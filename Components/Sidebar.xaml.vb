@@ -3,55 +3,42 @@ Imports System.Windows.Controls
 Imports System.Windows.Input
 Imports System.Windows.Media.Animation
 
-Public Class Sidebar
-    Inherits UserControl ' Add this line
+Namespace DPC.Components
+    Partial Public Class Sidebar
+        Inherits UserControl
 
-    Private IsExpanded As Boolean = False
+        Private IsExpanded As Boolean = True ' Start expanded
 
-    ' Toggle Sidebar Expansion
-    Private Sub ToggleSidebar()
-        Dim widthAnimation As New DoubleAnimation()
-        If IsExpanded Then
-            widthAnimation.To = 65 ' Collapse
-        Else
-            widthAnimation.To = 250 ' Expand
-        End If
-        widthAnimation.Duration = TimeSpan.FromSeconds(0.3)
+        ' Constructor
+        Public Sub New()
+            InitializeComponent()
+            SidebarContainer.Width = 500 ' Ensure it starts expanded
+        End Sub
 
-        ' Ensure Transform is applied
-        If Me.RenderTransform Is Nothing OrElse Not TypeOf Me.RenderTransform Is ScaleTransform Then
-            Me.RenderTransform = New ScaleTransform(1, 1)
-        End If
+        Private Sub ToggleSidebar()
+            Dim widthAnimation As New DoubleAnimation()
 
-        Dim scaleTransform As ScaleTransform = TryCast(Me.RenderTransform, ScaleTransform)
-        If scaleTransform IsNot Nothing Then
-            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, widthAnimation)
-        End If
+            ' Expand or Collapse
+            If IsExpanded Then
+                widthAnimation.To = 100 ' Collapse
+            Else
+                widthAnimation.To = 500 ' Expand
+            End If
 
-        IsExpanded = Not IsExpanded
-    End Sub
+            widthAnimation.Duration = TimeSpan.FromSeconds(0.3)
+            widthAnimation.EasingFunction = New QuadraticEase() With {.EasingMode = EasingMode.EaseInOut}
 
+            ' Apply animation to the Sidebar Container
+            SidebarContainer.BeginAnimation(WidthProperty, widthAnimation)
 
-    ' Handle Button Clicks
-    Private Sub SidebarButton_Click(sender As Object, e As RoutedEventArgs)
-        Dim button As Button = TryCast(sender, Button)
-        If button IsNot Nothing Then
-            Select Case button.Tag.ToString()
-                Case "Logout"
-                    MessageBox.Show("Logging Out...")
-                Case Else
-                    MessageBox.Show("Navigating to " & button.Tag.ToString())
-            End Select
-        End If
-    End Sub
+            ' Toggle the state
+            IsExpanded = Not IsExpanded
+        End Sub
 
-    ' Expand Sidebar on Hover
-    Private Sub Sidebar_MouseEnter(sender As Object, e As MouseEventArgs)
-        If Not IsExpanded Then ToggleSidebar()
-    End Sub
+        ' Logo Click Event: Toggle Sidebar
+        Private Sub SidebarLogoButton_Click(sender As Object, e As RoutedEventArgs) Handles SidebarLogoButton.Click
+            ToggleSidebar()
+        End Sub
 
-    ' Collapse Sidebar on Leave
-    Private Sub Sidebar_MouseLeave(sender As Object, e As MouseEventArgs)
-        If IsExpanded Then ToggleSidebar()
-    End Sub
-End Class
+    End Class
+End Namespace
