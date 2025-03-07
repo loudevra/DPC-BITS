@@ -1,0 +1,81 @@
+<UserControl x:Class="DPC.Components.Sidebar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    Height="Auto" Width="100" Background="#121212">
+
+	<!-- Define Sidebar Button Style -->
+	<UserControl.Resources>
+		<Style x:Key="SidebarButton" TargetType="Button">
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="Padding" Value="10"/>
+			<Setter Property="Cursor" Value="Hand"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Style.Triggers>
+				<Trigger Property="IsMouseOver" Value="True">
+					<Setter Property="Foreground" Value="Red"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
+	</UserControl.Resources>
+
+	<!-- Sidebar Container -->
+	<Border Background="Black" CornerRadius="10" Padding="10">
+		<StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
+
+			<!-- Logo -->
+			<Image Source="/Assets/images/logo.png" Height="50" Width="50" Margin="0,10,0,20"/>
+
+			<!-- Navigation Items -->
+			<StackPanel>
+				<Button Style="{StaticResource SidebarButton}" Tag="Dashboard">
+                    <materialDesign:PackIcon Kind="Speedometer" Height="24" Width="24"/>
+				</Button>
+				<Button Style="{StaticResource SidebarButton}" Tag="Sales">
+					<materialDesign:PackIcon Kind="ChartLine" Height="24" Width="24"/>
+				</Button>
+				<Button Style="{StaticResource SidebarButton}" Tag="Stock">
+					<materialDesign:PackIcon Kind="PackageVariant" Height="24" Width="24"/>
+				</Button>
+				<Button Style="{StaticResource SidebarButton}" Tag="CRM">
+					<materialDesign:PackIcon Kind="AccountGroup" Height="24" Width="24"/>
+				</Button>
+				<Button Style="{StaticResource SidebarButton}" Tag="Project">
+					<materialDesign:PackIcon Kind="Folder" Height="24" Width="24"/>
+				</Button>
+				<Button Style="{StaticResource SidebarButton}" Tag="Accounts">
+					<materialDesign:PackIcon Kind="AccountBox" Height="24" Width="24"/>
+				</Button>
+				<Button Style="{StaticResource SidebarButton}" Tag="PromoCodes">
+					<materialDesign:PackIcon Kind="Tag" Height="24" Width="24"/>
+				</Button>
+				<Button Style="{StaticResource SidebarButton}" Tag="DataReports">
+					<materialDesign:PackIcon Kind="ChartBar" Height="24" Width="24"/>
+				</Button>
+				<Button Style="{StaticResource SidebarButton}" Tag="Miscellaneous">
+					<materialDesign:PackIcon Kind="DotsGrid" Height="24" Width="24"/>
+				</Button>
+				<Button Style="{StaticResource SidebarButton}" Tag="HRM">
+					<materialDesign:PackIcon Kind="AccountSupervisor" Height="24" Width="24"/>
+				</Button>
+			</StackPanel>
+
+			<!-- Spacer -->
+			<Grid Height="Auto"/>
+
+			<!-- User Profile -->
+			<StackPanel HorizontalAlignment="Center" Margin="0,20,0,0">
+				<Ellipse Width="40" Height="40" Fill="Gray"/>
+				<TextBlock Text="Username" Foreground="White" FontSize="12" TextAlignment="Center"/>
+				<TextBlock Text="name@mail.com" Foreground="Gray" FontSize="10" TextAlignment="Center"/>
+			</StackPanel>
+
+			<!-- Logout Button -->
+			<Button Style="{StaticResource SidebarButton}" Tag="Logout">
+				<materialDesign:PackIcon Kind="Logout" Foreground="Red" Height="24" Width="24"/>
+			</Button>
+		</StackPanel>
+	</Border>
+</UserControl>
