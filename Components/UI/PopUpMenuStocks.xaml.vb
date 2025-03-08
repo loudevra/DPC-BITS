@@ -1,0 +1,3 @@
+﻿Class PopUpMenuStocks
+
+End Class
