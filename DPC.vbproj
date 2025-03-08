@@ -141,7 +141,6 @@
     </ApplicationDefinition>
     <Page Include="Components\Forms\AddNewClientGrpForm.xaml">
       <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Navigation\Sidebar.xaml">
       <Generator>MSBuild:Compile</Generator>
