@@ -3,7 +3,7 @@ Imports System.Windows.Controls
 Imports System.Windows.Input
 Imports System.Windows.Media.Animation
 
-Namespace DPC.Components
+Namespace DPC.Components.Navigation
     Partial Public Class Sidebar
         Inherits UserControl
 

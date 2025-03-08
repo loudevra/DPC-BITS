@@ -139,7 +139,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Components\Sidebar.xaml">
+    <Page Include="Components\Navigation\Sidebar.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainWindow.xaml">
@@ -150,7 +150,7 @@
       <DependentUpon>Application.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Components\Sidebar.xaml.vb">
+    <Compile Include="Components\Navigation\Sidebar.xaml.vb">
       <DependentUpon>Sidebar.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.vb">
