@@ -46,61 +46,61 @@
                 <Button Style="{StaticResource SidebarButton}">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Speedometer" Width="24" Height="24"/>
-                        <TextBlock Text="Dashboard" Foreground="White" Margin="10,0,0,0"/>
+                        <TextBlock Text="Dashboard" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource SidebarButton}">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Cart" Width="24" Height="24"/>
-                        <TextBlock Text="Sales" Foreground="White" Margin="10,0,0,0"/>
+                        <TextBlock Text="Sales" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource SidebarButton}">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Layers" Width="24" Height="24"/>
-                        <TextBlock Text="Stock" Foreground="White" Margin="10,0,0,0"/>
+                        <TextBlock Text="Stocks" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource SidebarButton}">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="AccountMultiple" Width="24" Height="24"/>
-                        <TextBlock Text="CRM" Foreground="White" Margin="10,0,0,0"/>
+                        <TextBlock Text="CRM" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource SidebarButton}">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Briefcase" Width="24" Height="24"/>
-                        <TextBlock Text="Project" Foreground="White" Margin="10,0,0,0"/>
+                        <TextBlock Text="Project" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource SidebarButton}">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Account" Width="24" Height="24"/>
-                        <TextBlock Text="Accounts" Foreground="White" Margin="10,0,0,0"/>
+                        <TextBlock Text="Accounts" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource SidebarButton}">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="TicketPercent" Width="24" Height="24"/>
-                        <TextBlock Text="Promo Codes" Foreground="White" Margin="10,0,0,0"/>
+                        <TextBlock Text="Promo Codes" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource SidebarButton}">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="ChartBar" Width="24" Height="24"/>
-                        <TextBlock Text="Data &amp; Reports" Foreground="White" Margin="10,0,0,0"/>
+                        <TextBlock Text="Data &amp; Reports" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend" />
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource SidebarButton}">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="DotsGrid" Width="24" Height="24"/>
-                        <TextBlock Text="Miscellaneous" Foreground="White" Margin="10,0,0,0"/>
+                        <TextBlock Text="Miscellaneous" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource SidebarButton}">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="AccountTie" Width="24" Height="24"/>
-                        <TextBlock Text="HRM" Foreground="White" Margin="10,0,0,0"/>
+                        <TextBlock Text="HRM" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -114,14 +114,14 @@
                     <TextBlock x:Name="UserName" Text="Username" Foreground="White" FontWeight="Bold"/>
                     <TextBlock x:Name="UserEmail" Text="name@mail.com" Foreground="Gray" FontSize="12"/>
                 </StackPanel>
-                <materialDesign:PackIcon Kind="Cog" Width="24" Height="24" Foreground="White" Margin="20,5,0,0"/>
+                <materialDesign:PackIcon Kind="Cog" Width="24" Height="24" Foreground="White" Margin="20,5,0,0" FontFamily="Lexend"/>
             </StackPanel>
 
             <!-- Logout Button -->
             <Button Style="{StaticResource SidebarButton}">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="Logout" Width="24" Height="24" Foreground="Red"/>
-                    <TextBlock Text="Logout" Foreground="Red" Margin="10,0,0,0"/>
+                    <TextBlock Text="Logout" Foreground="Red" Margin="10,0,0,0" FontFamily="Lexend"/>
                 </StackPanel>
             </Button>
         </StackPanel>
