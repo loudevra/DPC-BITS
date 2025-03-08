@@ -142,6 +142,9 @@
     <Page Include="Components\Navigation\Sidebar.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\UI\PopUpMenuSales.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -152,6 +155,9 @@
     </Compile>
     <Compile Include="Components\Navigation\Sidebar.xaml.vb">
       <DependentUpon>Sidebar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\UI\PopUpMenuSales.xaml.vb">
+      <DependentUpon>PopUpMenuSales.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.vb">
       <DependentUpon>MainWindow.xaml</DependentUpon>
