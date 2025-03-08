@@ -29,10 +29,10 @@
                 </StackPanel>
                 <StackPanel Margin="20,5,0,0">
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NewClient">New Client</Hyperlink>
+                        <Hyperlink Click=" NavigateToNewInvoice">New Client</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="ManageClients">Manage Clients</Hyperlink>
+                        <Hyperlink Click=" NavigateToNewInvoice">Manage Clients</Hyperlink>
                     </TextBlock>
 
                 </StackPanel>
@@ -55,10 +55,10 @@
                 </StackPanel>
                 <StackPanel Margin="20,5,0,0">
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="Unsolved">Unsolved</Hyperlink>
+                        <Hyperlink Click=" NavigateToNewInvoice">Unsolved</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="ManageTickets">Manage Tickets</Hyperlink>
+                        <Hyperlink Click=" NavigateToNewInvoice">Manage Tickets</Hyperlink>
                     </TextBlock>
                 </StackPanel>
             </StackPanel>

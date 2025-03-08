@@ -32,7 +32,7 @@
                         <Hyperlink Click="NavigateToNewInvoice">New Product</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToNewInvoiceV2">Product Manager</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Product Manager</Hyperlink>
                     </TextBlock>
 
                 </StackPanel>
@@ -75,7 +75,7 @@
                         <Hyperlink Click="NavigateToNewInvoice">New Order</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToManageInvoices">Manage Order</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Manage Order</Hyperlink>
                     </TextBlock>
                 </StackPanel>
             </StackPanel>
@@ -88,10 +88,10 @@
                 </StackPanel>
                 <StackPanel Margin="20,5,0,0">
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToNewQuote">Suppliers Records</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Suppliers Records</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToManageQuote">Customers Records</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Customers Records</Hyperlink>
                     </TextBlock>
                 </StackPanel>
             </StackPanel>
@@ -104,10 +104,10 @@
                 </StackPanel>
                 <StackPanel Margin="20,5,0,0">
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToNewSubscription">New Suppliers</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">New Suppliers</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToSubscriptions">Manage Suppliers</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Manage Suppliers</Hyperlink>
                     </TextBlock>
                 </StackPanel>
             </StackPanel>
@@ -120,10 +120,10 @@
                 </StackPanel>
                 <StackPanel Margin="20,5,0,0">
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToNewSubscription">Custom Label</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Custom Label</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToSubscriptions">Standard Label</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Standard Label</Hyperlink>
                     </TextBlock>
                 </StackPanel>
             </StackPanel>
