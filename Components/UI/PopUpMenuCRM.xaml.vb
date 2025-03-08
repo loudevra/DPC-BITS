@@ -1,10 +1,10 @@
 ﻿Namespace DPC.Components.UI
-    Public Class PopUpMenuStocks
+    Public Class PopUpMenuCRM
         Inherits UserControl
 
         Public Sub New()
             InitializeComponent()
         End Sub
-    End Class
 
+    End Class
 End Namespace

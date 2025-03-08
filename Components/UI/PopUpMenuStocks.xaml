@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="DPC.Components.UI.PopUpMenuSales"
+﻿<UserControl x:Class="DPC.Components.UI.PopUpMenuStocks"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -24,7 +24,7 @@
             <!-- POS Sales Section -->
             <StackPanel Orientation="Vertical" Margin="0,5,0,10">
                 <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="" Foreground="White" Width="20" Height="20"/>
+                    <materialDesign:PackIcon Kind="Send" Foreground="White" Width="20" Height="20"/>
                     <TextBlock Text="Items Manager" Foreground="White" FontWeight="Bold" FontSize="16" Margin="10,0,0,0"/>
                 </StackPanel>
                 <StackPanel Margin="20,5,0,0">
@@ -42,7 +42,7 @@
             <!-- Product Categories Section -->
             <StackPanel Orientation="Vertical" Margin="0,5,0,10">
                 <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Cart" Foreground="White" Width="20" Height="20"/>
+                    <materialDesign:PackIcon Kind="Umbrella" Foreground="White" Width="20" Height="20"/>
                     <TextBlock Text="Product Categories" Foreground="White" FontWeight="Bold" FontSize="16" Margin="10,0,0,0"/>
                 </StackPanel>
             </StackPanel>
