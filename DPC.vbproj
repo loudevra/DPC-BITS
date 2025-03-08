@@ -139,6 +139,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Components\Forms\AddNewClientGrpForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\Navigation\Sidebar.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -164,6 +167,9 @@
     <Compile Include="Application.xaml.vb">
       <DependentUpon>Application.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Components\Forms\AddNewClientGrpForm.xaml.vb">
+      <DependentUpon>AddNewClientGrpForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Navigation\Sidebar.xaml.vb">
       <DependentUpon>Sidebar.xaml</DependentUpon>

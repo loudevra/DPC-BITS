@@ -1,0 +1,55 @@
+<UserControl x:Class="DPC.Components.Forms.AddNewClientGrpForm"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:local="namespace:DPC.Components.Forms"
+    Height="Auto" Width="400" Background="#1E1E1E">
+
+    <Border Background="White" CornerRadius="15" Padding="20" Width="400">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <StackPanel Orientation="Horizontal" Grid.Row="0">
+                <materialDesign:PackIcon Kind="AccountMultiplePlus" Foreground="Black" Width="24" Height="24"/>
+                <TextBlock Text="Add New Client Group" FontSize="18" FontWeight="Bold" Foreground="Black" Margin="8,0,0,0"/>
+                <Button Content="?" HorizontalAlignment="Right" Background="Transparent" BorderThickness="0"
+                        Foreground="Black" FontSize="16" Padding="0"
+                        Command="{Binding CloseCommand}" Margin="115,0,0,0" />
+            </StackPanel>
+
+            <!-- Group Name Input -->
+            <StackPanel Grid.Row="1" Margin="0,15,0,0">
+                <TextBlock Text="Group Name:" Foreground="Black" FontWeight="Bold"/>
+                <TextBox x:Name="txtGroupName" Height="35" BorderBrush="Black" BorderThickness="1"
+                         Background="Transparent" Padding="5"/>
+            </StackPanel>
+
+            <!-- Description Input -->
+            <StackPanel Grid.Row="2" Margin="0,10,0,0">
+                <TextBlock Text="Description:" Foreground="Black" FontWeight="Bold"/>
+                <TextBox x:Name="txtDescription" Height="35" BorderBrush="Black" BorderThickness="1"
+                         Background="Transparent" Padding="5"/>
+            </StackPanel>
+
+            <!-- Add Group Button -->
+            <Button x:Name="btnAddGroup" Grid.Row="3" Content="Add Group" Width="120" Height="35"
+            Background="#3CB371" Foreground="White" FontWeight="Bold" Margin="0,15,0,0"
+            HorizontalAlignment="Right" Click="BtnAddGroup_Click">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="20">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </Grid>
+    </Border>
+</UserControl>
