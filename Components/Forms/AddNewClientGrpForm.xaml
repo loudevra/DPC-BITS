@@ -10,10 +10,10 @@
     <!-- 🔹 Now Visible by Default -->
 
     <!-- Full-Screen Overlay -->
-    <Grid Background="#99000000">
+    <Grid Background="#99000000" Margin="-17,0,0,0">
 
         <!-- Modal Box -->
-        <Border Background="White" CornerRadius="15" Padding="20" Width="400"
+        <Border Background="#FDFDFD" CornerRadius="15" Padding="20" Width="417"
                 VerticalAlignment="Center" HorizontalAlignment="Center">
 
             <Grid>
@@ -26,34 +26,32 @@
 
                 <!-- Header -->
                 <DockPanel Grid.Row="0">
-                    <materialDesign:PackIcon Kind="AccountMultiplePlus" Foreground="Black" Width="24" Height="24" Margin="0,0,5,0"/>
-                    <TextBlock Text="Add New Client Group" FontSize="18" FontWeight="Bold" Foreground="Black"/>
+                    <materialDesign:PackIcon Kind="AccountMultiplePlus" Foreground="#555555" Width="30" Height="30" Margin="0,0,5,0"/>
+                    <TextBlock Text="Add New Client Group" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontSize="18" FontWeight="SemiBold" Foreground="#555555" Margin="6,5,-1,0" RenderTransformOrigin="0.587,0.571"/>
 
                     <!-- Close Button -->
-                    <Button Content="✖" Background="Transparent" BorderThickness="0"
-                            Foreground="Black" FontSize="16" Padding="5"
-                            Click="CloseModal_Click" DockPanel.Dock="Right" HorizontalAlignment="Right"/>
+                    <materialDesign:PackIcon Kind="Close" Foreground="#555555" Width="24" Height="24" Margin="129,0,0,0"/>
                 </DockPanel>
 
                 <!-- Group Name Input -->
                 <StackPanel Grid.Row="1" Margin="0,15,0,0">
-                    <TextBlock Text="Group Name:" Foreground="Black" FontWeight="Bold"/>
-                    <Border CornerRadius="15" BorderBrush="Black" BorderThickness="1" Background="Transparent">
+                    <TextBlock Text="Group Name:" Foreground="#555555" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700"  FontWeight="Medium" Margin="0,5,0,6"/>
+                    <Border CornerRadius="20" BorderBrush="#555555" BorderThickness="2" Background="Transparent">
                         <TextBox x:Name="txtGroupName" Height="35" Padding="5" BorderThickness="0" Background="Transparent"/>
                     </Border>
                 </StackPanel>
 
                 <!-- Description Input -->
                 <StackPanel Grid.Row="2" Margin="0,10,0,0">
-                    <TextBlock Text="Description:" Foreground="Black" FontWeight="Bold"/>
-                    <Border CornerRadius="15" BorderBrush="Black" BorderThickness="1" Background="Transparent">
+                    <TextBlock Text="Description:" Foreground="#555555" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontWeight="Medium" Margin="0,5,0,5"/>
+                    <Border CornerRadius="20" BorderBrush="#555555" BorderThickness="2" Background="Transparent">
                         <TextBox x:Name="txtDescription" Height="35" Padding="5" BorderThickness="0" Background="Transparent"/>
                     </Border>
                 </StackPanel>
 
                 <!-- Add Group Button -->
                 <Button x:Name="btnAddGroup" Grid.Row="3" Content="Add Group" Width="120" Height="35"
-                        Background="#3CB371" Foreground="White" FontWeight="Bold" Margin="0,15,0,0"
+                        Background="#52C69D" Foreground="#FDFDFD" FontWeight="SemiBold" Margin="0,22,0,0"
                         HorizontalAlignment="Right" Click="BtnAddGroup_Click">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
