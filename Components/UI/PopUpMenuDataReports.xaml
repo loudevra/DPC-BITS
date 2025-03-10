@@ -25,7 +25,7 @@
             <StackPanel Orientation="Vertical" Margin="0,5,0,10">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="Send" Foreground="White" Width="20" Height="20"/>
-                    <TextBlock Text="Business Registers" Foreground="White" FontWeight="Bold" FontSize="16" Margin="10,0,0,0"/>
+                    <TextBlock Text="Business Registers" Foreground="White" FontWeight="Bold" FontSize="16" Margin="10,0,0,0" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700"/>
                 </StackPanel>
 
             </StackPanel>
@@ -34,22 +34,22 @@
             <StackPanel Orientation="Vertical" Margin="0,5,0,10">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="Cart" Foreground="White" Width="20" Height="20"/>
-                    <TextBlock Text="Statements" Foreground="White" FontWeight="Bold" FontSize="16" Margin="10,0,0,0"/>
+                    <TextBlock Text="Statements" Foreground="White" FontWeight="Bold" FontSize="16" Margin="10,0,0,0" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700"/>
                 </StackPanel>
                 <StackPanel Margin="20,5,0,0">
-                    <TextBlock FontSize="14">
+                    <TextBlock FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontSize="14">
                         <Hyperlink Click="NavigateToNewInvoice">Account Statements</Hyperlink>
                     </TextBlock>
-                    <TextBlock FontSize="14">
+                    <TextBlock FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontSize="14">
                         <Hyperlink Click="NavigateToNewInvoice">Customer Account Statements</Hyperlink>
                     </TextBlock>
-                    <TextBlock FontSize="14">
+                    <TextBlock FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontSize="14">
                         <Hyperlink Click="NavigateToNewInvoice">Supplier Account Statements</Hyperlink>
                     </TextBlock>
-                    <TextBlock FontSize="14">
+                    <TextBlock FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontSize="14">
                         <Hyperlink Click="NavigateToNewInvoice">TAX Statements</Hyperlink>
                     </TextBlock>
-                    <TextBlock FontSize="14">
+                    <TextBlock FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontSize="14">
                         <Hyperlink Click="NavigateToNewInvoice">Product Sales Reports</Hyperlink>
                     </TextBlock>
                 </StackPanel>
@@ -59,28 +59,28 @@
             <StackPanel Orientation="Vertical" Margin="0,5,0,10">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="Phone" Foreground="White" Width="20" Height="20"/>
-                    <TextBlock Text="Graphical Reports" Foreground="White" FontWeight="Bold" FontSize="16" Margin="10,0,0,0"/>
+                    <TextBlock Text="Graphical Reports" Foreground="White" FontWeight="Bold" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontSize="16" Margin="10,0,0,0"/>
                 </StackPanel>
                 <StackPanel Margin="20,5,0,0">
-                    <TextBlock FontSize="14">
+                    <TextBlock FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontSize="14">
                         <Hyperlink Click="NavigateToNewInvoice">Product Categories</Hyperlink>
                     </TextBlock>
-                    <TextBlock FontSize="14">
+                    <TextBlock FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontSize="14">
                         <Hyperlink Click="NavigateToNewInvoice">Trending Products</Hyperlink>
                     </TextBlock>
-                    <TextBlock FontSize="14">
+                    <TextBlock FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontSize="14">
                         <Hyperlink Click="NavigateToNewInvoice">Profit</Hyperlink>
                     </TextBlock>
-                    <TextBlock FontSize="14">
+                    <TextBlock FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontSize="14">
                         <Hyperlink Click="NavigateToNewInvoice">Top Customers</Hyperlink>
                     </TextBlock>
-                    <TextBlock FontSize="14">
+                    <TextBlock FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontSize="14">
                         <Hyperlink Click="NavigateToNewInvoice">Income vs Expenses</Hyperlink>
                     </TextBlock>
-                    <TextBlock FontSize="14">
+                    <TextBlock FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontSize="14">
                         <Hyperlink Click="NavigateToNewInvoice">Income</Hyperlink>
                     </TextBlock>
-                    <TextBlock FontSize="14">
+                    <TextBlock FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontSize="14">
                         <Hyperlink Click="NavigateToNewInvoice">Expenses</Hyperlink>
                     </TextBlock>
                 </StackPanel>
@@ -90,28 +90,28 @@
             <StackPanel Orientation="Vertical" Margin="0,5,0,10">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="SignalCellularOutline" Foreground="White" Width="20" Height="20"/>
-                    <TextBlock Text="Summary and Report" Foreground="White" FontWeight="Bold" FontSize="16" Margin="10,0,0,0"/>
+                    <TextBlock Text="Summary and Report" Foreground="White" FontWeight="Bold" FontSize="16" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" Margin="10,0,0,0"/>
                 </StackPanel>
                 <StackPanel Margin="20,5,0,0">
-                    <TextBlock FontSize="14">
+                    <TextBlock FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontSize="14">
                         <Hyperlink Click="NavigateToNewInvoice">Statistics</Hyperlink>
                     </TextBlock>
-                    <TextBlock FontSize="14">
+                    <TextBlock FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontSize="14">
                         <Hyperlink Click="NavigateToNewInvoice">Profit</Hyperlink>
                     </TextBlock>
-                    <TextBlock FontSize="14">
+                    <TextBlock FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontSize="14">
                         <Hyperlink Click="NavigateToNewInvoice">Calculate Income</Hyperlink>
                     </TextBlock>
-                    <TextBlock FontSize="14">
+                    <TextBlock FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontSize="14">
                         <Hyperlink Click="NavigateToNewInvoice">Calculate Expenses</Hyperlink>
                     </TextBlock>
-                    <TextBlock FontSize="14">
+                    <TextBlock FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontSize="14">
                         <Hyperlink Click="NavigateToNewInvoice">Sales</Hyperlink>
                     </TextBlock>
-                    <TextBlock FontSize="14">
+                    <TextBlock FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontSize="14">
                         <Hyperlink Click="NavigateToNewInvoice">Products</Hyperlink>
                     </TextBlock>
-                    <TextBlock FontSize="14">
+                    <TextBlock FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontSize="14">
                         <Hyperlink Click="NavigateToNewInvoice">Employee Commission</Hyperlink>
                     </TextBlock>
                 </StackPanel>

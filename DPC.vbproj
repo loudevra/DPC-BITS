@@ -145,6 +145,10 @@
     <Page Include="Components\Forms\AddNewClientGrpForm.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\Forms\AddNewSupplierForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Components\Navigation\Sidebar.xaml">
       <Generator>MSBuild:Compile</Generator>
 	  <SubType>Designer</SubType>
@@ -158,6 +162,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\UI\PopUpMenuDataReports.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\UI\PopUpMenuHRM.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\UI\PopUpMenuMiscellaneous.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -187,6 +199,9 @@
     <Compile Include="Components\Forms\AddNewClientGrpForm.xaml.vb">
       <DependentUpon>AddNewClientGrpForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\AddNewSupplierForm.xaml.vb">
+      <DependentUpon>AddNewSupplierForm.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Navigation\Sidebar.xaml.vb">
       <DependentUpon>Sidebar.xaml</DependentUpon>
     </Compile>
@@ -198,6 +213,12 @@
     </Compile>
     <Compile Include="Components\UI\PopUpMenuDataReports.xaml.vb">
       <DependentUpon>PopUpMenuDataReports.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\UI\PopUpMenuHRM.xaml.vb">
+      <DependentUpon>PopUpMenuHRM.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\UI\PopUpMenuMiscellaneous.xaml.vb">
+      <DependentUpon>PopUpMenuMiscellaneous.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\UI\PopUpMenuProject.xaml.vb">
       <DependentUpon>PopUpMenuProject.xaml</DependentUpon>
