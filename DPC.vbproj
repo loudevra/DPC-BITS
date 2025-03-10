@@ -142,6 +142,10 @@
     <Page Include="Components\Forms\AddNewClientGrpForm.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\Forms\AddNewSupplierForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Components\Navigation\Sidebar.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -182,6 +186,9 @@
     </Compile>
     <Compile Include="Components\Forms\AddNewClientGrpForm.xaml.vb">
       <DependentUpon>AddNewClientGrpForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\AddNewSupplierForm.xaml.vb">
+      <DependentUpon>AddNewSupplierForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Navigation\Sidebar.xaml.vb">
       <DependentUpon>Sidebar.xaml</DependentUpon>
