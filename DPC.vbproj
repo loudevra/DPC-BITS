@@ -139,6 +139,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Views\Dashboard\Dashboard.xaml.vb">
+      <DependentUpon>Dashboard.xaml</DependentUpon>
+    </Compile>
     <Page Include="Components\Forms\AddNewClientGrpForm.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -148,6 +151,7 @@
     </Page>
     <Page Include="Components\Navigation\Sidebar.xaml">
       <Generator>MSBuild:Compile</Generator>
+	  <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\UI\PopUpMenuAccounts.xaml">
       <SubType>Designer</SubType>
@@ -232,6 +236,9 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\Dashboard\Dashboard.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Import Include="System.Threading.Tasks" />
@@ -291,7 +298,6 @@
     <Folder Include="Installer\" />
     <Folder Include="Services\" />
     <Folder Include="Themes\" />
-    <Folder Include="Views\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\images\logo.png" />
