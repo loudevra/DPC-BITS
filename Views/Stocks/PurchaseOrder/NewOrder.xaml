@@ -17,9 +17,15 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="35,0,0,0" HorizontalAlignment="Left">
+        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"  Orientation="Horizontal" Margin="35,0,0,0" HorizontalAlignment="Left">
             <materialDesign:PackIcon Kind="CartOutline" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0"/>
             <materialDesign:PackIcon Kind="LocationOnOutline" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0"/>
 
@@ -33,12 +39,9 @@
                 <materialDesign:PackIcon Kind="EmailOutline" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0"/>
                 <materialDesign:PackIcon Kind="ClockOutline" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0"/>
             </StackPanel>
-
-            <Button x:Name="test" Content="Click Me!" Width="120" Height="30" Margin="10,0,0,0"/>
         </StackPanel>
 
-
-        <StackPanel Grid.Row="2" Orientation="Horizontal">
+        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
             <TextBlock Text="Bill From"/>
             <Button x:Name="btnAddSupplier" Width="120" Height="40">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -48,7 +51,7 @@
             </Button>
         </StackPanel>
 
-        <StackPanel Grid.Row="3" Orientation="Horizontal">
+        <StackPanel Grid.Row="2" Grid.Column="0">
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="Search Supplier:"/>
 
@@ -67,10 +70,12 @@
                     <ComboBoxItem Content="Warehouse 3"/>
                 </ComboBox>
             </StackPanel>
-            
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Grid.Column="1">
             <StackPanel>
                 <TextBlock Text="Purchase Order"/>
-                
+
                 <TextBlock Text="Invoice Number"/>
                 <TextBox Width="250" Height="30"/>
 
@@ -78,13 +83,130 @@
                 <TextBox Width="250" Height="30"/>
 
                 <TextBlock Text="Order Date:"/>
-                <DatePicker Width="150" Height="30"/>
+                <DatePicker x:Name="Test1" Width="150" Height="30"/>
 
+                <TextBlock Text="Order Due Date:"/>
+                <DatePicker x:Name="Test2" Width="150" Height="30"/>
+
+                <TextBlock Text="Tax:"/>
+                <ComboBox SelectedIndex="0">
+                    <ComboBoxItem Content="Inclusive"/>
+                    <ComboBoxItem Content="Exclusive"/>
+                </ComboBox>
+
+                <TextBlock Text="Discount:"/>
+                <ComboBox SelectedIndex="0">
+                    <ComboBoxItem Content="% Discount After"/>
+                    <ComboBoxItem Content="Flat Discount After"/>
+                    <ComboBoxItem Content=" % Discount Before"/>
+                    <ComboBoxItem Content=" Flat Discount Before"/>
+                </ComboBox>
+
+                <TextBlock Text="Order Note:"/>
+                <TextBox Width="250" Height="30"/>
             </StackPanel>
         </StackPanel>
 
+        <StackPanel x:Name="TableGridPanel" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
+
+                <TextBlock Text="Item Name" Grid.Row="0" Grid.Column="0"/>
+                <TextBlock Text="Quantity" Grid.Row="0" Grid.Column="1"/>
+                <TextBlock Text="Rate" Grid.Row="0" Grid.Column="2"/>
+                <TextBlock Text="Tax(%)" Grid.Row="0" Grid.Column="3"/>
+                <TextBlock Text="Tax" Grid.Row="0" Grid.Column="4"/>
+                <TextBlock Text="Discount" Grid.Row="0" Grid.Column="5"/>
+                <TextBlock Text="Amount" Grid.Row="0" Grid.Column="6"/>
+                <TextBlock Text="Action" Grid.Row="0" Grid.Column="7"/>
+
+                <TextBox Width="150" Height="30" Grid.Row="1" Grid.Column="0"/>
+                <TextBox Width="150" Height="30" Grid.Row="1" Grid.Column="1"/>
+                <TextBox Width="150" Height="30" Grid.Row="1" Grid.Column="2"/>
+                <TextBox Width="150" Height="30" Grid.Row="1" Grid.Column="3"/>
+                <TextBlock Text="0" Grid.Row="1" Grid.Column="4"/>
+                <TextBox Width="150" Height="30" Grid.Row="1" Grid.Column="5"/>
+                <TextBlock Text="0" Grid.Row="1" Grid.Column="6"/>
+                <Button x:Name="btnDeleteRow" Width="120" Height="30" Grid.Row="1" Grid.Column="7">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <materialDesign:PackIcon Kind="PlaylistRemove" Foreground="Black" Width="24" Height="24" Margin="0,0,5,0"/>
+                        <TextBlock Text="Delete" Foreground="Black" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+                <TextBox Width="auto" Height="30" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="8"/>
+            </Grid>
+        </StackPanel>
+        
+        <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical">
+            <Button x:Name="btnAddRow" Width="120" Height="40">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <materialDesign:PackIcon Kind="PlaylistAdd" Foreground="Black" Width="24" Height="24" Margin="0,0,5,0"/>
+                    <TextBlock Text="Row" Foreground="Black" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+            <StackPanel Grid.Row="5" Grid.Column="0" Orientation="Vertical">
+                <TextBlock Text="Payment Terms:"/>
+                <ComboBox SelectedIndex="0">
+                    <ComboBoxItem Content="Payment On Receipt"/>
+                </ComboBox>
+
+                <TextBlock Text="Update Stock:"/>
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton Content="Yes" GroupName="Choices"/>
+                    <RadioButton Content="No" GroupName="Choices"/>
+                </StackPanel>
+            </StackPanel>
+
+
+        <StackPanel Grid.Row="5" Grid.Column="2" Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Total Tax: "/>
+                <TextBlock Text="0"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Total Discount: "/>
+                <TextBlock Text="0"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Shipping: "/>
+                    <TextBox Width="250" Height="30"/>
+                </StackPanel>
+                <TextBlock Text="( Tax: 0 )"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Grand Total: "/>
+                <TextBlock Text="0"/>
+            </StackPanel>
+
+            <StackPanel>
+                <Button x:Name="btnGenerateOrder" Width="120" Height="40">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="Generate Order" Foreground="Black" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </StackPanel>
     </Grid>
-
-
 </Window>
