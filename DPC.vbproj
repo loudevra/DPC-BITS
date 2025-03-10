@@ -139,9 +139,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Views\Dashboard\Dashboard.xaml.vb">
-      <DependentUpon>Dashboard.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Stocks\PurchaseOrder\NewOrder.xaml.vb">
       <DependentUpon>NewOrder.xaml</DependentUpon>
     </Compile>
@@ -217,9 +214,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\Dashboard\Dashboard.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Stocks\PurchaseOrder\NewOrder.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
