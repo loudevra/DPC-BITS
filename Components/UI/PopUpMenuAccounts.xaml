@@ -29,13 +29,13 @@
                 </StackPanel>
                 <StackPanel Margin="20,5,0,0">
                     <TextBlock FontSize="14">
-                        <Hyperlink Click=" NavigateToNewInvoice">Manage Accounts</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Manage Accounts</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click=" NavigateToNewInvoice">Balance Sheets</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Balance Sheets</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click=" NavigateToNewInvoice">Account Statement</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Account Statement</Hyperlink>
                     </TextBlock>
 
                 </StackPanel>
@@ -49,13 +49,13 @@
                 </StackPanel>
                 <StackPanel Margin="20,5,0,0">
                     <TextBlock FontSize="14">
-                        <Hyperlink Click=" NavigateToNewInvoice">View Transactions</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">View Transactions</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click=" NavigateToNewInvoice">New Transaction</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">New Transaction</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click=" NavigateToNewInvoice">New Transfer</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">New Transfer</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
                         <Hyperlink Click=" NavigateToNewInvoice">Clients Transaction</Hyperlink>

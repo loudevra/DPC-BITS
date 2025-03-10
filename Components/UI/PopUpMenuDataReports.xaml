@@ -41,7 +41,7 @@
                         <Hyperlink Click="NavigateToNewInvoice">Account Statements</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToManageInvoices">Customer Account Statements</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Customer Account Statements</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
                         <Hyperlink Click="NavigateToNewInvoice">Supplier Account Statements</Hyperlink>
@@ -63,25 +63,25 @@
                 </StackPanel>
                 <StackPanel Margin="20,5,0,0">
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToNewQuote">Product Categories</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Product Categories</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToManageQuote">Trending Products</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Trending Products</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToNewQuote">Profit</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Profit</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToManageQuote">Top Customers</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Top Customers</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToNewQuote">Income vs Expenses</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Income vs Expenses</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToManageQuote">Income</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Income</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToManageQuote">Expenses</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Expenses</Hyperlink>
                     </TextBlock>
                 </StackPanel>
             </StackPanel>
@@ -94,31 +94,28 @@
                 </StackPanel>
                 <StackPanel Margin="20,5,0,0">
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToNewSubscription">Statistics</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Statistics</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToSubscriptions">Profit</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Profit</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToSubscriptions">Calculate Income</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Calculate Income</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToSubscriptions">Calculate Expenses</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Calculate Expenses</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToSubscriptions">Sales</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Sales</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToSubscriptions">Products</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Products</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToSubscriptions">Employee Commission</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Employee Commission</Hyperlink>
                     </TextBlock>
                 </StackPanel>
             </StackPanel>
-
-
-
         </StackPanel>
     </Border>
 </UserControl>
