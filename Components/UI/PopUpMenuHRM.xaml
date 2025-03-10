@@ -32,16 +32,16 @@
                         <Hyperlink Click="NavigateToNewInvoice">Employees</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToNewInvoiceV2">Permissions</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Permissions</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToManageInvoices">Salaries</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Salaries</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToManageInvoices">Attendance</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Attendance</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToManageInvoices">Holidays</Hyperlink>
+                        <Hyperlink Click="NavigateToNewInvoice">Holidays</Hyperlink>
                     </TextBlock>
                 </StackPanel>
             </StackPanel>
