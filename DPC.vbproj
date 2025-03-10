@@ -151,11 +151,23 @@
     <Page Include="Components\Navigation\Sidebar.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\UI\PopUpMenuAccounts.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\UI\PopUpMenuCRM.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\UI\PopUpMenuDataReports.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\UI\PopUpMenuProject.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\UI\PopUpMenuPromoCodes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -180,11 +192,20 @@
     <Compile Include="Components\Navigation\Sidebar.xaml.vb">
       <DependentUpon>Sidebar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\UI\PopUpMenuAccounts.xaml.vb">
+      <DependentUpon>PopUpMenuAccounts.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\UI\PopUpMenuCRM.xaml.vb">
       <DependentUpon>PopUpMenuCRM.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\UI\PopUpMenuDataReports.xaml.vb">
+      <DependentUpon>PopUpMenuDataReports.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\UI\PopUpMenuProject.xaml.vb">
       <DependentUpon>PopUpMenuProject.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\UI\PopUpMenuPromoCodes.xaml.vb">
+      <DependentUpon>PopUpMenuPromoCodes.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\UI\PopUpMenuSales.xaml.vb">
       <DependentUpon>PopUpMenuSales.xaml</DependentUpon>
