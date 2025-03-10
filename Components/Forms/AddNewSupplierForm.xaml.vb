@@ -1,17 +1,18 @@
 Namespace DPC.Components.Forms
     Public Class AddNewSupplierForm
+        Public Event CloseRequested As EventHandler
+
         Public Sub New()
             InitializeComponent()
         End Sub
 
-        Private Sub CloseWindow_Click(sender As Object, e As RoutedEventArgs)
-            Me.Close()
+        Private Sub ClosePopup(sender As Object, e As RoutedEventArgs)
+            RaiseEvent CloseRequested(Me, EventArgs.Empty)
         End Sub
 
-        Private Sub AddSupplier_Click(sender As Object, e As RoutedEventArgs)
-            ' Logic to handle adding a new supplier
+        Private Sub AddSupplier(sender As Object, e As RoutedEventArgs)
             MessageBox.Show("Supplier Added Successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
-            Me.Close()
+            RaiseEvent CloseRequested(Me, EventArgs.Empty)
         End Sub
     End Class
 End Namespace
