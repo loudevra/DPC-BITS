@@ -4,7 +4,7 @@ Imports System.Windows.Input
 Imports System.Windows.Media.Animation
 
 Namespace DPC.Components.Navigation
-    Partial Public Class Sidebar
+    Public Class Sidebar
         Inherits UserControl
 
         Private IsExpanded As Boolean = True ' Start expanded
