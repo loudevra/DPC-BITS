@@ -24,7 +24,7 @@
             <!-- Business Registers Section -->
             <StackPanel Orientation="Vertical" Margin="0,5,0,10">
                 <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Send" Foreground="White" Width="20" Height="20"/>
+                    <materialDesign:PackIcon Kind="Glasses" Foreground="White" Width="20" Height="20"/>
                     <TextBlock Text="Business Registers" Foreground="White" FontWeight="Bold" FontSize="16" Margin="10,0,0,0" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700"/>
                 </StackPanel>
 
@@ -33,7 +33,7 @@
             <!-- Statements Section -->
             <StackPanel Orientation="Vertical" Margin="0,5,0,10">
                 <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Cart" Foreground="White" Width="20" Height="20"/>
+                    <materialDesign:PackIcon Kind="ListBoxOutline" Foreground="White" Width="20" Height="20"/>
                     <TextBlock Text="Statements" Foreground="White" FontWeight="Bold" FontSize="16" Margin="10,0,0,0" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700"/>
                 </StackPanel>
                 <StackPanel Margin="20,5,0,0">
@@ -58,7 +58,7 @@
             <!-- Graphical Reports Section -->
             <StackPanel Orientation="Vertical" Margin="0,5,0,10">
                 <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Phone" Foreground="White" Width="20" Height="20"/>
+                    <materialDesign:PackIcon Kind="SignalCellularOutline" Foreground="White" Width="20" Height="20"/>
                     <TextBlock Text="Graphical Reports" Foreground="White" FontWeight="Bold" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontSize="16" Margin="10,0,0,0"/>
                 </StackPanel>
                 <StackPanel Margin="20,5,0,0">
@@ -89,7 +89,7 @@
             <!-- Summary & Report Section -->
             <StackPanel Orientation="Vertical" Margin="0,5,0,10">
                 <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="SignalCellularOutline" Foreground="White" Width="20" Height="20"/>
+                    <materialDesign:PackIcon Kind="LightbulbVariantOutline" Foreground="White" Width="20" Height="20"/>
                     <TextBlock Text="Summary and Report" Foreground="White" FontWeight="Bold" FontSize="16" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" Margin="10,0,0,0"/>
                 </StackPanel>
                 <StackPanel Margin="20,5,0,0">
