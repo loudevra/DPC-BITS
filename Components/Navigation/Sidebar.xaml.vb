@@ -1,7 +1,7 @@
 ﻿Imports System.Windows
 Imports System.Windows.Controls
-Imports System.Windows.Input
 Imports System.Windows.Media.Animation
+Imports DPC.DPC.Components.UI
 
 Namespace DPC.Components.Navigation
     Public Class Sidebar
@@ -12,7 +12,136 @@ Namespace DPC.Components.Navigation
         ' Constructor
         Public Sub New()
             InitializeComponent()
-            SidebarContainer.Width = 250 ' Ensure it starts expanded
+        End Sub
+
+        ''' <summary>
+        ''' Handles the click event for the Miscellaneous menu item.
+        ''' </summary>
+        Private Sub OpenMiscellaneous(sender As Object, e As RoutedEventArgs)
+            Dim popupMenu As New PopUpMenuMiscelleneous()
+
+            ' Get the position of the Stocks button
+            Dim button As Button = CType(sender, Button)
+            Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
+
+            ' Call the ShowPopup method to show the popup at the button's position
+            popupMenu.ShowPopup(Me, sender)
+        End Sub
+
+        ''' <summary>
+        ''' Handles the click event for the Dashboard menu item.
+        ''' </summary>
+        Private Sub OpenDashboard(sender As Object, e As RoutedEventArgs)
+            ' Show the Dashboard or navigate to the corresponding page
+            MessageBox.Show("Dashboard clicked!")
+        End Sub
+
+        ''' <summary>
+        ''' Handles the click event for the Sales menu item.
+        ''' </summary>
+        Private Sub OpenSales(sender As Object, e As RoutedEventArgs)
+            Dim popupMenu As New PopUpMenuSales()
+
+            ' Get the position of the Stocks button
+            Dim button As Button = CType(sender, Button)
+            Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
+
+            ' Call the ShowPopup method to show the popup at the button's position
+            popupMenu.ShowPopup(Me, sender)
+        End Sub
+
+        ''' <summary>
+        ''' Handles the click event for the Stocks menu item.
+        ''' </summary>
+        Private Sub OpenStocksPopup(sender As Object, e As RoutedEventArgs)
+            ' Create a new instance of the PopUpMenuStocks control
+            Dim popupMenu As New PopUpMenuStocks()
+
+            ' Get the position of the Stocks button
+            Dim button As Button = CType(sender, Button)
+            Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
+
+            ' Call the ShowPopup method to show the popup at the button's position
+            popupMenu.ShowPopup(Me, sender)
+        End Sub
+
+
+        ''' <summary>
+        ''' Handles the click event for the CRM menu item.
+        ''' </summary>
+        Private Sub OpenCRM(sender As Object, e As RoutedEventArgs)
+            Dim popupMenu As New PopUpMenuCRM()
+
+            ' Get the position of the Stocks button
+            Dim button As Button = CType(sender, Button)
+            Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
+
+            ' Call the ShowPopup method to show the popup at the button's position
+            popupMenu.ShowPopup(Me, sender)
+        End Sub
+        ''' <summary>
+        ''' Handles the click event for the Project menu item.
+        ''' </summary>
+        Private Sub OpenProject(sender As Object, e As RoutedEventArgs)
+            Dim popupMenu As New PopUpMenuProjects()
+
+            ' Get the position of the Stocks button
+            Dim button As Button = CType(sender, Button)
+            Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
+
+            ' Call the ShowPopup method to show the popup at the button's position
+            popupMenu.ShowPopup(Me, sender)
+        End Sub
+        Private Sub OpenPromoCodes(sender As Object, e As RoutedEventArgs)
+            Dim popupMenu As New PopUpMenuPromoCodes()
+
+            ' Get the position of the Stocks button
+            Dim button As Button = CType(sender, Button)
+            Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
+
+            ' Call the ShowPopup method to show the popup at the button's position
+            popupMenu.ShowPopup(Me, sender)
+        End Sub
+        Private Sub OpenDataReports(sender As Object, e As RoutedEventArgs)
+            Dim popupMenu As New PopUpMenuDataReports()
+
+            ' Get the position of the Stocks button
+            Dim button As Button = CType(sender, Button)
+            Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
+
+            ' Call the ShowPopup method to show the popup at the button's position
+            popupMenu.ShowPopup(Me, sender)
+        End Sub
+        Private Sub OpenHRM(sender As Object, e As RoutedEventArgs)
+            Dim popupMenu As New PopUpMenuHRM()
+
+            ' Get the position of the Stocks button
+            Dim button As Button = CType(sender, Button)
+            Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
+
+            ' Call the ShowPopup method to show the popup at the button's position
+            popupMenu.ShowPopup(Me, sender)
+        End Sub
+        Private Sub OpenAccounts(sender As Object, e As RoutedEventArgs)
+            Dim popupMenu As New PopUpMenuAccounts()
+
+            ' Get the position of the Stocks button
+            Dim button As Button = CType(sender, Button)
+            Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
+
+            ' Call the ShowPopup method to show the popup at the button's position
+            popupMenu.ShowPopup(Me, sender)
+        End Sub
+        Private Sub Logout(sender As Object, e As RoutedEventArgs)
+            ' Navigate to MainWindow.xaml
+            Dim mainWindow As New MainWindow()
+            Application.Current.MainWindow = mainWindow
+            mainWindow.Show()
+            ' Close the current window
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            If currentWindow IsNot Nothing Then
+                currentWindow.Close()
+            End If
         End Sub
 
         ''' <summary>
@@ -23,7 +152,7 @@ Namespace DPC.Components.Navigation
 
             ' Expand or Collapse
             If IsExpanded Then
-                widthAnimation.To = 85 ' Collapse to match the image
+                widthAnimation.To = 85 ' Collapse
                 For Each child As UIElement In SidebarMenu.Children
                     If TypeOf child Is Button Then
                         Dim btn As Button = CType(child, Button)
