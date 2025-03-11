@@ -1,0 +1,63 @@
+﻿<UserControl x:Class="DPC.Components.Forms.AddNewClientGrpForm"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    mc:Ignorable="d"
+    d:DesignHeight="400" d:DesignWidth="400" Background="Transparent"
+    Visibility="Visible">
+    <!-- 🔹 Now Visible by Default -->
+
+    <!-- Full-Screen Overlay -->
+    <Grid Background="#99000000" Margin="-208,0,0,0">
+
+        <!-- Modal Box -->
+        <Border Background="#FDFDFD" CornerRadius="15" Padding="20" Width="506"
+                VerticalAlignment="Center" HorizontalAlignment="Center" Height="340">
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Header -->
+                <DockPanel Grid.Row="0">
+                    <TextBlock Text="Category" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontSize="18" FontWeight="SemiBold" Foreground="#555555" Margin="1,35,-1,0" RenderTransformOrigin="0.587,0.571"/>
+                    <!-- Minimize Button -->
+                    <materialDesign:PackIcon Kind="Minimize" Foreground="#555555" Width="24" Height="24" Margin="340,0,0,0"/>
+                    <!-- Close Button -->
+                    <materialDesign:PackIcon Kind="Close" Foreground="#555555" Width="24" Height="24" Margin="2,0,0,0"/>
+                </DockPanel>
+
+                <!-- Filter Input -->
+                <StackPanel Grid.Row="1" Margin="0,15,0,0">
+                    <Border CornerRadius="20" BorderBrush="#555555" BorderThickness="2" Background="Transparent">
+                        <TextBox x:Name="txtFilterInput" Height="35" Padding="5" BorderThickness="0" Background="Transparent"/>
+                    </Border>
+                </StackPanel>
+
+                <!-- Motherboard Button -->
+                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,15,0,0">
+                    <Button Width="120" Height="30" Background="#AEAEAE" 
+                    Foreground="#FDFDFD" FontWeight="SemiBold" Padding="10,5" Margin="0,0,4,0">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="#AEAEAE" CornerRadius="15">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Motherboard" FontFamily="Lexend" VerticalAlignment="Center" Margin="0,0,5,-1"/>
+                            <materialDesign:PackIcon Kind="Close" Foreground="#FDFDFD" Width="15" Height="25"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
