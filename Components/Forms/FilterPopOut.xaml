@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="DPC.Components.Forms.AddNewClientGrpForm"
+﻿<UserControl x:Class="DPC.Components.Forms.FilterPopOut"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -7,6 +7,7 @@
     mc:Ignorable="d"
     d:DesignHeight="400" d:DesignWidth="400" Background="Transparent"
     Visibility="Visible">
+    
     <!-- 🔹 Now Visible by Default -->
 
     <!-- Full-Screen Overlay -->
