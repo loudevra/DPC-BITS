@@ -540,17 +540,17 @@
                     <TextBlock Text="Amount" Grid.Row="0" Grid.Column="6" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     <TextBlock Text="Action" Grid.Row="0" Grid.Column="7" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
-                    <TextBox Width="Auto" Height="30" Grid.Row="1" Grid.Column="0"/>
-                    <TextBox Width="Auto" Height="30" Grid.Row="1" Grid.Column="1"/>
-                    <TextBox Width="Auto" Height="30" Grid.Row="1" Grid.Column="2"/>
-                    <TextBox Width="Auto" Height="30" Grid.Row="1" Grid.Column="3"/>
-                    <TextBlock Text="0" Grid.Row="1" Grid.Column="4"/>
-                    <TextBox Width="Auto" Height="30" Grid.Row="1" Grid.Column="5"/>
-                    <TextBlock Text="0" Grid.Row="1" Grid.Column="6"/>
-                    <Button x:Name="btnDeleteRow" Width="120" Height="30" Grid.Row="1" Grid.Column="7">
+                    <TextBox Width="Auto" Height="30" Grid.Row="1" Grid.Column="0" FontFamily="Lexend" HorizontalContentAlignment="Left" VerticalContentAlignment="Center"/>
+                    <TextBox Width="Auto" Height="30" Grid.Row="1" Grid.Column="1" FontFamily="Lexend" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <TextBox Width="Auto" Height="30" Grid.Row="1" Grid.Column="2" FontFamily="Lexend" HorizontalContentAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBox Width="Auto" Height="30" Grid.Row="1" Grid.Column="3" FontFamily="Lexend" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <TextBlock Text="0" Grid.Row="1" Grid.Column="4" FontFamily="Lexend" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <TextBox Width="Auto" Height="30" Grid.Row="1" Grid.Column="5" FontFamily="Lexend" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                    <TextBlock Text="0" Grid.Row="1" Grid.Column="6" FontFamily="Lexend" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <Button x:Name="btnDeleteRow" Width="Auto" Height="30" Grid.Row="1" Grid.Column="7" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <materialDesign:PackIcon Kind="PlaylistRemove" Foreground="Black" Width="24" Height="24" Margin="0,0,5,0"/>
-                            <TextBlock Text="Delete" Foreground="Black" VerticalAlignment="Center"/>
+                            <TextBlock Text="Delete" Foreground="Black" VerticalAlignment="Center" FontFamily="Lexend"/>
                         </StackPanel>
                     </Button>
                     <TextBox Width="auto" Height="30" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="8"/>
