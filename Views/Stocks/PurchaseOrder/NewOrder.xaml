@@ -10,157 +10,561 @@
         WindowStartupLocation="CenterScreen">
 
 
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
-
-        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"  Orientation="Horizontal" Margin="35,0,0,0" HorizontalAlignment="Left">
-            <materialDesign:PackIcon Kind="CartOutline" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0"/>
-            <materialDesign:PackIcon Kind="LocationOnOutline" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0"/>
-
-            <StackPanel Orientation="Horizontal" Background="White">
-                <TextBox Width="250" Height="30" Margin="10,0,10,0" VerticalAlignment="Center"/>
-                <materialDesign:PackIcon Kind="Search" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0"/>
+            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="25,10,0,10">
+                <materialDesign:PackIcon Kind="CartOutline" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                <materialDesign:PackIcon Kind="LocationOnOutline" Foreground="Black" Width="24" Height="24" Margin="0,0,0,0" VerticalAlignment="Center"/>
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <materialDesign:PackIcon Kind="BellOutline" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0"/>
-                <materialDesign:PackIcon Kind="EmailOutline" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0"/>
-                <materialDesign:PackIcon Kind="ClockOutline" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0"/>
+            <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" Margin="0,10,25,10" HorizontalAlignment="Right">
+                <Border CornerRadius="15" BorderThickness="0" BorderBrush="white" Background="white" Margin="0,0,10,0">
+                    <StackPanel Orientation="Horizontal" Background="Transparent">
+                        <TextBox Width="250" Height="25" Margin="10,0,10,0" VerticalAlignment="Center" BorderThickness="0" VerticalContentAlignment="Center" FontFamily="Lexend"/>
+                        <materialDesign:PackIcon Kind="Search" Foreground="#AEAEAE" Width="24" Height="24" Margin="0,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                    </StackPanel>
+                </Border>
+
+                <materialDesign:PackIcon Kind="BellOutline" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                <materialDesign:PackIcon Kind="EmailOutline" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                <materialDesign:PackIcon Kind="ClockOutline" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
             </StackPanel>
-        </StackPanel>
 
-        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal">
-            <TextBlock Text="Bill From"/>
-            <Button x:Name="btnAddSupplier" Width="120" Height="40">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <materialDesign:PackIcon Kind="AccountAdd" Foreground="Black" Width="24" Height="24" Margin="0,0,5,0"/>
-                    <TextBlock Text="Supplier" Foreground="Black" VerticalAlignment="Center"/>
-                </StackPanel>
-            </Button>
-        </StackPanel>
-
-        <StackPanel Grid.Row="2" Grid.Column="0">
-            <StackPanel Orientation="Vertical">
-                <TextBlock Text="Search Supplier:"/>
-
-                <StackPanel Orientation="Horizontal" Background="White">
-                    <TextBox Width="250" Height="30" Margin="10,0,10,0" VerticalAlignment="Center"/>
-                    <materialDesign:PackIcon Kind="Search" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0"/>
-                </StackPanel>
-
-                <TextBlock Text="Supplier Details:"/>
-                <TextBox/>
-
-                <TextBlock Text="Warehouse:"/>
-                <ComboBox SelectedIndex="0">
-                    <ComboBoxItem Content="Warehouse 1"/>
-                    <ComboBoxItem Content="Warehouse 2"/>
-                    <ComboBoxItem Content="Warehouse 3"/>
-                </ComboBox>
-            </StackPanel>
-        </StackPanel>
-
-        <StackPanel Grid.Row="2" Grid.Column="1">
-            <StackPanel>
-                <TextBlock Text="Purchase Order"/>
-
-                <TextBlock Text="Invoice Number"/>
-                <TextBox Width="250" Height="30"/>
-
-                <TextBlock Text="Reference:"/>
-                <TextBox Width="250" Height="30"/>
-
-                <TextBlock Text="Order Date:"/>
-                <DatePicker x:Name="Test1" Width="150" Height="30"/>
-
-                <TextBlock Text="Order Due Date:"/>
-                <DatePicker x:Name="Test2" Width="150" Height="30"/>
-
-                <TextBlock Text="Tax:"/>
-                <ComboBox SelectedIndex="0">
-                    <ComboBoxItem Content="Inclusive"/>
-                    <ComboBoxItem Content="Exclusive"/>
-                </ComboBox>
-
-                <TextBlock Text="Discount:"/>
-                <ComboBox SelectedIndex="0">
-                    <ComboBoxItem Content="% Discount After"/>
-                    <ComboBoxItem Content="Flat Discount After"/>
-                    <ComboBoxItem Content=" % Discount Before"/>
-                    <ComboBoxItem Content=" Flat Discount Before"/>
-                </ComboBox>
-
-                <TextBlock Text="Order Note:"/>
-                <TextBox Width="250" Height="30"/>
-            </StackPanel>
-        </StackPanel>
-
-        <StackPanel x:Name="TableGridPanel" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-
-                <TextBlock Text="Item Name" Grid.Row="0" Grid.Column="0"/>
-                <TextBlock Text="Quantity" Grid.Row="0" Grid.Column="1"/>
-                <TextBlock Text="Rate" Grid.Row="0" Grid.Column="2"/>
-                <TextBlock Text="Tax(%)" Grid.Row="0" Grid.Column="3"/>
-                <TextBlock Text="Tax" Grid.Row="0" Grid.Column="4"/>
-                <TextBlock Text="Discount" Grid.Row="0" Grid.Column="5"/>
-                <TextBlock Text="Amount" Grid.Row="0" Grid.Column="6"/>
-                <TextBlock Text="Action" Grid.Row="0" Grid.Column="7"/>
-
-                <TextBox Width="150" Height="30" Grid.Row="1" Grid.Column="0"/>
-                <TextBox Width="150" Height="30" Grid.Row="1" Grid.Column="1"/>
-                <TextBox Width="150" Height="30" Grid.Row="1" Grid.Column="2"/>
-                <TextBox Width="150" Height="30" Grid.Row="1" Grid.Column="3"/>
-                <TextBlock Text="0" Grid.Row="1" Grid.Column="4"/>
-                <TextBox Width="150" Height="30" Grid.Row="1" Grid.Column="5"/>
-                <TextBlock Text="0" Grid.Row="1" Grid.Column="6"/>
-                <Button x:Name="btnDeleteRow" Width="120" Height="30" Grid.Row="1" Grid.Column="7">
+            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="25,10,0,0">
+                <TextBlock Text="Bill From" FontWeight="SemiBold" FontFamily="Lexend" FontSize="25" Margin="0,0,20,0" Foreground="#474747" VerticalAlignment="Center"/>
+                <Button x:Name="btnAddSupplier" Width="120" Height="30" Background="#D9D9D9">
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="15" BorderThickness="2" BorderBrush="#474747" >
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <materialDesign:PackIcon Kind="PlaylistRemove" Foreground="Black" Width="24" Height="24" Margin="0,0,5,0"/>
-                        <TextBlock Text="Delete" Foreground="Black" VerticalAlignment="Center"/>
+                        <materialDesign:PackIcon Kind="AccountAdd" Foreground="#474747" Width="25" Height="25" Margin="0,0,5,0"/>
+                        <TextBlock Text="Supplier" FontFamily="Lexend" Foreground="#474747" VerticalAlignment="Center" FontSize="17"/>
                     </StackPanel>
                 </Button>
+            </StackPanel>
 
-                <TextBox Width="auto" Height="30" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="8"/>
-            </Grid>
-        </StackPanel>
-        
-        <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical">
-            <Button x:Name="btnAddRow" Width="120" Height="40">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <materialDesign:PackIcon Kind="PlaylistAdd" Foreground="Black" Width="24" Height="24" Margin="0,0,5,0"/>
-                    <TextBlock Text="Row" Foreground="Black" VerticalAlignment="Center"/>
+            <StackPanel Grid.Row="2" Grid.Column="0" Margin="25,10,25,10" Orientation="Vertical">
+                <StackPanel Margin="0,50,0,5">
+                    <TextBlock Text="Search Supplier:" FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
                 </StackPanel>
-            </Button>
-        </StackPanel>
+
+                <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" Width="500" Background="White" HorizontalAlignment="Left" Margin="0,0,0,10">
+                    <StackPanel Orientation="Horizontal" Width="500">
+                        <TextBox Width="445" Height="35" Margin="20,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Left" BorderThickness="0" FontFamily="Lexend"/>
+                        <materialDesign:PackIcon Kind="Search" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                    </StackPanel>
+                </Border>
+
+
+                <StackPanel Margin="0,5,0,5">
+                    <TextBlock Text="Supplier Details:"  FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
+                    <Grid Width="500" HorizontalAlignment="Left">
+                        <!-- Border with lower ZIndex -->
+                        <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" Width="500" Height="150"
+                        Background="White" Panel.ZIndex="0"/>
+
+                        <!-- TextBox on top -->
+                        <TextBox Width="480" Height="130" HorizontalAlignment="Center" VerticalAlignment="Center"
+                        Background="Transparent" BorderThickness="0" Panel.ZIndex="1" IsReadOnly="True" FontFamily="Lexend"/>
+                    </Grid>
+                </StackPanel>
+
+                <StackPanel  Margin="0,5,0,0">
+                    <TextBlock Text="Warehouse:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
+                </StackPanel>
+
+                <StackPanel HorizontalAlignment="Left">
+                    <ComboBox SelectedIndex="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"
+                      Padding="10" Width="500" Height="35" Background="White" BorderBrush="black"
+                      BorderThickness="1" HorizontalContentAlignment="Left">
+                        <ComboBox.Resources>
+
+                            <!-- Custom ComboBox Toggle Button -->
+                            <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+                                <Setter Property="Focusable" Value="False"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Border Background="Transparent" Padding="5">
+                                                <Grid>
+                                                    <Path x:Name="Arrow" Data="M 0 0 L 4 4 L 8 0 Z"
+                                              HorizontalAlignment="Right" VerticalAlignment="Center"
+                                              Fill="Black" Width="8" Height="8" 
+                                              Margin="0,5,10,0"/>
+                                                </Grid>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+
+                            <!-- Custom ComboBox Style -->
+                            <Style TargetType="ComboBox">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ComboBox">
+                                            <Border Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="20" Padding="5">
+                                                <Grid>
+                                                    <!-- Toggle Button for Dropdown -->
+                                                    <ToggleButton Name="ToggleButton" 
+                                                      Style="{StaticResource ComboBoxToggleButton}"
+                                                      Grid.Column="2" Focusable="False"
+                                                      IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" 
+                                                      ClickMode="Press"/>
+
+                                                    <!-- Selected Content -->
+                                                    <ContentPresenter Name="ContentSite" IsHitTestVisible="False" 
+                                                          Content="{TemplateBinding SelectionBoxItem}" 
+                                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                          Margin="10,0,40,0" VerticalAlignment="Center"/>
+
+                                                    <!-- Dropdown List -->
+                                                    <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" 
+                                               AllowsTransparency="True" Focusable="False"
+                                               PopupAnimation="Slide" Width="490">
+                                                        <Border Background="White" BorderBrush="Gray" BorderThickness="1" 
+                                                    CornerRadius="10">
+                                                            <ScrollViewer>
+                                                                <StackPanel>
+                                                                    <ItemsPresenter/>
+                                                                </StackPanel>
+                                                            </ScrollViewer>
+                                                        </Border>
+                                                    </Popup>
+                                                </Grid>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ComboBox.Resources>
+
+                        <!-- ComboBox Items -->
+                        <ComboBoxItem Content="Warehouse 1"/>
+                        <ComboBoxItem Content="Warehouse 2"/>
+                        <ComboBoxItem Content="Warehouse 3"/>
+                    </ComboBox>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" Grid.Column="1"  Margin="25,10,0,10" Orientation="Vertical">
+                <Border BorderThickness="2" BorderBrush="Gray" CornerRadius="20" Background="White"
+            Padding="5" Margin="10,10,40,10" Height="360">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Background="#FDFDFD">
+                            <StackPanel>
+                                <TextBlock Text="Purchase Order" FontFamily="Lexend" FontSize="25" Foreground="#474747" Margin="0,0,0,25"/>
+
+                                <TextBlock Text="Invoice Number:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
+                                <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" Width="475" Background="White" HorizontalAlignment="Left" Margin="0,0,0,10">
+                                    <StackPanel Orientation="Horizontal" Width="500">
+                                        <TextBox Width="425" Height="35" Margin="20,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Left" BorderThickness="0" FontFamily="Lexend"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <TextBlock Text="Reference:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
+                                <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" Width="475" Background="White" HorizontalAlignment="Left" Margin="0,0,0,10">
+                                    <StackPanel Orientation="Horizontal" Width="500">
+                                        <TextBox Width="425" Height="35" Margin="20,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Left" BorderThickness="0" FontFamily="Lexend"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <TextBlock Text="Order Date:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
+                                <DatePicker x:Name="orderDate" Margin="0,0,0,10"
+                Width="475"
+                Height="35"
+                Background="White"
+                BorderBrush="Gray"
+                BorderThickness="1"
+                Padding="10,0,10,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center">
+                                    <DatePicker.Resources>
+                                        <!-- Style for Placeholder Text -->
+                                        <Style TargetType="DatePickerTextBox">
+                                            <Setter Property="Foreground" Value="Gray"/>
+                                            <Setter Property="Text" Value="DD-MM-YYYY"/>
+                                            <Setter Property="FontStyle" Value="Italic"/>
+                                        </Style>
+                                    </DatePicker.Resources>
+                                    <DatePicker.Style>
+                                        <Style TargetType="DatePicker">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="DatePicker">
+                                                        <Grid>
+                                                            <!-- Rounded Border -->
+                                                            <Border CornerRadius="20"
+                                        Background="White"
+                                        BorderBrush="Black"
+                                        BorderThickness="1"
+                                        Padding="5">
+                                                                <Grid>
+                                                                    <!-- DatePicker Input Box -->
+                                                                    <DatePickerTextBox x:Name="PART_TextBox"
+                                                           Foreground="#474747"
+                                                           FontSize="14"
+                                                           Background="Transparent"
+                                                           BorderThickness="1"
+                                                           VerticalContentAlignment="Center"
+                                                           Padding="10,0,40,0"
+                                                           IsReadOnly="True"/>
+
+                                                                    <!-- Clickable Button with Calendar Icon -->
+                                                                    <Button x:Name="PART_Button"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                HorizontalAlignment="Right"
+                                                Padding="0"
+                                                Width="40"
+                                                Cursor="Hand">
+                                                                        <materialDesign:PackIcon Kind="Calendar"
+                                                                     Foreground="#474747"
+                                                                     Width="20"
+                                                                     Height="20"/>
+                                                                    </Button>
+                                                                </Grid>
+                                                            </Border>
+                                                            <!-- Popup for Calendar -->
+                                                            <Popup x:Name="PART_Popup"
+                                       Placement="Bottom"
+                                       StaysOpen="False"
+                                       IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}">
+                                                                <Border BorderBrush="Gray" BorderThickness="1" Background="White">
+                                                                    <Calendar x:Name="PART_Calendar"
+                                                  SelectedDate="{Binding SelectedDate, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"/>
+                                                                </Border>
+                                                            </Popup>
+                                                        </Grid>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </DatePicker.Style>
+                                </DatePicker>
+
+
+                                <TextBlock Text="Order Due Date:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
+                                <DatePicker x:Name="orderDueDate" Margin="0,0,0,10"
+    Width="475"
+    Height="35"
+    Background="White"
+    BorderBrush="Gray"
+    BorderThickness="1"
+    Padding="10,0,10,0"
+    HorizontalAlignment="Left"
+    VerticalAlignment="Center">
+                                    <DatePicker.Resources>
+                                        <!-- Style for Placeholder Text -->
+                                        <Style TargetType="DatePickerTextBox">
+                                            <Setter Property="Foreground" Value="Gray"/>
+                                            <Setter Property="Text" Value="DD-MM-YYYY"/>
+                                            <Setter Property="FontStyle" Value="Italic"/>
+                                        </Style>
+                                    </DatePicker.Resources>
+                                    <DatePicker.Style>
+                                        <Style TargetType="DatePicker">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="DatePicker">
+                                                        <Grid>
+                                                            <!-- Rounded Border -->
+                                                            <Border CornerRadius="20"
+                            Background="White"
+                            BorderBrush="Black"
+                            BorderThickness="1"
+                            Padding="5">
+                                                                <Grid>
+                                                                    <!-- DatePicker Input Box -->
+                                                                    <DatePickerTextBox x:Name="PART_TextBox"
+                                               Foreground="#474747"
+                                               FontSize="14"
+                                               Background="Transparent"
+                                               BorderThickness="1"
+                                               VerticalContentAlignment="Center"
+                                               Padding="10,0,40,0"
+                                               IsReadOnly="True"/>
+
+                                                                    <!-- Clickable Button with Calendar Icon -->
+                                                                    <Button x:Name="PART_Button"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    HorizontalAlignment="Right"
+                                    Padding="0"
+                                    Width="40"
+                                    Cursor="Hand">
+                                                                        <materialDesign:PackIcon Kind="Calendar"
+                                                         Foreground="#474747"
+                                                         Width="20"
+                                                         Height="20"/>
+                                                                    </Button>
+                                                                </Grid>
+                                                            </Border>
+                                                            <!-- Popup for Calendar -->
+                                                            <Popup x:Name="PART_Popup"
+                           Placement="Bottom"
+                           StaysOpen="False"
+                           IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}">
+                                                                <Border BorderBrush="Gray" BorderThickness="1" Background="White">
+                                                                    <Calendar x:Name="PART_Calendar"
+                                      SelectedDate="{Binding SelectedDate, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"/>
+                                                                </Border>
+                                                            </Popup>
+                                                        </Grid>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </DatePicker.Style>
+                                </DatePicker>
+
+                                <TextBlock Text="Tax:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
+                                <StackPanel HorizontalAlignment="Left" Margin="0,0,0,10">
+                                    <ComboBox SelectedIndex="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"
+          Padding="10" Width="475" Height="35" Background="White" BorderBrush="black"
+          BorderThickness="1" HorizontalContentAlignment="Left">
+                                        <ComboBox.Resources>
+
+                                            <!-- Custom ComboBox Toggle Button -->
+                                            <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+                                                <Setter Property="Focusable" Value="False"/>
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="ToggleButton">
+                                                            <Border Background="Transparent" Padding="5">
+                                                                <Grid>
+                                                                    <Path x:Name="Arrow" Data="M 0 0 L 4 4 L 8 0 Z"
+                                  HorizontalAlignment="Right" VerticalAlignment="Center"
+                                  Fill="Black" Width="8" Height="8" 
+                                  Margin="0,5,10,0"/>
+                                                                </Grid>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+
+                                            <!-- Custom ComboBox Style -->
+                                            <Style TargetType="ComboBox">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="ComboBox">
+                                                            <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="20" Padding="5">
+                                                                <Grid>
+                                                                    <!-- Toggle Button for Dropdown -->
+                                                                    <ToggleButton Name="ToggleButton" 
+                                          Style="{StaticResource ComboBoxToggleButton}"
+                                          Grid.Column="2" Focusable="False"
+                                          IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" 
+                                          ClickMode="Press"/>
+
+                                                                    <!-- Selected Content -->
+                                                                    <ContentPresenter Name="ContentSite" IsHitTestVisible="False" 
+                                              Content="{TemplateBinding SelectionBoxItem}" 
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              Margin="10,0,40,0" VerticalAlignment="Center"/>
+
+                                                                    <!-- Dropdown List -->
+                                                                    <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" 
+                                   AllowsTransparency="True" Focusable="False"
+                                   PopupAnimation="Slide" Width="465">
+                                                                        <Border Background="White" BorderBrush="Gray" BorderThickness="1" 
+                                        CornerRadius="10">
+                                                                            <ScrollViewer>
+                                                                                <StackPanel>
+                                                                                    <ItemsPresenter/>
+                                                                                </StackPanel>
+                                                                            </ScrollViewer>
+                                                                        </Border>
+                                                                    </Popup>
+                                                                </Grid>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </ComboBox.Resources>
+
+                                        <!-- ComboBox Items -->
+                                        <ComboBoxItem Content="Inclusive"/>
+                                        <ComboBoxItem Content="Exclusive"/>
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <TextBlock Text="Discount:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
+                                <StackPanel HorizontalAlignment="Left" Margin="0,0,0,10">
+                                    <ComboBox SelectedIndex="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"
+    Padding="10" Width="475" Height="35" Background="White" BorderBrush="black"
+    BorderThickness="1" HorizontalContentAlignment="Left">
+                                        <ComboBox.Resources>
+
+                                            <!-- Custom ComboBox Toggle Button -->
+                                            <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+                                                <Setter Property="Focusable" Value="False"/>
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="ToggleButton">
+                                                            <Border Background="Transparent" Padding="5">
+                                                                <Grid>
+                                                                    <Path x:Name="Arrow" Data="M 0 0 L 4 4 L 8 0 Z"
+                            HorizontalAlignment="Right" VerticalAlignment="Center"
+                            Fill="Black" Width="8" Height="8" 
+                            Margin="0,5,10,0"/>
+                                                                </Grid>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+
+                                            <!-- Custom ComboBox Style -->
+                                            <Style TargetType="ComboBox">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="ComboBox">
+                                                            <Border Background="{TemplateBinding Background}"
+                      BorderBrush="{TemplateBinding BorderBrush}"
+                      BorderThickness="{TemplateBinding BorderThickness}"
+                      CornerRadius="20" Padding="5">
+                                                                <Grid>
+                                                                    <!-- Toggle Button for Dropdown -->
+                                                                    <ToggleButton Name="ToggleButton" 
+                                    Style="{StaticResource ComboBoxToggleButton}"
+                                    Grid.Column="2" Focusable="False"
+                                    IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" 
+                                    ClickMode="Press"/>
+
+                                                                    <!-- Selected Content -->
+                                                                    <ContentPresenter Name="ContentSite" IsHitTestVisible="False" 
+                                        Content="{TemplateBinding SelectionBoxItem}" 
+                                        ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                        Margin="10,0,40,0" VerticalAlignment="Center"/>
+
+                                                                    <!-- Dropdown List -->
+                                                                    <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" 
+                             AllowsTransparency="True" Focusable="False"
+                             PopupAnimation="Slide" Width="465">
+                                                                        <Border Background="White" BorderBrush="Gray" BorderThickness="1" 
+                                  CornerRadius="10">
+                                                                            <ScrollViewer>
+                                                                                <StackPanel>
+                                                                                    <ItemsPresenter/>
+                                                                                </StackPanel>
+                                                                            </ScrollViewer>
+                                                                        </Border>
+                                                                    </Popup>
+                                                                </Grid>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </ComboBox.Resources>
+
+                                        <!-- ComboBox Items -->
+                                        <ComboBoxItem Content="% Discount After"/>
+                                        <ComboBoxItem Content="Flat Discount After"/>
+                                        <ComboBoxItem Content=" % Discount Before"/>
+                                        <ComboBoxItem Content=" Flat Discount Before"/>
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <TextBlock Text="Order Note:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,0"/>
+                                <StackPanel Margin="0,5,0,5">
+                                    <Grid Width="475" HorizontalAlignment="Left">
+                                        <!-- Border with lower ZIndex -->
+                                        <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" Width="475" Height="150"
+            Background="White" Panel.ZIndex="0"/>
+
+                                        <!-- TextBox on top -->
+                                        <TextBox Width="455" Height="130" HorizontalAlignment="Center" VerticalAlignment="Center"
+            Background="Transparent" BorderThickness="0" Panel.ZIndex="1" FontFamily="Lexend"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+
+            </StackPanel>
+
+            <StackPanel x:Name="TableGridPanel" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
+                <Grid Margin="25,10,40,10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width=".3*"/>
+                        <ColumnDefinition Width=".1*"/>
+                        <ColumnDefinition Width=".1*"/>
+                        <ColumnDefinition Width=".1*"/>
+                        <ColumnDefinition Width=".1*"/>
+                        <ColumnDefinition Width=".1*"/>
+                        <ColumnDefinition Width=".1*"/>
+                        <ColumnDefinition Width=".1*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Row="0" Grid.ColumnSpan="8" Background="#555555" Padding="20" CornerRadius="10,10,0,0"/>
+
+                    <TextBlock Text="Item Name" Grid.Row="0" Grid.Column="0" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Quantity" Grid.Row="0" Grid.Column="1" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Rate" Grid.Row="0" Grid.Column="2" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Tax(%)" Grid.Row="0" Grid.Column="3" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Tax" Grid.Row="0" Grid.Column="4" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Discount" Grid.Row="0" Grid.Column="5" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Amount" Grid.Row="0" Grid.Column="6" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Action" Grid.Row="0" Grid.Column="7" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+                    <TextBox Width="Auto" Height="30" Grid.Row="1" Grid.Column="0"/>
+                    <TextBox Width="Auto" Height="30" Grid.Row="1" Grid.Column="1"/>
+                    <TextBox Width="Auto" Height="30" Grid.Row="1" Grid.Column="2"/>
+                    <TextBox Width="Auto" Height="30" Grid.Row="1" Grid.Column="3"/>
+                    <TextBlock Text="0" Grid.Row="1" Grid.Column="4"/>
+                    <TextBox Width="Auto" Height="30" Grid.Row="1" Grid.Column="5"/>
+                    <TextBlock Text="0" Grid.Row="1" Grid.Column="6"/>
+                    <Button x:Name="btnDeleteRow" Width="120" Height="30" Grid.Row="1" Grid.Column="7">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <materialDesign:PackIcon Kind="PlaylistRemove" Foreground="Black" Width="24" Height="24" Margin="0,0,5,0"/>
+                            <TextBlock Text="Delete" Foreground="Black" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <TextBox Width="auto" Height="30" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="8"/>
+                </Grid>
+            </StackPanel>
+        
+            <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical">
+                <Button x:Name="btnAddRow" Width="120" Height="35" HorizontalAlignment="Left" Margin="25,5,0,10" Background="#2E466B">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="left">
+                        <materialDesign:PackIcon Kind="PlaylistAdd" Foreground="white" Width="24" Height="24" Margin="0,0,5,0"/>
+                        <TextBlock Text="Row" Foreground="white" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
 
             <StackPanel Grid.Row="5" Grid.Column="0" Orientation="Vertical">
                 <TextBlock Text="Payment Terms:"/>
@@ -175,38 +579,38 @@
                 </StackPanel>
             </StackPanel>
 
-
-        <StackPanel Grid.Row="5" Grid.Column="2" Orientation="Vertical">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Total Tax: "/>
-                <TextBlock Text="0"/>
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Total Discount: "/>
-                <TextBlock Text="0"/>
-            </StackPanel>
-
-            <StackPanel Orientation="Vertical">
+            <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Vertical">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Shipping: "/>
-                    <TextBox Width="250" Height="30"/>
+                    <TextBlock Text="Total Tax: "/>
+                    <TextBlock Text="0"/>
                 </StackPanel>
-                <TextBlock Text="( Tax: 0 )"/>
-            </StackPanel>
 
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Grand Total: "/>
-                <TextBlock Text="0"/>
-            </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Total Discount: "/>
+                    <TextBlock Text="0"/>
+                </StackPanel>
 
-            <StackPanel>
-                <Button x:Name="btnGenerateOrder" Width="120" Height="40">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <TextBlock Text="Generate Order" Foreground="Black" VerticalAlignment="Center"/>
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Shipping: "/>
+                        <TextBox Width="250" Height="30"/>
                     </StackPanel>
-                </Button>
+                    <TextBlock Text="( Tax: 0 )"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Grand Total: "/>
+                    <TextBlock Text="0"/>
+                </StackPanel>
+
+                <StackPanel>
+                    <Button x:Name="btnGenerateOrder" Width="120" Height="40">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock Text="Generate Order" Foreground="Black" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
-    </Grid>
+        </Grid>
+    </ScrollViewer>
 </Window>
