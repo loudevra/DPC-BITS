@@ -5,7 +5,6 @@
     xmlns:local="namespace:DPC.Components.Navigation"
     Height="Auto" Width="250" Background="#121212">
 
-
     <UserControl.Resources>
         <Style x:Key="SidebarButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
@@ -44,61 +43,61 @@
 
             <!-- Navigation Items -->
             <StackPanel x:Name="SidebarMenu">
-                <Button Style="{StaticResource SidebarButton}">
+                <Button Style="{StaticResource SidebarButton}" Click="OpenDashboard">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Speedometer" Width="24" Height="24"/>
                         <TextBlock Text="Dashboard" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
-                <Button Style="{StaticResource SidebarButton}">
+                <Button Style="{StaticResource SidebarButton}" Click="OpenSales">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Cart" Width="24" Height="24"/>
                         <TextBlock Text="Sales" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
-                <Button Style="{StaticResource SidebarButton}">
+                <Button Style="{StaticResource SidebarButton}" Click="OpenStocksPopup">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Layers" Width="24" Height="24"/>
                         <TextBlock Text="Stocks" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
-                <Button Style="{StaticResource SidebarButton}">
+                <Button Style="{StaticResource SidebarButton}" Click="OpenCRM">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="AccountMultiple" Width="24" Height="24"/>
                         <TextBlock Text="CRM" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
-                <Button Style="{StaticResource SidebarButton}">
+                <Button Style="{StaticResource SidebarButton}" Click="OpenProject">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Briefcase" Width="24" Height="24"/>
                         <TextBlock Text="Project" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
-                <Button Style="{StaticResource SidebarButton}">
+                <Button Style="{StaticResource SidebarButton}" Click="OpenAccounts">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Account" Width="24" Height="24"/>
                         <TextBlock Text="Accounts" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
-                <Button Style="{StaticResource SidebarButton}">
+                <Button Style="{StaticResource SidebarButton}" Click="OpenPromoCodes">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="TicketPercent" Width="24" Height="24"/>
                         <TextBlock Text="Promo Codes" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
-                <Button Style="{StaticResource SidebarButton}">
+                <Button Style="{StaticResource SidebarButton}" Click="OpenDataReports">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="ChartBar" Width="24" Height="24"/>
                         <TextBlock Text="Data &amp; Reports" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend" />
                     </StackPanel>
                 </Button>
-                <Button Style="{StaticResource SidebarButton}">
+                <Button Style="{StaticResource SidebarButton}" Click="OpenMiscellaneous">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="DotsGrid" Width="24" Height="24"/>
                         <TextBlock Text="Miscellaneous" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
-                <Button Style="{StaticResource SidebarButton}">
+                <Button Style="{StaticResource SidebarButton}" Click="OpenHRM">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="AccountTie" Width="24" Height="24"/>
                         <TextBlock Text="HRM" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
@@ -119,7 +118,7 @@
             </StackPanel>
 
             <!-- Logout Button -->
-            <Button Style="{StaticResource SidebarButton}">
+            <Button Style="{StaticResource SidebarButton}" Click="Logout">
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="Logout" Width="24" Height="24" Foreground="Red"/>
                     <TextBlock Text="Logout" Foreground="Red" Margin="10,0,0,0" FontFamily="Lexend"/>
