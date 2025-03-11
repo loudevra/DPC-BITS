@@ -46,61 +46,61 @@
                 <Button Style="{StaticResource SidebarButton}" Click="OpenDashboard">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Speedometer" Width="24" Height="24"/>
-                        <TextBlock Text="Dashboard" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
+                        <TextBlock Text="Dashboard" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource SidebarButton}" Click="OpenSales">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Cart" Width="24" Height="24"/>
-                        <TextBlock Text="Sales" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
+                        <TextBlock Text="Sales" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource SidebarButton}" Click="OpenStocksPopup">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Layers" Width="24" Height="24"/>
-                        <TextBlock Text="Stocks" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
+                        <TextBlock Text="Stocks" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource SidebarButton}" Click="OpenCRM">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="AccountMultiple" Width="24" Height="24"/>
-                        <TextBlock Text="CRM" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
+                        <TextBlock Text="CRM" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource SidebarButton}" Click="OpenProject">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Briefcase" Width="24" Height="24"/>
-                        <TextBlock Text="Project" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
+                        <TextBlock Text="Project" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource SidebarButton}" Click="OpenAccounts">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Account" Width="24" Height="24"/>
-                        <TextBlock Text="Accounts" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
+                        <TextBlock Text="Accounts" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource SidebarButton}" Click="OpenPromoCodes">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="TicketPercent" Width="24" Height="24"/>
-                        <TextBlock Text="Promo Codes" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
+                        <TextBlock Text="Promo Codes" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource SidebarButton}" Click="OpenDataReports">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="ChartBar" Width="24" Height="24"/>
-                        <TextBlock Text="Data &amp; Reports" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend" />
+                        <TextBlock Text="Data &amp; Reports" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend" />
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource SidebarButton}" Click="OpenMiscellaneous">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="DotsGrid" Width="24" Height="24"/>
-                        <TextBlock Text="Miscellaneous" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
+                        <TextBlock Text="Miscellaneous" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
                 <Button Style="{StaticResource SidebarButton}" Click="OpenHRM">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="AccountTie" Width="24" Height="24"/>
-                        <TextBlock Text="HRM" Foreground="White" Margin="10,0,0,0" FontFamily="Lexend"/>
+                        <TextBlock Text="HRM" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -108,20 +108,20 @@
             <Grid Height="Auto"/>
 
             <!-- User Profile -->
-            <StackPanel x:Name="UserProfile" Orientation="Horizontal" VerticalAlignment="Bottom" Margin="0,20,0,10">
-                <Ellipse Width="40" Height="40" Fill="White"/>
+            <StackPanel x:Name="UserProfile" Orientation="Horizontal" VerticalAlignment="Bottom" Margin="5,20,0,10">
+                <Ellipse Width="35" Height="35" Fill="White"/>
                 <StackPanel Margin="10,0,0,0">
                     <TextBlock x:Name="UserName" Text="Username" Foreground="White" FontWeight="Bold"/>
                     <TextBlock x:Name="UserEmail" Text="name@mail.com" Foreground="Gray" FontSize="12"/>
                 </StackPanel>
-                <materialDesign:PackIcon Kind="Cog" Width="24" Height="24" Foreground="White" Margin="20,5,0,0" FontFamily="Lexend"/>
+                <materialDesign:PackIcon Kind="Cog" Width="24" Height="24" Foreground="White" Margin="50,5,0,0" FontFamily="Lexend"/>
             </StackPanel>
 
             <!-- Logout Button -->
             <Button Style="{StaticResource SidebarButton}" Click="Logout">
                 <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Logout" Width="24" Height="24" Foreground="Red"/>
-                    <TextBlock Text="Logout" Foreground="Red" Margin="10,0,0,0" FontFamily="Lexend"/>
+                    <materialDesign:PackIcon Kind="Logout" Width="24" Height="24" Foreground="Red" Margin="3,0,0,0"/>
+                    <TextBlock Text="Logout" Foreground="Red" Margin="10,4,0,0" FontFamily="Lexend"/>
                 </StackPanel>
             </Button>
         </StackPanel>
