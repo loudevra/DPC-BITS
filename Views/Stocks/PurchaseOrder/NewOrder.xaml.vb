@@ -6,8 +6,8 @@
         Public Sub New()
             InitializeComponent()
 
-            Test1.SelectedDate = Date.Today
-            Test2.SelectedDate = Date.Today
+            orderDate.SelectedDate = Date.Today
+            orderDueDate.SelectedDate = Date.Today.AddDays(1)
             ' Find the Grid inside StackPanel (Replace "MyStackPanel" with the actual name)
             MyDynamicGrid = CType(TableGridPanel.Children(0), Grid)
         End Sub
