@@ -539,75 +539,76 @@
                     <TextBlock Text="Discount" Grid.Row="0" Grid.Column="5" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     <TextBlock Text="Amount" Grid.Row="0" Grid.Column="6" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     <TextBlock Text="Action" Grid.Row="0" Grid.Column="7" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-
-                    <TextBox Width="Auto" Height="30" Grid.Row="1" Grid.Column="0" FontFamily="Lexend" HorizontalContentAlignment="Left" VerticalContentAlignment="Center"/>
-                    <TextBox Width="Auto" Height="30" Grid.Row="1" Grid.Column="1" FontFamily="Lexend" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                    <TextBox Width="Auto" Height="30" Grid.Row="1" Grid.Column="2" FontFamily="Lexend" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                    <TextBox Width="Auto" Height="30" Grid.Row="1" Grid.Column="3" FontFamily="Lexend" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                    <TextBlock Text="0" Grid.Row="1" Grid.Column="4" FontFamily="Lexend" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <TextBox Width="Auto" Height="30" Grid.Row="1" Grid.Column="5" FontFamily="Lexend" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-                    <TextBlock Text="0" Grid.Row="1" Grid.Column="6" FontFamily="Lexend" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    <Button x:Name="btnDeleteRow" Width="Auto" Height="30" Grid.Row="1" Grid.Column="7" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                            <materialDesign:PackIcon Kind="PlaylistRemove" Foreground="Black" Width="24" Height="24" Margin="0,0,5,0"/>
-                            <TextBlock Text="Delete" Foreground="Black" VerticalAlignment="Center" FontFamily="Lexend"/>
-                        </StackPanel>
-                    </Button>
-                    <TextBox Width="auto" Height="60" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="8" FontFamily="Lexend" HorizontalContentAlignment="Left" VerticalContentAlignment="Top"/>
                 </Grid>
+              
             </StackPanel>
         
             <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical">
+                
                 <Button x:Name="btnAddRow" Width="120" Height="35" HorizontalAlignment="Left" Margin="25,5,0,10" Background="#2E466B">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="left">
-                        <materialDesign:PackIcon Kind="PlaylistAdd" Foreground="white" Width="24" Height="24" Margin="0,0,5,0"/>
-                        <TextBlock Text="Row" Foreground="white" VerticalAlignment="Center"/>
-                    </StackPanel>
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="15" Padding="5">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <materialDesign:PackIcon Kind="PlaylistAdd" Foreground="white" Width="24" Height="24" Margin="0,0,5,0"/>
+                                    <TextBlock Text="Row" Foreground="white" VerticalAlignment="Center" FontFamily="Lexend" FontSize="13"/>
+                                </StackPanel>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
                 </Button>
             </StackPanel>
 
             <StackPanel Grid.Row="5" Grid.Column="0" Orientation="Vertical">
-                <TextBlock Text="Payment Terms:"/>
+                <TextBlock Text="Payment Terms:"  FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
                 <ComboBox SelectedIndex="0">
                     <ComboBoxItem Content="Payment On Receipt"/>
                 </ComboBox>
 
-                <TextBlock Text="Update Stock:"/>
+                <TextBlock Text="Update Stock:" FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
                 <StackPanel Orientation="Horizontal">
-                    <RadioButton Content="Yes" GroupName="Choices"/>
-                    <RadioButton Content="No" GroupName="Choices"/>
+                    <RadioButton Content="Yes" GroupName="Choices" FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
+                    <RadioButton Content="No" GroupName="Choices" FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
                 </StackPanel>
             </StackPanel>
 
             <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Vertical">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Total Tax: "/>
-                    <TextBlock Text="0"/>
+                    <TextBlock Text="Total Tax: " FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
+                    <TextBlock Text="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Total Discount: "/>
-                    <TextBlock Text="0"/>
+                    <TextBlock Text="Total Discount: " FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
+                    <TextBlock Text="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
                 </StackPanel>
 
-                <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Shipping: "/>
-                        <TextBox Width="250" Height="30"/>
+                        <TextBlock Text="Shipping: " FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
                     </StackPanel>
-                    <TextBlock Text="( Tax: 0 )"/>
+                    <StackPanel>
+                        <TextBox Width="250" Height="30" FontFamily="Lexend" FontSize="14" Foreground="#474747" HorizontalAlignment="Left"/>
+                        <TextBlock Text="( Tax: 0 )" FontFamily="Lexend" FontSize="10" Foreground="#474747"/>
+                    </StackPanel>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Grand Total: "/>
-                    <TextBlock Text="0"/>
+                    <TextBlock Text="Grand Total: " FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
+                    <TextBlock Text="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
                 </StackPanel>
 
                 <StackPanel>
-                    <Button x:Name="btnGenerateOrder" Width="120" Height="40">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                            <TextBlock Text="Generate Order" Foreground="Black" VerticalAlignment="Center"/>
-                        </StackPanel>
+                    <Button x:Name="btnGenerateOrder"  Width="120" Height="25" HorizontalAlignment="Left" Margin="25,5,0,10" Background="#1D5642">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}" CornerRadius="15" Padding="5">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <TextBlock Text="Generate Order" VerticalAlignment="Center" FontFamily="Lexend" FontSize="12" Foreground="white"/>
+                                    </StackPanel>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
                     </Button>
                 </StackPanel>
             </StackPanel>
