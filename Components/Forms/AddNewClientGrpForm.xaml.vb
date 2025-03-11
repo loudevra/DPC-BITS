@@ -19,7 +19,7 @@ Namespace DPC.Components.Forms
         End Sub
 
         ' Button click event to add a new group
-        Private Sub btnAddGroup_Click(sender As Object, e As RoutedEventArgs)
+        Private Sub BtnAddGroup_Click(sender As Object, e As RoutedEventArgs)
             Dim groupName As String = txtGroupName.Text.Trim()
             Dim description As String = txtDescription.Text.Trim()
 
