@@ -148,6 +148,12 @@
     <Compile Include="Views\ItemManager\ManageProducts.xaml.vb">
       <DependentUpon>ManageProducts.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ProductCategories\ProductCategories.xaml.vb">
+      <DependentUpon>ProductCategories.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\StocksTransfer\StocksTransfer.xaml.vb">
+      <DependentUpon>StocksTransfer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stocks\PurchaseOrder\NewOrder.xaml.vb">
       <DependentUpon>NewOrder.xaml</DependentUpon>
     </Compile>
@@ -157,6 +163,9 @@
     <Compile Include="Components\Forms\AddNewProductsForm.xaml.xaml.vb" />
     <Compile Include="Components\Forms\AddNewProductsNextForm.xaml.vb">
       <DependentUpon>AddNewProductsNextForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Warehouses\Warehouses.xaml.vb">
+      <DependentUpon>Warehouses.xaml</DependentUpon>
     </Compile>
     <Page Include="Components\Forms\AddNewClientGrpForm.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -244,7 +253,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ProductCategories\ProductCategories.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\StocksTransfer\StocksTransfer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Stocks\PurchaseOrder\NewOrder.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Warehouses\Warehouses.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
@@ -306,6 +327,9 @@
     <Folder Include="Installer\" />
     <Folder Include="Services\" />
     <Folder Include="Themes\" />
+    <Folder Include="Views\ProductsLabel\" />
+    <Folder Include="Views\StockReturn\" />
+    <Folder Include="Views\Suppliers\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\images\logo.png" />

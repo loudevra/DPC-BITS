@@ -25,11 +25,13 @@
         <Label Content="Out Stock" HorizontalAlignment="Left" Margin="297,120,0,0" VerticalAlignment="Top" Height="26"/>
         <Label Content="Total" HorizontalAlignment="Left" Margin="562,125,0,0" VerticalAlignment="Top" Height="26"/>
         <Button Content="Add Product" HorizontalAlignment="Left" Margin="199,41,0,0" VerticalAlignment="Top"/>
-        <Button Content="Add Product" HorizontalAlignment="Left" Margin="24,182,0,0" VerticalAlignment="Top"/>
-        <Button Content="Choices" HorizontalAlignment="Left" Margin="199,182,0,0" VerticalAlignment="Top"/>
-        <Button Content="List" HorizontalAlignment="Left" Margin="256,182,0,0" VerticalAlignment="Top" Width="61"/>
-        <Button Content="Filter" HorizontalAlignment="Left" Margin="328,182,0,0" VerticalAlignment="Top" Width="63"/>
-        <DataGrid HorizontalAlignment="Left" Height="185" Margin="24,227,0,0" VerticalAlignment="Top" Width="759" d:ItemsSource="{d:SampleData ItemCount=8`}"/>
+        <Button Content="Excel" HorizontalAlignment="Left" Margin="24,182,0,0" VerticalAlignment="Top" Width="82"/>
+        <Button Content="Choices" HorizontalAlignment="Left" Margin="251,182,0,0" VerticalAlignment="Top"/>
+        <Button Content="List" HorizontalAlignment="Left" Margin="304,182,0,0" VerticalAlignment="Top" Width="61"/>
+        <Button Content="Filter" HorizontalAlignment="Center" Margin="0,182,0,0" VerticalAlignment="Top" Width="62"/>
+        <Label Content="Show" HorizontalAlignment="Left" Margin="111,179,0,0" VerticalAlignment="Top"/>
+        <ListBox HorizontalAlignment="Left" Height="20" Margin="150,182,0,0" VerticalAlignment="Top" Width="94" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+        <DataGrid HorizontalAlignment="Left" Height="207" Margin="24,217,0,0" VerticalAlignment="Top" Width="759" d:ItemsSource="{d:SampleData ItemCount=8}"/>
 
     </Grid>
 </Window>
