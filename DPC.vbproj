@@ -359,6 +359,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="API\" />
+    <Folder Include="Assets\fonts\Lexend\" />
     <Folder Include="Config\" />
     <Folder Include="Data\Models\" />
     <Folder Include="Installer\" />
