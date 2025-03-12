@@ -7,7 +7,7 @@
     mc:Ignorable="d"
     d:DesignHeight="400" d:DesignWidth="400" Background="Transparent"
     Visibility="Visible">
-    
+
     <!-- 🔹 Now Visible by Default -->
 
     <!-- Full-Screen Overlay -->

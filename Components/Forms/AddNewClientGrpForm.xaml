@@ -35,7 +35,7 @@
 
                 <!-- Group Name Input -->
                 <StackPanel Grid.Row="1" Margin="0,15,0,0">
-                    <TextBlock Text="Group Name:" Foreground="#555555" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700"  FontWeight="Medium" Margin="0,5,0,6"/>
+                    <TextBlock Text="Group Name:" Foreground="#555555" FontFamily="{StaticResource LexendRegular}"  FontWeight="Medium" Margin="0,5,0,6"/>
                     <Border CornerRadius="20" BorderBrush="#555555" BorderThickness="2" Background="Transparent">
                         <TextBox x:Name="txtGroupName" Height="35" Padding="5" BorderThickness="0" Background="Transparent"/>
                     </Border>
@@ -51,7 +51,7 @@
 
                 <!-- Add Group Button -->
                 <Button x:Name="btnAddGroup" Grid.Row="3" Content="Add Group" Width="120" Height="35"
-                        Background="#52C69D" Foreground="#FDFDFD" FontWeight="SemiBold" Margin="0,22,0,0"
+                        Background="#52C69D" Foreground="#FDFDFD" FontWeight="SemiBold" Margin="0,22,0,0" FontFamily="{StaticResource LexendSemiBold}"
                         HorizontalAlignment="Right" Click="BtnAddGroup_Click">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
