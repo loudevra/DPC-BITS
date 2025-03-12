@@ -70,10 +70,16 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToEmployees(sender As Object, e As RoutedEventArgs)
+            ' Open EmployeesView
             Dim employeesWindow As New Views.HRM.Employees.Employees.EmployeesView()
             employeesWindow.Show()
-        End Sub
 
+            ' Close the current window where this UserControl is being used
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            If currentWindow IsNot Nothing Then
+                currentWindow.Close()
+            End If
+        End Sub
 
         Private Sub NavigateToPermissions(sender As Object, e As RoutedEventArgs)
             MessageBox.Show("Navigating to Permissions")
