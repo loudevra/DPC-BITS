@@ -32,8 +32,8 @@ Namespace DPC.Components.Navigation
         ''' Handles the click event for the Dashboard menu item.
         ''' </summary>
         Private Sub OpenDashboard(sender As Object, e As RoutedEventArgs)
-            ' Show the Dashboard or navigate to the corresponding page
-            MessageBox.Show("Dashboard clicked!")
+            Dim Dashboard As New Views.Dashboard.Dashboard()
+            Dashboard.Show()
         End Sub
 
         ''' <summary>

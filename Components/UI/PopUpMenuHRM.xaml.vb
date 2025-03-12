@@ -69,8 +69,34 @@ Namespace DPC.Components.UI
             ' popup.VerticalOffset = verticalOffset
         End Sub
 
-        Private Sub NavigateToNewInvoice(sender As Object, e As RoutedEventArgs)
-            MessageBox.Show("Navigate to New Invoice", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+        Private Sub NavigateToEmployees(sender As Object, e As RoutedEventArgs)
+            Dim employeesWindow As New Views.HRM.Employees.Employees.EmployeesView()
+            employeesWindow.Show()
+        End Sub
+
+
+        Private Sub NavigateToPermissions(sender As Object, e As RoutedEventArgs)
+            MessageBox.Show("Navigating to Permissions")
+        End Sub
+
+        Private Sub NavigateToSalaries(sender As Object, e As RoutedEventArgs)
+            MessageBox.Show("Navigating to Salaries")
+        End Sub
+
+        Private Sub NavigateToAttendance(sender As Object, e As RoutedEventArgs)
+            MessageBox.Show("Navigating to Attendance")
+        End Sub
+
+        Private Sub NavigateToHolidays(sender As Object, e As RoutedEventArgs)
+            MessageBox.Show("Navigating to Holidays")
+        End Sub
+
+        Private Sub NavigateToDepartments(sender As Object, e As RoutedEventArgs)
+            MessageBox.Show("Navigating to Departments")
+        End Sub
+
+        Private Sub NavigateToPayroll(sender As Object, e As RoutedEventArgs)
+            MessageBox.Show("Navigating to Payroll")
         End Sub
     End Class
 End Namespace

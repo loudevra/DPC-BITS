@@ -196,8 +196,12 @@
     <Compile Include="Components\Forms\FilterPopOut.xaml.vb">
       <DependentUpon>FilterPopOut.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Data\Models\Employee.vb" />
     <Compile Include="Views\Dashboard\Dashboard.xaml.vb">
       <DependentUpon>Dashboard.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HRM\Employees\Employees\EmployeesView.xaml.vb">
+      <DependentUpon>EmployeesView.xaml</DependentUpon>
     </Compile>
     <Page Include="Components\ConfirmationModals\CancelClientAdding.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -305,6 +309,9 @@
     <Page Include="Views\Dashboard\Dashboard.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\HRM\Employees\Employees\EmployeesView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Import Include="System.Threading.Tasks" />
@@ -361,10 +368,15 @@
     <Folder Include="API\" />
     <Folder Include="Assets\fonts\Lexend\" />
     <Folder Include="Config\" />
-    <Folder Include="Data\Models\" />
     <Folder Include="Installer\" />
     <Folder Include="Services\" />
     <Folder Include="Themes\" />
+    <Folder Include="Views\HRM\Departments\" />
+    <Folder Include="Views\HRM\Employees\Attendance\" />
+    <Folder Include="Views\HRM\Employees\Holidays\" />
+    <Folder Include="Views\HRM\Employees\Permissions\" />
+    <Folder Include="Views\HRM\Employees\Salaries\" />
+    <Folder Include="Views\HRM\Payroll\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\images\logo.png" />

@@ -16,10 +16,5 @@ Namespace DPC
             dashboard.Show()
             Me.Close()
         End Sub
-        ' Close the application when the close button is clicked
-        Private Sub CloseApp_Click(sender As Object, e As RoutedEventArgs)
-            Me.Close()
-        End Sub
-
     End Class
 End Namespace
