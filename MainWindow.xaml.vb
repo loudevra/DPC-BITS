@@ -21,7 +21,7 @@ Namespace DPC
 
 
         ' Sign-In button click event
- 
+
         Private Sub BtnSignIn_Click(sender As Object, e As RoutedEventArgs)
             MessageBox.Show("Welcome: " & txtEmail.Text)
             ' Redirect to Dashboard.xaml
