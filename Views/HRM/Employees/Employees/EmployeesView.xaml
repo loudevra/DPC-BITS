@@ -24,7 +24,7 @@
 				<TextBlock Text="Employee" FontSize="24" FontWeight="Bold"/>
 				<Button Content="+ Employee" Margin="10,0,0,0"
                         Style="{StaticResource MaterialDesignOutlinedButton}"
-                        VerticalAlignment="Center"/>
+                        VerticalAlignment="Center" Click="AddEmployee"/>
 			</StackPanel>
 
 			<!-- Table and Controls -->
