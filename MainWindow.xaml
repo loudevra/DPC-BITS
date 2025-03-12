@@ -4,73 +4,52 @@
         xmlns:local="clr-namespace:DPC"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         Title="DPC Login"
-        Height="515"
+        Height="500"
         Width="800"
         Background="Transparent"
         WindowStyle="None"
         WindowStartupLocation="CenterScreen"
         AllowsTransparency="True">
 
-
     <Grid Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0*"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <!-- Main Border for Rounded Window with Shadow -->
-        <Border Background="#212121" CornerRadius="20" Padding="0">
-            <Border.Effect>
-                <DropShadowEffect Color="Black" Opacity="0.5" BlurRadius="15" ShadowDepth="0"/>
-            </Border.Effect>
+        <Border Background="Transparent" Padding="0" Margin="0,0,0,0" Grid.RowSpan="2">
 
             <!-- Wrapper Grid -->
             <Grid>
-                <!-- Title Bar with Close Button -->
-                <DockPanel LastChildFill="False" Height="35" Background="Transparent">
-                    <TextBlock Text="DPC Login" Foreground="White" FontSize="14" VerticalAlignment="Center" Margin="15,0,0,0"/>
-                    <Button Content="✖" Foreground="White"
-                            Width="35" Height="35" BorderThickness="0"
-                            Cursor="Hand" HorizontalAlignment="Right"
-                            Click="CloseApp_Click">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Opacity" Value="0.6"/>
-                                <Setter Property="FontSize" Value="14"/>
-                                <Setter Property="FontWeight" Value="Bold"/>
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Opacity" Value="1"/>
-                                        <Setter Property="Foreground" Value="Red"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                    </Button>
-                </DockPanel>
-
                 <!-- Main Content Grid -->
                 <Grid Width="820" HorizontalAlignment="Center" Margin="0,40,0,5">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="45*"/>
-                        <ColumnDefinition Width="55*"/>
+                        <ColumnDefinition Width="282*"/>
+                        <ColumnDefinition Width="87*"/>
+                        <ColumnDefinition Width="451*"/>
                     </Grid.ColumnDefinitions>
 
                     <!-- Left Panel with Rounded Corners -->
-                    <Border Grid.Column="0" Background="Black" CornerRadius="50">
+                    <Border Grid.Column="0" Background="Black" CornerRadius="50" Grid.ColumnSpan="2" Margin="10,0,0,0">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                             <Image Source="Assets/images/logo.png" Height="120" Width="120"/>
-                            <TextBlock Text="DREAM PC BUILD" Foreground="White" FontSize="20" FontWeight="Bold" TextAlignment="Center"/>
-                            <TextBlock Text="AND IT SOLUTIONS INC." Foreground="Gray" FontSize="12" TextAlignment="Center"/>
+                            <TextBlock Text="DREAM PC BUILD" Foreground="White" FontSize="20" FontWeight="Bold" TextAlignment="Center" FontFamily="{StaticResource LexendBold}">
+                            </TextBlock>
+                            <TextBlock Text="AND IT SOLUTIONS INC." Foreground="Gray" FontSize="12" TextAlignment="Center" FontFamily="{StaticResource LexendLight}"/>
                         </StackPanel>
                     </Border>
 
                     <!-- Right Panel with Rounded Corners -->
-                    <Border Grid.Column="1" Background="White" CornerRadius="20" Padding="20">
+                    <Border Grid.Column="2" Background="White" CornerRadius="45" Padding="20" Margin="0,0,16,0">
                         <Grid>
                             <!-- Sign-In Panel -->
                             <Grid x:Name="SignInPanel">
                                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300">
-                                    <TextBlock Text="Sign In" FontSize="20" FontWeight="Bold" TextAlignment="Center" Margin="0,0,0,20"/>
+                                    <TextBlock Text="Sign In" FontSize="20" FontWeight="Bold" FontFamily="{StaticResource LexendBold}" TextAlignment="Center" Margin="0,0,0,20"/>
                                     <TextBox x:Name="txtEmail" materialDesign:HintAssist.Hint="Email" Margin="0,10"/>
                                     <PasswordBox x:Name="txtPassword" materialDesign:HintAssist.Hint="Password" Margin="0,10"/>
-                                    <TextBlock Text="Forgot Password?" Foreground="Gray" TextAlignment="Right" Cursor="Hand" Margin="0,5"/>
-                                    <Button Content="Sign In" Background="Black" Foreground="White" Margin="0,20" Height="40" Click="BtnSignIn_Click">
+                                    <TextBlock Text="Forgot Password?" Foreground="Gray" TextAlignment="Right" Cursor="Hand" Margin="0,5" FontFamily="{StaticResource LexendLight}"/>
+                                    <Button Content="Sign In" Background="Black" Foreground="White" FontFamily="{StaticResource LexendRegular}" Margin="0,20" Height="40" Click="BtnSignIn_Click">
                                         <Button.Template>
                                             <ControlTemplate TargetType="Button">
                                                 <Border Background="{TemplateBinding Background}" CornerRadius="20">
@@ -79,27 +58,6 @@
                                             </ControlTemplate>
                                         </Button.Template>
                                     </Button>
-                                    <TextBlock Text="Sign Up" Foreground="Gray" TextAlignment="Center" Cursor="Hand" MouseDown="SwitchToSignUp"/>
-                                </StackPanel>
-                            </Grid>
-
-                            <!-- Sign-Up Panel (Initially Hidden) -->
-                            <Grid x:Name="SignUpPanel" Visibility="Hidden">
-                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300">
-                                    <TextBlock Text="Sign Up" FontSize="20" FontWeight="Bold" TextAlignment="Center" Margin="0,0,0,20"/>
-                                    <TextBox x:Name="txtSignUpEmail" materialDesign:HintAssist.Hint="Email" Margin="0,10"/>
-                                    <PasswordBox x:Name="txtSignUpPassword" materialDesign:HintAssist.Hint="New Password" Margin="0,10"/>
-                                    <PasswordBox x:Name="txtConfirmPassword" materialDesign:HintAssist.Hint="Confirm Password" Margin="0,10"/>
-                                    <Button Content="Sign Up" Background="Black" Foreground="White" Margin="0,20" Height="40" Click="BtnSignUp_Click">
-                                        <Button.Template>
-                                            <ControlTemplate TargetType="Button">
-                                                <Border Background="{TemplateBinding Background}" CornerRadius="20">
-                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Button.Template>
-                                    </Button>
-                                    <TextBlock Text="Sign In" Foreground="Gray" TextAlignment="Center" Cursor="Hand" MouseDown="SwitchToSignIn"/>
                                 </StackPanel>
                             </Grid>
                         </Grid>

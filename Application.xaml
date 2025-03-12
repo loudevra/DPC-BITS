@@ -11,14 +11,27 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <Style TargetType="TextBlock">
-                <Setter Property="FontFamily" Value="Lexend" />
+
+            <!-- Font Definitions -->
+            <FontFamily x:Key="LexendRegular">pack://application:,,,/Assets/fonts/Lexend/Lexend-Regular.ttf</FontFamily>
+            <FontFamily x:Key="LexendBlack">pack://application:,,,/Assets/fonts/Lexend/Lexend-Black.ttf</FontFamily>
+            <FontFamily x:Key="LexendMedium">pack://application:,,,/Assets/fonts/Lexend/Lexend-Medium.ttf</FontFamily>
+            <FontFamily x:Key="LexendSemiBold">pack://application:,,,/Assets/fonts/Lexend/Lexend-SemiBold.ttf</FontFamily>
+            <FontFamily x:Key="LexendBold">pack://application:,,,/Assets/fonts/Lexend/Lexend-Bold.ttf</FontFamily>
+            <FontFamily x:Key="LexendExtraBold">pack://application:,,,/Assets/fonts/Lexend/Lexend-ExtraBold.ttf</FontFamily>
+            <FontFamily x:Key="LexendLight">pack://application:,,,/Assets/fonts/Lexend/Lexend-Light.ttf</FontFamily>
+            <FontFamily x:Key="LexendThin">pack://application:,,,/Assets/fonts/Lexend/Lexend-Thin.ttf</FontFamily>
+            <FontFamily x:Key="LexendExtraLight">pack://application:,,,/Assets/fonts/Lexend/Lexend-ExtraLight.ttf</FontFamily>
+
+            <!-- Styles -->
+            <Style x:Key="TextBlockStyle" TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="{StaticResource LexendRegular}" />
             </Style>
-            <Style TargetType="TextBox">
-                <Setter Property="FontFamily" Value="Lexend" />
+            <Style x:Key="TextBoxStyle" TargetType="TextBox">
+                <Setter Property="FontFamily" Value="{StaticResource LexendRegular}" />
             </Style>
-            <Style TargetType="Button">
-                <Setter Property="FontFamily" Value="Lexend" />
+            <Style x:Key="ButtonStyle" TargetType="Button">
+                <Setter Property="FontFamily" Value="{StaticResource LexendSemiBold}" />
             </Style>
         </ResourceDictionary>
     </Application.Resources>
