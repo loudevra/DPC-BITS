@@ -65,5 +65,15 @@ Namespace DPC.Views.HRM.Employees.Employees
             CurrentPage = TotalPages
             UpdatePagination()
         End Sub
+
+        Private Sub AddEmployee(sender As Object, e As RoutedEventArgs)
+            ' Open EmployeeAdd.xaml
+            Dim addEmployeeWindow As New EmployeeAdd()
+            addEmployeeWindow.Show()
+
+            ' Close the current EmployeesView window
+            Me.Close()
+        End Sub
+
     End Class
 End Namespace

@@ -200,6 +200,9 @@
     <Compile Include="Views\Dashboard\Dashboard.xaml.vb">
       <DependentUpon>Dashboard.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\HRM\Employees\Employees\EmployeeAdd.xaml.vb">
+      <DependentUpon>EmployeeAdd.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\HRM\Employees\Employees\EmployeesView.xaml.vb">
       <DependentUpon>EmployeesView.xaml</DependentUpon>
     </Compile>
@@ -307,6 +310,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\Dashboard\Dashboard.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HRM\Employees\Employees\EmployeeAdd.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HRM\Employees\Employees\EmployeesView.xaml">
