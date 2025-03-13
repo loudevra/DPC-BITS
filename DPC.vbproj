@@ -154,6 +154,9 @@
     <Compile Include="Views\StocksTransfer\StocksTransfer.xaml.vb">
       <DependentUpon>StocksTransfer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Stocks\ProductsLabel\CustomLabel.xaml.vb">
+      <DependentUpon>CustomLabel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stocks\PurchaseOrder\NewOrder.xaml.vb">
       <DependentUpon>NewOrder.xaml</DependentUpon>
     </Compile>
@@ -261,6 +264,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Stocks\ProductsLabel\CustomLabel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Stocks\PurchaseOrder\NewOrder.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -327,7 +333,6 @@
     <Folder Include="Installer\" />
     <Folder Include="Services\" />
     <Folder Include="Themes\" />
-    <Folder Include="Views\ProductsLabel\" />
     <Folder Include="Views\StockReturn\" />
     <Folder Include="Views\Suppliers\" />
   </ItemGroup>
