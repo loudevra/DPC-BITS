@@ -1,3 +1,6 @@
-﻿Public Class CustomLabel
+﻿Namespace DPC.Views.Stocks.CustomLabel
+    Public Class CustomLabel
 
-End Class
+    End Class
+
+End Namespace
