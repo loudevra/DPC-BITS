@@ -1,4 +1,4 @@
-<Window x:Class="DPC.Views.Stocks.ProdductsLabel.CustomLabel"
+<Window x:Class="DPC.Views.Stocks.ProdductsLabel.CustomLabel.CustomLabel"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="namespace:DPC.Views.Stocks.ProdductsLabel"
