@@ -6,76 +6,141 @@
         Title="Add Employee"
         Height="800" Width="1200"
         Background="#F5F5F5"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        FontFamily="{StaticResource LexendRegular}">
 
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
-            <!-- Sidebar -->
             <ColumnDefinition Width="*"/>
-            <!-- Main Content -->
         </Grid.ColumnDefinitions>
 
         <!-- Sidebar -->
         <Border x:Name="SidebarContainer" Grid.Column="0"/>
 
         <!-- Main Content -->
-        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <StackPanel Margin="20">
 
                 <!-- Title -->
-                <TextBlock Text="Employee Details" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
+                <TextBlock Text="👤 Employee Details" 
+                           FontSize="24" 
+                           FontWeight="Bold" 
+                           Foreground="#333"
+                           FontFamily="{StaticResource LexendBold}" 
+                           Margin="0,0,0,20"/>
 
-                <!-- Form Fields -->
-                <Border Background="White" Padding="20" CornerRadius="8">
-                    <StackPanel>
+                <!-- Form Card with Rounded Corners -->
+                <Border CornerRadius="20" Background="White" Padding="0">
+                    <materialDesign:Card Padding="20">
 
-                        <!-- Username -->
-                        <TextBlock Text="Username:" FontWeight="Bold"/>
-                        <TextBox Text="Enter username..." Margin="0,5,0,15"/>
+                        <StackPanel>
 
+                            <!-- Username -->
+                            <TextBlock Text="Username:" FontFamily="{StaticResource LexendSemiBold}"/>
+                            <TextBox materialDesign:HintAssist.Hint="Enter username..." Margin="0,5,0,10"/>
+                            <TextBlock Text="(Use only A-Z &amp; 0-9)" Foreground="Red" FontSize="12"/>
 
-                        <!-- Business Location -->
-                        <TextBlock Text="Business Location:" FontWeight="Bold"/>
-                        <ComboBox Margin="0,5,0,15">
-                            <ComboBoxItem Content="Default" IsSelected="True"/>
-                            <!-- Add more locations here -->
-                        </ComboBox>
+                            <!-- Business Location -->
+                            <TextBlock Text="Business Location:" FontFamily="{StaticResource LexendSemiBold}"/>
+                            <ComboBox Margin="0,5,0,10">
+                                <ComboBoxItem Content="Default" IsSelected="True"/>
+                            </ComboBox>
 
-                        <!-- User Role -->
-                        <TextBlock Text="User Role:" FontWeight="Bold"/>
-                        <ComboBox Margin="0,5,0,15">
-                            <ComboBoxItem Content="Inventory Manager" IsSelected="False"/>
-                            <ComboBoxItem Content="Sales Person" IsSelected="False"/>
-                            <ComboBoxItem Content="Sales Manager" IsSelected="False"/>
-                            <ComboBoxItem Content="Business Manager" IsSelected="True"/>
-                            <ComboBoxItem Content="Business Owner" IsSelected="False"/>
-                            <ComboBoxItem Content="Business Manager" IsSelected="False"/>
-                            <!-- Add more roles here -->
-                        </ComboBox>
+                            <!-- User Role -->
+                            <TextBlock Text="User Role:" FontFamily="{StaticResource LexendSemiBold}"/>
+                            <ComboBox Margin="0,5,0,10">
+                                <ComboBoxItem Content="Inventory Manager"/>
+                                <ComboBoxItem Content="Sales Person"/>
+                                <ComboBoxItem Content="Sales Manager"/>
+                                <ComboBoxItem Content="Business Manager" IsSelected="True"/>
+                                <ComboBoxItem Content="Business Owner"/>
+                            </ComboBox>
 
-                        <!-- Email -->
-                        <TextBlock Text="Email:" FontWeight="Bold"/>
-                        <TextBox Text="Enter email..." Margin="0,5,0,15"/>
+                            <!-- Email -->
+                            <TextBlock Text="Email:" FontFamily="{StaticResource LexendSemiBold}"/>
+                            <TextBox materialDesign:HintAssist.Hint="Enter email..." Margin="0,5,0,10"/>
 
-                        <!-- Password -->
-                        <TextBlock Text="Password:" FontWeight="Bold"/>
-                        <PasswordBox Margin="0,5,0,15"/>
+                            <!-- Password -->
+                            <TextBlock Text="Password:" FontFamily="{StaticResource LexendSemiBold}"/>
+                            <PasswordBox materialDesign:HintAssist.Hint="Enter password..." Margin="0,5,0,10"/>
 
-                        <!-- Validation Tips -->
-                        <TextBlock Text="✓ At least 6 characters" Foreground="Gray"/>
-                        <TextBlock Text="✓ Under 20 characters" Foreground="Gray"/>
-                        <TextBlock Text="✓ 1 uppercase letter" Foreground="Gray"/>
-                        <TextBlock Text="✓ 1 lowercase letter" Foreground="Gray"/>
-                        <TextBlock Text="✓ 1 special character" Foreground="Gray"/>
-                        <TextBlock Text="✓ 1 number" Foreground="Gray"/>
+                            <!-- Validation Tips -->
+                            <StackPanel Margin="0,0,0,10">
+                                <TextBlock Text="✓ At least 6 characters" Foreground="Gray"/>
+                                <TextBlock Text="✓ Under 20 characters" Foreground="Gray"/>
+                                <TextBlock Text="✓ 1 uppercase letter" Foreground="Gray"/>
+                                <TextBlock Text="✓ 1 lowercase letter" Foreground="Gray"/>
+                                <TextBlock Text="✓ 1 special character" Foreground="Gray"/>
+                                <TextBlock Text="✓ 1 number" Foreground="Gray"/>
+                            </StackPanel>
 
-                        <!-- Buttons -->
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-                            <Button Content="Cancel" Background="Gray" Foreground="White" Padding="10,5" Margin="0,0,10,0" Click="CancelAddEmployee"/>
-                            <Button Content="Save Employee" Background="Green" Foreground="White" Padding="10,5" Click="SaveEmployee"/>
+                            <!-- Name -->
+                            <TextBlock Text="Name:" FontFamily="{StaticResource LexendSemiBold}"/>
+                            <TextBox materialDesign:HintAssist.Hint="Enter name..." Margin="0,5,0,10"/>
+
+                            <!-- Address -->
+                            <TextBlock Text="Address:" FontFamily="{StaticResource LexendSemiBold}"/>
+                            <TextBox materialDesign:HintAssist.Hint="Enter address..." Margin="0,5,0,10"/>
+
+                            <!-- City, Region, Country -->
+                            <StackPanel Orientation="Horizontal" Margin="0,5,0,10">
+                                <StackPanel Margin="0,0,10,0">
+                                    <TextBlock Text="City:" FontFamily="{StaticResource LexendSemiBold}"/>
+                                    <TextBox materialDesign:HintAssist.Hint="Enter city..." Margin="0,5,0,0"/>
+                                </StackPanel>
+                                <StackPanel Margin="0,0,10,0">
+                                    <TextBlock Text="Region:" FontFamily="{StaticResource LexendSemiBold}"/>
+                                    <TextBox materialDesign:HintAssist.Hint="Enter region..." Margin="0,5,0,0"/>
+                                </StackPanel>
+                                <StackPanel>
+                                    <TextBlock Text="Country:" FontFamily="{StaticResource LexendSemiBold}"/>
+                                    <TextBox materialDesign:HintAssist.Hint="Enter country..." Margin="0,5,0,0"/>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <!-- PostBox -->
+                            <TextBlock Text="PostBox:" FontFamily="{StaticResource LexendSemiBold}"/>
+                            <TextBox materialDesign:HintAssist.Hint="Enter PostBox..." Margin="0,5,0,10"/>
+
+                            <!-- Phone -->
+                            <TextBlock Text="Phone:" FontFamily="{StaticResource LexendSemiBold}"/>
+                            <TextBox materialDesign:HintAssist.Hint="Enter phone number..." Margin="0,5,0,10"/>
+
+                            <!-- Salary -->
+                            <TextBlock Text="Salary:" FontFamily="{StaticResource LexendSemiBold}"/>
+                            <TextBox materialDesign:HintAssist.Hint="Enter salary..." Margin="0,5,0,10"/>
+
+                            <!-- Sales Commission -->
+                            <TextBlock Text="Sales Commission %:" FontFamily="{StaticResource LexendSemiBold}"/>
+                            <TextBox materialDesign:HintAssist.Hint="Enter commission percentage..." Margin="0,5,0,5"/>
+                            <TextBlock Text="It will be based on each invoice amount - inclusive of taxes, shipping, and discounts" Foreground="Gray" FontSize="12"/>
+
+                            <!-- Department -->
+                            <TextBlock Text="Department:" FontFamily="{StaticResource LexendSemiBold}"/>
+                            <ComboBox Margin="0,5,0,15">
+                                <ComboBoxItem Content="Default - No" IsSelected="True"/>
+                            </ComboBox>
+
+                            <!-- Action Buttons -->
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+                                <Button Content="Cancel" 
+                                        Style="{StaticResource MaterialDesignFlatButton}" 
+                                        Foreground="White" 
+                                        Background="Gray"
+                                        Padding="10,5" 
+                                        Margin="0,0,10,0" 
+                                        Click="CancelAddEmployee"/>
+                                <Button Content="Add Employee" 
+                                        Style="{StaticResource MaterialDesignRaisedButton}" 
+                                        Background="{DynamicResource PrimaryHueDarkBrush}" 
+                                        Foreground="White"
+                                        Padding="10,5" 
+                                        Click="SaveEmployee"/>
+                            </StackPanel>
+
                         </StackPanel>
-                    </StackPanel>
+                    </materialDesign:Card>
                 </Border>
 
             </StackPanel>
