@@ -32,19 +32,7 @@
             CreateTextBox(newRowStart, 5) ' Discount
             CreateTextBox(newRowStart, 6) ' Amount (Editable)
             CreateDeleteButton(newRowStart, 7)
-
-            ' Full-Width TextBox for Notes
-            Dim fullWidthTextBox As New TextBox() With {
-        .Width = Double.NaN, ' Auto width
-        .Height = 60,
-        .FontFamily = New FontFamily("Lexend"),
-        .HorizontalContentAlignment = HorizontalAlignment.Left,
-        .VerticalContentAlignment = VerticalAlignment.Top
-    }
-            Grid.SetRow(fullWidthTextBox, newRowStart + 1)
-            Grid.SetColumn(fullWidthTextBox, 0)
-            Grid.SetColumnSpan(fullWidthTextBox, 8)
-            MyDynamicGrid.Children.Add(fullWidthTextBox)
+            CreateFullWidthTextBox(newRowStart)
         End Sub
 
         ' ➜ Create TextBox
@@ -64,28 +52,42 @@
         .Height = 30,
         .FontFamily = New FontFamily("Lexend"),
         .HorizontalContentAlignment = If(column = 0, HorizontalAlignment.Left, HorizontalAlignment.Center),
-        .VerticalContentAlignment = VerticalAlignment.Center
+        .VerticalContentAlignment = VerticalAlignment.Center,
+        .Padding = New Thickness(5),
+        .Background = Brushes.White,
+        .BorderThickness = New Thickness(0)
     }
 
             ' Attach numeric validation and event handlers
             If column = 1 Or column = 2 Or column = 3 Or column = 4 Or column = 5 Or column = 6 Then
                 AddHandler txt.PreviewTextInput, AddressOf ValidateNumericInput
-                AddHandler txt.TextChanged, Sub(sender As Object, e As TextChangedEventArgs)
-                                                Dim parentRow As Integer = Grid.GetRow(CType(sender, TextBox))
-                                                UpdateTaxAndAmount(parentRow)
-                                            End Sub
+                AddHandler txt.TextChanged, AddressOf TextBoxValueChanged ' Attach the event handler here
             End If
 
-            ' Set Grid position
-            Grid.SetRow(txt, row)
-            Grid.SetColumn(txt, column)
+            ' Create a Border with Rounded Corners
+            Dim border As New Border() With {
+        .CornerRadius = New CornerRadius(20),
+        .BorderThickness = New Thickness(1),
+        .Background = Brushes.White,
+        .BorderBrush = Brushes.Gray,
+        .Margin = New Thickness(5),
+        .Padding = New Thickness(6),
+        .Child = txt ' Wrap TextBox inside the Border
+    }
 
-            ' Register the TextBox name
-            Me.RegisterName(txtName, txt)
+            ' Set Grid position
+            Grid.SetRow(border, row)
+            Grid.SetColumn(border, column)
+
+            ' Register the Border (not the TextBox) since FindName works on registered names
+            Me.RegisterName(txtName, border)
 
             ' Add to Grid
-            MyDynamicGrid.Children.Add(txt)
+            MyDynamicGrid.Children.Add(border)
         End Sub
+
+
+
 
         'Check if entered text is a number
         Private Sub ValidateNumericInput(sender As Object, e As TextCompositionEventArgs)
@@ -94,6 +96,53 @@
                 e.Handled = True ' Reject input if it doesn't match
             End If
         End Sub
+
+        ' Function to create a full-width TextBox inside a Border
+        Private Sub CreateFullWidthTextBox(row As Integer)
+            Dim txtName As String = $"txt_full_{row}"
+
+            ' Check if the name already exists and unregister it
+            Dim existingElement As Object = Me.FindName(txtName)
+            If existingElement IsNot Nothing Then
+                Me.UnregisterName(txtName)
+            End If
+
+            ' Create TextBox
+            Dim fullWidthTextBox As New TextBox() With {
+        .Name = txtName,
+        .Width = Double.NaN, ' Auto width
+        .Height = 60,
+        .FontFamily = New FontFamily("Lexend"),
+        .HorizontalContentAlignment = HorizontalAlignment.Left,
+        .VerticalContentAlignment = VerticalAlignment.Top,
+        .Padding = New Thickness(5),
+        .BorderThickness = New Thickness(0),
+        .Background = Brushes.White
+    }
+
+            ' Create a Border with Rounded Corners
+            Dim border As New Border() With {
+        .CornerRadius = New CornerRadius(20),
+        .BorderThickness = New Thickness(1),
+        .BorderBrush = Brushes.Gray,
+        .Background = Brushes.White,
+        .Margin = New Thickness(5),
+        .Padding = New Thickness(6),
+        .Child = fullWidthTextBox ' Wrap TextBox inside the Border
+    }
+
+            ' Set Grid position
+            Grid.SetRow(border, row + 1) ' Place it in the next row
+            Grid.SetColumn(border, 0)
+            Grid.SetColumnSpan(border, 8) ' Span across all columns
+
+            ' Register the Border (not the TextBox)
+            Me.RegisterName(txtName, border)
+
+            ' Add to Grid
+            MyDynamicGrid.Children.Add(border)
+        End Sub
+
 
         ' ➜ Create TextBlock
         Private Sub CreateTextBlock(row As Integer, column As Integer, text As String)
@@ -114,7 +163,8 @@
         .Width = Double.NaN,
         .Height = 30,
         .HorizontalAlignment = HorizontalAlignment.Center,
-        .VerticalAlignment = VerticalAlignment.Center
+        .VerticalAlignment = VerticalAlignment.Center,
+        .BorderThickness = New Thickness(0)
     }
 
             Dim stack As New StackPanel() With {
@@ -124,21 +174,13 @@
 
             Dim icon As New MaterialDesignThemes.Wpf.PackIcon() With {
         .Kind = MaterialDesignThemes.Wpf.PackIconKind.PlaylistRemove,
-        .Foreground = Brushes.Black,
-        .Width = 24,
-        .Height = 24,
+        .Foreground = Brushes.Red,
+        .Width = 30,
+        .Height = 30,
         .Margin = New Thickness(0, 0, 5, 0)
     }
 
-            Dim deleteText As New TextBlock() With {
-        .Text = "Delete",
-        .FontFamily = New FontFamily("Lexend"),
-        .Foreground = Brushes.Black,
-        .VerticalAlignment = VerticalAlignment.Center
-    }
-
             stack.Children.Add(icon)
-            stack.Children.Add(deleteText)
             btn.Content = stack
 
             ' Attach delete functionality
@@ -210,14 +252,23 @@
 
         'Calculations for the data table
 
+        ' Function to retrieve the TextBox from a Border element
+        Private Function GetTextBoxFromBorder(borderName As String) As TextBox
+            Dim border As Border = TryCast(Me.FindName(borderName), Border)
+            If border IsNot Nothing AndAlso TypeOf border.Child Is TextBox Then
+                Return CType(border.Child, TextBox)
+            End If
+            Return Nothing
+        End Function
+
         Private Sub UpdateTaxAndAmount(row As Integer)
-            ' Get references to the required textboxes
-            Dim quantityTxt As TextBox = TryCast(Me.FindName($"txt_{row}_1"), TextBox)
-            Dim rateTxt As TextBox = TryCast(Me.FindName($"txt_{row}_2"), TextBox)
-            Dim taxPercentTxt As TextBox = TryCast(Me.FindName($"txt_{row}_3"), TextBox)
-            Dim taxTxt As TextBox = TryCast(Me.FindName($"txt_{row}_4"), TextBox) ' Now a TextBox
-            Dim discountTxt As TextBox = TryCast(Me.FindName($"txt_{row}_5"), TextBox)
-            Dim amountTxt As TextBox = TryCast(Me.FindName($"txt_{row}_6"), TextBox) ' Now a TextBox
+            ' Get references to the required textboxes inside their borders
+            Dim quantityTxt As TextBox = GetTextBoxFromBorder($"txt_{row}_1")
+            Dim rateTxt As TextBox = GetTextBoxFromBorder($"txt_{row}_2")
+            Dim taxPercentTxt As TextBox = GetTextBoxFromBorder($"txt_{row}_3")
+            Dim taxTxt As TextBox = GetTextBoxFromBorder($"txt_{row}_4") ' Now a TextBox
+            Dim discountTxt As TextBox = GetTextBoxFromBorder($"txt_{row}_5")
+            Dim amountTxt As TextBox = GetTextBoxFromBorder($"txt_{row}_6") ' Now a TextBox
 
             ' Ensure all fields have valid numeric input
             Dim quantity As Integer = If(quantityTxt IsNot Nothing AndAlso Integer.TryParse(quantityTxt.Text, quantity), quantity, 0)
@@ -260,5 +311,6 @@
                 UpdateTaxAndAmount(row) ' Call function to update tax and amount
             End If
         End Sub
+
     End Class
 End Namespace
