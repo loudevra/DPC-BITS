@@ -3,48 +3,345 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:DPC"
         mc:Ignorable="d"
-        Title="AddNewProducts" Height="450" Width="800">
+        Background="#D9D9D9"
+        Title="AddNewProducts" Height="450" Width="800"
+        WindowStartupLocation="CenterScreen">
     <Grid>
-        <Button Content="Cart" HorizontalAlignment="Left" Margin="18,6,0,0" VerticalAlignment="Top"/>
-        <Button Content="Location" HorizontalAlignment="Left" Margin="49,7,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Margin="528,10,0,0" TextWrapping="Wrap" Text="Search Here..." VerticalAlignment="Top" Width="120"/>
-        <Button Content="Notif" HorizontalAlignment="Left" Margin="655,7,0,0" VerticalAlignment="Top"/>
-        <Button Content="Messages" HorizontalAlignment="Left" Margin="690,7,0,0" VerticalAlignment="Top"/>
-        <Button Content="Clock" HorizontalAlignment="Left" Margin="750,7,0,0" VerticalAlignment="Top"/>
-        <Image HorizontalAlignment="Left" Height="44" Margin="19,33,0,0" VerticalAlignment="Top" Width="51"/>
-        <Label Content="Add New Products" HorizontalAlignment="Left" Margin="88,37,0,0" VerticalAlignment="Top"/>
-        <Label Content="Product Name :" HorizontalAlignment="Left" Margin="31,59,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Margin="43,83,0,0" TextWrapping="Wrap" Text="Enter product name..." VerticalAlignment="Top" Width="357"/>
-        <Label Content="Product Code  :" HorizontalAlignment="Left" Margin="32,100,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Margin="44,123,0,0" TextWrapping="Wrap" Text="Enter product code..." VerticalAlignment="Top" Width="357"/>
-        <Label Content="Product category :" HorizontalAlignment="Left" Margin="32,139,0,0" VerticalAlignment="Top"/>
-        <Label Content="Sub-Category :" HorizontalAlignment="Left" Margin="34,178,0,0" VerticalAlignment="Top"/>
-        <Label Content="Warehouse :" HorizontalAlignment="Left" Margin="35,221,0,0" VerticalAlignment="Top"/>
-        <Label Content="Product category :" HorizontalAlignment="Left" Margin="33,263,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Margin="45,287,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="357"/>
-        <Label Content="Warehouse :" HorizontalAlignment="Left" Margin="33,306,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Margin="45,328,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="357"/>
-        <Label Content="Product Retail Price : " HorizontalAlignment="Left" Margin="33,344,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Margin="45,366,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="357"/>
-        <Label Content="Product Order Price : " HorizontalAlignment="Left" Margin="33,380,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Margin="45,405,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="357" Height="18"/>
-        <Label Content="Default Tax Rate :" HorizontalAlignment="Left" Margin="421,59,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Margin="428,83,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="357"/>
-        <Label Content="Default Discount Rate :" HorizontalAlignment="Left" Margin="421,115,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Margin="426,141,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="357"/>
-        <Label Content="Stock Units :" HorizontalAlignment="Left" Margin="428,176,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Margin="433,202,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="357"/>
-        <Label Content="Alert Quantity :" HorizontalAlignment="Left" Margin="427,217,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Margin="433,244,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="357" Height="18"/>
-        <Button Content="Next" HorizontalAlignment="Left" Margin="734,274,0,0" VerticalAlignment="Top" Width="52"/>
-        <Button Content="Cancel" HorizontalAlignment="Left" Margin="674,276,0,0" VerticalAlignment="Top" Width="52"/>
-        <Label Content="You can also change the discount during invoice creation." HorizontalAlignment="Left" Margin="426,156,0,0" VerticalAlignment="Top" FontSize="8"/>
-        <Label Content="You can also change the discount during invoice creation." HorizontalAlignment="Left" Margin="426,98,0,0" VerticalAlignment="Top" FontSize="8"/>
-        <ComboBox HorizontalAlignment="Left" Margin="47,162,0,0" VerticalAlignment="Top" Width="353"/>
-        <ComboBox HorizontalAlignment="Left" Margin="47,202,0,0" VerticalAlignment="Top" Width="353"/>
-        <ComboBox HorizontalAlignment="Left" Margin="48,245,0,0" VerticalAlignment="Top" Width="353"/>
+
+        <materialDesign:PackIcon Kind="CartOutline" Foreground="Black" Width="22" Height="17" Margin="19,15,0,0"/>
+        <materialDesign:PackIcon Kind="LocationOnOutline" Foreground="Black" Width="23" Height="17" Margin="47,15,0,0"/>
+
+        <Label Content="Add New Products" FontWeight="SemiBold" HorizontalAlignment="Left" Margin="68,42,0,0" VerticalAlignment="Top" FontSize="16" FontFamily="Lexend" Foreground="#474747"/>
+
+
+        <Label Content="Product Name:" HorizontalAlignment="Left" Margin="21,76,0,0" VerticalAlignment="Top" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
+
+        <Label Content="Product Code:" HorizontalAlignment="Left" Margin="21,128,0,0" VerticalAlignment="Top"  FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
+        <Label Content="Product category:" HorizontalAlignment="Left" Margin="21,175,0,0" VerticalAlignment="Top" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
+        <Label Content="Sub-Category:" HorizontalAlignment="Left" Margin="23,225,0,0" VerticalAlignment="Top" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
+        <Label Content="Warehouse:" HorizontalAlignment="Left" Margin="24,271,0,0" VerticalAlignment="Top" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747" Height="26"/>
+        <Label Content="Product category:" HorizontalAlignment="Left" Margin="22,322,0,0" VerticalAlignment="Top" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
+        <Label Content="Product Retail Price: " HorizontalAlignment="Left" Margin="24,369,0,0" VerticalAlignment="Top" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747" Height="22"/>
+        <Label Content="Product Order Price: " HorizontalAlignment="Left" Margin="410,75,0,0" VerticalAlignment="Top" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747" Height="22"/>
+        <TextBox HorizontalAlignment="Left" Margin="422,99,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="357" Height="28"
+         BorderThickness="2" BorderBrush="#474747">
+            <TextBox.Style>
+                <Style TargetType="TextBox">
+                    <Setter Property="Control.Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TextBox">
+                                <Border CornerRadius="15" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+                                    <ScrollViewer Margin="4" x:Name="PART_ContentHost"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TextBox.Style>
+        </TextBox>
+
+        <Label Content="Default Tax Rate:" HorizontalAlignment="Left" Margin="410,133,0,0" VerticalAlignment="Top" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
+        <Label Content="Default Discount Rate:" HorizontalAlignment="Left" Margin="410,191,0,0" VerticalAlignment="Top" FontWeight="Medium"  FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
+        <Label Content="Stock Units:" HorizontalAlignment="Left" Margin="417,251,0,0" VerticalAlignment="Top" FontWeight="Medium"  FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
+        <Label Content="Alert Quantity:" HorizontalAlignment="Left" Margin="416,301,0,0" VerticalAlignment="Top"  FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
+        <TextBox HorizontalAlignment="Left" Margin="422,327,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="357" Height="28"
+         BorderThickness="2" BorderBrush="#474747">
+            <TextBox.Style>
+                <Style TargetType="TextBox">
+                    <Setter Property="Control.Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TextBox">
+                                <Border CornerRadius="15" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+                                    <ScrollViewer Margin="4" x:Name="PART_ContentHost"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TextBox.Style>
+        </TextBox>
+
+        <Label Content="You can also change the discount during invoice creation." HorizontalAlignment="Left" Margin="415,241,0,0" VerticalAlignment="Top"  FontSize="5" FontFamily="Lexend" Foreground="#474747"/>
+        <Label Content="You can also change the discount during invoice creation." HorizontalAlignment="Left" Margin="421,181,0,0" VerticalAlignment="Top"  FontSize="5" FontFamily="Lexend" Foreground="#474747"/>
+
+        <ComboBox HorizontalAlignment="Left" Margin="21,198,0,0" VerticalAlignment="Top" Width="359" Background="White"
+          BorderThickness="2" BorderBrush="#474747" Height="28">
+            <ComboBox.Style>
+                <Style TargetType="ComboBox">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ComboBox">
+                                <Grid>
+                                    <!-- Border with rounded corners -->
+                                    <Border CornerRadius="15" Background="{TemplateBinding Background}" 
+                                    BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                        <Grid>
+                                            <!-- ContentPresenter for the selected item -->
+                                            <ContentPresenter VerticalAlignment="Center" Margin="10,0,35,0"/>
+
+                                            <!-- Drop-down button (on the right side) -->
+                                            <ToggleButton x:Name="ArrowButton" Focusable="False"
+                                                  Background="Transparent" BorderThickness="0"
+                                                  HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                  Width="30" Height="30" Margin="0,0,5,0">
+                                                <Path Data="M 0 0 L 5 5 L 10 0" Stroke="#474747" StrokeThickness="2"
+                                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </ToggleButton>
+                                        </Grid>
+                                    </Border>
+                                    <Popup x:Name="PART_Popup" IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom">
+                                        <Border CornerRadius="10" BorderBrush="#474747" BorderThickness="2" Background="White">
+                                            <ScrollViewer>
+                                                <ItemsPresenter/>
+                                            </ScrollViewer>
+                                        </Border>
+                                    </Popup>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ComboBox.Style>
+        </ComboBox>
+
+
+        <materialDesign:PackIcon Kind="BellOutline" Foreground="Black" Width="22" Height="16" Margin="703,16,0,0"/>
+        <materialDesign:PackIcon Kind="EmailOutline" Foreground="Black" Width="22" Height="16" Margin="730,16,0,0"/>
+        <materialDesign:PackIcon Kind="ClockOutline" Foreground="Black" Width="22" Height="16" Margin="758,16,0,0"/>
+
+
+        <Button x:Name="btnAddRow" Background="#2E466B" Margin="710,384,13,24">
+            <Button.Template>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="15" Padding="5">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+
+                            <TextBlock Text="Next" Foreground="white" VerticalAlignment="Center" FontFamily="Lexend" FontSize="10"/>
+                        </StackPanel>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+        <Button x:Name="btnAddRow_Copy" Background="#D23636" Margin="620,384,100,24">
+            <Button.Template>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="15" Padding="5">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+
+                            <TextBlock Text="Cancel" Foreground="white" VerticalAlignment="Center" FontFamily="Lexend" FontSize="10"/>
+                        </StackPanel>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+        <materialDesign:PackIcon Kind="PackageVariantClosedPlus" Foreground="#474747" Width="48" Height="42" Margin="15,38,0,0"/>
+        <TextBox HorizontalAlignment="Left" Margin="422,273,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="357" Height="30"
+            BorderThickness="2" BorderBrush="#474747">
+            <TextBox.Style>
+                <Style TargetType="{x:Type TextBox}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type TextBox}">
+                                <Border CornerRadius="15" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+                                    <ScrollViewer Margin="4" x:Name="PART_ContentHost"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TextBox.Style>
+        </TextBox>
+        <TextBox HorizontalAlignment="Left" Margin="422,215,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="357" Height="30"
+            BorderThickness="2" BorderBrush="#474747">
+            <TextBox.Style>
+                <Style TargetType="{x:Type TextBox}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type TextBox}">
+                                <Border CornerRadius="15" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+                                    <ScrollViewer Margin="4" x:Name="PART_ContentHost"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TextBox.Style>
+        </TextBox>
+        <TextBox HorizontalAlignment="Left" Margin="417,155,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="357" Height="28"
+            BorderThickness="2" BorderBrush="#474747">
+            <TextBox.Style>
+                <Style TargetType="{x:Type TextBox}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type TextBox}">
+                                <Border CornerRadius="15" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+                                    <ScrollViewer Margin="4" x:Name="PART_ContentHost"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TextBox.Style>
+        </TextBox>
+        <TextBox Text = "Enter product name..."  Foreground="#474747" FontSize="8" FontWeight="Regular" HorizontalAlignment="Left" Margin="23,99,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="357" Height="29"
+            BorderThickness="2" BorderBrush="#474747">
+            <TextBox.Style>
+                <Style TargetType="{x:Type TextBox}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type TextBox}">
+                                <Border CornerRadius="15" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+                                    <ScrollViewer Margin="4" x:Name="PART_ContentHost"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TextBox.Style>
+        </TextBox>
+
+        <TextBox Text = "Enter product code..."  Foreground="#474747"  FontSize="8" FontWeight="Regular" HorizontalAlignment="Left" Margin="21,151,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="357" Height="29"
+            BorderThickness="2" BorderBrush="#474747">
+            <TextBox.Style>
+                <Style TargetType="{x:Type TextBox}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type TextBox}">
+                                <Border CornerRadius="15" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+                                    <ScrollViewer Margin="4" x:Name="PART_ContentHost"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TextBox.Style>
+        </TextBox>
+        <TextBox HorizontalAlignment="Left" Margin="26,344,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="357" Height="29"
+            BorderThickness="2" BorderBrush="#474747">
+            <TextBox.Style>
+                <Style TargetType="{x:Type TextBox}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type TextBox}">
+                                <Border CornerRadius="15" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+                                    <ScrollViewer Margin="4" x:Name="PART_ContentHost"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TextBox.Style>
+        </TextBox>
+
+        <Grid HorizontalAlignment="Left" Margin="28,390,0,0" VerticalAlignment="Top">
+            <Border CornerRadius="15" BorderThickness="2" BorderBrush="#474747" Background="White" Width="357" Height="29" Margin="-1,0,1,0">
+                <Grid>
+
+                    <materialDesign:PackIcon Kind="CurrencyPhp" Width="15" Height="15" Foreground="#474747" 
+                                     VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+                    <TextBox Margin="35,0,10,0" Background="Transparent" BorderThickness="0" VerticalContentAlignment="Center"/>
+                </Grid>
+            </Border>
+        </Grid>
+        <ComboBox HorizontalAlignment="Left" Margin="21,249,0,0" VerticalAlignment="Top" Width="359" Background="White"
+            BorderThickness="2" BorderBrush="#474747" Height="27">
+            <ComboBox.Style>
+                <Style TargetType="{x:Type ComboBox}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ComboBox}">
+                                <Grid>
+                                    <!-- Border with rounded corners -->
+                                    <Border CornerRadius="15" Background="{TemplateBinding Background}" 
+                                        BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                        <Grid>
+                                            <!-- ContentPresenter for the selected item -->
+                                            <ContentPresenter VerticalAlignment="Center" Margin="10,0,35,0"/>
+
+                                            <!-- Drop-down button (on the right side) -->
+                                            <ToggleButton x:Name="ArrowButton" Focusable="False"
+                                                Background="Transparent" BorderThickness="0"
+                                                HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                Width="30" Height="30" Margin="0,0,5,0">
+                                                <Path Data="M 0 0 L 5 5 L 10 0" Stroke="#474747" StrokeThickness="2"
+                                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </ToggleButton>
+                                        </Grid>
+                                    </Border>
+                                    <Popup x:Name="PART_Popup" IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom">
+                                        <Border CornerRadius="10" BorderBrush="#474747" BorderThickness="2" Background="White">
+                                            <ScrollViewer>
+                                                <ItemsPresenter/>
+                                            </ScrollViewer>
+                                        </Border>
+                                    </Popup>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ComboBox.Style>
+        </ComboBox>
+        <ComboBox HorizontalAlignment="Left" Margin="24,294,0,0" VerticalAlignment="Top" Width="359" Background="White"
+            BorderThickness="2" BorderBrush="#474747" Height="30">
+            <ComboBox.Style>
+                <Style TargetType="{x:Type ComboBox}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ComboBox}">
+                                <Grid>
+                                    <!-- Border with rounded corners -->
+                                    <Border CornerRadius="15" Background="{TemplateBinding Background}" 
+                                        BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                        <Grid>
+                                            <!-- ContentPresenter for the selected item -->
+                                            <ContentPresenter VerticalAlignment="Center" Margin="10,0,35,0"/>
+
+                                            <!-- Drop-down button (on the right side) -->
+                                            <ToggleButton x:Name="ArrowButton" Focusable="False"
+                                                Background="Transparent" BorderThickness="0"
+                                                HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                Width="30" Height="30" Margin="0,0,5,0">
+                                                <Path Data="M 0 0 L 5 5 L 10 0" Stroke="#474747" StrokeThickness="2"
+                                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </ToggleButton>
+                                        </Grid>
+                                    </Border>
+                                    <Popup x:Name="PART_Popup" IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom">
+                                        <Border CornerRadius="10" BorderBrush="#474747" BorderThickness="2" Background="White">
+                                            <ScrollViewer>
+                                                <ItemsPresenter/>
+                                            </ScrollViewer>
+                                        </Border>
+                                    </Popup>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ComboBox.Style>
+        </ComboBox>
+        <TextBox HorizontalAlignment="Left" Margin="504,11,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="188" Height="26"
+            BorderThickness="2" BorderBrush="#474747">
+            <TextBox.Style>
+                <Style TargetType="{x:Type TextBox}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type TextBox}">
+                                <Border CornerRadius="15" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+                                    <ScrollViewer Margin="4" x:Name="PART_ContentHost"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TextBox.Style>
+        </TextBox>
+        <materialDesign:PackIcon  Kind="Magnify " Foreground="#D9D9D9" Width="22" Height="16" Margin="657,17,0,0"/>
+
 
     </Grid>
 </Window>
