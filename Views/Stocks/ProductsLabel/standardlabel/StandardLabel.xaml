@@ -10,7 +10,6 @@
         Background="#D9D9D9"
         WindowStartupLocation="CenterScreen">
 
-
 	<Window.Resources>
 		<!-- Default Border Style -->
 		<Style x:Key="DefaultBorderStyle" TargetType="Border">
