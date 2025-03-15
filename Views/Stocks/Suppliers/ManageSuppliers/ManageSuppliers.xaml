@@ -337,6 +337,11 @@
                             <materialDesign:PackIcon Kind="UnfoldMoreHorizontal" Width="15" Height="15" Margin="5,0,0,0"/>
                         </StackPanel>
                     </Grid>
+                   
+                    
+                    
+
+
                 </Border>
             </StackPanel>
         </Grid>
