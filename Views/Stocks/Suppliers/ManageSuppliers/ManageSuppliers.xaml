@@ -227,7 +227,7 @@
                                     Background="Transparent"
                                     BorderThickness="0"
                                     HorizontalAlignment="Stretch"
-                                    Click="StartDate_Click">
+                                    >
                                     <TextBlock Text="{Binding StartDate, StringFormat='MMM dd, yyyy'}"
                                            FontFamily="Lexend"
                                            FontSize="12"
@@ -253,7 +253,7 @@
                                     BorderThickness="0"
                                     Padding="0"
                                     HorizontalAlignment="Stretch"
-                                    Click="EndDate_Click">
+                                    >
                                     <TextBlock Text="{Binding EndDate, StringFormat='MMM dd, yyyy'}"
                                            FontFamily="Lexend"
                                            FontSize="12"
