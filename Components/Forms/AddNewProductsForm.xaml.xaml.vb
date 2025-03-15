@@ -1,3 +1,0 @@
-﻿Class AddNewProductsForm
-
-End Class
