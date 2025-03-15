@@ -1,0 +1,75 @@
+<UserControl x:Class="DPC.Components.Navigation.TopNavBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="namespace:DPC.Data.Converters.ValueConverter"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"
+             Height="60" Background="#E0E0E0">
+
+    <!-- Top Navigation Grid -->
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <!-- Left Icons -->
+            <ColumnDefinition Width="*"/>
+            <!-- Search Bar (Flexible) -->
+            <ColumnDefinition Width="Auto"/>
+            <!-- Right Icons -->
+        </Grid.ColumnDefinitions>
+
+        <!-- Left Icons (POS, Location) -->
+        <StackPanel Orientation="Horizontal" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,10,0">
+            <Button Style="{StaticResource IconButton}" Click="OpenPOS">
+                <materialDesign:PackIcon Kind="Cart" Width="24" Height="24"/>
+            </Button>
+            <Button Style="{StaticResource IconButton}" Click="ChangeLocation">
+                <materialDesign:PackIcon Kind="MapMarker" Width="24" Height="24" Margin="10,0,0,0"/>
+            </Button>
+        </StackPanel>
+
+        <!-- Search Bar (Expands Dynamically) -->
+        <!-- Search Bar (Limited to 50% of Navbar Width) -->
+        <Grid Grid.Column="1" HorizontalAlignment="Left" MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=UserControl}}">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <!-- TextBox Expands -->
+                <ColumnDefinition Width="Auto"/>
+                <!-- Search Button -->
+            </Grid.ColumnDefinitions>
+
+            <TextBox x:Name="SearchBar" Height="35"
+             materialDesign:HintAssist.Hint="Search customer..."
+             FontSize="14"
+             Padding="10,0,40,0"
+             Background="White"
+             BorderThickness="0"
+             VerticalContentAlignment="Center"
+             materialDesign:HintAssist.IsFloating="True"
+             Grid.Column="0"
+             Width="500"/>
+
+            <Button x:Name="SearchButton" Background="Transparent" BorderThickness="0"
+            Width="40" Height="35"
+            Click="SearchCustomer"
+            Grid.Column="1">
+                <materialDesign:PackIcon Kind="Magnify" Width="24" Height="24" Foreground="Gray"/>
+            </Button>
+        </Grid>
+
+        <!-- Right Icons (Notifications, Messages, Clock In/Out) -->
+        <StackPanel Orientation="Horizontal" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0">
+            <Button Style="{StaticResource IconButton}" Click="ShowNotifications">
+                <materialDesign:PackIcon Kind="Bell" Width="24" Height="24"/>
+            </Button>
+            <Button Style="{StaticResource IconButton}" Click="ShowMessages">
+                <materialDesign:PackIcon Kind="Email" Width="24" Height="24" Margin="10,0,0,0"/>
+            </Button>
+            <Button Style="{StaticResource IconButton}" Click="ToggleClockInOut">
+                <materialDesign:PackIcon x:Name="ClockIcon" Kind="ClockOutline" Width="24" Height="24" Margin="10,0,0,0"/>
+            </Button>
+        </StackPanel>
+    </Grid>
+</UserControl>
