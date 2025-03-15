@@ -19,5 +19,9 @@
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20">
             <Label Content="Suppliers" FontWeight="SemiBold" FontSize="24" FontFamily="Lexend" Foreground="#474747"/>
         </StackPanel>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20">
+            <Button Content="Add Supplier" Margin="160,28,904,21" Padding="10,5" FontSize="14" FontWeight="Bold"/>
+        </StackPanel>
     </Grid>
 </Window>
