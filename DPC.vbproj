@@ -373,6 +373,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HRM\Employees\Permissions\EmployeePermissions.xaml">
+	</Page>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\Stocks\ItemManager\NewProduct\AddNewProducts.xaml">
