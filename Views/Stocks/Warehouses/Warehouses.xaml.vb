@@ -1,12 +1,6 @@
-﻿Imports System.Windows
-
-Namespace DPC.Views.Stocks.Warehouses
+﻿Namespace DPC.Views.Warehouses.Warehouses
     Public Class Warehouses
-        Inherits Window
 
-        Public Sub New()
-            InitializeComponent()
-
-        End Sub
     End Class
 End Namespace
+
