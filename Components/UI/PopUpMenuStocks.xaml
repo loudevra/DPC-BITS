@@ -35,35 +35,41 @@
                     </StackPanel>
                     <StackPanel Margin="20,5,0,0">
                         <TextBlock FontSize="14">
-                            <Hyperlink Click="NavigateToNewInvoice">New Product</Hyperlink>
+                            <Hyperlink Click="NavigateToNewProduct">New Product</Hyperlink>
                         </TextBlock>
                         <TextBlock FontSize="14">
-                            <Hyperlink Click="NavigateToNewInvoice">Product Manager</Hyperlink>
+                            <Hyperlink Click="NavigateToProductManager">Product Manager</Hyperlink>
                         </TextBlock>
                     </StackPanel>
                 </StackPanel>
 
-                <!-- Section: Product Categories -->
+                <!-- Product Categories (Clickable) -->
                 <StackPanel Orientation="Vertical" Margin="0,5,0,10">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Label" Foreground="White" Width="20" Height="20"/>
-                        <TextBlock Text="Product Categories" Foreground="White" FontWeight="Bold" FontSize="16" Margin="10,0,0,0"/>
+                        <TextBlock FontSize="16" FontFamily="{StaticResource LexendBold}" Margin="10,0,0,0" >
+                            <Hyperlink Click="NavigateToProductCategories" Foreground="White">Product Categories</Hyperlink>
+                        </TextBlock>
                     </StackPanel>
                 </StackPanel>
 
-                <!-- Section: Warehouses -->
+                <!-- Warehouses (Clickable) -->
                 <StackPanel Orientation="Vertical" Margin="0,5,0,10">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Warehouse" Foreground="White" Width="20" Height="20"/>
-                        <TextBlock Text="Warehouses" Foreground="White" FontWeight="Bold" FontSize="16" Margin="10,0,0,0"/>
+                        <TextBlock FontSize="16" FontFamily="{StaticResource LexendBold}" Margin="10,0,0,0">
+                            <Hyperlink Click="NavigateToWarehouses" Foreground="White">Warehouses</Hyperlink>
+                        </TextBlock>
                     </StackPanel>
                 </StackPanel>
 
-                <!-- Section: Stocks Transfer -->
+                <!-- Stocks Transfer (Clickable) -->
                 <StackPanel Orientation="Vertical" Margin="0,5,0,10">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="SwapHorizontal" Foreground="White" Width="20" Height="20"/>
-                        <TextBlock Text="Stocks Transfer" Foreground="White" FontWeight="Bold" FontSize="16" Margin="10,0,0,0"/>
+                        <TextBlock FontSize="16" FontFamily="{StaticResource LexendBold}" Margin="10,0,0,0">
+                            <Hyperlink Click="NavigateToStocksTransfer" Foreground="White" >Stocks Transfer</Hyperlink>
+                        </TextBlock>
                     </StackPanel>
                 </StackPanel>
 
@@ -75,10 +81,10 @@
                     </StackPanel>
                     <StackPanel Margin="20,5,0,0">
                         <TextBlock FontSize="14">
-                            <Hyperlink Click="NavigateToNewInvoice">New Order</Hyperlink>
+                            <Hyperlink Click="NavigateToNewOrder">New Order</Hyperlink>
                         </TextBlock>
                         <TextBlock FontSize="14">
-                            <Hyperlink Click="NavigateToNewInvoice">Manage Order</Hyperlink>
+                            <Hyperlink Click="NavigateToManageOrder">Manage Order</Hyperlink>
                         </TextBlock>
                     </StackPanel>
                 </StackPanel>
@@ -91,10 +97,10 @@
                     </StackPanel>
                     <StackPanel Margin="20,5,0,0">
                         <TextBlock FontSize="14">
-                            <Hyperlink Click="NavigateToNewInvoice">Suppliers Records</Hyperlink>
+                            <Hyperlink Click="NavigateToSupplierRecords">Suppliers Records</Hyperlink>
                         </TextBlock>
                         <TextBlock FontSize="14">
-                            <Hyperlink Click="NavigateToNewInvoice">Customers Records</Hyperlink>
+                            <Hyperlink Click="NavigateToCustomerRecords">Customers Records</Hyperlink>
                         </TextBlock>
                     </StackPanel>
                 </StackPanel>
@@ -107,10 +113,10 @@
                     </StackPanel>
                     <StackPanel Margin="20,5,0,0">
                         <TextBlock FontSize="14">
-                            <Hyperlink Click="NavigateToNewInvoice">New Suppliers</Hyperlink>
+                            <Hyperlink Click="NavigateToNewSuppliers">New Suppliers</Hyperlink>
                         </TextBlock>
                         <TextBlock FontSize="14">
-                            <Hyperlink Click="NavigateToNewInvoice">Manage Suppliers</Hyperlink>
+                            <Hyperlink Click="NavigateToManageSuppliers">Manage Suppliers</Hyperlink>
                         </TextBlock>
                     </StackPanel>
                 </StackPanel>
@@ -123,10 +129,10 @@
                     </StackPanel>
                     <StackPanel Margin="20,5,0,0">
                         <TextBlock FontSize="14">
-                            <Hyperlink Click="NavigateToNewInvoice">Custom Label</Hyperlink>
+                            <Hyperlink Click="NavigateToCustomLabel">Custom Label</Hyperlink>
                         </TextBlock>
                         <TextBlock FontSize="14">
-                            <Hyperlink Click="NavigateToNewInvoice">Standard Label</Hyperlink>
+                            <Hyperlink Click="NavigateToStandardLabel">Standard Label</Hyperlink>
                         </TextBlock>
                     </StackPanel>
                 </StackPanel>

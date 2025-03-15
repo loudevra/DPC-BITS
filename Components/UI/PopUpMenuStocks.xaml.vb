@@ -73,8 +73,65 @@ Namespace DPC.Components.UI
             ' popup.VerticalOffset = verticalOffset
         End Sub
 
-        Private Sub NavigateToNewInvoice(sender As Object, e As RoutedEventArgs)
-            MessageBox.Show("Navigate to New Invoice", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+        Private Sub NavigateToNewProduct(sender As Object, e As RoutedEventArgs)
+            MessageBox.Show("Navigating to Product Categories", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+            ' TODO: Implement actual navigation logic
+        End Sub
+        Private Sub NavigateToManageProduct(sender As Object, e As RoutedEventArgs)
+            MessageBox.Show("Navigating to Product Categories", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+            ' TODO: Implement actual navigation logic
+        End Sub
+        ''' <summary>
+        ''' Navigate to Product Categories Page
+        ''' </summary>
+        '''
+        Private Sub NavigateToProductCategories(sender As Object, e As RoutedEventArgs)
+            MessageBox.Show("Navigating to Product Categories", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+            ' TODO: Implement actual navigation logic
+        End Sub
+
+        ''' <summary>
+        ''' Navigate to Warehouses Page
+        ''' </summary>
+        Private Sub NavigateToWarehouses(sender As Object, e As RoutedEventArgs)
+            MessageBox.Show("Navigating to Warehouses", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+            ' TODO: Implement actual navigation logic
+        End Sub
+
+        ''' <summary>
+        ''' Navigate to Stocks Transfer Page
+        ''' </summary>
+        Private Sub NavigateToNewOrder(sender As Object, e As RoutedEventArgs)
+            MessageBox.Show("Navigating to Stocks Transfer", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+            ' TODO: Implement actual navigation logic
+        End Sub
+
+        Private Sub NavigateToManageOrder(sender As Object, e As RoutedEventArgs)
+            MessageBox.Show("Navigating to Stocks Transfer", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+            ' TODO: Implement actual navigation logic
+        End Sub
+        Private Sub NavigateToSupplierRecords(sender As Object, e As RoutedEventArgs)
+            MessageBox.Show("Navigating to Stocks Transfer", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+            ' TODO: Implement actual navigation logic
+        End Sub
+        Private Sub NavigateToCustomerRecords(sender As Object, e As RoutedEventArgs)
+            MessageBox.Show("Navigating to Stocks Transfer", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+            ' TODO: Implement actual navigation logic
+        End Sub
+        Private Sub NavigateToNewSuppliers(sender As Object, e As RoutedEventArgs)
+            MessageBox.Show("Navigating to Stocks Transfer", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+            ' TODO: Implement actual navigation logic
+        End Sub
+        Private Sub NavigateToManageSuppliers(sender As Object, e As RoutedEventArgs)
+            MessageBox.Show("Navigating to Stocks Transfer", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+        End Sub
+        Private Sub NavigateToCustomLabel(sender As Object, e As RoutedEventArgs)
+            MessageBox.Show("Navigating to Stocks Transfer", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+            ' TODO: Implement actual navigation logic
+        End Sub
+        Private Sub NavigateToStandardLabel(sender As Object, e As RoutedEventArgs)
+            MessageBox.Show("Navigating to Stocks Transfer", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+
         End Sub
 
     End Class
