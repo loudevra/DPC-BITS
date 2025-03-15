@@ -163,9 +163,13 @@
     <Compile Include="Views\Stocks\PurchaseOrder\NewOrder\NewOrder.xaml.vb">
       <DependentUpon>NewOrder.xaml</DependentUpon>
     </Compile>
-
-    <Compile Include="Views\Warehouses\Warehouses.xaml.vb"/>
-
+    <Compile Include="Views\Suppliers\ManageSuppliers\ManageSuppliers.xaml.vb">
+      <DependentUpon>ManageSuppliers.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Suppliers\NewSupplier\NewSupplier.xaml.vb">
+      <DependentUpon>NewSupplier.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Warehouses\Warehouses.xaml.vb" />
     <Page Include="Components\Forms\AddNewClientGrpForm.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -232,8 +236,16 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-	</ItemGroup>
-	<ItemGroup>
+    <Page Include="Views\Suppliers\ManageSuppliers\ManageSuppliers.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Suppliers\NewSupplier\NewSupplier.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
     <Page Include="Views\Stocks\ItemManager\NewProduct\AddNewProducts.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -329,7 +341,6 @@
     <Folder Include="Themes\" />
     <Folder Include="Views\Stocks\PurchaseOrder\ManageOrders\" />
     <Folder Include="Views\Stocks\StocksReturn\" />
-    <Folder Include="Views\Stocks\Suppliers\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\images\logo.png" />
