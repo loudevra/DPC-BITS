@@ -1,0 +1,22 @@
+﻿<Window x:Class="DPC.Views.Stocks.ProductCategories.ProductCategories"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DPC"
+        mc:Ignorable="d"
+        Title="ProductCategories" Height="450" Width="800">
+    <Grid>
+        <Button Content="Cart" HorizontalAlignment="Left" Margin="18,7,0,0" VerticalAlignment="Top"/>
+        <Button Content="Location" HorizontalAlignment="Left" Margin="49,7,0,0" VerticalAlignment="Top"/>
+        <Button Content="Notif" HorizontalAlignment="Left" Margin="655,7,0,0" VerticalAlignment="Top"/>
+        <Button Content="Messages" HorizontalAlignment="Left" Margin="690,7,0,0" VerticalAlignment="Top"/>
+        <Button Content="Clock" HorizontalAlignment="Left" Margin="750,7,0,0" VerticalAlignment="Top"/>
+        <Image HorizontalAlignment="Left" Height="44" Margin="19,33,0,0" VerticalAlignment="Top" Width="51"/>
+        <Label Content="Product Category" HorizontalAlignment="Left" Margin="92,37,0,0" VerticalAlignment="Top"/>
+        <Button Content="Category" HorizontalAlignment="Left" Margin="217,41,0,0" VerticalAlignment="Top" Width="80"/>
+        <DataGrid HorizontalAlignment="Left" Height="258" Margin="26,0,0,0" VerticalAlignment="Center" Width="757" d:ItemsSource="{d:SampleData ItemCount=10}"/>
+        <Button Content="Sub-category" HorizontalAlignment="Left" Margin="310,42,0,0" VerticalAlignment="Top" Width="109"/>
+
+    </Grid>
+</Window>

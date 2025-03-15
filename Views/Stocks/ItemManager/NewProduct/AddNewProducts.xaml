@@ -1,0 +1,280 @@
+﻿<Window x:Class="DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="clr-namespace:DPC"
+        mc:Ignorable="d"
+        Background="#D9D9D9"
+        Title="AddNewProducts" Height="800" Width="1200"
+        WindowStartupLocation="CenterScreen">
+
+
+
+    <Grid Background="#D3D3D3" Margin="2">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20">
+            <materialDesign:PackIcon Kind="PackageVariantClosedPlus" Foreground="#474747" Width="64" Height="55"/>
+            <Label Content="Add New Products" FontWeight="SemiBold" FontSize="24" FontFamily="Lexend" Foreground="#474747"/>
+        </StackPanel>
+
+        <UniformGrid Grid.Row="1" Columns="1" Margin="20" HorizontalAlignment="Center" Width="950">
+            <StackPanel>
+                <Label Content="Product Name:" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
+                <TextBox Height="42" BorderThickness="2" BorderBrush="#474747">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <Setter Property="Control.Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="TextBox">
+                                        <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White">
+                                            <ScrollViewer x:Name="PART_ContentHost"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+
+            </StackPanel>
+            <StackPanel>
+                <Label Content="Product Code:" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
+                <TextBox Height="42" BorderThickness="2" BorderBrush="#474747">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <Setter Property="Control.Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="TextBox">
+                                        <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White">
+                                            <ScrollViewer x:Name="PART_ContentHost"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+
+            </StackPanel>
+            <StackPanel>
+                <Label Content="Product Category:" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
+                <ComboBox Height="42" BorderThickness="2" BorderBrush="#474747">
+                    <ComboBox.Style>
+                        <Style TargetType="ComboBox">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ComboBox">
+                                        <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White">
+                                            <Grid>
+                                                <ToggleButton 
+                                    Name="ToggleButton" 
+                                    Grid.Column="2" 
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Focusable="false"
+                                    ClickMode="Press">
+                                                    <ContentPresenter Margin="6,0,0,0" />
+                                                </ToggleButton>
+                                                <ContentPresenter
+                                    Name="ContentSite"
+                                    IsHitTestVisible="False"
+                                    Margin="4"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Left"/>
+                                                <Popup Name="Popup"
+                                       Placement="Bottom"
+                                       IsOpen="{TemplateBinding IsDropDownOpen}"
+                                       AllowsTransparency="True"
+                                       Focusable="False">
+                                                    <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White">
+                                                        <ScrollViewer>
+                                                            <StackPanel IsItemsHost="True"/>
+                                                        </ScrollViewer>
+                                                    </Border>
+                                                </Popup>
+                                            </Grid>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ComboBox.Style>
+                </ComboBox>
+
+            </StackPanel>
+            <StackPanel>
+                <Label Content="Sub-Category:" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
+                <ComboBox Height="42" BorderThickness="2" BorderBrush="#474747">
+                    <ComboBox.Style>
+                        <Style TargetType="ComboBox">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ComboBox">
+                                        <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White">
+                                            <Grid>
+                                                <ToggleButton 
+                                    Name="ToggleButton" 
+                                    Grid.Column="2" 
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Focusable="false"
+                                    ClickMode="Press">
+                                                    <ContentPresenter Margin="6,0,0,0" />
+                                                </ToggleButton>
+                                                <ContentPresenter
+                                    Name="ContentSite"
+                                    IsHitTestVisible="False"
+                                    Margin="4"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Left"/>
+                                                <Popup Name="Popup"
+                                       Placement="Bottom"
+                                       IsOpen="{TemplateBinding IsDropDownOpen}"
+                                       AllowsTransparency="True"
+                                       Focusable="False">
+                                                    <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White">
+                                                        <ScrollViewer>
+                                                            <StackPanel IsItemsHost="True"/>
+                                                        </ScrollViewer>
+                                                    </Border>
+                                                </Popup>
+                                            </Grid>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ComboBox.Style>
+                </ComboBox>
+
+            </StackPanel>
+            <StackPanel>
+                <Label Content="Warehouse:" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
+                <ComboBox Height="42" BorderThickness="2" BorderBrush="#474747">
+                    <ComboBox.Style>
+                        <Style TargetType="ComboBox">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ComboBox">
+                                        <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White">
+                                            <Grid>
+                                                <ToggleButton 
+                                    Name="ToggleButton" 
+                                    Grid.Column="2" 
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    Focusable="false"
+                                    ClickMode="Press">
+                                                    <ContentPresenter Margin="6,0,0,0" />
+                                                </ToggleButton>
+                                                <ContentPresenter
+                                    Name="ContentSite"
+                                    IsHitTestVisible="False"
+                                    Margin="4"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Left"/>
+                                                <Popup Name="Popup"
+                                       Placement="Bottom"
+                                       IsOpen="{TemplateBinding IsDropDownOpen}"
+                                       AllowsTransparency="True"
+                                       Focusable="False">
+                                                    <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White">
+                                                        <ScrollViewer>
+                                                            <StackPanel IsItemsHost="True"/>
+                                                        </ScrollViewer>
+                                                    </Border>
+                                                </Popup>
+                                            </Grid>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ComboBox.Style>
+                </ComboBox>
+
+            </StackPanel>
+            <StackPanel>
+                <Label Content="Product Category:" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
+                <TextBox Height="42" BorderThickness="2" BorderBrush="#474747">
+                    <TextBox.Style>
+                        <Style TargetType="TextBox">
+                            <Setter Property="Control.Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="TextBox">
+                                        <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White">
+                                            <ScrollViewer x:Name="PART_ContentHost"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </TextBox.Style>
+                </TextBox>
+
+            </StackPanel>
+            <StackPanel>
+                <Label Content="Product Retail Price:" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
+                <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White" Height="42">
+                    <Grid>
+                        <materialDesign:PackIcon Kind="CurrencyPhp" Width="15" Height="15" Foreground="#474747" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+                        <TextBox Margin="35,0,10,0" Background="Transparent" BorderThickness="0" VerticalContentAlignment="Center"/>
+                    </Grid>
+                </Border>
+            </StackPanel>
+            <StackPanel>
+                <Label Content="Product Order Price:" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
+                <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White" Height="42">
+                    <Grid>
+                        <materialDesign:PackIcon Kind="CurrencyPhp" Width="15" Height="15" Foreground="#474747" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"/>
+                        <TextBox Margin="35,0,10,0" Background="Transparent" BorderThickness="0" VerticalContentAlignment="Center"/>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </UniformGrid>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="20">
+            <Button x:Name="btnCancel" Background="#D23636" Width="100" Height="40" Margin="5" BorderThickness="0">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border CornerRadius="18" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+                <TextBlock Text="Cancel" Foreground="White" FontFamily="Lexend" FontSize="10"/>
+            </Button>
+
+            <Button x:Name="btnNext" Background="#2E466B" Width="100" Height="40" Margin="5" BorderThickness="0"  Click="btnAddRow_Click">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border CornerRadius="18" Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+                <TextBlock Text="Next" Foreground="White" FontFamily="Lexend" FontSize="10"/>
+            </Button>
+        </StackPanel>
+
+    </Grid>
+</Window>

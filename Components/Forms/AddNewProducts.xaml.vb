@@ -1,0 +1,3 @@
+﻿Class AddNewProducts
+
+End Class

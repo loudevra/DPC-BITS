@@ -238,6 +238,48 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="Views\Stocks\ItemManager\NewProduct\AddNewProducts.xaml.vb">
+      <DependentUpon>AddNewProducts.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\ItemManager\NewProduct\AddNewProductSecondForm.xaml.vb">
+      <DependentUpon>AddNewProductSecondForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\ItemManager\ProductManager\ManageProducts.xaml.vb">
+      <DependentUpon>ManageProducts.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\ProductCategories\ProductCategories.xaml.vb">
+      <DependentUpon>ProductCategories.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\ProductsLabel\StandardLabel\StandardLabel.xaml.vb">
+      <DependentUpon>StandardLabel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\PurchaseOrder\ManageOrders\ManageOrders.xaml.vb">
+      <DependentUpon>ManageOrders.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\StockReturn\CutomersRecords\CustomersRecords.xaml.vb">
+      <DependentUpon>CustomersRecords.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\StockReturn\SuppliersRecords\SuppliersRecords.xaml.vb">
+      <DependentUpon>SuppliersRecords.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\StocksTransfer\StocksTransfer.xaml.vb">
+      <DependentUpon>StocksTransfer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\ProductsLabel\CustomLabel\CustomLabel.xaml.vb">
+      <DependentUpon>CustomLabel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\PurchaseOrder\NewOrder\NewOrder.xaml.vb">
+      <DependentUpon>NewOrder.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\Suppliers\ManageSuppliers\ManageSuppliers.xaml.vb">
+      <DependentUpon>ManageSuppliers.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\Suppliers\NewSupplier\NewSuppliers.xaml.vb">
+      <DependentUpon>NewSuppliers.xaml</DependentUpon>
+    </Compile>
+    <Page Include="Components\Forms\AddNewClientGrpForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\UI\PopUpMenuAccounts.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -331,6 +373,59 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HRM\Employees\Permissions\EmployeePermissions.xaml">
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Views\Stocks\ItemManager\NewProduct\AddNewProducts.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\ItemManager\NewProduct\AddNewProductSecondForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\ItemManager\ProductManager\ManageProducts.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\ProductCategories\ProductCategories.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\ProductsLabel\StandardLabel\StandardLabel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Stocks\PurchaseOrder\ManageOrders\ManageOrders.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\StockReturn\CutomersRecords\CustomersRecords.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\StockReturn\SuppliersRecords\SuppliersRecords.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\StocksTransfer\StocksTransfer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\ProductsLabel\CustomLabel\CustomLabel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\PurchaseOrder\NewOrder\NewOrder.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\Suppliers\ManageSuppliers\ManageSuppliers.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\Suppliers\NewSupplier\NewSuppliers.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\Warehouses\Warehouses.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
