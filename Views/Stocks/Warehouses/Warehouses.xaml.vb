@@ -1,7 +1,7 @@
 ﻿Imports System.Windows
 
-Namespace DPC.Views.ItemManager.AddNewProducts
-    Public Class AddNewProductSecondForm
+Namespace DPC.Views.Stocks.Warehouses
+    Public Class Warehouses
         Inherits Window
 
         Public Sub New()

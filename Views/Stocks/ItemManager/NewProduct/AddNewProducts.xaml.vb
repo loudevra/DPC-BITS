@@ -1,4 +1,4 @@
-﻿Namespace DPC.Views.ItemManager.AddNewProducts
+﻿Namespace DPC.Views.Stocks.ItemManager.NewProduct
     Public Class AddNewProducts
         Inherits Window
 

@@ -1,4 +1,4 @@
-﻿Namespace DPC.Views.Stocks.PurchaseOrder
+﻿Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
     Public Class NewOrder
         Private rowCount As Integer = 0
         Private MyDynamicGrid As Grid

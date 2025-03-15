@@ -139,30 +139,35 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Views\ItemManager\AddNewProducts.xaml.vb">
+    <Compile Include="Views\Stocks\ItemManager\NewProduct\AddNewProducts.xaml.vb">
       <DependentUpon>AddNewProducts.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ItemManager\AddNewProductSecondForm.xaml.vb">
+    <Compile Include="Views\Stocks\ItemManager\NewProduct\AddNewProductSecondForm.xaml.vb">
       <DependentUpon>AddNewProductSecondForm.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ItemManager\ManageProducts.xaml.vb">
+    <Compile Include="Views\Stocks\ItemManager\ProductManager\ManageProducts.xaml.vb">
       <DependentUpon>ManageProducts.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ProductCategories\ProductCategories.xaml.vb">
+    <Compile Include="Views\Stocks\ProductCategories\ProductCategories.xaml.vb">
       <DependentUpon>ProductCategories.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\StocksTransfer\StocksTransfer.xaml.vb">
+    <Compile Include="Views\Stocks\StocksTransfer\StocksTransfer.xaml.vb">
       <DependentUpon>StocksTransfer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Stocks\ProductsLabel\CustomLabel.xaml.vb">
+    <Compile Include="Views\Stocks\ProductsLabel\CustomLabel\CustomLabel.xaml.vb">
       <DependentUpon>CustomLabel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Stocks\PurchaseOrder\NewOrder.xaml.vb">
+    <Compile Include="Views\Stocks\PurchaseOrder\NewOrder\NewOrder.xaml.vb">
       <DependentUpon>NewOrder.xaml</DependentUpon>
     </Compile>
+
     <Compile Include="Views\Warehouses\Warehouses.xaml.vb">
-      <DependentUpon>Warehouses.xaml</DependentUpon>
+
+    <Compile Include="Components\Forms\AddNewProductsForm.xaml.xaml.vb" />
+    <Compile Include="Components\Forms\AddNewProductsNextForm.xaml.vb">
+      <DependentUpon>AddNewProductsNextForm.xaml</DependentUpon>
     </Compile>
+
     <Page Include="Components\Forms\AddNewClientGrpForm.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -229,33 +234,33 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\ItemManager\AddNewProducts.xaml">
+    <Page Include="Views\Stocks\ItemManager\NewProduct\AddNewProducts.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ItemManager\AddNewProductSecondForm.xaml">
+    <Page Include="Views\Stocks\ItemManager\NewProduct\AddNewProductSecondForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ItemManager\ManageProducts.xaml">
+    <Page Include="Views\Stocks\ItemManager\ProductManager\ManageProducts.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ProductCategories\ProductCategories.xaml">
+    <Page Include="Views\Stocks\ProductCategories\ProductCategories.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\StocksTransfer\StocksTransfer.xaml">
+    <Page Include="Views\Stocks\StocksTransfer\StocksTransfer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Stocks\ProductsLabel\CustomLabel.xaml">
+    <Page Include="Views\Stocks\ProductsLabel\CustomLabel\CustomLabel.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Stocks\PurchaseOrder\NewOrder.xaml">
+    <Page Include="Views\Stocks\PurchaseOrder\NewOrder\NewOrder.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Warehouses\Warehouses.xaml">
+    <Page Include="Views\Stocks\Warehouses\Warehouses.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -318,8 +323,10 @@
     <Folder Include="Installer\" />
     <Folder Include="Services\" />
     <Folder Include="Themes\" />
-    <Folder Include="Views\StockReturn\" />
-    <Folder Include="Views\Suppliers\" />
+    <Folder Include="Views\Stocks\ProductsLabel\StandardLabel\" />
+    <Folder Include="Views\Stocks\PurchaseOrder\ManageOrders\" />
+    <Folder Include="Views\Stocks\StocksReturn\" />
+    <Folder Include="Views\Stocks\Suppliers\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\images\logo.png" />
