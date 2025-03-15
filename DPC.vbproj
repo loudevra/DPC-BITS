@@ -164,12 +164,7 @@
       <DependentUpon>NewOrder.xaml</DependentUpon>
     </Compile>
 
-    <Compile Include="Views\Warehouses\Warehouses.xaml.vb">
-
-    <Compile Include="Components\Forms\AddNewProductsForm.xaml.xaml.vb" />
-    <Compile Include="Components\Forms\AddNewProductsNextForm.xaml.vb">
-      <DependentUpon>AddNewProductsNextForm.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Views\Warehouses\Warehouses.xaml.vb"/>
 
     <Page Include="Components\Forms\AddNewClientGrpForm.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -237,6 +232,8 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+	</ItemGroup>
+	<ItemGroup>
     <Page Include="Views\Stocks\ItemManager\NewProduct\AddNewProducts.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
