@@ -80,6 +80,50 @@
             </Setter>
         </Style>
 
+        <!-- Printer Button Style -->
+        <Style x:Key="PrinterButton" TargetType="Button">
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Background" Value="#244270"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="20" Padding="{TemplateBinding Padding}">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <materialDesign:PackIcon Kind="PrinterPosPlus" Width="20" Height="20" Foreground="White" Margin="0,0,5,0"/>
+                                <TextBlock Text="{TemplateBinding Content}" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Border Style -->
+        <Style x:Key="TextBoxBorderStyle" TargetType="Border">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+
+        <!-- TextBox Style -->
+        <Style x:Key="CustomTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Margin" Value="20,0,0,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontFamily" Value="Lexend"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Focusable" Value="True"/>
+        </Style>
     </Window.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
@@ -531,24 +575,13 @@ BorderThickness="1" HorizontalContentAlignment="Left">
                         <TextBlock Text="Label Width:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
                     </StackPanel>
                     <StackPanel Grid.Row="1" Grid.Column="0" Margin="10,0,25,10">
-                        <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" 
-Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
+                        <Border Style="{StaticResource TextBoxBorderStyle}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
-                                    <!-- Makes the TextBox fill the width -->
                                 </Grid.ColumnDefinitions>
 
-                                <TextBox Grid.Column="0"
-         Height="35"
-         Margin="20,0,0,0"
-         VerticalAlignment="Center"
-         VerticalContentAlignment="Center"
-         BorderThickness="0"
-         FontFamily="Lexend"
-         Background="Transparent"
-         HorizontalAlignment="Stretch"
-         Focusable="True"/>
+                                <TextBox Grid.Column="0" Style="{StaticResource CustomTextBoxStyle}"/>
                             </Grid>
                         </Border>
                     </StackPanel>
@@ -557,24 +590,13 @@ Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                         <TextBlock Text="Label Height:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
                     </StackPanel>
                     <StackPanel Grid.Row="1" Grid.Column="1" Margin="10,0,25,10">
-                        <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" 
-Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
+                        <Border Style="{StaticResource TextBoxBorderStyle}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
-                                    <!-- Makes the TextBox fill the width -->
                                 </Grid.ColumnDefinitions>
 
-                                <TextBox Grid.Column="0"
-         Height="35"
-         Margin="20,0,0,0"
-         VerticalAlignment="Center"
-         VerticalContentAlignment="Center"
-         BorderThickness="0"
-         FontFamily="Lexend"
-         Background="Transparent"
-         HorizontalAlignment="Stretch"
-         Focusable="True"/>
+                                <TextBox Grid.Column="0" Style="{StaticResource CustomTextBoxStyle}"/>
                             </Grid>
                         </Border>
                     </StackPanel>
@@ -596,24 +618,13 @@ Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                         <TextBlock Text="Sheet Width:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
                     </StackPanel>
                     <StackPanel Grid.Row="1" Grid.Column="0" Margin="10,0,25,10">
-                        <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" 
-Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
+                        <Border Style="{StaticResource TextBoxBorderStyle}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
-                                    <!-- Makes the TextBox fill the width -->
                                 </Grid.ColumnDefinitions>
 
-                                <TextBox Grid.Column="0"
-         Height="35"
-         Margin="20,0,0,0"
-         VerticalAlignment="Center"
-         VerticalContentAlignment="Center"
-         BorderThickness="0"
-         FontFamily="Lexend"
-         Background="Transparent"
-         HorizontalAlignment="Stretch"
-         Focusable="True"/>
+                                <TextBox Grid.Column="0" Style="{StaticResource CustomTextBoxStyle}"/>
                             </Grid>
                         </Border>
                     </StackPanel>
@@ -622,24 +633,13 @@ Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                         <TextBlock Text="Sheet Height:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
                     </StackPanel>
                     <StackPanel Grid.Row="1" Grid.Column="1" Margin="10,0,25,10">
-                        <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" 
-Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
+                        <Border Style="{StaticResource TextBoxBorderStyle}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
-                                    <!-- Makes the TextBox fill the width -->
                                 </Grid.ColumnDefinitions>
 
-                                <TextBox Grid.Column="0"
-         Height="35"
-         Margin="20,0,0,0"
-         VerticalAlignment="Center"
-         VerticalContentAlignment="Center"
-         BorderThickness="0"
-         FontFamily="Lexend"
-         Background="Transparent"
-         HorizontalAlignment="Stretch"
-         Focusable="True"/>
+                                <TextBox Grid.Column="0" Style="{StaticResource CustomTextBoxStyle}"/>
                             </Grid>
                         </Border>
                     </StackPanel>
@@ -868,7 +868,6 @@ Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                     <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,10">
                         <TextBlock Text="Product Name:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top"/>
                     </StackPanel>
-
                     <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,25,10">
                         <Border x:Name="AddBorderProductName" Style="{StaticResource DefaultBorderStyle}">
                             <Grid>
@@ -896,7 +895,6 @@ Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                             </Grid>
                         </Border>
                     </StackPanel>
-
                     <StackPanel Grid.Row="2" Grid.Column="1" Margin="0,0,25,10">
                         <Border x:Name="RemoveBorderProductName" Style="{StaticResource DefaultBorderStyle}">
                             <Grid>
@@ -925,7 +923,6 @@ Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                     <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,10">
                         <TextBlock Text="Business Location:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top"/>
                     </StackPanel>
-
                     <StackPanel Grid.Row="4" Grid.Column="0" Margin="0,0,25,10">
                         <Border x:Name="AddBorderBusinessLocation" Style="{StaticResource DefaultBorderStyle}">
                             <Grid>
@@ -953,7 +950,6 @@ Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                             </Grid>
                         </Border>
                     </StackPanel>
-
                     <StackPanel Grid.Row="4" Grid.Column="1" Margin="0,0,25,10">
                         <Border x:Name="RemoveBorderBusinessLocation" Style="{StaticResource DefaultBorderStyle}">
                             <Grid>
@@ -984,7 +980,6 @@ Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                     <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,10">
                         <TextBlock Text="Warehouse:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top"/>
                     </StackPanel>
-
                     <StackPanel Grid.Row="6" Grid.Column="0" Margin="0,0,25,10">
                         <Border x:Name="AddBorderWarehouse" Style="{StaticResource DefaultBorderStyle}">
                             <Grid>
@@ -1012,7 +1007,6 @@ Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                             </Grid>
                         </Border>
                     </StackPanel>
-
                     <StackPanel Grid.Row="6" Grid.Column="1" Margin="0,0,25,10">
                         <Border x:Name="RemoveBorderWarehouse" Style="{StaticResource DefaultBorderStyle}">
                             <Grid>
@@ -1043,7 +1037,6 @@ Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                     <StackPanel Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,10">
                         <TextBlock Text="Price:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top"/>
                     </StackPanel>
-
                     <StackPanel Grid.Row="8" Grid.Column="0" Margin="0,0,25,10">
                         <Border x:Name="AddBorderPrice" Style="{StaticResource DefaultBorderStyle}">
                             <Grid>
@@ -1071,7 +1064,6 @@ Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                             </Grid>
                         </Border>
                     </StackPanel>
-
                     <StackPanel Grid.Row="8" Grid.Column="1" Margin="0,0,25,10">
                         <Border x:Name="RemoveBorderPrice" Style="{StaticResource DefaultBorderStyle}">
                             <Grid>
@@ -1102,8 +1094,6 @@ Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                     <StackPanel Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,10">
                         <TextBlock Text="Product Code:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top"/>
                     </StackPanel>
-
-
                     <StackPanel Grid.Row="10" Grid.Column="0" Margin="0,0,25,10">
                         <Border x:Name="AddBorderProductCode" Style="{StaticResource DefaultBorderStyle}">
                             <Grid>
@@ -1131,7 +1121,6 @@ Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                             </Grid>
                         </Border>
                     </StackPanel>
-
                     <StackPanel Grid.Row="10" Grid.Column="1" Margin="0,0,25,10">
                         <Border x:Name="RemoveBorderProductCode" Style="{StaticResource DefaultBorderStyle}">
                             <Grid>
@@ -1162,8 +1151,6 @@ Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                     <StackPanel Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,10">
                         <TextBlock Text="Products:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top"/>
                     </StackPanel>
-
-
                     <StackPanel Grid.Row="12" Grid.Column="0" Margin="0,0,25,10">
                         <Border x:Name="AddBorderProducts" Style="{StaticResource DefaultBorderStyle}">
                             <Grid>
@@ -1191,7 +1178,6 @@ Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                             </Grid>
                         </Border>
                     </StackPanel>
-
                     <StackPanel Grid.Row="12" Grid.Column="1" Margin="0,0,25,10">
                         <Border x:Name="RemoveBorderProducts" Style="{StaticResource DefaultBorderStyle}">
                             <Grid>
@@ -1220,26 +1206,7 @@ Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                     </StackPanel>
 
                     <StackPanel Grid.Row="13" Grid.Column="0" Grid.ColumnSpan="2" Margin="25,25,25,40" HorizontalAlignment="Right">
-                        <Button Width="100" Height="40" Background="#244270" Foreground="White"
-Padding="10" HorizontalAlignment="Left">
-                            <Button.Style>
-                                <Style TargetType="Button">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="Button">
-                                                <Border Background="{TemplateBinding Background}" CornerRadius="20" Padding="{TemplateBinding Padding}">
-                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </Button.Style>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <materialDesign:PackIcon Kind="PrinterPosPlus" Width="20" Height="20" Foreground="White" Margin="0,0,5,0"/>
-                                <TextBlock Text="Print" FontSize="14" VerticalAlignment="Center" FontWeight="Bold"/>
-                            </StackPanel>
-                        </Button>
+                        <Button Content="Print" Style="{StaticResource PrinterButton}"/>
                     </StackPanel>
                 </Grid>
             </StackPanel>

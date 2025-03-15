@@ -151,6 +151,9 @@
     <Compile Include="Views\Stocks\ProductCategories\ProductCategories.xaml.vb">
       <DependentUpon>ProductCategories.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Stocks\ProductsLabel\StandardLabel\StandardLabel.xaml.vb">
+      <DependentUpon>StandardLabel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stocks\StocksTransfer\StocksTransfer.xaml.vb">
       <DependentUpon>StocksTransfer.xaml</DependentUpon>
     </Compile>
@@ -260,6 +263,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Stocks\ProductsLabel\StandardLabel\StandardLabel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Stocks\StocksTransfer\StocksTransfer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -333,7 +340,6 @@
     <Folder Include="Installer\" />
     <Folder Include="Services\" />
     <Folder Include="Themes\" />
-    <Folder Include="Views\Stocks\ProductsLabel\StandardLabel\" />
     <Folder Include="Views\Stocks\PurchaseOrder\ManageOrders\" />
     <Folder Include="Views\Stocks\StocksReturn\" />
     <Folder Include="Views\Stocks\Suppliers\" />

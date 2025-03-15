@@ -4,83 +4,34 @@
         xmlns:local="namespace:DPC.Views.Stocks.ProductsLabel"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         Title="Standard Label"
-		Loaded="Window_Loaded"
         Width="1200"
         Height="800"
         Background="#D9D9D9"
         WindowStartupLocation="CenterScreen">
 
 	<Window.Resources>
-		<!-- Default Border Style -->
-		<Style x:Key="DefaultBorderStyle" TargetType="Border">
-			<Setter Property="BorderThickness" Value="2"/>
-			<Setter Property="CornerRadius" Value="20"/>
-			<Setter Property="Padding" Value="5"/>
-			<Setter Property="Width" Value="Auto"/>
-			<Setter Property="Background" Value="White"/>
-			<Setter Property="BorderBrush" Value="Black"/>
-			<!-- Default Black -->
-		</Style>
-
-		<!-- Default PackIcon Style -->
-		<Style x:Key="DefaultPackIconStyle" TargetType="materialDesign:PackIcon">
-			<Setter Property="Foreground" Value="#474747"/>
-			<!-- Default Gray -->
-			<Setter Property="Width" Value="20"/>
-			<Setter Property="Height" Value="20"/>
-			<Setter Property="HorizontalAlignment" Value="Right"/>
-			<Setter Property="VerticalAlignment" Value="Center"/>
-			<Setter Property="Margin" Value="10,0,10,0"/>
-		</Style>
-
-		<!-- Custom RadioButton Style -->
-		<Style x:Key="CustomRadioButtonStyle" TargetType="RadioButton">
-			<Setter Property="Foreground" Value="#474747"/>
-			<!-- Default Text Color -->
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="RadioButton">
-						<StackPanel Orientation="Horizontal">
-							<!-- Outer Circle -->
-							<Border Width="16" Height="16" CornerRadius="8"
-                                BorderThickness="2" Margin="5"
-                                x:Name="OuterCircle"
-                                BorderBrush="#474747">
-								<!-- Inner Circle -->
-								<Ellipse Width="8" Height="8" Fill="Transparent"
-                                     x:Name="InnerCircle" Visibility="Collapsed"/>
-							</Border>
-
-							<!-- TextBlock for Content -->
-							<TextBlock x:Name="RadioText" VerticalAlignment="Center"
-                                   Text="{TemplateBinding Content}"
-                                   Foreground="{TemplateBinding Foreground}"/>
-						</StackPanel>
-
-						<ControlTemplate.Triggers>
-							<!-- When Checked (Only the selected button changes) -->
-							<Trigger Property="IsChecked" Value="True">
-								<Setter TargetName="InnerCircle" Property="Visibility" Value="Visible"/>
-								<Setter TargetName="InnerCircle" Property="Fill" Value="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"/>
-								<Setter TargetName="OuterCircle" Property="BorderBrush" Value="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"/>
-								<Setter TargetName="RadioText" Property="Foreground" Value="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"/>
-								<Setter Property="Foreground" Value="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"/>
-							</Trigger>
-
-							<!-- When Unchecked (Stays in default black/gray) -->
-							<Trigger Property="IsChecked" Value="False">
-								<Setter TargetName="InnerCircle" Property="Visibility" Value="Collapsed"/>
-								<Setter TargetName="OuterCircle" Property="BorderBrush" Value="#474747"/>
-								<Setter TargetName="RadioText" Property="Foreground" Value="#474747"/>
-								<Setter Property="Foreground" Value="#474747"/>
-							</Trigger>
-						</ControlTemplate.Triggers>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-
-	</Window.Resources>
+        <!-- Printer Button Style -->
+        <Style x:Key="PrinterButton" TargetType="Button">
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Background" Value="#244270"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="20" Padding="{TemplateBinding Padding}">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <materialDesign:PackIcon Kind="PrinterPosPlus" Width="20" Height="20" Foreground="White" Margin="0,0,5,0"/>
+                                <TextBlock Text="{TemplateBinding Content}" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
 
 	<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
 		<Grid>
@@ -93,167 +44,167 @@
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 
-			<StackPanel x:Name="ProductLabelRow" Grid.Row="0" Margin="0,0,0,30">
-				<Grid>
-					<Grid.RowDefinitions>
-						<RowDefinition Height=".2*"/>
-						<RowDefinition Height=".4*"/>
-						<RowDefinition Height=".4*"/>
-					</Grid.RowDefinitions>
+            <StackPanel x:Name="ProductLabelRow" Grid.Row="0" Margin="0,0,0,30">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height=".2*"/>
+                        <RowDefinition Height=".4*"/>
+                        <RowDefinition Height=".4*"/>
+                    </Grid.RowDefinitions>
 
-					<StackPanel Grid.Row="0" Margin="25,25,0,30">
-						<TextBlock Text="Product Label" FontWeight="SemiBold" FontFamily="Lexend" FontSize="25" Foreground="#474747" VerticalAlignment="Top"/>
-					</StackPanel>
+                    <StackPanel Grid.Row="0" Margin="25,25,0,30">
+                        <TextBlock Text="Product Label" FontWeight="SemiBold" FontFamily="Lexend" FontSize="25" Foreground="#474747" VerticalAlignment="Top"/>
+                    </StackPanel>
 
-					<StackPanel Grid.Row="1" Margin="0,0,0,0">
-						<Grid>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width=".5*"/>
-								<ColumnDefinition Width=".5*"/>
-							</Grid.ColumnDefinitions>
-							<!-- Yes Button with Border -->
-							<Border Grid.Column="0" Background="#AEAEAE" CornerRadius="20" Padding="10" Margin="25,0,25,25">
-								<RadioButton Content="Custom" IsChecked="True" GroupName="Custom_Standard" FontFamily="Lexend" FontSize="14" Foreground="White">
-									<RadioButton.Style>
-										<Style TargetType="RadioButton">
-											<Setter Property="Template">
-												<Setter.Value>
-													<ControlTemplate TargetType="RadioButton">
-														<StackPanel Orientation="Horizontal">
-															<Border Width="16" Height="16" CornerRadius="8" BorderBrush="White" BorderThickness="2" Margin="5">
-																<Ellipse Width="8" Height="8" Fill="White" Visibility="Collapsed" x:Name="Dot"/>
-															</Border>
-															<ContentPresenter VerticalAlignment="Center"/>
-														</StackPanel>
-														<ControlTemplate.Triggers>
-															<Trigger Property="IsChecked" Value="True">
-																<Setter TargetName="Dot" Property="Visibility" Value="Visible"/>
-															</Trigger>
-														</ControlTemplate.Triggers>
-													</ControlTemplate>
-												</Setter.Value>
-											</Setter>
-										</Style>
-									</RadioButton.Style>
-								</RadioButton>
-							</Border>
+                    <StackPanel Grid.Row="1" Margin="0,0,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width=".5*"/>
+                                <ColumnDefinition Width=".5*"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- Yes Button with Border -->
+                            <Border Grid.Column="0" Background="#AEAEAE" CornerRadius="20" Padding="10" Margin="25,0,25,25">
+                                <RadioButton Content="Custom" GroupName="Custom_Standard" FontFamily="Lexend" FontSize="14" Foreground="White">
+                                    <RadioButton.Style>
+                                        <Style TargetType="RadioButton">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="RadioButton">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Border Width="16" Height="16" CornerRadius="8" BorderBrush="White" BorderThickness="2" Margin="5">
+                                                                <Ellipse Width="8" Height="8" Fill="White" Visibility="Collapsed" x:Name="Dot"/>
+                                                            </Border>
+                                                            <ContentPresenter VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsChecked" Value="True">
+                                                                <Setter TargetName="Dot" Property="Visibility" Value="Visible"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </RadioButton.Style>
+                                </RadioButton>
+                            </Border>
 
-							<!-- No Button with Border -->
-							<Border Grid.Column="1" Background="#AEAEAE" CornerRadius="20" Padding="10" Margin="25,0,25,25">
-								<RadioButton Content="Standard" GroupName="Custom_Standard" FontFamily="Lexend" FontSize="14" Foreground="White">
-									<RadioButton.Style>
-										<Style TargetType="RadioButton">
-											<Setter Property="Template">
-												<Setter.Value>
-													<ControlTemplate TargetType="RadioButton">
-														<StackPanel Orientation="Horizontal">
-															<Border Width="16" Height="16" CornerRadius="8" BorderBrush="White" BorderThickness="2" Margin="5">
-																<Ellipse Width="8" Height="8" Fill="White" Visibility="Collapsed" x:Name="Dot"/>
-															</Border>
-															<ContentPresenter VerticalAlignment="Center"/>
-														</StackPanel>
-														<ControlTemplate.Triggers>
-															<Trigger Property="IsChecked" Value="True">
-																<Setter TargetName="Dot" Property="Visibility" Value="Visible"/>
-															</Trigger>
-														</ControlTemplate.Triggers>
-													</ControlTemplate>
-												</Setter.Value>
-											</Setter>
-										</Style>
-									</RadioButton.Style>
-								</RadioButton>
-							</Border>
-						</Grid>
-					</StackPanel>
+                            <!-- No Button with Border -->
+                            <Border Grid.Column="1" Background="#AEAEAE" CornerRadius="20" Padding="10" Margin="25,0,25,25">
+                                <RadioButton Content="Standard" IsChecked="True" GroupName="Custom_Standard" FontFamily="Lexend" FontSize="14" Foreground="White">
+                                    <RadioButton.Style>
+                                        <Style TargetType="RadioButton">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="RadioButton">
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Border Width="16" Height="16" CornerRadius="8" BorderBrush="White" BorderThickness="2" Margin="5">
+                                                                <Ellipse Width="8" Height="8" Fill="White" Visibility="Collapsed" x:Name="Dot"/>
+                                                            </Border>
+                                                            <ContentPresenter VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsChecked" Value="True">
+                                                                <Setter TargetName="Dot" Property="Visibility" Value="Visible"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </RadioButton.Style>
+                                </RadioButton>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
 
-					<StackPanel Grid.Row="2" Margin="25,0,25,0">
-						<TextBlock Text="Warehouse:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
-						<StackPanel Width="Auto" HorizontalAlignment="Stretch" Margin="0,0,0,10">
-							<ComboBox SelectedIndex="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"
+                    <StackPanel Grid.Row="2" Margin="25,0,25,0">
+                        <TextBlock Text="Warehouse:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
+                        <StackPanel Width="Auto" HorizontalAlignment="Stretch" Margin="0,0,0,10">
+                            <ComboBox SelectedIndex="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"
     Padding="10" Width="Auto" Height="40" Background="White" BorderBrush="black"
     BorderThickness="1" HorizontalContentAlignment="Left" Margin="0,0,0,10">
-								<ComboBox.Resources>
-									<!-- Custom ComboBox Toggle Button -->
-									<Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
-										<Setter Property="Focusable" Value="False"/>
-										<Setter Property="Template">
-											<Setter.Value>
-												<ControlTemplate TargetType="ToggleButton">
-													<Border Background="Transparent" Padding="5">
-														<Grid>
-															<Path x:Name="Arrow" Data="M 0 0 L 4 4 L 8 0 Z"
+                                <ComboBox.Resources>
+                                    <!-- Custom ComboBox Toggle Button -->
+                                    <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+                                        <Setter Property="Focusable" Value="False"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ToggleButton">
+                                                    <Border Background="Transparent" Padding="5">
+                                                        <Grid>
+                                                            <Path x:Name="Arrow" Data="M 0 0 L 4 4 L 8 0 Z"
               HorizontalAlignment="Right" VerticalAlignment="Center"
               Fill="Black" Width="8" Height="8"
               Margin="0,5,10,0"/>
-														</Grid>
-													</Border>
-												</ControlTemplate>
-											</Setter.Value>
-										</Setter>
-									</Style>
+                                                        </Grid>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
 
-									<!-- Custom ComboBox Style -->
-									<Style TargetType="ComboBox">
-										<Setter Property="Template">
-											<Setter.Value>
-												<ControlTemplate TargetType="ComboBox">
-													<Border Background="{TemplateBinding Background}"
+                                    <!-- Custom ComboBox Style -->
+                                    <Style TargetType="ComboBox">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ComboBox">
+                                                    <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="20" Padding="5">
-														<Grid>
-															<!-- Toggle Button for Dropdown -->
-															<ToggleButton Name="ToggleButton"
+                                                        <Grid>
+                                                            <!-- Toggle Button for Dropdown -->
+                                                            <ToggleButton Name="ToggleButton"
                                       Style="{StaticResource ComboBoxToggleButton}"
                                       Grid.Column="2" Focusable="False"
                                       IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                                       ClickMode="Press"/>
 
-															<!-- Selected Content -->
-															<ContentPresenter Name="ContentSite" IsHitTestVisible="False"
+                                                            <!-- Selected Content -->
+                                                            <ContentPresenter Name="ContentSite" IsHitTestVisible="False"
                                       Content="{TemplateBinding SelectionBoxItem}"
                                       ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
                                       Margin="10,0,40,0" VerticalAlignment="Center"/>
 
-															<!-- Dropdown List -->
-															<Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}"
+                                                            <!-- Dropdown List -->
+                                                            <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}"
                                        AllowsTransparency="True" Focusable="False"
                                        PopupAnimation="Slide"
                                        MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-																<Border Background="White" BorderBrush="Gray" BorderThickness="1"
+                                                                <Border Background="White" BorderBrush="Gray" BorderThickness="1"
                                         CornerRadius="10"
                                         Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-																	<ScrollViewer>
-																		<StackPanel>
-																			<ItemsPresenter/>
-																		</StackPanel>
-																	</ScrollViewer>
-																</Border>
-															</Popup>
-														</Grid>
-													</Border>
-												</ControlTemplate>
-											</Setter.Value>
-										</Setter>
-									</Style>
-								</ComboBox.Resources>
+                                                                    <ScrollViewer>
+                                                                        <StackPanel>
+                                                                            <ItemsPresenter/>
+                                                                        </StackPanel>
+                                                                    </ScrollViewer>
+                                                                </Border>
+                                                            </Popup>
+                                                        </Grid>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ComboBox.Resources>
 
-								<!-- ComboBox Items -->
-								<ComboBoxItem Content="Warehouse 1"/>
-								<ComboBoxItem Content="Warehouse 2"/>
-							</ComboBox>
-						</StackPanel>
-						<TextBlock Text="Products:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
-						<Border BorderThickness="1" BorderBrush="black" CornerRadius="20"
+                                <!-- ComboBox Items -->
+                                <ComboBoxItem Content="Warehouse 1"/>
+                                <ComboBoxItem Content="Warehouse 2"/>
+                            </ComboBox>
+                        </StackPanel>
+                        <TextBlock Text="Products:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
+                        <Border BorderThickness="1" BorderBrush="black" CornerRadius="20"
         Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<!-- Makes the TextBox fill the width -->
-								</Grid.ColumnDefinitions>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <!-- Makes the TextBox fill the width -->
+                                </Grid.ColumnDefinitions>
 
-								<TextBox Grid.Column="0"
+                                <TextBox Grid.Column="0"
                  Height="35"
                  Margin="20,0,0,0"
                  VerticalAlignment="Center"
@@ -263,986 +214,114 @@
                  Background="Transparent"
                  HorizontalAlignment="Stretch"
                  Focusable="True"/>
-							</Grid>
-						</Border>
-					</StackPanel>
-				</Grid>
-			</StackPanel>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+            
+            <StackPanel x:Name="PrintSettings" Grid.Row="1" Margin="25,0,25,30">
+                <Border BorderThickness="0,2,0,0" BorderBrush="#AEAEAE" Margin="-10,0,-10,25" Width="Auto" HorizontalAlignment="Stretch"/>
+                <TextBlock Text="Print Settings" FontWeight="Regular" FontFamily="Lexend" FontSize="20" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,20"/>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-			<StackPanel x:Name="PrintSettings" Grid.Row="1" Margin="25,0,25,30">
-				<Border BorderThickness="0,2,0,0" BorderBrush="#AEAEAE" Margin="-10,0,-10,25" Width="Auto" HorizontalAlignment="Stretch"/>
-
-				<TextBlock Text="Print Settings" FontWeight="Regular" FontFamily="Lexend" FontSize="20" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,20"/>
-
-				<Grid>
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-					</Grid.RowDefinitions>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width=".25*"/>
-						<ColumnDefinition Width=".25*"/>
-						<ColumnDefinition Width=".25*"/>
-						<ColumnDefinition Width=".25*"/>
-					</Grid.ColumnDefinitions>
-
-					<StackPanel Grid.Row="0" Grid.Column="0">
-						<TextBlock Text="Barcode Type:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
-					</StackPanel>
-					<StackPanel Grid.Row="1" Grid.Column="0"  Margin="10,0,25,10">
-						<ComboBox SelectedIndex="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"
+                    <StackPanel Grid.Row="0" Grid.Column="0">
+                        <TextBlock Text="Barcode Type:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="0"  Margin="0,0,0,0">
+                        <ComboBox SelectedIndex="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"
     Padding="10" Width="Auto" Height="40" Background="White" BorderBrush="black"
     BorderThickness="1" HorizontalContentAlignment="Left">
-							<ComboBox.Resources>
-								<!-- Custom ComboBox Toggle Button -->
-								<Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
-									<Setter Property="Focusable" Value="False"/>
-									<Setter Property="Template">
-										<Setter.Value>
-											<ControlTemplate TargetType="ToggleButton">
-												<Border Background="Transparent" Padding="5">
-													<Grid>
-														<Path x:Name="Arrow" Data="M 0 0 L 4 4 L 8 0 Z"
+                            <ComboBox.Resources>
+                                <!-- Custom ComboBox Toggle Button -->
+                                <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+                                    <Setter Property="Focusable" Value="False"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ToggleButton">
+                                                <Border Background="Transparent" Padding="5">
+                                                    <Grid>
+                                                        <Path x:Name="Arrow" Data="M 0 0 L 4 4 L 8 0 Z"
               HorizontalAlignment="Right" VerticalAlignment="Center"
               Fill="Black" Width="8" Height="8"
               Margin="0,5,10,0"/>
-													</Grid>
-												</Border>
-											</ControlTemplate>
-										</Setter.Value>
-									</Setter>
-								</Style>
+                                                    </Grid>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
 
-								<!-- Custom ComboBox Style -->
-								<Style TargetType="ComboBox">
-									<Setter Property="Template">
-										<Setter.Value>
-											<ControlTemplate TargetType="ComboBox">
-												<Border Background="{TemplateBinding Background}"
+                                <!-- Custom ComboBox Style -->
+                                <Style TargetType="ComboBox">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ComboBox">
+                                                <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="20" Padding="5">
-													<Grid>
-														<!-- Toggle Button for Dropdown -->
-														<ToggleButton Name="ToggleButton"
+                                                    <Grid>
+                                                        <!-- Toggle Button for Dropdown -->
+                                                        <ToggleButton Name="ToggleButton"
                                       Style="{StaticResource ComboBoxToggleButton}"
                                       Grid.Column="2" Focusable="False"
                                       IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                                       ClickMode="Press"/>
 
-														<!-- Selected Content -->
-														<ContentPresenter Name="ContentSite" IsHitTestVisible="False"
+                                                        <!-- Selected Content -->
+                                                        <ContentPresenter Name="ContentSite" IsHitTestVisible="False"
                                       Content="{TemplateBinding SelectionBoxItem}"
                                       ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
                                       Margin="10,0,40,0" VerticalAlignment="Center"/>
 
-														<!-- Dropdown List -->
-														<Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}"
+                                                        <!-- Dropdown List -->
+                                                        <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}"
                                        AllowsTransparency="True" Focusable="False"
                                        PopupAnimation="Slide"
                                                               
                                        MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-															<Border Background="White" BorderBrush="Gray" BorderThickness="1"
+                                                            <Border Background="White" BorderBrush="Gray" BorderThickness="1"
                                         CornerRadius="10"
                                         Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-																<ScrollViewer>
-																	<StackPanel>
-																		<ItemsPresenter/>
-																	</StackPanel>
-																</ScrollViewer>
-															</Border>
-														</Popup>
-													</Grid>
-												</Border>
-											</ControlTemplate>
-										</Setter.Value>
-									</Setter>
-								</Style>
-							</ComboBox.Resources>
-
-							<!-- ComboBox Items -->
-							<ComboBoxItem Content="EAN-13"/>
-							<ComboBoxItem Content="CODE-128"/>
-							<ComboBoxItem Content="CODE-39"/>
-							<ComboBoxItem Content="EAN-5"/>
-							<ComboBoxItem Content="EAN-8"/>
-							<ComboBoxItem Content="UPC-A"/>
-							<ComboBoxItem Content="UPC-E"/>
-						</ComboBox>
-					</StackPanel>
-
-					<StackPanel Grid.Row="0" Grid.Column="1">
-						<TextBlock Text="Barcode Width:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
-					</StackPanel>
-					<StackPanel Grid.Row="1" Grid.Column="1" Margin="10,0,25,10">
-						<Border BorderThickness="1" BorderBrush="black" CornerRadius="20"
-        Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<!-- Makes the TextBox fill the width -->
-								</Grid.ColumnDefinitions>
-
-								<TextBox Grid.Column="0"
-                 Height="35"
-                 Margin="20,0,0,0"
-                 VerticalAlignment="Center"
-                 VerticalContentAlignment="Center"
-                 BorderThickness="0"
-                 FontFamily="Lexend"
-                 Background="Transparent"
-                 HorizontalAlignment="Stretch"
-                 Focusable="True"/>
-							</Grid>
-						</Border>
-					</StackPanel>
-
-					<StackPanel Grid.Row="0" Grid.Column="2">
-						<TextBlock Text="Barcode Height:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
-					</StackPanel>
-					<StackPanel Grid.Row="1" Grid.Column="2" Margin="10,0,25,10">
-						<Border BorderThickness="1" BorderBrush="black" CornerRadius="20"
-Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<!-- Makes the TextBox fill the width -->
-								</Grid.ColumnDefinitions>
-
-								<TextBox Grid.Column="0"
-         Height="35"
-         Margin="20,0,0,0"
-         VerticalAlignment="Center"
-         VerticalContentAlignment="Center"
-         BorderThickness="0"
-         FontFamily="Lexend"
-         Background="Transparent"
-         HorizontalAlignment="Stretch"
-         Focusable="True"/>
-							</Grid>
-						</Border>
-					</StackPanel>
-
-					<StackPanel Grid.Row="0" Grid.Column="3">
-						<TextBlock Text="Font Size:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
-					</StackPanel>
-					<StackPanel Grid.Row="1" Grid.Column="3"  Margin="10,0,25,10">
-						<ComboBox SelectedIndex="3" FontFamily="Lexend" FontSize="14" Foreground="#474747"
-Padding="10" Width="Auto" Height="40" Background="White" BorderBrush="black"
-BorderThickness="1" HorizontalContentAlignment="Left">
-							<ComboBox.Resources>
-								<!-- Custom ComboBox Toggle Button -->
-								<Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
-									<Setter Property="Focusable" Value="False"/>
-									<Setter Property="Template">
-										<Setter.Value>
-											<ControlTemplate TargetType="ToggleButton">
-												<Border Background="Transparent" Padding="5">
-													<Grid>
-														<Path x:Name="Arrow" Data="M 0 0 L 4 4 L 8 0 Z"
-          HorizontalAlignment="Right" VerticalAlignment="Center"
-          Fill="Black" Width="8" Height="8"
-          Margin="0,5,10,0"/>
-													</Grid>
-												</Border>
-											</ControlTemplate>
-										</Setter.Value>
-									</Setter>
-								</Style>
-
-								<!-- Custom ComboBox Style -->
-								<Style TargetType="ComboBox">
-									<Setter Property="Template">
-										<Setter.Value>
-											<ControlTemplate TargetType="ComboBox">
-												<Border Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="20" Padding="5">
-													<Grid>
-														<!-- Toggle Button for Dropdown -->
-														<ToggleButton Name="ToggleButton"
-                                  Style="{StaticResource ComboBoxToggleButton}"
-                                  Grid.Column="2" Focusable="False"
-                                  IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
-                                  ClickMode="Press"/>
-
-														<!-- Selected Content -->
-														<ContentPresenter Name="ContentSite" IsHitTestVisible="False"
-                                  Content="{TemplateBinding SelectionBoxItem}"
-                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                  Margin="10,0,40,0" VerticalAlignment="Center"/>
-
-														<!-- Dropdown List -->
-														<Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}"
-                                   AllowsTransparency="True" Focusable="False"
-                                   PopupAnimation="Slide"
-                                                          
-                                   MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-															<Border Background="White" BorderBrush="Gray" BorderThickness="1"
-                                    CornerRadius="10"
-                                    Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-																<ScrollViewer>
-																	<StackPanel>
-																		<ItemsPresenter/>
-																	</StackPanel>
-																</ScrollViewer>
-															</Border>
-														</Popup>
-													</Grid>
-												</Border>
-											</ControlTemplate>
-										</Setter.Value>
-									</Setter>
-								</Style>
-							</ComboBox.Resources>
-
-							<!-- ComboBox Items -->
-							<ComboBoxItem Content="8pt"/>
-							<ComboBoxItem Content="9pt"/>
-							<ComboBoxItem Content="10pt"/>
-							<ComboBoxItem Content="11pt"/>
-							<ComboBoxItem Content="12pt"/>
-							<ComboBoxItem Content="13pt"/>
-							<ComboBoxItem Content="14pt"/>
-							<ComboBoxItem Content="15pt"/>
-							<ComboBoxItem Content="16pt"/>
-							<ComboBoxItem Content="17pt"/>
-							<ComboBoxItem Content="18pt"/>
-							<ComboBoxItem Content="19pt"/>
-							<ComboBoxItem Content="20pt"/>
-						</ComboBox>
-					</StackPanel>
-				</Grid>
-
-				<Border BorderThickness="0,2,0,0" BorderBrush="#AEAEAE" Margin="-10,10,-10,15" Width="Auto" HorizontalAlignment="Stretch"/>
-
-				<Grid>
-					<Grid.RowDefinitions>
-						<RowDefinition Height=".5*"/>
-						<RowDefinition Height=".5*"/>
-					</Grid.RowDefinitions>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width=".5*"/>
-						<ColumnDefinition Width=".5*"/>
-					</Grid.ColumnDefinitions>
-
-					<StackPanel Grid.Row="0" Grid.Column="0">
-						<TextBlock Text="Label Width:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
-					</StackPanel>
-					<StackPanel Grid.Row="1" Grid.Column="0" Margin="10,0,25,10">
-						<Border BorderThickness="1" BorderBrush="black" CornerRadius="20"
-Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<!-- Makes the TextBox fill the width -->
-								</Grid.ColumnDefinitions>
-
-								<TextBox Grid.Column="0"
-         Height="35"
-         Margin="20,0,0,0"
-         VerticalAlignment="Center"
-         VerticalContentAlignment="Center"
-         BorderThickness="0"
-         FontFamily="Lexend"
-         Background="Transparent"
-         HorizontalAlignment="Stretch"
-         Focusable="True"/>
-							</Grid>
-						</Border>
-					</StackPanel>
-
-					<StackPanel Grid.Row="0" Grid.Column="1">
-						<TextBlock Text="Label Height:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
-					</StackPanel>
-					<StackPanel Grid.Row="1" Grid.Column="1" Margin="10,0,25,10">
-						<Border BorderThickness="1" BorderBrush="black" CornerRadius="20"
-Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<!-- Makes the TextBox fill the width -->
-								</Grid.ColumnDefinitions>
-
-								<TextBox Grid.Column="0"
-         Height="35"
-         Margin="20,0,0,0"
-         VerticalAlignment="Center"
-         VerticalContentAlignment="Center"
-         BorderThickness="0"
-         FontFamily="Lexend"
-         Background="Transparent"
-         HorizontalAlignment="Stretch"
-         Focusable="True"/>
-							</Grid>
-						</Border>
-					</StackPanel>
-				</Grid>
-
-				<Border BorderThickness="0,2,0,0" BorderBrush="#AEAEAE" Margin="-10,10,-10,15" Width="Auto" HorizontalAlignment="Stretch"/>
-
-				<Grid>
-					<Grid.RowDefinitions>
-						<RowDefinition Height=".5*"/>
-						<RowDefinition Height=".5*"/>
-					</Grid.RowDefinitions>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width=".5*"/>
-						<ColumnDefinition Width=".5*"/>
-					</Grid.ColumnDefinitions>
-
-					<StackPanel Grid.Row="0" Grid.Column="0">
-						<TextBlock Text="Sheet Width:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
-					</StackPanel>
-					<StackPanel Grid.Row="1" Grid.Column="0" Margin="10,0,25,10">
-						<Border BorderThickness="1" BorderBrush="black" CornerRadius="20"
-Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<!-- Makes the TextBox fill the width -->
-								</Grid.ColumnDefinitions>
-
-								<TextBox Grid.Column="0"
-         Height="35"
-         Margin="20,0,0,0"
-         VerticalAlignment="Center"
-         VerticalContentAlignment="Center"
-         BorderThickness="0"
-         FontFamily="Lexend"
-         Background="Transparent"
-         HorizontalAlignment="Stretch"
-         Focusable="True"/>
-							</Grid>
-						</Border>
-					</StackPanel>
-
-					<StackPanel Grid.Row="0" Grid.Column="1">
-						<TextBlock Text="Sheet Height:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
-					</StackPanel>
-					<StackPanel Grid.Row="1" Grid.Column="1" Margin="10,0,25,10">
-						<Border BorderThickness="1" BorderBrush="black" CornerRadius="20"
-Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<!-- Makes the TextBox fill the width -->
-								</Grid.ColumnDefinitions>
-
-								<TextBox Grid.Column="0"
-         Height="35"
-         Margin="20,0,0,0"
-         VerticalAlignment="Center"
-         VerticalContentAlignment="Center"
-         BorderThickness="0"
-         FontFamily="Lexend"
-         Background="Transparent"
-         HorizontalAlignment="Stretch"
-         Focusable="True"/>
-							</Grid>
-						</Border>
-					</StackPanel>
-				</Grid>
-
-				<Border BorderThickness="0,2,0,0" BorderBrush="#AEAEAE" Margin="-10,10,-10,15" Width="Auto" HorizontalAlignment="Stretch"/>
-
-				<Grid>
-					<Grid.RowDefinitions>
-						<RowDefinition Height=".5*"/>
-						<RowDefinition Height=".5*"/>
-					</Grid.RowDefinitions>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width=".5*"/>
-						<ColumnDefinition Width=".5*"/>
-					</Grid.ColumnDefinitions>
-
-					<StackPanel Grid.Row="0" Grid.Column="0">
-						<TextBlock Text="Total Rows:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
-					</StackPanel>
-					<StackPanel Grid.Row="1" Grid.Column="0" Margin="10,0,25,10">
-						<ComboBox SelectedIndex="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"
-    Padding="10" Width="Auto" Height="40" Background="White" BorderBrush="black"
-    BorderThickness="1" HorizontalContentAlignment="Left" Margin="0,0,0,10">
-							<ComboBox.Resources>
-								<!-- Custom ComboBox Toggle Button -->
-								<Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
-									<Setter Property="Focusable" Value="False"/>
-									<Setter Property="Template">
-										<Setter.Value>
-											<ControlTemplate TargetType="ToggleButton">
-												<Border Background="Transparent" Padding="5">
-													<Grid>
-														<Path x:Name="Arrow" Data="M 0 0 L 4 4 L 8 0 Z"
-              HorizontalAlignment="Right" VerticalAlignment="Center"
-              Fill="Black" Width="8" Height="8"
-              Margin="0,5,10,0"/>
-													</Grid>
-												</Border>
-											</ControlTemplate>
-										</Setter.Value>
-									</Setter>
-								</Style>
-
-								<!-- Custom ComboBox Style -->
-								<Style TargetType="ComboBox">
-									<Setter Property="Template">
-										<Setter.Value>
-											<ControlTemplate TargetType="ComboBox">
-												<Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="20" Padding="5">
-													<Grid>
-														<!-- Toggle Button for Dropdown -->
-														<ToggleButton Name="ToggleButton"
-                                      Style="{StaticResource ComboBoxToggleButton}"
-                                      Grid.Column="2" Focusable="False"
-                                      IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
-                                      ClickMode="Press"/>
-
-														<!-- Selected Content -->
-														<ContentPresenter Name="ContentSite" IsHitTestVisible="False"
-                                      Content="{TemplateBinding SelectionBoxItem}"
-                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                      Margin="10,0,40,0" VerticalAlignment="Center"/>
-
-														<!-- Dropdown List -->
-														<Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}"
-                                       AllowsTransparency="True" Focusable="False"
-                                       PopupAnimation="Slide"
-                                       MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-															<Border Background="White" BorderBrush="Gray" BorderThickness="1"
-                                        CornerRadius="10"
-                                        Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-																<ScrollViewer>
-																	<StackPanel>
-																		<ItemsPresenter/>
-																	</StackPanel>
-																</ScrollViewer>
-															</Border>
-														</Popup>
-													</Grid>
-												</Border>
-											</ControlTemplate>
-										</Setter.Value>
-									</Setter>
-								</Style>
-							</ComboBox.Resources>
-
-							<!-- ComboBox Items -->
-							<ComboBoxItem Content="1"/>
-							<ComboBoxItem Content="2"/>
-							<ComboBoxItem Content="3"/>
-							<ComboBoxItem Content="4"/>
-							<ComboBoxItem Content="5"/>
-							<ComboBoxItem Content="6"/>
-							<ComboBoxItem Content="7"/>
-							<ComboBoxItem Content="8"/>
-							<ComboBoxItem Content="9"/>
-							<ComboBoxItem Content="10"/>
-							<ComboBoxItem Content="20"/>
-						</ComboBox>
-					</StackPanel>
-
-					<StackPanel Grid.Row="0" Grid.Column="1">
-						<TextBlock Text="Total Columns:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
-					</StackPanel>
-					<StackPanel Grid.Row="1" Grid.Column="1" Margin="10,0,25,10">
-						<ComboBox SelectedIndex="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"
-    Padding="10" Width="Auto" Height="40" Background="White" BorderBrush="black"
-    BorderThickness="1" HorizontalContentAlignment="Left" Margin="0,0,0,10">
-							<ComboBox.Resources>
-								<!-- Custom ComboBox Toggle Button -->
-								<Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
-									<Setter Property="Focusable" Value="False"/>
-									<Setter Property="Template">
-										<Setter.Value>
-											<ControlTemplate TargetType="ToggleButton">
-												<Border Background="Transparent" Padding="5">
-													<Grid>
-														<Path x:Name="Arrow" Data="M 0 0 L 4 4 L 8 0 Z"
-              HorizontalAlignment="Right" VerticalAlignment="Center"
-              Fill="Black" Width="8" Height="8"
-              Margin="0,5,10,0"/>
-													</Grid>
-												</Border>
-											</ControlTemplate>
-										</Setter.Value>
-									</Setter>
-								</Style>
-
-								<!-- Custom ComboBox Style -->
-								<Style TargetType="ComboBox">
-									<Setter Property="Template">
-										<Setter.Value>
-											<ControlTemplate TargetType="ComboBox">
-												<Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="20" Padding="5">
-													<Grid>
-														<!-- Toggle Button for Dropdown -->
-														<ToggleButton Name="ToggleButton"
-                                      Style="{StaticResource ComboBoxToggleButton}"
-                                      Grid.Column="2" Focusable="False"
-                                      IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
-                                      ClickMode="Press"/>
-
-														<!-- Selected Content -->
-														<ContentPresenter Name="ContentSite" IsHitTestVisible="False"
-                                      Content="{TemplateBinding SelectionBoxItem}"
-                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                      Margin="10,0,40,0" VerticalAlignment="Center"/>
-
-														<!-- Dropdown List -->
-														<Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}"
-                                       AllowsTransparency="True" Focusable="False"
-                                       PopupAnimation="Slide"
-                                       MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-															<Border Background="White" BorderBrush="Gray" BorderThickness="1"
-                                        CornerRadius="10"
-                                        Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-																<ScrollViewer>
-																	<StackPanel>
-																		<ItemsPresenter/>
-																	</StackPanel>
-																</ScrollViewer>
-															</Border>
-														</Popup>
-													</Grid>
-												</Border>
-											</ControlTemplate>
-										</Setter.Value>
-									</Setter>
-								</Style>
-							</ComboBox.Resources>
-
-							<!-- ComboBox Items -->
-							<ComboBoxItem Content="1"/>
-							<ComboBoxItem Content="2"/>
-							<ComboBoxItem Content="3"/>
-							<ComboBoxItem Content="4"/>
-							<ComboBoxItem Content="5"/>
-							<ComboBoxItem Content="6"/>
-							<ComboBoxItem Content="7"/>
-							<ComboBoxItem Content="8"/>
-							<ComboBoxItem Content="9"/>
-							<ComboBoxItem Content="10"/>
-							<ComboBoxItem Content="20"/>
-						</ComboBox>
-					</StackPanel>
-				</Grid>
-
-				<Border BorderThickness="0,2,0,0" BorderBrush="#AEAEAE" Margin="-10,10,-10,15" Width="Auto" HorizontalAlignment="Stretch"/>
-
-			</StackPanel>
-
-			<StackPanel x:Name="PrintDetail" Grid.Row="2" Margin="25,-20,25,0">
-				<Grid>
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width=".5*"/>
-						<ColumnDefinition Width=".5*"/>
-					</Grid.ColumnDefinitions>
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-					</Grid.RowDefinitions>
-
-					<StackPanel Margin="0,0,0,25" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1">
-						<TextBlock Text="Print Details" FontWeight="Regular" FontFamily="Lexend" FontSize="20" Foreground="#474747" VerticalAlignment="Top"/>
-					</StackPanel>
-
-					<StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,10">
-						<TextBlock Text="Product Name:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top"/>
-					</StackPanel>
-
-					<StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,25,10">
-						<Border x:Name="AddBorderProductName" Style="{StaticResource DefaultBorderStyle}">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="Auto" />
-								</Grid.ColumnDefinitions>
-
-								<RadioButton x:Name="AddProductName"
-                                 GroupName="ProductName"
-                                 Content="Add"
-                                 Style="{StaticResource CustomRadioButtonStyle}"
-                                 Tag="#456B2E"
-                                 Checked="Add_CheckedProductName"
-                                 Unchecked="Add_UncheckedProductName"
-                                 FontWeight="Regular"
-                                 FontFamily="Lexend"
-                                 FontSize="14"
-                                 Foreground="#474747"
-                                 IsChecked="True"/>
-
-
-								<materialDesign:PackIcon x:Name="AddIconProductName" Kind="PlusBoxOutline"
-                                     Style="{StaticResource DefaultPackIconStyle}"/>
-							</Grid>
-						</Border>
-					</StackPanel>
-
-					<StackPanel Grid.Row="2" Grid.Column="1" Margin="0,0,25,10">
-						<Border x:Name="RemoveBorderProductName" Style="{StaticResource DefaultBorderStyle}">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="Auto" />
-								</Grid.ColumnDefinitions>
-
-								<RadioButton x:Name="RemoveProductName" GroupName="ProductName" Content="Remove"
-                                 Style="{StaticResource CustomRadioButtonStyle}"
-                                 Tag="#D23636"
-                                 Checked="Remove_CheckedProductName"
-                                 Unchecked="Remove_UncheckedProductName"
-                                 FontWeight="Regular"
-                                 FontFamily="Lexend"
-                                 FontSize="14"
-                                 Foreground="#474747"
-                                 />
-
-								<materialDesign:PackIcon x:Name="RemoveIconProductName" Kind="MinusBoxOutline"
-                                     Style="{StaticResource DefaultPackIconStyle}"/>
-							</Grid>
-						</Border>
-					</StackPanel>
-
-					<StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,10">
-						<TextBlock Text="Business Location:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top"/>
-					</StackPanel>
-
-					<StackPanel Grid.Row="4" Grid.Column="0" Margin="0,0,25,10">
-						<Border x:Name="AddBorderBusinessLocation" Style="{StaticResource DefaultBorderStyle}">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="Auto" />
-								</Grid.ColumnDefinitions>
-
-								<RadioButton x:Name="AddBusinessLocation"
-                                GroupName="BusinessLocation"
-                                Content="Add"
-                                Style="{StaticResource CustomRadioButtonStyle}"
-                                Tag="#456B2E"
-                                Checked="Add_CheckedBusinessLocation"
-                                Unchecked="Add_UncheckedBusinessLocation"
-                                FontWeight="Regular"
-                                FontFamily="Lexend"
-                                FontSize="14"
-                                Foreground="#474747"
-                                IsChecked="True"/>
-
-
-								<materialDesign:PackIcon x:Name="AddIconBusinessLocation" Kind="PlusBoxOutline"
-                        Style="{StaticResource DefaultPackIconStyle}"/>
-							</Grid>
-						</Border>
-					</StackPanel>
-
-					<StackPanel Grid.Row="4" Grid.Column="1" Margin="0,0,25,10">
-						<Border x:Name="RemoveBorderBusinessLocation" Style="{StaticResource DefaultBorderStyle}">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="Auto" />
-								</Grid.ColumnDefinitions>
-
-								<RadioButton x:Name="RemoveBusinessLocation"
-                                GroupName="BusinessLocation"
-                                Content="Remove"
-                                Style="{StaticResource CustomRadioButtonStyle}"
-                                Tag="#D23636"
-                                Checked="Remove_CheckedBusinessLocation"
-                                Unchecked="Remove_UncheckedBusinessLocation"
-                                FontWeight="Regular"
-                                FontFamily="Lexend"
-                                FontSize="14"
-                                Foreground="#474747"
-                                />
-
-								<materialDesign:PackIcon x:Name="RemoveIconBusinessLocation" Kind="MinusBoxOutline"
-                        Style="{StaticResource DefaultPackIconStyle}"/>
-							</Grid>
-						</Border>
-					</StackPanel>
-
-					<StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,10">
-						<TextBlock Text="Warehouse:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top"/>
-					</StackPanel>
-
-					<StackPanel Grid.Row="6" Grid.Column="0" Margin="0,0,25,10">
-						<Border x:Name="AddBorderWarehouse" Style="{StaticResource DefaultBorderStyle}">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="Auto" />
-								</Grid.ColumnDefinitions>
-
-								<RadioButton x:Name="AddWarehouse"
-                                GroupName="Warehouse"
-                                Content="Add"
-                                Style="{StaticResource CustomRadioButtonStyle}"
-                                Tag="#456B2E"
-                                Checked="Add_CheckedWarehouse"
-                                Unchecked="Add_UncheckedWarehouse"
-                                FontWeight="Regular"
-                                FontFamily="Lexend"
-                                FontSize="14"
-                                Foreground="#474747"
-                                IsChecked="True"/>
-
-
-								<materialDesign:PackIcon x:Name="AddIconWarehouse" Kind="PlusBoxOutline"
-                        Style="{StaticResource DefaultPackIconStyle}"/>
-							</Grid>
-						</Border>
-					</StackPanel>
-
-					<StackPanel Grid.Row="6" Grid.Column="1" Margin="0,0,25,10">
-						<Border x:Name="RemoveBorderWarehouse" Style="{StaticResource DefaultBorderStyle}">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="Auto" />
-								</Grid.ColumnDefinitions>
-
-								<RadioButton x:Name="RemoveWarehouse"
-                                GroupName="Warehouse"
-                                Content="Remove"
-                                Style="{StaticResource CustomRadioButtonStyle}"
-                                Tag="#D23636"
-                                Checked="Remove_CheckedWarehouse"
-                                Unchecked="Remove_UncheckedWarehouse"
-                                FontWeight="Regular"
-                                FontFamily="Lexend"
-                                FontSize="14"
-                                Foreground="#474747"
-                                />
-
-								<materialDesign:PackIcon x:Name="RemoveIconWarehouse" Kind="MinusBoxOutline"
-                        Style="{StaticResource DefaultPackIconStyle}"/>
-							</Grid>
-						</Border>
-					</StackPanel>
-
-					<StackPanel Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,10">
-						<TextBlock Text="Price:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top"/>
-					</StackPanel>
-
-					<StackPanel Grid.Row="8" Grid.Column="0" Margin="0,0,25,10">
-						<Border x:Name="AddBorderPrice" Style="{StaticResource DefaultBorderStyle}">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="Auto" />
-								</Grid.ColumnDefinitions>
-
-								<RadioButton x:Name="AddPrice"
-                                GroupName="Price"
-                                Content="Add"
-                                Style="{StaticResource CustomRadioButtonStyle}"
-                                Tag="#456B2E"
-                                Checked="Add_CheckedPrice"
-                                Unchecked="Add_UncheckedPrice"
-                                FontWeight="Regular"
-                                FontFamily="Lexend"
-                                FontSize="14"
-                                Foreground="#474747"
-                                IsChecked="True"/>
-
-
-								<materialDesign:PackIcon x:Name="AddIconPrice" Kind="PlusBoxOutline"
-                        Style="{StaticResource DefaultPackIconStyle}"/>
-							</Grid>
-						</Border>
-					</StackPanel>
-
-					<StackPanel Grid.Row="8" Grid.Column="1" Margin="0,0,25,10">
-						<Border x:Name="RemoveBorderPrice" Style="{StaticResource DefaultBorderStyle}">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="Auto" />
-								</Grid.ColumnDefinitions>
-
-								<RadioButton x:Name="RemovePrice"
-                                GroupName="Price"
-                                Content="Remove"
-                                Style="{StaticResource CustomRadioButtonStyle}"
-                                Tag="#D23636"
-                                Checked="Remove_CheckedPrice"
-                                Unchecked="Remove_UncheckedPrice"
-                                FontWeight="Regular"
-                                FontFamily="Lexend"
-                                FontSize="14"
-                                Foreground="#474747"
-                                />
-
-								<materialDesign:PackIcon x:Name="RemoveIconPrice" Kind="MinusBoxOutline"
-                        Style="{StaticResource DefaultPackIconStyle}"/>
-							</Grid>
-						</Border>
-					</StackPanel>
-
-					<StackPanel Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,10">
-						<TextBlock Text="Product Code:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top"/>
-					</StackPanel>
-
-
-					<StackPanel Grid.Row="10" Grid.Column="0" Margin="0,0,25,10">
-						<Border x:Name="AddBorderProductCode" Style="{StaticResource DefaultBorderStyle}">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="Auto" />
-								</Grid.ColumnDefinitions>
-
-								<RadioButton x:Name="AddProductCode"
-                                GroupName="ProductCode"
-                                Content="Add"
-                                Style="{StaticResource CustomRadioButtonStyle}"
-                                Tag="#456B2E"
-                                Checked="Add_CheckedProductCode"
-                                Unchecked="Add_UncheckedProductCode"
-                                FontWeight="Regular"
-                                FontFamily="Lexend"
-                                FontSize="14"
-                                Foreground="#474747"
-                                IsChecked="True"/>
-
-
-								<materialDesign:PackIcon x:Name="AddIconProductCode" Kind="PlusBoxOutline"
-                        Style="{StaticResource DefaultPackIconStyle}"/>
-							</Grid>
-						</Border>
-					</StackPanel>
-
-					<StackPanel Grid.Row="10" Grid.Column="1" Margin="0,0,25,10">
-						<Border x:Name="RemoveBorderProductCode" Style="{StaticResource DefaultBorderStyle}">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="Auto" />
-								</Grid.ColumnDefinitions>
-
-								<RadioButton x:Name="RemoveProductCode"
-                                GroupName="ProductCode"
-                                Content="Remove"
-                                Style="{StaticResource CustomRadioButtonStyle}"
-                                Tag="#D23636"
-                                Checked="Remove_CheckedProductCode"
-                                Unchecked="Remove_UncheckedProductCode"
-                                FontWeight="Regular"
-                                FontFamily="Lexend"
-                                FontSize="14"
-                                Foreground="#474747"
-                                />
-
-								<materialDesign:PackIcon x:Name="RemoveIconProductCode" Kind="MinusBoxOutline"
-                        Style="{StaticResource DefaultPackIconStyle}"/>
-							</Grid>
-						</Border>
-					</StackPanel>
-
-					<StackPanel Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,0,0,10">
-						<TextBlock Text="Products:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top"/>
-					</StackPanel>
-
-
-					<StackPanel Grid.Row="12" Grid.Column="0" Margin="0,0,25,10">
-						<Border x:Name="AddBorderProducts" Style="{StaticResource DefaultBorderStyle}">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="Auto" />
-								</Grid.ColumnDefinitions>
-
-								<RadioButton x:Name="AddProducts"
-                                GroupName="Products"
-                                Content="Add"
-                                Style="{StaticResource CustomRadioButtonStyle}"
-                                Tag="#456B2E"
-                                Checked="Add_CheckedProducts"
-                                Unchecked="Add_UncheckedProducts"
-                                FontWeight="Regular"
-                                FontFamily="Lexend"
-                                FontSize="14"
-                                Foreground="#474747"
-                                IsChecked="True"/>
-
-
-								<materialDesign:PackIcon x:Name="AddIconProducts" Kind="PlusBoxOutline"
-                        Style="{StaticResource DefaultPackIconStyle}"/>
-							</Grid>
-						</Border>
-					</StackPanel>
-
-					<StackPanel Grid.Row="12" Grid.Column="1" Margin="0,0,25,10">
-						<Border x:Name="RemoveBorderProducts" Style="{StaticResource DefaultBorderStyle}">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="*" />
-									<ColumnDefinition Width="Auto" />
-								</Grid.ColumnDefinitions>
-
-								<RadioButton x:Name="RemoveProducts"
-                                GroupName="Products"
-                                Content="Remove"
-                                Style="{StaticResource CustomRadioButtonStyle}"
-                                Tag="#D23636"
-                                Checked="Remove_CheckedProducts"
-                                Unchecked="Remove_UncheckedProducts"
-                                FontWeight="Regular"
-                                FontFamily="Lexend"
-                                FontSize="14"
-                                Foreground="#474747"
-                                />
-
-								<materialDesign:PackIcon x:Name="RemoveIconProducts" Kind="MinusBoxOutline"
-                        Style="{StaticResource DefaultPackIconStyle}"/>
-							</Grid>
-						</Border>
-					</StackPanel>
-
-					<StackPanel Grid.Row="13" Grid.Column="0" Grid.ColumnSpan="2" Margin="25,25,25,40" HorizontalAlignment="Right">
-						<Button Width="100" Height="40" Background="#244270" Foreground="White"
-Padding="10" HorizontalAlignment="Left">
-							<Button.Style>
-								<Style TargetType="Button">
-									<Setter Property="Template">
-										<Setter.Value>
-											<ControlTemplate TargetType="Button">
-												<Border Background="{TemplateBinding Background}" CornerRadius="20" Padding="{TemplateBinding Padding}">
-													<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-												</Border>
-											</ControlTemplate>
-										</Setter.Value>
-									</Setter>
-								</Style>
-							</Button.Style>
-							<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-								<materialDesign:PackIcon Kind="PrinterPosPlus" Width="20" Height="20" Foreground="White" Margin="0,0,5,0"/>
-								<TextBlock Text="Print" FontSize="14" VerticalAlignment="Center" FontWeight="Bold"/>
-							</StackPanel>
-						</Button>
-					</StackPanel>
-				</Grid>
-			</StackPanel>
-		</Grid>
+                                                                <ScrollViewer>
+                                                                    <StackPanel>
+                                                                        <ItemsPresenter/>
+                                                                    </StackPanel>
+                                                                </ScrollViewer>
+                                                            </Border>
+                                                        </Popup>
+                                                    </Grid>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ComboBox.Resources>
+
+                            <!-- ComboBox Items -->
+                            <ComboBoxItem Content="EAN-13"/>
+                            <ComboBoxItem Content="CODE-128"/>
+                            <ComboBoxItem Content="CODE-39"/>
+                            <ComboBoxItem Content="EAN-5"/>
+                            <ComboBoxItem Content="EAN-8"/>
+                            <ComboBoxItem Content="UPC-A"/>
+                            <ComboBoxItem Content="UPC-E"/>
+                        </ComboBox>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="25,0,25,40" HorizontalAlignment="Right">
+                <Button Content="Print" Style="{StaticResource PrinterButton}"/>
+            </StackPanel>
+        </Grid>
 	</ScrollViewer>
 </Window>
