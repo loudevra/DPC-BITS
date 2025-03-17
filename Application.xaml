@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:local="clr-namespace:DPC"
-    StartupUri="SplashScreen.xaml">
+    StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -63,6 +63,175 @@
                 <Setter Property="BorderThickness" Value="0"/>
                 <Setter Property="FontSize" Value="12"/>
                 <Setter Property="Margin" Value="20,0"/>
+            </Style>
+
+            <!-- Custom ComboBox Toggle Button -->
+            <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+                <Setter Property="Focusable" Value="False"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border Background="Transparent" Padding="5">
+                                <Grid>
+                                    <Path x:Name="Arrow" Data="M 0 0 L 4 4 L 8 0 Z"
+                              HorizontalAlignment="Right" VerticalAlignment="Center"
+                              Fill="Black" Width="8" Height="8" 
+                              Margin="0,5,10,0"/>
+                                </Grid>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Custom ComboBox Style -->
+            <Style x:Key="RoundedComboBoxStyle" TargetType="ComboBox">
+                <Setter Property="FontFamily" Value="Lexend"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="Foreground" Value="#474747"/>
+                <Setter Property="Padding" Value="10"/>
+                <Setter Property="Width" Value="500"/>
+                <Setter Property="Height" Value="35"/>
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="BorderBrush" Value="Black"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                <Setter Property="Margin" Value="0,0,0,10"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ComboBox">
+                            <Border x:Name="ComboBorder"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="20"
+                        Padding="5">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="30" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Clickable Area (Triggers the Dropdown) -->
+                                    <Border x:Name="ClickArea" Background="Transparent" Grid.ColumnSpan="2"/>
+
+                                    <!-- Selected Content -->
+                                    <ContentPresenter Name="ContentSite" IsHitTestVisible="False" 
+                                          Content="{TemplateBinding SelectionBoxItem}" 
+                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                          Margin="10,0,40,0" VerticalAlignment="Center"
+                                          Grid.Column="0"/>
+
+                                    <!-- Toggle Button for Dropdown -->
+                                    <ToggleButton Name="ToggleButton" 
+                                      Style="{StaticResource ComboBoxToggleButton}"
+                                      Grid.Column="1" Focusable="False"
+                                      ClickMode="Press"
+                                      IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"/>
+
+                                    <!-- Dropdown List -->
+                                    <Popup Name="Popup"
+                               Placement="Bottom"
+                               AllowsTransparency="True" Focusable="False"
+                               PopupAnimation="Slide">
+                                        <Border Background="White"
+                                    BorderBrush="Gray"
+                                    BorderThickness="1"
+                                    CornerRadius="10"
+                                    Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                            <ScrollViewer>
+                                                <StackPanel>
+                                                    <ItemsPresenter/>
+                                                </StackPanel>
+                                            </ScrollViewer>
+                                        </Border>
+                                    </Popup>
+                                </Grid>
+                            </Border>
+
+                            <!-- Triggers to Handle Dropdown Behavior -->
+                            <ControlTemplate.Triggers>
+                                <!-- Click anywhere on the ComboBox to toggle dropdown -->
+                                <EventTrigger RoutedEvent="UIElement.MouseLeftButtonDown">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="IsDropDownOpen"
+                                                                Storyboard.TargetName="Popup">
+                                                <DiscreteBooleanKeyFrame Value="True" KeyTime="0:0:0"/>
+                                            </BooleanAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+
+                                <!-- Auto-close dropdown when an item is selected -->
+                                <Trigger Property="IsDropDownOpen" Value="True">
+                                    <Setter TargetName="Popup" Property="IsOpen" Value="True"/>
+                                </Trigger>
+                                <Trigger Property="IsDropDownOpen" Value="False">
+                                    <Setter TargetName="Popup" Property="IsOpen" Value="False"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="RoundedDatePickerStyle" TargetType="DatePicker">
+                <Setter Property="Width" Value="Auto"/>
+                <Setter Property="Height" Value="35"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Padding" Value="10,0,10,0"/>
+                <Setter Property="HorizontalAlignment" Value="Left"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="DatePicker">
+                            <Grid>
+                                <!-- DatePicker Input Box -->
+                                <DatePickerTextBox x:Name="PART_TextBox"
+                                       Foreground="#474747"
+                                       FontSize="14"
+                                       Background="Transparent"
+                                       BorderThickness="0"
+                                       VerticalContentAlignment="Center"
+                                       Padding="10,0,40,0"
+                                       IsReadOnly="True"/>
+
+                                <!-- Clickable Button with Calendar Icon -->
+                                <Button x:Name="PART_Button"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            HorizontalAlignment="Right"
+                            Padding="0"
+                            Width="40"
+                            Cursor="Hand">
+                                    <materialDesign:PackIcon Kind="Calendar"
+                                                 Foreground="#474747"
+                                                 Width="20"
+                                                 Height="20"/>
+                                </Button>
+
+                                <!-- Popup for Calendar -->
+                                <Popup x:Name="PART_Popup"
+                           Placement="Bottom"
+                           StaysOpen="False"
+                           IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}">
+                                    <Border BorderBrush="Gray" BorderThickness="1" Background="White">
+                                        <Calendar x:Name="PART_Calendar"
+                                      SelectedDate="{Binding SelectedDate, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"/>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Placeholder Style for DatePicker TextBox -->
+            <Style TargetType="DatePickerTextBox">
+                <Setter Property="Foreground" Value="Gray"/>
+                <Setter Property="FontStyle" Value="Italic"/>
             </Style>
 
         </ResourceDictionary>

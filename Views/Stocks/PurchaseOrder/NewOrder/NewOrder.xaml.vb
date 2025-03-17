@@ -50,54 +50,36 @@
 
             ' Create TextBox
             Dim txt As New TextBox() With {
-        .Name = txtName,
-        .Width = Double.NaN,
-        .Height = 30,
-        .FontFamily = New FontFamily("Lexend"),
-        .HorizontalContentAlignment = If(column = 0, HorizontalAlignment.Left, HorizontalAlignment.Center),
-        .VerticalContentAlignment = VerticalAlignment.Center,
-        .Padding = New Thickness(5),
-        .Background = Brushes.White,
-        .BorderThickness = New Thickness(0)
+        .Name = txtName
     }
+
+            ' Apply TextBox style dynamically
+            txt.Style = CType(Me.FindResource("RoundedTextboxStyle"), Style)
 
             ' Attach numeric validation and event handlers
             If column = 1 Or column = 2 Or column = 3 Or column = 4 Or column = 5 Or column = 6 Then
                 AddHandler txt.PreviewTextInput, AddressOf ValidateNumericInput
-                AddHandler txt.TextChanged, AddressOf TextBoxValueChanged ' Attach the event handler here
+                AddHandler txt.TextChanged, AddressOf TextBoxValueChanged
             End If
 
-            ' Create a Border with Rounded Corners
+            ' Create a Border and apply the style
             Dim border As New Border() With {
-        .CornerRadius = New CornerRadius(20),
-        .BorderThickness = New Thickness(1),
-        .Background = Brushes.White,
-        .BorderBrush = Brushes.Gray,
-        .Margin = New Thickness(5),
-        .Padding = New Thickness(6),
-        .Child = txt ' Wrap TextBox inside the Border
+        .Margin = New Thickness(5, 5, 5, 5) ' Custom margin to maintain spacing
     }
+            border.Style = CType(Me.FindResource("RoundedBorderStyle"), Style)
+
+            ' Wrap TextBox inside the Border
+            border.Child = txt
 
             ' Set Grid position
             Grid.SetRow(border, row)
             Grid.SetColumn(border, column)
 
-            ' Register the Border (not the TextBox) since FindName works on registered names
+            ' Register the Border
             Me.RegisterName(txtName, border)
 
             ' Add to Grid
             MyDynamicGrid.Children.Add(border)
-        End Sub
-
-
-
-
-        'Check if entered text is a number
-        Private Sub ValidateNumericInput(sender As Object, e As TextCompositionEventArgs)
-            Dim allowedPattern As String = "^[0-9.]+$" ' Allow only digits and decimal point
-            If Not System.Text.RegularExpressions.Regex.IsMatch(e.Text, allowedPattern) Then
-                e.Handled = True ' Reject input if it doesn't match
-            End If
         End Sub
 
         ' Function to create a full-width TextBox inside a Border
@@ -113,39 +95,34 @@
             ' Create TextBox
             Dim fullWidthTextBox As New TextBox() With {
         .Name = txtName,
-        .Width = Double.NaN, ' Auto width
-        .Height = 60,
-        .FontFamily = New FontFamily("Lexend"),
-        .HorizontalContentAlignment = HorizontalAlignment.Left,
+        .Height = 60, ' Adjust height for full-width text box
         .VerticalContentAlignment = VerticalAlignment.Top,
-        .Padding = New Thickness(5),
-        .BorderThickness = New Thickness(0),
-        .Background = Brushes.White
+        .Padding = New Thickness(0, 5, 0, 0)
     }
 
-            ' Create a Border with Rounded Corners
+            ' Apply the existing TextBox style
+            fullWidthTextBox.Style = CType(Me.FindResource("RoundedTextboxStyle"), Style)
+
+            ' Create a Border and apply the existing style
             Dim border As New Border() With {
-        .CornerRadius = New CornerRadius(20),
-        .BorderThickness = New Thickness(1),
-        .BorderBrush = Brushes.Gray,
-        .Background = Brushes.White,
-        .Margin = New Thickness(5),
-        .Padding = New Thickness(6),
-        .Child = fullWidthTextBox ' Wrap TextBox inside the Border
+        .Margin = New Thickness(5, 5, 5, 5) ' Consistent margin for spacing
     }
+            border.Style = CType(Me.FindResource("RoundedBorderStyle"), Style)
+
+            ' Wrap TextBox inside the Border
+            border.Child = fullWidthTextBox
 
             ' Set Grid position
             Grid.SetRow(border, row + 1) ' Place it in the next row
             Grid.SetColumn(border, 0)
             Grid.SetColumnSpan(border, 8) ' Span across all columns
 
-            ' Register the Border (not the TextBox)
+            ' Register the Border
             Me.RegisterName(txtName, border)
 
             ' Add to Grid
             MyDynamicGrid.Children.Add(border)
         End Sub
-
 
         ' ➜ Create TextBlock
         Private Sub CreateTextBlock(row As Integer, column As Integer, text As String)
@@ -196,6 +173,18 @@
             Grid.SetColumn(btn, column)
             MyDynamicGrid.Children.Add(btn)
         End Sub
+
+        'Check if entered text is a number
+        Private Sub ValidateNumericInput(sender As Object, e As TextCompositionEventArgs)
+            Dim allowedPattern As String = "^[0-9.]+$" ' Allow only digits and decimal point
+            If Not System.Text.RegularExpressions.Regex.IsMatch(e.Text, allowedPattern) Then
+                e.Handled = True ' Reject input if it doesn't match
+            End If
+        End Sub
+
+
+
+
 
         ' Remove Row Functionality
         Private Sub RemoveRow(row As Integer)
