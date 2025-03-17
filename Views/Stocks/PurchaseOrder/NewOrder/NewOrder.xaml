@@ -10,187 +10,204 @@
         WindowStartupLocation="CenterScreen">
 
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-        <Grid>
+    <Grid>
+        <!-- Define Column Structure -->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <!-- Sidebar Width -->
+            <ColumnDefinition Width="*"/>
+            <!-- Main Content -->
+        </Grid.ColumnDefinitions>
+
+        <!-- Sidebar -->
+        <Border Grid.Column="0"
+                Background="White"
+                BorderBrush="#E0E0E0"
+                BorderThickness="0,0,1,0">
+            <ContentControl x:Name="SidebarContainer"/>
+        </Border>
+
+        <!-- Main Content -->
+        <Grid Grid.Column="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="60"/>
+                <!-- Top Navigation Bar -->
+                <RowDefinition Height="*"/>
+                <!-- Form Content -->
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="25,10,0,10">
-                <materialDesign:PackIcon Kind="CartOutline" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                <materialDesign:PackIcon Kind="LocationOnOutline" Foreground="Black" Width="24" Height="24" Margin="0,0,0,0" VerticalAlignment="Center"/>
-            </StackPanel>
+            <!-- Top Navigation Bar -->
+            <Border Grid.Row="0"
+                    Background="White"
+                    BorderBrush="#E0E0E0"
+                    BorderThickness="0,0,0,1">
+                <ContentControl x:Name="TopNavBarContainer"/>
+            </Border>
 
-            <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" Margin="0,10,25,10" HorizontalAlignment="Right">
-                <Border CornerRadius="15" BorderThickness="0" BorderBrush="white" Background="white" Margin="0,0,10,0">
-                    <StackPanel Orientation="Horizontal" Background="Transparent">
-                        <TextBox Width="250" Height="25" Margin="10,0,10,0" VerticalAlignment="Center" BorderThickness="0" VerticalContentAlignment="Center" FontFamily="Lexend"/>
-                        <materialDesign:PackIcon Kind="Search" Foreground="#AEAEAE" Width="24" Height="24" Margin="0,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+            <!-- Main Form Content -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="25,10,0,0">
+                        <TextBlock Text="Bill From" FontWeight="SemiBold" FontFamily="Lexend" FontSize="25" Margin="0,0,20,0" Foreground="#474747" VerticalAlignment="Center"/>
+                        <Button x:Name="btnAddSupplier" Width="120" Height="30" Background="#D9D9D9">
+                            <Button.Template>
+                                <ControlTemplate TargetType="{x:Type Button}">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="15" BorderThickness="2" BorderBrush="#474747" >
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <materialDesign:PackIcon Kind="AccountAdd" Foreground="#474747" Width="25" Height="25" Margin="0,0,5,0"/>
+                                <TextBlock Text="Supplier" FontFamily="Lexend" Foreground="#474747" VerticalAlignment="Center" FontSize="17"/>
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
-                </Border>
 
-                <materialDesign:PackIcon Kind="BellOutline" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                <materialDesign:PackIcon Kind="EmailOutline" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                <materialDesign:PackIcon Kind="ClockOutline" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-            </StackPanel>
+                    <StackPanel Grid.Row="2" Grid.Column="0" Margin="25,10,25,10" Orientation="Vertical">
+                        <StackPanel Margin="0,50,0,5">
+                            <TextBlock Text="Search Supplier:" FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
+                        </StackPanel>
 
-            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="25,10,0,0">
-                <TextBlock Text="Bill From" FontWeight="SemiBold" FontFamily="Lexend" FontSize="25" Margin="0,0,20,0" Foreground="#474747" VerticalAlignment="Center"/>
-                <Button x:Name="btnAddSupplier" Width="120" Height="30" Background="#D9D9D9">
-                    <Button.Template>
-                        <ControlTemplate TargetType="{x:Type Button}">
-                            <Border Background="{TemplateBinding Background}" CornerRadius="15" BorderThickness="2" BorderBrush="#474747" >
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                        </ControlTemplate>
-                    </Button.Template>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <materialDesign:PackIcon Kind="AccountAdd" Foreground="#474747" Width="25" Height="25" Margin="0,0,5,0"/>
-                        <TextBlock Text="Supplier" FontFamily="Lexend" Foreground="#474747" VerticalAlignment="Center" FontSize="17"/>
-                    </StackPanel>
-                </Button>
-            </StackPanel>
-
-            <StackPanel Grid.Row="2" Grid.Column="0" Margin="25,10,25,10" Orientation="Vertical">
-                <StackPanel Margin="0,50,0,5">
-                    <TextBlock Text="Search Supplier:" FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
-                </StackPanel>
-
-                <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" Width="500" Background="White" HorizontalAlignment="Left" Margin="0,0,0,10">
-                    <StackPanel Orientation="Horizontal" Width="500">
-                        <TextBox Width="445" Height="35" Margin="20,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Left" BorderThickness="0" FontFamily="Lexend"/>
-                        <materialDesign:PackIcon Kind="Search" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                    </StackPanel>
-                </Border>
+                        <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" Width="500" Background="White" HorizontalAlignment="Left" Margin="0,0,0,10">
+                            <StackPanel Orientation="Horizontal" Width="500">
+                                <TextBox Width="445" Height="35" Margin="20,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Left" BorderThickness="0" FontFamily="Lexend"/>
+                                <materialDesign:PackIcon Kind="Search" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                            </StackPanel>
+                        </Border>
 
 
-                <StackPanel Margin="0,5,0,5">
-                    <TextBlock Text="Supplier Details:"  FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
-                    <Grid Width="500" HorizontalAlignment="Left">
-                        <!-- Border with lower ZIndex -->
-                        <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" Width="500" Height="150"
+                        <StackPanel Margin="0,5,0,5">
+                            <TextBlock Text="Supplier Details:"  FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
+                            <Grid Width="500" HorizontalAlignment="Left">
+                                <!-- Border with lower ZIndex -->
+                                <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" Width="500" Height="150"
                         Background="White" Panel.ZIndex="0"/>
 
-                        <!-- TextBox on top -->
-                        <TextBox Width="480" Height="130" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                <!-- TextBox on top -->
+                                <TextBox Width="480" Height="130" HorizontalAlignment="Center" VerticalAlignment="Center"
                         Background="Transparent" BorderThickness="0" Panel.ZIndex="1" IsReadOnly="True" FontFamily="Lexend"/>
-                    </Grid>
-                </StackPanel>
+                            </Grid>
+                        </StackPanel>
 
-                <StackPanel  Margin="0,5,0,0">
-                    <TextBlock Text="Warehouse:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
-                </StackPanel>
+                        <StackPanel  Margin="0,5,0,0">
+                            <TextBlock Text="Warehouse:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
+                        </StackPanel>
 
-                <StackPanel HorizontalAlignment="Left">
-                    <ComboBox SelectedIndex="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"
+                        <StackPanel HorizontalAlignment="Left">
+                            <ComboBox SelectedIndex="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"
                       Padding="10" Width="500" Height="35" Background="White" BorderBrush="black"
                       BorderThickness="1" HorizontalContentAlignment="Left">
-                        <ComboBox.Resources>
+                                <ComboBox.Resources>
 
-                            <!-- Custom ComboBox Toggle Button -->
-                            <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
-                                <Setter Property="Focusable" Value="False"/>
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="ToggleButton">
-                                            <Border Background="Transparent" Padding="5">
-                                                <Grid>
-                                                    <Path x:Name="Arrow" Data="M 0 0 L 4 4 L 8 0 Z"
+                                    <!-- Custom ComboBox Toggle Button -->
+                                    <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+                                        <Setter Property="Focusable" Value="False"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ToggleButton">
+                                                    <Border Background="Transparent" Padding="5">
+                                                        <Grid>
+                                                            <Path x:Name="Arrow" Data="M 0 0 L 4 4 L 8 0 Z"
                                               HorizontalAlignment="Right" VerticalAlignment="Center"
                                               Fill="Black" Width="8" Height="8" 
                                               Margin="0,5,10,0"/>
-                                                </Grid>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
+                                                        </Grid>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
 
-                            <!-- Custom ComboBox Style -->
-                            <Style TargetType="ComboBox">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="ComboBox">
-                                            <Border Background="{TemplateBinding Background}"
+                                    <!-- Custom ComboBox Style -->
+                                    <Style TargetType="ComboBox">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ComboBox">
+                                                    <Border Background="{TemplateBinding Background}"
                                         BorderBrush="{TemplateBinding BorderBrush}"
                                         BorderThickness="{TemplateBinding BorderThickness}"
                                         CornerRadius="20" Padding="5">
-                                                <Grid>
-                                                    <!-- Toggle Button for Dropdown -->
-                                                    <ToggleButton Name="ToggleButton" 
+                                                        <Grid>
+                                                            <!-- Toggle Button for Dropdown -->
+                                                            <ToggleButton Name="ToggleButton" 
                                                       Style="{StaticResource ComboBoxToggleButton}"
                                                       Grid.Column="2" Focusable="False"
                                                       IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" 
                                                       ClickMode="Press"/>
 
-                                                    <!-- Selected Content -->
-                                                    <ContentPresenter Name="ContentSite" IsHitTestVisible="False" 
+                                                            <!-- Selected Content -->
+                                                            <ContentPresenter Name="ContentSite" IsHitTestVisible="False" 
                                                           Content="{TemplateBinding SelectionBoxItem}" 
                                                           ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
                                                           Margin="10,0,40,0" VerticalAlignment="Center"/>
 
-                                                    <!-- Dropdown List -->
-                                                    <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" 
+                                                            <!-- Dropdown List -->
+                                                            <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" 
                                                AllowsTransparency="True" Focusable="False"
                                                PopupAnimation="Slide" Width="490">
-                                                        <Border Background="White" BorderBrush="Gray" BorderThickness="1" 
+                                                                <Border Background="White" BorderBrush="Gray" BorderThickness="1" 
                                                     CornerRadius="10">
-                                                            <ScrollViewer>
-                                                                <StackPanel>
-                                                                    <ItemsPresenter/>
-                                                                </StackPanel>
-                                                            </ScrollViewer>
-                                                        </Border>
-                                                    </Popup>
-                                                </Grid>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </ComboBox.Resources>
+                                                                    <ScrollViewer>
+                                                                        <StackPanel>
+                                                                            <ItemsPresenter/>
+                                                                        </StackPanel>
+                                                                    </ScrollViewer>
+                                                                </Border>
+                                                            </Popup>
+                                                        </Grid>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ComboBox.Resources>
 
-                        <!-- ComboBox Items -->
-                        <ComboBoxItem Content="Warehouse 1"/>
-                        <ComboBoxItem Content="Warehouse 2"/>
-                        <ComboBoxItem Content="Warehouse 3"/>
-                    </ComboBox>
-                </StackPanel>
-            </StackPanel>
+                                <!-- ComboBox Items -->
+                                <ComboBoxItem Content="Warehouse 1"/>
+                                <ComboBoxItem Content="Warehouse 2"/>
+                                <ComboBoxItem Content="Warehouse 3"/>
+                            </ComboBox>
+                        </StackPanel>
+                    </StackPanel>
 
-            <StackPanel Grid.Row="2" Grid.Column="1"  Margin="25,10,0,10" Orientation="Vertical">
-                <Border BorderThickness="2" BorderBrush="Gray" CornerRadius="20" Background="White"
+                    <StackPanel Grid.Row="2" Grid.Column="1"  Margin="25,10,0,10" Orientation="Vertical">
+                        <Border BorderThickness="2" BorderBrush="Gray" CornerRadius="20" Background="White"
             Padding="5" Margin="10,10,40,10" Height="360">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <StackPanel Background="#FDFDFD">
-                            <StackPanel>
-                                <TextBlock Text="Purchase Order" FontFamily="Lexend" FontSize="25" Foreground="#474747" Margin="0,0,0,25"/>
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <StackPanel Background="#FDFDFD">
+                                    <StackPanel>
+                                        <TextBlock Text="Purchase Order" FontFamily="Lexend" FontSize="25" Foreground="#474747" Margin="0,0,0,25"/>
 
-                                <TextBlock Text="Invoice Number:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
-                                <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" Width="475" Background="White" HorizontalAlignment="Left" Margin="0,0,0,10">
-                                    <StackPanel Orientation="Horizontal" Width="500">
-                                        <TextBox Width="425" Height="35" Margin="20,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Left" BorderThickness="0" FontFamily="Lexend"/>
-                                    </StackPanel>
-                                </Border>
+                                        <TextBlock Text="Invoice Number:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
+                                        <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" Width="475" Background="White" HorizontalAlignment="Left" Margin="0,0,0,10">
+                                            <StackPanel Orientation="Horizontal" Width="500">
+                                                <TextBox Width="425" Height="35" Margin="20,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Left" BorderThickness="0" FontFamily="Lexend"/>
+                                            </StackPanel>
+                                        </Border>
 
-                                <TextBlock Text="Reference:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
-                                <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" Width="475" Background="White" HorizontalAlignment="Left" Margin="0,0,0,10">
-                                    <StackPanel Orientation="Horizontal" Width="500">
-                                        <TextBox Width="425" Height="35" Margin="20,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Left" BorderThickness="0" FontFamily="Lexend"/>
-                                    </StackPanel>
-                                </Border>
+                                        <TextBlock Text="Reference:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
+                                        <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" Width="475" Background="White" HorizontalAlignment="Left" Margin="0,0,0,10">
+                                            <StackPanel Orientation="Horizontal" Width="500">
+                                                <TextBox Width="425" Height="35" Margin="20,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Left" BorderThickness="0" FontFamily="Lexend"/>
+                                            </StackPanel>
+                                        </Border>
 
-                                <TextBlock Text="Order Date:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
-                                <DatePicker x:Name="orderDate" Margin="0,0,0,10"
+                                        <TextBlock Text="Order Date:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
+                                        <DatePicker x:Name="orderDate" Margin="0,0,0,10"
                 Width="475"
                 Height="35"
                 Background="White"
@@ -199,29 +216,29 @@
                 Padding="10,0,10,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center">
-                                    <DatePicker.Resources>
-                                        <!-- Style for Placeholder Text -->
-                                        <Style TargetType="DatePickerTextBox">
-                                            <Setter Property="Foreground" Value="Gray"/>
-                                            <Setter Property="Text" Value="DD-MM-YYYY"/>
-                                            <Setter Property="FontStyle" Value="Italic"/>
-                                        </Style>
-                                    </DatePicker.Resources>
-                                    <DatePicker.Style>
-                                        <Style TargetType="DatePicker">
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="DatePicker">
-                                                        <Grid>
-                                                            <!-- Rounded Border -->
-                                                            <Border CornerRadius="20"
+                                            <DatePicker.Resources>
+                                                <!-- Style for Placeholder Text -->
+                                                <Style TargetType="DatePickerTextBox">
+                                                    <Setter Property="Foreground" Value="Gray"/>
+                                                    <Setter Property="Text" Value="DD-MM-YYYY"/>
+                                                    <Setter Property="FontStyle" Value="Italic"/>
+                                                </Style>
+                                            </DatePicker.Resources>
+                                            <DatePicker.Style>
+                                                <Style TargetType="DatePicker">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="DatePicker">
+                                                                <Grid>
+                                                                    <!-- Rounded Border -->
+                                                                    <Border CornerRadius="20"
                                         Background="White"
                                         BorderBrush="Black"
                                         BorderThickness="1"
                                         Padding="5">
-                                                                <Grid>
-                                                                    <!-- DatePicker Input Box -->
-                                                                    <DatePickerTextBox x:Name="PART_TextBox"
+                                                                        <Grid>
+                                                                            <!-- DatePicker Input Box -->
+                                                                            <DatePickerTextBox x:Name="PART_TextBox"
                                                            Foreground="#474747"
                                                            FontSize="14"
                                                            Background="Transparent"
@@ -230,42 +247,42 @@
                                                            Padding="10,0,40,0"
                                                            IsReadOnly="True"/>
 
-                                                                    <!-- Clickable Button with Calendar Icon -->
-                                                                    <Button x:Name="PART_Button"
+                                                                            <!-- Clickable Button with Calendar Icon -->
+                                                                            <Button x:Name="PART_Button"
                                                 Background="Transparent"
                                                 BorderThickness="0"
                                                 HorizontalAlignment="Right"
                                                 Padding="0"
                                                 Width="40"
                                                 Cursor="Hand">
-                                                                        <materialDesign:PackIcon Kind="Calendar"
+                                                                                <materialDesign:PackIcon Kind="Calendar"
                                                                      Foreground="#474747"
                                                                      Width="20"
                                                                      Height="20"/>
-                                                                    </Button>
-                                                                </Grid>
-                                                            </Border>
-                                                            <!-- Popup for Calendar -->
-                                                            <Popup x:Name="PART_Popup"
+                                                                            </Button>
+                                                                        </Grid>
+                                                                    </Border>
+                                                                    <!-- Popup for Calendar -->
+                                                                    <Popup x:Name="PART_Popup"
                                        Placement="Bottom"
                                        StaysOpen="False"
                                        IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}">
-                                                                <Border BorderBrush="Gray" BorderThickness="1" Background="White">
-                                                                    <Calendar x:Name="PART_Calendar"
+                                                                        <Border BorderBrush="Gray" BorderThickness="1" Background="White">
+                                                                            <Calendar x:Name="PART_Calendar"
                                                   SelectedDate="{Binding SelectedDate, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"/>
-                                                                </Border>
-                                                            </Popup>
-                                                        </Grid>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </DatePicker.Style>
-                                </DatePicker>
+                                                                        </Border>
+                                                                    </Popup>
+                                                                </Grid>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </DatePicker.Style>
+                                        </DatePicker>
 
 
-                                <TextBlock Text="Order Due Date:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
-                                <DatePicker x:Name="orderDueDate" Margin="0,0,0,10"
+                                        <TextBlock Text="Order Due Date:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
+                                        <DatePicker x:Name="orderDueDate" Margin="0,0,0,10"
     Width="475"
     Height="35"
     Background="White"
@@ -274,29 +291,29 @@
     Padding="10,0,10,0"
     HorizontalAlignment="Left"
     VerticalAlignment="Center">
-                                    <DatePicker.Resources>
-                                        <!-- Style for Placeholder Text -->
-                                        <Style TargetType="DatePickerTextBox">
-                                            <Setter Property="Foreground" Value="Gray"/>
-                                            <Setter Property="Text" Value="DD-MM-YYYY"/>
-                                            <Setter Property="FontStyle" Value="Italic"/>
-                                        </Style>
-                                    </DatePicker.Resources>
-                                    <DatePicker.Style>
-                                        <Style TargetType="DatePicker">
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="DatePicker">
-                                                        <Grid>
-                                                            <!-- Rounded Border -->
-                                                            <Border CornerRadius="20"
+                                            <DatePicker.Resources>
+                                                <!-- Style for Placeholder Text -->
+                                                <Style TargetType="DatePickerTextBox">
+                                                    <Setter Property="Foreground" Value="Gray"/>
+                                                    <Setter Property="Text" Value="DD-MM-YYYY"/>
+                                                    <Setter Property="FontStyle" Value="Italic"/>
+                                                </Style>
+                                            </DatePicker.Resources>
+                                            <DatePicker.Style>
+                                                <Style TargetType="DatePicker">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="DatePicker">
+                                                                <Grid>
+                                                                    <!-- Rounded Border -->
+                                                                    <Border CornerRadius="20"
                             Background="White"
                             BorderBrush="Black"
                             BorderThickness="1"
                             Padding="5">
-                                                                <Grid>
-                                                                    <!-- DatePicker Input Box -->
-                                                                    <DatePickerTextBox x:Name="PART_TextBox"
+                                                                        <Grid>
+                                                                            <!-- DatePicker Input Box -->
+                                                                            <DatePickerTextBox x:Name="PART_TextBox"
                                                Foreground="#474747"
                                                FontSize="14"
                                                Background="Transparent"
@@ -305,388 +322,390 @@
                                                Padding="10,0,40,0"
                                                IsReadOnly="True"/>
 
-                                                                    <!-- Clickable Button with Calendar Icon -->
-                                                                    <Button x:Name="PART_Button"
+                                                                            <!-- Clickable Button with Calendar Icon -->
+                                                                            <Button x:Name="PART_Button"
                                     Background="Transparent"
                                     BorderThickness="0"
                                     HorizontalAlignment="Right"
                                     Padding="0"
                                     Width="40"
                                     Cursor="Hand">
-                                                                        <materialDesign:PackIcon Kind="Calendar"
+                                                                                <materialDesign:PackIcon Kind="Calendar"
                                                          Foreground="#474747"
                                                          Width="20"
                                                          Height="20"/>
-                                                                    </Button>
-                                                                </Grid>
-                                                            </Border>
-                                                            <!-- Popup for Calendar -->
-                                                            <Popup x:Name="PART_Popup"
+                                                                            </Button>
+                                                                        </Grid>
+                                                                    </Border>
+                                                                    <!-- Popup for Calendar -->
+                                                                    <Popup x:Name="PART_Popup"
                            Placement="Bottom"
                            StaysOpen="False"
                            IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}">
-                                                                <Border BorderBrush="Gray" BorderThickness="1" Background="White">
-                                                                    <Calendar x:Name="PART_Calendar"
+                                                                        <Border BorderBrush="Gray" BorderThickness="1" Background="White">
+                                                                            <Calendar x:Name="PART_Calendar"
                                       SelectedDate="{Binding SelectedDate, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"/>
-                                                                </Border>
-                                                            </Popup>
-                                                        </Grid>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </DatePicker.Style>
-                                </DatePicker>
+                                                                        </Border>
+                                                                    </Popup>
+                                                                </Grid>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </DatePicker.Style>
+                                        </DatePicker>
 
-                                <TextBlock Text="Tax:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
-                                <StackPanel HorizontalAlignment="Left" Margin="0,0,0,10">
-                                    <ComboBox SelectedIndex="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"
+                                        <TextBlock Text="Tax:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
+                                        <StackPanel HorizontalAlignment="Left" Margin="0,0,0,10">
+                                            <ComboBox SelectedIndex="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"
           Padding="10" Width="475" Height="35" Background="White" BorderBrush="black"
           BorderThickness="1" HorizontalContentAlignment="Left">
-                                        <ComboBox.Resources>
+                                                <ComboBox.Resources>
 
-                                            <!-- Custom ComboBox Toggle Button -->
-                                            <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
-                                                <Setter Property="Focusable" Value="False"/>
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="ToggleButton">
-                                                            <Border Background="Transparent" Padding="5">
-                                                                <Grid>
-                                                                    <Path x:Name="Arrow" Data="M 0 0 L 4 4 L 8 0 Z"
+                                                    <!-- Custom ComboBox Toggle Button -->
+                                                    <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+                                                        <Setter Property="Focusable" Value="False"/>
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="ToggleButton">
+                                                                    <Border Background="Transparent" Padding="5">
+                                                                        <Grid>
+                                                                            <Path x:Name="Arrow" Data="M 0 0 L 4 4 L 8 0 Z"
                                   HorizontalAlignment="Right" VerticalAlignment="Center"
                                   Fill="Black" Width="8" Height="8" 
                                   Margin="0,5,10,0"/>
-                                                                </Grid>
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
+                                                                        </Grid>
+                                                                    </Border>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
 
-                                            <!-- Custom ComboBox Style -->
-                                            <Style TargetType="ComboBox">
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="ComboBox">
-                                                            <Border Background="{TemplateBinding Background}"
+                                                    <!-- Custom ComboBox Style -->
+                                                    <Style TargetType="ComboBox">
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="ComboBox">
+                                                                    <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="20" Padding="5">
-                                                                <Grid>
-                                                                    <!-- Toggle Button for Dropdown -->
-                                                                    <ToggleButton Name="ToggleButton" 
+                                                                        <Grid>
+                                                                            <!-- Toggle Button for Dropdown -->
+                                                                            <ToggleButton Name="ToggleButton" 
                                           Style="{StaticResource ComboBoxToggleButton}"
                                           Grid.Column="2" Focusable="False"
                                           IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" 
                                           ClickMode="Press"/>
 
-                                                                    <!-- Selected Content -->
-                                                                    <ContentPresenter Name="ContentSite" IsHitTestVisible="False" 
+                                                                            <!-- Selected Content -->
+                                                                            <ContentPresenter Name="ContentSite" IsHitTestVisible="False" 
                                               Content="{TemplateBinding SelectionBoxItem}" 
                                               ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
                                               Margin="10,0,40,0" VerticalAlignment="Center"/>
 
-                                                                    <!-- Dropdown List -->
-                                                                    <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" 
+                                                                            <!-- Dropdown List -->
+                                                                            <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" 
                                    AllowsTransparency="True" Focusable="False"
                                    PopupAnimation="Slide" Width="465">
-                                                                        <Border Background="White" BorderBrush="Gray" BorderThickness="1" 
+                                                                                <Border Background="White" BorderBrush="Gray" BorderThickness="1" 
                                         CornerRadius="10">
-                                                                            <ScrollViewer>
-                                                                                <StackPanel>
-                                                                                    <ItemsPresenter/>
-                                                                                </StackPanel>
-                                                                            </ScrollViewer>
-                                                                        </Border>
-                                                                    </Popup>
-                                                                </Grid>
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </ComboBox.Resources>
+                                                                                    <ScrollViewer>
+                                                                                        <StackPanel>
+                                                                                            <ItemsPresenter/>
+                                                                                        </StackPanel>
+                                                                                    </ScrollViewer>
+                                                                                </Border>
+                                                                            </Popup>
+                                                                        </Grid>
+                                                                    </Border>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </ComboBox.Resources>
 
-                                        <!-- ComboBox Items -->
-                                        <ComboBoxItem Content="Inclusive"/>
-                                        <ComboBoxItem Content="Exclusive"/>
-                                    </ComboBox>
-                                </StackPanel>
+                                                <!-- ComboBox Items -->
+                                                <ComboBoxItem Content="Inclusive"/>
+                                                <ComboBoxItem Content="Exclusive"/>
+                                            </ComboBox>
+                                        </StackPanel>
 
-                                <TextBlock Text="Discount:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
-                                <StackPanel HorizontalAlignment="Left" Margin="0,0,0,10">
-                                    <ComboBox SelectedIndex="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"
+                                        <TextBlock Text="Discount:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
+                                        <StackPanel HorizontalAlignment="Left" Margin="0,0,0,10">
+                                            <ComboBox SelectedIndex="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"
     Padding="10" Width="475" Height="35" Background="White" BorderBrush="black"
     BorderThickness="1" HorizontalContentAlignment="Left">
-                                        <ComboBox.Resources>
+                                                <ComboBox.Resources>
 
-                                            <!-- Custom ComboBox Toggle Button -->
-                                            <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
-                                                <Setter Property="Focusable" Value="False"/>
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="ToggleButton">
-                                                            <Border Background="Transparent" Padding="5">
-                                                                <Grid>
-                                                                    <Path x:Name="Arrow" Data="M 0 0 L 4 4 L 8 0 Z"
+                                                    <!-- Custom ComboBox Toggle Button -->
+                                                    <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+                                                        <Setter Property="Focusable" Value="False"/>
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="ToggleButton">
+                                                                    <Border Background="Transparent" Padding="5">
+                                                                        <Grid>
+                                                                            <Path x:Name="Arrow" Data="M 0 0 L 4 4 L 8 0 Z"
                             HorizontalAlignment="Right" VerticalAlignment="Center"
                             Fill="Black" Width="8" Height="8" 
                             Margin="0,5,10,0"/>
-                                                                </Grid>
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
+                                                                        </Grid>
+                                                                    </Border>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
 
-                                            <!-- Custom ComboBox Style -->
-                                            <Style TargetType="ComboBox">
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="ComboBox">
-                                                            <Border Background="{TemplateBinding Background}"
+                                                    <!-- Custom ComboBox Style -->
+                                                    <Style TargetType="ComboBox">
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="ComboBox">
+                                                                    <Border Background="{TemplateBinding Background}"
                       BorderBrush="{TemplateBinding BorderBrush}"
                       BorderThickness="{TemplateBinding BorderThickness}"
                       CornerRadius="20" Padding="5">
-                                                                <Grid>
-                                                                    <!-- Toggle Button for Dropdown -->
-                                                                    <ToggleButton Name="ToggleButton" 
+                                                                        <Grid>
+                                                                            <!-- Toggle Button for Dropdown -->
+                                                                            <ToggleButton Name="ToggleButton" 
                                     Style="{StaticResource ComboBoxToggleButton}"
                                     Grid.Column="2" Focusable="False"
                                     IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" 
                                     ClickMode="Press"/>
 
-                                                                    <!-- Selected Content -->
-                                                                    <ContentPresenter Name="ContentSite" IsHitTestVisible="False" 
+                                                                            <!-- Selected Content -->
+                                                                            <ContentPresenter Name="ContentSite" IsHitTestVisible="False" 
                                         Content="{TemplateBinding SelectionBoxItem}" 
                                         ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
                                         Margin="10,0,40,0" VerticalAlignment="Center"/>
 
-                                                                    <!-- Dropdown List -->
-                                                                    <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" 
+                                                                            <!-- Dropdown List -->
+                                                                            <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" 
                              AllowsTransparency="True" Focusable="False"
                              PopupAnimation="Slide" Width="465">
-                                                                        <Border Background="White" BorderBrush="Gray" BorderThickness="1" 
+                                                                                <Border Background="White" BorderBrush="Gray" BorderThickness="1" 
                                   CornerRadius="10">
-                                                                            <ScrollViewer>
-                                                                                <StackPanel>
-                                                                                    <ItemsPresenter/>
-                                                                                </StackPanel>
-                                                                            </ScrollViewer>
-                                                                        </Border>
-                                                                    </Popup>
-                                                                </Grid>
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </ComboBox.Resources>
+                                                                                    <ScrollViewer>
+                                                                                        <StackPanel>
+                                                                                            <ItemsPresenter/>
+                                                                                        </StackPanel>
+                                                                                    </ScrollViewer>
+                                                                                </Border>
+                                                                            </Popup>
+                                                                        </Grid>
+                                                                    </Border>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </ComboBox.Resources>
 
-                                        <!-- ComboBox Items -->
-                                        <ComboBoxItem Content="% Discount After"/>
-                                        <ComboBoxItem Content="Flat Discount After"/>
-                                        <ComboBoxItem Content=" % Discount Before"/>
-                                        <ComboBoxItem Content=" Flat Discount Before"/>
-                                    </ComboBox>
-                                </StackPanel>
+                                                <!-- ComboBox Items -->
+                                                <ComboBoxItem Content="% Discount After"/>
+                                                <ComboBoxItem Content="Flat Discount After"/>
+                                                <ComboBoxItem Content=" % Discount Before"/>
+                                                <ComboBoxItem Content=" Flat Discount Before"/>
+                                            </ComboBox>
+                                        </StackPanel>
 
-                                <TextBlock Text="Order Note:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,0"/>
-                                <StackPanel Margin="0,5,0,5">
-                                    <Grid Width="475" HorizontalAlignment="Left">
-                                        <!-- Border with lower ZIndex -->
-                                        <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" Width="475" Height="150"
+                                        <TextBlock Text="Order Note:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,0"/>
+                                        <StackPanel Margin="0,5,0,5">
+                                            <Grid Width="475" HorizontalAlignment="Left">
+                                                <!-- Border with lower ZIndex -->
+                                                <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" Width="475" Height="150"
             Background="White" Panel.ZIndex="0"/>
 
-                                        <!-- TextBox on top -->
-                                        <TextBox Width="455" Height="130" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                <!-- TextBox on top -->
+                                                <TextBox Width="455" Height="130" HorizontalAlignment="Center" VerticalAlignment="Center"
             Background="Transparent" BorderThickness="0" Panel.ZIndex="1" FontFamily="Lexend"/>
-                                    </Grid>
+                                            </Grid>
+                                        </StackPanel>
+                                    </StackPanel>
                                 </StackPanel>
-                            </StackPanel>
-                        </StackPanel>
-                    </ScrollViewer>
-                </Border>
+                            </ScrollViewer>
+                        </Border>
 
-            </StackPanel>
+                    </StackPanel>
 
-            <StackPanel x:Name="TableGridPanel" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
-                <Grid Margin="25,10,40,10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width=".3*"/>
-                        <ColumnDefinition Width=".1*"/>
-                        <ColumnDefinition Width=".1*"/>
-                        <ColumnDefinition Width=".1*"/>
-                        <ColumnDefinition Width=".1*"/>
-                        <ColumnDefinition Width=".1*"/>
-                        <ColumnDefinition Width=".1*"/>
-                        <ColumnDefinition Width=".1*"/>
-                    </Grid.ColumnDefinitions>
+                    <StackPanel x:Name="TableGridPanel" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
+                        <Grid Margin="25,10,40,10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width=".3*"/>
+                                <ColumnDefinition Width=".1*"/>
+                                <ColumnDefinition Width=".1*"/>
+                                <ColumnDefinition Width=".1*"/>
+                                <ColumnDefinition Width=".1*"/>
+                                <ColumnDefinition Width=".1*"/>
+                                <ColumnDefinition Width=".1*"/>
+                                <ColumnDefinition Width=".1*"/>
+                            </Grid.ColumnDefinitions>
 
-                    <Border Grid.Row="0" Grid.ColumnSpan="8" Background="#555555" Padding="20" CornerRadius="10,10,0,0"/>
+                            <Border Grid.Row="0" Grid.ColumnSpan="8" Background="#555555" Padding="20" CornerRadius="10,10,0,0"/>
 
-                    <TextBlock Text="Item Name" Grid.Row="0" Grid.Column="0" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Quantity" Grid.Row="0" Grid.Column="1" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Rate" Grid.Row="0" Grid.Column="2" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Tax(%)" Grid.Row="0" Grid.Column="3" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Tax" Grid.Row="0" Grid.Column="4" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Discount" Grid.Row="0" Grid.Column="5" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Amount" Grid.Row="0" Grid.Column="6" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Action" Grid.Row="0" Grid.Column="7" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                </Grid>
-              
-            </StackPanel>
-        
-            <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical">
-                
-                <Button x:Name="btnAddRow" Width="120" Height="35" HorizontalAlignment="Left" Margin="25,5,0,10" Background="#2E466B">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border Background="{TemplateBinding Background}" CornerRadius="15" Padding="5">
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <materialDesign:PackIcon Kind="PlaylistAdd" Foreground="white" Width="24" Height="24" Margin="0,0,5,0"/>
-                                    <TextBlock Text="Row" Foreground="white" VerticalAlignment="Center" FontFamily="Lexend" FontSize="13"/>
-                                </StackPanel>
-                            </Border>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-            </StackPanel>
+                            <TextBlock Text="Item Name" Grid.Row="0" Grid.Column="0" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Quantity" Grid.Row="0" Grid.Column="1" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Rate" Grid.Row="0" Grid.Column="2" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Tax(%)" Grid.Row="0" Grid.Column="3" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Tax" Grid.Row="0" Grid.Column="4" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Discount" Grid.Row="0" Grid.Column="5" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Amount" Grid.Row="0" Grid.Column="6" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Action" Grid.Row="0" Grid.Column="7" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Grid>
 
-            <StackPanel Grid.Row="5" Grid.Column="0" Orientation="Vertical"  Margin="25,10,0,10">
-                <TextBlock Text="Payment Terms:"  FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
-                <StackPanel HorizontalAlignment="Left">
-                    <ComboBox SelectedIndex="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical">
+
+                        <Button x:Name="btnAddRow" Width="120" Height="35" HorizontalAlignment="Left" Margin="25,5,0,10" Background="#2E466B">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="15" Padding="5">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <materialDesign:PackIcon Kind="PlaylistAdd" Foreground="white" Width="24" Height="24" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Row" Foreground="white" VerticalAlignment="Center" FontFamily="Lexend" FontSize="13"/>
+                                        </StackPanel>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="5" Grid.Column="0" Orientation="Vertical"  Margin="25,10,0,10">
+                        <TextBlock Text="Payment Terms:"  FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
+                        <StackPanel HorizontalAlignment="Left">
+                            <ComboBox SelectedIndex="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"
                     Padding="10" Width="500" Height="35" Background="White" BorderBrush="black"
-                    BorderThickness="1" HorizontalContentAlignment="Left" Margin="0,0,0,10">         
-                        <ComboBox.Resources>
+                    BorderThickness="1" HorizontalContentAlignment="Left" Margin="0,0,0,10">
+                                <ComboBox.Resources>
 
-                            <!-- Custom ComboBox Toggle Button -->
-                            <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
-                                <Setter Property="Focusable" Value="False"/>
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="ToggleButton">
-                                            <Border Background="Transparent" Padding="5">
-                                                <Grid>
-                                                    <Path x:Name="Arrow" Data="M 0 0 L 4 4 L 8 0 Z"
+                                    <!-- Custom ComboBox Toggle Button -->
+                                    <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+                                        <Setter Property="Focusable" Value="False"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ToggleButton">
+                                                    <Border Background="Transparent" Padding="5">
+                                                        <Grid>
+                                                            <Path x:Name="Arrow" Data="M 0 0 L 4 4 L 8 0 Z"
                               HorizontalAlignment="Right" VerticalAlignment="Center"
                               Fill="Black" Width="8" Height="8" 
                               Margin="0,5,10,0"/>
-                                                </Grid>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
+                                                        </Grid>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
 
-                            <!-- Custom ComboBox Style -->
-                            <Style TargetType="ComboBox">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="ComboBox">
-                                            <Border Background="{TemplateBinding Background}"
+                                    <!-- Custom ComboBox Style -->
+                                    <Style TargetType="ComboBox">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ComboBox">
+                                                    <Border Background="{TemplateBinding Background}"
                                             BorderBrush="{TemplateBinding BorderBrush}"
                                             BorderThickness="{TemplateBinding BorderThickness}"
                                             CornerRadius="20" Padding="5">
-                                                <Grid>
-                                                    <!-- Toggle Button for Dropdown -->
-                                                    <ToggleButton Name="ToggleButton" 
+                                                        <Grid>
+                                                            <!-- Toggle Button for Dropdown -->
+                                                            <ToggleButton Name="ToggleButton" 
                                                       Style="{StaticResource ComboBoxToggleButton}"
                                                       Grid.Column="2" Focusable="False"
                                                       IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" 
-                                                      ClickMode="Press"/>       
+                                                      ClickMode="Press"/>
 
-                                                    <!-- Selected Content -->
-                                                    <ContentPresenter Name="ContentSite" IsHitTestVisible="False" 
+                                                            <!-- Selected Content -->
+                                                            <ContentPresenter Name="ContentSite" IsHitTestVisible="False" 
                                                       Content="{TemplateBinding SelectionBoxItem}" 
                                                       ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                                      Margin="10,0,40,0" VerticalAlignment="Center"/>   
+                                                      Margin="10,0,40,0" VerticalAlignment="Center"/>
 
-                                                    <!-- Dropdown List -->
-                                                    <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" 
+                                                            <!-- Dropdown List -->
+                                                            <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" 
                                                        AllowsTransparency="True" Focusable="False"
                                                        PopupAnimation="Slide" Width="490">
-                                                        <Border Background="White" BorderBrush="Gray" BorderThickness="1" 
+                                                                <Border Background="White" BorderBrush="Gray" BorderThickness="1" 
                                                         CornerRadius="10">
-                                                            <ScrollViewer>
-                                                                <StackPanel>
-                                                                    <ItemsPresenter/>
-                                                                </StackPanel>
-                                                            </ScrollViewer>
-                                                        </Border>
-                                                    </Popup>
-                                                </Grid>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </ComboBox.Resources>
+                                                                    <ScrollViewer>
+                                                                        <StackPanel>
+                                                                            <ItemsPresenter/>
+                                                                        </StackPanel>
+                                                                    </ScrollViewer>
+                                                                </Border>
+                                                            </Popup>
+                                                        </Grid>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ComboBox.Resources>
 
-                        <!-- ComboBox Items -->
-                        <ComboBoxItem Content="Payment On Receipt"/>
-                    </ComboBox>
-                </StackPanel>
+                                <!-- ComboBox Items -->
+                                <ComboBoxItem Content="Payment On Receipt"/>
+                            </ComboBox>
+                        </StackPanel>
 
-                <TextBlock Text="Update Stock:" FontFamily="Lexend" FontSize="14" Foreground="#474747"  Margin="0,0,0,5"/>
-                <StackPanel Orientation="Horizontal">
-                    <RadioButton Content="Yes" IsChecked="True" GroupName="Choices" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,5,0"/>
-                    <RadioButton Content="No" GroupName="Choices" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="5,0,0,0"/>
-                </StackPanel>
-            </StackPanel>
-
-            <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Vertical"  Margin="25,10,0,10">
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                    <TextBlock Text="Total Tax: " FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
-                    <TextBlock Text="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                    <TextBlock Text="Total Discount: " FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
-                    <TextBlock Text="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Shipping: " FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,2,0,0"/>
+                        <TextBlock Text="Update Stock:" FontFamily="Lexend" FontSize="14" Foreground="#474747"  Margin="0,0,0,5"/>
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton Content="Yes" IsChecked="True" GroupName="Choices" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,5,0"/>
+                            <RadioButton Content="No" GroupName="Choices" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="5,0,0,0"/>
+                        </StackPanel>
                     </StackPanel>
-                    <StackPanel>
-                        <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" Width="250" Background="White" HorizontalAlignment="Left" Margin="0,0,0,0">
-                            <StackPanel Orientation="Horizontal" Width="250">
-                                <TextBox Width="230" Height="15" FontFamily="Lexend" FontSize="14" Foreground="#474747" HorizontalAlignment="Left" Margin="10,5,0,5" BorderThickness="0" VerticalContentAlignment="Center"/>
+
+                    <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Vertical"  Margin="25,10,0,10">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                            <TextBlock Text="Total Tax: " FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
+                            <TextBlock Text="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                            <TextBlock Text="Total Discount: " FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
+                            <TextBlock Text="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Shipping: " FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,2,0,0"/>
                             </StackPanel>
-                        </Border>
-                        <TextBlock Text="( Tax: 0 )" FontFamily="Lexend" FontSize="10" Foreground="#474747"/>
-                        
-                    </StackPanel>
-                </StackPanel>
-
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                    <TextBlock Text="Grand Total: " FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
-                    <TextBlock Text="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
-                </StackPanel>
-
-                <StackPanel>
-                    <Button x:Name="btnGenerateOrder"  Width="120" Height="25" HorizontalAlignment="Left" Margin="0,0,0,0" Background="#1D5642">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}" CornerRadius="15" Padding="5">
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <TextBlock Text="Generate Order" VerticalAlignment="Center" FontFamily="Lexend" FontSize="12" Foreground="white"/>
+                            <StackPanel>
+                                <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" Width="250" Background="White" HorizontalAlignment="Left" Margin="0,0,0,0">
+                                    <StackPanel Orientation="Horizontal" Width="250">
+                                        <TextBox Width="230" Height="15" FontFamily="Lexend" FontSize="14" Foreground="#474747" HorizontalAlignment="Left" Margin="10,5,0,5" BorderThickness="0" VerticalContentAlignment="Center"/>
                                     </StackPanel>
                                 </Border>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                </StackPanel>
-            </StackPanel>
+                                <TextBlock Text="( Tax: 0 )" FontFamily="Lexend" FontSize="10" Foreground="#474747"/>
+
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                            <TextBlock Text="Grand Total: " FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
+                            <TextBlock Text="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
+                        </StackPanel>
+
+                        <StackPanel>
+                            <Button x:Name="btnGenerateOrder"  Width="120" Height="25" HorizontalAlignment="Left" Margin="0,0,0,0" Background="#1D5642">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" CornerRadius="15" Padding="5">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                <TextBlock Text="Generate Order" VerticalAlignment="Center" FontFamily="Lexend" FontSize="12" Foreground="white"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </ScrollViewer>
         </Grid>
-    </ScrollViewer>
+    </Grid>
 </Window>

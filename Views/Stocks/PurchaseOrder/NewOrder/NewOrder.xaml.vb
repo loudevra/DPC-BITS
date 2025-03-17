@@ -6,6 +6,9 @@
         Public Sub New()
             InitializeComponent()
 
+            SidebarContainer.Content = New Components.Navigation.Sidebar()
+            TopNavBarContainer.Content = New Components.Navigation.TopNavBar()
+
             orderDate.SelectedDate = Date.Today
             orderDueDate.SelectedDate = Date.Today.AddDays(1)
             MyDynamicGrid = CType(TableGridPanel.Children(0), Grid)
