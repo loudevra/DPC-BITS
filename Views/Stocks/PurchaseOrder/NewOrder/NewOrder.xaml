@@ -9,7 +9,8 @@
         Background="#D9D9D9"
         WindowStartupLocation="CenterScreen">
 
-
+    
+    
     <Grid>
         <!-- Define Column Structure -->
         <Grid.ColumnDefinitions>
@@ -77,29 +78,35 @@
                         </Button>
                     </StackPanel>
 
-                    <StackPanel Grid.Row="2" Grid.Column="0" Margin="25,10,25,10" Orientation="Vertical">
+                    <StackPanel Grid.Row="2" Grid.Column="0" Margin="25,10,25,10" Orientation="Vertical" Width="Auto">
                         <StackPanel Margin="0,50,0,5">
                             <TextBlock Text="Search Supplier:" FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
                         </StackPanel>
 
-                        <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" Width="500" Background="White" HorizontalAlignment="Left" Margin="0,0,0,10">
-                            <StackPanel Orientation="Horizontal" Width="500">
-                                <TextBox Width="445" Height="35" Margin="20,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Left" BorderThickness="0" FontFamily="Lexend"/>
-                                <materialDesign:PackIcon Kind="Search" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                            </StackPanel>
+                        <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,5">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width=".1*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <materialDesign:PackIcon Kind="Search" Foreground="Black" Width="24" Height="24" Margin="0,0,10,0" HorizontalAlignment="Stretch"/>
+                                </StackPanel>
+                            </Grid>
                         </Border>
 
 
                         <StackPanel Margin="0,5,0,5">
                             <TextBlock Text="Supplier Details:"  FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
-                            <Grid Width="500" HorizontalAlignment="Left">
+                            <Grid Width="Auto" HorizontalAlignment="Stretch">
                                 <!-- Border with lower ZIndex -->
-                                <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" Width="500" Height="150"
-                        Background="White" Panel.ZIndex="0"/>
+                                <Border Style="{StaticResource RoundedBorderStyle}"/>
 
                                 <!-- TextBox on top -->
-                                <TextBox Width="480" Height="130" HorizontalAlignment="Center" VerticalAlignment="Center"
-                        Background="Transparent" BorderThickness="0" Panel.ZIndex="1" IsReadOnly="True" FontFamily="Lexend"/>
+                                <TextBox Style="{StaticResource RoundedTextboxStyle}" Width="Auto" Height="130" Margin="10,5" VerticalContentAlignment="Top" IsReadOnly="True"/>
                             </Grid>
                         </StackPanel>
 

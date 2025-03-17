@@ -14,26 +14,19 @@
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Font Definitions -->
-            <FontFamily x:Key="LexendRegular">pack://application:,,,/Assets/fonts/Lexend/Lexend-Regular.ttf</FontFamily>
-            <FontFamily x:Key="LexendBlack">pack://application:,,,/Assets/fonts/Lexend/Lexend-Black.ttf</FontFamily>
-            <FontFamily x:Key="LexendMedium">pack://application:,,,/Assets/fonts/Lexend/Lexend-Medium.ttf</FontFamily>
-            <FontFamily x:Key="LexendSemiBold">pack://application:,,,/Assets/fonts/Lexend/Lexend-SemiBold.ttf</FontFamily>
-            <FontFamily x:Key="LexendBold">pack://application:,,,/Assets/fonts/Lexend/Lexend-Bold.ttf</FontFamily>
-            <FontFamily x:Key="LexendExtraBold">pack://application:,,,/Assets/fonts/Lexend/Lexend-ExtraBold.ttf</FontFamily>
-            <FontFamily x:Key="LexendLight">pack://application:,,,/Assets/fonts/Lexend/Lexend-Light.ttf</FontFamily>
-            <FontFamily x:Key="LexendThin">pack://application:,,,/Assets/fonts/Lexend/Lexend-Thin.ttf</FontFamily>
-            <FontFamily x:Key="LexendExtraLight">pack://application:,,,/Assets/fonts/Lexend/Lexend-ExtraLight.ttf</FontFamily>
+            <FontFamily x:Key="Lexend">pack://application:,,,/Assets/fonts/Lexend/Lexend-Regular.ttf</FontFamily>
+            
 
             
             <!-- Styles -->
             <Style x:Key="TextBlockStyle" TargetType="TextBlock">
-                <Setter Property="FontFamily" Value="{StaticResource LexendRegular}" />
+                <Setter Property="FontFamily" Value="{StaticResource Lexend}" />
             </Style>
             <Style x:Key="TextBoxStyle" TargetType="TextBox">
-                <Setter Property="FontFamily" Value="{StaticResource LexendRegular}" />
+                <Setter Property="FontFamily" Value="{StaticResource Lexend}" />
             </Style>
             <Style x:Key="ButtonStyle" TargetType="Button">
-                <Setter Property="FontFamily" Value="{StaticResource LexendSemiBold}" />
+                <Setter Property="FontFamily" Value="{StaticResource Lexend}" />
             </Style>
 
             <Style x:Key="IconButton" TargetType="Button">
@@ -50,6 +43,26 @@
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
+            </Style>
+
+            <!-- Rounded Borders for texboxes-->
+            <Style x:Key="RoundedBorderStyle" TargetType="Border">
+                <Setter Property="CornerRadius" Value="20"/>
+                <Setter Property="BorderBrush" Value="Black"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Background" Value="White"/>
+            </Style>
+
+            <!-- rounded texboxes-->
+            <Style x:Key="RoundedTextboxStyle" TargetType="TextBox">
+                <Setter Property="Width" Value="Auto"/>
+                <Setter Property="Height" Value="35"/>
+                <Setter Property="VerticalAlignment" Value="Top"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="Margin" Value="20,0"/>
             </Style>
 
         </ResourceDictionary>

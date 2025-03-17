@@ -47,7 +47,7 @@
                 <StackPanel Orientation="Vertical" Margin="0,5,0,10">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Label" Foreground="White" Width="20" Height="20"/>
-                        <TextBlock FontSize="16" FontFamily="{StaticResource LexendBold}" Margin="10,0,0,0" >
+                        <TextBlock FontSize="16" FontFamily="{StaticResource Lexend}" Margin="10,0,0,0" >
                             <Hyperlink Click="NavigateToProductCategories" Foreground="White">Product Categories</Hyperlink>
                         </TextBlock>
                     </StackPanel>
@@ -57,7 +57,7 @@
                 <StackPanel Orientation="Vertical" Margin="0,5,0,10">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="Warehouse" Foreground="White" Width="20" Height="20"/>
-                        <TextBlock FontSize="16" FontFamily="{StaticResource LexendBold}" Margin="10,0,0,0">
+                        <TextBlock FontSize="16" FontFamily="{StaticResource Lexend}" Margin="10,0,0,0">
                             <Hyperlink Click="NavigateToWarehouses" Foreground="White">Warehouses</Hyperlink>
                         </TextBlock>
                     </StackPanel>
@@ -67,7 +67,7 @@
                 <StackPanel Orientation="Vertical" Margin="0,5,0,10">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="SwapHorizontal" Foreground="White" Width="20" Height="20"/>
-                        <TextBlock FontSize="16" FontFamily="{StaticResource LexendBold}" Margin="10,0,0,0">
+                        <TextBlock FontSize="16" FontFamily="{StaticResource Lexend}" Margin="10,0,0,0">
                             <Hyperlink Click="NavigateToStocksTransfer" Foreground="White" >Stocks Transfer</Hyperlink>
                         </TextBlock>
                     </StackPanel>
