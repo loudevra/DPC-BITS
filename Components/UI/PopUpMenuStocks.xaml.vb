@@ -77,7 +77,7 @@ Namespace DPC.Components.UI
             MessageBox.Show("Navigating to Product Categories", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
             ' TODO: Implement actual navigation logic
         End Sub
-        Private Sub NavigateToManageProduct(sender As Object, e As RoutedEventArgs)
+        Private Sub NavigateToProductManager(sender As Object, e As RoutedEventArgs)
             MessageBox.Show("Navigating to Product Categories", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
             ' TODO: Implement actual navigation logic
         End Sub
@@ -101,7 +101,12 @@ Namespace DPC.Components.UI
         ''' <summary>
         ''' Navigate to Stocks Transfer Page
         ''' </summary>
+        ''' 
         Private Sub NavigateToNewOrder(sender As Object, e As RoutedEventArgs)
+            MessageBox.Show("Navigating to Stocks Transfer", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+            ' TODO: Implement actual navigation logic
+        End Sub
+        Private Sub NavigateToStocksTransfer(sender As Object, e As RoutedEventArgs)
             MessageBox.Show("Navigating to Stocks Transfer", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
             ' TODO: Implement actual navigation logic
         End Sub
