@@ -7,8 +7,41 @@
         Height="800" Width="1200"
         Background="#F5F5F5"
         WindowStartupLocation="CenterScreen"
-        FontFamily="{StaticResource LexendRegular}">
+        FontFamily="Lexend">
 
+    <Window.Resources>
+        <Style x:Key="RoundedBorderStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+
+        <Style x:Key="RoundedTextboxStyle" TargetType="TextBox">
+            <Setter Property="Width" Value="Auto"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Margin" Value="20,0"/>
+        </Style>
+
+        <Style x:Key="RoundedComboboxStyle" TargetType="ComboBox">
+            <Setter Property="Width" Value="Auto"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Margin" Value="20,0,18,0"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#474747"/>
+        </Style>
+    </Window.Resources>
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -22,13 +55,72 @@
         <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <StackPanel Margin="20">
 
-                <!-- Title -->
-                <TextBlock Text="👤 Employee Details" 
-                           FontSize="24" 
-                           FontWeight="Bold" 
-                           Foreground="#333"
-                           FontFamily="{StaticResource LexendBold}" 
-                           Margin="0,0,0,20"/>
+                <Grid Margin="25,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0">
+                        <materialDesign:PackIcon Kind="UserAdd" Foreground="#474747" Width="50" Height="50" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        <!-- Title -->
+                        <TextBlock Text="Employee Details" VerticalAlignment="Center"
+                        FontSize="25" 
+                        FontWeight="Regular" 
+                        Foreground="#474747"
+                        Margin="0,0,0,0"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1" Orientation="Vertical" Margin="0,20">
+                        <StackPanel Margin="0,0,0,10">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Username:" FontSize="14" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                <TextBlock Text="(Use only A-Z &amp; 0-9)" Foreground="#D23636" FontSize="11" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <Border Style="{StaticResource RoundedBorderStyle}" Padding="0,1">
+                                <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,10">
+                            <StackPanel Margin="0,0,0,5">
+                                <TextBlock Text="Business Location:" FontSize="14" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <Border Style="{StaticResource RoundedBorderStyle}">
+                                    <ComboBox Style="{StaticResource RoundedComboboxStyle}" SelectedIndex="0">
+                                        <ComboBoxItem Content="Location 1"/>
+                                    </ComboBox>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,10">
+                            <StackPanel Margin="0,0,0,5">
+                                <TextBlock Text="User Role:" FontSize="14" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <Border Style="{StaticResource RoundedBorderStyle}">
+                                    <ComboBox Style="{StaticResource RoundedComboboxStyle}" SelectedIndex="0">
+                                        <ComboBoxItem Content="Role 1"/>
+                                    </ComboBox>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,10">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Email:" FontSize="14" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            </StackPanel>
+                            <Border Style="{StaticResource RoundedBorderStyle}" Padding="0,1">
+                                <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+
 
                 <!-- Form Card with Rounded Corners -->
                 <Border CornerRadius="20" Background="White" Padding="0">
@@ -37,9 +129,7 @@
                         <StackPanel>
 
                             <!-- Username -->
-                            <TextBlock Text="Username:" FontFamily="{StaticResource LexendSemiBold}"/>
-                            <TextBox materialDesign:HintAssist.Hint="Enter username..." Margin="0,5,0,10"/>
-                            <TextBlock Text="(Use only A-Z &amp; 0-9)" Foreground="Red" FontSize="12"/>
+                            
 
                             <!-- Business Location -->
                             <TextBlock Text="Business Location:" FontFamily="{StaticResource LexendSemiBold}"/>
