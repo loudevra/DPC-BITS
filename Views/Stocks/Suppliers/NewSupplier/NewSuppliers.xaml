@@ -238,7 +238,7 @@
         </UniformGrid>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="20">
-            <Button x:Name="btnNext" Background="#52C69D" Width="100" Height="40" Margin="5,0,110,0" BorderThickness="0"  Click="btnNext_Click">
+            <Button x:Name="btnNext" Background="#52C69D" Width="100" Height="40" Margin="5,0,110,0" BorderThickness="0"  Click="BtnNext_Click">
                 <Button.Style>
                     <Style TargetType="Button">
                         <Setter Property="Template">

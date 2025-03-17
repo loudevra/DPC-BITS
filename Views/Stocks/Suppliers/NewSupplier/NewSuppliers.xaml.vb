@@ -8,7 +8,7 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
             InitializeComponent()
 
         End Sub
-        Private Sub btnNext_Click(sender As Object, e As RoutedEventArgs)
+        Private Sub BtnNext_Click(sender As Object, e As RoutedEventArgs)
             InsertSupplierData()
         End Sub
         Private Sub InsertSupplierData()

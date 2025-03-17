@@ -10,48 +10,56 @@
         Background="Transparent"
         Topmost="True"
         Loaded="Window_Loaded"
-        FontFamily="{StaticResource LexendRegular}">
+        FontFamily="{StaticResource Lexend}">
 
-	<Grid>
-		<!-- Outer Glow Effect -->
-		<Border CornerRadius="20" Background="Transparent">
-			<Border.Effect>
-				<DropShadowEffect x:Name="GlowEffect" Color="Red" BlurRadius="40" ShadowDepth="0"/>
-			</Border.Effect>
-		</Border>
+    <Grid>
+        <!-- Outer Glow Effect -->
+        <Border CornerRadius="20" Background="Transparent">
+            <Border.Effect>
+                <DropShadowEffect x:Name="GlowEffect" Color="Red" BlurRadius="40" ShadowDepth="0"/>
+            </Border.Effect>
+        </Border>
 
-		<!-- Card Container -->
-		<materialDesign:Card Padding="20" Background="#1E1E1E" UniformCornerRadius="16"
+        <!-- Card Container -->
+        <materialDesign:Card Padding="20" Background="#1E1E1E" UniformCornerRadius="30"
+                             Width="500" Height="400"
                              VerticalAlignment="Center" HorizontalAlignment="Center">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
-				</Grid.RowDefinitions>
 
-				<!-- Logo Image -->
-				<Image x:Name="LogoImage" Source="/Assets/images/logo.png" Width="80" Height="80" Grid.Row="0"/>
+            <!-- Center Content -->
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-				<!-- Title -->
-				<TextBlock Text="Dream PC" FontSize="24" FontWeight="Bold" Foreground="White"
-                           HorizontalAlignment="Center" Grid.Row="1"/>
+                <!-- Logo Image -->
+                <Image x:Name="LogoImage" Source="/Assets/images/logo.png" Width="160" Height="160" Grid.Row="0"
+                       HorizontalAlignment="Center"/>
 
-				<!-- Subtitle -->
-				<TextBlock Text="Management System" FontSize="14" FontWeight="Regular" Foreground="White"
+                <!-- Title -->
+                <TextBlock Text="DREAM PC BUILD" FontSize="32" FontWeight="Bold" Foreground="White"
+                           HorizontalAlignment="Center" Grid.Row="1" Margin="0,10,0,0"/>
+
+                <!-- Subtitle -->
+                <TextBlock Text="Management System" FontSize="18" FontWeight="Regular" Foreground="White"
                            HorizontalAlignment="Center" Grid.Row="2"/>
 
-				<!-- Loading Text -->
-				<TextBlock x:Name="LoadingText" Text="Loading..." FontSize="14" Foreground="LightGray"
+                <!-- Loading Text -->
+                <TextBlock x:Name="LoadingText" Text="Loading..." FontSize="14" Foreground="LightGray"
                            HorizontalAlignment="Center" Grid.Row="3" Margin="0,5,0,0"/>
 
-				<!-- Progress Bar -->
-				<ProgressBar IsIndeterminate="True" Height="4" Grid.Row="4" Margin="0,10,0,0"
-                             Foreground="{DynamicResource PrimaryHueMidBrush}" Width="200"
-                             HorizontalAlignment="Center"/>
-			</Grid>
-		</materialDesign:Card>
-	</Grid>
+                <!-- Progress Bar -->
+                <ProgressBar x:Name="LoadingProgressBar" Grid.Row="4"
+                    Width="200" Height="7"
+                    Foreground="White" Background="#333"
+                    IsIndeterminate="True"
+                    HorizontalAlignment="Center"
+                    Margin="0,10,0,0"/>
+
+            </Grid>
+        </materialDesign:Card>
+    </Grid>
 </Window>

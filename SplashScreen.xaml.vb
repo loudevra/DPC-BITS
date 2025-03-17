@@ -30,7 +30,7 @@ Namespace DPC
             ' Apply animation to Glow Effect
             Dim glowEffect As New DropShadowEffect With {
                 .Color = Colors.Red,
-                .BlurRadius = 100,
+                .BlurRadius = 120,
                 .ShadowDepth = 0
             }
             glowEffect = glowEffect
@@ -39,7 +39,7 @@ Namespace DPC
             ' Apply animation to Logo Glow
             Dim logoEffect As New DropShadowEffect With {
                 .Color = Colors.Red,
-                .BlurRadius = 60,
+                .BlurRadius = 250,
                 .ShadowDepth = 0
             }
             LogoImage.Effect = logoEffect
@@ -49,8 +49,8 @@ Namespace DPC
         ' Initialize Database Connection
         Private Async Function InitializeApplicationAsync() As Task
             Try
-                Await Task.Delay(5000) ' Simulated Load Time
                 InitializeDatabase()
+                Await Task.Delay(6000) ' Simulated Load Time
             Catch ex As Exception
                 MessageBox.Show("Error initializing application: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
@@ -62,7 +62,6 @@ Namespace DPC
                 If DBConnection Is Nothing Then
                     DBConnection = New MySqlConnection("server=localhost;userid=root;password=;database=dpc;")
                     DBConnection.Open()
-                    MessageBox.Show("Database connection Succesfull")
                 End If
             Catch ex As Exception
                 MessageBox.Show("Database connection failed: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
@@ -71,6 +70,15 @@ Namespace DPC
 
         ' Open Main Window and Close Splash Screen
         Private Sub OpenMainWindow()
+            ' Check if MainWindow is already open
+            For Each window As Window In Application.Current.Windows
+                If TypeOf window Is MainWindow Then
+                    Me.Close()
+                    Return ' Exit the method if MainWindow is already open
+                End If
+            Next
+
+            ' Otherwise, create a new instance
             Dim mainWindow As New MainWindow()
             mainWindow.Show()
             Me.Close()

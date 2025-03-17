@@ -249,7 +249,7 @@
         End Sub
 
 
-        Private Sub btnAddRow_Click(sender As Object, e As RoutedEventArgs) Handles btnAddRow.Click
+        Private Sub BtnAddRow_Click(sender As Object, e As RoutedEventArgs) Handles btnAddRow.Click
             AddNewRow()
         End Sub
 
