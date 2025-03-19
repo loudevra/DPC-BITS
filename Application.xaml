@@ -13,6 +13,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/Generic.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBox.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Font Definitions -->
@@ -46,6 +47,7 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+
 
             <!-- Rounded Borders for texboxes-->
             <Style x:Key="RoundedBorderStyle" TargetType="Border">
