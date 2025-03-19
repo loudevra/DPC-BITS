@@ -4,165 +4,113 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:local="clr-namespace:DPC"
+        xmlns:local="namespace:DPC.Views.Stocks.ItemManager"
         mc:Ignorable="d"
         Background="#D9D9D9"
         Title="Add New Products"
         Height="800" Width="1200"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        FontFamily="{StaticResource Lexend}"
+        Foreground="#474747">
 
-    <Grid Background="#D3D3D3" Margin="2">
-        <!-- Define Columns for Sidebar and Main Content Wrapper -->
+    <Grid>
+        <!-- Define Column Structure -->
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <!-- Sidebar -->
+            <ColumnDefinition Width="250"/>
+            <!-- Sidebar Width -->
             <ColumnDefinition Width="*"/>
-            <!-- Content Wrapper -->
+            <!-- Main Content -->
         </Grid.ColumnDefinitions>
 
         <!-- Sidebar -->
-        <Border x:Name="SidebarContainer" Grid.Row="0" Grid.Column="0" Background="Black"/>
+        <Border Grid.Column="0"
+        Background="White"
+        BorderBrush="#E0E0E0"
+        BorderThickness="0,0,1,0">
+            <ContentControl x:Name="SidebarContainer"/>
+        </Border>
 
-        <!-- Wrapper for TopNavBar + Content -->
+        <!-- Main Content -->
         <Grid Grid.Column="1">
-            <!-- Define Rows for Top Navigation and Main Content -->
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <!-- Top Navigation -->
+                <RowDefinition Height="60"/>
+                <!-- Top Navigation Bar -->
                 <RowDefinition Height="*"/>
-                <!-- Main Content -->
+                <!-- Form Content -->
             </Grid.RowDefinitions>
 
             <!-- Top Navigation Bar -->
-            <Border x:Name="TopNavBarContainer" Grid.Row="0" Background="White" Height="Auto" MinHeight="50"/>
+            <Border Grid.Row="0"
+            Background="White"
+            BorderBrush="#E0E0E0"
+            BorderThickness="0,0,0,1">
+                <ContentControl x:Name="TopNavBarContainer"/>
+            </Border>
 
-            <!-- Main Content -->
-            <Grid Grid.Row="1" Margin="20">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+            <!-- Main Form Content -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <Grid Margin="25,10,25,20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                <!-- Page Header -->
-                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0 0 0 20">
-                    <materialDesign:PackIcon Kind="PackageVariantClosedPlus" Foreground="#474747" Width="64" Height="55"/>
-                    <Label Content="Add New Products" FontWeight="SemiBold" FontSize="24" FontFamily="Lexend" Foreground="#474747"/>
-                </StackPanel>
+                    <StackPanel Grid.Row="0" Margin="0,0,0,20">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <materialDesign:PackIcon Kind="PackageVariantAdd" Width="50" Height="50" Margin="0,0,15,0"/>
+                            <TextBlock Text="Add New Product" FontSize="25" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </StackPanel>
 
-                <!-- Form Section -->
-                <UniformGrid Grid.Row="1" Columns="1" HorizontalAlignment="Center" Width="950">
-                    <StackPanel>
-                        <Label Content="Product Name:" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
-                        <TextBox Height="42" BorderThickness="2" BorderBrush="#474747">
-                            <TextBox.Style>
-                                <Style TargetType="TextBox">
-                                    <Setter Property="Control.Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="TextBox">
-                                                <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White">
-                                                    <ScrollViewer x:Name="PART_ContentHost"/>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </TextBox.Style>
-                        </TextBox>
+                        <StackPanel Margin="0,10">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Product Image:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                            </StackPanel>
+                            <TextBlock Text="Please select a file to upload an image for the product." FontSize="13"/>
+                        </StackPanel>
                     </StackPanel>
 
-                    <StackPanel>
-                        <Label Content="Product Code:" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
-                        <TextBox Height="42" BorderThickness="2" BorderBrush="#474747">
-                            <TextBox.Style>
-                                <Style TargetType="TextBox">
-                                    <Setter Property="Control.Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="TextBox">
-                                                <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White">
-                                                    <ScrollViewer x:Name="PART_ContentHost"/>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </TextBox.Style>
-                        </TextBox>
+                    <StackPanel Grid.Row="1">
+                        <StackPanel Margin="0,10">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Product Name:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                            </StackPanel>
+                            <Border Style="{StaticResource RoundedBorderStyle}">
+                                <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,10">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Product Code:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                            </StackPanel>
+                            <Border Style="{StaticResource RoundedBorderStyle}">
+                                <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,10">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Product Category:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                            </StackPanel>
+                            <ComboBox x:Name="CategoryComboBox" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,10" Visibility="Collapsed">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Sub Category:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                            </StackPanel>
+                            <ComboBox x:Name="SubCategoryComboBox" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0"/>
+                        </StackPanel>
                     </StackPanel>
-
-                    <StackPanel>
-                        <Label Content="Product Category:" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
-                        <ComboBox Height="42" BorderThickness="2" BorderBrush="#474747"/>
-                    </StackPanel>
-
-                    <StackPanel>
-                        <Label Content="Sub-Category:" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
-                        <ComboBox Height="42" BorderThickness="2" BorderBrush="#474747"/>
-                    </StackPanel>
-
-                    <StackPanel>
-                        <Label Content="Warehouse:" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
-                        <ComboBox Height="42" BorderThickness="2" BorderBrush="#474747"/>
-                    </StackPanel>
-
-                    <StackPanel>
-                        <Label Content="Product Retail Price:" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
-                        <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White" Height="42">
-                            <Grid>
-                                <materialDesign:PackIcon Kind="CurrencyPhp" Width="15" Height="15" Foreground="#474747" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"/>
-                                <TextBox Margin="35,0,10,0" Background="Transparent" BorderThickness="0" VerticalContentAlignment="Center"/>
-                            </Grid>
-                        </Border>
-                    </StackPanel>
-
-                    <StackPanel>
-                        <Label Content="Product Order Price:" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747"/>
-                        <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White" Height="42">
-                            <Grid>
-                                <materialDesign:PackIcon Kind="CurrencyPhp" Width="15" Height="15" Foreground="#474747" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0"/>
-                                <TextBox Margin="35,0,10,0" Background="Transparent" BorderThickness="0" VerticalContentAlignment="Center"/>
-                            </Grid>
-                        </Border>
-                    </StackPanel>
-                </UniformGrid>
-
-                <!-- Action Buttons -->
-                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 20 0 0">
-                    <Button x:Name="btnCancel" Background="#D23636" Width="100" Height="40" Margin="5" BorderThickness="0">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border CornerRadius="18" Background="{TemplateBinding Background}">
-                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </Button.Style>
-                        <TextBlock Text="Cancel" Foreground="White" FontFamily="Lexend" FontSize="10"/>
-                    </Button>
-
-                    <Button x:Name="btnNext" Background="#2E466B" Width="100" Height="40" Margin="5" BorderThickness="0" Click="btnAddRow_Click">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border CornerRadius="18" Background="{TemplateBinding Background}">
-                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Border>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </Button.Style>
-                        <TextBlock Text="Next" Foreground="White" FontFamily="Lexend" FontSize="10"/>
-                    </Button>
-                </StackPanel>
-            </Grid>
+                    
+                </Grid>
+            </ScrollViewer>
         </Grid>
     </Grid>
 </Window>

@@ -1,4 +1,6 @@
-﻿Imports DPC.DPC.Components.Navigation
+﻿Imports System.Windows
+Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Components
 
 Namespace DPC.Views.Stocks.ItemManager.NewProduct
     Public Class AddNewProducts
@@ -7,16 +9,14 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         Public Sub New()
             InitializeComponent()
 
-            InitializeComponent()
+            Dim sidebar As New Components.Navigation.Sidebar()
+            SidebarContainer.Content = sidebar
 
-            ' Add Sidebar to SidebarContainer
-            Dim sidebar As New Sidebar()
-            SidebarContainer.Child = sidebar
+            ' Load Top Navigation Bar
+            Dim topNav As New Components.Navigation.TopNavBar()
+            TopNavBarContainer.Content = topNav
 
-            ' Add TopNavBar to TopNavBarContainer
-            Dim topNavBar As New TopNavBar()
-            TopNavBarContainer.Child = topNavBar
-
+            ProductController.GetProductCategory(CategoryComboBox)
         End Sub
 
         Private Sub btnAddRow_Click(sender As Object, e As RoutedEventArgs)
@@ -24,5 +24,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Dim secondForm As New AddNewProductSecondForm()
             secondForm.Show()
         End Sub
+
     End Class
 End Namespace
