@@ -267,9 +267,6 @@
     <Compile Include="Views\Stocks\ItemManager\NewProduct\AddNewProducts.xaml.vb">
       <DependentUpon>AddNewProducts.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Stocks\ItemManager\NewProduct\AddNewProductSecondForm.xaml.vb">
-      <DependentUpon>AddNewProductSecondForm.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Stocks\ItemManager\ProductManager\ManageProducts.xaml.vb">
       <DependentUpon>ManageProducts.xaml</DependentUpon>
     </Compile>
@@ -400,10 +397,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\Stocks\ItemManager\NewProduct\AddNewProducts.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Stocks\ItemManager\NewProduct\AddNewProductSecondForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

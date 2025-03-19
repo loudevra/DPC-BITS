@@ -23,11 +23,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             End If
         End Sub
 
-        Private Sub btnAddRow_Click(sender As Object, e As RoutedEventArgs)
-            ' Open the second form
-            Dim secondForm As New AddNewProductSecondForm()
-            secondForm.Show()
-        End Sub
 
         Private Sub CategoryComboBox_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles CategoryComboBox.SelectionChanged
             Dim selectedCategory As String = TryCast(CategoryComboBox.SelectedItem, ComboBoxItem)?.Content?.ToString()
