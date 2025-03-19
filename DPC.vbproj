@@ -221,6 +221,7 @@
       <DependentUpon>TopNavBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Data\Controllers\SupplierController.vb" />
+    <Compile Include="Data\Converters\PasswordMaskingBehavior.vb" />
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
     <Compile Include="Data\DatabaseHelper.vb" />
