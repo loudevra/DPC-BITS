@@ -7,7 +7,7 @@
         Height="800" Width="1200"
         Background="#F5F5F5"
         WindowStartupLocation="CenterScreen"
-        FontFamily="{StaticResource LexendRegular}">
+        FontFamily="{StaticResource Lexend}">
 
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -28,7 +28,6 @@
                                FontSize="24"
                                FontWeight="Bold"
                                Foreground="#333"
-                               FontFamily="{StaticResource LexendBold}"
                                DockPanel.Dock="Left"/>
 
 					<TextBox materialDesign:HintAssist.Hint="Search Employee..."

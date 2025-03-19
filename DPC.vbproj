@@ -510,7 +510,6 @@
     <Folder Include="API\" />
     <Folder Include="Config\" />
     <Folder Include="Installer\" />
-    <Folder Include="Services\" />
     <Folder Include="Themes\" />
     <Folder Include="Views\HRM\Departments\" />
     <Folder Include="Views\HRM\Employees\Attendance\" />

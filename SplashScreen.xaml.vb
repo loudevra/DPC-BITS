@@ -6,7 +6,8 @@ Imports System.Windows.Media.Effects
 
 Namespace DPC
     Public Class SplashScreen
-        Public Shared Property DBConnection As MySqlConnection
+        ' Store Connection String (Enable Connection Pooling)
+        Private Shared ReadOnly ConnectionString As String = "server=localhost;userid=root;password=;database=dpc;Pooling=True;Min Pool Size=5;Max Pool Size=100;"
 
         Private Async Sub Window_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
             StartRGBAnimation()
@@ -46,27 +47,26 @@ Namespace DPC
             logoEffect.BeginAnimation(DropShadowEffect.ColorProperty, colorAnimation)
         End Sub
 
-        ' Initialize Database Connection
+        ' Initialize Database Connection (Only Test It)
         Private Async Function InitializeApplicationAsync() As Task
             Try
-                InitializeDatabase()
+                Await TestDatabaseConnectionAsync() ' Only test connection, do not store it
                 Await Task.Delay(6000) ' Simulated Load Time
             Catch ex As Exception
                 MessageBox.Show("Error initializing application: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Function
 
-        ' Open Connection and Store It
-        Private Sub InitializeDatabase()
+        ' Test if Database Connection Works (DO NOT STORE CONNECTION)
+        Private Async Function TestDatabaseConnectionAsync() As Task
             Try
-                If DBConnection Is Nothing Then
-                    DBConnection = New MySqlConnection("server=localhost;userid=root;password=;database=dpc;")
-                    DBConnection.Open()
-                End If
+                Using connection As New MySqlConnection(ConnectionString)
+                    Await connection.OpenAsync()
+                End Using
             Catch ex As Exception
-                MessageBox.Show("Database connection failed: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                Throw New Exception("Database connection failed: " & ex.Message)
             End Try
-        End Sub
+        End Function
 
         ' Open Main Window and Close Splash Screen
         Private Sub OpenMainWindow()
@@ -83,5 +83,10 @@ Namespace DPC
             mainWindow.Show()
             Me.Close()
         End Sub
+
+        ' Public Function to Get Database Connection
+        Public Shared Function GetDatabaseConnection() As MySqlConnection
+            Return New MySqlConnection(ConnectionString) ' Returns a pooled connection
+        End Function
     End Class
 End Namespace
