@@ -10,9 +10,10 @@ Namespace DPC.Data.Controllers
             emp.EmployeeID = GenerateEmployeeID()
 
             Dim query As String = "INSERT INTO Employee (EmployeeID, Username, Email, Password, UserRoleID, BusinessLocationID, Name, " &
-                                  "StreetAddress, City, Region, Country, PostalCode, Phone, Salary, SalesCommission, Department) " &
-                                  "VALUES (@EmployeeID, @Username, @Email, @Password, @UserRoleID, @BusinessLocationID, @Name, @StreetAddress, " &
-                                  "@City, @Region, @Country, @PostalCode, @Phone, @Salary, @SalesCommission, @Department)"
+                      "StreetAddress, City, Region, Country, PostalCode, Phone, Salary, SalesCommission, Department, CreatedAt, UpdatedAt) " &
+                      "VALUES (@EmployeeID, @Username, @Email, @Password, @UserRoleID, @BusinessLocationID, @Name, @StreetAddress, " &
+                      "@City, @Region, @Country, @PostalCode, @Phone, @Salary, @SalesCommission, @Department, @CreatedAt, @UpdatedAt)"
+
 
             ' Get a new connection from the pool
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
@@ -35,6 +36,9 @@ Namespace DPC.Data.Controllers
                         cmd.Parameters.AddWithValue("@Salary", emp.Salary)
                         cmd.Parameters.AddWithValue("@SalesCommission", emp.SalesCommission)
                         cmd.Parameters.AddWithValue("@Department", emp.Department)
+                        cmd.Parameters.AddWithValue("@CreatedAt", DateTime.Now)
+                        cmd.Parameters.AddWithValue("@UpdatedAt", DateTime.Now)
+
 
                         Dim result As Integer = cmd.ExecuteNonQuery()
                         Return result > 0
