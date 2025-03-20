@@ -59,11 +59,32 @@
 
                     <StackPanel Grid.Row="0">
                         <StackPanel>
-                            <Border Style="{StaticResource RoundedBorderStyle}">
-                                <StackPanel Background="#474747">
-                                    <TextBlock Foreground="white" Text="Serial Number"/>
+                            <Border Style="{StaticResource RoundedBorderStyle}" Background="#474747" BorderThickness="0" CornerRadius="15,15,0,0">
+                                <StackPanel Background="#474747" Orientation="Horizontal" Margin="20,10">
+                                    <TextBlock Text="Serial Number:" Foreground="white" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                    <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
                                 </StackPanel>
                             </Border>
+                            
+                            <StackPanel Background="white">
+                                <StackPanel Margin="25">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Style="{StaticResource RoundedBorderStyle}" Grid.Column="0">
+                                            <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                            <materialDesign:PackIcon Kind="TableRowAddAfter" Width="40" Height="40" Foreground="#456B2E" Margin="10,0,5,0"/>
+                                            <materialDesign:PackIcon Kind="TableRowRemove" Width="40" Height="40" Foreground="#D23636" Margin="0,0,5,0"/>
+                                            <materialDesign:PackIcon Kind="" Width="40" Height="40" Foreground="#AEAEAE" Margin="0,0,5,0"/>
+                                            <materialDesign:PackIcon Kind="TableRowRemove" Width="40" Height="40" Foreground="#AEAEAE" Margin="0,0,5,0"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
                         </StackPanel>
                     </StackPanel>
 
