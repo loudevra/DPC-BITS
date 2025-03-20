@@ -49,12 +49,10 @@ Namespace DPC.Data.Controllers
             End Using
         End Sub
 
-        Public Shared Sub GetProductSubcategory(categoryName As String, comboBox As ComboBox)
+        Public Shared Sub GetProductSubcategory(categoryName As String, comboBox As ComboBox, label As TextBlock)
             Dim query As String = "SELECT subcategory FROM productcategory WHERE LOWER(category) = LOWER(@categoryName)"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-
-
                 Try
                     conn.Open()
                     Using cmd As New MySqlCommand(query, conn)
@@ -63,21 +61,34 @@ Namespace DPC.Data.Controllers
                             comboBox.Items.Clear()
 
                             If reader.Read() Then
-                                Dim subcategoryData As String = reader("subcategory").ToString()
+                                Dim subcategoryData As String = reader("subcategory").ToString().Trim()
+
+                                ' Remove unwanted characters and check for empty data
+                                subcategoryData = subcategoryData.Replace("""", "").Replace("[", "").Replace("]", "").Trim()
 
                                 If String.IsNullOrWhiteSpace(subcategoryData) Then
-                                    comboBox.Items.Add(New ComboBoxItem With {.Content = "No Subcategories Available"})
+                                    comboBox.Visibility = Visibility.Collapsed
+                                    label.Visibility = Visibility.Collapsed
+                                    comboBox.SelectedIndex = -1
                                 Else
+                                    label.Visibility = Visibility.Visible
+                                    comboBox.Visibility = Visibility.Visible
+
+                                    ' Format and add subcategories to ComboBox
                                     Dim subcategories As String() = subcategoryData.Split(","c).
-                                                                Select(Function(s) StrConv(s.Trim(), VbStrConv.ProperCase)).
-                                                                ToArray()
+                                                Select(Function(s) StrConv(s.Trim(), VbStrConv.ProperCase)).
+                                                ToArray()
 
                                     For Each subcategory As String In subcategories
                                         comboBox.Items.Add(New ComboBoxItem With {.Content = subcategory})
                                     Next
+
+                                    comboBox.SelectedIndex = 0
                                 End If
                             Else
-                                comboBox.Items.Add(New ComboBoxItem With {.Content = "No Subcategories Found"})
+                                comboBox.Visibility = Visibility.Collapsed
+                                label.Visibility = Visibility.Collapsed
+                                comboBox.SelectedIndex = -1
                             End If
                         End Using
                     End Using
@@ -87,6 +98,33 @@ Namespace DPC.Data.Controllers
             End Using
         End Sub
 
+        Public Shared Sub GetWarehouse(comboBox As ComboBox)
+            Dim query As String = "SELECT name FROM warehouse ORDER BY name ASC"
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            comboBox.Items.Clear()
+
+                            If reader.HasRows Then
+                                While reader.Read()
+                                    Dim warehouseName As String = reader("name").ToString().Trim()
+                                    comboBox.Items.Add(New ComboBoxItem With {.Content = warehouseName})
+                                End While
+                                comboBox.SelectedIndex = 0 ' Set first item as selected
+                            Else
+                                comboBox.Items.Add(New ComboBoxItem With {.Content = "No Warehouses Available"})
+                                comboBox.SelectedIndex = 0
+                            End If
+                        End Using
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show($"Error: {ex.Message}")
+                End Try
+            End Using
+        End Sub
     End Class
 
 End Namespace

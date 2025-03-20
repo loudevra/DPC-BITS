@@ -21,13 +21,15 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             If CategoryComboBox.SelectedItem IsNot Nothing Then
                 CategoryComboBox_SelectionChanged(CategoryComboBox, Nothing)
             End If
+
+            ProductController.GetWarehouse(WarehouseComboBox)
         End Sub
 
 
         Private Sub CategoryComboBox_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles CategoryComboBox.SelectionChanged
             Dim selectedCategory As String = TryCast(CategoryComboBox.SelectedItem, ComboBoxItem)?.Content?.ToString()
             If Not String.IsNullOrEmpty(selectedCategory) Then
-                ProductController.GetProductSubcategory(selectedCategory, SubCategoryComboBox)
+                ProductController.GetProductSubcategory(selectedCategory, SubCategoryComboBox, SubCategoryLabel)
             Else
                 SubCategoryComboBox.Items.Clear()
             End If

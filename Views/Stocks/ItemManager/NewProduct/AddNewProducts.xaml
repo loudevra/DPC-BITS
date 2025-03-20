@@ -98,17 +98,107 @@
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Text="Product Category:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                             </StackPanel>
-                            <ComboBox x:Name="CategoryComboBox" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0"/>
+                            <ComboBox x:Name="CategoryComboBox" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0"/>
                         </StackPanel>
 
                         <StackPanel Margin="0,10">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                <TextBlock Text="Sub Category:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                <TextBlock x:Name="SubCategoryLabel"  Text="Sub-Category:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0" Visibility="Collapsed"/>
                             </StackPanel>
-                            <ComboBox x:Name="SubCategoryComboBox" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0"/>
+                            <ComboBox x:Name="SubCategoryComboBox" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0" Visibility="Collapsed"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,10">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Include product variation" FontSize="14" FontWeight="SemiBold"/>
+                                <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold" Margin="5,0,0,0"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,10">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Warehouse:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                            </StackPanel>
+                            <ComboBox x:Name="WarehouseComboBox" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,10">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <TextBlock Text="Product Retail Price:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                    <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                                </StackPanel>
+                                <Border Style="{StaticResource RoundedBorderStyle}">
+                                    <Grid>
+                                        <!-- Define two columns: one for the icon, one for the TextBox -->
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Icon with Vertical Centering -->
+                                        <materialDesign:PackIcon Kind="CurrencyPhp" Width="25" Height="20" Margin="10,0,0,0" VerticalAlignment="Center" Grid.Column="0"/>
+
+                                        <!-- TextBox with Rounded Style -->
+                                        <TextBox Style="{StaticResource RoundedTextboxStyle}" Margin="0,0,25,0" Grid.Column="1"/>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,10,0,20">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <TextBlock Text="Product Purchase Order:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                    <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                                </StackPanel>
+                                <Border Style="{StaticResource RoundedBorderStyle}">
+                                    <Grid>
+                                        <!-- Define two columns: one for the icon, one for the TextBox -->
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Icon with Vertical Centering -->
+                                        <materialDesign:PackIcon Kind="CurrencyPhp" Width="25" Height="20" Margin="10,0,0,0" VerticalAlignment="Center" Grid.Column="0"/>
+
+                                        <!-- TextBox with Rounded Style -->
+                                        <TextBox Style="{StaticResource RoundedTextboxStyle}" Margin="0,0,25,0" Grid.Column="1"/>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <Border BorderBrush="#AEAEAE" BorderThickness="1" Margin="-10,0,0,10"/>
+                    </StackPanel>
+
+                    <StackPanel  Grid.Row="2" Margin="0,20,0,20">
+                        <StackPanel Margin="0,10,0,20">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <TextBlock Text="Product Purchase Order:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                    <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                                </StackPanel>
+                                <Border Style="{StaticResource RoundedBorderStyle}">
+                                    <Grid>
+                                        <!-- Define two columns: one for the icon, one for the TextBox -->
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Icon with Vertical Centering -->
+                                        <materialDesign:PackIcon Kind="CurrencyPhp" Width="25" Height="20" Margin="10,0,0,0" VerticalAlignment="Center" Grid.Column="0"/>
+
+                                        <!-- TextBox with Rounded Style -->
+                                        <TextBox Style="{StaticResource RoundedTextboxStyle}" Margin="0,0,25,0" Grid.Column="1"/>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
                         </StackPanel>
                     </StackPanel>
-                    
                 </Grid>
             </ScrollViewer>
         </Grid>
