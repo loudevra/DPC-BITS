@@ -23,6 +23,10 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             End If
 
             ProductController.GetWarehouse(WarehouseComboBox)
+
+            Dim calendarViewModel As New CalendarController.SingleCalendar()
+            Me.DataContext = calendarViewModel
+
         End Sub
 
 
@@ -34,5 +38,11 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 SubCategoryComboBox.Items.Clear()
             End If
         End Sub
+
+        Public Sub StartDate_Click(sender As Object, e As RoutedEventArgs)
+            SingleDatePicker.IsDropDownOpen = True
+        End Sub
+
+
     End Class
 End Namespace
