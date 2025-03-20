@@ -3,13 +3,29 @@ Imports System.Threading.Tasks
 Imports System.Windows.Media.Animation
 Imports System.Windows.Media
 Imports System.Windows.Media.Effects
+Imports DPC.DPC.Data.Helpers ' Import EnvLoader
 
 Namespace DPC
     Public Class SplashScreen
         ' Store Connection String (Enable Connection Pooling)
-        Private Shared ReadOnly ConnectionString As String = "server=localhost;userid=root;password=;database=dpc;Pooling=True;Min Pool Size=5;Max Pool Size=100;"
+        Private Shared ReadOnly ConnectionString As String =
+            $"server={EnvLoader.GetEnv("DB_HOST")};" &
+            $"userid={EnvLoader.GetEnv("DB_USER")};" &
+            $"password={EnvLoader.GetEnv("DB_PASS")};" &
+            $"database={EnvLoader.GetEnv("DB_NAME")};" &
+            $"Pooling=True;" &
+            $"Min Pool Size={EnvLoader.GetEnv("DB_POOL_MIN")};" &
+            $"Max Pool Size={EnvLoader.GetEnv("DB_POOL_MAX")};"
 
         Private Async Sub Window_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
+            ' Load environment variables
+            Try
+                EnvLoader.LoadEnv()
+            Catch ex As Exception
+                MessageBox.Show("Failed to load environment variables: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                Application.Current.Shutdown()
+            End Try
+
             StartRGBAnimation()
             Await InitializeApplicationAsync()
             OpenMainWindow()
@@ -27,15 +43,6 @@ Namespace DPC
             colorAnimation.KeyFrames.Add(New LinearColorKeyFrame(Colors.Green, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(1))))
             colorAnimation.KeyFrames.Add(New LinearColorKeyFrame(Colors.Blue, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(2))))
             colorAnimation.KeyFrames.Add(New LinearColorKeyFrame(Colors.Red, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(3))))
-
-            ' Apply animation to Glow Effect
-            Dim glowEffect As New DropShadowEffect With {
-                .Color = Colors.Red,
-                .BlurRadius = 120,
-                .ShadowDepth = 0
-            }
-            glowEffect = glowEffect
-            glowEffect.BeginAnimation(DropShadowEffect.ColorProperty, colorAnimation)
 
             ' Apply animation to Logo Glow
             Dim logoEffect As New DropShadowEffect With {

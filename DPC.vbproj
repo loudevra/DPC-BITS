@@ -367,6 +367,7 @@
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
     <Compile Include="Data\DatabaseHelper.vb" />
+    <Compile Include="Data\Helpers\EnvLoader.vb" />
     <Compile Include="Data\Models\Employee.vb" />
     <Compile Include="Data\Models\Supplier.vb" />
     <Compile Include="SplashScreen.xaml.vb">
@@ -631,7 +632,11 @@
     </EmbeddedResource>
     <Resource Include="Assets\fonts\Lexend\Lexend-Regular.ttf" />
     <None Include=".env" />
-    <None Include="My Project\Settings.settings">
+	  <None Update=".env">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+
+	  <None Include="My Project\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
