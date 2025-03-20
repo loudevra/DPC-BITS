@@ -1,0 +1,354 @@
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{16F4394E-03A5-47BB-887F-3D256816E3E1}</ProjectGuid>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{F184B08F-C81C-45F6-A57F-5ABD9991F28F}</ProjectTypeGuids>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>DPC</RootNamespace>
+    <AssemblyName>DPC</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <MyType>Custom</MyType>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <IncrementalBuild>true</IncrementalBuild>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>DPC.xml</DocumentationFile>
+    <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036,42314</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <IncrementalBuild>false</IncrementalBuild>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>DPC.xml</DocumentationFile>
+    <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036,42314</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionExplicit>On</OptionExplicit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionCompare>Binary</OptionCompare>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionStrict>Off</OptionStrict>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionInfer>On</OptionInfer>
+  </PropertyGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Components\ConfirmationModals\CancelClientAdding.xaml.vb">
+      <DependentUpon>CancelClientAdding.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ConfirmationModals\CancelSupplierAdding.xaml.vb">
+      <DependentUpon>CancelSupplierAdding.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\FilterPopOut.xaml.vb">
+      <DependentUpon>FilterPopOut.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Navigation\TopNavbar.xaml.vb">
+      <DependentUpon>TopNavBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Data\Controllers\ProductController.vb" />
+    <Compile Include="Data\Controllers\SupplierController.vb" />
+    <Compile Include="Data\Controllers\WarehousesController.vb" />
+    <Compile Include="Data\Converters\PasswordMaskingBehavior.vb" />
+    <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
+    <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
+    <Compile Include="Data\DatabaseHelper.vb" />
+    <Compile Include="Data\Models\Employee.vb" />
+    <Compile Include="Data\Models\Supplier.vb" />
+    <Compile Include="SplashScreen.xaml.vb">
+      <DependentUpon>SplashScreen.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Dashboard\Dashboard.xaml.vb">
+      <DependentUpon>Dashboard.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HRM\Employees\Employees\EmployeeAdd.xaml.vb">
+      <DependentUpon>EmployeeAdd.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HRM\Employees\Employees\EmployeesView.xaml.vb">
+      <DependentUpon>EmployeesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HRM\Employees\Permissions\EmployeePermissions.xaml.vb">
+      <DependentUpon>EmployeePermissions.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\Warehouses\Warehouses.xaml.vb">
+      <DependentUpon>Warehouses.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\ItemManager\NewProduct\AddNewProducts.xaml.vb">
+      <DependentUpon>AddNewProducts.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\ItemManager\ProductManager\ManageProducts.xaml.vb">
+      <DependentUpon>ManageProducts.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\ProductCategories\ProductCategories.xaml.vb">
+      <DependentUpon>ProductCategories.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\ProductsLabel\StandardLabel\StandardLabel.xaml.vb">
+      <DependentUpon>StandardLabel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\PurchaseOrder\ManageOrders\ManageOrders.xaml.vb">
+      <DependentUpon>ManageOrders.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\StockReturn\CutomersRecords\CustomersRecords.xaml.vb">
+      <DependentUpon>CustomersRecords.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\StockReturn\SuppliersRecords\SuppliersRecords.xaml.vb">
+      <DependentUpon>SuppliersRecords.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\StocksTransfer\StocksTransfer.xaml.vb">
+      <DependentUpon>StocksTransfer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\ProductsLabel\CustomLabel\CustomLabel.xaml.vb">
+      <DependentUpon>CustomLabel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\PurchaseOrder\NewOrder\NewOrder.xaml.vb">
+      <DependentUpon>NewOrder.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\Suppliers\ManageSuppliers\ManageSuppliers.xaml.vb">
+      <DependentUpon>ManageSuppliers.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\Suppliers\NewSupplier\NewSuppliers.xaml.vb">
+      <DependentUpon>NewSuppliers.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Application.xaml.vb">
+      <DependentUpon>Application.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Components\Forms\AddNewSupplierForm.xaml.vb">
+      <DependentUpon>AddNewSupplierForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Navigation\Sidebar.xaml.vb">
+      <DependentUpon>Sidebar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\UI\PopUpMenuAccounts.xaml.vb">
+      <DependentUpon>PopUpMenuAccounts.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\UI\PopUpMenuCRM.xaml.vb">
+      <DependentUpon>PopUpMenuCRM.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\UI\PopUpMenuDataReports.xaml.vb">
+      <DependentUpon>PopUpMenuDataReports.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\UI\PopUpMenuHRM.xaml.vb">
+      <DependentUpon>PopUpMenuHRM.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\UI\PopUpMenuMiscellaneous.xaml.vb">
+      <DependentUpon>PopUpMenuMiscellaneous.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\UI\PopUpMenuProject.xaml.vb">
+      <DependentUpon>PopUpMenuProject.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\UI\PopUpMenuPromoCodes.xaml.vb">
+      <DependentUpon>PopUpMenuPromoCodes.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\UI\PopUpMenuSales.xaml.vb">
+      <DependentUpon>PopUpMenuSales.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\UI\PopUpMenuStocks.xaml.vb">
+      <DependentUpon>PopUpMenuStocks.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainWindow.xaml.vb">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <Import Include="System.Threading.Tasks" />
+    <Import Include="System.Linq" />
+    <Import Include="System.Xml.Linq" />
+    <Import Include="Microsoft.VisualBasic" />
+    <Import Include="System" />
+    <Import Include="System.Collections" />
+    <Import Include="System.Collections.Generic" />
+    <Import Include="System.Diagnostics" />
+    <Import Include="System.Windows" />
+    <Import Include="System.Windows.Controls" />
+    <Import Include="System.Windows.Data" />
+    <Import Include="System.Windows.Documents" />
+    <Import Include="System.Windows.Input" />
+    <Import Include="System.Windows.Shapes" />
+    <Import Include="System.Windows.Media" />
+    <Import Include="System.Windows.Media.Imaging" />
+    <Import Include="System.Windows.Navigation" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="My Project\AssemblyInfo.vb">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="My Project\MyExtensions\MyWpfExtension.vb">
+      <VBMyExtensionTemplateID>Microsoft.VisualBasic.WPF.MyExtension</VBMyExtensionTemplateID>
+      <VBMyExtensionTemplateVersion>1.0.0.0</VBMyExtensionTemplateVersion>
+    </Compile>
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="My Project\Settings.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="My Project\Resources.resx">
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+    </EmbeddedResource>
+    <None Include="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="OpenTK.dll.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="API\" />
+    <Folder Include="Config\" />
+    <Folder Include="Installer\" />
+    <Folder Include="Themes\" />
+    <Folder Include="Views\HRM\Departments\" />
+    <Folder Include="Views\HRM\Employees\Attendance\" />
+    <Folder Include="Views\HRM\Employees\Holidays\" />
+    <Folder Include="Views\HRM\Employees\Salaries\" />
+    <Folder Include="Views\HRM\Payroll\" />
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+  <Import Project="packages\MaterialDesignThemes.5.2.1\build\MaterialDesignThemes.targets" Condition="Exists('packages\MaterialDesignThemes.5.2.1\build\MaterialDesignThemes.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\MaterialDesignThemes.5.2.1\build\MaterialDesignThemes.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\MaterialDesignThemes.5.2.1\build\MaterialDesignThemes.targets'))" />
+  </Target>
+  <ItemGroup>
+    <ReferencePath Include="C:\DPC\packages\BouncyCastle.Cryptography.2.5.1\lib\net461\BouncyCastle.Cryptography.dll" />
+    <ReferencePath Include="C:\DPC\packages\ControlzEx.4.3.0\lib\net462\ControlzEx.dll" />
+    <ReferencePath Include="C:\DPC\packages\OpenTK.GLWpfControl.3.3.0\lib\net452\GLWpfControl.dll" />
+    <ReferencePath Include="C:\DPC\packages\Google.Protobuf.3.30.0\lib\net45\Google.Protobuf.dll" />
+    <ReferencePath Include="C:\DPC\packages\K4os.Compression.LZ4.1.3.8\lib\net462\K4os.Compression.LZ4.dll" />
+    <ReferencePath Include="C:\DPC\packages\K4os.Compression.LZ4.Streams.1.3.8\lib\net462\K4os.Compression.LZ4.Streams.dll" />
+    <ReferencePath Include="C:\DPC\packages\K4os.Hash.xxHash.1.0.8\lib\net462\K4os.Hash.xxHash.dll" />
+    <ReferencePath Include="C:\DPC\packages\MahApps.Metro.2.0.0\lib\net47\MahApps.Metro.dll" />
+    <ReferencePath Include="C:\DPC\packages\MahApps.Metro.IconPacks.Core.5.1.0\lib\net47\MahApps.Metro.IconPacks.Core.dll" />
+    <ReferencePath Include="C:\DPC\packages\MahApps.Metro.IconPacks.MaterialDesign.5.1.0\lib\net47\MahApps.Metro.IconPacks.MaterialDesign.dll" />
+    <ReferencePath Include="C:\DPC\packages\MaterialDesignColors.5.2.1\lib\net462\MaterialDesignColors.dll" />
+    <ReferencePath Include="C:\DPC\packages\MaterialDesignThemes.MahApps.5.2.1\lib\net462\MaterialDesignThemes.MahApps.dll" />
+    <ReferencePath Include="C:\DPC\packages\MaterialDesignThemes.5.2.1\lib\net462\MaterialDesignThemes.Wpf.dll" />
+    <ReferencePath Include="C:\DPC\packages\Microsoft.Bcl.AsyncInterfaces.9.0.3\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll" />
+    <ReferencePath Include="C:\DPC\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.135\lib\net462\Microsoft.Xaml.Behaviors.dll" />
+    <ReferencePath Include="C:\DPC\packages\MySql.Data.9.2.0\lib\net48\MySql.Data.dll" />
+    <ReferencePath Include="C:\DPC\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll" />
+    <ReferencePath Include="C:\DPC\packages\NuGet.Common.6.13.2\lib\net472\NuGet.Common.dll" />
+    <ReferencePath Include="C:\DPC\packages\NuGet.Configuration.6.13.2\lib\net472\NuGet.Configuration.dll" />
+    <ReferencePath Include="C:\DPC\packages\NuGet.Frameworks.6.13.2\lib\net472\NuGet.Frameworks.dll" />
+    <ReferencePath Include="C:\DPC\packages\NuGet.Packaging.6.13.2\lib\net472\NuGet.Packaging.dll" />
+    <ReferencePath Include="C:\DPC\packages\NuGet.Protocol.6.13.2\lib\net472\NuGet.Protocol.dll" />
+    <ReferencePath Include="C:\DPC\packages\NuGet.Versioning.6.13.2\lib\net472\NuGet.Versioning.dll" />
+    <ReferencePath Include="C:\DPC\packages\OpenTK.3.3.1\lib\net20\OpenTK.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\PresentationCore.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\PresentationFramework.dll" />
+    <ReferencePath Include="C:\DPC\packages\SkiaSharp.3.116.1\lib\net462\SkiaSharp.dll" />
+    <ReferencePath Include="C:\DPC\packages\SkiaSharp.SceneGraph.3.116.1\lib\net462\SkiaSharp.SceneGraph.dll" />
+    <ReferencePath Include="C:\DPC\packages\SkiaSharp.Skottie.3.116.1\lib\net462\SkiaSharp.Skottie.dll" />
+    <ReferencePath Include="C:\DPC\packages\SkiaSharp.Views.Desktop.Common.3.116.1\lib\net462\SkiaSharp.Views.Desktop.Common.dll" />
+    <ReferencePath Include="C:\DPC\packages\SkiaSharp.Views.WPF.3.116.1\lib\net462\SkiaSharp.Views.WPF.dll" />
+    <ReferencePath Include="C:\DPC\packages\System.Buffers.4.6.0\lib\net462\System.Buffers.dll" />
+    <ReferencePath Include="C:\DPC\packages\System.Collections.Immutable.9.0.3\lib\net462\System.Collections.Immutable.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.ComponentModel.DataAnnotations.dll" />
+    <ReferencePath Include="C:\DPC\packages\System.Configuration.ConfigurationManager.9.0.3\lib\net462\System.Configuration.ConfigurationManager.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Configuration.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Core.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Data.DataSetExtensions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Data.dll" />
+    <ReferencePath Include="C:\DPC\packages\System.Diagnostics.DiagnosticSource.9.0.3\lib\net462\System.Diagnostics.DiagnosticSource.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.IdentityModel.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.IO.Compression.dll" />
+    <ReferencePath Include="C:\DPC\packages\System.IO.Pipelines.9.0.3\lib\net462\System.IO.Pipelines.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Management.dll" />
+    <ReferencePath Include="C:\DPC\packages\System.Memory.4.6.0\lib\net462\System.Memory.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Net.Http.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Net.Http.WebRequest.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Numerics.dll" />
+    <ReferencePath Include="C:\DPC\packages\System.Numerics.Vectors.4.6.0\lib\net462\System.Numerics.Vectors.dll" />
+    <ReferencePath Include="C:\DPC\packages\System.Runtime.CompilerServices.Unsafe.6.1.0\lib\net462\System.Runtime.CompilerServices.Unsafe.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Security.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.ServiceModel.dll" />
+    <ReferencePath Include="C:\DPC\packages\System.Text.Encodings.Web.9.0.3\lib\net462\System.Text.Encodings.Web.dll" />
+    <ReferencePath Include="C:\DPC\packages\System.Text.Json.9.0.3\lib\net462\System.Text.Json.dll" />
+    <ReferencePath Include="C:\DPC\packages\System.Threading.Tasks.Extensions.4.6.0\lib\net462\System.Threading.Tasks.Extensions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Transactions.dll" />
+    <ReferencePath Include="C:\DPC\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Web.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Web.Extensions.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Xaml.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Xml.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Xml.Linq.dll" />
+    <ReferencePath Include="C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\WindowsBase.dll" />
+    <ReferencePath Include="C:\DPC\packages\ZstdSharp.Port.0.8.5\lib\net462\ZstdSharp.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="C:\DPC\obj\Debug\Components\ConfirmationModals\CancelClientAdding.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Components\ConfirmationModals\CancelSupplierAdding.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Components\Forms\AddNewSupplierForm.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Components\Forms\FilterPopOut.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Components\Navigation\Sidebar.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Components\Navigation\TopNavBar.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Components\UI\PopUpMenuAccounts.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Components\UI\PopUpMenuCRM.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Components\UI\PopUpMenuDataReports.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Components\UI\PopUpMenuHRM.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Components\UI\PopUpMenuMiscellaneous.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Components\UI\PopUpMenuProject.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Components\UI\PopUpMenuPromoCodes.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Components\UI\PopUpMenuSales.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Components\UI\PopUpMenuStocks.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\MainWindow.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\SplashScreen.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Views\Dashboard\Dashboard.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Views\HRM\Employees\Employees\EmployeeAdd.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Views\HRM\Employees\Employees\EmployeesView.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Views\HRM\Employees\Permissions\EmployeePermissions.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Views\Stocks\Warehouses\Warehouses.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Views\Stocks\ItemManager\NewProduct\AddNewProducts.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Views\Stocks\ItemManager\ProductManager\ManageProducts.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Views\Stocks\ProductCategories\ProductCategories.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Views\Stocks\ProductsLabel\StandardLabel\StandardLabel.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Views\Stocks\PurchaseOrder\ManageOrders\ManageOrders.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Views\Stocks\StockReturn\CutomersRecords\CustomersRecords.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Views\Stocks\StockReturn\SuppliersRecords\SuppliersRecords.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Views\Stocks\StocksTransfer\StocksTransfer.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Views\Stocks\ProductsLabel\CustomLabel\CustomLabel.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Views\Stocks\PurchaseOrder\NewOrder\NewOrder.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Views\Stocks\Suppliers\ManageSuppliers\ManageSuppliers.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Views\Stocks\Suppliers\NewSupplier\NewSuppliers.g.vb" />
+    <Compile Include="C:\DPC\obj\Debug\Application.g.vb" />
+  </ItemGroup>
+</Project>
