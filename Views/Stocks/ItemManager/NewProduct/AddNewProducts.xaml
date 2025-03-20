@@ -12,7 +12,6 @@
         WindowStartupLocation="CenterScreen"
         FontFamily="{StaticResource Lexend}"
         Foreground="#474747">
-
     <Grid>
         <!-- Define Column Structure -->
         <Grid.ColumnDefinitions>
@@ -58,7 +57,17 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0" Margin="0,0,0,20">
+                    <StackPanel Grid.Row="0">
+                        <StackPanel>
+                            <Border Style="{StaticResource RoundedBorderStyle}">
+                                <StackPanel Background="#474747">
+                                    <TextBlock Foreground="white" Text="Serial Number"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="4" Margin="0,0,0,20">
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <materialDesign:PackIcon Kind="PackageVariantAdd" Width="50" Height="50" Margin="0,0,15,0"/>
                             <TextBlock Text="Add New Product" FontSize="25" FontWeight="SemiBold" VerticalAlignment="Center"/>
@@ -174,31 +183,126 @@
                         <Border BorderBrush="#AEAEAE" BorderThickness="1" Margin="-10,0,0,10"/>
                     </StackPanel>
 
-                    <StackPanel  Grid.Row="2" Margin="0,20,0,20">
-                        <StackPanel Margin="0,10,0,20">
-                            <StackPanel>
+                    <StackPanel  Grid.Row="2">
+                        <StackPanel Margin="0,10">
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                    <TextBlock Text="Product Purchase Order:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                    <TextBlock Text="Default Tax Rate:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                                     <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
                                 </StackPanel>
-                                <Border Style="{StaticResource RoundedBorderStyle}">
-                                    <Grid>
-                                        <!-- Define two columns: one for the icon, one for the TextBox -->
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
+                            <Border Style="{StaticResource RoundedBorderStyle}">
+                                <Grid>
+                                    <!-- Define two columns: one for the icon, one for the TextBox -->
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
 
-                                        <!-- Icon with Vertical Centering -->
-                                        <materialDesign:PackIcon Kind="CurrencyPhp" Width="25" Height="20" Margin="10,0,0,0" VerticalAlignment="Center" Grid.Column="0"/>
+                                    <!-- TextBox with Rounded Style -->
+                                    <TextBox Style="{StaticResource RoundedTextboxStyle}" Margin="25,0,0,0" Grid.Column="0"/>
 
-                                        <!-- TextBox with Rounded Style -->
-                                        <TextBox Style="{StaticResource RoundedTextboxStyle}" Margin="0,0,25,0" Grid.Column="1"/>
-                                    </Grid>
-                                </Border>
+                                    <!-- Icon with Vertical Centering -->
+                                    <materialDesign:PackIcon Kind="PercentOutline" Width="25" Height="20" Margin="0,0,10,0" VerticalAlignment="Center" Grid.Column="1"/>
+                                </Grid>
+                            </Border>
+                            <TextBlock Text="You can also change the Tax Rate during invoice creation" Margin="10,5,0,0"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,10">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Default Discount Rate:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
                             </StackPanel>
+                            <Border Style="{StaticResource RoundedBorderStyle}">
+                                <Grid>
+                                    <!-- Define two columns: one for the icon, one for the TextBox -->
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- TextBox with Rounded Style -->
+                                    <TextBox Style="{StaticResource RoundedTextboxStyle}" Margin="25,0,0,0" Grid.Column="0"/>
+
+                                    <!-- Icon with Vertical Centering -->
+                                    <materialDesign:PackIcon Kind="PercentOutline" Width="25" Height="20" Margin="0,0,10,0" VerticalAlignment="Center" Grid.Column="1"/>
+                                </Grid>
+                            </Border>
+                            <TextBlock Text="You can also change the Discount Rate during invoice creation" Margin="10,5,0,0"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,10">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Stock Units:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                            </StackPanel>
+                            <Border Style="{StaticResource RoundedBorderStyle}">
+                                <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,10,0,20">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Alert Quantity:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                            </StackPanel>
+                            <Border Style="{StaticResource RoundedBorderStyle}">
+                                <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
+                            </Border>
+                        </StackPanel>
+
+                        <Border BorderBrush="#AEAEAE" BorderThickness="1" Margin="-10,0,0,10"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="3">
+                        <StackPanel Margin="0,10">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Measurement Unit:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                            </StackPanel>
+                            <ComboBox Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0">
+                                <ComboBoxItem Content="None"/>
+                                <ComboBoxItem Content="cm"/>
+                                <ComboBoxItem Content="mm"/>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,10">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Description:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                            </StackPanel>
+                            <Border Style="{StaticResource RoundedBorderStyle}">
+                                <TextBox Style="{StaticResource RoundedTextboxStyle}" Height="100"/>
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,10">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Valid To Date:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                            </StackPanel>
+                            <Border Style="{StaticResource RoundedBorderStyle}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width=".05*"/>
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Single Date Picker -->
+                                    <DatePicker x:Name="SingleDatePicker" Style="{StaticResource SingleDatePickerStyle}" SelectedDate="{Binding SelectedDate, Mode=TwoWay}"/>
+
+                                    <!-- Calendar Icon -->
+                                    <materialDesign:PackIcon Grid.Column="0" Kind="Calendar" Width="25" Height="25" Foreground="#474747" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,0,0,0"/>
+
+                                    <!-- Date Display -->
+                                    <Button Grid.Column="1" Style="{StaticResource DateButtonStyle}" Click="StartDate_Click"  Width="Auto" Margin="10,0,25,0">
+                                        <TextBlock Text="{Binding SelectedDate, StringFormat='MMM dd, yyyy'}" Margin="0,0,5,0" Foreground="#474747" Height="14"/>
+                                    </Button>
+                                </Grid>
+                            </Border>
+                            <TextBlock Text="Do not change if not applicable." Margin="10,5,0,0"/>
                         </StackPanel>
                     </StackPanel>
+
+                    
                 </Grid>
             </ScrollViewer>
         </Grid>

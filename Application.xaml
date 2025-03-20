@@ -7,7 +7,6 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="Grey" SecondaryColor="LightBlue" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml"/>
@@ -18,8 +17,6 @@
 
             <!-- Font Definitions -->
             <FontFamily x:Key="Lexend">pack://application:,,,/Assets/fonts/Lexend/Lexend-Regular.ttf</FontFamily>
-            
-
             
             <!-- Styles -->
             <Style x:Key="TextBlockStyle" TargetType="TextBlock">
@@ -47,7 +44,6 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-
 
             <!-- Rounded Borders for texboxes-->
             <Style x:Key="RoundedBorderStyle" TargetType="Border">
@@ -151,67 +147,33 @@
                 </Setter>
             </Style>
 
-
-
-
-            <Style x:Key="RoundedDatePickerStyle" TargetType="DatePicker">
+            <Style x:Key="SingleDatePickerStyle" TargetType="DatePicker">
+                <Setter Property="FontFamily" Value="Lexend"/>
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="Foreground" Value="Black"/>
+                <Setter Property="Visibility" Value="Hidden"/>
                 <Setter Property="Width" Value="Auto"/>
                 <Setter Property="Height" Value="35"/>
+                <Setter Property="VerticalAlignment" Value="Top"/>
+                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="FontSize" Value="12"/>
+            </Style>
+
+            <Style x:Key="DateButtonStyle" TargetType="Button">
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="BorderThickness" Value="0"/>
-                <Setter Property="Padding" Value="10,0,10,0"/>
-                <Setter Property="HorizontalAlignment" Value="Left"/>
+                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            </Style>
+
+            <Style x:Key="DateTextBlockStyle" TargetType="TextBlock">
                 <Setter Property="VerticalAlignment" Value="Center"/>
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="DatePicker">
-                            <Grid>
-                                <!-- DatePicker Input Box -->
-                                <DatePickerTextBox x:Name="PART_TextBox"
-                                       Foreground="#474747"
-                                       FontSize="14"
-                                       Background="Transparent"
-                                       BorderThickness="0"
-                                       VerticalContentAlignment="Center"
-                                       Padding="10,0,40,0"
-                                       IsReadOnly="True"/>
-
-                                <!-- Clickable Button with Calendar Icon -->
-                                <Button x:Name="PART_Button"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            HorizontalAlignment="Right"
-                            Padding="0"
-                            Width="40"
-                            Cursor="Hand">
-                                    <materialDesign:PackIcon Kind="Calendar"
-                                                 Foreground="#474747"
-                                                 Width="20"
-                                                 Height="20"/>
-                                </Button>
-
-                                <!-- Popup for Calendar -->
-                                <Popup x:Name="PART_Popup"
-                           Placement="Bottom"
-                           StaysOpen="False"
-                           IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}">
-                                    <Border BorderBrush="Gray" BorderThickness="1" Background="White">
-                                        <Calendar x:Name="PART_Calendar"
-                                      SelectedDate="{Binding SelectedDate, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"/>
-                                    </Border>
-                                </Popup>
-                            </Grid>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
+                <Setter Property="Width" Value="Auto"/>
+                <Setter Property="Height" Value="35"/>
+                <Setter Property="HorizontalAlignment" Value="Left"/>
+                <Setter Property="FontSize" Value="14"/>
             </Style>
-
-            <!-- Placeholder Style for DatePicker TextBox -->
-            <Style TargetType="DatePickerTextBox">
-                <Setter Property="Foreground" Value="Gray"/>
-                <Setter Property="FontStyle" Value="Italic"/>
-            </Style>
-			
         </ResourceDictionary>
     </Application.Resources>
 </Application>

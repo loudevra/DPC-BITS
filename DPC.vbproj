@@ -221,14 +221,17 @@
       <DependentUpon>TopNavBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Data\Controllers\EmployeeController.vb" />
+    <Compile Include="Data\Controllers\CalendarController.vb" />
     <Compile Include="Data\Controllers\ProductController.vb" />
     <Compile Include="Data\Controllers\SupplierController.vb" />
+    <Compile Include="Data\Controllers\WarehousesController.vb" />
     <Compile Include="Data\Converters\PasswordMaskingBehavior.vb" />
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
     <Compile Include="Data\DatabaseHelper.vb" />
     <Compile Include="Data\Models\Employee.vb" />
     <Compile Include="Data\Models\Supplier.vb" />
+    <Compile Include="Data\Models\Warehouses.vb" />
     <Compile Include="SplashScreen.xaml.vb">
       <DependentUpon>SplashScreen.xaml</DependentUpon>
     </Compile>
@@ -240,6 +243,9 @@
     </Compile>
     <Compile Include="Views\HRM\Employees\Employees\EmployeesView.xaml.vb">
       <DependentUpon>EmployeesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\Warehouses\Warehouses.xaml.vb">
+      <DependentUpon>Warehouses.xaml</DependentUpon>
     </Compile>
     <Page Include="Components\ConfirmationModals\CancelClientAdding.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -390,6 +396,12 @@
     <Page Include="Views\HRM\Employees\Employees\EmployeesView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\HRM\Employees\Permissions\EmployeePermissions.xaml">
+    </Page>
+    <Page Include="Views\Stocks\Warehouses\Warehouses.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\Stocks\ItemManager\NewProduct\AddNewProducts.xaml">
@@ -434,10 +446,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Stocks\Suppliers\NewSupplier\NewSuppliers.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Stocks\Warehouses\Warehouses.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
