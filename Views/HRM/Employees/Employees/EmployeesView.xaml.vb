@@ -15,12 +15,6 @@ Namespace DPC.Views.HRM.Employees.Employees
         Public Sub New()
             InitializeComponent()
 
-            ' Initialize Sample Data
-            Employees = New ObservableCollection(Of Employee) From {
-                New Employee With {.Id = 1, .Name = "John Doe", .Role = "Manager", .Status = "Active"},
-                New Employee With {.Id = 2, .Name = "Jane Smith", .Role = "HR", .Status = "Inactive"},
-                New Employee With {.Id = 3, .Name = "Alice Johnson", .Role = "Sales", .Status = "Active"}
-            }
 
             EmployeesDataGrid.ItemsSource = Employees
 
@@ -68,7 +62,7 @@ Namespace DPC.Views.HRM.Employees.Employees
 
         Private Sub AddEmployee(sender As Object, e As RoutedEventArgs)
             ' Open EmployeeAdd.xaml
-            Dim addEmployeeWindow As New EmployeeAdd()
+            Dim addEmployeeWindow As New AddEmployee()
             addEmployeeWindow.Show()
 
             ' Close the current EmployeesView window
