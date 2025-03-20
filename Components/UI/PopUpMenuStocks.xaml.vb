@@ -73,8 +73,132 @@ Namespace DPC.Components.UI
             ' popup.VerticalOffset = verticalOffset
         End Sub
 
-        Private Sub NavigateToNewInvoice(sender As Object, e As RoutedEventArgs)
-            MessageBox.Show("Navigate to New Invoice", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+        Private Sub NavigateToNewProduct(sender As Object, e As RoutedEventArgs)
+            Dim NewProductWindow As New Views.Stocks.ItemManager.NewProduct.AddNewProducts
+            NewProductWindow.Show()
+
+            ' Close the current window where this UserControl is being used
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
+        End Sub
+        Private Sub NavigateToProductManager(sender As Object, e As RoutedEventArgs)
+            Dim NewProductWindow As New Views.Stocks.ItemManager.ProductManager.ManageProducts()
+            NewProductWindow.Show()
+
+            ' Close the current window where this UserControl is being used
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
+        End Sub
+        ''' <summary>
+        ''' Navigate to Product Categories Page
+        ''' </summary>
+        '''
+        Private Sub NavigateToProductCategories(sender As Object, e As RoutedEventArgs)
+            ' Open EmployeesView
+            Dim ProductCategoriesWindow As New Views.Stocks.ProductCategories.ProductCategories()
+            ProductCategoriesWindow.Show()
+
+            ' Close the current window where this UserControl is being used
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
+        End Sub
+
+        ''' <summary>
+        ''' Navigate to Warehouses Page
+        ''' </summary>
+        Private Sub NavigateToWarehouses(sender As Object, e As RoutedEventArgs)
+            ' Open EmployeesView
+            Dim WarehouseWindow As New Views.Stocks.Warehouses.Warehouses()
+            WarehouseWindow.Show()
+
+            ' Close the current window where this UserControl is being used
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
+        End Sub
+
+        ''' <summary>
+        ''' Navigate to Stocks Transfer Page
+        ''' </summary>
+        ''' 
+        Private Sub NavigateToNewOrder(sender As Object, e As RoutedEventArgs)
+            Dim NewOrderWindow As New Views.Stocks.PurchaseOrder.NewOrder.NewOrder()
+            NewOrderWindow.Show()
+
+            ' Close the current window where this UserControl is being used
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
+        End Sub
+        Private Sub NavigateToManageOrder(sender As Object, e As RoutedEventArgs)
+            Dim ManageOrderWindow As New Views.Stocks.PurchaseOrder.ManageOrders.ManageOrders()
+            ManageOrderWindow.Show()
+
+            ' Close the current window where this UserControl is being used
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
+        End Sub
+        Private Sub NavigateToStocksTransfer(sender As Object, e As RoutedEventArgs)
+            Dim StockTransferWindow As New Views.Stocks.StocksTransfer.StocksTransfer()
+            StockTransferWindow.Show()
+
+            ' Close the current window where this UserControl is being used
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
+        End Sub
+
+
+        Private Sub NavigateToSupplierRecords(sender As Object, e As RoutedEventArgs)
+            Dim SupplierRecordWindow As New Views.Stocks.StockReturn.SupplierRecords.SuppliersRecords()
+            SupplierRecordWindow.Show()
+
+            ' Close the current window where this UserControl is being used
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
+        End Sub
+        Private Sub NavigateToCustomerRecords(sender As Object, e As RoutedEventArgs)
+            Dim CustomerRecordWindow As New Views.Stocks.StockReturn.CustomersRecords.CustomersRecords()
+            CustomerRecordWindow.Show()
+
+            ' Close the current window where this UserControl is being used
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
+        End Sub
+
+
+        Private Sub NavigateToNewSuppliers(sender As Object, e As RoutedEventArgs)
+            ' Open EmployeesView
+            Dim NewSupplierWindow As New Views.Stocks.Supplier.NewSuppliers.NewSuppliers()
+            NewSupplierWindow.Show()
+
+            ' Close the current window where this UserControl is being used
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
+        End Sub
+
+        Private Sub NavigateToManageSuppliers(sender As Object, e As RoutedEventArgs)
+
+            Dim ManageSupplierWindow As New Views.Stocks.Suppliers.ManageSuppliers.ManageSuppliers()
+            ManageSupplierWindow.Show()
+
+            ' Close the current window where this UserControl is being used
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
+        End Sub
+
+        Private Sub NavigateToCustomLabel(sender As Object, e As RoutedEventArgs)
+            Dim CustomLabelWindow As New Views.Stocks.ProductsLabel.CustomLabel.CustomLabel()
+            CustomLabelWindow.Show()
+
+            ' Close the current window where this UserControl is being used
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
+        End Sub
+        Private Sub NavigateToStandardLabel(sender As Object, e As RoutedEventArgs)
+            Dim StandardLabelWindow As New Views.Stocks.ProductsLabel.StandardLabel.StandardLabel()
+            StandardLabelWindow.Show()
+
+            ' Close the current window where this UserControl is being used
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
         End Sub
 
     End Class

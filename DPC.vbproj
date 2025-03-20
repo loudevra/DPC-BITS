@@ -57,6 +57,9 @@
     <Reference Include="ControlzEx, Version=4.0.0.0, Culture=neutral, PublicKeyToken=69f1c32f803d307e, processorArchitecture=MSIL">
       <HintPath>packages\ControlzEx.4.3.0\lib\net462\ControlzEx.dll</HintPath>
     </Reference>
+    <Reference Include="GLWpfControl, Version=3.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\OpenTK.GLWpfControl.3.3.0\lib\net452\GLWpfControl.dll</HintPath>
+    </Reference>
     <Reference Include="Google.Protobuf, Version=3.30.0.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
       <HintPath>packages\Google.Protobuf.3.30.0\lib\net45\Google.Protobuf.dll</HintPath>
     </Reference>
@@ -116,6 +119,24 @@
     </Reference>
     <Reference Include="NuGet.Versioning, Version=6.13.2.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>packages\NuGet.Versioning.6.13.2\lib\net472\NuGet.Versioning.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK, Version=3.3.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>packages\OpenTK.3.3.1\lib\net20\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="SkiaSharp, Version=3.116.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>packages\SkiaSharp.3.116.1\lib\net462\SkiaSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="SkiaSharp.SceneGraph, Version=3.116.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>packages\SkiaSharp.SceneGraph.3.116.1\lib\net462\SkiaSharp.SceneGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="SkiaSharp.Skottie, Version=3.116.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>packages\SkiaSharp.Skottie.3.116.1\lib\net462\SkiaSharp.Skottie.dll</HintPath>
+    </Reference>
+    <Reference Include="SkiaSharp.Views.Desktop.Common, Version=3.116.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>packages\SkiaSharp.Views.Desktop.Common.3.116.1\lib\net462\SkiaSharp.Views.Desktop.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="SkiaSharp.Views.WPF, Version=3.116.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>packages\SkiaSharp.Views.WPF.3.116.1\lib\net462\SkiaSharp.Views.WPF.dll</HintPath>
     </Reference>
     <Reference Include="System.Buffers, Version=4.0.4.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Buffers.4.6.0\lib\net462\System.Buffers.dll</HintPath>
@@ -196,8 +217,20 @@
     <Compile Include="Components\Forms\FilterPopOut.xaml.vb">
       <DependentUpon>FilterPopOut.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Navigation\TopNavbar.xaml.vb">
+      <DependentUpon>TopNavBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Data\Controllers\ProductController.vb" />
+    <Compile Include="Data\Controllers\SupplierController.vb" />
+    <Compile Include="Data\Converters\PasswordMaskingBehavior.vb" />
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
+    <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
+    <Compile Include="Data\DatabaseHelper.vb" />
     <Compile Include="Data\Models\Employee.vb" />
+    <Compile Include="Data\Models\Supplier.vb" />
+    <Compile Include="SplashScreen.xaml.vb">
+      <DependentUpon>SplashScreen.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Dashboard\Dashboard.xaml.vb">
       <DependentUpon>Dashboard.xaml</DependentUpon>
     </Compile>
@@ -216,9 +249,6 @@
     <Page Include="Components\ConfirmationModals\CancelSupplierAdding.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Components\Forms\AddNewClientGrpForm.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Components\Forms\AddNewSupplierForm.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -230,6 +260,46 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Components\Navigation\TopNavBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="Views\Stocks\ItemManager\NewProduct\AddNewProducts.xaml.vb">
+      <DependentUpon>AddNewProducts.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\ItemManager\ProductManager\ManageProducts.xaml.vb">
+      <DependentUpon>ManageProducts.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\ProductCategories\ProductCategories.xaml.vb">
+      <DependentUpon>ProductCategories.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\ProductsLabel\StandardLabel\StandardLabel.xaml.vb">
+      <DependentUpon>StandardLabel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\PurchaseOrder\ManageOrders\ManageOrders.xaml.vb">
+      <DependentUpon>ManageOrders.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\StockReturn\CutomersRecords\CustomersRecords.xaml.vb">
+      <DependentUpon>CustomersRecords.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\StockReturn\SuppliersRecords\SuppliersRecords.xaml.vb">
+      <DependentUpon>SuppliersRecords.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\StocksTransfer\StocksTransfer.xaml.vb">
+      <DependentUpon>StocksTransfer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\ProductsLabel\CustomLabel\CustomLabel.xaml.vb">
+      <DependentUpon>CustomLabel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\PurchaseOrder\NewOrder\NewOrder.xaml.vb">
+      <DependentUpon>NewOrder.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\Suppliers\ManageSuppliers\ManageSuppliers.xaml.vb">
+      <DependentUpon>ManageSuppliers.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\Suppliers\NewSupplier\NewSuppliers.xaml.vb">
+      <DependentUpon>NewSuppliers.xaml</DependentUpon>
+    </Compile>
     <Page Include="Components\UI\PopUpMenuAccounts.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -273,9 +343,6 @@
       <DependentUpon>Application.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Components\Forms\AddNewClientGrpForm.xaml.vb">
-      <DependentUpon>AddNewClientGrpForm.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Components\Forms\AddNewSupplierForm.xaml.vb">
       <DependentUpon>AddNewSupplierForm.xaml</DependentUpon>
     </Compile>
@@ -313,6 +380,9 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="SplashScreen.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Dashboard\Dashboard.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -323,6 +393,56 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HRM\Employees\Permissions\EmployeePermissions.xaml">
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Views\Stocks\ItemManager\NewProduct\AddNewProducts.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\ItemManager\ProductManager\ManageProducts.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\ProductCategories\ProductCategories.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\ProductsLabel\StandardLabel\StandardLabel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Stocks\PurchaseOrder\ManageOrders\ManageOrders.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\StockReturn\CutomersRecords\CustomersRecords.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\StockReturn\SuppliersRecords\SuppliersRecords.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\StocksTransfer\StocksTransfer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\ProductsLabel\CustomLabel\CustomLabel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\PurchaseOrder\NewOrder\NewOrder.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\Suppliers\ManageSuppliers\ManageSuppliers.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\Suppliers\NewSupplier\NewSuppliers.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\Warehouses\Warehouses.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
@@ -368,10 +488,12 @@
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
     </EmbeddedResource>
+    <Resource Include="Assets\fonts\Lexend\Lexend-Regular.ttf" />
     <None Include="My Project\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
+    <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -379,10 +501,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="API\" />
-    <Folder Include="Assets\fonts\Lexend\" />
     <Folder Include="Config\" />
     <Folder Include="Installer\" />
-    <Folder Include="Services\" />
     <Folder Include="Themes\" />
     <Folder Include="Views\HRM\Departments\" />
     <Folder Include="Views\HRM\Employees\Attendance\" />
@@ -391,10 +511,10 @@
     <Folder Include="Views\HRM\Payroll\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Assets\images\logo.png" />
+    <Resource Include="ILLink\ILLink.Descriptors.LibraryBuild.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="ILLink\ILLink.Descriptors.LibraryBuild.xml" />
+    <Resource Include="Assets\images\logo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <Import Project="packages\MaterialDesignThemes.5.2.1\build\MaterialDesignThemes.targets" Condition="Exists('packages\MaterialDesignThemes.5.2.1\build\MaterialDesignThemes.targets')" />

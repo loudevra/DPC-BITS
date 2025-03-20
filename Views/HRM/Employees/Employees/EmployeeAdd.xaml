@@ -7,8 +7,24 @@
         Height="800" Width="1200"
         Background="#F5F5F5"
         WindowStartupLocation="CenterScreen"
-        FontFamily="{StaticResource LexendRegular}">
+        FontFamily="{StaticResource Lexend}"
+        >
 
+    <Window.Resources>
+        <Style x:Key="RoundedComboboxStyle" TargetType="ComboBox">
+            <Setter Property="Width" Value="Auto"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Margin" Value="20,0,18,0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#474747"/>
+        </Style>
+    </Window.Resources>
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -20,130 +36,215 @@
 
         <!-- Main Content -->
         <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-            <StackPanel Margin="20">
 
-                <!-- Title -->
-                <TextBlock Text="👤 Employee Details" 
-                           FontSize="24" 
-                           FontWeight="Bold" 
-                           Foreground="#333"
-                           FontFamily="{StaticResource LexendBold}" 
-                           Margin="0,0,0,20"/>
+            <Grid Margin="25,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-                <!-- Form Card with Rounded Corners -->
-                <Border CornerRadius="20" Background="White" Padding="0">
-                    <materialDesign:Card Padding="20">
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0">
+                    <materialDesign:PackIcon Kind="UserAdd" Foreground="#474747" Width="50" Height="50" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <!-- Title -->
+                    <TextBlock Text="Employee Details" VerticalAlignment="Center"
+                    FontWeight="SemiBold"
+                    FontSize="25"  
+                    Foreground="#474747"
+                    Margin="0,0,0,0"/>
+                </StackPanel>
 
-                        <StackPanel>
-
-                            <!-- Username -->
-                            <TextBlock Text="Username:" FontFamily="{StaticResource LexendSemiBold}"/>
-                            <TextBox materialDesign:HintAssist.Hint="Enter username..." Margin="0,5,0,10"/>
-                            <TextBlock Text="(Use only A-Z &amp; 0-9)" Foreground="Red" FontSize="12"/>
-
-                            <!-- Business Location -->
-                            <TextBlock Text="Business Location:" FontFamily="{StaticResource LexendSemiBold}"/>
-                            <ComboBox Margin="0,5,0,10">
-                                <ComboBoxItem Content="Default" IsSelected="True"/>
-                            </ComboBox>
-
-                            <!-- User Role -->
-                            <TextBlock Text="User Role:" FontFamily="{StaticResource LexendSemiBold}"/>
-                            <ComboBox Margin="0,5,0,10">
-                                <ComboBoxItem Content="Inventory Manager"/>
-                                <ComboBoxItem Content="Sales Person"/>
-                                <ComboBoxItem Content="Sales Manager"/>
-                                <ComboBoxItem Content="Business Manager" IsSelected="True"/>
-                                <ComboBoxItem Content="Business Owner"/>
-                            </ComboBox>
-
-                            <!-- Email -->
-                            <TextBlock Text="Email:" FontFamily="{StaticResource LexendSemiBold}"/>
-                            <TextBox materialDesign:HintAssist.Hint="Enter email..." Margin="0,5,0,10"/>
-
-                            <!-- Password -->
-                            <TextBlock Text="Password:" FontFamily="{StaticResource LexendSemiBold}"/>
-                            <PasswordBox materialDesign:HintAssist.Hint="Enter password..." Margin="0,5,0,10"/>
-
-                            <!-- Validation Tips -->
-                            <StackPanel Margin="0,0,0,10">
-                                <TextBlock Text="✓ At least 6 characters" Foreground="Gray"/>
-                                <TextBlock Text="✓ Under 20 characters" Foreground="Gray"/>
-                                <TextBlock Text="✓ 1 uppercase letter" Foreground="Gray"/>
-                                <TextBlock Text="✓ 1 lowercase letter" Foreground="Gray"/>
-                                <TextBlock Text="✓ 1 special character" Foreground="Gray"/>
-                                <TextBlock Text="✓ 1 number" Foreground="Gray"/>
-                            </StackPanel>
-
-                            <!-- Name -->
-                            <TextBlock Text="Name:" FontFamily="{StaticResource LexendSemiBold}"/>
-                            <TextBox materialDesign:HintAssist.Hint="Enter name..." Margin="0,5,0,10"/>
-
-                            <!-- Address -->
-                            <TextBlock Text="Address:" FontFamily="{StaticResource LexendSemiBold}"/>
-                            <TextBox materialDesign:HintAssist.Hint="Enter address..." Margin="0,5,0,10"/>
-
-                            <!-- City, Region, Country -->
-                            <StackPanel Orientation="Horizontal" Margin="0,5,0,10">
-                                <StackPanel Margin="0,0,10,0">
-                                    <TextBlock Text="City:" FontFamily="{StaticResource LexendSemiBold}"/>
-                                    <TextBox materialDesign:HintAssist.Hint="Enter city..." Margin="0,5,0,0"/>
-                                </StackPanel>
-                                <StackPanel Margin="0,0,10,0">
-                                    <TextBlock Text="Region:" FontFamily="{StaticResource LexendSemiBold}"/>
-                                    <TextBox materialDesign:HintAssist.Hint="Enter region..." Margin="0,5,0,0"/>
-                                </StackPanel>
-                                <StackPanel>
-                                    <TextBlock Text="Country:" FontFamily="{StaticResource LexendSemiBold}"/>
-                                    <TextBox materialDesign:HintAssist.Hint="Enter country..." Margin="0,5,0,0"/>
-                                </StackPanel>
-                            </StackPanel>
-
-                            <!-- PostBox -->
-                            <TextBlock Text="PostBox:" FontFamily="{StaticResource LexendSemiBold}"/>
-                            <TextBox materialDesign:HintAssist.Hint="Enter PostBox..." Margin="0,5,0,10"/>
-
-                            <!-- Phone -->
-                            <TextBlock Text="Phone:" FontFamily="{StaticResource LexendSemiBold}"/>
-                            <TextBox materialDesign:HintAssist.Hint="Enter phone number..." Margin="0,5,0,10"/>
-
-                            <!-- Salary -->
-                            <TextBlock Text="Salary:" FontFamily="{StaticResource LexendSemiBold}"/>
-                            <TextBox materialDesign:HintAssist.Hint="Enter salary..." Margin="0,5,0,10"/>
-
-                            <!-- Sales Commission -->
-                            <TextBlock Text="Sales Commission %:" FontFamily="{StaticResource LexendSemiBold}"/>
-                            <TextBox materialDesign:HintAssist.Hint="Enter commission percentage..." Margin="0,5,0,5"/>
-                            <TextBlock Text="It will be based on each invoice amount - inclusive of taxes, shipping, and discounts" Foreground="Gray" FontSize="12"/>
-
-                            <!-- Department -->
-                            <TextBlock Text="Department:" FontFamily="{StaticResource LexendSemiBold}"/>
-                            <ComboBox Margin="0,5,0,15">
-                                <ComboBoxItem Content="Default - No" IsSelected="True"/>
-                            </ComboBox>
-
-                            <!-- Action Buttons -->
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-                                <Button Content="Cancel" 
-                                        Style="{StaticResource MaterialDesignFlatButton}" 
-                                        Foreground="White" 
-                                        Background="Gray"
-                                        Padding="10,5" 
-                                        Margin="0,0,10,0" 
-                                        Click="CancelAddEmployee"/>
-                                <Button Content="Add Employee" 
-                                        Style="{StaticResource MaterialDesignRaisedButton}" 
-                                        Background="{DynamicResource PrimaryHueDarkBrush}" 
-                                        Foreground="White"
-                                        Padding="10,5" 
-                                        Click="SaveEmployee"/>
-                            </StackPanel>
-
+                <StackPanel Grid.Row="1" Orientation="Vertical" Margin="0,20,0,20">
+                    <StackPanel Margin="0,0,0,10">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                            <TextBlock Text="Username:" FontSize="14" FontWeight="SemiBold" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <TextBlock Text="(Use only A-Z &amp; 0-9)" FontWeight="SemiBold" Foreground="#D23636" FontSize="11" VerticalAlignment="Center"/>
                         </StackPanel>
-                    </materialDesign:Card>
-                </Border>
+                        <Border Style="{StaticResource RoundedBorderStyle}" Padding="0,1">
+                            <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
+                        </Border>
+                    </StackPanel>
 
-            </StackPanel>
+                    <StackPanel Margin="0,10">
+                        <StackPanel Margin="0,0,0,5">
+                            <TextBlock Text="Business Location:" FontSize="14" FontWeight="SemiBold" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <Border Style="{StaticResource RoundedBorderStyle}">
+                                <ComboBox Style="{StaticResource RoundedComboboxStyle}" SelectedIndex="0">
+                                    <ComboBoxItem Content="Location 1"/>
+                                </ComboBox>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Margin="0,10">
+                        <StackPanel Margin="0,0,0,5">
+                            <TextBlock Text="User Role:" FontSize="14" FontWeight="SemiBold" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <Border Style="{StaticResource RoundedBorderStyle}">
+                                <ComboBox Style="{StaticResource RoundedComboboxStyle}" SelectedIndex="0">
+                                    <ComboBoxItem Content="Role 1"/>
+                                </ComboBox>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Margin="0, 10">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                            <TextBlock Text="Email:" FontSize="14" FontWeight="SemiBold" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        </StackPanel>
+                        <Border Style="{StaticResource RoundedBorderStyle}" Padding="0,1">
+                            <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Margin="0,10">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                            <TextBlock Text="Password:" FontSize="14" FontWeight="SemiBold" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        </StackPanel>
+                        <Border Style="{StaticResource RoundedBorderStyle}" Padding="0,1">
+                            <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
+                        </Border>
+                        <StackPanel Margin="0,10,0,0">
+                            <TextBlock Text="✓ At least 6 Characters" FontWeight="Regular" FontSize="12" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,0,2"/>
+                            <TextBlock Text="✓ Under 20 characters" FontWeight="Regular" FontSize="12" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,0,2"/>
+                            <TextBlock Text="✓ 1 uppercase letter" FontWeight="Regular" FontSize="12" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,0,2"/>
+                            <TextBlock Text="✓ 1 lowercase letter" FontWeight="Regular" FontSize="12" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,0,2"/>
+                            <TextBlock Text="✓ 1 special character" FontWeight="Regular" FontSize="12" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,0,2"/>
+                            <TextBlock Text="✓ 1 number" FontWeight="Regular" FontSize="12" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,0,2"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Row="2" Margin="-10,0">
+                    <Border BorderThickness="1" BorderBrush="#AEAEAE"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="3" Orientation="Vertical" Margin="0,20,0,20">
+                    <StackPanel Margin="0, 10">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                            <TextBlock Text="Name:" FontSize="14" FontWeight="SemiBold" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        </StackPanel>
+                        <Border Style="{StaticResource RoundedBorderStyle}" Padding="0,1">
+                            <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Margin="0, 10">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                            <TextBlock Text="Address:" FontSize="14" FontWeight="SemiBold" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        </StackPanel>
+                        <Border Style="{StaticResource RoundedBorderStyle}" Padding="0,1">
+                            <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Margin="0, 10">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="City:" FontSize="14" FontWeight="SemiBold" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            </StackPanel>
+                            <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource RoundedBorderStyle}" Padding="0,1" Margin="0,0,25,0">
+                                <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
+                            </Border>
+
+                            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Region:" FontSize="14" FontWeight="SemiBold" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            </StackPanel>
+                            <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource RoundedBorderStyle}" Padding="0,1" Margin="0,0,25,0">
+                                <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
+                            </Border>
+
+                            <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Country:" FontSize="14" FontWeight="SemiBold" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            </StackPanel>
+                            <Border Grid.Row="1" Grid.Column="2" Style="{StaticResource RoundedBorderStyle}" Padding="0,1" Margin="0,0,0,0">
+                                <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Margin="0, 10">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                            <TextBlock Text="Postal Code:" FontSize="14" FontWeight="SemiBold" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        </StackPanel>
+                        <Border Style="{StaticResource RoundedBorderStyle}" Padding="0,1">
+                            <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Margin="0,10,0,0">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                            <TextBlock Text="Phone:" FontSize="14" FontWeight="SemiBold" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        </StackPanel>
+                        <Border Style="{StaticResource RoundedBorderStyle}" Padding="0,1">
+                            <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
+                        </Border>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Row="4" Margin="-10,10,-10,0">
+                    <Border BorderThickness="1" BorderBrush="#AEAEAE"/>
+                </StackPanel>
+
+                <StackPanel Grid.Row="5" Orientation="Vertical" Margin="0,10,0,20">
+                    <StackPanel Margin="0, 10">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                            <TextBlock Text="Salary:" FontSize="14" FontWeight="SemiBold" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        </StackPanel>
+                        <Border Style="{StaticResource RoundedBorderStyle}" Padding="0,1">
+                            <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Margin="0, 10">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                            <TextBlock Text="Sales Commission %:" FontSize="14" FontWeight="SemiBold" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        </StackPanel>
+                        <Border Style="{StaticResource RoundedBorderStyle}" Padding="0,1">
+                            <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
+                        </Border>
+                        <TextBlock Text="It will be based on each invoice amount - inclusive all taxes, shipping, discounts" FontSize="12" FontWeight="Regular" Foreground="#474747" VerticalAlignment="Center" Margin="0,5,0,0"/>
+                    </StackPanel>
+
+                    <StackPanel Margin="0,10">
+                        <StackPanel Margin="0,0,0,5">
+                            <TextBlock Text="Department:" FontSize="14" FontWeight="SemiBold" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <Border Style="{StaticResource RoundedBorderStyle}">
+                                <ComboBox Style="{StaticResource RoundedComboboxStyle}" SelectedIndex="0">
+                                    <ComboBoxItem Content="Department 1"/>
+                                </ComboBox>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Margin="0,20,0,25" HorizontalAlignment="Right">
+                        <Button Width="Auto" Height="35" Background="Transparent" BorderThickness="0">
+                            <Border Style="{StaticResource RoundedBorderStyle}" Background="#1d5642" Padding="10,5" Width="250" BorderThickness="0">
+                                <TextBlock Text="Add Employee" Foreground="White" FontSize="14" FontWeight="SemiBold" 
+                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
         </ScrollViewer>
     </Grid>
 </Window>

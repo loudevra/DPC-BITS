@@ -10,6 +10,10 @@ Namespace DPC.Views.Dashboard
             ' Add Sidebar to SidebarContainer
             Dim sidebar As New Sidebar()
             SidebarContainer.Child = sidebar
+
+            ' Add TopNavBar to TopNavBarContainer
+            Dim topNavBar As New TopNavBar()
+            TopNavBarContainer.Child = topNavBar
         End Sub
     End Class
 End Namespace
