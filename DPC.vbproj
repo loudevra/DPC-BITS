@@ -220,6 +220,7 @@
     <Compile Include="Components\Navigation\TopNavbar.xaml.vb">
       <DependentUpon>TopNavBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Data\Controllers\EmployeeController.vb" />
     <Compile Include="Data\Controllers\CalendarController.vb" />
     <Compile Include="Data\Controllers\ProductController.vb" />
     <Compile Include="Data\Controllers\SupplierController.vb" />
@@ -237,14 +238,11 @@
     <Compile Include="Views\Dashboard\Dashboard.xaml.vb">
       <DependentUpon>Dashboard.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\HRM\Employees\Employees\EmployeeAdd.xaml.vb">
-      <DependentUpon>EmployeeAdd.xaml</DependentUpon>
+    <Compile Include="Views\HRM\Employees\Employees\AddEmployee.xaml.vb">
+      <DependentUpon>AddEmployee.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\HRM\Employees\Employees\EmployeesView.xaml.vb">
       <DependentUpon>EmployeesView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\HRM\Employees\Permissions\EmployeePermissions.xaml.vb">
-      <DependentUpon>EmployeePermissions.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Stocks\Warehouses\Warehouses.xaml.vb">
       <DependentUpon>Warehouses.xaml</DependentUpon>
@@ -392,13 +390,11 @@
     <Page Include="Views\Dashboard\Dashboard.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\HRM\Employees\Employees\EmployeeAdd.xaml">
+    <Page Include="Views\HRM\Employees\Employees\AddEmployee.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HRM\Employees\Employees\EmployeesView.xaml">
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\HRM\Employees\Permissions\EmployeePermissions.xaml">
     </Page>
     <Page Include="Views\Stocks\Warehouses\Warehouses.xaml">
       <SubType>Designer</SubType>
@@ -513,6 +509,7 @@
     <Folder Include="Views\HRM\Departments\" />
     <Folder Include="Views\HRM\Employees\Attendance\" />
     <Folder Include="Views\HRM\Employees\Holidays\" />
+    <Folder Include="Views\HRM\Employees\Permissions\" />
     <Folder Include="Views\HRM\Employees\Salaries\" />
     <Folder Include="Views\HRM\Payroll\" />
   </ItemGroup>
