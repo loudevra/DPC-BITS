@@ -220,6 +220,9 @@
     <Compile Include="Components\Forms\VariationModal102.xaml.vb">
       <DependentUpon>VariationModal102.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\VariationModal103.xaml.vb">
+      <DependentUpon>VariationModal103.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\VariationModal104.xaml.vb">
       <DependentUpon>VariationModal104.xaml</DependentUpon>
     </Compile>
@@ -269,6 +272,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\VariationModal102.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\VariationModal103.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
