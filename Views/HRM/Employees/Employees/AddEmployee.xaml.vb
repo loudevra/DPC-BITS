@@ -1,11 +1,25 @@
 ﻿Imports System.Text.RegularExpressions
 Imports System.Windows
+Imports DPC.DPC.Components.Navigation
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Model
 
 Namespace DPC.Views.HRM.Employees
     Public Class AddEmployee
+        Public Sub New()
+            InitializeComponent()
 
+            ' Add Sidebar to SidebarContainer
+            Dim sidebar As New Sidebar()
+            SidebarContainer.Child = sidebar
+
+            ' Add TopNavBar to TopNavBarContainer
+            Dim topNavBar As New TopNavBar()
+            TopNavBarContainer.Child = topNavBar
+
+            LoadUserRoles()
+            LoadBusinessLocations()
+        End Sub
         Private Sub BtnAddEmployee_Click(sender As Object, e As RoutedEventArgs)
             ' Validate required fields
             If String.IsNullOrWhiteSpace(txtUsername.Text) OrElse
@@ -68,5 +82,21 @@ Namespace DPC.Views.HRM.Employees
                 MessageBox.Show("Failed to add employee.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End If
         End Sub
+        ' Load User Roles into ComboBox
+        Private Sub LoadUserRoles()
+            Dim roles = EmployeeController.GetUserRoles()
+            cmbUserRole.ItemsSource = roles
+            cmbUserRole.DisplayMemberPath = "Value"
+            cmbUserRole.SelectedValuePath = "Key"
+        End Sub
+
+        ' Load Business Locations into ComboBox
+        Private Sub LoadBusinessLocations()
+            Dim locations = EmployeeController.GetBusinessLocations()
+            cmbBusinessLocation.ItemsSource = locations
+            cmbBusinessLocation.DisplayMemberPath = "Value"
+            cmbBusinessLocation.SelectedValuePath = "Key"
+        End Sub
+
     End Class
 End Namespace
