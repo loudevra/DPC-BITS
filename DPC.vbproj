@@ -217,6 +217,12 @@
     <Compile Include="Components\Forms\FilterPopOut.xaml.vb">
       <DependentUpon>FilterPopOut.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\VariationModal102.xaml.vb">
+      <DependentUpon>VariationModal102.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\VariationModal104.xaml.vb">
+      <DependentUpon>VariationModal104.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Navigation\TopNavbar.xaml.vb">
       <DependentUpon>TopNavBar.xaml</DependentUpon>
     </Compile>
@@ -260,6 +266,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Forms\FilterPopOut.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\VariationModal102.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\VariationModal104.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Navigation\Sidebar.xaml">
