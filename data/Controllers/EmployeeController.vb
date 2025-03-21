@@ -86,5 +86,48 @@ Namespace DPC.Data.Controllers
                 End Try
             End Using
         End Function
+
+        ' Fetch all user roles
+        Public Shared Function GetUserRoles() As List(Of KeyValuePair(Of Integer, String))
+            Dim roles As New List(Of KeyValuePair(Of Integer, String))
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "SELECT RoleID, RoleName FROM UserRoles"
+                    Using cmd As New MySqlCommand(query, conn)
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            While reader.Read()
+                                roles.Add(New KeyValuePair(Of Integer, String)(reader.GetInt32(0), reader.GetString(1)))
+                            End While
+                        End Using
+                    End Using
+                End Using
+            Catch ex As Exception
+                MessageBox.Show($"Error fetching user roles: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+            Return roles
+        End Function
+
+        ' Fetch all business locations
+        Public Shared Function GetBusinessLocations() As List(Of KeyValuePair(Of Integer, String))
+            Dim locations As New List(Of KeyValuePair(Of Integer, String))
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "SELECT LocationID, LocationName FROM BusinessLocations"
+                    Using cmd As New MySqlCommand(query, conn)
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            While reader.Read()
+                                locations.Add(New KeyValuePair(Of Integer, String)(reader.GetInt32(0), reader.GetString(1)))
+                            End While
+                        End Using
+                    End Using
+                End Using
+            Catch ex As Exception
+                MessageBox.Show($"Error fetching business locations: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+            Return locations
+        End Function
+
     End Class
 End Namespace
