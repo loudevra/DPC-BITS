@@ -1,6 +1,8 @@
 ﻿Imports MySql.Data.MySqlClient
 Imports System.Collections.ObjectModel
 Imports DPC.DPC.Data.Model
+Imports System.Security.Cryptography
+Imports System.Text
 
 Namespace DPC.Data.Controllers
     Public Class EmployeeController
@@ -9,11 +11,13 @@ Namespace DPC.Data.Controllers
             ' Generate the custom Employee ID
             emp.EmployeeID = GenerateEmployeeID()
 
-            Dim query As String = "INSERT INTO Employee (EmployeeID, Username, Email, Password, UserRoleID, BusinessLocationID, Name, " &
-                      "StreetAddress, City, Region, Country, PostalCode, Phone, Salary, SalesCommission, Department, CreatedAt, UpdatedAt) " &
-                      "VALUES (@EmployeeID, @Username, @Email, @Password, @UserRoleID, @BusinessLocationID, @Name, @StreetAddress, " &
-                      "@City, @Region, @Country, @PostalCode, @Phone, @Salary, @SalesCommission, @Department, @CreatedAt, @UpdatedAt)"
+            ' Hash the password before storing
+            Dim hashedPassword As String = HashPassword(emp.Password)
 
+            Dim query As String = "INSERT INTO Employee (EmployeeID, Username, Email, Password, UserRoleID, BusinessLocationID, Name, " &
+              "StreetAddress, City, Region, Country, PostalCode, Phone, Salary, SalesCommission, Department, CreatedAt, UpdatedAt) " &
+              "VALUES (@EmployeeID, @Username, @Email, @Password, @UserRoleID, @BusinessLocationID, @Name, @StreetAddress, " &
+              "@City, @Region, @Country, @PostalCode, @Phone, @Salary, @SalesCommission, @Department, @CreatedAt, @UpdatedAt)"
 
             ' Get a new connection from the pool
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
@@ -23,7 +27,7 @@ Namespace DPC.Data.Controllers
                         cmd.Parameters.AddWithValue("@EmployeeID", emp.EmployeeID)
                         cmd.Parameters.AddWithValue("@Username", emp.Username)
                         cmd.Parameters.AddWithValue("@Email", emp.Email)
-                        cmd.Parameters.AddWithValue("@Password", emp.Password) ' Hash before storing
+                        cmd.Parameters.AddWithValue("@Password", hashedPassword) ' Storing hashed password
                         cmd.Parameters.AddWithValue("@UserRoleID", emp.UserRoleID)
                         cmd.Parameters.AddWithValue("@BusinessLocationID", emp.BusinessLocationID)
                         cmd.Parameters.AddWithValue("@Name", emp.Name)
@@ -38,7 +42,6 @@ Namespace DPC.Data.Controllers
                         cmd.Parameters.AddWithValue("@Department", emp.Department)
                         cmd.Parameters.AddWithValue("@CreatedAt", DateTime.Now)
                         cmd.Parameters.AddWithValue("@UpdatedAt", DateTime.Now)
-
 
                         Dim result As Integer = cmd.ExecuteNonQuery()
                         Return result > 0
@@ -127,6 +130,15 @@ Namespace DPC.Data.Controllers
                 MessageBox.Show($"Error fetching business locations: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
             Return locations
+        End Function
+
+        ' Function to hash passwords using SHA-256
+        Private Shared Function HashPassword(password As String) As String
+            Using sha256 As SHA256 = SHA256.Create()
+                Dim bytes As Byte() = Encoding.UTF8.GetBytes(password)
+                Dim hash As Byte() = sha256.ComputeHash(bytes)
+                Return BitConverter.ToString(hash).Replace("-", "").ToLower()
+            End Using
         End Function
 
     End Class
