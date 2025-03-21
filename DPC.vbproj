@@ -214,6 +214,9 @@
     <Compile Include="Components\ConfirmationModals\CancelSupplierAdding.xaml.vb">
       <DependentUpon>CancelSupplierAdding.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\AddRowPopOut.xaml.vb">
+      <DependentUpon>AddRowPopOut.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\FilterPopOut.xaml.vb">
       <DependentUpon>FilterPopOut.xaml</DependentUpon>
     </Compile>
@@ -262,6 +265,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\AddNewSupplierForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Components\Forms\AddRowPopOut.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
