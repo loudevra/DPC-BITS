@@ -360,7 +360,7 @@
                             </StackPanel>
                         </StackPanel>
 
-                        <Button Background="Transparent" HorizontalAlignment="Right" BorderThickness="0" Margin="0,15,0,0">
+                        <Button Background="Transparent" HorizontalAlignment="Right" BorderThickness="0" Margin="0,15,0,0" x:Name="btnAddProduct"  Click="BtnAddProduct_Click">
                             <Border Style="{StaticResource RoundedBorderStyle}" Padding="1" Background="#52C69D" BorderBrush="#52C69D">
                                 <StackPanel Orientation="Horizontal" Background="#52C69D" Margin="10,0,10,0">
                                     <materialDesign:PackIcon Kind="CartAdd" Width="20" Height="20" Margin="5,0,5,0" Foreground="White" VerticalAlignment="Center"/>

@@ -2,6 +2,8 @@
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Components
 Imports System.Windows.Controls.Primitives
+Imports MySql.Data.MySqlClient
+Imports System.Diagnostics.Metrics
 
 Namespace DPC.Views.Stocks.ItemManager.NewProduct
     Public Class AddNewProducts
@@ -29,6 +31,105 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Me.DataContext = calendarViewModel
 
             AddHandler BtnRowController.Click, AddressOf BtnRowController_Click
+        End Sub
+
+        'start of inserting function for add product button
+        Private Sub BtnAddProduct_Click(sender As Object, e As RoutedEventArgs)
+            InsertNewProducts()
+        End Sub
+
+        Private TxtSerialNumber As TextBox
+
+
+        'funtion to insert data to the database
+        Private Sub InsertNewProducts()
+            Dim connectionString As String = "server=localhost;userid=root;password=;database=dpc"
+
+            ' Validate all required fields
+            If String.IsNullOrWhiteSpace(TxtProductName.Text) OrElse
+String.IsNullOrWhiteSpace(TxtProductCode.Text) OrElse
+String.IsNullOrWhiteSpace(ComboBoxCategory.Text) OrElse
+String.IsNullOrWhiteSpace(ComboBoxSubCategory.Text) OrElse
+String.IsNullOrWhiteSpace(ComboBoxWarehouse.Text) OrElse
+String.IsNullOrWhiteSpace(TxtRetailPrice.Text) OrElse
+String.IsNullOrWhiteSpace(TxtPurchaseOrder.Text) OrElse
+String.IsNullOrWhiteSpace(TxtDefaultTax.Text) OrElse
+String.IsNullOrWhiteSpace(TxtDiscountRate.Text) OrElse
+String.IsNullOrWhiteSpace(TxtStockUnits.Text) OrElse
+String.IsNullOrWhiteSpace(TxtAlertQuantity.Text) OrElse
+String.IsNullOrWhiteSpace(ComboBoxMeasurementUnit.Text) OrElse
+String.IsNullOrWhiteSpace(TxtDescription.Text) OrElse
+String.IsNullOrWhiteSpace(SingleDatePicker.Text) OrElse
+String.IsNullOrWhiteSpace(TxtSerialNumber.Text) Then
+
+                MessageBox.Show("Please fill in all required fields!", "Input Error", MessageBoxButton.OK)
+                Exit Sub
+            End If
+
+            Using conn As New MySqlConnection(connectionString)
+                conn.Open()
+                Dim transaction As MySqlTransaction = conn.BeginTransaction()
+                ' Start transaction
+
+                Try
+                    ' Insert into storedproduct table
+                    Dim query1 As String = "INSERT INTO storedproduct
+         (ProductName, ProductCode, Category, SubCategory, Warehouse,
+RetailPrice, PurchaseOrder, DefaultTax, DiscountRate, StockUnits,
+AlertQuantity, MeasurementUnit, Description, DateAdded)
+         VALUES (@ProductName, @ProductCode, @Category, @SubCategory,
+@Warehouse, @RetailPrice, @PurchaseOrder, @DefaultTax, @DiscountRate,
+@StockUnits, @AlertQuantity, @MeasurementUnit, @Description,
+@DateAdded);
+         SELECT LAST_INSERT_ID();"
+
+                    Using cmd1 As New MySqlCommand(query1, conn, transaction)
+                        cmd1.Parameters.AddWithValue("@ProductName", TxtProductName.Text)
+                        cmd1.Parameters.AddWithValue("@ProductCode", TxtProductCode.Text)
+                        cmd1.Parameters.AddWithValue("@Category", ComboBoxCategory.Text)
+                        cmd1.Parameters.AddWithValue("@SubCategory", ComboBoxSubCategory.Text)
+                        cmd1.Parameters.AddWithValue("@Warehouse", ComboBoxWarehouse.Text)
+                        cmd1.Parameters.AddWithValue("@RetailPrice", TxtRetailPrice.Text)
+                        cmd1.Parameters.AddWithValue("@PurchaseOrder", TxtPurchaseOrder.Text)
+                        cmd1.Parameters.AddWithValue("@DefaultTax", TxtDefaultTax.Text)
+                        cmd1.Parameters.AddWithValue("@DiscountRate", TxtDiscountRate.Text)
+                        cmd1.Parameters.AddWithValue("@StockUnits", TxtStockUnits.Text)
+                        cmd1.Parameters.AddWithValue("@AlertQuantity", TxtAlertQuantity.Text)
+                        cmd1.Parameters.AddWithValue("@MeasurementUnit", ComboBoxMeasurementUnit.Text)
+                        cmd1.Parameters.AddWithValue("@Description", TxtDescription.Text)
+                        cmd1.Parameters.AddWithValue("@DateAdded", SingleDatePicker.Text)
+
+                        Dim productID As Integer = Convert.ToInt32(cmd1.ExecuteScalar()) ' Get the inserted ID
+
+                        ' Insert into serialnumberproduct table
+                        Dim query2 As String = "INSERT INTO serialnumberproduct (SerialNumber, ProductID) VALUES (@SerialNumber,
+@ProductID)"
+
+                        Using cmd2 As New MySqlCommand(query2, conn, transaction)
+                            cmd2.Parameters.AddWithValue("@SerialNumber", TxtSerialNumber.Text)
+                            cmd2.Parameters.AddWithValue("@ProductID",
+productID) ' Link to the stored product
+                            cmd2.ExecuteNonQuery()
+                        End Using
+                    End Using
+
+                    ' Commit Transaction if both inserts succeed
+                    transaction.Commit()
+
+                    MessageBox.Show("Product and Serial Number added
+successfully!", "Success", MessageBoxButton.OK)
+
+                Catch ex As MySqlException
+                    transaction.Rollback() ' Rollback transaction if an error occurs
+                    MessageBox.Show("Database Error: " & ex.Message, "Error",
+MessageBoxButton.OK)
+
+                Catch ex As Exception
+                    transaction.Rollback() ' Ensure rollback on any failure
+                    MessageBox.Show("Unexpected Error: " & ex.Message,
+"Error", MessageBoxButton.OK)
+                End Try
+            End Using
         End Sub
 
         'Function to handle integer only input on textboxes
@@ -126,12 +227,15 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             grid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
 
             ' Create TextBox with Border
+            Dim textBox As New TextBox With {
+    .Style = TryFindResource("RoundedTextboxStyle"),
+    .Name = "TxtSerialNumber" ' Set the name
+}
+            TxtSerialNumber = textBox
             Dim textBoxBorder As New Border With {
-        .Style = TryFindResource("RoundedBorderStyle"),
-        .Child = New TextBox With {
-            .Style = TryFindResource("RoundedTextboxStyle")
-        }
-    }
+    .Style = TryFindResource("RoundedBorderStyle"),
+    .Child = textBox
+}
             Grid.SetColumn(textBoxBorder, 0)
             grid.Children.Add(textBoxBorder)
 
