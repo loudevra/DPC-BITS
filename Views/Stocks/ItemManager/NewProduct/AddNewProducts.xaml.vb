@@ -17,13 +17,13 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Dim topNav As New Components.Navigation.TopNavBar()
             TopNavBarContainer.Content = topNav
 
-            ProductController.GetProductCategory(CategoryComboBox)
+            ProductController.GetProductCategory(ComboBoxCategory)
 
-            If CategoryComboBox.SelectedItem IsNot Nothing Then
-                CategoryComboBox_SelectionChanged(CategoryComboBox, Nothing)
+            If ComboBoxCategory.SelectedItem IsNot Nothing Then
+                CategoryComboBox_SelectionChanged(ComboBoxCategory, Nothing)
             End If
 
-            ProductController.GetWarehouse(WarehouseComboBox)
+            ProductController.GetWarehouse(ComboBoxWarehouse)
 
             Dim calendarViewModel As New CalendarController.SingleCalendar()
             Me.DataContext = calendarViewModel
@@ -53,12 +53,12 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
 
         'handles the combobox for categories and subcategories
-        Private Sub CategoryComboBox_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles CategoryComboBox.SelectionChanged
-            Dim selectedCategory As String = TryCast(CategoryComboBox.SelectedItem, ComboBoxItem)?.Content?.ToString()
+        Private Sub CategoryComboBox_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles ComboBoxCategory.SelectionChanged
+            Dim selectedCategory As String = TryCast(ComboBoxCategory.SelectedItem, ComboBoxItem)?.Content?.ToString()
             If Not String.IsNullOrEmpty(selectedCategory) Then
-                ProductController.GetProductSubcategory(selectedCategory, SubCategoryComboBox, SubCategoryLabel)
+                ProductController.GetProductSubcategory(selectedCategory, ComboBoxSubCategory, SubCategoryLabel)
             Else
-                SubCategoryComboBox.Items.Clear()
+                ComboBoxSubCategory.Items.Clear()
             End If
         End Sub
 
