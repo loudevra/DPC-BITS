@@ -1,5 +1,5 @@
 ﻿Namespace DPC.Components.Forms
-    Public Class VariationModal103
+    Public Class VariationModal105
         Public Event CloseRequested As EventHandler
 
         Public Sub New()

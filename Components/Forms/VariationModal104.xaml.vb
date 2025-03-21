@@ -10,8 +10,8 @@
             RaiseEvent CloseRequested(Me, EventArgs.Empty)
         End Sub
 
-        Private Sub AddSupplier(sender As Object, e As RoutedEventArgs)
-            MessageBox.Show("Supplier Added Successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+        Private Sub AddNewVariation(sender As Object, e As RoutedEventArgs)
+            MessageBox.Show("New Variation Added Successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
             RaiseEvent CloseRequested(Me, EventArgs.Empty)
         End Sub
     End Class
