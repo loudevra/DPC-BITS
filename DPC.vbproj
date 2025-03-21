@@ -222,6 +222,7 @@
     </Compile>
     <Compile Include="Data\Controllers\EmployeeController.vb" />
     <Compile Include="Data\Controllers\CalendarController.vb" />
+    <Compile Include="Data\Controllers\ManageProductsController.vb" />
     <Compile Include="Data\Controllers\ProductController.vb" />
     <Compile Include="Data\Controllers\SupplierController.vb" />
     <Compile Include="Data\Controllers\WarehousesController.vb" />
@@ -230,6 +231,7 @@
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
     <Compile Include="Data\DatabaseHelper.vb" />
     <Compile Include="Data\Models\Employee.vb" />
+    <Compile Include="Data\Models\ManageProducts.vb" />
     <Compile Include="Data\Models\Supplier.vb" />
     <Compile Include="Data\Models\Warehouses.vb" />
     <Compile Include="SplashScreen.xaml.vb">
