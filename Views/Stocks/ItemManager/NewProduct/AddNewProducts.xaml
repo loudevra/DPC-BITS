@@ -248,7 +248,6 @@
                             <Border Style="{StaticResource RoundedBorderStyle}">
 <!-- Stock Units Value-->
                                 <TextBox x:Name="TxtStockUnits" Style="{StaticResource RoundedTextboxStyle}"
-                                Text="1"
                                 PreviewTextInput="IntegerOnlyTextInputHandler"
                                 DataObject.Pasting="IntegerOnlyPasteHandler"
                                 KeyDown="TxtStockUnits_KeyDown"/>
@@ -334,29 +333,7 @@
                             </Border>
 
                             <StackPanel Background="white" x:Name="MainContainer">
-                                <StackPanel Margin="25,20,10,20">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Border Style="{StaticResource RoundedBorderStyle}" Grid.Column="0">
-                                            <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
-                                        </Border>
-                                        <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10,0,0,0">
-                                            <Button Background="White" BorderThickness="0" x:Name="BtnAddRow">
-                                                <materialDesign:PackIcon Kind="TableRowAddAfter" Width="40" Height="30" Foreground="#456B2E"/>
-                                            </Button>
-                                            <Button Background="White" BorderThickness="0" x:Name="BtnRemoveRow">
-                                                <materialDesign:PackIcon Kind="TableRowRemove" Width="40" Height="30" Foreground="#D23636"/>
-                                            </Button>
-                                            <Border BorderBrush="#AEAEAE" BorderThickness="1" Height="Auto"/>
-                                            <Button Background="White" BorderThickness="0" x:Name="BtnRowController">
-                                                <materialDesign:PackIcon Kind="MenuDown" Width="30" Height="30" Foreground="#AEAEAE" Margin="0,0,0,0"/>
-                                            </Button>
-                                        </StackPanel>
-                                    </Grid>
-                                </StackPanel>
+                                
                             </StackPanel>
                         </StackPanel>
 
