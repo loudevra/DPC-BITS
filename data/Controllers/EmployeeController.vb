@@ -4,6 +4,7 @@ Imports DPC.DPC.Data.Model
 Imports System.Security.Cryptography
 Imports System.Text
 Imports Microsoft.AspNetCore.Cryptography.KeyDerivation
+Imports DPC.DPC.Data.Helpers ' Import PBKDF2Hasher
 
 Namespace DPC.Data.Controllers
     Public Class EmployeeController
@@ -13,7 +14,7 @@ Namespace DPC.Data.Controllers
             emp.EmployeeID = GenerateEmployeeID()
 
             ' Hash the password before storing
-            Dim hashedPassword As String = AuthController.HashPassword(emp.Password)
+            Dim hashedPassword As String = PBKDF2Hasher.HashPassword(emp.Password)
 
             Dim query As String = "INSERT INTO Employee (EmployeeID, Username, Email, Password, UserRoleID, BusinessLocationID, Name, " &
               "StreetAddress, City, Region, Country, PostalCode, Phone, Salary, SalesCommission, Department, CreatedAt, UpdatedAt) " &
@@ -66,31 +67,6 @@ Namespace DPC.Data.Controllers
 
             ' Concatenate to get full EmployeeID
             Return prefix & datePart & counterPart
-        End Function
-
-
-        ' Function to get the next Employee counter (last 4 digits)
-        Private Shared Function GetNextEmployeeCounter() As Integer
-            Dim query As String = "SELECT MAX(CAST(SUBSTRING(EmployeeID, 11, 4) AS UNSIGNED)) FROM Employee WHERE EmployeeID LIKE '10" & DateTime.Now.ToString("MMddyyyy") & "%'"
-
-            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                Try
-                    conn.Open()
-                    Using cmd As New MySqlCommand(query, conn)
-                        Dim result As Object = cmd.ExecuteScalar()
-
-                        ' If no previous records exist for today, start with 0001
-                        If result IsNot DBNull.Value AndAlso result IsNot Nothing Then
-                            Return Convert.ToInt32(result) + 1
-                        Else
-                            Return 1
-                        End If
-                    End Using
-                Catch ex As Exception
-                    MessageBox.Show("Error generating Employee ID: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
-                    Return 1
-                End Try
-            End Using
         End Function
 
         ' Fetch all user roles

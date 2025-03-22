@@ -6,15 +6,14 @@ Imports System.Text
 Imports Microsoft.IdentityModel.Tokens
 Imports MySql.Data.MySqlClient
 Imports DPC.DPC.Data.Model
-Imports MailKit.Net.Smtp
-Imports MimeKit
+Imports DPC.DPC.Data.Helpers ' Import PBKDF2Hasher
 Imports Microsoft.AspNetCore.Cryptography.KeyDerivation
 Imports System.Windows ' Required for MessageBox.Show()
 
 Namespace DPC.Data.Controllers
     Public Class AuthController
-        ' Secret key for JWT (Change this for production)
-        Private Shared ReadOnly JWT_SECRET As String = "YourSuperSecretKey1234567890"
+        ' Secret key for JWT (Change this for production, For Testing Purposes)
+        Private Shared ReadOnly JWT_SECRET As String = "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTc0MjY1OTAzNywiaWF0IjoxNzQyNjU5MDM3fQ.WHd7Nt4aNhUskAiB5iOta4C1Uc3Saqhk9zpRRlc0G3I"
 
         ' Token expiration settings
         Private Const ACCESS_TOKEN_EXPIRY As Integer = 15 ' Minutes
@@ -34,16 +33,13 @@ Namespace DPC.Data.Controllers
                                 Dim employeeID As String = reader("EmployeeID").ToString()
                                 Dim roleID As String = reader("UserRoleID").ToString()
 
-                                ' Verify password
-                                If VerifyPassword(password, storedHashedPassword) Then
-                                    ' Get user role
+                                ' Verify password using PBKDF2Hasher
+                                If PBKDF2Hasher.VerifyPassword(password, storedHashedPassword) Then
                                     Dim userRole As String = GetUserRole(roleID)
-
-                                    ' Generate JWT tokens
                                     Dim accessToken As String = GenerateJwtToken(employeeID, username, userRole, ACCESS_TOKEN_EXPIRY)
                                     Dim refreshToken As String = GenerateJwtToken(employeeID, username, userRole, REFRESH_TOKEN_EXPIRY, True)
 
-                                    ' Store refresh token in database
+                                    ' Store refresh token in the database
                                     StoreRefreshToken(employeeID, refreshToken)
 
                                     Return (accessToken, refreshToken)

@@ -78,6 +78,8 @@ Namespace DPC.Views.HRM.Employees
             If EmployeeController.CreateEmployee(newEmployee) Then
                 MessageBox.Show("Employee added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
                 Me.Close() ' Close the form
+                Dim employeesWindow As New Views.HRM.Employees.Employees.EmployeesView()
+                employeesWindow.Show()
             Else
                 MessageBox.Show("Failed to add employee.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End If
