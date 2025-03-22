@@ -3,6 +3,7 @@ Imports System.Collections.ObjectModel
 Imports DPC.DPC.Data.Model
 Imports System.Security.Cryptography
 Imports System.Text
+Imports Microsoft.AspNetCore.Cryptography.KeyDerivation
 
 Namespace DPC.Data.Controllers
     Public Class EmployeeController
@@ -12,7 +13,7 @@ Namespace DPC.Data.Controllers
             emp.EmployeeID = GenerateEmployeeID()
 
             ' Hash the password before storing
-            Dim hashedPassword As String = HashPassword(emp.Password)
+            Dim hashedPassword As String = AuthController.HashPassword(emp.Password)
 
             Dim query As String = "INSERT INTO Employee (EmployeeID, Username, Email, Password, UserRoleID, BusinessLocationID, Name, " &
               "StreetAddress, City, Region, Country, PostalCode, Phone, Salary, SalesCommission, Department, CreatedAt, UpdatedAt) " &
@@ -50,14 +51,15 @@ Namespace DPC.Data.Controllers
                     MessageBox.Show("Error creating employee: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
                     Return False
                 End Try
-            End Using ' ✅ Connection is automatically returned to the pool
+            End Using
         End Function
 
+        ' Function to generate EmployeeID in format 10MMDDYYYYXXXX
         ' Function to generate EmployeeID in format 10MMDDYYYYXXXX
         Private Shared Function GenerateEmployeeID() As String
             Dim prefix As String = "10"
             Dim datePart As String = DateTime.Now.ToString("MMddyyyy") ' MMDDYYYY format
-            Dim counter As Integer = GetNextEmployeeCounter()
+            Dim counter As Integer = GetNextEmployeeCounter(datePart)
 
             ' Format counter to be 4 digits (e.g., 0001, 0025, 0150)
             Dim counterPart As String = counter.ToString("D4")
@@ -65,6 +67,7 @@ Namespace DPC.Data.Controllers
             ' Concatenate to get full EmployeeID
             Return prefix & datePart & counterPart
         End Function
+
 
         ' Function to get the next Employee counter (last 4 digits)
         Private Shared Function GetNextEmployeeCounter() As Integer
@@ -132,12 +135,62 @@ Namespace DPC.Data.Controllers
             Return locations
         End Function
 
-        ' Function to hash passwords using SHA-256
-        Private Shared Function HashPassword(password As String) As String
-            Using sha256 As SHA256 = SHA256.Create()
-                Dim bytes As Byte() = Encoding.UTF8.GetBytes(password)
-                Dim hash As Byte() = sha256.ComputeHash(bytes)
-                Return BitConverter.ToString(hash).Replace("-", "").ToLower()
+        ' Get Employee Info with Role and Location
+        Public Shared Function GetEmployeeByID(employeeID As String) As Employee
+            Dim employee As Employee = Nothing
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "SELECT e.*, r.RoleName, l.LocationName FROM Employee e " &
+                                          "JOIN UserRoles r ON e.UserRoleID = r.RoleID " &
+                                          "JOIN BusinessLocations l ON e.BusinessLocationID = l.LocationID " &
+                                          "WHERE e.EmployeeID = @EmployeeID"
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@EmployeeID", employeeID)
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            If reader.Read() Then
+                                employee = New Employee() With {
+                                    .EmployeeID = reader("EmployeeID").ToString(),
+                                    .Username = reader("Username").ToString(),
+                                    .Email = reader("Email").ToString(),
+                                    .Name = reader("Name").ToString(),
+                                    .RoleName = reader("RoleName").ToString(),
+                                    .LocationName = reader("LocationName").ToString(),
+                                    .CreatedAt = Convert.ToDateTime(reader("CreatedAt")),
+                                    .UpdatedAt = Convert.ToDateTime(reader("UpdatedAt"))
+                                }
+                            End If
+                        End Using
+                    End Using
+                End Using
+            Catch ex As Exception
+                MessageBox.Show($"Error fetching employee: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+            Return employee
+        End Function
+
+        ' Function to get the next Employee counter (last 4 digits) with reset condition
+        Private Shared Function GetNextEmployeeCounter(datePart As String) As Integer
+            Dim query As String = "SELECT MAX(CAST(SUBSTRING(EmployeeID, 11, 4) AS UNSIGNED)) FROM Employee " &
+                          "WHERE EmployeeID LIKE '10" & datePart & "%'"
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        Dim result As Object = cmd.ExecuteScalar()
+
+                        ' If no previous records exist for today, start with 0001
+                        If result IsNot DBNull.Value AndAlso result IsNot Nothing Then
+                            Return Convert.ToInt32(result) + 1
+                        Else
+                            Return 1
+                        End If
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show("Error generating Employee ID: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return 1
+                End Try
             End Using
         End Function
 
