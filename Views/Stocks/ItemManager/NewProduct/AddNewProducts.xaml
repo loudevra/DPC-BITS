@@ -4,7 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:local="namespace:DPC.Views.Stocks.ItemManager"
+        xmlns:local="namespace:DPC.Views.Stocks.ItemManager" 
+        xmlns:local1="namespace:DPC.Components.Forms"
         mc:Ignorable="d"
         Background="#D9D9D9"
         Title="Add New Products"
@@ -332,9 +333,10 @@
                                 </StackPanel>
                             </Border>
 
-                            <StackPanel Background="white" x:Name="MainContainer">
-                                
-                            </StackPanel>
+                                <StackPanel x:Name="MainContainer" Background="white">
+                                    <!-- Other UI elements -->
+                                </StackPanel>
+
                         </StackPanel>
 
                         <Button Background="Transparent" HorizontalAlignment="Right" BorderThickness="0" Margin="0,15,0,0" x:Name="btnAddProduct"  Click="BtnAddProduct_Click">
