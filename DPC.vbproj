@@ -254,8 +254,11 @@
     <Compile Include="Components\ConfirmationModals\CancelSupplierAdding.xaml.vb">
       <DependentUpon>CancelSupplierAdding.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\Forms\AddRowPopOut.xaml.vb">
-      <DependentUpon>AddRowPopOut.xaml</DependentUpon>
+    <Compile Include="Components\Forms\AddRowPopout.xaml.vb">
+      <DependentUpon>AddRowPopout.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\RowControllerPopout.xaml.vb">
+      <DependentUpon>RowControllerPopout.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\FilterPopOut.xaml.vb">
       <DependentUpon>FilterPopOut.xaml</DependentUpon>
@@ -316,7 +319,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Components\Forms\AddRowPopOut.xaml">
+    <Page Include="Components\Forms\AddRowPopout.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\RowControllerPopout.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
