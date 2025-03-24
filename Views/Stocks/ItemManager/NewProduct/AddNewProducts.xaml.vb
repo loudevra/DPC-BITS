@@ -1,4 +1,5 @@
-﻿Imports DPC.DPC.Components.Forms
+﻿Imports System.Windows.Controls.Primitives
+Imports DPC.DPC.Components.Forms
 Imports DPC.DPC.Data.Controllers
 
 Namespace DPC.Views.Stocks.ItemManager.NewProduct
@@ -18,6 +19,9 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Dim topNav As New Components.Navigation.TopNavBar()
             TopNavBarContainer.Content = topNav
 
+            Toggle.IsChecked = False
+            VariationChecker(Toggle)
+
             ProductController.GetProductCategory(ComboBoxCategory)
 
             If ComboBoxCategory.SelectedItem IsNot Nothing Then
@@ -34,6 +38,48 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             'MessageBox.Show("MainContainer and TxtStockUnits have been initialized.")
 
             ProductController.BtnAddRow_Click(Nothing, Nothing)
+        End Sub
+
+        Private Sub Toggle_Click(sender As Object, e As RoutedEventArgs)
+            VariationChecker(Toggle)
+        End Sub
+
+        Private Sub VariationChecker(Toggle As ToggleButton)
+            If Toggle.IsChecked Then
+                ' Move to Yes State
+                SwitchGrid.HorizontalAlignment = HorizontalAlignment.Right
+                SwitchText.Text = "Yes"
+                SwitchText.Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#4D4D4D"))
+                BackgroundBorder.Background = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
+                NoVariation.Visibility = Visibility.Visible
+                YesVariation.Visibility = Visibility.Hidden
+
+                StackPanelWarehouse.Visibility = Visibility.Collapsed
+                StackPanelRetailPrice.Visibility = Visibility.Collapsed
+                StackPanelOrderPrice.Visibility = Visibility.Collapsed
+                BorderSeperator.Visibility = Visibility.Collapsed
+                StackPanelTaxRate.Visibility = Visibility.Collapsed
+                StackPanelDiscountRate.Visibility = Visibility.Collapsed
+                StackPanelStockUnits.Visibility = Visibility.Collapsed
+                StackPanelAlertQuantity.Visibility = Visibility.Collapsed
+            Else
+                ' Move to No State
+                SwitchGrid.HorizontalAlignment = HorizontalAlignment.Left
+                SwitchText.Text = "No"
+                SwitchText.Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#4D4D4D"))
+                BackgroundBorder.Background = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
+                NoVariation.Visibility = Visibility.Hidden
+                YesVariation.Visibility = Visibility.Visible
+
+                StackPanelWarehouse.Visibility = Visibility.Visible
+                StackPanelRetailPrice.Visibility = Visibility.Visible
+                StackPanelOrderPrice.Visibility = Visibility.Visible
+                BorderSeperator.Visibility = Visibility.Visible
+                StackPanelTaxRate.Visibility = Visibility.Visible
+                StackPanelDiscountRate.Visibility = Visibility.Visible
+                StackPanelStockUnits.Visibility = Visibility.Visible
+                StackPanelAlertQuantity.Visibility = Visibility.Visible
+            End If
         End Sub
 
         ' Start of inserting function for add product button
