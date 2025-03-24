@@ -63,8 +63,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             End If
         End Sub
 
-
-
         'handles the combobox for categories and subcategories
         Private Sub CategoryComboBox_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles ComboBoxCategory.SelectionChanged
             Dim selectedCategory As String = TryCast(ComboBoxCategory.SelectedItem, ComboBoxItem)?.Content?.ToString()

@@ -55,7 +55,6 @@ Namespace DPC.Data.Controllers
         End Function
 
         ' Function to generate EmployeeID in format 10MMDDYYYYXXXX
-        ' Function to generate EmployeeID in format 10MMDDYYYYXXXX
         Private Shared Function GenerateEmployeeID() As String
             Dim prefix As String = "10"
             Dim datePart As String = DateTime.Now.ToString("MMddyyyy") ' MMDDYYYY format
