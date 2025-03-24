@@ -3,7 +3,6 @@ Imports System.Collections.ObjectModel
 Imports DPC.DPC.Data.Model
 Imports System.Security.Cryptography
 Imports System.Text
-Imports Microsoft.AspNetCore.Cryptography.KeyDerivation
 Imports DPC.DPC.Data.Helpers ' Import PBKDF2Hasher
 
 Namespace DPC.Data.Controllers
