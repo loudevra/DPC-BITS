@@ -203,7 +203,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
         Private Function FindParentGrid(element As DependencyObject) As Grid
             ' Traverse up the visual tree to find the Grid
-            While element IsNot Nothing AndAlso Not TypeOf element Is Grid
+            While element IsNot Nothing AndAlso TypeOf element IsNot Grid
                 element = VisualTreeHelper.GetParent(element)
             End While
             Return TryCast(element, Grid)
