@@ -280,20 +280,32 @@
     <Compile Include="Data\Controllers\CalendarController.vb" />
     <Compile Include="Data\Controllers\ManageProductsController.vb" />
     <Compile Include="Data\Controllers\ProductController.vb" />
+    <Compile Include="Data\Controllers\ResetPassController.vb" />
     <Compile Include="Data\Controllers\SessionManager.vb" />
     <Compile Include="Data\Controllers\SupplierController.vb" />
     <Compile Include="Data\Controllers\WarehousesController.vb" />
     <Compile Include="Data\Converters\PasswordMaskingBehavior.vb" />
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
+    <Compile Include="Data\Helpers\EmailService.vb" />
     <Compile Include="Data\Helpers\EnvLoader.vb" />
     <Compile Include="Data\Helpers\PBKDF2Hasher.vb" />
+    <Compile Include="Data\Helpers\RelayCommand.vb" />
     <Compile Include="Data\Models\Employee.vb" />
     <Compile Include="Data\Models\ManageProducts.vb" />
     <Compile Include="Data\Models\Supplier.vb" />
     <Compile Include="Data\Models\Warehouses.vb" />
     <Compile Include="SplashScreen.xaml.vb">
       <DependentUpon>SplashScreen.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Auth\ForgotPassword.xaml.vb">
+      <DependentUpon>ForgotPassword.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Auth\ResetPassword.xaml.vb">
+      <DependentUpon>ResetPassword.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Auth\VerifyCode.xaml.vb">
+      <DependentUpon>VerifyCode.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Dashboard\Dashboard.xaml.vb">
       <DependentUpon>Dashboard.xaml</DependentUpon>
@@ -465,6 +477,15 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="SplashScreen.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Auth\ForgotPassword.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Auth\ResetPassword.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Auth\VerifyCode.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Dashboard\Dashboard.xaml">

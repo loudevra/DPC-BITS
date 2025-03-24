@@ -8,7 +8,14 @@ Imports DPC.DPC.Data.Helpers
 Namespace DPC
     Public Class SplashScreen
         ' Store Connection String (Enable Connection Pooling)
-        Private Shared ReadOnly ConnectionString As String = "server=localhost;userid=root;password=;database=dpc;Pooling=True;Min Pool Size=5;Max Pool Size=100;"
+        Private Shared ReadOnly ConnectionString As String =
+            $"server={EnvLoader.GetEnv("DB_HOST")};" &
+            $"userid={EnvLoader.GetEnv("DB_USER")};" &
+            $"password={EnvLoader.GetEnv("DB_PASS")};" &
+            $"database={EnvLoader.GetEnv("DB_NAME")};" &
+            $"Pooling=True;" &
+            $"Min Pool Size={EnvLoader.GetEnv("DB_POOL_MIN")};" &
+            $"Max Pool Size={EnvLoader.GetEnv("DB_POOL_MAX")};"
 
         Private Async Sub Window_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
             ' Load environment variables

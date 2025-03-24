@@ -5,6 +5,7 @@ Imports System.Windows.Media.Effects
 Imports DPC.DPC.Data.Converters
 Imports DPC.DPC.Data.Controllers
 Imports System.Web.SessionState
+Imports DPC.DPC.Views.Auth
 
 Namespace DPC
     Partial Public Class MainWindow
@@ -31,10 +32,10 @@ Namespace DPC
             'Dim refreshToken As String = authResult.Item2
 
             'If Not String.IsNullOrEmpty(accessToken) AndAlso Not String.IsNullOrEmpty(refreshToken) Then
-            '    MessageBox.Show("Login Successful!", "Welcome", MessageBoxButton.OK, MessageBoxImage.Information)
+            'MessageBox.Show("Login Successful!", "Welcome", MessageBoxButton.OK, MessageBoxImage.Information)
 
             '    ' Store tokens for session
-            '    SessionManager.SetSessionTokens(accessToken, refreshToken)
+            'SessionManager.SetSessionTokens(accessToken, refreshToken)
 
             ' Redirect to Dashboard.xaml
             Dim dashboard As New Views.Dashboard.Dashboard()
@@ -62,6 +63,12 @@ Namespace DPC
 
             Dim glowEffect As DropShadowEffect = CType(LogoImage.Effect, DropShadowEffect)
             glowEffect.BeginAnimation(DropShadowEffect.ColorProperty, colorAnimation)
+        End Sub
+
+        Private Sub ForgotPassword_Click(sender As Object, e As MouseButtonEventArgs)
+            Dim forgotPasswordWindow As New ForgotPassword()
+            forgotPasswordWindow.Show()
+            Me.Close() ' Close Sign-In window
         End Sub
 
     End Class
