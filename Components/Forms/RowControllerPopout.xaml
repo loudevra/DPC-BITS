@@ -29,7 +29,7 @@
             </Button>
         </StackPanel>
         <StackPanel Grid.Row="1" Margin="5,5,5,0">
-            <Button Width="Auto" HorizontalContentAlignment="Left" BorderThickness="0" Background="White">
+            <Button Width="Auto" HorizontalContentAlignment="Left" BorderThickness="0" Background="White" Click="RemoveRows_Click">
                 <StackPanel Width="Auto"  Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="TableRowRemove" Width="25" Height="20" Foreground="#AEAEAE" VerticalAlignment="Center"/>
                     <TextBlock Text="Remove Rows" FontFamily="{StaticResource Lexend}" Foreground="#AEAEAE" VerticalAlignment="Center"/>
