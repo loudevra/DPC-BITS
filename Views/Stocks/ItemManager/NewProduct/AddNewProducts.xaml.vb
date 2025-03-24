@@ -31,9 +31,9 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             ProductController.MainContainer = MainContainer
             ProductController.TxtStockUnits = TxtStockUnits
-            MessageBox.Show("MainContainer and TxtStockUnits have been initialized.")
+            'MessageBox.Show("MainContainer and TxtStockUnits have been initialized.")
 
-            productController.BtnAddRow_Click(Nothing, Nothing)
+            ProductController.BtnAddRow_Click(Nothing, Nothing)
         End Sub
 
         ' Start of inserting function for add product button

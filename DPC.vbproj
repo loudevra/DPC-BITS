@@ -257,6 +257,9 @@
     <Compile Include="Components\Forms\AddRowPopout.xaml.vb">
       <DependentUpon>AddRowPopout.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\RemoveRowPopout.xaml.vb">
+      <DependentUpon>RemoveRowPopout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\RowControllerPopout.xaml.vb">
       <DependentUpon>RowControllerPopout.xaml</DependentUpon>
     </Compile>
@@ -333,6 +336,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Forms\AddRowPopout.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\RemoveRowPopout.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\RowControllerPopout.xaml">

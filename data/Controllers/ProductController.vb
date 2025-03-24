@@ -362,6 +362,15 @@ Namespace DPC.Data.Controllers
             ' Open the popup
             Popup.IsOpen = True
         End Sub
+
+        Public Shared Sub RemoveLatestRow()
+            Dim parentPanel As StackPanel = MainContainer
+            If parentPanel IsNot Nothing AndAlso parentPanel.Children.Count > 0 Then
+                parentPanel.Children.RemoveAt(parentPanel.Children.Count - 1)
+            Else
+                MessageBox.Show("No rows available to remove.")
+            End If
+        End Sub
     End Class
 
 End Namespace
