@@ -289,6 +289,7 @@
     <Compile Include="Data\Converters\PasswordMaskingBehavior.vb" />
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
+    <Compile Include="Data\Helpers\EnvLoader.vb" />
     <Compile Include="Data\Helpers\PBKDF2Hasher.vb" />
     <Compile Include="Data\Models\Employee.vb" />
     <Compile Include="Data\Models\ManageProducts.vb" />
@@ -576,6 +577,10 @@
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
     </EmbeddedResource>
     <Resource Include="Assets\fonts\Lexend\Lexend-Regular.ttf" />
+    <None Include=".env">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="My Project\.env" />
     <None Include="My Project\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>

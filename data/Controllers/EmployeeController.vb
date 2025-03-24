@@ -3,7 +3,6 @@ Imports System.Collections.ObjectModel
 Imports DPC.DPC.Data.Model
 Imports System.Security.Cryptography
 Imports System.Text
-Imports Microsoft.AspNetCore.Cryptography.KeyDerivation
 Imports DPC.DPC.Data.Helpers ' Import PBKDF2Hasher
 
 Namespace DPC.Data.Controllers
@@ -55,7 +54,6 @@ Namespace DPC.Data.Controllers
             End Using
         End Function
 
-        ' Function to generate EmployeeID in format 10MMDDYYYYXXXX
         ' Function to generate EmployeeID in format 10MMDDYYYYXXXX
         Private Shared Function GenerateEmployeeID() As String
             Dim prefix As String = "10"
