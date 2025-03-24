@@ -630,6 +630,10 @@
   <ItemGroup>
     <Resource Include="Assets\images\logo.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\mails\password_reset_code.html" />
+    <Content Include="Assets\mails\password_reset_success.html" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <Import Project="packages\MaterialDesignThemes.5.2.1\build\MaterialDesignThemes.targets" Condition="Exists('packages\MaterialDesignThemes.5.2.1\build\MaterialDesignThemes.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

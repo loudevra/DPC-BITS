@@ -41,6 +41,7 @@ Namespace DPC.Views.Auth
         End Function
 
         ' Reset Password Button Click
+        ' Reset Password Button Click
         Private Sub BtnResetPassword_Click(sender As Object, e As RoutedEventArgs)
             Dim newPassword As String = TxtNewPassword.Password
             Dim confirmPassword As String = TxtConfirmPassword.Password
@@ -56,9 +57,19 @@ Namespace DPC.Views.Auth
                 Return
             End If
 
-            ' Reset password
+            ' Reset password in database
             If ResetPassController.ResetPassword(email, newPassword) Then
-                MessageBox.Show("Your password has been reset successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                ' Send password reset confirmation email
+                Dim resetDate As DateTime = DateTime.Now
+                Dim username As String = ResetPassController.GetUsernameByEmail(email) ' Fetch username
+
+                Dim emailSent As Boolean = EmailService.SendPasswordResetConfirmation(email, username, resetDate)
+
+                If emailSent Then
+                    MessageBox.Show("Your password has been reset successfully! A confirmation email has been sent.", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                Else
+                    MessageBox.Show("Your password has been reset, but the confirmation email could not be sent.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning)
+                End If
 
                 ' Redirect to Sign-In
                 Dim signInWindow As New MainWindow()
@@ -68,5 +79,6 @@ Namespace DPC.Views.Auth
                 MessageBox.Show("An error occurred. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End If
         End Sub
+
     End Class
 End Namespace

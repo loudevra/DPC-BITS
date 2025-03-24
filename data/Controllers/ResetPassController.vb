@@ -1,5 +1,6 @@
 ﻿Imports System
 Imports System.Data
+Imports System.Security.Cryptography
 Imports DPC.DPC.Data.Helpers
 Imports MySql.Data.MySqlClient
 
@@ -22,27 +23,53 @@ Namespace DPC.Data.Controllers
             End Try
         End Function
 
+        ' Generate a cryptographically secure 6-digit verification code
+        Private Shared Function GenerateSecureCode() As String
+            Dim rng As New RNGCryptoServiceProvider()
+            Dim bytes(3) As Byte
+            rng.GetBytes(bytes)
+            Dim verificationCode As Integer = BitConverter.ToUInt32(bytes, 0) Mod 900000 + 100000
+            Return verificationCode.ToString()
+        End Function
+
         ' Generate and store a verification code
         Public Shared Function GenerateAndStoreVerificationCode(email As String) As String
-            Dim verificationCode As String = New Random().Next(100000, 999999).ToString()
-            Dim expiration As DateTime = DateTime.Now.AddMinutes(5) ' Code expires in 5 minutes
+            Dim verificationCode As String = GenerateSecureCode()
+            Dim expiration As DateTime = DateTime.Now.AddMinutes(5)
 
             Try
+                Dim username As String = GetUsernameByEmail(email)
+                If String.IsNullOrEmpty(username) Then
+                    Console.WriteLine("Username not found for email: " & email)
+                    Return String.Empty
+                End If
+
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "INSERT INTO password_resets (email, verification_code, expires_at) 
-                                           VALUES (@Email, @Code, @Expires)
-                                           ON DUPLICATE KEY UPDATE verification_code = @Code, expires_at = @Expires"
-                    Using cmd As New MySqlCommand(query, conn)
-                        cmd.Parameters.AddWithValue("@Email", email)
-                        cmd.Parameters.AddWithValue("@Code", verificationCode)
-                        cmd.Parameters.AddWithValue("@Expires", expiration)
-                        cmd.ExecuteNonQuery()
+                    Using transaction = conn.BeginTransaction()
+                        Try
+                            Dim query As String = "INSERT INTO password_resets (email, verification_code, expires_at) 
+                                                   VALUES (@Email, @Code, @Expires)
+                                                   ON DUPLICATE KEY UPDATE verification_code = @Code, expires_at = @Expires"
+                            Using cmd As New MySqlCommand(query, conn, transaction)
+                                cmd.Parameters.AddWithValue("@Email", email)
+                                cmd.Parameters.AddWithValue("@Code", verificationCode)
+                                cmd.Parameters.AddWithValue("@Expires", expiration)
+                                cmd.ExecuteNonQuery()
+                            End Using
+
+                            ' Commit transaction
+                            transaction.Commit()
+                        Catch ex As Exception
+                            transaction.Rollback()
+                            Console.WriteLine("Error storing verification code: " & ex.Message)
+                            Return String.Empty
+                        End Try
                     End Using
                 End Using
 
                 ' Send Email with the verification code
-                EmailService.SendVerificationCode(email, verificationCode)
+                EmailService.SendVerificationCode(email, username, verificationCode)
                 Return verificationCode
             Catch ex As Exception
                 Console.WriteLine("Error storing verification code: " & ex.Message)
@@ -76,20 +103,28 @@ Namespace DPC.Data.Controllers
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "UPDATE employee SET password = @Password WHERE email = @Email"
-                    Using cmd As New MySqlCommand(query, conn)
-                        cmd.Parameters.AddWithValue("@Password", hashedPassword)
-                        cmd.Parameters.AddWithValue("@Email", email)
+                    Using transaction = conn.BeginTransaction()
+                        Try
+                            Dim query As String = "UPDATE employee SET password = @Password WHERE email = @Email"
+                            Using cmd As New MySqlCommand(query, conn, transaction)
+                                cmd.Parameters.AddWithValue("@Password", hashedPassword)
+                                cmd.Parameters.AddWithValue("@Email", email)
 
-                        ' If password was updated, delete the verification code
-                        If cmd.ExecuteNonQuery() > 0 Then
-                            Dim deleteQuery As String = "DELETE FROM password_resets WHERE email = @Email"
-                            Using deleteCmd As New MySqlCommand(deleteQuery, conn)
-                                deleteCmd.Parameters.AddWithValue("@Email", email)
-                                deleteCmd.ExecuteNonQuery()
+                                ' If password was updated, delete the verification code
+                                If cmd.ExecuteNonQuery() > 0 Then
+                                    Dim deleteQuery As String = "DELETE FROM password_resets WHERE email = @Email"
+                                    Using deleteCmd As New MySqlCommand(deleteQuery, conn, transaction)
+                                        deleteCmd.Parameters.AddWithValue("@Email", email)
+                                        deleteCmd.ExecuteNonQuery()
+                                    End Using
+                                    transaction.Commit()
+                                    Return True
+                                End If
                             End Using
-                            Return True
-                        End If
+                        Catch ex As Exception
+                            transaction.Rollback()
+                            Console.WriteLine("Error resetting password: " & ex.Message)
+                        End Try
                     End Using
                 End Using
             Catch ex As Exception
@@ -98,5 +133,26 @@ Namespace DPC.Data.Controllers
 
             Return False
         End Function
+
+        ' Fetch the username associated with an email
+        Public Shared Function GetUsernameByEmail(email As String) As String
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "SELECT Username FROM employee WHERE email = @Email"
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@Email", email)
+                        Dim result As Object = cmd.ExecuteScalar()
+                        If result IsNot Nothing Then
+                            Return result.ToString()
+                        End If
+                    End Using
+                End Using
+            Catch ex As Exception
+                Console.WriteLine("Error fetching username: " & ex.Message)
+            End Try
+            Return String.Empty
+        End Function
+
     End Class
 End Namespace
