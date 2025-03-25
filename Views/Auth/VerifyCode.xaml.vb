@@ -44,8 +44,7 @@ Namespace DPC.Views.Auth
                 BtnVerify.IsEnabled = False
             End If
         End Sub
-
-        ' Allow only digits and auto-move to the next box
+        ' Allow only digits and move to the next box automatically
         Private Sub OtpBox_PreviewTextInput(sender As Object, e As System.Windows.Input.TextCompositionEventArgs)
             Dim textBox As TextBox = CType(sender, TextBox)
 
@@ -55,21 +54,42 @@ Namespace DPC.Views.Auth
                 Return
             End If
 
-            ' Move to next box if the current box already has a digit
-            If textBox.Text.Length >= 1 Then
-                e.Handled = True
-                MoveToNextBox(textBox, e.Text)
-            End If
+            ' Replace current text (ensuring only one digit per box)
+            textBox.Text = e.Text
+            e.Handled = True  ' Prevents adding more characters
+
+            ' Move to next box if not the last one
+            MoveToNextBox(textBox)
         End Sub
 
-        ' Handle backspace and auto-focus previous box
+        ' Handle Backspace, Delete, and Arrow Keys
         Private Sub OtpBox_KeyDown(sender As Object, e As System.Windows.Input.KeyEventArgs)
             Dim textBox As TextBox = CType(sender, TextBox)
 
-            ' Move focus to the previous box if backspace is pressed and the box is empty
-            If e.Key = Key.Back AndAlso textBox.Text = "" Then
-                MoveToPreviousBox(textBox)
-            End If
+            Select Case e.Key
+                Case Key.Back
+                    ' If the box is empty, move to the previous one and delete its content
+                    If textBox.Text = "" Then
+                        MoveToPreviousBoxAndDelete(textBox)
+                    Else
+                        ' Otherwise, just clear the current box
+                        textBox.Text = ""
+                        e.Handled = True
+                    End If
+
+                Case Key.Delete
+                    ' Clear the current box without moving
+                    textBox.Text = ""
+                    e.Handled = True
+
+                Case Key.Left
+                    ' Move focus to the previous box
+                    MoveToPreviousBox(textBox)
+
+                Case Key.Right
+                    ' Move focus to the next box
+                    MoveToNextBox(textBox)
+            End Select
         End Sub
 
         ' Prevent pasting into OTP boxes
@@ -78,7 +98,7 @@ Namespace DPC.Views.Auth
         End Sub
 
         ' Move to the next OTP box
-        Private Sub MoveToNextBox(textBox As TextBox, input As String)
+        Private Sub MoveToNextBox(textBox As TextBox)
             Select Case textBox.Name
                 Case "OtpBox1" : OtpBox2.Focus()
                 Case "OtpBox2" : OtpBox3.Focus()
@@ -88,7 +108,7 @@ Namespace DPC.Views.Auth
             End Select
         End Sub
 
-        ' Move to the previous OTP box when backspace is pressed
+        ' Move to the previous OTP box
         Private Sub MoveToPreviousBox(textBox As TextBox)
             Select Case textBox.Name
                 Case "OtpBox6" : OtpBox5.Focus()
@@ -98,6 +118,27 @@ Namespace DPC.Views.Auth
                 Case "OtpBox2" : OtpBox1.Focus()
             End Select
         End Sub
+
+        ' Move to the previous OTP box and delete its content
+        Private Sub MoveToPreviousBoxAndDelete(textBox As TextBox)
+            Dim previousBox As TextBox = Nothing
+
+            Select Case textBox.Name
+                Case "OtpBox6" : previousBox = OtpBox5
+                Case "OtpBox5" : previousBox = OtpBox4
+                Case "OtpBox4" : previousBox = OtpBox3
+                Case "OtpBox3" : previousBox = OtpBox2
+                Case "OtpBox2" : previousBox = OtpBox1
+            End Select
+
+            ' If a previous box exists, clear its text and move focus
+            If previousBox IsNot Nothing Then
+                previousBox.Text = ""
+                previousBox.Focus()
+                previousBox.CaretIndex = 1 ' Ensure cursor stays at the end
+            End If
+        End Sub
+
 
 
         ' Verify Code Button Click
