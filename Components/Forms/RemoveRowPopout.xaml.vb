@@ -6,7 +6,7 @@ Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Views.Stocks.ItemManager.NewProduct
 
 Namespace DPC.Components.Forms
-    Public Class AddRowPopout
+    Public Class RemoveRowPopout
         Inherits UserControl
 
         Public Sub New()
@@ -62,9 +62,15 @@ Namespace DPC.Components.Forms
             If TxtRowNum IsNot Nothing Then
                 Dim rowCount As Integer
                 If Integer.TryParse(TxtRowNum.Text, rowCount) Then
+                    Dim productController As New ProductController()
                     For i As Integer = 1 To rowCount
-                        ProductController.BtnAddRow_Click(Nothing, Nothing)
+                        ProductController.RemoveLatestRow()
                     Next
+
+                    ' Update TxtStockunits
+                    If ProductController.MainContainer IsNot Nothing Then
+                        ProductController.TxtStockUnits.Text = ProductController.MainContainer.Children.Count.ToString()
+                    End If
                 Else
                     MessageBox.Show("Invalid number in TxtRowNum.")
                 End If
@@ -72,6 +78,7 @@ Namespace DPC.Components.Forms
                 MessageBox.Show("TxtRowNum is not found or not initialized.")
             End If
         End Sub
+
 
     End Class
 End Namespace

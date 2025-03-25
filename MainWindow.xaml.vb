@@ -3,6 +3,9 @@ Imports System.Windows.Input
 Imports System.Windows.Media.Animation
 Imports System.Windows.Media.Effects
 Imports DPC.DPC.Data.Converters
+Imports DPC.DPC.Data.Controllers
+Imports System.Web.SessionState
+Imports DPC.DPC.Views.Auth
 
 Namespace DPC
     Partial Public Class MainWindow
@@ -11,7 +14,7 @@ Namespace DPC
             PasswordMaskingBehavior.SetEnablePasswordMasking(txtPassword, True)
         End Sub
 
-        ' Sign-In button click event
+        ' Sign-In button click event Uncomment to Enable Authentication
 
         Private Sub BtnSignIn_Click(sender As Object, e As RoutedEventArgs)
             Dim username As String = txtEmail.Text.Trim()
@@ -43,6 +46,7 @@ Namespace DPC
             End If
         End Sub
 
+
         Private Sub BtnExit_Click(sender As Object, e As RoutedEventArgs)
             Application.Current.Shutdown()
         End Sub
@@ -59,6 +63,12 @@ Namespace DPC
 
             Dim glowEffect As DropShadowEffect = CType(LogoImage.Effect, DropShadowEffect)
             glowEffect.BeginAnimation(DropShadowEffect.ColorProperty, colorAnimation)
+        End Sub
+
+        Private Sub ForgotPassword_Click(sender As Object, e As MouseButtonEventArgs)
+            Dim forgotPasswordWindow As New ForgotPassword()
+            forgotPasswordWindow.Show()
+            Me.Close() ' Close Sign-In window
         End Sub
 
     End Class
