@@ -81,9 +81,6 @@
     <Reference Include="MahApps.Metro.IconPacks.MaterialDesign, Version=5.0.0.0, Culture=neutral, PublicKeyToken=0c0d510f9915137a, processorArchitecture=MSIL">
       <HintPath>packages\MahApps.Metro.IconPacks.MaterialDesign.5.1.0\lib\net47\MahApps.Metro.IconPacks.MaterialDesign.dll</HintPath>
     </Reference>
-    <Reference Include="MailKit, Version=4.11.0.0, Culture=neutral, PublicKeyToken=4e064fe7c44a8f1b, processorArchitecture=MSIL">
-      <HintPath>packages\MailKit.4.11.0\lib\net48\MailKit.dll</HintPath>
-    </Reference>
     <Reference Include="MaterialDesignColors, Version=5.2.1.0, Culture=neutral, PublicKeyToken=df2a72020bd7962a, processorArchitecture=MSIL">
       <HintPath>packages\MaterialDesignColors.5.2.1\lib\net462\MaterialDesignColors.dll</HintPath>
     </Reference>
@@ -93,42 +90,11 @@
     <Reference Include="MaterialDesignThemes.Wpf, Version=5.2.1.0, Culture=neutral, PublicKeyToken=df2a72020bd7962a, processorArchitecture=MSIL">
       <HintPath>packages\MaterialDesignThemes.5.2.1\lib\net462\MaterialDesignThemes.Wpf.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.AspNetCore.Cryptography.Internal, Version=9.0.3.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.AspNetCore.Cryptography.Internal.9.0.3\lib\net462\Microsoft.AspNetCore.Cryptography.Internal.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation, Version=9.0.3.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.AspNetCore.Cryptography.KeyDerivation.9.0.3\lib\net462\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=9.0.0.3, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Bcl.AsyncInterfaces.9.0.3\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Bcl.Memory, Version=9.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Bcl.Memory.9.0.0\lib\net462\Microsoft.Bcl.Memory.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Bcl.TimeProvider, Version=8.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Bcl.TimeProvider.8.0.1\lib\net462\Microsoft.Bcl.TimeProvider.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Extensions.Logging.Abstractions.2.1.0\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.IdentityModel.Abstractions, Version=8.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.IdentityModel.Abstractions.8.7.0\lib\net472\Microsoft.IdentityModel.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.IdentityModel.JsonWebTokens, Version=8.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.IdentityModel.JsonWebTokens.8.7.0\lib\net472\Microsoft.IdentityModel.JsonWebTokens.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.IdentityModel.Logging, Version=8.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.IdentityModel.Logging.8.7.0\lib\net472\Microsoft.IdentityModel.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.IdentityModel.Tokens, Version=8.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.IdentityModel.Tokens.8.7.0\lib\net472\Microsoft.IdentityModel.Tokens.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Xaml.Behaviors.Wpf.1.1.135\lib\net462\Microsoft.Xaml.Behaviors.dll</HintPath>
-    </Reference>
-    <Reference Include="MimeKit, Version=4.11.0.0, Culture=neutral, PublicKeyToken=bede1c8a46c66814, processorArchitecture=MSIL">
-      <HintPath>packages\MimeKit.4.11.0\lib\net48\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data, Version=9.2.0.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>packages\MySql.Data.9.2.0\lib\net48\MySql.Data.dll</HintPath>
@@ -187,13 +153,7 @@
     <Reference Include="System.Diagnostics.DiagnosticSource, Version=9.0.0.3, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Diagnostics.DiagnosticSource.9.0.3\lib\net462\System.Diagnostics.DiagnosticSource.dll</HintPath>
     </Reference>
-    <Reference Include="System.Formats.Asn1, Version=8.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>packages\System.Formats.Asn1.8.0.1\lib\net462\System.Formats.Asn1.dll</HintPath>
-    </Reference>
     <Reference Include="System.IdentityModel" />
-    <Reference Include="System.IdentityModel.Tokens.Jwt, Version=8.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\System.IdentityModel.Tokens.Jwt.8.7.0\lib\net472\System.IdentityModel.Tokens.Jwt.dll</HintPath>
-    </Reference>
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Pipelines, Version=9.0.0.3, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.IO.Pipelines.9.0.3\lib\net462\System.IO.Pipelines.dll</HintPath>
@@ -254,14 +214,8 @@
     <Compile Include="Components\ConfirmationModals\CancelSupplierAdding.xaml.vb">
       <DependentUpon>CancelSupplierAdding.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\Forms\AddRowPopout.xaml.vb">
-      <DependentUpon>AddRowPopout.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\Forms\RemoveRowPopout.xaml.vb">
-      <DependentUpon>RemoveRowPopout.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\Forms\RowControllerPopout.xaml.vb">
-      <DependentUpon>RowControllerPopout.xaml</DependentUpon>
+    <Compile Include="Components\Forms\AddRowPopOut.xaml.vb">
+      <DependentUpon>AddRowPopOut.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\FilterPopOut.xaml.vb">
       <DependentUpon>FilterPopOut.xaml</DependentUpon>
@@ -281,37 +235,22 @@
     <Compile Include="Components\Navigation\TopNavbar.xaml.vb">
       <DependentUpon>TopNavBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Data\Controllers\AuthController.vb" />
     <Compile Include="Data\Controllers\EmployeeController.vb" />
     <Compile Include="Data\Controllers\CalendarController.vb" />
     <Compile Include="Data\Controllers\ManageProductsController.vb" />
     <Compile Include="Data\Controllers\ProductController.vb" />
-    <Compile Include="Data\Controllers\ResetPassController.vb" />
-    <Compile Include="Data\Controllers\SessionManager.vb" />
     <Compile Include="Data\Controllers\SupplierController.vb" />
     <Compile Include="Data\Controllers\WarehousesController.vb" />
     <Compile Include="Data\Converters\PasswordMaskingBehavior.vb" />
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
-    <Compile Include="Data\Helpers\EmailService.vb" />
-    <Compile Include="Data\Helpers\EnvLoader.vb" />
-    <Compile Include="Data\Helpers\PBKDF2Hasher.vb" />
-    <Compile Include="Data\Helpers\RelayCommand.vb" />
+    <Compile Include="Data\DatabaseHelper.vb" />
     <Compile Include="Data\Models\Employee.vb" />
     <Compile Include="Data\Models\ManageProducts.vb" />
     <Compile Include="Data\Models\Supplier.vb" />
     <Compile Include="Data\Models\Warehouses.vb" />
     <Compile Include="SplashScreen.xaml.vb">
       <DependentUpon>SplashScreen.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Auth\ForgotPassword.xaml.vb">
-      <DependentUpon>ForgotPassword.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Auth\ResetPassword.xaml.vb">
-      <DependentUpon>ResetPassword.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Auth\VerifyCode.xaml.vb">
-      <DependentUpon>VerifyCode.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Dashboard\Dashboard.xaml.vb">
       <DependentUpon>Dashboard.xaml</DependentUpon>
@@ -335,13 +274,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Components\Forms\AddRowPopout.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\RemoveRowPopout.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\RowControllerPopout.xaml">
+    <Page Include="Components\Forms\AddRowPopOut.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -491,15 +424,6 @@
     <Page Include="SplashScreen.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Auth\ForgotPassword.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Auth\ResetPassword.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Auth\VerifyCode.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Dashboard\Dashboard.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -607,7 +531,6 @@
     <None Include=".env">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="My Project\.env" />
     <None Include="My Project\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
@@ -635,10 +558,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\images\logo.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Assets\mails\password_reset_code.html" />
-    <Content Include="Assets\mails\password_reset_success.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <Import Project="packages\MaterialDesignThemes.5.2.1\build\MaterialDesignThemes.targets" Condition="Exists('packages\MaterialDesignThemes.5.2.1\build\MaterialDesignThemes.targets')" />

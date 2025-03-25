@@ -7,98 +7,87 @@
         Background="#F5F5F5"
         WindowStartupLocation="CenterScreen">
 
-    <Grid>
-        <!-- Sidebar and Main Content Columns -->
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
 
-        <!-- Sidebar -->
-        <Border x:Name="SidebarContainer" Grid.Column="0" Background="Black"/>
+		<!-- Sidebar -->
+		<Border x:Name="SidebarContainer" Grid.Column="0"/>
 
-        <!-- Wrapper for TopNavBar + Main Content -->
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+		<!-- Main Content -->
+		<StackPanel Grid.Column="1" Margin="20">
 
-            <!-- Top Navigation Bar -->
-            <Border x:Name="TopNavBarContainer" Grid.Row="0" Background="White" Height="Auto" MinHeight="50"/>
+			<!-- Header Section -->
+			<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
+				<TextBlock Text="Employee" FontSize="24" FontWeight="Bold"/>
+				<Button Content="+ Employee" Margin="10,0,0,0"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        VerticalAlignment="Center" Click="AddEmployee"/>
+			</StackPanel>
 
-            <!-- Main Content -->
-            <StackPanel Grid.Row="1" Margin="20">
-                <!-- Header Section -->
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
-                    <TextBlock Text="Employee" FontSize="24" FontWeight="Bold"/>
-                    <Button Content="+ Employee" Margin="10,0,0,0"
-                            Style="{StaticResource MaterialDesignOutlinedButton}"
-                            VerticalAlignment="Center" Click="AddEmployee"/>
-                </StackPanel>
+			<!-- Table and Controls -->
+			<Border Background="White" CornerRadius="8" Padding="15">
+				<StackPanel>
 
-                <!-- Table and Controls -->
-                <Border Background="White" CornerRadius="8" Padding="15">
-                    <StackPanel>
+					<!-- Table Header -->
+					<StackPanel Orientation="Horizontal" Margin="0,0,0,10" HorizontalAlignment="Stretch">
+						<ComboBox Width="100" Margin="0,0,10,0">
+							<ComboBoxItem Content="10"/>
+							<ComboBoxItem Content="25"/>
+							<ComboBoxItem Content="50"/>
+						</ComboBox>
+						<TextBox Width="200" HorizontalAlignment="Right" materialDesign:HintAssist.Hint="Search"/>
+					</StackPanel>
 
-                        <!-- Table Header -->
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10" HorizontalAlignment="Stretch">
-                            <ComboBox Width="100" Margin="0,0,10,0">
-                                <ComboBoxItem Content="10"/>
-                                <ComboBoxItem Content="25"/>
-                                <ComboBoxItem Content="50"/>
-                            </ComboBox>
-                            <TextBox Width="200" HorizontalAlignment="Right" materialDesign:HintAssist.Hint="Search"/>
-                        </StackPanel>
+					<!-- Data Grid -->
+					<DataGrid x:Name="EmployeesDataGrid"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False"
+                              CanUserResizeRows="False"
+                              CanUserResizeColumns="False"
+                              IsReadOnly="True"
+                              RowHeight="40">
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="#" Binding="{Binding Id}" Width="50"/>
+							<DataGridTemplateColumn Header="Name" Width="200">
+								<DataGridTemplateColumn.CellTemplate>
+									<DataTemplate>
+										<StackPanel Orientation="Horizontal">
+											<Ellipse Width="30" Height="30" Fill="Gray" Margin="0,0,10,0"/>
+											<TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+										</StackPanel>
+									</DataTemplate>
+								</DataGridTemplateColumn.CellTemplate>
+							</DataGridTemplateColumn>
+							<DataGridTextColumn Header="Role" Binding="{Binding Role}" Width="200"/>
+							<DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
+							<DataGridTemplateColumn Header="Actions" Width="100">
+								<DataGridTemplateColumn.CellTemplate>
+									<DataTemplate>
+										<StackPanel Orientation="Horizontal">
+											<Button Content="👁" Command="{Binding ViewCommand}" Margin="2"/>
+											<Button Content="🖋" Command="{Binding EditCommand}" Margin="2"/>
+											<Button Content="🗑" Command="{Binding DeleteCommand}" Margin="2"/>
+										</StackPanel>
+									</DataTemplate>
+								</DataGridTemplateColumn.CellTemplate>
+							</DataGridTemplateColumn>
+						</DataGrid.Columns>
+					</DataGrid>
 
-                        <!-- Data Grid -->
-                        <DataGrid x:Name="EmployeesDataGrid"
-                                  AutoGenerateColumns="False"
-                                  CanUserAddRows="False"
-                                  CanUserResizeRows="False"
-                                  CanUserResizeColumns="False"
-                                  IsReadOnly="True"
-                                  RowHeight="40">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="#" Binding="{Binding EmployeeID}" Width="50"/>
-                                <DataGridTemplateColumn Header="Name" Width="200">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Ellipse Width="30" Height="30" Fill="Gray" Margin="0,0,10,0"/>
-                                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                                <DataGridTextColumn Header="Role" Binding="{Binding RoleName}" Width="200"/>
-                                <DataGridTextColumn Header="Location" Binding="{Binding LocationName}" Width="200"/>
-                                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
-                                <DataGridTemplateColumn Header="Actions" Width="150">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Button Content="👁" Click="ViewEmployee" Margin="2"/>
-                                                <Button Content="🖋" Command="{Binding EditCommand}" Margin="2"/>
-                                                <Button Content="🗑" Command="{Binding DeleteCommand}" Margin="2"/>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                            </DataGrid.Columns>
-                        </DataGrid>
+					<!-- Pagination Controls -->
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+						<Button Content="«" x:Name="BtnFirstPage" Click="BtnFirstPage_Click"/>
+						<Button Content="‹" x:Name="BtnPrevPage" Click="BtnPrevPage_Click" Margin="5,0"/>
+						<TextBlock x:Name="TxtPageNumber" Text="Page 1 of 10" VerticalAlignment="Center"/>
+						<Button Content="›" x:Name="BtnNextPage" Click="BtnNextPage_Click" Margin="5,0"/>
+						<Button Content="»" x:Name="BtnLastPage" Click="BtnLastPage_Click"/>
+					</StackPanel>
+				</StackPanel>
+			</Border>
 
-                        <!-- Pagination Controls -->
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-                            <Button Content="«" x:Name="BtnFirstPage" Click="BtnFirstPage_Click"/>
-                            <Button Content="‹" x:Name="BtnPrevPage" Click="BtnPrevPage_Click" Margin="5,0"/>
-                            <TextBlock x:Name="TxtPageNumber" Text="Page 1 of 10" VerticalAlignment="Center"/>
-                            <Button Content="›" x:Name="BtnNextPage" Click="BtnNextPage_Click" Margin="5,0"/>
-                            <Button Content="»" x:Name="BtnLastPage" Click="BtnLastPage_Click"/>
-                        </StackPanel>
-                    </StackPanel>
-                </Border>
-            </StackPanel>
-        </Grid>
-    </Grid>
+		</StackPanel>
+	</Grid>
 </Window>

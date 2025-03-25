@@ -4,8 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:local="namespace:DPC.Views.Stocks.ItemManager" 
-        xmlns:local1="namespace:DPC.Components.Forms"
+        xmlns:local="namespace:DPC.Views.Stocks.ItemManager"
         mc:Ignorable="d"
         Background="#D9D9D9"
         Title="Add New Products"
@@ -13,7 +12,6 @@
         WindowStartupLocation="CenterScreen"
         FontFamily="{StaticResource Lexend}"
         Foreground="#474747">
-
     <Grid>
         <!-- Define Column Structure -->
         <Grid.ColumnDefinitions>
@@ -116,87 +114,14 @@
                             <ComboBox x:Name="ComboBoxSubCategory" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0" Visibility="Collapsed"/>
                         </StackPanel>
 
-                        <StackPanel Margin="0,10,0,20">
+                        <StackPanel Margin="0,10">
                             <StackPanel Orientation="Horizontal">
-                                <Grid Width="200" Height="40">
-                                    <!-- Background Border -->
-                                    <Border x:Name="BackgroundBorder"
-            Background="#AEAEAE"
-            CornerRadius="25"/>
-
-                                    <!-- Switch Grid for the sliding part -->
-                                    <Grid x:Name="SwitchGrid"
-          HorizontalAlignment="Left"
-          Width="95"
-          Margin="5">
-                                        <Border Background="#F5F5F5"
-                CornerRadius="20"/>
-                                        <TextBlock x:Name="SwitchText"
-                   Text="No"
-                   FontSize="14"
-                   FontWeight="Bold"
-                   Foreground="#4D4D4D"
-                   VerticalAlignment="Center"
-                   HorizontalAlignment="Center"/>
-                                    </Grid>
-
-                                    <!-- Text Labels Grid for Centering -->
-                                    <Grid Margin="5">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <!-- No Text on Left -->
-                                        <TextBlock x:Name="NoVariation" Text="No"
-
-                   FontSize="14"
-                   Foreground="White"
-                   VerticalAlignment="Center"
-                   HorizontalAlignment="Center"
-                   Grid.Column="0"/>
-
-                                        <!-- Yes Text on Right -->
-                                        <TextBlock x:Name="YesVariation" Text="Yes"
-                   FontSize="14"
-                   FontWeight="Normal"
-                   Foreground="White"
-                   VerticalAlignment="Center"
-                   HorizontalAlignment="Center"
-                   Grid.Column="1"/>
-                                    </Grid>
-
-                                    <!-- Transparent Toggle Button to trigger the event -->
-                                    <ToggleButton x:Name="Toggle"
-                  Width="200"
-                  Height="40"
-                  Background="Transparent"
-                  BorderThickness="0"
-                  Click="Toggle_Click">
-                                        <ToggleButton.Style>
-                                            <Style TargetType="ToggleButton">
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="ToggleButton">
-                                                            <Border Background="Transparent"
-                                    BorderThickness="0">
-                                                                <ContentPresenter />
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </ToggleButton.Style>
-                                    </ToggleButton>
-                                </Grid>
-
-
-                                <TextBlock Text="Include product variation" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                                <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                                <TextBlock Text="Include product variation" FontSize="14" FontWeight="SemiBold"/>
+                                <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold" Margin="5,0,0,0"/>
                             </StackPanel>
                         </StackPanel>
 
-                        <StackPanel Margin="0,0,0,10" x:Name="StackPanelWarehouse">
+                        <StackPanel Margin="0,10">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Text="Warehouse:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                                 <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
@@ -205,7 +130,7 @@
                             <ComboBox x:Name="ComboBoxWarehouse" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0"/>
                         </StackPanel>
 
-                        <StackPanel Margin="0,10" x:Name="StackPanelRetailPrice">
+                        <StackPanel Margin="0,10">
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                     <TextBlock Text="Product Retail Price:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
@@ -232,7 +157,7 @@
                             </StackPanel>
                         </StackPanel>
 
-                        <StackPanel Margin="0,10,0,20" x:Name="StackPanelOrderPrice">
+                        <StackPanel Margin="0,10,0,20">
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                     <TextBlock Text="Purchase Order Price:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
@@ -259,11 +184,11 @@
                             </StackPanel>
                         </StackPanel>
 
-                        <Border x:Name="BorderSeperator" BorderBrush="#AEAEAE" BorderThickness="1" Margin="-10,0,0,10"/>
+                        <Border BorderBrush="#AEAEAE" BorderThickness="1" Margin="-10,0,0,10"/>
                     </StackPanel>
 
                     <StackPanel  Grid.Row="2">
-                        <StackPanel Margin="0,10" x:Name="StackPanelTaxRate">
+                        <StackPanel Margin="0,10">
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                     <TextBlock Text="Default Tax Rate:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                                     <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
@@ -289,7 +214,7 @@
                             <TextBlock Text="You can also change the Tax Rate during invoice creation" Margin="10,5,0,0"/>
                         </StackPanel>
 
-                        <StackPanel Margin="0,10" x:Name="StackPanelDiscountRate">
+                        <StackPanel Margin="0,10">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Text="Default Discount Rate:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                                 <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
@@ -315,7 +240,7 @@
                             <TextBlock Text="You can also change the Discount Rate during invoice creation" Margin="10,5,0,0"/>
                         </StackPanel>
 
-                        <StackPanel Margin="0,10" x:Name="StackPanelStockUnits">
+                        <StackPanel Margin="0,10">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Text="Stock Units:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                                 <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
@@ -323,14 +248,15 @@
                             <Border Style="{StaticResource RoundedBorderStyle}">
 <!-- Stock Units Value-->
                                 <TextBox x:Name="TxtStockUnits" Style="{StaticResource RoundedTextboxStyle}"
+                                Text="1"
                                 PreviewTextInput="IntegerOnlyTextInputHandler"
                                 DataObject.Pasting="IntegerOnlyPasteHandler"
                                 KeyDown="TxtStockUnits_KeyDown"/>
                             </Border>
                         </StackPanel>
 
-                        <StackPanel Margin="0,10,0,20" x:Name="StackPanelAlertQuantity">
-                            <StackPanel Orientation="Horizontal" Margin="0">
+                        <StackPanel Margin="0,10,0,20">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Text="Alert Quantity:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                                 <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
                             </StackPanel>
@@ -407,10 +333,31 @@
                                 </StackPanel>
                             </Border>
 
-                                <StackPanel x:Name="MainContainer" Background="white">
-                                    <!-- Other UI elements -->
+                            <StackPanel Background="white" x:Name="MainContainer">
+                                <StackPanel Margin="25,20,10,20">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Style="{StaticResource RoundedBorderStyle}" Grid.Column="0">
+                                            <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
+                                        </Border>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10,0,0,0">
+                                            <Button Background="White" BorderThickness="0" x:Name="BtnAddRow">
+                                                <materialDesign:PackIcon Kind="TableRowAddAfter" Width="40" Height="30" Foreground="#456B2E"/>
+                                            </Button>
+                                            <Button Background="White" BorderThickness="0" x:Name="BtnRemoveRow">
+                                                <materialDesign:PackIcon Kind="TableRowRemove" Width="40" Height="30" Foreground="#D23636"/>
+                                            </Button>
+                                            <Border BorderBrush="#AEAEAE" BorderThickness="1" Height="Auto"/>
+                                            <Button Background="White" BorderThickness="0" x:Name="BtnRowController">
+                                                <materialDesign:PackIcon Kind="MenuDown" Width="30" Height="30" Foreground="#AEAEAE" Margin="0,0,0,0"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </Grid>
                                 </StackPanel>
-
+                            </StackPanel>
                         </StackPanel>
 
                         <Button Background="Transparent" HorizontalAlignment="Right" BorderThickness="0" Margin="0,15,0,0" x:Name="btnAddProduct"  Click="BtnAddProduct_Click">
