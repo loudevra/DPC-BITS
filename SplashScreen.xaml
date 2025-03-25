@@ -21,7 +21,7 @@
         </Border>
 
         <!-- Card Container -->
-        <materialDesign:Card Padding="20" Background="#1E1E1E" UniformCornerRadius="30"
+        <materialDesign:Card Padding="20" Background="#090909" UniformCornerRadius="30"
                              Width="500" Height="400"
                              VerticalAlignment="Center" HorizontalAlignment="Center">
 
