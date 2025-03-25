@@ -1,67 +1,60 @@
 ﻿Imports System.ComponentModel
 Imports System.Windows
+Imports System.Windows.Controls
 Imports DPC.DPC.Data.Controllers
-Imports DPC.DPC.Data.Helpers
 Imports NuGet.Common
 
 Namespace DPC.Views.Auth
-    Public Class ForgotPassword
+    Partial Public Class ForgotPassword
+        Inherits UserControl
         Implements INotifyPropertyChanged
 
-        ' Property Change for Binding
-        Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
+        ' Constructor
+        Public Sub New()
+            InitializeComponent()
+        End Sub
 
+        ' Event to switch back to Sign-In
+        Public Event BackToSignIn As EventHandler
+
+        ' Property Changed Event (for future data binding)
+        Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
         Private Sub RaisePropertyChanged(propertyName As String)
             RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
         End Sub
 
-
-        ' Send Code Command
-        Public ReadOnly Property SendCodeCommand As New RelayCommand(AddressOf SendVerificationCode)
-
-        Private Sub SendVerificationCode()
+        ' Send verification code logic
+        Private Sub BtnSendCode_Click(sender As Object, e As RoutedEventArgs)
             Dim email As String = txtEmail.Text.Trim()
 
             If String.IsNullOrWhiteSpace(email) Then
-                lblMessage.Text = "Email is required."
-                lblMessage.Visibility = Visibility.Visible
+                ShowMessage("Email is required.")
                 Return
             End If
 
-            ' Check if email exists
             If Not ResetPassController.DoesEmailExist(email) Then
-                lblMessage.Text = "Email not found."
-                lblMessage.Visibility = Visibility.Visible
+                ShowMessage("Email not found.")
                 Return
             End If
 
-            ' Generate and send the code
             Dim verificationCode As String = ResetPassController.GenerateAndStoreVerificationCode(email)
             If String.IsNullOrEmpty(verificationCode) Then
-                lblMessage.Text = "Failed to send verification code. Try again."
-                lblMessage.Visibility = Visibility.Visible
+                ShowMessage("Failed to send verification code. Try again.")
             Else
-                ' Navigate to verification screen
-                Dim verifyCodeWindow As New VerifyCode(email)
-                verifyCodeWindow.Show()
-                Me.Close()
+                ' Switch to VerifyCode view and pass the email
+                Dim parentWindow As MainWindow = CType(Window.GetWindow(Me), MainWindow)
+                parentWindow.LoadView(2, email)
             End If
         End Sub
 
-        Private Sub BtnContinue_Click(sender As Object, e As RoutedEventArgs)
-            Dim email As String = txtEmail.Text.Trim()
-
-            If ResetPassController.DoesEmailExist(email) Then
-                ' Generate and send verification code
-                ResetPassController.GenerateAndStoreVerificationCode(email)
-
-                ' Open Verify Code Window
-                Dim verifyWindow As New VerifyCode(email)
-                verifyWindow.Show()
-                Me.Close()
-            Else
-                MessageBox.Show("This email is not registered.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
-            End If
+        Private Sub ShowMessage(message As String)
+            lblMessage.Text = message
+            lblMessage.Visibility = Visibility.Visible
         End Sub
+
+        Private Sub BackToSignIn_Click(sender As Object, e As MouseButtonEventArgs)
+            RaiseEvent BackToSignIn(Me, EventArgs.Empty)
+        End Sub
+
     End Class
 End Namespace

@@ -63,7 +63,6 @@ Namespace DPC.Data.Helpers
                     smtpClient.Disconnect(True)
                 End Using
 
-                Console.WriteLine("✅ Password reset code email sent successfully to " & recipientEmail)
 
             Catch ex As Exception
                 Console.WriteLine("🚨 Email Sending Error: " & ex.Message)

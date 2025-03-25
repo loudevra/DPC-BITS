@@ -81,31 +81,6 @@ Namespace DPC.Data.Controllers
             Return New JwtSecurityTokenHandler().WriteToken(token)
         End Function
 
-        ' Verify password hash
-        Private Shared Function VerifyPassword(plainPassword As String, hashedPassword As String) As Boolean
-            Dim parts As String() = hashedPassword.Split(":"c)
-            If parts.Length <> 2 Then Return False
-
-            Dim salt As Byte() = Convert.FromBase64String(parts(0))
-            Dim storedHash As String = parts(1)
-
-            Dim computedHash As String = HashPassword(plainPassword, salt)
-            Return storedHash = computedHash
-        End Function
-
-        ' Hash password using PBKDF2
-        Public Shared Function HashPassword(password As String, Optional salt As Byte() = Nothing) As String
-            If salt Is Nothing Then
-                salt = New Byte(15) {}
-                Using rng As New RNGCryptoServiceProvider()
-                    rng.GetBytes(salt)
-                End Using
-            End If
-
-            Dim hashed As Byte() = KeyDerivation.Pbkdf2(password, salt, KeyDerivationPrf.HMACSHA256, 10000, 32)
-            Return Convert.ToBase64String(salt) & ":" & Convert.ToBase64String(hashed)
-        End Function
-
         ' Get user role
         Private Shared Function GetUserRole(roleID As String) As String
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()

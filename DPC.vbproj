@@ -310,6 +310,9 @@
     <Compile Include="Views\Auth\ResetPassword.xaml.vb">
       <DependentUpon>ResetPassword.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Auth\SignIn.xaml.vb">
+      <DependentUpon>SignIn.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Auth\VerifyCode.xaml.vb">
       <DependentUpon>VerifyCode.xaml</DependentUpon>
     </Compile>
@@ -495,6 +498,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Auth\ResetPassword.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Auth\SignIn.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Auth\VerifyCode.xaml">
