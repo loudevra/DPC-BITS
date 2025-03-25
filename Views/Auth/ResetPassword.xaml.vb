@@ -5,6 +5,7 @@ Imports System.Text.RegularExpressions
 Imports System.Windows.Media
 Imports System.Windows.Controls
 Imports System.Windows.Media.Imaging
+Imports System.Windows.Media.Animation
 
 Namespace DPC.Views.Auth
     Public Class ResetPassword
@@ -165,6 +166,51 @@ Namespace DPC.Views.Auth
                 MessageBox.Show("An error occurred: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Sub
+
+
+
+        ' Trigger animations on focus
+        Private Sub TxtNewPassword_GotFocus(sender As Object, e As RoutedEventArgs)
+            LblNewPassword.Foreground = Brushes.Black
+            Dim anim As New DoubleAnimation(-5, TimeSpan.FromSeconds(0.2))
+            LblNewPassword.RenderTransform.BeginAnimation(TranslateTransform.YProperty, anim)
+            NewPasswordActiveUnderline.Opacity = 1
+            NewPasswordActiveUnderline.RenderTransform.BeginAnimation(ScaleTransform.ScaleXProperty, New DoubleAnimation(1.1, TimeSpan.FromSeconds(0.2)))
+        End Sub
+
+        ' Reset label when field is empty
+        Private Sub TxtNewPassword_LostFocus(sender As Object, e As RoutedEventArgs)
+            If String.IsNullOrWhiteSpace(TxtNewPassword.Password) Then
+                LblNewPassword.Foreground = Brushes.Gray
+                Dim anim As New DoubleAnimation(20, TimeSpan.FromSeconds(0.2))
+                LblNewPassword.RenderTransform.BeginAnimation(TranslateTransform.YProperty, anim)
+            End If
+            NewPasswordActiveUnderline.Opacity = 0
+            NewPasswordActiveUnderline.RenderTransform.BeginAnimation(ScaleTransform.ScaleXProperty, New DoubleAnimation(0, TimeSpan.FromSeconds(0.2)))
+        End Sub
+
+
+        ' Trigger animations on focus
+        Private Sub TxtConfirmPassword_GotFocus(sender As Object, e As RoutedEventArgs)
+            LblConfirmPassword.Foreground = Brushes.Black
+            Dim anim As New DoubleAnimation(-5, TimeSpan.FromSeconds(0.2))
+            LblConfirmPassword.RenderTransform.BeginAnimation(TranslateTransform.YProperty, anim)
+            ConfirmActiveUnderline.Opacity = 1
+            ConfirmActiveUnderline.RenderTransform.BeginAnimation(ScaleTransform.ScaleXProperty, New DoubleAnimation(1.1, TimeSpan.FromSeconds(0.2)))
+        End Sub
+
+        ' Reset label when field is empty
+        Private Sub TxtConfirmPassword_LostFocus(sender As Object, e As RoutedEventArgs)
+            If String.IsNullOrWhiteSpace(TxtConfirmPassword.Password) Then
+                LblConfirmPassword.Foreground = Brushes.Gray
+                Dim anim As New DoubleAnimation(20, TimeSpan.FromSeconds(0.2))
+                LblConfirmPassword.RenderTransform.BeginAnimation(TranslateTransform.YProperty, anim)
+            End If
+            ConfirmActiveUnderline.Opacity = 0
+            ConfirmActiveUnderline.RenderTransform.BeginAnimation(ScaleTransform.ScaleXProperty, New DoubleAnimation(0, TimeSpan.FromSeconds(0.2)))
+        End Sub
+
+
 
     End Class
 End Namespace
