@@ -30,28 +30,28 @@ Namespace DPC.Views.Auth
 
         ' 🔹 Toggle New Password Visibility
         Private Sub BtnToggleNewPassword_Click(sender As Object, e As RoutedEventArgs)
-            TogglePasswordVisibility(TxtNewPassword, NewPasswordText, BtnToggleNewPassword, isNewPasswordVisible)
+            TogglePasswordVisibility(TxtNewPassword, NewPasswordText, IconToggleNewPassword, isNewPasswordVisible)
         End Sub
 
         ' 🔹 Toggle Confirm Password Visibility
         Private Sub BtnToggleConfirmPassword_Click(sender As Object, e As RoutedEventArgs)
-            TogglePasswordVisibility(TxtConfirmPassword, ConfirmPasswordText, BtnToggleConfirmPassword, isConfirmPasswordVisible)
+            TogglePasswordVisibility(TxtConfirmPassword, ConfirmPasswordText, IconToggleConfirmPassword, isConfirmPasswordVisible)
         End Sub
 
         ' 🔹 Function to Toggle Password Visibility
-        Private Sub TogglePasswordVisibility(passwordBox As PasswordBox, textBox As TextBox, button As Button, ByRef isVisible As Boolean)
+        Private Sub TogglePasswordVisibility(passwordBox As PasswordBox, textBox As TextBox, icon As MaterialDesignThemes.Wpf.PackIcon, ByRef isVisible As Boolean)
             If isVisible Then
                 ' Switch back to PasswordBox
                 textBox.Visibility = Visibility.Collapsed
                 passwordBox.Visibility = Visibility.Visible
                 passwordBox.Password = textBox.Text
-                button.Content = New Image With {.Source = New BitmapImage(New Uri("/Assets/Icons/eye_closed.png", UriKind.Relative))}
+                icon.Kind = MaterialDesignThemes.Wpf.PackIconKind.EyeOff
             Else
                 ' Switch to TextBox
                 textBox.Text = passwordBox.Password
                 passwordBox.Visibility = Visibility.Collapsed
                 textBox.Visibility = Visibility.Visible
-                button.Content = New Image With {.Source = New BitmapImage(New Uri("/Assets/Icons/eye_open.png", UriKind.Relative))}
+                icon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Eye
             End If
             isVisible = Not isVisible
         End Sub
