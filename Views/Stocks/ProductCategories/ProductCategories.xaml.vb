@@ -10,6 +10,13 @@ Namespace DPC.Views.Stocks.ProductCategories
         Public Sub New()
             InitializeComponent()
 
+            Dim sidebar As New Components.Navigation.Sidebar()
+            SidebarContainer.Child = sidebar
+
+            ' Load Top Navigation Bar
+            Dim topNav As New Components.Navigation.TopNavBar()
+            TopNavBarContainer.Child = topNav
+
         End Sub
     End Class
 End Namespace

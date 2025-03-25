@@ -3,27 +3,125 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DPC"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="namespace:DPC.Views.Stocks.StocksTransfer" 
+        xmlns:local1="namespace:DPC.Components.Forms"
         mc:Ignorable="d"
-        Title="StocksTransfer" Height="450" Width="800">
-    <Grid>
-        <Button Content="Cart" HorizontalAlignment="Left" Margin="18,7,0,0" VerticalAlignment="Top"/>
-        <Button Content="Location" HorizontalAlignment="Left" Margin="49,7,0,0" VerticalAlignment="Top"/>
-        <Button Content="Notif" HorizontalAlignment="Left" Margin="655,7,0,0" VerticalAlignment="Top"/>
-        <Button Content="Messages" HorizontalAlignment="Left" Margin="690,7,0,0" VerticalAlignment="Top"/>
-        <Button Content="Clock" HorizontalAlignment="Left" Margin="750,7,0,0" VerticalAlignment="Top"/>
-        <Image HorizontalAlignment="Left" Height="44" Margin="19,33,0,0" VerticalAlignment="Top" Width="51"/>
-        <Label Content="Stocks Transfer" HorizontalAlignment="Left" Margin="92,37,0,0" VerticalAlignment="Top"/>
-        <Label Content="Transfer From :" HorizontalAlignment="Left" Margin="80,96,0,0" VerticalAlignment="Top" Width="192"/>
-        <Label Content="Products :" HorizontalAlignment="Left" Margin="80,139,0,0" VerticalAlignment="Top" Width="136"/>
-        <TextBox HorizontalAlignment="Left" Margin="102,161,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="644"/>
-        <Label Content="Products Quantity :" HorizontalAlignment="Left" Margin="80,187,0,0" VerticalAlignment="Top" Width="220"/>
-        <TextBox HorizontalAlignment="Left" Margin="102,214,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="644"/>
-        <Label Content="Transfer To : " HorizontalAlignment="Left" Margin="80,254,0,0" VerticalAlignment="Top" Width="223"/>
-        <ComboBox HorizontalAlignment="Left" Margin="102,119,0,0" VerticalAlignment="Top" Width="644"/>
-        <ComboBox HorizontalAlignment="Left" Margin="102,280,0,0" VerticalAlignment="Top" Width="644"/>
-        <Label Content="Comma (,) separated" HorizontalAlignment="Left" Margin="116,232,0,0" VerticalAlignment="Top" Width="220" Height="22" FontSize="8"/>
-        <Button Content="Stock Transfer" HorizontalAlignment="Left" Margin="633,353,0,0" VerticalAlignment="Top" Width="113"/>
+        Background="#D9D9D9"
+        Title="StocksTransfer"
+        Height="800" Width="1200"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="{StaticResource Lexend}"
+        Foreground="#474747">
 
+    <Grid>
+        <!-- Define Column Structure -->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <!-- Sidebar Width -->
+            <ColumnDefinition Width="*"/>
+            <!-- Main Content -->
+        </Grid.ColumnDefinitions>
+
+        <!-- Sidebar -->
+        <Border Grid.Column="0"
+        Background="White"
+        BorderBrush="#E0E0E0"
+        BorderThickness="0,0,1,0">
+            <ContentControl x:Name="SidebarContainer"/>
+        </Border>
+
+        <!-- Main Content -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"/>
+                <!-- Top Navigation Bar -->
+                <RowDefinition Height="*"/>
+                <!-- Form Content -->
+            </Grid.RowDefinitions>
+
+            <!-- Top Navigation Bar -->
+            <Border Grid.Row="0"
+            Background="White"
+            BorderBrush="#E0E0E0"
+            BorderThickness="0,0,0,1">
+                <ContentControl x:Name="TopNavBarContainer"/>
+            </Border>
+
+            <!-- Main Form Content -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <Grid Margin="25,10,25,20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Margin="0,0,0,20">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <materialDesign:PackIcon Kind="WeatherWindy" Width="50" Height="50" Margin="0,0,15,0"/>
+                            <TextBlock Text="Stocks Transfer" FontSize="25" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1">
+                        <StackPanel Margin="0,10">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Transfer From:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                            </StackPanel>
+                            <!--Category Value-->
+                            <ComboBox x:Name="TransferFrom" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,10">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Products:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                            </StackPanel>
+                            <Border Style="{StaticResource RoundedBorderStyle}">
+                                <!--Product Name Value is here!-->
+                                <TextBox x:Name="TxtProductName" Style="{StaticResource RoundedTextboxStyle}"/>
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,10">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Products Qty:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                            </StackPanel>
+                            <Border Style="{StaticResource RoundedBorderStyle}">
+                                <!--Product Name Value is here!-->
+                                <TextBox x:Name="TxtProductQty" Style="{StaticResource RoundedTextboxStyle}"/>
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,10,0,20" x:Name="StackPanelOrderPrice">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <TextBlock Text="Transfer To:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                    <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                                </StackPanel>
+                                <ComboBox x:Name="TransferTo" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0"/>
+                            </StackPanel>
+                        </StackPanel>
+
+
+                    </StackPanel>
+
+                    <StackPanel  Grid.Row="2" Height="63" VerticalAlignment="Center">
+                        <Button Background="Transparent" HorizontalAlignment="Right" BorderThickness="0" Margin="0,15,0,0" x:Name="btnAddProduct" >
+                            <Border Style="{StaticResource RoundedBorderStyle}" Padding="1" Background="#1D5642" BorderBrush="#1D5642" Height="43" Width="212">
+                                <StackPanel Orientation="Horizontal" Background="#1D5642" Margin="10,0,10,0">
+
+                                    <TextBlock Text="Stock Transfer" Foreground="White" VerticalAlignment="Center" Margin="50,0,0,0"/>
+                                </StackPanel>
+                            </Border>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </Window>
