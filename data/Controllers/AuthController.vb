@@ -13,7 +13,7 @@ Imports System.Windows ' Required for MessageBox.Show()
 Namespace DPC.Data.Controllers
     Public Class AuthController
         ' Secret key for JWT (Change this for production, For Testing Purposes)
-        Private Shared ReadOnly JWT_SECRET As String = "eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTc0MjY1OTAzNywiaWF0IjoxNzQyNjU5MDM3fQ.WHd7Nt4aNhUskAiB5iOta4C1Uc3Saqhk9zpRRlc0G3I"
+        Private Shared ReadOnly JWT_SECRET As String = EnvLoader.GetEnv("JWT_TOKEN")
 
         ' Token expiration settings
         Private Const ACCESS_TOKEN_EXPIRY As Integer = 15 ' Minutes
