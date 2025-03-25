@@ -7,9 +7,16 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
         Public Sub New()
             InitializeComponent()
 
+            Dim sidebar As New Components.Navigation.Sidebar()
+            SidebarContainer.Content = sidebar
+
+            ' Load Top Navigation Bar
+            Dim topNav As New Components.Navigation.TopNavBar()
+            TopNavBarContainer.Content = topNav
         End Sub
         Private Sub BtnNext_Click(sender As Object, e As RoutedEventArgs)
             InsertSupplierData()
+
         End Sub
         Private Sub InsertSupplierData()
             Dim connectionString As String = "server=localhost;userid=root;password=;database=dpc"
