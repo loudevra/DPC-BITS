@@ -282,7 +282,7 @@
 
                                     <!-- Thumb for Switch (Same Width as Column) -->
                                     <Border x:Name="SwitchThumb" Height="30" Background="#F5F5F5"
-                                CornerRadius="15" Grid.ColumnSpan="2"
+                                CornerRadius="20" Grid.ColumnSpan="2"
                                 HorizontalAlignment="Left">
                                         <Border.Width>
                                             <Binding ElementName="ToggleGrid" Path="ActualWidth">

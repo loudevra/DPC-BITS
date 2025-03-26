@@ -22,7 +22,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="0,0,0,10">
                     <materialDesign:PackIcon Kind="FormatListGroupPlus" Foreground="#555555" Margin="5,0,0,0" Width="30" Height="30" VerticalAlignment="Center"/>
                     <TextBlock FontSize="18" Foreground="#AEAEAE" FontWeight="SemiBold" Text="Add Variation" Margin="0,0,0,0" VerticalAlignment="Center"/>
                 </StackPanel>
@@ -75,11 +75,17 @@
                             <Border Style="{StaticResource RoundedBorderStyle}" BorderBrush="#555555" Margin="0,0,0,15">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBox Grid.Column="0" Style="{StaticResource RoundedTextboxStyle}" Margin="20,0,0,0"/>
-                                    <materialDesign:PackIcon Grid.Column="1" Kind="TrashCanOutline" Foreground="#D23636" Width="20" Height="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                    <TextBox Grid.Column="0" x:Name="TxtVariationName" Text="Variation 1" Foreground="#555555" FontSize="13" FontWeight="SemiBold" Margin="20,0,5,0" Style="{StaticResource RoundedTextboxStyle}" IsReadOnly="True"/>
+                                    <Button Grid.Column="1" Margin="5,0,10,0" Background="Transparent" BorderThickness="0" Padding="5" Click="BtnEditVariationName">
+                                        <materialDesign:PackIcon x:Name="BtnIconVariationName" Kind="PencilOffOutline" Foreground="#AEAEAE" Width="25" Height="25" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                    </Button>
+                                    <Button Grid.Column="2" Margin="0,0,15,0"  VerticalAlignment="Center" HorizontalAlignment="Right" Background="Transparent" BorderThickness="0" Padding="5" Click="BtnClearVariationName">
+                                        <materialDesign:PackIcon Kind="TrashCanOutline" Foreground="#D23636" Width="25" Height="25"/>
+                                    </Button>
                                 </Grid>
                             </Border>
                             <Grid>
