@@ -110,7 +110,6 @@ Namespace DPC.Components.UI
             ' Open EmployeesView
             Dim WarehouseWindow As New Views.Stocks.Warehouses.Warehouses()
             WarehouseWindow.Show()
-
             ' Close the current window where this UserControl is being used
             Dim currentWindow As Window = Window.GetWindow(Me)
             currentWindow?.Close()
