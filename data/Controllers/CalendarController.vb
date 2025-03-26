@@ -46,7 +46,6 @@ Namespace DPC.Data.Controllers
 
             Private _selectedDate As Date? = Date.Now
 
-            ' Single Date (Today)
             Public Property SelectedDate As Date?
                 Get
                     Return _selectedDate
@@ -57,7 +56,6 @@ Namespace DPC.Data.Controllers
                 End Set
             End Property
 
-            ' Event to handle property changes
             Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
 
             Protected Overridable Sub OnPropertyChanged(propertyName As String)

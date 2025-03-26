@@ -52,7 +52,7 @@ Namespace DPC.Data.Controllers
             End Using
         End Sub
 
-        Public Shared Sub GetProductSubcategory(categoryName As String, comboBox As ComboBox, label As TextBlock)
+        Public Shared Sub GetProductSubcategory(categoryName As String, comboBox As ComboBox, label As TextBlock, stackPanel As StackPanel)
             Dim query As String = "SELECT subcategory FROM productcategory WHERE LOWER(category) = LOWER(@categoryName)"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
@@ -73,9 +73,11 @@ Namespace DPC.Data.Controllers
                                     comboBox.Visibility = Visibility.Collapsed
                                     label.Visibility = Visibility.Collapsed
                                     comboBox.SelectedIndex = -1
+                                    stackPanel.Visibility = Visibility.Collapsed
                                 Else
                                     label.Visibility = Visibility.Visible
                                     comboBox.Visibility = Visibility.Visible
+                                    stackPanel.Visibility = Visibility.Visible
 
                                     ' Format and add subcategories to ComboBox
                                     Dim subcategories As String() = subcategoryData.Split(","c).
@@ -92,6 +94,7 @@ Namespace DPC.Data.Controllers
                                 comboBox.Visibility = Visibility.Collapsed
                                 label.Visibility = Visibility.Collapsed
                                 comboBox.SelectedIndex = -1
+                                stackPanel.Visibility = Visibility.Collapsed
                             End If
                         End Using
                     End Using

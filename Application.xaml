@@ -210,6 +210,54 @@
                 </Style.Triggers>
             </Style>
 
+            <Style x:Key="RoundedButtonStyle" TargetType="Button">
+                <Setter Property="FontFamily" Value="{StaticResource Lexend}"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="Foreground" Value="#474747"/>
+                <Setter Property="Padding" Value="10"/>
+                <Setter Property="Width" Value="Auto"/>
+                <Setter Property="Height" Value="40"/>
+                <Setter Property="BorderThickness" Value="2"/>
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="0,0,0,10"/>
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="BorderBrush" Value="#474747"/>
+
+                <!-- Control Template for the Rounded Button -->
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="ButtonBorder"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="20"
+                        Padding="0">
+                                <ContentPresenter HorizontalAlignment="Stretch"
+                                      VerticalAlignment="Center"/>
+                            </Border>
+
+                            <!-- Visual State for Pressed and Disabled States -->
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="ButtonBorder" Property="Background" Value="#f0f0f0"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="ButtonBorder" Property="Background" Value="#e0e0e0"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="ButtonBorder" Property="Background" Value="#cccccc"/>
+                                    <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="#aaaaaa"/>
+                                    <Setter Property="Foreground" Value="#888888"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

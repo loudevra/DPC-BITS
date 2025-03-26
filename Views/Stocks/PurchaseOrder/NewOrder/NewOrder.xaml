@@ -142,15 +142,59 @@
                                         </Border>
 
                                         <TextBlock Text="Order Date:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
-                                        <Border Style="{StaticResource RoundedBorderStyle}" Width="Auto" Margin="0,0,10,10" Padding="0,1">
-                                            <DatePicker x:Name="orderDate" Style="{StaticResource RoundedDatePickerStyle}" HorizontalAlignment="Stretch">
-                                            </DatePicker>
+                                        <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,10,10">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width=".15*"/>
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <!-- Order Date -->
+                                                <DatePicker x:Name="OrderDatePicker"
+                                                    Style="{StaticResource SingleDatePickerStyle}"
+                                                    SelectedDate="{Binding OrderDate.SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                                <materialDesign:PackIcon Grid.Column="0" Kind="Calendar" Width="25" Height="25" Foreground="#474747" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,0,0,0"/>
+
+                                                <Button Grid.Column="1"
+                                                    Style="{StaticResource DateButtonStyle}"
+                                                    Click="OrderDate_Click"
+                                                    Width="Auto"
+                                                    Margin="10,0,25,0">         
+                                                    <TextBlock Text="{Binding OrderDate.SelectedDate, StringFormat='MMM dd, yyyy'}"
+                                                       Margin="0,0,5,0"
+                                                       Foreground="#474747"
+                                                       Height="14"/>
+                                                </Button>
+                                            </Grid>
                                         </Border>
 
                                         <TextBlock Text="Order Due Date:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
-                                        <Border Style="{StaticResource RoundedBorderStyle}" Width="Auto" Margin="0,0,10,10" Padding="0,1">
-                                            <DatePicker x:Name="orderDueDate" Style="{StaticResource RoundedDatePickerStyle}" HorizontalAlignment="Stretch">
-                                            </DatePicker>
+                                        <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,10,10">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width=".15*"/>
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <!-- Due Date -->
+                                                <DatePicker x:Name="OrderDueDatePicker"
+                                                    Style="{StaticResource SingleDatePickerStyle}"
+                                                    SelectedDate="{Binding OrderDueDate.SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                                <materialDesign:PackIcon Grid.Column="0" Kind="Calendar" Width="25" Height="25" Foreground="#474747" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,0,0,0"/>
+
+                                                <Button Grid.Column="1"
+                                                    Style="{StaticResource DateButtonStyle}"
+                                                    Click="OrderDueDate_Click"
+                                                    Width="Auto"
+                                                    Margin="10,0,25,0">
+                                                    <TextBlock Text="{Binding OrderDueDate.SelectedDate, StringFormat='MMM dd, yyyy'}"
+                                                       Margin="0,0,5,0"
+                                                       Foreground="#474747"
+                                                       Height="14"/>
+                                                </Button>
+                                            </Grid>
                                         </Border>
 
                                         <TextBlock Text="Tax:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>

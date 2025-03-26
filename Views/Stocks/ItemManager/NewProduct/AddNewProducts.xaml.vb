@@ -54,6 +54,8 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 NoVariation.Visibility = Visibility.Visible
                 YesVariation.Visibility = Visibility.Hidden
 
+                StackPanelVariation.Visibility = Visibility.Visible
+
                 StackPanelWarehouse.Visibility = Visibility.Collapsed
                 StackPanelRetailPrice.Visibility = Visibility.Collapsed
                 StackPanelOrderPrice.Visibility = Visibility.Collapsed
@@ -70,6 +72,8 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 BackgroundBorder.Background = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
                 NoVariation.Visibility = Visibility.Hidden
                 YesVariation.Visibility = Visibility.Visible
+
+                StackPanelVariation.Visibility = Visibility.Collapsed
 
                 StackPanelWarehouse.Visibility = Visibility.Visible
                 StackPanelRetailPrice.Visibility = Visibility.Visible
@@ -116,7 +120,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         Private Sub CategoryComboBox_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles ComboBoxCategory.SelectionChanged
             Dim selectedCategory As String = TryCast(ComboBoxCategory.SelectedItem, ComboBoxItem)?.Content?.ToString()
             If Not String.IsNullOrEmpty(selectedCategory) Then
-                productController.GetProductSubcategory(selectedCategory, ComboBoxSubCategory, SubCategoryLabel)
+                ProductController.GetProductSubcategory(selectedCategory, ComboBoxSubCategory, SubCategoryLabel, StackPanelSubCategory)
             Else
                 ComboBoxSubCategory.Items.Clear()
             End If

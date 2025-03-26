@@ -1,18 +1,34 @@
-﻿Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
+﻿Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Controllers.CalendarController
+
+Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
     Public Class NewOrder
         Private rowCount As Integer = 0
         Private MyDynamicGrid As Grid
+
+        Public Property OrderDate As New CalendarController.SingleCalendar()
+        Public Property OrderDueDate As New CalendarController.SingleCalendar()
 
         Public Sub New()
             InitializeComponent()
 
             SidebarContainer.Content = New Components.Navigation.Sidebar()
             TopNavBarContainer.Content = New Components.Navigation.TopNavBar()
+            OrderDate.SelectedDate = Date.Today
+            OrderDueDate.SelectedDate = Date.Today.AddDays(1)
 
-            orderDate.SelectedDate = Date.Today
-            orderDueDate.SelectedDate = Date.Today.AddDays(1)
+            DataContext = Me
+
             MyDynamicGrid = CType(TableGridPanel.Children(0), Grid)
             AddNewRow()
+        End Sub
+
+        Private Sub OrderDate_Click(sender As Object, e As RoutedEventArgs)
+            OrderDatePicker.IsDropDownOpen = True
+        End Sub
+
+        Private Sub OrderDueDate_Click(sender As Object, e As RoutedEventArgs)
+            OrderDueDatePicker.IsDropDownOpen = True
         End Sub
 
         ' ➜ Add a New Row
@@ -241,8 +257,6 @@
         Private Sub BtnAddRow_Click(sender As Object, e As RoutedEventArgs) Handles btnAddRow.Click
             AddNewRow()
         End Sub
-
-        'Calculations for the data table
 
         ' Function to retrieve the TextBox from a Border element
         Private Function GetTextBoxFromBorder(borderName As String) As TextBox
