@@ -117,63 +117,30 @@
                         </StackPanel>
 
                         <StackPanel Margin="0,10,0,20">
-                            <StackPanel Orientation="Horizontal">
-                                <Grid Width="200" Height="40">
-                                    <!-- Background Border -->
-                                    <Border x:Name="BackgroundBorder" Background="#AEAEAE" CornerRadius="25"/>
-
-                                    <!-- Switch Grid for the sliding part -->
-                                    <Grid x:Name="SwitchGrid" HorizontalAlignment="Left" Width="95" Margin="5">
-                                        <Border Background="#F5F5F5" CornerRadius="20"/>
-                                        <TextBlock x:Name="SwitchText" Text="No" FontSize="14" FontWeight="Bold" Foreground="#4D4D4D" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                    </Grid>
-
-                                    <!-- Text Labels Grid for Centering -->
-                                    <Grid Margin="5">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <!-- No Text on Left -->
-                                        <TextBlock x:Name="NoVariation" Text="No" FontSize="14" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="0"/>
-
-                                        <!-- Yes Text on Right -->
-                                        <TextBlock x:Name="YesVariation" Text="Yes" FontSize="14" FontWeight="Normal" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1"/>
-                                    </Grid>
-
-                                    <!-- Transparent Toggle Button to trigger the event -->
-                                    <ToggleButton x:Name="Toggle" Width="200" Height="40" Background="Transparent" BorderThickness="0" Click="Toggle_Click">
-                                        <ToggleButton.Style>
-                                            <Style TargetType="ToggleButton">
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="ToggleButton">
-                                                            <Border Background="Transparent" BorderThickness="0">
-                                                                <ContentPresenter />
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </ToggleButton.Style>
-                                    </ToggleButton>
-                                </Grid>
-
-
-                                <TextBlock Text="Include product variation" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                                <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold" Margin="5,0,0,0" VerticalAlignment="Center"/>
-                            </StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width=".3*"/>
+                                    <ColumnDefinition Width=".7*"/>
+                                </Grid.ColumnDefinitions>
+                                <ToggleButton Grid.Column="0" x:Name="Toggle" Style="{StaticResource ToggleSwitchStyle}" Click="Toggle_Click"/>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                    <TextBlock Text="Include product variation" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                    <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
 
                             <StackPanel Margin="0,20,0,0" x:Name="StackPanelVariation">
-                                <Button x:Name="BtnVariation" Style="{StaticResource RoundedButtonStyle}">
+                                <Button x:Name="BtnVariation" Style="{StaticResource RoundedButtonStyle}" Click="OpenAddVariation">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
 
-                                        <TextBlock Grid.Column="0" Text="Product Variation" HorizontalAlignment="Left" Margin="10,0,0,0" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left">
+                                            <TextBlock Text="Product Variation" Margin="10,0,10,0" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="ProductVariation" Text="White" Foreground="#AEAEAE" Margin="0,0,0,0" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                        </StackPanel>
                                         <materialDesign:PackIcon Kind="MenuRight" Grid.Column="1" Height="20" Width="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
                                     </Grid>
                                 </Button>

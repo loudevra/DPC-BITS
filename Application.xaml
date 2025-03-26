@@ -1,8 +1,8 @@
 ﻿<Application x:Class="Application"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-    xmlns:local="clr-namespace:DPC"
+    xmlns:local="namespace:DPC" 
+    xmlns:local2="clr-namespace:DPC.DPC.Data.Converters.ValueConverter"
     StartupUri="SplashScreen.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -229,23 +229,17 @@
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
                             <Border x:Name="ButtonBorder"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="20"
-                        Padding="0">
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="20"
+                    Padding="0">
                                 <ContentPresenter HorizontalAlignment="Stretch"
                                       VerticalAlignment="Center"/>
                             </Border>
 
-                            <!-- Visual State for Pressed and Disabled States -->
+                            <!-- Visual State for Disabled States -->
                             <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="ButtonBorder" Property="Background" Value="#f0f0f0"/>
-                                </Trigger>
-                                <Trigger Property="IsPressed" Value="True">
-                                    <Setter TargetName="ButtonBorder" Property="Background" Value="#e0e0e0"/>
-                                </Trigger>
                                 <Trigger Property="IsEnabled" Value="False">
                                     <Setter TargetName="ButtonBorder" Property="Background" Value="#cccccc"/>
                                     <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="#aaaaaa"/>
@@ -257,7 +251,83 @@
                 </Setter>
             </Style>
 
+            <Style x:Key="ToggleSwitchStyle" TargetType="ToggleButton">
+                <Setter Property="Height" Value="40"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
 
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Grid Height="40">
+                                <!-- Background Border -->
+                                <Border x:Name="BackgroundBorder" Background="#AEAEAE" CornerRadius="25"/>
+
+                                <!-- Layout Grid with Equal Columns -->
+                                <Grid Margin="5" x:Name="ToggleGrid">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Labels for No and Yes -->
+                                    <TextBlock x:Name="NoLabel" Text="No" FontSize="14"
+                                   Foreground="White" FontWeight="SemiBold"
+                                   VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+                                    <TextBlock x:Name="YesLabel" Text="Yes" FontSize="14"
+                                   Foreground="#555555" FontWeight="Normal"
+                                   VerticalAlignment="Center" HorizontalAlignment="Center"
+                                   Grid.Column="1"/>
+
+                                    <!-- Thumb for Switch (Same Width as Column) -->
+                                    <Border x:Name="SwitchThumb" Height="30" Background="#F5F5F5"
+                                CornerRadius="15" Grid.ColumnSpan="2"
+                                HorizontalAlignment="Left">
+                                        <Border.Width>
+                                            <Binding ElementName="ToggleGrid" Path="ActualWidth">
+                                                <Binding.Converter>
+                                                    <local2:HalfWidthConverter/>
+                                                </Binding.Converter>    
+                                            </Binding>
+                                        </Border.Width>
+                                        <TextBlock x:Name="ThumbText" Text="No" FontSize="14"
+                                       FontWeight="Bold" Foreground="#4D4D4D"
+                                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    </Border>
+                                </Grid>
+                            </Grid>
+
+                            <!-- Animation and State Management -->
+                            <ControlTemplate.Triggers>
+                                <!-- When Checked -->
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="ThumbText" Property="Text" Value="Yes"/>
+                                    <Setter TargetName="YesLabel" Property="Foreground" Value="White"/>
+                                    <Setter TargetName="YesLabel" Property="FontWeight" Value="SemiBold"/>
+                                    <Setter TargetName="NoLabel" Property="Foreground" Value="#FDFDFD"/>
+                                    <Setter TargetName="NoLabel" Property="FontWeight" Value="Normal"/>
+
+                                    <!-- Slide Thumb to the Right -->
+                                    <Setter TargetName="SwitchThumb" Property="HorizontalAlignment" Value="Right"/>
+                                </Trigger>
+
+                                <!-- When Unchecked -->
+                                <Trigger Property="IsChecked" Value="False">
+                                    <Setter TargetName="ThumbText" Property="Text" Value="No"/>
+                                    <Setter TargetName="NoLabel" Property="Foreground" Value="White"/>
+                                    <Setter TargetName="NoLabel" Property="FontWeight" Value="SemiBold"/>
+                                    <Setter TargetName="YesLabel" Property="Foreground" Value="#FDFDFD"/>
+                                    <Setter TargetName="YesLabel" Property="FontWeight" Value="Normal"/>
+
+                                    <!-- Slide Thumb to the Left -->
+                                    <Setter TargetName="SwitchThumb" Property="HorizontalAlignment" Value="Left"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

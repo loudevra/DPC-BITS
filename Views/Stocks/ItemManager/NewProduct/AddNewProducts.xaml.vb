@@ -1,6 +1,7 @@
 ﻿Imports System.Windows.Controls.Primitives
 Imports DPC.DPC.Components.Forms
 Imports DPC.DPC.Data.Controllers
+Imports MaterialDesignThemes.Wpf.Theme
 
 Namespace DPC.Views.Stocks.ItemManager.NewProduct
     Public Class AddNewProducts
@@ -8,6 +9,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
         Private productController As New ProductController()
         Private WithEvents AddRowPopoutControl As AddRowPopout
+        Private popup As Popup
 
         Public Sub New()
             InitializeComponent()
@@ -44,55 +46,48 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             VariationChecker(Toggle)
         End Sub
 
-        Private Sub VariationChecker(Toggle As ToggleButton)
-            If Toggle.IsChecked Then
-                ' Move to Yes State
-                SwitchGrid.HorizontalAlignment = HorizontalAlignment.Right
-                SwitchText.Text = "Yes"
-                SwitchText.Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#4D4D4D"))
-                BackgroundBorder.Background = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
-                NoVariation.Visibility = Visibility.Visible
-                YesVariation.Visibility = Visibility.Hidden
+        Private Sub VariationChecker(Toggle As System.Windows.Controls.Primitives.ToggleButton)
+            Try
+                If Toggle Is Nothing Then
+                    Throw New Exception("ToggleButton is not initialized.")
+                End If
 
-                StackPanelVariation.Visibility = Visibility.Visible
+                ' Update UI based on IsChecked state
+                If Toggle.IsChecked = True Then
+                    StackPanelVariation.Visibility = Visibility.Visible
+                    StackPanelWarehouse.Visibility = Visibility.Collapsed
+                    StackPanelRetailPrice.Visibility = Visibility.Collapsed
+                    StackPanelOrderPrice.Visibility = Visibility.Collapsed
+                    BorderSeperator.Visibility = Visibility.Collapsed
+                    StackPanelTaxRate.Visibility = Visibility.Collapsed
+                    StackPanelDiscountRate.Visibility = Visibility.Collapsed
+                    StackPanelStockUnits.Visibility = Visibility.Collapsed
+                    StackPanelAlertQuantity.Visibility = Visibility.Collapsed
+                Else
+                    StackPanelVariation.Visibility = Visibility.Collapsed
+                    StackPanelWarehouse.Visibility = Visibility.Visible
+                    StackPanelRetailPrice.Visibility = Visibility.Visible
+                    StackPanelOrderPrice.Visibility = Visibility.Visible
+                    BorderSeperator.Visibility = Visibility.Visible
+                    StackPanelTaxRate.Visibility = Visibility.Visible
+                    StackPanelDiscountRate.Visibility = Visibility.Visible
+                    StackPanelStockUnits.Visibility = Visibility.Visible
+                    StackPanelAlertQuantity.Visibility = Visibility.Visible
+                End If
 
-                StackPanelWarehouse.Visibility = Visibility.Collapsed
-                StackPanelRetailPrice.Visibility = Visibility.Collapsed
-                StackPanelOrderPrice.Visibility = Visibility.Collapsed
-                BorderSeperator.Visibility = Visibility.Collapsed
-                StackPanelTaxRate.Visibility = Visibility.Collapsed
-                StackPanelDiscountRate.Visibility = Visibility.Collapsed
-                StackPanelStockUnits.Visibility = Visibility.Collapsed
-                StackPanelAlertQuantity.Visibility = Visibility.Collapsed
-            Else
-                ' Move to No State
-                SwitchGrid.HorizontalAlignment = HorizontalAlignment.Left
-                SwitchText.Text = "No"
-                SwitchText.Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#4D4D4D"))
-                BackgroundBorder.Background = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
-                NoVariation.Visibility = Visibility.Hidden
-                YesVariation.Visibility = Visibility.Visible
-
-                StackPanelVariation.Visibility = Visibility.Collapsed
-
-                StackPanelWarehouse.Visibility = Visibility.Visible
-                StackPanelRetailPrice.Visibility = Visibility.Visible
-                StackPanelOrderPrice.Visibility = Visibility.Visible
-                BorderSeperator.Visibility = Visibility.Visible
-                StackPanelTaxRate.Visibility = Visibility.Visible
-                StackPanelDiscountRate.Visibility = Visibility.Visible
-                StackPanelStockUnits.Visibility = Visibility.Visible
-                StackPanelAlertQuantity.Visibility = Visibility.Visible
-            End If
+            Catch ex As Exception
+                MessageBox.Show($"Error: {ex.Message}")
+            End Try
         End Sub
+
 
         ' Start of inserting function for add product button
         Private Sub BtnAddProduct_Click(sender As Object, e As RoutedEventArgs)
-            productController.InsertNewProduct(
+            ProductController.InsertNewProduct(
                 TxtProductName, TxtProductCode, ComboBoxCategory, ComboBoxSubCategory,
                 ComboBoxWarehouse, TxtRetailPrice, TxtPurchaseOrder, TxtDefaultTax,
                 TxtDiscountRate, TxtStockUnits, TxtAlertQuantity, ComboBoxMeasurementUnit,
-                TxtDescription, SingleDatePicker, productController.SerialNumbers)
+                TxtDescription, SingleDatePicker, ProductController.SerialNumbers)
         End Sub
 
         Private TxtSerialNumber As TextBox
@@ -133,11 +128,11 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
         ' Handles the serial table components
         Private Sub BtnAddRow_Click(sender As Object, e As RoutedEventArgs)
-            productController.BtnAddRow_Click(Nothing, Nothing)
+            ProductController.BtnAddRow_Click(Nothing, Nothing)
         End Sub
 
         Private Sub BtnRemoveRow_Click(sender As Object, e As RoutedEventArgs)
-            productController.BtnRemoveRow_Click(Nothing, Nothing)
+            ProductController.BtnRemoveRow_Click(Nothing, Nothing)
         End Sub
 
         Private Function FindParentGrid(element As DependencyObject) As Grid
@@ -176,6 +171,46 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 ' Prevent further propagation of the event
                 e.Handled = True
             End If
+        End Sub
+
+
+        Private recentlyClosed As Boolean = False
+
+        Private Sub OpenAddVariation(sender As Object, e As RoutedEventArgs)
+            Dim clickedButton As System.Windows.Controls.Button = CType(sender, System.Windows.Controls.Button)
+            If clickedButton Is Nothing Then Return
+
+            ' Reuse or create a new Popup if it doesn't exist
+            If popup Is Nothing Then
+                popup = New Popup With {
+            .PlacementTarget = clickedButton,
+            .Placement = PlacementMode.Relative,
+            .StaysOpen = False,
+            .AllowsTransparency = True
+        }
+            End If
+
+            Dim popOutContent As New DPC.Components.Forms.AddVariation()
+            popup.Child = popOutContent
+
+            ' Adjust position once the content is loaded
+            AddHandler popOutContent.Loaded, Sub()
+                                                 Dim targetElement As FrameworkElement = TryCast(popup.PlacementTarget, FrameworkElement)
+                                                 If targetElement IsNot Nothing Then
+                                                     ' Center horizontally and position below the parent
+                                                     popup.HorizontalOffset = -(popup.Child.DesiredSize.Width - targetElement.ActualWidth) / 2
+                                                     popup.VerticalOffset = targetElement.ActualHeight
+                                                 End If
+                                             End Sub
+
+            ' Handle popup closure
+            AddHandler popup.Closed, Sub()
+                                         recentlyClosed = True
+                                         Task.Delay(100).ContinueWith(Sub() recentlyClosed = False, TaskScheduler.FromCurrentSynchronizationContext())
+                                     End Sub
+
+            ' Open the popup
+            popup.IsOpen = True
         End Sub
     End Class
 End Namespace
