@@ -292,7 +292,7 @@
     <Compile Include="Data\Controllers\ResetPassController.vb" />
     <Compile Include="Data\Controllers\SessionManager.vb" />
     <Compile Include="Data\Controllers\SupplierController.vb" />
-    <Compile Include="Data\Controllers\WarehousesController.vb" />
+    <Compile Include="Data\Controllers\WarehouseController.vb" />
     <Compile Include="Data\Converters\PasswordMaskingBehavior.vb" />
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
@@ -327,6 +327,9 @@
     </Compile>
     <Compile Include="Views\HRM\Employees\Employees\EmployeesView.xaml.vb">
       <DependentUpon>EmployeesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\Warehouses\AddWarehouse.xaml.vb">
+      <DependentUpon>AddWarehouse.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Stocks\Warehouses\Warehouses.xaml.vb">
       <DependentUpon>Warehouses.xaml</DependentUpon>
@@ -519,6 +522,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HRM\Employees\Employees\EmployeesView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\Warehouses\AddWarehouse.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Stocks\Warehouses\Warehouses.xaml">

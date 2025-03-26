@@ -21,7 +21,7 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
 
         ' Load Data Using SupplierController
         Public Sub LoadData()
-            dataGrid.ItemsSource = WarehousesController.GetWarehouses()
+            dataGrid.ItemsSource = WarehouseController.GetWarehouses()
         End Sub
     End Class
 End Namespace

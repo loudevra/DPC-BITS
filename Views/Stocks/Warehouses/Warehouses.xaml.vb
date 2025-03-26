@@ -1,6 +1,7 @@
 ﻿Imports System.Windows
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Components
+Imports DPC.DPC.Views.Warehouse
 
 Namespace DPC.Views.Stocks.Warehouses
     Public Class Warehouses
@@ -9,6 +10,7 @@ Namespace DPC.Views.Stocks.Warehouses
         Public Sub New()
             InitializeComponent()
 
+            ' Load Sidebar
             Dim sidebar As New Components.Navigation.Sidebar()
             SidebarContainer.Child = sidebar
 
@@ -16,14 +18,21 @@ Namespace DPC.Views.Stocks.Warehouses
             Dim topNav As New Components.Navigation.TopNavBar()
             TopNavBarContainer.Child = topNav
 
+            ' Load Data
             LoadData()
         End Sub
 
-        ' Load Data Using SupplierController
+        ' Load Warehouse Data
         Public Sub LoadData()
-            dataGrid.ItemsSource = WarehousesController.GetWarehouses()
+            dataGrid.ItemsSource = WarehouseController.GetWarehouses()
+        End Sub
+
+        ' Event Handler for Add Warehouse Button Click
+        Private Sub BtnAddNew_Click(sender As Object, e As RoutedEventArgs)
+            Dim addWarehousePopup As New AddWarehouse With {
+                .Owner = Me ' Set parent window
+            }
+            addWarehousePopup.ShowDialog() ' Show as modal popup
         End Sub
     End Class
 End Namespace
-
-
