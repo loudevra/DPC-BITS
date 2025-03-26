@@ -18,37 +18,37 @@ Namespace DPC.Views.Auth
 
         ' Handle Sign-In Process
         Private Sub BtnSignIn_Click(sender As Object, e As RoutedEventArgs)
-            'Dim username As String = txtUsername.Text.Trim()
-            'Dim password As String = realPassword
+            Dim username As String = txtUsername.Text.Trim()
+            Dim password As String = realPassword
 
             ' Check if fields are empty
-            'If String.IsNullOrWhiteSpace(username) OrElse String.IsNullOrWhiteSpace(password) Then
-            'MessageBox.Show("Please enter both username and password.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
-            'Return
-            'End If
+            If String.IsNullOrWhiteSpace(username) OrElse String.IsNullOrWhiteSpace(password) Then
+                MessageBox.Show("Please enter both username and password.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                Return
+            End If
 
             ' Authenticate user
-            'Dim authResult As (String, String) = AuthController.SignIn(username, password)
-            'Dim accessToken As String = authResult.Item1
-            'Dim refreshToken As String = authResult.Item2
+            Dim authResult As (String, String) = AuthController.SignIn(username, password)
+            Dim accessToken As String = authResult.Item1
+            Dim refreshToken As String = authResult.Item2
 
 
-            'If Not String.IsNullOrEmpty(accessToken) AndAlso Not String.IsNullOrEmpty(refreshToken) Then
-            MessageBox.Show("Login Successful!", "Welcome", MessageBoxButton.OK, MessageBoxImage.Information)
+            If Not String.IsNullOrEmpty(accessToken) AndAlso Not String.IsNullOrEmpty(refreshToken) Then
+                MessageBox.Show("Login Successful!", "Welcome", MessageBoxButton.OK, MessageBoxImage.Information)
 
-            ' Store tokens for session
-            'SessionManager.SetSessionTokens(accessToken, refreshToken)
+                ' Store tokens for session
+                SessionManager.SetSessionTokens(accessToken, refreshToken)
 
-            ' Redirect to Dashboard.xaml
-            Dim dashboard As New Views.Dashboard.Dashboard()
+                ' Redirect to Dashboard.xaml
+                Dim dashboard As New Views.Dashboard.Dashboard()
                 dashboard.Show()
 
                 ' Close the parent window
                 Dim parentWindow As Window = Window.GetWindow(Me)
                 parentWindow?.Close()
-            'Else
-            'MessageBox.Show("Invalid username or password. Please try again.", "Authentication Failed", MessageBoxButton.OK, MessageBoxImage.Warning)
-            'End If
+            Else
+                MessageBox.Show("Invalid username or password. Please try again.", "Authentication Failed", MessageBoxButton.OK, MessageBoxImage.Warning)
+            End If
         End Sub
 
         ' Handle text input correctly while masking
