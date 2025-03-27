@@ -187,31 +187,31 @@
 
                     <!-- Title and Add Button -->
                     <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,10,0,20">
-                        
+
                         <TextBlock Text="Product Category"
                                    FontWeight="SemiBold"
                                    FontFamily="Lexend"
                                    FontSize="25"
                                    Foreground="#474747"
                                    VerticalAlignment="Center"/>
-                        <Button x:Name="btnCategory"
-                                Style="{StaticResource AddNewButtonStyle}"
-                                Margin="20,0,0,0">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="Plus" Width="25" Height="25" Foreground="#474747"/>
-                                <TextBlock Text="Category" FontSize="17" Foreground="#474747"/>
-                            </StackPanel>
+
+                        <Button x:Name="btnCategory" Background="Transparent" VerticalAlignment="Center" BorderThickness="0" Margin="10,0,0,0" >
+                            <Border Style="{StaticResource RoundedBorderStyle}" Padding="2" Background="Transparent" BorderBrush="#474747" BorderThickness="2">
+                                <StackPanel Orientation="Horizontal" Background="Transparent" Margin="10,0,10,0">
+                                    <materialDesign:PackIcon Kind="Plus" Width="20" Height="20" Margin="0,0,5,0" Foreground="#474747" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Category" FontSize="17" Foreground="#474747" VerticalAlignment="Center" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                </StackPanel>
+                            </Border>
                         </Button>
 
-                        <Button x:Name="btnSubCategory"
-                                Style="{StaticResource AddNewButtonStyle}"
-                                Margin="20,0,0,0" Width="162">
-                            <StackPanel Orientation="Horizontal">
-                                <materialDesign:PackIcon Kind="Plus" Width="25" Height="25" Foreground="#474747"/>
-                                <TextBlock Text="Sub-Category" FontSize="17" Foreground="#474747"/>
-                            </StackPanel>
+                        <Button x:Name="btnSubCategory" Background="Transparent" VerticalAlignment="Center" BorderThickness="0" Margin="10,0,0,0" >
+                            <Border Style="{StaticResource RoundedBorderStyle}" Padding="2" Background="Transparent" BorderBrush="#474747" BorderThickness="2">
+                                <StackPanel Orientation="Horizontal" Background="Transparent" Margin="10,0,10,0">
+                                    <materialDesign:PackIcon Kind="Plus" Width="20" Height="20" Margin="0,0,5,0" Foreground="#474747" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Category" FontSize="17" Foreground="#474747" VerticalAlignment="Center" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                </StackPanel>
+                            </Border>
                         </Button>
-
                     </StackPanel>
 
                     <!-- Filters and Controls -->

@@ -90,6 +90,8 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 TxtDiscountRate, TxtStockUnits, TxtAlertQuantity, ComboBoxMeasurementUnit,
                 TxtDescription, SingleDatePicker, ProductController.SerialNumbers)
 
+            ClearInputFields()
+
             'Current Workload
             Dim ProductName As String = TxtProductCode.Text
             Dim CategoryID As String = ComboBoxCategory.Tag
@@ -98,6 +100,34 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 .CategoryID = CategoryID
             }
         End Sub
+
+        Private Sub ClearInputFields()
+            ' Clear TextBoxes
+            TxtProductName.Clear()
+            TxtProductCode.Clear()
+            TxtRetailPrice.Clear()
+            TxtPurchaseOrder.Clear()
+            TxtDefaultTax.Clear()
+            TxtDiscountRate.Clear()
+            TxtStockUnits.Clear()
+            TxtAlertQuantity.Clear()
+            TxtDescription.Clear()
+
+            ' Reset ComboBoxes to first item (index 0)
+            ComboBoxCategory.SelectedIndex = 0
+            ComboBoxSubCategory.SelectedIndex = 0
+            ComboBoxWarehouse.SelectedIndex = 0
+            ComboBoxMeasurementUnit.SelectedIndex = 0
+
+            ' Set DatePicker to current date
+            SingleDatePicker.SelectedDate = DateTime.Now
+
+            ' Clear Serial Numbers
+            If ProductController.SerialNumbers IsNot Nothing Then
+                ProductController.SerialNumbers.Clear()
+            End If
+        End Sub
+
 
         Private TxtSerialNumber As TextBox
 

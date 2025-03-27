@@ -28,7 +28,7 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
             ProductController.LoadProductData(dataGrid)
         End Sub
 
-        Private Sub BtnAddNew_Click(sender As Object, e As RoutedEventArgs) Handles btnAddNew.Click
+        Private Sub BtnAddNew_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddNew.Click
             Dim NewProductWindow As New Views.Stocks.ItemManager.NewProduct.AddNewProducts
             NewProductWindow.Show()
 

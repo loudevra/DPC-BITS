@@ -77,13 +77,13 @@ Namespace DPC.Data.Controllers
                             If reader.Read() Then
                                 Dim subcategoryData As String = reader("subcategory").ToString().Trim()
 
-                                ' Remove unwanted characters and check for empty data
+                                ' Remove unwanted characters and check for empty or None data
                                 subcategoryData = subcategoryData.Replace("""", "").Replace("[", "").Replace("]", "").Trim()
 
-                                If String.IsNullOrWhiteSpace(subcategoryData) Then
+                                If String.IsNullOrWhiteSpace(subcategoryData) OrElse subcategoryData.ToLower() = "none" Then
                                     comboBox.Visibility = Visibility.Collapsed
                                     label.Visibility = Visibility.Collapsed
-                                    comboBox.SelectedIndex = -1
+                                    comboBox.SelectedItem = Nothing ' Set to NULL equivalent
                                     stackPanel.Visibility = Visibility.Collapsed
                                 Else
                                     label.Visibility = Visibility.Visible
@@ -92,8 +92,8 @@ Namespace DPC.Data.Controllers
 
                                     ' Format and add subcategories to ComboBox
                                     Dim subcategories As String() = subcategoryData.Split(","c).
-                                                Select(Function(s) StrConv(s.Trim(), VbStrConv.ProperCase)).
-                                                ToArray()
+                                        Select(Function(s) StrConv(s.Trim(), VbStrConv.ProperCase)).
+                                        ToArray()
 
                                     For Each subcategory As String In subcategories
                                         comboBox.Items.Add(New ComboBoxItem With {.Content = subcategory})
@@ -104,7 +104,7 @@ Namespace DPC.Data.Controllers
                             Else
                                 comboBox.Visibility = Visibility.Collapsed
                                 label.Visibility = Visibility.Collapsed
-                                comboBox.SelectedIndex = -1
+                                comboBox.SelectedItem = Nothing
                                 stackPanel.Visibility = Visibility.Collapsed
                             End If
                         End Using
@@ -114,6 +114,7 @@ Namespace DPC.Data.Controllers
                 End Try
             End Using
         End Sub
+
 
         Public Shared Sub GetWarehouse(comboBox As ComboBox)
             Dim query As String = "SELECT name FROM warehouse ORDER BY name ASC"
@@ -150,56 +151,24 @@ Namespace DPC.Data.Controllers
                                     MeasurementUnit As ComboBox, Description As TextBox, ValidDate As DatePicker,
                                     SerialNumbers As List(Of TextBox))
 
-            Dim CheckComponent = Sub(name As String, component As Object)
-                                     If component Is Nothing Then
-                                         Debug.WriteLine($"{name}: NULL")
-                                     ElseIf TypeOf component Is TextBox Then
-                                         Debug.WriteLine($"{name}: Initialized, Text='{CType(component, TextBox).Text}'")
-                                     ElseIf TypeOf component Is ComboBox Then
-                                         Dim selectedItem As ComboBoxItem = TryCast(CType(component, ComboBox).SelectedItem, ComboBoxItem)
-                                         If selectedItem IsNot Nothing Then
-                                             Debug.WriteLine($"{name}: Initialized, SelectedItem='{selectedItem.Content}'")
-                                         Else
-                                             Debug.WriteLine($"{name}: Initialized, No Item Selected")
-                                         End If
-                                     ElseIf TypeOf component Is DatePicker Then
-                                         Debug.WriteLine($"{name}: Initialized, SelectedDate='{CType(component, DatePicker).SelectedDate}'")
-                                     Else
-                                         Debug.WriteLine($"{name}: Initialized")
-                                     End If
-                                 End Sub
-
-
-            ' Check if any serial number TextBox is null and print their texts if available
-            For i As Integer = 0 To SerialNumbers.Count - 1
-                If SerialNumbers(i) Is Nothing Then
-                    Debug.WriteLine($"SerialNumber {i + 1}: NULL")
-                Else
-                    Debug.WriteLine($"SerialNumber {i + 1}: Initialized, Text='{SerialNumbers(i).Text}'")
-                End If
-            Next
-
-
             If String.IsNullOrWhiteSpace(ProductName.Text) OrElse
-               String.IsNullOrWhiteSpace(ProductCode.Text) OrElse
-               Category.SelectedItem Is Nothing OrElse
-               SubCategory.SelectedItem Is Nothing OrElse
-               Warehouse.SelectedItem Is Nothing OrElse
-               String.IsNullOrWhiteSpace(RetailPrice.Text) OrElse
-               String.IsNullOrWhiteSpace(PurchaseOrder.Text) OrElse
-               String.IsNullOrWhiteSpace(DefaultTax.Text) OrElse
-               String.IsNullOrWhiteSpace(DiscountRate.Text) OrElse
-               String.IsNullOrWhiteSpace(StockUnits.Text) OrElse
-               String.IsNullOrWhiteSpace(AlertQuantity.Text) OrElse
-               MeasurementUnit.SelectedItem Is Nothing OrElse
-               String.IsNullOrWhiteSpace(Description.Text) OrElse
-               ValidDate.SelectedDate Is Nothing OrElse
-               SerialNumbers.Any(Function(txt) String.IsNullOrWhiteSpace(txt.Text)) Then
+       String.IsNullOrWhiteSpace(ProductCode.Text) OrElse
+       Category.SelectedItem Is Nothing OrElse
+       Warehouse.SelectedItem Is Nothing OrElse
+       String.IsNullOrWhiteSpace(RetailPrice.Text) OrElse
+       String.IsNullOrWhiteSpace(PurchaseOrder.Text) OrElse
+       String.IsNullOrWhiteSpace(DefaultTax.Text) OrElse
+       String.IsNullOrWhiteSpace(DiscountRate.Text) OrElse
+       String.IsNullOrWhiteSpace(StockUnits.Text) OrElse
+       String.IsNullOrWhiteSpace(AlertQuantity.Text) OrElse
+       MeasurementUnit.SelectedItem Is Nothing OrElse
+       String.IsNullOrWhiteSpace(Description.Text) OrElse
+       ValidDate.SelectedDate Is Nothing OrElse
+       SerialNumbers.Any(Function(txt) String.IsNullOrWhiteSpace(txt.Text)) Then
 
                 MessageBox.Show("Please fill in all required fields!", "Input Error", MessageBoxButton.OK)
                 Exit Sub
             End If
-
 
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
@@ -207,17 +176,18 @@ Namespace DPC.Data.Controllers
                     Using transaction = conn.BeginTransaction()
                         ' Insert into storedproduct table
                         Dim query1 As String = "INSERT INTO storedproduct 
-                                                (ProductID, ProductName, ProductCode, Category, SubCategory, Warehouse,
-                                                RetailPrice, PurchaseOrder, DefaultTax, DiscountRate, StockUnits,
-                                                AlertQuantity, MeasurementUnit, Description, DateAdded)
-                                                VALUES 
-                                                (DEFAULT, @ProductName, @ProductCode, @Category, @SubCategory,
-                                                @Warehouse, @RetailPrice, @PurchaseOrder, @DefaultTax, @DiscountRate,
-                                                @StockUnits, @AlertQuantity, @MeasurementUnit, @Description, @DateAdded);"
+                                        (ProductID, ProductName, ProductCode, Category, SubCategory, Warehouse,
+                                        RetailPrice, PurchaseOrder, DefaultTax, DiscountRate, StockUnits,
+                                        AlertQuantity, MeasurementUnit, Description, DateAdded)
+                                        VALUES 
+                                        (DEFAULT, @ProductName, @ProductCode, @Category, @SubCategory,
+                                        @Warehouse, @RetailPrice, @PurchaseOrder, @DefaultTax, @DiscountRate,
+                                        @StockUnits, @AlertQuantity, @MeasurementUnit, @Description, @DateAdded);"
 
                         Using cmd1 As New MySqlCommand(query1, conn, transaction)
                             cmd1.Parameters.AddWithValue("@ProductName", ProductName.Text)
                             cmd1.Parameters.AddWithValue("@ProductCode", ProductCode.Text)
+
                             Dim selectedCategoryItem As ComboBoxItem = TryCast(Category.SelectedItem, ComboBoxItem)
                             If selectedCategoryItem IsNot Nothing Then
                                 cmd1.Parameters.AddWithValue("@Category", selectedCategoryItem.Tag)
@@ -225,19 +195,24 @@ Namespace DPC.Data.Controllers
                                 MessageBox.Show("Please select a category.")
                                 Exit Sub
                             End If
-                            cmd1.Parameters.AddWithValue("@SubCategory", SubCategory.Text)
-                            cmd1.Parameters.AddWithValue("@Warehouse", Warehouse.Text)
+
+                            ' Handle SubCategory NULL if "None" or empty
+                            Dim subCategoryText As String = If(SubCategory.SelectedItem IsNot Nothing, CType(SubCategory.SelectedItem, ComboBoxItem).Content.ToString(), "")
+                            Dim subCategoryValue As Object = If(String.IsNullOrWhiteSpace(subCategoryText) OrElse subCategoryText.ToLower() = "none", DBNull.Value, subCategoryText)
+                            cmd1.Parameters.AddWithValue("@SubCategory", subCategoryValue)
+
+                            cmd1.Parameters.AddWithValue("@Warehouse", CType(Warehouse.SelectedItem, ComboBoxItem).Content.ToString())
                             cmd1.Parameters.AddWithValue("@RetailPrice", RetailPrice.Text)
                             cmd1.Parameters.AddWithValue("@PurchaseOrder", PurchaseOrder.Text)
                             cmd1.Parameters.AddWithValue("@DefaultTax", DefaultTax.Text)
                             cmd1.Parameters.AddWithValue("@DiscountRate", DiscountRate.Text)
                             cmd1.Parameters.AddWithValue("@StockUnits", StockUnits.Text)
                             cmd1.Parameters.AddWithValue("@AlertQuantity", AlertQuantity.Text)
-                            cmd1.Parameters.AddWithValue("@MeasurementUnit", MeasurementUnit.Text)
+                            cmd1.Parameters.AddWithValue("@MeasurementUnit", CType(MeasurementUnit.SelectedItem, ComboBoxItem).Content.ToString())
                             cmd1.Parameters.AddWithValue("@Description", Description.Text)
-                            cmd1.Parameters.AddWithValue("@DateAdded", ValidDate.Text)
+                            cmd1.Parameters.AddWithValue("@DateAdded", ValidDate.SelectedDate)
 
-                            ' After the first query execution
+                            ' Execute the query
                             cmd1.ExecuteNonQuery()
 
                             ' Retrieve the last inserted ProductID
@@ -247,7 +222,6 @@ Namespace DPC.Data.Controllers
 
                                 ' Insert into serialnumberproduct table
                                 Dim query2 As String = "INSERT INTO serialnumberproduct (SerialNumber, ProductID) VALUES (@SerialNumber, @ProductID)"
-
                                 Using cmd2 As New MySqlCommand(query2, conn, transaction)
                                     cmd2.Parameters.AddWithValue("@ProductID", productID)
 
@@ -260,10 +234,10 @@ Namespace DPC.Data.Controllers
                                         End If
                                     Next
                                 End Using
-
-                                transaction.Commit()
-                                MessageBox.Show($"Product {ProductName.Text} has been inserted successfully.")
                             End Using
+
+                            transaction.Commit()
+                            MessageBox.Show($"Product {ProductName.Text} has been inserted successfully.")
                         End Using
                     End Using
                 End Using
