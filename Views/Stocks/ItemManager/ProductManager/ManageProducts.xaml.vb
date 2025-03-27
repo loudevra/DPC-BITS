@@ -23,6 +23,15 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
         Public Sub LoadData()
             dataGrid.ItemsSource = WarehouseController.GetWarehouses()
         End Sub
+
+        Private Sub BtnAddNew_Click(sender As Object, e As RoutedEventArgs) Handles btnAddNew.Click
+            Dim NewProductWindow As New Views.Stocks.ItemManager.NewProduct.AddNewProducts
+            NewProductWindow.Show()
+
+            ' Close the current window where this UserControl is being used
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
+        End Sub
     End Class
 End Namespace
 

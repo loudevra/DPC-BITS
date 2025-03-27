@@ -64,6 +64,13 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
                         MessageBox.Show("Supplier added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
                     End Using
 
+                    Dim NewSupplierWindow As New Views.Stocks.Suppliers.ManageSuppliers.ManageSuppliers()
+                    NewSupplierWindow.Show()
+
+                    ' Close the current window where this UserControl is being used
+                    Dim currentWindow As Window = Window.GetWindow(Me)
+                    currentWindow?.Close()
+
                 Catch ex As MySqlException
                     MessageBox.Show("Database Error: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
 
