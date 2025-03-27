@@ -133,7 +133,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             ' Add back one row for Serial Number input
             ProductController.BtnAddRow_Click(Nothing, Nothing)
-
+            TxtStockUnits.Text = "1"
         End Sub
 
         Private TxtSerialNumber As TextBox
