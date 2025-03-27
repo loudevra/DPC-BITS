@@ -248,6 +248,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Base.xaml.vb">
+      <DependentUpon>Base.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\ConfirmationModals\CancelClientAdding.xaml.vb">
       <DependentUpon>CancelClientAdding.xaml</DependentUpon>
     </Compile>
@@ -334,6 +337,9 @@
     <Compile Include="Views\Stocks\Warehouses\Warehouses.xaml.vb">
       <DependentUpon>Warehouses.xaml</DependentUpon>
     </Compile>
+    <Page Include="Base.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\ConfirmationModals\CancelClientAdding.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -639,6 +645,7 @@
   <ItemGroup>
     <Folder Include="API\" />
     <Folder Include="Config\" />
+    <Folder Include="Data\Animations\" />
     <Folder Include="Installer\" />
     <Folder Include="Themes\" />
     <Folder Include="Views\HRM\Departments\" />

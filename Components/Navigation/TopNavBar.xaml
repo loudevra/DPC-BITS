@@ -6,7 +6,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
-             Height="60" Background="#E0E0E0">
+             Height="60" Background="Transparent">
 
     <!-- Top Navigation Grid -->
     <Grid>
@@ -44,7 +44,7 @@
              materialDesign:HintAssist.Hint="Search customer..."
              FontSize="14"
              Padding="10,0,40,0"
-             Background="White"
+             Background="#d9d9d9"
              BorderThickness="0"
              VerticalContentAlignment="Center"
              materialDesign:HintAssist.IsFloating="True"
