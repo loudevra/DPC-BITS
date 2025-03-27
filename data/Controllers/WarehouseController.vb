@@ -4,6 +4,8 @@ Imports DPC.DPC.Data.Model
 
 Namespace DPC.Data.Controllers
     Public Class WarehouseController
+        Public Shared Reload As Boolean
+
         ' Function to Fetch Business Locations from the Database
         Public Shared Function GetBusinessLocations() As ObservableCollection(Of KeyValuePair(Of Integer, String))
             Dim locations As New ObservableCollection(Of KeyValuePair(Of Integer, String))()

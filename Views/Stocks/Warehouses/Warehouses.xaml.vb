@@ -30,9 +30,15 @@ Namespace DPC.Views.Stocks.Warehouses
         ' Event Handler for Add Warehouse Button Click
         Private Sub BtnAddNew_Click(sender As Object, e As RoutedEventArgs)
             Dim addWarehousePopup As New AddWarehouse With {
-                .Owner = Me ' Set parent window
-            }
+        .Owner = Me ' Set parent window
+    }
             addWarehousePopup.ShowDialog() ' Show as modal popup
+
+            ' Check if reload flag is set and refresh the data
+            If WarehouseController.Reload Then
+                LoadData()
+                WarehouseController.Reload = False ' Reset the flag after reloading
+            End If
         End Sub
     End Class
 End Namespace

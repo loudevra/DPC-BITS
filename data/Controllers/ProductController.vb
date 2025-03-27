@@ -3,14 +3,20 @@ Imports System.Collections.ObjectModel
 Imports DPC.DPC.Data.Model
 Imports System.Web
 Imports System.Windows.Controls.Primitives
+Imports System.Data
 
 
 Namespace DPC.Data.Controllers
     Public Class ProductController
+        Public Shared SerialNumbers As New List(Of TextBox)
+        Public Shared Property MainContainer As StackPanel
+        Public Shared Property TxtStockUnits As TextBox
+        Private Shared popup As Popup
+        Private Shared recentlyClosed As Boolean = False
 
         Public Shared Sub GetProductCategory(comboBox As ComboBox)
             Dim query As String = "
-    SELECT TRIM(CONCAT(
+    SELECT productcategoryid, TRIM(CONCAT(
         IF(category = 'fdas', 
            UPPER(category), 
            IF(CHAR_LENGTH(SUBSTRING_INDEX(category, ' ', 1)) <= 3,
@@ -42,7 +48,12 @@ Namespace DPC.Data.Controllers
                             comboBox.Items.Clear()
                             While reader.Read()
                                 Dim categoryName As String = reader("category").ToString()
-                                comboBox.Items.Add(New ComboBoxItem With {.Content = categoryName})
+                                Dim categoryId As Integer = Convert.ToInt32(reader("productcategoryid"))
+                                Dim item As New ComboBoxItem With {
+                            .Content = categoryName,
+                            .Tag = categoryId
+                        }
+                                comboBox.Items.Add(item)
                             End While
                         End Using
                     End Using
@@ -139,26 +150,56 @@ Namespace DPC.Data.Controllers
                                     MeasurementUnit As ComboBox, Description As TextBox, ValidDate As DatePicker,
                                     SerialNumbers As List(Of TextBox))
 
-            ' Validate required fields
+            Dim CheckComponent = Sub(name As String, component As Object)
+                                     If component Is Nothing Then
+                                         Debug.WriteLine($"{name}: NULL")
+                                     ElseIf TypeOf component Is TextBox Then
+                                         Debug.WriteLine($"{name}: Initialized, Text='{CType(component, TextBox).Text}'")
+                                     ElseIf TypeOf component Is ComboBox Then
+                                         Dim selectedItem As ComboBoxItem = TryCast(CType(component, ComboBox).SelectedItem, ComboBoxItem)
+                                         If selectedItem IsNot Nothing Then
+                                             Debug.WriteLine($"{name}: Initialized, SelectedItem='{selectedItem.Content}'")
+                                         Else
+                                             Debug.WriteLine($"{name}: Initialized, No Item Selected")
+                                         End If
+                                     ElseIf TypeOf component Is DatePicker Then
+                                         Debug.WriteLine($"{name}: Initialized, SelectedDate='{CType(component, DatePicker).SelectedDate}'")
+                                     Else
+                                         Debug.WriteLine($"{name}: Initialized")
+                                     End If
+                                 End Sub
+
+
+            ' Check if any serial number TextBox is null and print their texts if available
+            For i As Integer = 0 To SerialNumbers.Count - 1
+                If SerialNumbers(i) Is Nothing Then
+                    Debug.WriteLine($"SerialNumber {i + 1}: NULL")
+                Else
+                    Debug.WriteLine($"SerialNumber {i + 1}: Initialized, Text='{SerialNumbers(i).Text}'")
+                End If
+            Next
+
+
             If String.IsNullOrWhiteSpace(ProductName.Text) OrElse
                String.IsNullOrWhiteSpace(ProductCode.Text) OrElse
-               String.IsNullOrWhiteSpace(Category.Text) OrElse
-               String.IsNullOrWhiteSpace(SubCategory.Text) OrElse
-               String.IsNullOrWhiteSpace(Warehouse.Text) OrElse
+               Category.SelectedItem Is Nothing OrElse
+               SubCategory.SelectedItem Is Nothing OrElse
+               Warehouse.SelectedItem Is Nothing OrElse
                String.IsNullOrWhiteSpace(RetailPrice.Text) OrElse
                String.IsNullOrWhiteSpace(PurchaseOrder.Text) OrElse
                String.IsNullOrWhiteSpace(DefaultTax.Text) OrElse
                String.IsNullOrWhiteSpace(DiscountRate.Text) OrElse
                String.IsNullOrWhiteSpace(StockUnits.Text) OrElse
                String.IsNullOrWhiteSpace(AlertQuantity.Text) OrElse
-               String.IsNullOrWhiteSpace(MeasurementUnit.Text) OrElse
+               MeasurementUnit.SelectedItem Is Nothing OrElse
                String.IsNullOrWhiteSpace(Description.Text) OrElse
-               String.IsNullOrWhiteSpace(ValidDate.Text) OrElse
+               ValidDate.SelectedDate Is Nothing OrElse
                SerialNumbers.Any(Function(txt) String.IsNullOrWhiteSpace(txt.Text)) Then
 
                 MessageBox.Show("Please fill in all required fields!", "Input Error", MessageBoxButton.OK)
                 Exit Sub
             End If
+
 
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
@@ -177,7 +218,13 @@ Namespace DPC.Data.Controllers
                         Using cmd1 As New MySqlCommand(query1, conn, transaction)
                             cmd1.Parameters.AddWithValue("@ProductName", ProductName.Text)
                             cmd1.Parameters.AddWithValue("@ProductCode", ProductCode.Text)
-                            cmd1.Parameters.AddWithValue("@Category", Category.Text)
+                            Dim selectedCategoryItem As ComboBoxItem = TryCast(Category.SelectedItem, ComboBoxItem)
+                            If selectedCategoryItem IsNot Nothing Then
+                                cmd1.Parameters.AddWithValue("@Category", selectedCategoryItem.Tag)
+                            Else
+                                MessageBox.Show("Please select a category.")
+                                Exit Sub
+                            End If
                             cmd1.Parameters.AddWithValue("@SubCategory", SubCategory.Text)
                             cmd1.Parameters.AddWithValue("@Warehouse", Warehouse.Text)
                             cmd1.Parameters.AddWithValue("@RetailPrice", RetailPrice.Text)
@@ -224,11 +271,6 @@ Namespace DPC.Data.Controllers
                 MessageBox.Show($"An error occurred: {ex.Message}")
             End Try
         End Sub
-
-        ' Declare a list to store serial number TextBoxes
-        Public Shared SerialNumbers As New List(Of TextBox)
-        Public Shared Property MainContainer As StackPanel
-        Public Shared Property TxtStockUnits As TextBox
 
         ' Add Row Function
         Public Shared Sub BtnAddRow_Click(sender As Object, e As RoutedEventArgs)
@@ -305,6 +347,14 @@ Namespace DPC.Data.Controllers
 
             If parentGrid IsNot Nothing Then
                 Dim parentStackPanel As StackPanel = TryCast(parentGrid.Parent, StackPanel)
+
+                ' Find the TextBox inside the grid and remove it from SerialNumbers
+                Dim serialTextBox As TextBox = TryCast(parentGrid.Children.OfType(Of TextBox)().FirstOrDefault(), TextBox)
+                If serialTextBox IsNot Nothing AndAlso SerialNumbers.Contains(serialTextBox) Then
+                    SerialNumbers.Remove(serialTextBox)
+                End If
+
+                ' Remove the row from MainContainer
                 If parentStackPanel IsNot Nothing AndAlso MainContainer.Children.Contains(parentStackPanel) Then
                     MainContainer.Children.Remove(parentStackPanel)
 
@@ -324,9 +374,6 @@ Namespace DPC.Data.Controllers
             Return TryCast(element, Grid)
         End Function
 
-        Private Shared popup As Popup
-        Private Shared recentlyClosed As Boolean = False
-
         ' Row Controller Handler (Placeholder)
         Public Shared Sub BtnRowController_Click(sender As Object, e As RoutedEventArgs)
             Dim clickedButton As Button = TryCast(sender, Button)
@@ -339,8 +386,8 @@ Namespace DPC.Data.Controllers
             End If
 
             ' If the popup exists and is open, close it
-            If popup IsNot Nothing AndAlso Popup.IsOpen Then
-                Popup.IsOpen = False
+            If popup IsNot Nothing AndAlso popup.IsOpen Then
+                popup.IsOpen = False
                 recentlyClosed = True
                 Return
             End If
@@ -354,26 +401,66 @@ Namespace DPC.Data.Controllers
         }
 
             Dim popOutContent As New DPC.Components.Forms.RowControllerPopout()
-            Popup.Child = popOutContent
+            popup.Child = popOutContent
 
             ' Handle popup closure
-            AddHandler Popup.Closed, Sub()
+            AddHandler popup.Closed, Sub()
                                          recentlyClosed = True
                                          Task.Delay(100).ContinueWith(Sub() recentlyClosed = False, TaskScheduler.FromCurrentSynchronizationContext())
                                      End Sub
 
             ' Open the popup
-            Popup.IsOpen = True
+            popup.IsOpen = True
         End Sub
 
+        ' Remove Latest Row Function
         Public Shared Sub RemoveLatestRow()
             Dim parentPanel As StackPanel = MainContainer
             If parentPanel IsNot Nothing AndAlso parentPanel.Children.Count > 0 Then
+                ' Find the latest row
+                Dim latestStackPanel As StackPanel = TryCast(parentPanel.Children(parentPanel.Children.Count - 1), StackPanel)
+
+                ' Remove the TextBox from SerialNumbers if it exists
+                If latestStackPanel IsNot Nothing Then
+                    Dim latestTextBox As TextBox = latestStackPanel.Children.OfType(Of TextBox)().FirstOrDefault()
+                    If latestTextBox IsNot Nothing AndAlso SerialNumbers.Contains(latestTextBox) Then
+                        SerialNumbers.Remove(latestTextBox)
+                    End If
+                End If
+
+                ' Remove the row
                 parentPanel.Children.RemoveAt(parentPanel.Children.Count - 1)
             Else
                 MessageBox.Show("No rows available to remove.")
             End If
         End Sub
+
+        Public Shared Sub LoadProductData(dataGrid As DataGrid)
+            Dim query As String = "SELECT productid AS ID, productname AS Name, stockunits AS StockQuantity, (retailprice * stockunits) AS Action FROM storedproduct;"
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Dim adapter As New MySqlDataAdapter(query, conn)
+                    Dim table As New DataTable()
+                    adapter.Fill(table)
+
+                    ' Calculate Total Products manually since SQL query doesn't return it
+                    If Not table.Columns.Contains("TotaProducts") Then
+                        table.Columns.Add("TotaProducts", GetType(Integer))
+                    End If
+
+                    For Each row As DataRow In table.Rows
+                        row("TotaProducts") = 1 ' Since this is a product without variation
+                    Next
+
+                    dataGrid.ItemsSource = table.DefaultView
+                Catch ex As Exception
+                    MessageBox.Show($"Error loading data: {ex.Message}")
+                End Try
+            End Using
+        End Sub
+
     End Class
 
 End Namespace

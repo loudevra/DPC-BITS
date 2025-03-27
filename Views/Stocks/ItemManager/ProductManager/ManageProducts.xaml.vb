@@ -1,10 +1,14 @@
-﻿Imports System.Windows
+﻿Imports System.Windows.Controls.Primitives
+Imports DPC.DPC.Components.Forms
 Imports DPC.DPC.Data.Controllers
-Imports DPC.DPC.Components
+Imports DPC.DPC.Data.Model
+Imports MaterialDesignThemes.Wpf.Theme
 
 Namespace DPC.Views.Stocks.ItemManager.ProductManager
     Public Class ManageProducts
         Inherits Window
+
+
 
         Public Sub New()
             InitializeComponent()
@@ -21,7 +25,7 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
 
         ' Load Data Using SupplierController
         Public Sub LoadData()
-            dataGrid.ItemsSource = WarehouseController.GetWarehouses()
+            ProductController.LoadProductData(dataGrid)
         End Sub
     End Class
 End Namespace
