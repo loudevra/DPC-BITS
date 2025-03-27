@@ -29,7 +29,7 @@
     </UserControl.Resources>
 
     <!-- Material Design Sidebar Container -->
-    <materialDesign:Card x:Name="SidebarContainer" Background="#1E1E1E" Width="260" UniformCornerRadius="15" Padding="15"
+    <materialDesign:Card x:Name="SidebarContainer" Background="#090909" Width="260" UniformCornerRadius="15" Padding="15"
         materialDesign:ElevationAssist.Elevation="Dp3">
 
         <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">

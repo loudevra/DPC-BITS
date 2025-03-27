@@ -11,11 +11,27 @@ Namespace DPC
 
             ' Add Sidebar to SidebarContainer
             Dim sidebar As New Sidebar()
-            SidebarContainer.Child = sidebar ' Use Content instead of Child
+            SidebarContainer.Child = sidebar
 
             ' Add TopNavBar to TopNavBarContainer
             Dim topNavBar As New TopNavBar()
-            TopNavBarContainer.Content = topNavBar ' Use Content instead of Child
+            TopNavBarContainer.Content = topNavBar
+
+            ' 🔥 Attach event listener for sidebar toggle
+            AddHandler sidebar.SidebarToggled, AddressOf OnSidebarToggled
+        End Sub
+
+        ' 🔥 Event handler to resize MainContentColumn when Sidebar is toggled
+        Private Sub OnSidebarToggled(isExpanded As Boolean)
+            Dispatcher.Invoke(Sub()
+                                  If isExpanded Then
+                                      ' Sidebar Expanded → Main Content Shrinks
+                                      MainContentColumn.Width = New GridLength(1, GridUnitType.Star)
+                                  Else
+                                      ' Sidebar Collapsed → Main Content Expands
+                                      MainContentColumn.Width = New GridLength(1.2, GridUnitType.Star)
+                                  End If
+                              End Sub)
         End Sub
 
         ' Current View Property

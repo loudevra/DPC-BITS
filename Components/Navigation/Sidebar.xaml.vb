@@ -9,7 +9,7 @@ Namespace DPC.Components.Navigation
 
         Private IsExpanded As Boolean = True
         Public Event LogoButtonClick As RoutedEventHandler
-
+        Public Event SidebarToggled(isExpanded As Boolean)
         Public Sub New()
             InitializeComponent()
 
@@ -89,6 +89,9 @@ Namespace DPC.Components.Navigation
 
             ' Toggle state
             IsExpanded = Not IsExpanded
+
+            ' 🔥 Trigger the event so Base.xaml knows about the toggle
+            RaiseEvent SidebarToggled(IsExpanded)
         End Sub
 
 

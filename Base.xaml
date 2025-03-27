@@ -16,7 +16,7 @@
         <!-- Material Design Card -->
         <md:Card Background="White"
                  UniformCornerRadius="8"
-                 Padding="10"
+                 Padding="25"
                  md:ElevationAssist.Elevation="Dp4"
                  Margin="10">
 
@@ -46,16 +46,16 @@
                     <!-- Top Navigation Bar -->
                     <md:Card x:Name="TopNavBarContainer"
                              Grid.Row="0"
-                             Background="White"
-                             Padding="8"
-                             md:ElevationAssist.Elevation="Dp2"/>
+                             Background="#FAFAFA"
+                             Padding="10"
+                             md:ElevationAssist.Elevation="Dp24"/>
 
                     <!-- Dynamic Content -->
                     <md:Card Grid.Row="1"
                              Background="#FAFAFA"
                              Padding="10"
                              UniformCornerRadius="8"
-                             md:ElevationAssist.Elevation="Dp1">
+                             md:ElevationAssist.Elevation="Dp16">
                         <ContentPresenter Content="{Binding CurrentView}" />
                     </md:Card>
 
