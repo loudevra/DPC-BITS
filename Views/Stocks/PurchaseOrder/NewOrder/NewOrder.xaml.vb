@@ -65,12 +65,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             End If
 
             ' Create TextBox
-            Dim txt As New TextBox() With {
-        .Name = txtName
-    }
-
             ' Apply TextBox style dynamically
-            txt.Style = CType(Me.FindResource("RoundedTextboxStyle"), Style)
+            Dim txt As New TextBox With {
+                .Name = txtName,
+                .Style = CType(Me.FindResource("RoundedTextboxStyle"), Style)
+            }
 
             ' Attach numeric validation and event handlers
             If column = 1 Or column = 2 Or column = 3 Or column = 4 Or column = 5 Or column = 6 Then
@@ -79,13 +78,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             End If
 
             ' Create a Border and apply the style
-            Dim border As New Border() With {
-        .Margin = New Thickness(5, 5, 5, 5) ' Custom margin to maintain spacing
-    }
-            border.Style = CType(Me.FindResource("RoundedBorderStyle"), Style)
-
             ' Wrap TextBox inside the Border
-            border.Child = txt
+            Dim border As New Border With {
+                .Margin = New Thickness(5, 5, 5, 5), ' Custom margin to maintain spacing
+                .Style = CType(Me.FindResource("RoundedBorderStyle"), Style),
+                .Child = txt
+            }
 
             ' Set Grid position
             Grid.SetRow(border, row)
@@ -109,24 +107,22 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             End If
 
             ' Create TextBox
-            Dim fullWidthTextBox As New TextBox() With {
-        .Name = txtName,
-        .Height = 60, ' Adjust height for full-width text box
-        .VerticalContentAlignment = VerticalAlignment.Top,
-        .Padding = New Thickness(0, 5, 0, 0)
-    }
-
             ' Apply the existing TextBox style
-            fullWidthTextBox.Style = CType(Me.FindResource("RoundedTextboxStyle"), Style)
+            Dim fullWidthTextBox As New TextBox With {
+                .Name = txtName,
+.Height = 60, ' Adjust height for full-width text box
+.VerticalContentAlignment = VerticalAlignment.Top,
+.Padding = New Thickness(0, 5, 0, 0),
+                .Style = CType(Me.FindResource("RoundedTextboxStyle"), Style)
+            }
 
             ' Create a Border and apply the existing style
-            Dim border As New Border() With {
-        .Margin = New Thickness(5, 5, 5, 5) ' Consistent margin for spacing
-    }
-            border.Style = CType(Me.FindResource("RoundedBorderStyle"), Style)
-
             ' Wrap TextBox inside the Border
-            border.Child = fullWidthTextBox
+            Dim border As New Border With {
+                .Margin = New Thickness(5, 5, 5, 5), ' Consistent margin for spacing
+                .Style = CType(Me.FindResource("RoundedBorderStyle"), Style),
+                .Child = fullWidthTextBox
+            }
 
             ' Set Grid position
             Grid.SetRow(border, row + 1) ' Place it in the next row
@@ -318,5 +314,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             End If
         End Sub
 
+        Private Sub BtnAddSupplier_Click(sender As Object, e As RoutedEventArgs) Handles btnAddSupplier.Click
+            Dim NewSupplierWindow As New Views.Stocks.Supplier.NewSuppliers.NewSuppliers()
+            NewSupplierWindow.Show()
+
+            ' Close the current window where this UserControl is being used
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
+        End Sub
     End Class
 End Namespace
