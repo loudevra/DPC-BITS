@@ -109,7 +109,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             TxtPurchaseOrder.Clear()
             TxtDefaultTax.Clear()
             TxtDiscountRate.Clear()
-            TxtStockUnits.Clear()
+            TxtStockUnits.Text = "1"
             TxtAlertQuantity.Clear()
             TxtDescription.Clear()
 
@@ -122,12 +122,19 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ' Set DatePicker to current date
             SingleDatePicker.SelectedDate = DateTime.Now
 
-            ' Clear Serial Numbers
+            ' Clear Serial Numbers and reset to one row
             If ProductController.SerialNumbers IsNot Nothing Then
                 ProductController.SerialNumbers.Clear()
             End If
-        End Sub
 
+            If MainContainer IsNot Nothing Then
+                MainContainer.Children.Clear()
+            End If
+
+            ' Add back one row for Serial Number input
+            ProductController.BtnAddRow_Click(Nothing, Nothing)
+
+        End Sub
 
         Private TxtSerialNumber As TextBox
 
