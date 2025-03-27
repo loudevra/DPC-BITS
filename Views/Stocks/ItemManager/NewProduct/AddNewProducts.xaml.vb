@@ -1,6 +1,7 @@
 ﻿Imports System.Windows.Controls.Primitives
 Imports DPC.DPC.Components.Forms
 Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Model
 Imports MaterialDesignThemes.Wpf.Theme
 
 Namespace DPC.Views.Stocks.ItemManager.NewProduct
@@ -88,6 +89,51 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 ComboBoxWarehouse, TxtRetailPrice, TxtPurchaseOrder, TxtDefaultTax,
                 TxtDiscountRate, TxtStockUnits, TxtAlertQuantity, ComboBoxMeasurementUnit,
                 TxtDescription, SingleDatePicker, ProductController.SerialNumbers)
+
+            ClearInputFields()
+
+            'Current Workload
+            Dim ProductName As String = TxtProductCode.Text
+            Dim CategoryID As String = ComboBoxCategory.Tag
+            Dim newProduct As New Product With {
+                .ProductName = ProductName,
+                .CategoryID = CategoryID
+            }
+        End Sub
+
+        Private Sub ClearInputFields()
+            ' Clear TextBoxes
+            TxtProductName.Clear()
+            TxtProductCode.Clear()
+            TxtRetailPrice.Clear()
+            TxtPurchaseOrder.Clear()
+            TxtDefaultTax.Clear()
+            TxtDiscountRate.Clear()
+            TxtStockUnits.Text = "1"
+            TxtAlertQuantity.Clear()
+            TxtDescription.Clear()
+
+            ' Reset ComboBoxes to first item (index 0)
+            ComboBoxCategory.SelectedIndex = 0
+            ComboBoxSubCategory.SelectedIndex = 0
+            ComboBoxWarehouse.SelectedIndex = 0
+            ComboBoxMeasurementUnit.SelectedIndex = 0
+
+            ' Set DatePicker to current date
+            SingleDatePicker.SelectedDate = DateTime.Now
+
+            ' Clear Serial Numbers and reset to one row
+            If ProductController.SerialNumbers IsNot Nothing Then
+                ProductController.SerialNumbers.Clear()
+            End If
+
+            If MainContainer IsNot Nothing Then
+                MainContainer.Children.Clear()
+            End If
+
+            ' Add back one row for Serial Number input
+            ProductController.BtnAddRow_Click(Nothing, Nothing)
+            TxtStockUnits.Text = "1"
         End Sub
 
         Private TxtSerialNumber As TextBox
@@ -142,7 +188,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             End While
             Return TryCast(element, Grid)
         End Function
-
         Private Sub TxtStockUnits_KeyDown(sender As Object, e As KeyEventArgs)
             ' Check if Enter key is pressed
             If e.Key = Key.Enter Then
@@ -153,6 +198,9 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                     If stockUnits > 0 Then
                         ' Clear previous rows
                         MainContainer.Children.Clear()
+
+                        ' Clear SerialNumbers to remove old references
+                        ProductController.SerialNumbers.Clear()
 
                         ' Call BtnAddRow_Click the specified number of times
                         For i As Integer = 1 To stockUnits

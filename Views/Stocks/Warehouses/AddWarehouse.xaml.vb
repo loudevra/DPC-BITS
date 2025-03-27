@@ -1,6 +1,7 @@
 ﻿Imports System.Collections.ObjectModel
 Imports System.Windows
 Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Model
 
 Namespace DPC.Views.Warehouse
     Partial Public Class AddWarehouse
@@ -36,11 +37,13 @@ Namespace DPC.Views.Warehouse
 
             Dim success As Boolean = WarehouseController.AddWarehouse(name, description, businessLocationID)
             If success Then
+                WarehouseController.Reload = True
                 MessageBox.Show("Warehouse added successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
                 Me.Close()
             Else
                 MessageBox.Show("Failed to add warehouse.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End If
+
         End Sub
 
         ' Close Popup
