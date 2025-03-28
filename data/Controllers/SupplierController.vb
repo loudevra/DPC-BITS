@@ -32,7 +32,7 @@ Namespace DPC.Data.Controllers
                 Catch ex As Exception
                     MessageBox.Show("Error fetching suppliers: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 End Try
-            End Using ' ✅ Connection is automatically returned to the pool
+            End Using 'Connection is automatically returned to the pool
 
             Return supplierList
         End Function

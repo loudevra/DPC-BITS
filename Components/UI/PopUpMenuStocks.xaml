@@ -118,6 +118,9 @@
                         <TextBlock FontSize="14">
                             <Hyperlink Click="NavigateToManageSuppliers">Manage Suppliers</Hyperlink>
                         </TextBlock>
+                        <TextBlock FontSize="14">
+                            <Hyperlink Click="NavigateToManageBrands">Manage Brands</Hyperlink>
+                        </TextBlock>
                     </StackPanel>
                 </StackPanel>
 

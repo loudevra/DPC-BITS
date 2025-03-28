@@ -16,29 +16,29 @@ Namespace DPC.Data.Controllers
 
         Public Shared Sub GetProductCategory(comboBox As ComboBox)
             Dim query As String = "
-    SELECT productcategoryid, TRIM(CONCAT(
-        IF(category = 'fdas', 
-           UPPER(category), 
-           IF(CHAR_LENGTH(SUBSTRING_INDEX(category, ' ', 1)) <= 3,
-              UPPER(SUBSTRING_INDEX(category, ' ', 1)),
-              CONCAT(UPPER(LEFT(SUBSTRING_INDEX(category, ' ', 1), 1)),
-                     LOWER(SUBSTRING(SUBSTRING_INDEX(category, ' ', 1), 2)))
-           )
-        ),
-        IF(LOCATE(' ', category) > 0, CONCAT(' ',
-            IF(category = 'fdas', 
-               UPPER(category),
-               IF(CHAR_LENGTH(SUBSTRING_INDEX(category, ' ', -1)) <= 3,
-                  UPPER(SUBSTRING_INDEX(category, ' ', -1)),
-                  CONCAT(UPPER(LEFT(SUBSTRING_INDEX(category, ' ', -1), 1)),
-                         LOWER(SUBSTRING(SUBSTRING_INDEX(category, ' ', -1), 2)))
-               )
-            )
-        ), '')
-    )) AS category
-    FROM productcategory
-    ORDER BY category ASC;
-    "
+                SELECT productcategoryid, TRIM(CONCAT(
+                    IF(category = 'fdas', 
+                       UPPER(category), 
+                       IF(CHAR_LENGTH(SUBSTRING_INDEX(category, ' ', 1)) <= 3,
+                          UPPER(SUBSTRING_INDEX(category, ' ', 1)),
+                          CONCAT(UPPER(LEFT(SUBSTRING_INDEX(category, ' ', 1), 1)),
+                                 LOWER(SUBSTRING(SUBSTRING_INDEX(category, ' ', 1), 2)))
+                       )
+                    ),
+                    IF(LOCATE(' ', category) > 0, CONCAT(' ',
+                        IF(category = 'fdas', 
+                           UPPER(category),
+                           IF(CHAR_LENGTH(SUBSTRING_INDEX(category, ' ', -1)) <= 3,
+                              UPPER(SUBSTRING_INDEX(category, ' ', -1)),
+                              CONCAT(UPPER(LEFT(SUBSTRING_INDEX(category, ' ', -1), 1)),
+                                     LOWER(SUBSTRING(SUBSTRING_INDEX(category, ' ', -1), 2)))
+                           )
+                        )
+                    ), '')
+                )) AS category
+                FROM productcategory
+                ORDER BY category ASC;
+                "
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try

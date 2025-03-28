@@ -6,4 +6,10 @@
         Public Property Email As String
         Public Property Phone As Integer
     End Class
+
+    Public Class Brand
+        Public Property ID As String
+        Public Property Name As String
+    End Class
+
 End Namespace

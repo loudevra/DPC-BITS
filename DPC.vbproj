@@ -254,6 +254,9 @@
     <Compile Include="Components\ConfirmationModals\CancelSupplierAdding.xaml.vb">
       <DependentUpon>CancelSupplierAdding.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\AddBrand.xaml.vb">
+      <DependentUpon>AddBrand.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\AddRowPopout.xaml.vb">
       <DependentUpon>AddRowPopout.xaml</DependentUpon>
     </Compile>
@@ -285,6 +288,7 @@
       <DependentUpon>TopNavBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Data\Controllers\AuthController.vb" />
+    <Compile Include="Data\Controllers\BrandController.vb" />
     <Compile Include="Data\Controllers\EmployeeController.vb" />
     <Compile Include="Data\Controllers\CalendarController.vb" />
     <Compile Include="Data\Controllers\ManageProductsController.vb" />
@@ -329,6 +333,9 @@
     <Compile Include="Views\HRM\Employees\Employees\EmployeesView.xaml.vb">
       <DependentUpon>EmployeesView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Stocks\Suppliers\ManageBrands\ManageBrands.xaml.vb">
+      <DependentUpon>ManageBrands.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stocks\Warehouses\AddWarehouse.xaml.vb">
       <DependentUpon>AddWarehouse.xaml</DependentUpon>
     </Compile>
@@ -339,6 +346,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\ConfirmationModals\CancelSupplierAdding.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\AddBrand.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\AddNewSupplierForm.xaml">
@@ -523,6 +533,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HRM\Employees\Employees\EmployeesView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\Suppliers\ManageBrands\ManageBrands.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Stocks\Warehouses\AddWarehouse.xaml">
