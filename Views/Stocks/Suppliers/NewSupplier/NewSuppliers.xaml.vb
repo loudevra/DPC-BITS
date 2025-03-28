@@ -1,86 +1,126 @@
-﻿Imports System.Diagnostics.Metrics
+﻿Imports System.Collections.ObjectModel
+Imports System.Windows.Controls
 Imports MySql.Data.MySqlClient
-Namespace DPC.Views.Stocks.Supplier.NewSuppliers
 
+Namespace DPC.Views.Stocks.Supplier.NewSuppliers
     Public Class NewSuppliers
         Inherits Window
+
+        Private brandList As ObservableCollection(Of Brand)
+        Private selectedBrands As New ObservableCollection(Of Brand)
+
         Public Sub New()
             InitializeComponent()
-
-            Dim sidebar As New Components.Navigation.Sidebar()
-            SidebarContainer.Content = sidebar
-
-            ' Load Top Navigation Bar
-            Dim topNav As New Components.Navigation.TopNavBar()
-            TopNavBarContainer.Content = topNav
+            LoadBrands()
         End Sub
-        Private Sub BtnNext_Click(sender As Object, e As RoutedEventArgs)
-            InsertSupplierData()
 
-        End Sub
-        Private Sub InsertSupplierData()
-            Dim connectionString As String = "server=localhost;userid=root;password=;database=dpc"
+        ' Load brands from database
+        Private Sub LoadBrands()
+            brandList = New ObservableCollection(Of Brand)()
 
-
-            If String.IsNullOrWhiteSpace(CompanyRepresentative.Text) OrElse
-               String.IsNullOrWhiteSpace(Company.Text) OrElse
-               String.IsNullOrWhiteSpace(Phone.Text) OrElse
-               String.IsNullOrWhiteSpace(Email.Text) OrElse
-               String.IsNullOrWhiteSpace(CompanyAddress.Text) OrElse
-               String.IsNullOrWhiteSpace(City.Text) OrElse
-               String.IsNullOrWhiteSpace(Region.Text) OrElse
-               String.IsNullOrWhiteSpace(Country.Text) OrElse
-               String.IsNullOrWhiteSpace(PostalCode.Text) OrElse
-               String.IsNullOrWhiteSpace(TinId.Text) Then
-
-                MessageBox.Show("Please fill in all required fields!", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning)
-                Exit Sub
-            End If
-
-            Using conn As New MySqlConnection(connectionString)
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
                     conn.Open()
-
-                    Dim query As String = "INSERT INTO supplier (representative, companyName, phoneNumber, email, officeAddress, city, region, country, postalcode, tinId) 
-                                   VALUES (@representative, @companyName, @phoneNumber, @email, @officeAddress, @city, @region, @country, @postalcode, @tinId)"
-
+                    Dim query As String = "SELECT brandid, brandname FROM Brand;"
                     Using cmd As New MySqlCommand(query, conn)
-
-                        cmd.Parameters.AddWithValue("@representative", CompanyRepresentative.Text)
-                        cmd.Parameters.AddWithValue("@companyName", Company.Text)
-                        cmd.Parameters.AddWithValue("@phoneNumber", Phone.Text)
-                        cmd.Parameters.AddWithValue("@email", Email.Text)
-                        cmd.Parameters.AddWithValue("@officeAddress", CompanyAddress.Text)
-                        cmd.Parameters.AddWithValue("@city", City.Text)
-                        cmd.Parameters.AddWithValue("@region", Region.Text)
-                        cmd.Parameters.AddWithValue("@country", Country.Text)
-                        cmd.Parameters.AddWithValue("@postalcode", PostalCode.Text)
-                        cmd.Parameters.AddWithValue("@tinId", TinId.Text)
-
-
-                        cmd.ExecuteNonQuery()
-
-
-                        MessageBox.Show("Supplier added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            While reader.Read()
+                                brandList.Add(New Brand With {
+                                    .ID = reader.GetInt32("brandid"),
+                                    .Name = reader.GetString("brandname")
+                                })
+                            End While
+                        End Using
                     End Using
-
-                    Dim NewSupplierWindow As New Views.Stocks.Suppliers.ManageSuppliers.ManageSuppliers()
-                    NewSupplierWindow.Show()
-
-                    ' Close the current window where this UserControl is being used
-                    Dim currentWindow As Window = Window.GetWindow(Me)
-                    currentWindow?.Close()
-
-                Catch ex As MySqlException
-                    MessageBox.Show("Database Error: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
-
                 Catch ex As Exception
-                    MessageBox.Show("Unexpected Error: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    MessageBox.Show("Error loading brands: " & ex.Message)
                 End Try
             End Using
         End Sub
 
+        ' Handle text change for brand search
+        Private Sub TxtBrand_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim searchText = TxtBrand.Text.ToLower()
 
+            If String.IsNullOrWhiteSpace(searchText) Then
+                LstBrands.Visibility = Visibility.Collapsed
+                Return
+            End If
+
+            Dim filteredBrands = brandList.Where(Function(b) b.Name.ToLower().Contains(searchText)).ToList()
+
+            If filteredBrands.Any() Then
+                LstBrands.ItemsSource = filteredBrands
+                LstBrands.Visibility = Visibility.Visible
+            Else
+                LstBrands.Visibility = Visibility.Collapsed
+            End If
+        End Sub
+
+        ' Handle keydown events (Enter or Backspace)
+        Private Sub TxtBrand_KeyDown(sender As Object, e As KeyEventArgs)
+            If e.Key = Key.Enter AndAlso LstBrands.SelectedItem IsNot Nothing Then
+                AddBrandChip(LstBrands.SelectedItem)
+                TxtBrand.Clear()
+            ElseIf e.Key = Key.Back AndAlso String.IsNullOrEmpty(TxtBrand.Text) AndAlso selectedBrands.Count > 0 Then
+                RemoveLastChip()
+            End If
+        End Sub
+
+        ' Handle brand selection from ListBox
+        Private Sub LstBrands_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+            If LstBrands.SelectedItem IsNot Nothing Then
+                AddBrandChip(LstBrands.SelectedItem)
+                TxtBrand.Clear()
+                LstBrands.Visibility = Visibility.Collapsed
+            End If
+        End Sub
+
+        ' Add selected brand as a chip
+        Private Sub AddBrandChip(selectedBrand As Brand)
+            If Not selectedBrands.Any(Function(b) b.ID = selectedBrand.ID) Then
+                selectedBrands.Add(selectedBrand)
+
+                Dim chip As New Border With {
+                    .Background = Brushes.LightBlue,
+                    .CornerRadius = New CornerRadius(10),
+                    .Margin = New Thickness(5),
+                    .Padding = New Thickness(8),
+                    .Child = New TextBlock With {.Text = selectedBrand.Name}
+                }
+
+                AddHandler chip.MouseLeftButtonDown, Sub(sender, e)
+                                                         RemoveBrandChip(selectedBrand, chip)
+                                                     End Sub
+
+                ChipPanel.Children.Add(chip)
+            End If
+        End Sub
+
+        ' Remove the brand chip
+        Private Sub RemoveBrandChip(selectedBrand As Brand, chip As Border)
+            selectedBrands.Remove(selectedBrand)
+            ChipPanel.Children.Remove(chip)
+        End Sub
+
+        ' Remove the last brand chip
+        Private Sub RemoveLastChip()
+            If selectedBrands.Count > 0 Then
+                Dim lastBrand = selectedBrands.Last()
+                Dim chipToRemove = ChipPanel.Children.OfType(Of Border)().
+                                   FirstOrDefault(Function(b) CType(b.Child, TextBlock).Text = lastBrand.Name)
+
+                If chipToRemove IsNot Nothing Then
+                    ChipPanel.Children.Remove(chipToRemove)
+                    selectedBrands.Remove(lastBrand)
+                End If
+            End If
+        End Sub
+
+        ' Brand Class
+        Public Class Brand
+            Public Property ID As Integer
+            Public Property Name As String
+        End Class
     End Class
 End Namespace
-

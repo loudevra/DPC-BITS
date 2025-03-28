@@ -120,10 +120,39 @@
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Text="Brand/s:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                             </StackPanel>
-                            <Border Style="{StaticResource RoundedBorderStyle}">
-                                <!--Brand Value is here!-->
-                                <TextBox x:Name="TxtBrand" Style="{StaticResource RoundedTextboxStyle}"/>
-                            </Border>
+                            <StackPanel>
+                                <!-- Display Selected Brands as Chips -->
+                                <WrapPanel x:Name="ChipPanel" Margin="0,5,0,5" />
+
+                                <!-- Autocomplete TextBox for Brand Selection -->
+                                <Border Style="{StaticResource RoundedBorderStyle}">
+                                    <Grid>
+                                        <TextBox x:Name="TxtBrand"
+                     Style="{StaticResource RoundedTextboxStyle}"
+                     TextChanged="TxtBrand_TextChanged"
+                     KeyDown="TxtBrand_KeyDown"
+                     VerticalAlignment="Center"
+                      />
+
+                                        <!-- Autocomplete ListBox -->
+                                        <ListBox x:Name="LstBrands"
+                     Visibility="Collapsed"
+                     Background="White"
+                     BorderBrush="LightGray"
+                     BorderThickness="1"
+                     MaxHeight="150"
+                     Margin="0,35,0,0"
+                     SelectionChanged="LstBrands_SelectionChanged">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Name}" Padding="8"/>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+
                         </StackPanel>
 
                         <StackPanel Grid.Row="5" Margin="0,10">
@@ -432,7 +461,7 @@
                     </UniformGrid>
 
                     <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="20">
-                        <Button x:Name="btnNext" Background="#52C69D" Width="161" Height="40" Margin="5,0,110,0" BorderThickness="0"  Click="BtnNext_Click">
+                        <Button x:Name="btnNext" Background="#52C69D" Width="161" Height="40" Margin="5,0,110,0" BorderThickness="0">
                             <Button.Style>
                                 <Style TargetType="Button">
                                     <Setter Property="Template">
