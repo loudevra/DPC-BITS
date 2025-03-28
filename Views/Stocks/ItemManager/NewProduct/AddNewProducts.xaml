@@ -358,10 +358,9 @@
                                 </StackPanel>
                             </Border>
 
-                                <StackPanel x:Name="MainContainer" Background="white">
-                                    <!-- Other UI elements -->
-                                </StackPanel>
-
+                            <StackPanel x:Name="MainContainer" Background="white">
+                                <!-- Other UI elements -->
+                            </StackPanel>
                         </StackPanel>
 
                         <Button Background="Transparent" HorizontalAlignment="Right" BorderThickness="0" Margin="0,15,0,0" x:Name="btnAddProduct"  Click="BtnAddProduct_Click">

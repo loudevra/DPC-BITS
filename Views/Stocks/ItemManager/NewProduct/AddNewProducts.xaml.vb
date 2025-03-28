@@ -85,7 +85,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         ' Start of inserting function for add product button
         Private Sub BtnAddProduct_Click(sender As Object, e As RoutedEventArgs)
             ProductController.InsertNewProduct(
-                TxtProductName, TxtProductCode, ComboBoxCategory, ComboBoxSubCategory,
+                TxtProductName, ComboBoxCategory, ComboBoxSubCategory,
                 ComboBoxWarehouse, TxtRetailPrice, TxtPurchaseOrder, TxtDefaultTax,
                 TxtDiscountRate, TxtStockUnits, TxtAlertQuantity, ComboBoxMeasurementUnit,
                 TxtDescription, SingleDatePicker, ProductController.SerialNumbers)

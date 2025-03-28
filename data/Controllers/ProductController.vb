@@ -144,49 +144,88 @@ Namespace DPC.Data.Controllers
             End Using
         End Sub
 
-        Public Shared Sub InsertNewProduct(ProductName As TextBox, ProductCode As TextBox,
-                                    Category As ComboBox, SubCategory As ComboBox, Warehouse As ComboBox,
-                                    RetailPrice As TextBox, PurchaseOrder As TextBox, DefaultTax As TextBox,
-                                    DiscountRate As TextBox, StockUnits As TextBox, AlertQuantity As TextBox,
-                                    MeasurementUnit As ComboBox, Description As TextBox, ValidDate As DatePicker,
-                                    SerialNumbers As List(Of TextBox))
+        ' Function to generate ProductCode in format 20MMDDYYYYXXXX
+        Private Shared Function GenerateProductCode() As String
+            Dim prefix As String = "20"
+            Dim datePart As String = DateTime.Now.ToString("MMddyyyy") ' MMDDYYYY format
+            Dim counter As Integer = GetNextProductCounter(datePart)
+
+            ' Format counter to be 4 digits (e.g., 0001, 0025, 0150)
+            Dim counterPart As String = counter.ToString("D4")
+
+            ' Concatenate to get full ProductCode
+            Return prefix & datePart & counterPart
+        End Function
+
+
+        ' Function to get the next Product counter (last 4 digits) with reset condition
+        Private Shared Function GetNextProductCounter(datePart As String) As Integer
+            Dim query As String = "SELECT MAX(CAST(SUBSTRING(ProductCode, 11, 4) AS UNSIGNED)) FROM storedproduct " &
+                  "WHERE ProductCode LIKE '20" & datePart & "%'"
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        Dim result As Object = cmd.ExecuteScalar()
+
+                        ' If no previous records exist for today, start with 0001
+                        If result IsNot DBNull.Value AndAlso result IsNot Nothing Then
+                            Return Convert.ToInt32(result) + 1
+                        Else
+                            Return 1
+                        End If
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show("Error generating Product Code: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return 1
+                End Try
+            End Using
+        End Function
+
+        Public Shared Sub InsertNewProduct(ProductName As TextBox,
+                             Category As ComboBox, SubCategory As ComboBox, Warehouse As ComboBox,
+                             RetailPrice As TextBox, PurchaseOrder As TextBox, DefaultTax As TextBox,
+                             DiscountRate As TextBox, StockUnits As TextBox, AlertQuantity As TextBox,
+                             MeasurementUnit As ComboBox, Description As TextBox, ValidDate As DatePicker,
+                             SerialNumbers As List(Of TextBox))
 
             If String.IsNullOrWhiteSpace(ProductName.Text) OrElse
-       String.IsNullOrWhiteSpace(ProductCode.Text) OrElse
-       Category.SelectedItem Is Nothing OrElse
-       Warehouse.SelectedItem Is Nothing OrElse
-       String.IsNullOrWhiteSpace(RetailPrice.Text) OrElse
-       String.IsNullOrWhiteSpace(PurchaseOrder.Text) OrElse
-       String.IsNullOrWhiteSpace(DefaultTax.Text) OrElse
-       String.IsNullOrWhiteSpace(DiscountRate.Text) OrElse
-       String.IsNullOrWhiteSpace(StockUnits.Text) OrElse
-       String.IsNullOrWhiteSpace(AlertQuantity.Text) OrElse
-       MeasurementUnit.SelectedItem Is Nothing OrElse
-       String.IsNullOrWhiteSpace(Description.Text) OrElse
-       ValidDate.SelectedDate Is Nothing OrElse
-       SerialNumbers.Any(Function(txt) String.IsNullOrWhiteSpace(txt.Text)) Then
+                Category.SelectedItem Is Nothing OrElse
+                Warehouse.SelectedItem Is Nothing OrElse
+                String.IsNullOrWhiteSpace(RetailPrice.Text) OrElse
+                String.IsNullOrWhiteSpace(PurchaseOrder.Text) OrElse
+                String.IsNullOrWhiteSpace(DefaultTax.Text) OrElse
+                String.IsNullOrWhiteSpace(DiscountRate.Text) OrElse
+                String.IsNullOrWhiteSpace(StockUnits.Text) OrElse
+                String.IsNullOrWhiteSpace(AlertQuantity.Text) OrElse
+                MeasurementUnit.SelectedItem Is Nothing OrElse
+                String.IsNullOrWhiteSpace(Description.Text) OrElse
+                ValidDate.SelectedDate Is Nothing OrElse
+                SerialNumbers.Any(Function(txt) String.IsNullOrWhiteSpace(txt.Text)) Then
 
                 MessageBox.Show("Please fill in all required fields!", "Input Error", MessageBoxButton.OK)
                 Exit Sub
             End If
 
             Try
+                Dim productCode As String = GenerateProductCode()
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
                     Using transaction = conn.BeginTransaction()
                         ' Insert into storedproduct table
                         Dim query1 As String = "INSERT INTO storedproduct 
-                                        (ProductID, ProductName, ProductCode, Category, SubCategory, Warehouse,
-                                        RetailPrice, PurchaseOrder, DefaultTax, DiscountRate, StockUnits,
-                                        AlertQuantity, MeasurementUnit, Description, DateAdded)
-                                        VALUES 
-                                        (DEFAULT, @ProductName, @ProductCode, @Category, @SubCategory,
-                                        @Warehouse, @RetailPrice, @PurchaseOrder, @DefaultTax, @DiscountRate,
-                                        @StockUnits, @AlertQuantity, @MeasurementUnit, @Description, @DateAdded);"
+                                 (ProductID, ProductName, ProductCode, Category, SubCategory, Warehouse,
+                                 RetailPrice, PurchaseOrder, DefaultTax, DiscountRate, StockUnits,
+                                 AlertQuantity, MeasurementUnit, Description, DateAdded)
+                                 VALUES 
+                                 (DEFAULT, @ProductName, @ProductCode, @Category, @SubCategory,
+                                 @Warehouse, @RetailPrice, @PurchaseOrder, @DefaultTax, @DiscountRate,
+                                 @StockUnits, @AlertQuantity, @MeasurementUnit, @Description, @DateAdded);"
 
                         Using cmd1 As New MySqlCommand(query1, conn, transaction)
                             cmd1.Parameters.AddWithValue("@ProductName", ProductName.Text)
-                            cmd1.Parameters.AddWithValue("@ProductCode", ProductCode.Text)
+                            cmd1.Parameters.AddWithValue("@ProductCode", productCode)
 
                             Dim selectedCategoryItem As ComboBoxItem = TryCast(Category.SelectedItem, ComboBoxItem)
                             If selectedCategoryItem IsNot Nothing Then
@@ -237,7 +276,7 @@ Namespace DPC.Data.Controllers
                             End Using
 
                             transaction.Commit()
-                            MessageBox.Show($"Product {ProductName.Text} has been inserted successfully.")
+                            MessageBox.Show($"Product {ProductName.Text} with Product Code {productCode} has been inserted successfully.")
                         End Using
                     End Using
                 End Using
