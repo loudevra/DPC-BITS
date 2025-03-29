@@ -121,35 +121,36 @@
                                 <TextBlock Text="Brand/s:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                             </StackPanel>
                             <StackPanel>
+                                <!-- Display Selected Brands as Chips -->
+                                <WrapPanel x:Name="ChipPanel" Margin="0,5,0,5" />
+
                                 <!-- Autocomplete TextBox for Brand Selection -->
                                 <Border Style="{StaticResource RoundedBorderStyle}">
                                     <Grid>
                                         <TextBox x:Name="TxtBrand"
-                                             Style="{StaticResource RoundedTextboxStyle}"
-                                             TextChanged="TxtBrand_TextChanged"
-                                             KeyDown="TxtBrand_KeyDown"
-                                             VerticalAlignment="Top"
-                                              />
+                     Style="{StaticResource RoundedTextboxStyle}"
+                     TextChanged="TxtBrand_TextChanged"
+                     KeyDown="TxtBrand_KeyDown"
+                     VerticalAlignment="Center"
+                      />
+
+                                        <!-- Autocomplete ListBox -->
+                                        <ListBox x:Name="LstBrands"
+                     Visibility="Collapsed"
+                     Background="White"
+                     BorderBrush="LightGray"
+                     BorderThickness="1"
+                     MaxHeight="150"
+                     Margin="0,35,0,0"
+                     SelectionChanged="LstBrands_SelectionChanged">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Name}" Padding="8"/>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
                                     </Grid>
                                 </Border>
-                                <!-- Autocomplete ListBox -->
-                                <ListBox x:Name="LstBrands"
-                                      Visibility="Collapsed"
-                                      Background="White"
-                                      BorderBrush="LightGray"
-                                      BorderThickness="1"
-                                      MaxHeight="150"
-                                      Margin="0,0,0,0"
-                                      SelectionChanged="LstBrands_SelectionChanged">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Name}" Padding="8"/>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
-
-                                <!-- Display Selected Brands as Chips -->
-                                <WrapPanel x:Name="ChipPanel" Margin="0,5,0,5" />
                             </StackPanel>
 
                         </StackPanel>
@@ -171,34 +172,34 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-
-                                <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                        <TextBlock Text="City:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                                    </StackPanel>
-                                    <Border Style="{StaticResource RoundedBorderStyle}">
-                                        <!--City Value is here!-->
-                                        <TextBox x:Name="TxtCity" Style="{StaticResource RoundedTextboxStyle}"/>
-                                    </Border>
+                            
+                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <TextBlock Text="City:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                                 </StackPanel>
-                                <StackPanel Grid.Column="1"  Margin="5,0,5,0">
-                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                        <TextBlock Text="Region:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                                    </StackPanel>
-                                    <Border Style="{StaticResource RoundedBorderStyle}">
-                                        <!--Region Value is here!-->
-                                        <TextBox x:Name="TxtRegion" Style="{StaticResource RoundedTextboxStyle}"/>
-                                    </Border>
+                                <Border Style="{StaticResource RoundedBorderStyle}">
+                                    <!--City Value is here!-->
+                                    <TextBox x:Name="TxtCity" Style="{StaticResource RoundedTextboxStyle}"/>
+                                </Border>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1"  Margin="5,0,5,0">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <TextBlock Text="Region:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                                 </StackPanel>
-                                <StackPanel Grid.Column="2" Margin="10,0,0,0">
-                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                        <TextBlock Text="Country:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                                    </StackPanel>
-                                    <Border Style="{StaticResource RoundedBorderStyle}">
-                                        <!--Country Value is here!-->
-                                        <TextBox x:Name="TxtCountry" Style="{StaticResource RoundedTextboxStyle}"/>
-                                    </Border>
+                                <Border Style="{StaticResource RoundedBorderStyle}">
+                                    <!--Region Value is here!-->
+                                    <TextBox x:Name="TxtRegion" Style="{StaticResource RoundedTextboxStyle}"/>
+                                </Border>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Margin="10,0,0,0">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <TextBlock Text="Country:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                                 </StackPanel>
+                                <Border Style="{StaticResource RoundedBorderStyle}">
+                                    <!--Country Value is here!-->
+                                    <TextBox x:Name="TxtCountry" Style="{StaticResource RoundedTextboxStyle}"/>
+                                </Border>
+                            </StackPanel>
                             </Grid>
                         </StackPanel>
 
@@ -231,7 +232,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Grid.Column="2">
-                                    <Button Background="Transparent" HorizontalAlignment="Right" BorderThickness="0" VerticalAlignment="Center" Click="BtnAddSupplier">
+                                    <Button Background="Transparent" HorizontalAlignment="Right" BorderThickness="0" x:Name="btnAdd" VerticalAlignment="Center">
                                         <Border Style="{StaticResource RoundedBorderStyle}" Padding="1" Background="#52C69D" BorderBrush="#52C69D">
                                             <StackPanel Orientation="Horizontal" Background="#52C69D" Margin="10,0,10,0">
                                                 <TextBlock Text="Add" Foreground="White" VerticalAlignment="Center" Margin="50,5"/>
@@ -242,6 +243,242 @@
                             </Grid>
                         </StackPanel>
                     </Grid>
+
+                    <UniformGrid Grid.Row="2" Columns="1" Margin="20" HorizontalAlignment="Center" Width="950">
+                        <StackPanel>
+                            <Label Content="Company Representative:" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747" Width="862"/>
+                            <TextBox x:Name="CompanyRepresentative" Height="42" BorderThickness="2" BorderBrush="#474747" Width="858">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+                                        <Setter Property="Control.Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="TextBox">
+                                                    <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White">
+                                                        <ScrollViewer x:Name="PART_ContentHost"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                        </StackPanel>
+
+
+                        <StackPanel>
+                            <Label Content="Company:" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747" Width="856"/>
+                            <TextBox x:Name="Company" Height="42" BorderThickness="2" BorderBrush="#474747" Width="856">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+
+
+                                        <Setter Property="Control.Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="TextBox">
+                                                    <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White">
+                                                        <ScrollViewer x:Name="PART_ContentHost"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                        </StackPanel>
+
+
+                        <StackPanel>
+                            <Label Content="Phone" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747" Width="857"/>
+                            <TextBox x:Name="Phone" Height="42" BorderThickness="2" BorderBrush="#474747" Width="860">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+
+
+                                        <Setter Property="Control.Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="TextBox">
+                                                    <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White">
+                                                        <ScrollViewer x:Name="PART_ContentHost"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                        </StackPanel>
+
+
+
+                        <StackPanel>
+                            <Label Content="Email" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747" Width="856"/>
+                            <TextBox x:Name="Email" Height="42" BorderThickness="2" BorderBrush="#474747" Width="858">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+
+
+                                        <Setter Property="Control.Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="TextBox">
+                                                    <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White">
+                                                        <ScrollViewer x:Name="PART_ContentHost"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                        </StackPanel>
+
+
+                        <StackPanel>
+                            <Label Content="Company Address:" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747" Width="862"/>
+                            <TextBox x:Name="CompanyAddress" Height="42" BorderThickness="2" BorderBrush="#474747" Width="863">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+
+
+                                        <Setter Property="Control.Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="TextBox">
+                                                    <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White">
+                                                        <ScrollViewer x:Name="PART_ContentHost"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                        </StackPanel>
+
+
+                        <StackPanel Orientation="Horizontal">
+                            <!-- City Field -->
+                            <StackPanel Width="310">
+                                <Label Content="City:" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747" Width="225"/>
+                                <TextBox x:Name="City" Height="42" BorderThickness="2" BorderBrush="#474747" Width="225">
+                                    <TextBox.Style>
+                                        <Style TargetType="{x:Type TextBox}">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type TextBox}">
+                                                        <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White">
+                                                            <ScrollViewer x:Name="PART_ContentHost"/>
+                                                            <!-- 'PART_ContentHost' is the correct name required by WPF -->
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </TextBox.Style>
+                                </TextBox>
+                            </StackPanel>
+
+
+                            <!-- Region Field -->
+                            <StackPanel Width="310" Margin="10,0,0,0">
+                                <Label Content="Region:" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747" Width="260"/>
+                                <TextBox x:Name="Region" Height="42" BorderThickness="2" BorderBrush="#474747" Width="258">
+                                    <TextBox.Style>
+                                        <Style TargetType="TextBox">
+
+                                            <Setter Property="Control.Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="TextBox">
+                                                        <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White">
+                                                            <ScrollViewer x:Name="PART_ContentHost"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </TextBox.Style>
+                                </TextBox>
+                            </StackPanel>
+
+                            <!-- Country Field -->
+                            <StackPanel Width="310" Margin="10,0,0,0">
+                                <Label Content="Country:" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747" Width="235"/>
+                                <TextBox  x:Name="Country" Height="42" BorderThickness="2" BorderBrush="#474747" Width="226">
+                                    <TextBox.Style>
+                                        <Style TargetType="{x:Type TextBox}">
+
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type TextBox}">
+                                                        <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White">
+                                                            <ScrollViewer x:Name="PART_ContentHost"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </TextBox.Style>
+                                </TextBox>
+                            </StackPanel>
+                        </StackPanel>
+
+
+                        <StackPanel>
+                            <Label Content="Postal Code}:" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747" Width="865"/>
+                            <TextBox x:Name="PostalCode" Height="42" BorderThickness="2" BorderBrush="#474747" Width="868">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+                                        <Setter Property="Control.Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="TextBox">
+                                                    <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White">
+                                                        <ScrollViewer x:Name="PART_ContentHost"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                        </StackPanel>
+
+                        <StackPanel>
+                            <Label Content="TIN ID:" FontWeight="Medium" FontSize="12" FontFamily="Lexend" Foreground="#474747" Width="865"/>
+                            <TextBox x:Name="TinId" Height="42" BorderThickness="2" BorderBrush="#474747" Width="869">
+                                <TextBox.Style>
+                                    <Style TargetType="TextBox">
+                                        <Setter Property="Control.Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="TextBox">
+                                                    <Border CornerRadius="18" BorderThickness="2" BorderBrush="#474747" Background="White">
+                                                        <ScrollViewer x:Name="PART_ContentHost"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </TextBox.Style>
+                            </TextBox>
+                        </StackPanel>
+                    </UniformGrid>
+
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="20">
+                        <Button x:Name="btnNext" Background="#52C69D" Width="161" Height="40" Margin="5,0,110,0" BorderThickness="0">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border CornerRadius="18" Background="{TemplateBinding Background}">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                            <TextBlock Text="Add" Foreground="White" FontFamily="Lexend" FontSize="10"/>
+                        </Button>
+                    </StackPanel>
+
                 </Grid>
             </ScrollViewer>
         </Grid>

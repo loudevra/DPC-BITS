@@ -6,7 +6,7 @@ Namespace DPC.Data.Controllers
     Public Class BrandController
         Public Shared Function GetBrands() As ObservableCollection(Of Brand)
             Dim brandList As New ObservableCollection(Of Brand)()
-            Dim query As String = "SELECT brandID, brandname FROM Brand;"
+            Dim query As String = "SELECT brandid, brandname FROM Brand;"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try

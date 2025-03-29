@@ -67,18 +67,18 @@
 
                         <StackPanel Margin="0,10">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                <TextBlock Text="Brand:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                            </StackPanel>
-                            <!--Brand Value-->
-                            <ComboBox x:Name="ComboBoxBrand" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0"/>
-                        </StackPanel>
-
-                        <StackPanel Margin="0,10">
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Text="Supplier:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                             </StackPanel>
                             <!--Supplier Value-->
                             <ComboBox x:Name="ComboBoxSupplier" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,10">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Brand:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                            </StackPanel>
+                            <!--Brand Value-->
+                            <ComboBox x:Name="ComboBoxBrand" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0"/>
                         </StackPanel>
 
                         <StackPanel Margin="0,10">
@@ -99,6 +99,20 @@
                             <Border Style="{StaticResource RoundedBorderStyle}">
                                 <!--Product Name Value is here!-->
                                 <TextBox x:Name="TxtProductName" Style="{StaticResource RoundedTextboxStyle}"/>
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,10">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Product Code:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                            </StackPanel>
+                            <Border Style="{StaticResource RoundedBorderStyle}">
+                                <!--Product Code Value-->
+                                <TextBox x:Name="TxtProductCode"
+                                Style="{StaticResource RoundedTextboxStyle}"
+                                PreviewTextInput="IntegerOnlyTextInputHandler"
+                                DataObject.Pasting="IntegerOnlyPasteHandler"/>
                             </Border>
                         </StackPanel>
 

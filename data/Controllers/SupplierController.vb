@@ -7,134 +7,34 @@ Namespace DPC.Data.Controllers
         ' Fetch Supplier Data Using Connection Pooling
         Public Shared Function GetSuppliers() As ObservableCollection(Of Supplier)
             Dim supplierList As New ObservableCollection(Of Supplier)()
-            Dim query As String = "
-                    SELECT s.supplierID,
-                           s.supplierName,
-                           s.supplierCompany,
-                           CONCAT(s.officeAddress, ', ', s.city, ', ', s.region, ', ', s.country, ', ', s.postalCode) AS address,
-                           s.supplierEmail,
-                           s.supplierPhone,
-                           COALESCE(GROUP_CONCAT(b.brandName SEPARATOR ', '), '') AS Brands
-                    FROM supplier s
-                    LEFT JOIN SupplierBrand sb ON sb.supplierID = s.supplierID
-                    LEFT JOIN brand b ON b.brandID = sb.brandID
-                    GROUP BY s.supplierID, s.supplierName, s.supplierCompany, s.officeAddress, s.city, s.region, s.country, s.postalCode, s.supplierEmail, s.supplierPhone;
-                    "
+            Dim query As String = "SELECT supplierid, representative,
+                                           CONCAT(officeAddress, ', ', city, ', ', region, ', ', country, ', ', postalcode) AS address, 
+                                           email, phoneNumber 
+                                    FROM supplier;"
 
+            ' Always get a new connection from the pool
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
                     conn.Open()
                     Using cmd As New MySqlCommand(query, conn)
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
-                                ' Combine all brands into a single string
-                                Dim brandString As String = If(reader.IsDBNull(reader.GetOrdinal("Brands")), "No Brands", reader.GetString("Brands"))
-
                                 supplierList.Add(New Supplier With {
-                            .SupplierID = reader.GetString("supplierID"),
-                            .SupplierName = reader.GetString("supplierName"),
-                            .SupplierCompany = reader.GetString("supplierCompany"),
-                            .OfficeAddress = reader.GetString("address"),
-                            .SupplierEmail = reader.GetString("supplierEmail"),
-                            .SupplierPhone = reader.GetString("supplierPhone"),
-                            .BrandNames = brandString
-                        })
+                                    .ID = reader.GetInt32("supplierid"),
+                                    .Name = reader.GetString("representative"),
+                                    .Address = reader.GetString("address"),
+                                    .Email = reader.GetString("email"),
+                                    .Phone = reader.GetInt32("phoneNumber")
+                                })
                             End While
                         End Using
                     End Using
                 Catch ex As Exception
                     MessageBox.Show("Error fetching suppliers: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 End Try
-            End Using
+            End Using 'Connection is automatically returned to the pool
 
             Return supplierList
         End Function
-
-        ' Function to generate SupplierID in format 20MMDDYYYYXXXX
-        Private Shared Function GenerateSupplierID() As String
-            Dim prefix As String = "20"
-            Dim datePart As String = DateTime.Now.ToString("MMddyyyy") ' MMDDYYYY format
-            Dim counter As Integer = GetNextSupplierCounter(datePart)
-
-            ' Format counter to be 4 digits (e.g., 0001, 0025, 0150)
-            Dim counterPart As String = counter.ToString("D4")
-
-            ' Concatenate to get full SupplierID
-            Return prefix & datePart & counterPart
-        End Function
-
-        ' Function to get the next Supplier counter (last 4 digits) with reset condition
-        Private Shared Function GetNextSupplierCounter(datePart As String) As Integer
-            Dim query As String = "SELECT MAX(CAST(SUBSTRING(supplierID, 11, 4) AS UNSIGNED)) FROM supplier " &
-                           "WHERE supplierID LIKE '20" & datePart & "%'"
-
-            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                Try
-                    conn.Open()
-                    Using cmd As New MySqlCommand(query, conn)
-                        Dim result As Object = cmd.ExecuteScalar()
-
-                        ' If no previous records exist for today, start with 0001
-                        If result IsNot DBNull.Value AndAlso result IsNot Nothing Then
-                            Return Convert.ToInt32(result) + 1
-                        Else
-                            Return 1
-                        End If
-                    End Using
-                Catch ex As Exception
-                    MessageBox.Show("Error generating SupplierID: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
-                    Return 1
-                End Try
-            End Using
-        End Function
-
-        ' Insert Supplier Data using Parameters
-        Public Shared Sub InsertSupplier(supplierName As String, companyName As String, phone As String, email As String,
-                                  address As String, city As String, region As String, country As String,
-                                  postalCode As String, tinID As String, brandIDs As List(Of String))
-
-            Dim supplierID As String = GenerateSupplierID()
-
-            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                Try
-                    conn.Open()
-
-                    ' Insert into Supplier table
-                    Dim supplierQuery As String = "INSERT INTO supplier (supplierID, supplierName, supplierCompany, officeAddress, city, region, country, postalCode, supplierEmail, supplierPhone, tinID) " &
-                                           "VALUES (@SupplierID, @SupplierName, @CompanyName, @OfficeAddress, @City, @Region, @Country, @PostalCode, @Email, @PhoneNumber, @TINID);"
-
-                    Using cmd As New MySqlCommand(supplierQuery, conn)
-                        cmd.Parameters.AddWithValue("@SupplierID", supplierID)
-                        cmd.Parameters.AddWithValue("@SupplierName", supplierName)
-                        cmd.Parameters.AddWithValue("@CompanyName", companyName) ' Added companyName here
-                        cmd.Parameters.AddWithValue("@OfficeAddress", address)
-                        cmd.Parameters.AddWithValue("@City", city)
-                        cmd.Parameters.AddWithValue("@Region", region)
-                        cmd.Parameters.AddWithValue("@Country", country)
-                        cmd.Parameters.AddWithValue("@PostalCode", postalCode)
-                        cmd.Parameters.AddWithValue("@Email", email)
-                        cmd.Parameters.AddWithValue("@PhoneNumber", phone)
-                        cmd.Parameters.AddWithValue("@TINID", tinID)
-                        cmd.ExecuteNonQuery()
-                    End Using
-
-                    ' Insert into SupplierBrand table for each brand
-                    Dim brandQuery As String = "INSERT INTO SupplierBrand (SupplierID, BrandID) VALUES (@SupplierID, @BrandID);"
-                    For Each brandID As String In brandIDs
-                        Using cmdBrand As New MySqlCommand(brandQuery, conn)
-                            cmdBrand.Parameters.AddWithValue("@SupplierID", supplierID)
-                            cmdBrand.Parameters.AddWithValue("@BrandID", brandID)
-                            cmdBrand.ExecuteNonQuery()
-                        End Using
-                    Next
-
-                    MessageBox.Show("Supplier and associated brands inserted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
-
-                Catch ex As Exception
-                    MessageBox.Show("Error inserting supplier: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
-                End Try
-            End Using
-        End Sub
-
     End Class
 End Namespace
