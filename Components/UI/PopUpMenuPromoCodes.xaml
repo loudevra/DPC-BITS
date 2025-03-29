@@ -29,10 +29,10 @@
                 </StackPanel>
                 <StackPanel Margin="20,5,0,0">
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToNewInvoice">New Promo</Hyperlink>
+                        <Hyperlink Click="NavigateToAddPromoCode">New Promo</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToNewInvoice">Manage Promo</Hyperlink>
+                        <Hyperlink Click="NaviagateToManagePromoCodes">Manage Promo</Hyperlink>
                     </TextBlock>
                 </StackPanel>
             </StackPanel>

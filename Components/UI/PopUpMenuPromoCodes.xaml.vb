@@ -67,8 +67,27 @@ Namespace DPC.Components.UI
             ' popup.HorizontalOffset = horizontalOffset
             ' popup.VerticalOffset = verticalOffset
         End Sub
-        Private Sub NavigateToNewInvoice(sender As Object, e As RoutedEventArgs)
-            MessageBox.Show("Navigate to New Invoice", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+
+
+        Private Sub NavigateToAddPromoCode(sender As Object, e As RoutedEventArgs)
+            ' Open EmployeesView
+            Dim PromoCodeAddWindow As New Views.PromoCodes.AddPromoCode()
+            PromoCodeAddWindow.Show()
+
+            ' Close the current window where this UserControl is being used
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
+        End Sub
+
+
+        Private Sub NaviagateToManagePromoCodes(sender As Object, e As RoutedEventArgs)
+            ' Open EmployeesView
+            Dim PromoCodeManageWindow As New Views.PromoCodes.ManagePromoCodes()
+            PromoCodeManageWindow.Show()
+
+            ' Close the current window where this UserControl is being used
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
         End Sub
     End Class
 End Namespace
