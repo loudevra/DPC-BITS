@@ -1,13 +1,6 @@
 ﻿Imports System.Collections.ObjectModel
 Imports System.Windows.Controls
-Imports DPC.DPC.Data.Model
 Imports MySql.Data.MySqlClient
-Imports DPC.DPC.Data.Controllers
-
-Imports System.Windows
-Imports DPC.DPC.Components
-
-
 
 Namespace DPC.Views.Stocks.Supplier.NewSuppliers
     Public Class NewSuppliers
@@ -15,78 +8,11 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
 
         Private brandList As ObservableCollection(Of Brand)
         Private selectedBrands As New ObservableCollection(Of Brand)
-        Dim Brand As New Brand()
 
         Public Sub New()
             InitializeComponent()
-
-            Dim sidebar As New Components.Navigation.Sidebar()
-            SidebarContainer.Content = sidebar
-
-            ' Load Top Navigation Bar
-            Dim topNav As New Components.Navigation.TopNavBar()
-            TopNavBarContainer.Content = topNav
-
             LoadBrands()
         End Sub
-
-        Private Sub BtnAddSupplier(sender As Object, e As RoutedEventArgs)
-            Try
-                ' Collect input values
-                Dim supplierName As String = TxtRepresentative.Text.Trim()
-                Dim companyName As String = TxtCompany.Text.Trim()
-                Dim phone As String = TxtPhone.Text.Trim()
-                Dim email As String = TxtEmail.Text.Trim()
-                Dim address As String = TxtAddress.Text.Trim()
-                Dim city As String = TxtCity.Text.Trim()
-                Dim region As String = TxtRegion.Text.Trim()
-                Dim country As String = TxtCountry.Text.Trim()
-                Dim postalCode As String = TxtPostalCode.Text.Trim()
-                Dim tinID As String = TxtTINID.Text.Trim()
-
-                ' Validate fields
-                If String.IsNullOrWhiteSpace(supplierName) OrElse String.IsNullOrWhiteSpace(companyName) OrElse
-           String.IsNullOrWhiteSpace(email) OrElse String.IsNullOrWhiteSpace(phone) Then
-                    MessageBox.Show("Please fill in all required fields.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
-                    Return
-                End If
-
-                ' Collect selected brand IDs from the chips
-                Dim brandIDs As List(Of String) = selectedBrands.Select(Function(b) b.ID.ToString()).ToList()
-
-                ' Call the InsertSupplier function
-                SupplierController.InsertSupplier(supplierName, companyName, phone, email, address, city, region, country, postalCode, tinID, brandIDs)
-
-                ' Clear form and reset fields after successful insertion
-                ClearForm()
-
-            Catch ex As Exception
-                MessageBox.Show("An error occurred while adding the supplier: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
-            End Try
-        End Sub
-
-        ' Clear input fields and chips
-        Private Sub ClearForm()
-            TxtRepresentative.Clear()
-            TxtCompany.Clear()
-            TxtPhone.Clear()
-            TxtEmail.Clear()
-            TxtAddress.Clear()
-            TxtCity.Clear()
-            TxtRegion.Clear()
-            TxtCountry.Clear()
-            TxtPostalCode.Clear()
-            TxtTINID.Clear()
-            TxtBrand.Clear()
-
-            ' Clear Chips
-            ChipPanel.Children.Clear()
-            selectedBrands.Clear()
-
-            MessageBox.Show("Form cleared!", "Info", MessageBoxButton.OK, MessageBoxImage.Information)
-        End Sub
-
-
 
         ' Load brands from database
         Private Sub LoadBrands()
@@ -121,10 +47,7 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
                 Return
             End If
 
-            Dim filteredBrands = brandList.
-                          Where(Function(b) b.Name.ToLower().Contains(searchText) AndAlso
-                                           Not selectedBrands.Any(Function(sb) sb.ID = b.ID)).
-                          ToList()
+            Dim filteredBrands = brandList.Where(Function(b) b.Name.ToLower().Contains(searchText)).ToList()
 
             If filteredBrands.Any() Then
                 LstBrands.ItemsSource = filteredBrands
@@ -150,12 +73,8 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
                 AddBrandChip(LstBrands.SelectedItem)
                 TxtBrand.Clear()
                 LstBrands.Visibility = Visibility.Collapsed
-
-                ' Clear selection to allow selecting the same item again
-                LstBrands.SelectedItem = Nothing
             End If
         End Sub
-
 
         ' Add selected brand as a chip
         Private Sub AddBrandChip(selectedBrand As Brand)
@@ -182,11 +101,7 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
         Private Sub RemoveBrandChip(selectedBrand As Brand, chip As Border)
             selectedBrands.Remove(selectedBrand)
             ChipPanel.Children.Remove(chip)
-
-            ' Refresh the ListBox to show the removed brand again if it matches the search
-            TxtBrand_TextChanged(Nothing, Nothing)
         End Sub
-
 
         ' Remove the last brand chip
         Private Sub RemoveLastChip()
@@ -201,5 +116,11 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
                 End If
             End If
         End Sub
+
+        ' Brand Class
+        Public Class Brand
+            Public Property ID As Integer
+            Public Property Name As String
+        End Class
     End Class
 End Namespace
