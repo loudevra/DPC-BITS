@@ -9,136 +9,6 @@
        Background="#D9D9D9"
        Title="NewSuppliers" Height="800" Width="1200"
        WindowStartupLocation="CenterScreen">
-    
-    <Window.Resources>
-        <Style x:Key="AddNewButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="120"/>
-            <Setter Property="Height" Value="30"/>
-            <Setter Property="Background" Value="#D9D9D9"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="BorderBrush" Value="#474747"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="15" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- Border Style -->
-        <Style x:Key="RoundedBorderStyle" TargetType="Border">
-            <Setter Property="CornerRadius" Value="15"/>
-        </Style>
-
-        <!-- Button Style -->
-        <Style x:Key="RoundedButtonStyle" TargetType="Button">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Style="{StaticResource RoundedBorderStyle}" Background="{TemplateBinding Background}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="RoundedComboBoxStyle" TargetType="ComboBox">
-            <Setter Property="BorderBrush" Value="Black"/>
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="FontFamily" Value="Lexend"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ComboBox">
-                        <Border Style="{StaticResource RoundedBorderStyle}" 
-                    Background="{TemplateBinding Background}" 
-                    BorderBrush="{TemplateBinding BorderBrush}" 
-                    BorderThickness="1">
-                            <Grid>
-                                <!-- Define two columns, Content on left, Arrow on right -->
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="35" />
-                                </Grid.ColumnDefinitions>
-
-                                <!-- Selected Item Content -->
-                                <ContentPresenter Name="ContentSite"
-                                      IsHitTestVisible="False"
-                                      Content="{TemplateBinding SelectionBoxItem}"
-                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                      VerticalAlignment="Center"
-                                      Margin="10,0,5,0"/>
-
-                                <!-- Arrow Button (Right) -->
-                                <ToggleButton Name="ToggleButton" 
-                                  Grid.Column="1"
-                                  Focusable="False"
-                                  IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
-                                  Background="Transparent"
-                                  BorderBrush="Transparent"
-                                  BorderThickness="0"
-                                  HorizontalAlignment="Right"
-                                  VerticalAlignment="Center"
-                                  Margin="0,0,5,0">
-                                    <ToggleButton.Style>
-                                        <Style TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
-                                            <Setter Property="Background" Value="Transparent"/>
-                                            <Setter Property="BorderBrush" Value="Transparent"/>
-                                            <Setter Property="Padding" Value="0"/>
-                                            <Setter Property="OverridesDefaultStyle" Value="True"/>
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="ToggleButton">
-                                                        <Border Background="Transparent" BorderThickness="0">
-                                                            <materialDesign:PackIcon Kind="ChevronDown" Width="20" Height="20" Foreground="Black"/>
-                                                        </Border>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </ToggleButton.Style>
-                                </ToggleButton>
-
-                                <!-- Dropdown Items -->
-                                <Popup Name="Popup"
-                           Placement="Bottom"
-                           IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
-                           AllowsTransparency="True"
-                           Focusable="False"
-                           MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-                                    <!-- MATCH WIDTH -->
-                                    <Border Style="{StaticResource RoundedBorderStyle}" 
-                                Background="White" 
-                                BorderBrush="Black"
-                                Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-                                        <!-- MATCH WIDTH -->
-                                        <ScrollViewer>
-                                            <StackPanel>
-                                                <ItemsPresenter/>
-                                            </StackPanel>
-                                        </ScrollViewer>
-                                    </Border>
-                                </Popup>
-                            </Grid>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="RoundedGridStyle" TargetType="Border">
-            <Setter Property="CornerRadius" Value="20"/>
-            <Setter Property="BorderBrush" Value="Black"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="Padding" Value="5"/>
-        </Style>
-
-    </Window.Resources>
 
     <Grid>
         <!-- Define Sidebar and Main Content Columns -->
@@ -194,7 +64,6 @@
                                    Foreground="#474747"
                                    VerticalAlignment="Center"/>
                         <Button x:Name="btnAddNew"
-                                Style="{StaticResource AddNewButtonStyle}"
                                 Margin="20,0,0,0">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="Plus" Width="25" Height="25" Foreground="#474747"/>
@@ -229,7 +98,7 @@
 
                             <!-- Right Controls -->
                             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                                <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200">
+                                <Border  MinWidth="200">
                                     <Grid>
                                         <TextBox BorderThickness="0" Background="Transparent" FontFamily="Lexend"/>
                                         <materialDesign:PackIcon Kind="Magnify" Width="20" Height="20" Foreground="Black" HorizontalAlignment="Right" Margin="0,0,10,0"/>
@@ -240,15 +109,15 @@
                     </Border>
 
                     <!-- DataGrid Section -->
-                    <StackPanel Grid.Row="2" Margin="0,10">
+                    <StackPanel Grid.Row="2">
                         <DataGrid Name="dataGrid"
-                                  AutoGenerateColumns="False"
-                                  CanUserAddRows="False"
-                                  HeadersVisibility="Column"
-                                  GridLinesVisibility="None"
-                                  RowBackground="White"
-                                  AlternatingRowBackground="WhiteSmoke"
-                                  BorderThickness="0">
+                            AutoGenerateColumns="False"
+                            CanUserAddRows="False"
+                            HeadersVisibility="Column"
+                            GridLinesVisibility="None"
+                            RowBackground="White"
+                            AlternatingRowBackground="WhiteSmoke"
+                            BorderThickness="0">
                             <DataGrid.RowStyle>
                                 <Style TargetType="DataGridRow">
                                     <Setter Property="Margin" Value="0,5,0,5"/>
@@ -269,11 +138,16 @@
                             </DataGrid.ColumnHeaderStyle>
 
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="#" Binding="{Binding ID}" Width="Auto"/>
-                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto"/>
-                                <DataGridTextColumn Header="Address" Binding="{Binding Address}" Width="Auto"/>
-                                <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="Auto"/>
-                                <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" Width="Auto"/>
+                                <DataGridTextColumn Header="#" Binding="{Binding SupplierID}" Width="Auto"/>
+                                <DataGridTextColumn Header="Name" Binding="{Binding SupplierName}" Width="Auto"/>
+                                <DataGridTextColumn Header="Company" Binding="{Binding SupplierCompany}" Width="Auto"/>
+                                <DataGridTextColumn Header="Address" Binding="{Binding OfficeAddress}" Width="Auto"/>
+                                <DataGridTextColumn Header="Email" Binding="{Binding SupplierEmail}" Width="Auto"/>
+                                <DataGridTextColumn Header="Phone" Binding="{Binding SupplierPhone}" Width="Auto"/>
+
+                                <!-- Brands Column Without Converter -->
+                                <DataGridTextColumn Header="Brands" Binding="{Binding BrandNames}" Width="Auto"/>
+
                                 <DataGridTemplateColumn Header="Settings" Width="*">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>

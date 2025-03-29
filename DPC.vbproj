@@ -303,6 +303,7 @@
     <Compile Include="Data\Controllers\WarehouseController.vb" />
     <Compile Include="Data\Converters\PasswordMaskingBehavior.vb" />
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
+    <Compile Include="Data\Converters\StringJoinConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
     <Compile Include="Data\Helpers\EmailService.vb" />
     <Compile Include="Data\Helpers\EnvLoader.vb" />
