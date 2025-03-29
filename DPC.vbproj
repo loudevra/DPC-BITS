@@ -321,12 +321,6 @@
     <Compile Include="SplashScreen.xaml.vb">
       <DependentUpon>SplashScreen.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Accounts\Accounts\ManageAccounts\AddAccount.xaml.vb">
-      <DependentUpon>AddAccount.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Accounts\Accounts\ManageAccounts\ManageAccounts.xaml.vb">
-      <DependentUpon>ManageAccounts.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Auth\ForgotPassword.xaml.vb">
       <DependentUpon>ForgotPassword.xaml</DependentUpon>
     </Compile>
@@ -535,12 +529,6 @@
     <Page Include="SplashScreen.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Accounts\Accounts\ManageAccounts\AddAccount.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Accounts\Accounts\ManageAccounts\ManageAccounts.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Auth\ForgotPassword.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -688,6 +676,7 @@
     <Folder Include="Config\" />
     <Folder Include="Installer\" />
     <Folder Include="Themes\" />
+    <Folder Include="Views\Accounts\Accounts\ManageAccounts\" />
     <Folder Include="Views\HRM\Departments\" />
     <Folder Include="Views\HRM\Employees\Attendance\" />
     <Folder Include="Views\HRM\Employees\Holidays\" />

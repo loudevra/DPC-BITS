@@ -68,12 +68,7 @@ Namespace DPC.Components.UI
             ' popup.VerticalOffset = verticalOffset
         End Sub
         Private Sub NavigateToManageAccounts(sender As Object, e As RoutedEventArgs)
-            Dim ManageAccounts As New Views.Accounts.Accounts.ManageAccounts.ManageAccounts()
-            ManageAccounts.Show()
 
-            ' Close the current window where this UserControl is being used
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
         End Sub
 
         Private Sub NavigateToNewInvoice(sender As Object, e As RoutedEventArgs)
