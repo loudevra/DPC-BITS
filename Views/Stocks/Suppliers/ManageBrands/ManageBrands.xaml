@@ -7,26 +7,25 @@
         xmlns:local="namespace:DPC.Views.Stocks.Suppliers.ManageBrands"
         mc:Ignorable="d"
        Background="#D9D9D9"
-       Title="NewSuppliers" Height="800" Width="1200"
+       Title="Manage Brands" Height="800" Width="1200"
        WindowStartupLocation="CenterScreen">
 
     <Grid>
-        <!-- Define Sidebar and Main Content Columns -->
+        <!-- Define Column Structure -->
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <!-- Sidebar -->
+            <ColumnDefinition Width="250"/>
+            <!-- Sidebar Width -->
             <ColumnDefinition Width="*"/>
             <!-- Main Content -->
         </Grid.ColumnDefinitions>
 
         <!-- Sidebar -->
         <Border Grid.Column="0"
-                x:Name="SidebarContainer"
-                Width="250"
-                Background="White"
-                BorderBrush="#E0E0E0"
-                BorderThickness="0,0,1,0"/>
-
+            Background="White"
+            BorderBrush="#E0E0E0"
+            BorderThickness="0,0,1,0">
+            <ContentControl x:Name="SidebarContainer"/>
+        </Border>
         <!-- Main Content Area -->
         <Grid Grid.Column="1">
             <!-- Define Rows for TopNavBar and Content -->
@@ -38,11 +37,12 @@
             </Grid.RowDefinitions>
 
             <!-- Top Navigation Bar -->
-            <Border x:Name="TopNavBarContainer"
-                    Grid.Row="0"
-                    Background="White"
-                    BorderBrush="#E0E0E0"
-                    BorderThickness="0,0,0,1"/>
+            <Border Grid.Row="0"
+                Background="White"
+                BorderBrush="#E0E0E0"
+                BorderThickness="0,0,0,1">
+                <ContentControl x:Name="TopNavBarContainer"/>
+            </Border>
 
             <!-- Main Content (ScrollViewer) -->
             <ScrollViewer Grid.Row="1"

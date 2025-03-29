@@ -25,7 +25,14 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Toggle.IsChecked = False
             VariationChecker(Toggle)
 
+            ProductController.GetBrands(ComboBoxBrand)
+
+            If ComboBoxBrand.SelectedItem IsNot Nothing Then
+                CategoryComboBox_SelectionChanged(ComboBoxBrand, Nothing)
+            End If
+
             ProductController.GetProductCategory(ComboBoxCategory)
+
 
             If ComboBoxCategory.SelectedItem IsNot Nothing Then
                 CategoryComboBox_SelectionChanged(ComboBoxCategory, Nothing)
@@ -86,7 +93,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         Private Sub BtnAddProduct_Click(sender As Object, e As RoutedEventArgs)
             ProductController.InsertNewProduct(
                 TxtProductName, ComboBoxCategory, ComboBoxSubCategory,
-                ComboBoxWarehouse, TxtRetailPrice, TxtPurchaseOrder, TxtDefaultTax,
+                ComboBoxWarehouse, ComboBoxBrand, ComboBoxSupplier, TxtRetailPrice, TxtPurchaseOrder, TxtDefaultTax,
                 TxtDiscountRate, TxtStockUnits, TxtAlertQuantity, ComboBoxMeasurementUnit,
                 TxtDescription, SingleDatePicker, ProductController.SerialNumbers)
 
@@ -166,6 +173,22 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 ComboBoxSubCategory.Items.Clear()
             End If
         End Sub
+
+        ' Handles the combobox for brands and suppliers
+        Private Sub ComboBoxBrand_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles ComboBoxBrand.SelectionChanged
+            Dim selectedBrandItem As ComboBoxItem = TryCast(ComboBoxBrand.SelectedItem, ComboBoxItem)
+
+            If selectedBrandItem IsNot Nothing AndAlso selectedBrandItem.Tag IsNot Nothing Then
+                Dim brandID As Integer = Convert.ToInt32(selectedBrandItem.Tag)
+                ProductController.GetSuppliersByBrand(brandID, ComboBoxSupplier)
+            Else
+                ComboBoxSupplier.Items.Clear()
+            End If
+        End Sub
+
+
+
+
 
         ' Handles the date picker component
         Public Sub StartDate_Click(sender As Object, e As RoutedEventArgs)
