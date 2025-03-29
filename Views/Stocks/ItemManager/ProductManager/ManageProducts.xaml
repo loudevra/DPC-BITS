@@ -272,13 +272,16 @@
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="#" Binding="{Binding ID}" Width="Auto"/>
                                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto"/>
-                                <DataGridTextColumn Header="Total Products" Binding="{Binding TotaProducts}" Width="Auto"/>
-                                <DataGridTextColumn Header="Stock Quantity" Binding="{Binding StockQuantity}" Width="Auto"/>
-                                <DataGridTextColumn Header="Worth (Sales/Sales)" Binding="{Binding Action}" Width="Auto"/>
-                                <DataGridTemplateColumn Header="Action" Width="*">
+                                <DataGridTextColumn Header="Qty" Binding="{Binding Qty}" Width="Auto"/>
+                                <DataGridTextColumn Header="Code" Binding="{Binding Code}" Width="Auto"/>
+                                <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="Auto"/>
+                                <DataGridTextColumn Header="Warehouse" Binding="{Binding Warehouse}" Width="Auto"/>
+                                <DataGridTextColumn Header="Price" Binding="{Binding Price}" Width="Auto"/>
+                                <DataGridTemplateColumn Header="Settings" Width="*">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Button Content="⚙" Width="30" Height="30" Background="Transparent"/>
+                                            
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>

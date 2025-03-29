@@ -14,6 +14,76 @@ Namespace DPC.Data.Controllers
         Private Shared popup As Popup
         Private Shared recentlyClosed As Boolean = False
 
+        Public Shared Sub GetBrands(comboBox As ComboBox)
+            Dim query As String = "
+                SELECT brandID, brandName
+                FROM brand
+                ORDER BY brandName ASC;
+                "
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            comboBox.Items.Clear()
+                            While reader.Read()
+                                Dim brandName As String = reader("brandName").ToString()
+                                Dim brandId As Integer = Convert.ToInt32(reader("brandID"))
+                                Dim item As New ComboBoxItem With {
+                            .Content = brandName,
+                            .Tag = brandId
+                        }
+                                comboBox.Items.Add(item)
+                            End While
+                        End Using
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show($"Error: {ex.Message}")
+                End Try
+            End Using
+        End Sub
+        Public Shared Sub GetSuppliersByBrand(brandID As Integer, comboBox As ComboBox)
+            Dim query As String = "
+        SELECT s.supplierID, s.supplierName
+        FROM supplier s
+        INNER JOIN SupplierBrand sb ON s.supplierID = sb.supplierID
+        WHERE sb.brandID = @brandID
+        ORDER BY s.supplierName ASC;
+    "
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@brandID", brandID)
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            comboBox.Items.Clear()
+
+                            If reader.HasRows Then
+                                While reader.Read()
+                                    Dim supplierName As String = reader("supplierName").ToString().Trim()
+                                    Dim supplierID As String = reader("supplierID").ToString()
+
+                                    Dim item As New ComboBoxItem With {
+                                .Content = supplierName,
+                                .Tag = supplierID
+                            }
+                                    comboBox.Items.Add(item)
+                                End While
+                                comboBox.SelectedIndex = 0
+                            Else
+                                MessageBox.Show("No suppliers found for the selected brand.", "Information", MessageBoxButton.OK, MessageBoxImage.Information)
+                                comboBox.Items.Clear()
+                            End If
+                        End Using
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show($"Error: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                End Try
+            End Using
+        End Sub
+
         Public Shared Sub GetProductCategory(comboBox As ComboBox)
             Dim query As String = "
                 SELECT productcategoryid, TRIM(CONCAT(
@@ -184,25 +254,28 @@ Namespace DPC.Data.Controllers
         End Function
 
         Public Shared Sub InsertNewProduct(ProductName As TextBox,
-                             Category As ComboBox, SubCategory As ComboBox, Warehouse As ComboBox,
-                             RetailPrice As TextBox, PurchaseOrder As TextBox, DefaultTax As TextBox,
-                             DiscountRate As TextBox, StockUnits As TextBox, AlertQuantity As TextBox,
-                             MeasurementUnit As ComboBox, Description As TextBox, ValidDate As DatePicker,
-                             SerialNumbers As List(Of TextBox))
+                         Category As ComboBox, SubCategory As ComboBox, Warehouse As ComboBox,
+                         Brand As ComboBox, Supplier As ComboBox,
+                         RetailPrice As TextBox, PurchaseOrder As TextBox, DefaultTax As TextBox,
+                         DiscountRate As TextBox, StockUnits As TextBox, AlertQuantity As TextBox,
+                         MeasurementUnit As ComboBox, Description As TextBox, ValidDate As DatePicker,
+                         SerialNumbers As List(Of TextBox))
 
             If String.IsNullOrWhiteSpace(ProductName.Text) OrElse
-                Category.SelectedItem Is Nothing OrElse
-                Warehouse.SelectedItem Is Nothing OrElse
-                String.IsNullOrWhiteSpace(RetailPrice.Text) OrElse
-                String.IsNullOrWhiteSpace(PurchaseOrder.Text) OrElse
-                String.IsNullOrWhiteSpace(DefaultTax.Text) OrElse
-                String.IsNullOrWhiteSpace(DiscountRate.Text) OrElse
-                String.IsNullOrWhiteSpace(StockUnits.Text) OrElse
-                String.IsNullOrWhiteSpace(AlertQuantity.Text) OrElse
-                MeasurementUnit.SelectedItem Is Nothing OrElse
-                String.IsNullOrWhiteSpace(Description.Text) OrElse
-                ValidDate.SelectedDate Is Nothing OrElse
-                SerialNumbers.Any(Function(txt) String.IsNullOrWhiteSpace(txt.Text)) Then
+        Category.SelectedItem Is Nothing OrElse
+        Warehouse.SelectedItem Is Nothing OrElse
+        Brand.SelectedItem Is Nothing OrElse
+        Supplier.SelectedItem Is Nothing OrElse
+        String.IsNullOrWhiteSpace(RetailPrice.Text) OrElse
+        String.IsNullOrWhiteSpace(PurchaseOrder.Text) OrElse
+        String.IsNullOrWhiteSpace(DefaultTax.Text) OrElse
+        String.IsNullOrWhiteSpace(DiscountRate.Text) OrElse
+        String.IsNullOrWhiteSpace(StockUnits.Text) OrElse
+        String.IsNullOrWhiteSpace(AlertQuantity.Text) OrElse
+        MeasurementUnit.SelectedItem Is Nothing OrElse
+        String.IsNullOrWhiteSpace(Description.Text) OrElse
+        ValidDate.SelectedDate Is Nothing OrElse
+        SerialNumbers.Any(Function(txt) String.IsNullOrWhiteSpace(txt.Text)) Then
 
                 MessageBox.Show("Please fill in all required fields!", "Input Error", MessageBoxButton.OK)
                 Exit Sub
@@ -213,34 +286,36 @@ Namespace DPC.Data.Controllers
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
                     Using transaction = conn.BeginTransaction()
-                        ' Insert into storedproduct table
+
                         Dim query1 As String = "INSERT INTO storedproduct 
-                                 (ProductID, ProductName, ProductCode, Category, SubCategory, Warehouse,
-                                 RetailPrice, PurchaseOrder, DefaultTax, DiscountRate, StockUnits,
-                                 AlertQuantity, MeasurementUnit, Description, DateAdded)
-                                 VALUES 
-                                 (DEFAULT, @ProductName, @ProductCode, @Category, @SubCategory,
-                                 @Warehouse, @RetailPrice, @PurchaseOrder, @DefaultTax, @DiscountRate,
-                                 @StockUnits, @AlertQuantity, @MeasurementUnit, @Description, @DateAdded);"
+                         (ProductID, ProductName, ProductCode, Category, SubCategory, Warehouse, BrandID, SupplierID,
+                         RetailPrice, PurchaseOrder, DefaultTax, DiscountRate, StockUnits,
+                         AlertQuantity, MeasurementUnit, Description, DateAdded)
+                         VALUES 
+                         (DEFAULT, @ProductName, @ProductCode, @Category, @SubCategory, @Warehouse, @BrandID, @SupplierID,
+                         @RetailPrice, @PurchaseOrder, @DefaultTax, @DiscountRate, @StockUnits,
+                         @AlertQuantity, @MeasurementUnit, @Description, @DateAdded);"
 
                         Using cmd1 As New MySqlCommand(query1, conn, transaction)
                             cmd1.Parameters.AddWithValue("@ProductName", ProductName.Text)
                             cmd1.Parameters.AddWithValue("@ProductCode", productCode)
 
                             Dim selectedCategoryItem As ComboBoxItem = TryCast(Category.SelectedItem, ComboBoxItem)
-                            If selectedCategoryItem IsNot Nothing Then
-                                cmd1.Parameters.AddWithValue("@Category", selectedCategoryItem.Tag)
-                            Else
-                                MessageBox.Show("Please select a category.")
-                                Exit Sub
-                            End If
+                            cmd1.Parameters.AddWithValue("@Category", selectedCategoryItem?.Tag)
 
-                            ' Handle SubCategory NULL if "None" or empty
                             Dim subCategoryText As String = If(SubCategory.SelectedItem IsNot Nothing, CType(SubCategory.SelectedItem, ComboBoxItem).Content.ToString(), "")
                             Dim subCategoryValue As Object = If(String.IsNullOrWhiteSpace(subCategoryText) OrElse subCategoryText.ToLower() = "none", DBNull.Value, subCategoryText)
                             cmd1.Parameters.AddWithValue("@SubCategory", subCategoryValue)
 
                             cmd1.Parameters.AddWithValue("@Warehouse", CType(Warehouse.SelectedItem, ComboBoxItem).Content.ToString())
+
+                            ' Extract Brand and Supplier IDs
+                            Dim brandID As Integer = Convert.ToInt32(TryCast(Brand.SelectedItem, ComboBoxItem)?.Tag)
+                            Dim supplierID As String = Convert.ToString(TryCast(Supplier.SelectedItem, ComboBoxItem)?.Tag)
+
+                            cmd1.Parameters.AddWithValue("@BrandID", brandID)
+                            cmd1.Parameters.AddWithValue("@SupplierID", supplierID)
+
                             cmd1.Parameters.AddWithValue("@RetailPrice", RetailPrice.Text)
                             cmd1.Parameters.AddWithValue("@PurchaseOrder", PurchaseOrder.Text)
                             cmd1.Parameters.AddWithValue("@DefaultTax", DefaultTax.Text)
@@ -254,12 +329,10 @@ Namespace DPC.Data.Controllers
                             ' Execute the query
                             cmd1.ExecuteNonQuery()
 
-                            ' Retrieve the last inserted ProductID
                             Dim productIDQuery As String = "SELECT LAST_INSERT_ID();"
                             Using cmdGetID As New MySqlCommand(productIDQuery, conn, transaction)
                                 Dim productID As Integer = Convert.ToInt32(cmdGetID.ExecuteScalar())
 
-                                ' Insert into serialnumberproduct table
                                 Dim query2 As String = "INSERT INTO serialnumberproduct (SerialNumber, ProductID) VALUES (@SerialNumber, @ProductID)"
                                 Using cmd2 As New MySqlCommand(query2, conn, transaction)
                                     cmd2.Parameters.AddWithValue("@ProductID", productID)
