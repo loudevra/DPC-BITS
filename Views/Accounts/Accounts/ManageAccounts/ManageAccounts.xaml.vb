@@ -51,6 +51,14 @@ Namespace DPC.Views.Accounts.Accounts.ManageAccounts
             AccountController.Reload = False ' Reset the flag after reloading
         End Sub
 
+        Private Sub OpenAddAccountPopup(sender As Object, e As RoutedEventArgs)
+            dialogHost.IsOpen = True
+        End Sub
+
+        Private Sub ClosePopup(sender As Object, e As RoutedEventArgs)
+            dialogHost.IsOpen = False
+        End Sub
+
 
 
     End Class
