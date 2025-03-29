@@ -2,6 +2,7 @@
     Public Class Account
         Public Property AccountID As Integer
         Public Property AccountName As String
+        Public Property AccountNo As String
         Public Property Name As String
         Public Property InitialBalance As Decimal
         Public Property Note As String

@@ -4,21 +4,26 @@ Imports DPC.DPC.Data.Models
 
 Namespace DPC.Data.Controllers
     Public Class AccountController
+        Public Shared Reload As Boolean
         ' Function to create a new account
         Public Shared Function CreateAccount(acc As Account) As Boolean
             ' Generate the custom Account ID
             acc.AccountID = GenerateAccountID()
 
-            Dim query As String = "INSERT INTO Accounts (AccountID, AccountName, AccountType, CreatedAt, UpdatedAt) " &
-                                  "VALUES (@AccountID, @AccountName, @AccountType, @CreatedAt, @UpdatedAt)"
+            Dim query As String = "INSERT INTO Accounts (AccountID, AccountName, AccountNo, AccountType, InitialBalance, Note, BusinessLocation, CreatedAt, UpdatedAt) " &
+                              "VALUES (@AccountID, @AccountName, @AccountNo, @AccountType, @InitialBalance, @Note, @BusinessLocation, @CreatedAt, @UpdatedAt)"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
                     conn.Open()
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@AccountID", acc.AccountID)
-                        cmd.Parameters.AddWithValue("@AccountName", acc.AccountName)
+                        cmd.Parameters.AddWithValue("@AccountName", acc.Name)
+                        cmd.Parameters.AddWithValue("@AccountNo", acc.AccountNo)
                         cmd.Parameters.AddWithValue("@AccountType", acc.AccountType)
+                        cmd.Parameters.AddWithValue("@InitialBalance", acc.InitialBalance)
+                        cmd.Parameters.AddWithValue("@Note", acc.Note)
+                        cmd.Parameters.AddWithValue("@BusinessLocation", acc.BusinessLocation)
                         cmd.Parameters.AddWithValue("@CreatedAt", DateTime.Now)
                         cmd.Parameters.AddWithValue("@UpdatedAt", DateTime.Now)
 

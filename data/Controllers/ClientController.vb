@@ -42,9 +42,9 @@ Namespace DPC.Data.Controllers
             End Using
         End Function
 
-        ' Function to generate ClientID in format 12MMDDYYYYXXXX
+        ' Function to generate ClientID in format 40MMDDYYYYXXXX
         Private Shared Function GenerateClientID() As String
-            Dim prefix As String = "12"
+            Dim prefix As String = "40"
             Dim datePart As String = DateTime.Now.ToString("MMddyyyy")
             Dim counter As Integer = GetNextClientCounter(datePart)
 

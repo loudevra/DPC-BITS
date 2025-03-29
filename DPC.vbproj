@@ -290,6 +290,7 @@
     <Compile Include="Data\Controllers\AccountController.vb" />
     <Compile Include="Data\Controllers\AuthController.vb" />
     <Compile Include="Data\Controllers\BrandController.vb" />
+    <Compile Include="Data\Controllers\BuissnessLocationController.vb" />
     <Compile Include="Data\Controllers\ClientController.vb" />
     <Compile Include="Data\Controllers\ClientGroupController.vb" />
     <Compile Include="Data\Controllers\EmployeeController.vb" />
@@ -319,6 +320,12 @@
     <Compile Include="Data\Models\Warehouses.vb" />
     <Compile Include="SplashScreen.xaml.vb">
       <DependentUpon>SplashScreen.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\ManageAccounts\AddAccount.xaml.vb">
+      <DependentUpon>AddAccount.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\ManageAccounts\ManageAccounts.xaml.vb">
+      <DependentUpon>ManageAccounts.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Auth\ForgotPassword.xaml.vb">
       <DependentUpon>ForgotPassword.xaml</DependentUpon>
@@ -526,6 +533,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="SplashScreen.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\ManageAccounts\AddAccount.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\ManageAccounts\ManageAccounts.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Auth\ForgotPassword.xaml">
