@@ -336,6 +336,7 @@
     <Compile Include="Data\Controllers\ManageProductsController.vb" />
     <Compile Include="Data\Controllers\ProductCategoryController.vb" />
     <Compile Include="Data\Controllers\ProductController.vb" />
+    <Compile Include="Data\Controllers\PromoCodeController.vb" />
     <Compile Include="Data\Controllers\ResetPassController.vb" />
     <Compile Include="Data\Controllers\SessionManager.vb" />
     <Compile Include="Data\Controllers\SupplierController.vb" />
@@ -347,10 +348,13 @@
     <Compile Include="Data\Helpers\EnvLoader.vb" />
     <Compile Include="Data\Helpers\PBKDF2Hasher.vb" />
     <Compile Include="Data\Helpers\RelayCommand.vb" />
+    <Compile Include="Data\Models\Client.vb" />
+    <Compile Include="Data\Models\ClientGroup.vb" />
     <Compile Include="Data\Models\Employee.vb" />
     <Compile Include="Data\Models\ManageProducts.vb" />
     <Compile Include="Data\Models\Product.vb" />
     <Compile Include="Data\Models\ProductCategory.vb" />
+    <Compile Include="Data\Models\PromoCode.vb" />
     <Compile Include="Data\Models\Supplier.vb" />
     <Compile Include="Data\Models\Warehouses.vb" />
     <Compile Include="SplashScreen.xaml.vb">
@@ -376,6 +380,12 @@
     </Compile>
     <Compile Include="Views\HRM\Employees\Employees\EmployeesView.xaml.vb">
       <DependentUpon>EmployeesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PromoCodes\AddPromoCode.xaml.vb">
+      <DependentUpon>AddPromoCode.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PromoCodes\ManagePromoCodes.xaml.vb">
+      <DependentUpon>ManagePromoCodes.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Stocks\ProductCategories\AddNewCategory.xaml.vb">
       <DependentUpon>AddNewCategory.xaml</DependentUpon>
@@ -581,6 +591,14 @@
     </Page>
     <Page Include="Views\HRM\Employees\Employees\EmployeesView.xaml">
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PromoCodes\AddPromoCode.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PromoCodes\ManagePromoCodes.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Stocks\ProductCategories\AddNewCategory.xaml">
       <SubType>Designer</SubType>

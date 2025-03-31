@@ -99,11 +99,8 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             ClearInputFields()
 
-            'Current Workload
-            Dim ProductName As String = TxtProductCode.Text
             Dim CategoryID As String = ComboBoxCategory.Tag
             Dim newProduct As New Product With {
-                .ProductName = ProductName,
                 .CategoryID = CategoryID
             }
         End Sub
@@ -111,7 +108,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         Private Sub ClearInputFields()
             ' Clear TextBoxes
             TxtProductName.Clear()
-            TxtProductCode.Clear()
             TxtRetailPrice.Clear()
             TxtPurchaseOrder.Clear()
             TxtDefaultTax.Clear()
