@@ -521,6 +521,14 @@ Namespace DPC.Data.Controllers
         ' Remove Latest Row Function
         Public Shared Sub RemoveLatestRow()
             Dim parentPanel As StackPanel = MainContainer
+
+            ' Check if there is only one row left
+            If parentPanel IsNot Nothing AndAlso parentPanel.Children.Count = 1 Then
+                MessageBox.Show("Cannot remove the last remaining row.")
+                Return
+            End If
+
+            ' Proceed to remove the latest row if there are multiple rows
             If parentPanel IsNot Nothing AndAlso parentPanel.Children.Count > 0 Then
                 ' Find the latest row
                 Dim latestStackPanel As StackPanel = TryCast(parentPanel.Children(parentPanel.Children.Count - 1), StackPanel)
@@ -539,6 +547,7 @@ Namespace DPC.Data.Controllers
                 MessageBox.Show("No rows available to remove.")
             End If
         End Sub
+
         Public Shared Sub LoadProductData(dataGrid As DataGrid)
             Dim query As String = "SELECT productid AS ID, productname AS Name, stockunits AS StockQuantity, (retailprice * stockunits) AS Action FROM storedproduct;"
 
