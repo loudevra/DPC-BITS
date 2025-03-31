@@ -1,7 +1,11 @@
-﻿Imports System.Windows
+﻿Imports System.IO
+Imports System.Windows
 Imports System.Windows.Controls
 Imports System.Windows.Controls.Primitives
 Imports DPC.DPC.Components
+Imports DPC.DPC.Data.Controllers
+Imports Microsoft.Win32
+
 
 Namespace DPC.Components.Forms
     Public Class RowControllerPopout
@@ -101,6 +105,11 @@ Namespace DPC.Components.Forms
             ' Open the popup
             popup.IsOpen = True
         End Sub
+
+        Private Sub ImportSerialNumbers_Click(sender As Object, e As RoutedEventArgs)
+            ProductController.ImportSerialNumbers_Click()
+        End Sub
+
 
 
     End Class

@@ -73,7 +73,7 @@ Namespace DPC.Data.Controllers
                                 End While
                                 comboBox.SelectedIndex = 0
                             Else
-                                MessageBox.Show("No suppliers found for the selected brand.", "Information", MessageBoxButton.OK, MessageBoxImage.Information)
+                                'MessageBox.Show("No suppliers found for the selected brand.", "Information", MessageBoxButton.OK, MessageBoxImage.Information)
                                 comboBox.Items.Clear()
                             End If
                         End Using
@@ -184,8 +184,6 @@ Namespace DPC.Data.Controllers
                 End Try
             End Using
         End Sub
-
-
         Public Shared Sub GetWarehouse(comboBox As ComboBox)
             Dim query As String = "SELECT name FROM warehouse ORDER BY name ASC"
 
@@ -213,7 +211,6 @@ Namespace DPC.Data.Controllers
                 End Try
             End Using
         End Sub
-
         ' Function to generate ProductCode in format 20MMDDYYYYXXXX
         Private Shared Function GenerateProductCode() As String
             Dim prefix As String = "20"
@@ -226,8 +223,6 @@ Namespace DPC.Data.Controllers
             ' Concatenate to get full ProductCode
             Return prefix & datePart & counterPart
         End Function
-
-
         ' Function to get the next Product counter (last 4 digits) with reset condition
         Private Shared Function GetNextProductCounter(datePart As String) As Integer
             Dim query As String = "SELECT MAX(CAST(SUBSTRING(ProductCode, 11, 4) AS UNSIGNED)) FROM storedproduct " &
@@ -252,33 +247,59 @@ Namespace DPC.Data.Controllers
                 End Try
             End Using
         End Function
+        Public Shared Sub InsertNewProduct(Toggle As System.Windows.Controls.Primitives.ToggleButton, Checkbox As Controls.CheckBox,
+                            ProductName As TextBox, Category As ComboBox, SubCategory As ComboBox, Warehouse As ComboBox,
+                            Brand As ComboBox, Supplier As ComboBox,
+                            RetailPrice As TextBox, PurchaseOrder As TextBox, DefaultTax As TextBox,
+                            DiscountRate As TextBox, StockUnits As TextBox, AlertQuantity As TextBox,
+                            MeasurementUnit As ComboBox, Description As TextBox, ValidDate As DatePicker,
+                            SerialNumbers As List(Of TextBox))
 
-        Public Shared Sub InsertNewProduct(ProductName As TextBox,
-                         Category As ComboBox, SubCategory As ComboBox, Warehouse As ComboBox,
-                         Brand As ComboBox, Supplier As ComboBox,
-                         RetailPrice As TextBox, PurchaseOrder As TextBox, DefaultTax As TextBox,
-                         DiscountRate As TextBox, StockUnits As TextBox, AlertQuantity As TextBox,
-                         MeasurementUnit As ComboBox, Description As TextBox, ValidDate As DatePicker,
-                         SerialNumbers As List(Of TextBox))
+            'Product is not a variation
+            If Toggle.IsChecked = False Then
+                'Include Serial Numbers
+                If Checkbox.IsChecked = True Then
+                    If String.IsNullOrWhiteSpace(ProductName.Text) OrElse
+                        Category.SelectedItem Is Nothing OrElse
+                        Warehouse.SelectedItem Is Nothing OrElse
+                        Brand.SelectedItem Is Nothing OrElse
+                        Supplier.SelectedItem Is Nothing OrElse
+                        String.IsNullOrWhiteSpace(RetailPrice.Text) OrElse
+                        String.IsNullOrWhiteSpace(PurchaseOrder.Text) OrElse
+                        String.IsNullOrWhiteSpace(DefaultTax.Text) OrElse
+                        String.IsNullOrWhiteSpace(DiscountRate.Text) OrElse
+                        String.IsNullOrWhiteSpace(StockUnits.Text) OrElse
+                        String.IsNullOrWhiteSpace(AlertQuantity.Text) OrElse
+                        MeasurementUnit.SelectedItem Is Nothing OrElse
+                        String.IsNullOrWhiteSpace(Description.Text) OrElse
+                        ValidDate.SelectedDate Is Nothing OrElse
+                        SerialNumbers.Any(Function(txt) String.IsNullOrWhiteSpace(txt.Text)) Then
 
-            If String.IsNullOrWhiteSpace(ProductName.Text) OrElse
-        Category.SelectedItem Is Nothing OrElse
-        Warehouse.SelectedItem Is Nothing OrElse
-        Brand.SelectedItem Is Nothing OrElse
-        Supplier.SelectedItem Is Nothing OrElse
-        String.IsNullOrWhiteSpace(RetailPrice.Text) OrElse
-        String.IsNullOrWhiteSpace(PurchaseOrder.Text) OrElse
-        String.IsNullOrWhiteSpace(DefaultTax.Text) OrElse
-        String.IsNullOrWhiteSpace(DiscountRate.Text) OrElse
-        String.IsNullOrWhiteSpace(StockUnits.Text) OrElse
-        String.IsNullOrWhiteSpace(AlertQuantity.Text) OrElse
-        MeasurementUnit.SelectedItem Is Nothing OrElse
-        String.IsNullOrWhiteSpace(Description.Text) OrElse
-        ValidDate.SelectedDate Is Nothing OrElse
-        SerialNumbers.Any(Function(txt) String.IsNullOrWhiteSpace(txt.Text)) Then
+                        MessageBox.Show("Please fill in all required fields!", "Input Error", MessageBoxButton.OK)
+                        Exit Sub
+                    End If
 
-                MessageBox.Show("Please fill in all required fields!", "Input Error", MessageBoxButton.OK)
-                Exit Sub
+                    'Do Not Include Serial Numbers
+                Else
+                    If String.IsNullOrWhiteSpace(ProductName.Text) OrElse
+                        Category.SelectedItem Is Nothing OrElse
+                        Warehouse.SelectedItem Is Nothing OrElse
+                        Brand.SelectedItem Is Nothing OrElse
+                        Supplier.SelectedItem Is Nothing OrElse
+                        String.IsNullOrWhiteSpace(RetailPrice.Text) OrElse
+                        String.IsNullOrWhiteSpace(PurchaseOrder.Text) OrElse
+                        String.IsNullOrWhiteSpace(DefaultTax.Text) OrElse
+                        String.IsNullOrWhiteSpace(DiscountRate.Text) OrElse
+                        String.IsNullOrWhiteSpace(StockUnits.Text) OrElse
+                        String.IsNullOrWhiteSpace(AlertQuantity.Text) OrElse
+                        MeasurementUnit.SelectedItem Is Nothing OrElse
+                        String.IsNullOrWhiteSpace(Description.Text) OrElse
+                        ValidDate.SelectedDate Is Nothing Then
+
+                        MessageBox.Show("Please fill in all required fields!", "Input Error", MessageBoxButton.OK)
+                        Exit Sub
+                    End If
+                End If
             End If
 
             Try
@@ -357,9 +378,8 @@ Namespace DPC.Data.Controllers
                 MessageBox.Show($"An error occurred: {ex.Message}")
             End Try
         End Sub
-
         ' Add Row Function
-        Public Shared Sub BtnAddRow_Click(sender As Object, e As RoutedEventArgs)
+        Public Shared Sub BtnAddRow_Click(sender As Object, e As RoutedEventArgs, Optional skipStockUpdate As Boolean = False)
             If MainContainer Is Nothing OrElse TxtStockUnits Is Nothing Then
                 MessageBox.Show("MainContainer or TxtStockUnits is not initialized.")
                 Return
@@ -412,12 +432,14 @@ Namespace DPC.Data.Controllers
 
             MainContainer.Children.Add(outerStackPanel)
 
-            ' Update TxtStockUnits value
-            Dim currentValue As Integer
-            If Integer.TryParse(TxtStockUnits.Text, currentValue) Then
-                TxtStockUnits.Text = (currentValue + 1).ToString()
-            Else
-                TxtStockUnits.Text = "1"
+            ' Update TxtStockUnits value only if not skipped
+            If Not skipStockUpdate Then
+                Dim currentValue As Integer
+                If Integer.TryParse(TxtStockUnits.Text, currentValue) Then
+                    TxtStockUnits.Text = (currentValue + 1).ToString()
+                Else
+                    TxtStockUnits.Text = "1"
+                End If
             End If
         End Sub
 
@@ -451,7 +473,6 @@ Namespace DPC.Data.Controllers
                 End If
             End If
         End Sub
-
         ' Helper function to find the parent grid
         Private Shared Function FindParentGrid(element As DependencyObject) As Grid
             While element IsNot Nothing AndAlso Not (TypeOf element Is Grid)
@@ -459,7 +480,6 @@ Namespace DPC.Data.Controllers
             End While
             Return TryCast(element, Grid)
         End Function
-
         ' Row Controller Handler (Placeholder)
         Public Shared Sub BtnRowController_Click(sender As Object, e As RoutedEventArgs)
             Dim clickedButton As Button = TryCast(sender, Button)
@@ -498,7 +518,6 @@ Namespace DPC.Data.Controllers
             ' Open the popup
             popup.IsOpen = True
         End Sub
-
         ' Remove Latest Row Function
         Public Shared Sub RemoveLatestRow()
             Dim parentPanel As StackPanel = MainContainer
@@ -520,7 +539,6 @@ Namespace DPC.Data.Controllers
                 MessageBox.Show("No rows available to remove.")
             End If
         End Sub
-
         Public Shared Sub LoadProductData(dataGrid As DataGrid)
             Dim query As String = "SELECT productid AS ID, productname AS Name, stockunits AS StockQuantity, (retailprice * stockunits) AS Action FROM storedproduct;"
 
@@ -545,6 +563,62 @@ Namespace DPC.Data.Controllers
                     MessageBox.Show($"Error loading data: {ex.Message}")
                 End Try
             End Using
+        End Sub
+
+        Public Shared Sub ImportSerialNumbers_Click()
+            Dim openFileDialog As New Microsoft.Win32.OpenFileDialog With {
+                .Filter = "CSV Files (*.csv)|*.csv"
+            }
+
+
+            If openFileDialog.ShowDialog() = True Then
+                Try
+                    Dim filePath As String = openFileDialog.FileName
+                    Dim lines As List(Of String) = IO.File.ReadAllLines(filePath).ToList()
+
+                    ' Ensure there are serial numbers available
+                    If lines.Count <= 1 Then
+                        MessageBox.Show("No serial numbers found in the file.")
+                        Return
+                    End If
+
+                    ' Remove the first line (title "Serial Number") and read the rest
+                    lines.RemoveAt(0)
+
+                    ' Clear existing rows if any
+                    MainContainer.Children.Clear()
+                    SerialNumbers.Clear()
+
+                    ' Process serial numbers
+                    Dim serialNumbersData As New List(Of String)
+                    For Each line In lines
+                        Dim serialNumber As String = line.Trim()
+                        If Not String.IsNullOrWhiteSpace(serialNumber) Then
+                            serialNumbersData.Add(serialNumber)
+                        End If
+                    Next
+
+                    If serialNumbersData.Any() Then
+                        ' Update stock units once
+                        TxtStockUnits.Text = serialNumbersData.Count.ToString()
+
+                        ' Dynamically add rows for each serial number
+                        For Each serialNumber In serialNumbersData
+                            BtnAddRow_Click(Nothing, Nothing, True)
+                            If SerialNumbers.Count > 0 Then
+                                SerialNumbers.Last().Text = serialNumber
+                            End If
+                        Next
+
+                        MessageBox.Show($"Successfully imported {serialNumbersData.Count} serial numbers.")
+                    Else
+                        MessageBox.Show("No valid serial numbers found.")
+                    End If
+
+                Catch ex As Exception
+                    MessageBox.Show($"Error importing serial numbers: {ex.Message}")
+                End Try
+            End If
         End Sub
 
     End Class

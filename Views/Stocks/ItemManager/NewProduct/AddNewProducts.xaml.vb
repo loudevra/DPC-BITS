@@ -1,7 +1,9 @@
 ﻿Imports System.Windows.Controls.Primitives
+Imports DocumentFormat.OpenXml.Office.CustomUI
 Imports DPC.DPC.Components.Forms
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Model
+Imports MaterialDesignThemes.Wpf
 Imports MaterialDesignThemes.Wpf.Theme
 
 Namespace DPC.Views.Stocks.ItemManager.NewProduct
@@ -24,6 +26,9 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             Toggle.IsChecked = False
             VariationChecker(Toggle)
+
+            CheckBoxSerialNumber.IsChecked = True
+            SerialNumberChecker(CheckBoxSerialNumber)
 
             ProductController.GetBrands(ComboBoxBrand)
 
@@ -88,10 +93,31 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             End Try
         End Sub
 
+        Private Sub IncludeSerial_Click(sender As Object, e As RoutedEventArgs)
+            SerialNumberChecker(CheckBoxSerialNumber)
+        End Sub
+        Private Sub SerialNumberChecker(Checkbox As Controls.CheckBox)
+
+            If Checkbox.IsChecked = True Then
+                StackPanelSerialRow.Visibility = Visibility.Visible
+                TxtStockUnits.IsReadOnly = True
+            Else
+                StackPanelSerialRow.Visibility = Visibility.Collapsed
+                TxtStockUnits.IsReadOnly = False
+            End If
+
+            If TxtStockUnits.IsReadOnly = True Then
+                BorderStockUnits.BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
+            Else
+                BorderStockUnits.BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#474747"))
+            End If
+        End Sub
+
+
 
         ' Start of inserting function for add product button
         Private Sub BtnAddProduct_Click(sender As Object, e As RoutedEventArgs)
-            ProductController.InsertNewProduct(
+            ProductController.InsertNewProduct(Toggle, CheckBoxSerialNumber,
                 TxtProductName, ComboBoxCategory, ComboBoxSubCategory,
                 ComboBoxWarehouse, ComboBoxBrand, ComboBoxSupplier, TxtRetailPrice, TxtPurchaseOrder, TxtDefaultTax,
                 TxtDiscountRate, TxtStockUnits, TxtAlertQuantity, ComboBoxMeasurementUnit,

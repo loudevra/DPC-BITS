@@ -37,7 +37,7 @@
             </Button>
         </StackPanel>
         <StackPanel Grid.Row="2" Margin="5">
-            <Button Width="Auto" HorizontalContentAlignment="Left" BorderThickness="0" Background="White">
+            <Button Width="Auto" HorizontalContentAlignment="Left" BorderThickness="0" Background="White" Click="ImportSerialNumbers_Click">
                 <StackPanel Width="Auto"  Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="FormTextbox" Width="25" Height="20" Foreground="#AEAEAE" VerticalAlignment="Center"/>
                     <TextBlock Text="Import Serial Numbers" FontFamily="{StaticResource Lexend}" Foreground="#AEAEAE" VerticalAlignment="Center"/>
