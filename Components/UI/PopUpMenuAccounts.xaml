@@ -29,7 +29,7 @@
                 </StackPanel>
                 <StackPanel Margin="20,5,0,0">
                     <TextBlock FontSize="14">
-                        <Hyperlink Click="NavigateToNewInvoice">Manage Accounts</Hyperlink>
+                        <Hyperlink Click="NavigateToManageAccounts">Manage Accounts</Hyperlink>
                     </TextBlock>
                     <TextBlock FontSize="14">
                         <Hyperlink Click="NavigateToNewInvoice">Balance Sheets</Hyperlink>
