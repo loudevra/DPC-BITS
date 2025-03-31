@@ -326,6 +326,7 @@
     <Compile Include="Components\Navigation\TopNavbar.xaml.vb">
       <DependentUpon>TopNavBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Data\Controllers\AccountController.vb" />
     <Compile Include="Data\Controllers\AuthController.vb" />
     <Compile Include="Data\Controllers\BrandController.vb" />
     <Compile Include="Data\Controllers\BuissnessLocationController.vb" />
@@ -348,6 +349,7 @@
     <Compile Include="Data\Helpers\EnvLoader.vb" />
     <Compile Include="Data\Helpers\PBKDF2Hasher.vb" />
     <Compile Include="Data\Helpers\RelayCommand.vb" />
+    <Compile Include="Data\Models\Account.vb" />
     <Compile Include="Data\Models\Client.vb" />
     <Compile Include="Data\Models\ClientGroup.vb" />
     <Compile Include="Data\Models\Employee.vb" />
@@ -359,6 +361,12 @@
     <Compile Include="Data\Models\Warehouses.vb" />
     <Compile Include="SplashScreen.xaml.vb">
       <DependentUpon>SplashScreen.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\ManageAccounts\AddAccount.xaml.vb">
+      <DependentUpon>AddAccount.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\ManageAccounts\ManageAccounts.xaml.vb">
+      <DependentUpon>ManageAccounts.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Auth\ForgotPassword.xaml.vb">
       <DependentUpon>ForgotPassword.xaml</DependentUpon>
@@ -571,6 +579,12 @@
     <Page Include="SplashScreen.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Accounts\Accounts\ManageAccounts\AddAccount.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\ManageAccounts\ManageAccounts.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Auth\ForgotPassword.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -724,7 +738,6 @@
     <Folder Include="Config\" />
     <Folder Include="Installer\" />
     <Folder Include="Themes\" />
-    <Folder Include="Views\Accounts\Accounts\ManageAccounts\" />
     <Folder Include="Views\HRM\Departments\" />
     <Folder Include="Views\HRM\Employees\Attendance\" />
     <Folder Include="Views\HRM\Employees\Holidays\" />
