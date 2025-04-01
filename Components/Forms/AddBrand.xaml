@@ -18,7 +18,7 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-                <materialDesign:PackIcon Kind="TextBoxOutline" Width="40" Height="40" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                <materialDesign:PackIcon Kind="TextBoxOutline" Width="40" Height="40" Margin="0,0,15,0" VerticalAlignment="Center" Foreground="#555555"/>
                 <TextBlock FontSize="20" Foreground="#555555" FontWeight="Bold" Text="Add Brand" Margin="0,0,0,0" VerticalAlignment="Center"/>
             </StackPanel>
 

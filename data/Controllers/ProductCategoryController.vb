@@ -11,13 +11,13 @@ Namespace DPC.Data.Controllers
                 ' Use connection from SplashScreen
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "SELECT productcategoryid, category FROM productcategory;"
+                    Dim query As String = "SELECT categoryID, categoryName FROM category;"
                     Using cmd As New MySqlCommand(query, conn)
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
                                 warehouseList.Add(New ProductCategory With {
-                                    .PCID = reader.GetInt32("productcategoryid"),
-                                    .Category = reader.GetString("category")})
+                                    .PCID = reader.GetInt32("categoryID"),
+                                    .Category = reader.GetString("categoryName")})
                             End While
                         End Using
                     End Using

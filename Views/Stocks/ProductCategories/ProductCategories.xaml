@@ -195,7 +195,7 @@
                                    Foreground="#474747"
                                    VerticalAlignment="Center"/>
 
-                        <Button x:Name="btnCategory" Background="Transparent" VerticalAlignment="Center" BorderThickness="0" Margin="10,0,0,0"  >
+                        <Button Background="Transparent" VerticalAlignment="Center" BorderThickness="0" Margin="10,0,0,0" Click="addCategory">
                             <Border Style="{StaticResource RoundedBorderStyle}" Padding="2" Background="Transparent" BorderBrush="#474747" BorderThickness="2">
                                 <StackPanel Orientation="Horizontal" Background="Transparent" Margin="10,0,10,0">
                                     <materialDesign:PackIcon Kind="Plus" Width="20" Height="20" Margin="0,0,5,0" Foreground="#474747" VerticalAlignment="Center"/>

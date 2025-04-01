@@ -7,6 +7,12 @@ Imports System.IO
 Imports System.Reflection
 Imports System.ComponentModel
 Imports DPC.DPC.Data.Controllers
+Imports System.Windows.Controls.Primitives
+Imports DocumentFormat.OpenXml.Office.CustomUI
+Imports DPC.DPC.Components.Forms
+Imports DPC.DPC.Data.Model
+Imports MaterialDesignThemes.Wpf
+Imports MaterialDesignThemes.Wpf.Theme
 
 Namespace DPC.Views.Stocks.ProductCategories
     ''' <summary>
@@ -16,6 +22,7 @@ Namespace DPC.Views.Stocks.ProductCategories
         Inherits Window
 
         Private view As ICollectionView
+
         Public Sub New()
             InitializeComponent()
 
@@ -116,5 +123,41 @@ Namespace DPC.Views.Stocks.ProductCategories
         Public Sub LoadData()
             dataGrid.ItemsSource = ProductCategoryController.GetProductCategory()
         End Sub
+
+
+        Private Sub addCategory(sender As Object, e As RoutedEventArgs)
+            ' Pass the button and the user control to the helper
+            Dim addCategoryWindow As New DPC.Components.Forms.AddCategory()
+            PopupHelper.OpenPopupWithControl(sender, addCategoryWindow)
+        End Sub
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     End Class
 End Namespace
