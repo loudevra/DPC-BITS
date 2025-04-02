@@ -41,7 +41,6 @@ Namespace DPC.Components.Forms
             Next
         End Sub
 
-
         Private Sub CreateCategoryPanel()
             Dim categoryPanel As New StackPanel() With {.Name = "CategoryPanel"}
             Dim categoryLabelPanel As New StackPanel() With {.Orientation = Orientation.Horizontal, .Margin = New Thickness(0, 0, 0, 5)}

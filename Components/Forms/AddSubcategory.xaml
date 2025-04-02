@@ -32,11 +32,11 @@
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="No. of Sub-Categories:" FontSize="14" FontWeight="SemiBold" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,15,0"/>
 
-                    <Button VerticalAlignment="Center" Padding="0" BorderThickness="0" Background="#D9D9D9">
+                    <Button VerticalAlignment="Center" Padding="0" BorderThickness="0" Background="#D9D9D9" Click="IncreaseBtn">
                         <materialDesign:PackIcon Kind="Minus" Width="10" Foreground="#555555" Margin="7.5,-3"/>
                     </Button>
-                    <TextBlock x:Name="CategoryNumber" Text="1" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" Margin="7.5,0"/>
-                    <Button VerticalAlignment="Center" Padding="0" BorderThickness="0" Background="#D9D9D9">
+                    <TextBlock x:Name="SubCategoryNumber" Text="1" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" Margin="7.5,0"/>
+                    <Button VerticalAlignment="Center" Padding="0" BorderThickness="0" Background="#D9D9D9" Click="DecreaseBtn">
                         <materialDesign:PackIcon Kind="Plus" Width="10" Foreground="#555555" Margin="7.5,-3"/>
                     </Button>
                 </StackPanel>

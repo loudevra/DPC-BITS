@@ -64,7 +64,7 @@ Namespace DPC.Views.Stocks.ProductCategories
         End Function
 
         ' Event handler for TextBox TextChanged event
-        Private Sub txtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
+        Private Sub TxtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
             If view IsNot Nothing Then
                 view.Refresh() ' Refresh the DataGrid filter whenever the text changes
             End If
@@ -129,7 +129,7 @@ Namespace DPC.Views.Stocks.ProductCategories
             End If
         End Sub
 
-        Private Sub addCategory(sender As Object, e As RoutedEventArgs)
+        Private Sub AddCategory(sender As Object, e As RoutedEventArgs)
             ' Create an instance of the AddCategory form
             Dim addCategoryWindow As New DPC.Components.Forms.AddCategory()
 
@@ -145,7 +145,7 @@ Namespace DPC.Views.Stocks.ProductCategories
             LoadData() ' Reloads the categories in the main view
         End Sub
 
-        Private Sub addSubcategory(sender As Object, e As RoutedEventArgs)
+        Private Sub AddSubcategory(sender As Object, e As RoutedEventArgs)
             Dim addSubcategoryWindow As New DPC.Components.Forms.AddSubcategory()
 
             ' Subscribe to the event to reload data after adding a category
