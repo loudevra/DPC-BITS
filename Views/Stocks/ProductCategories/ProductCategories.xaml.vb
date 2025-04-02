@@ -1,15 +1,12 @@
-﻿Imports System.Windows
-Imports System.Windows.Controls
-Imports ClosedXML.Excel
-Imports Microsoft.Win32
-Imports System.Data
-Imports System.IO
-Imports System.Reflection
-Imports System.ComponentModel
+﻿Imports ClosedXML.Excel
 Imports DPC.DPC.Data.Controllers
-Imports MaterialDesignThemes.Wpf.Theme
+Imports DPC.DPC.Data.Model
 Imports DPC.DPC.Data.Models
-Imports DPC.DPC.Components.Forms
+Imports Microsoft.Win32
+Imports System.Collections.ObjectModel
+Imports System.ComponentModel
+Imports System.Data
+Imports System.Reflection
 
 Namespace DPC.Views.Stocks.ProductCategories
     ''' <summary>
@@ -41,46 +38,39 @@ Namespace DPC.Views.Stocks.ProductCategories
             End If
         End Sub
 
-        ''' <summary>
-        ''' Load categories and subcategories into the DataGrid
-        ''' </summary>
+        ' Function to load data into the DataGrid
         Private Sub LoadData()
-            ' Get categories with subcategories from the controller
+            ' Fetch data from the database
             Dim categories As List(Of ProductCategory) = ProductCategoryController.GetAllCategoriesWithSubcategories()
 
-            ' Bind categories to the DataGrid
-            dataGrid.ItemsSource = categories
+            ' Set the data as the DataGrid's source
+            dataGrid.ItemsSource = New ObservableCollection(Of ProductCategory)(categories)
+
+            ' Refresh the view
+            If view IsNot Nothing Then
+                view.Refresh()
+            End If
         End Sub
 
-        ''' <summary>
-        ''' Function to filter DataGrid based on search text
-        ''' </summary>
+        ' Function to filter DataGrid based on search text
         Private Function FilterDataGrid(item As Object) As Boolean
             If String.IsNullOrWhiteSpace(txtSearch.Text) Then
                 Return True ' Show all items if search is empty
             End If
 
             Dim searchText As String = txtSearch.Text.ToLower()
-            Dim category As ProductCategory = TryCast(item, ProductCategory)
 
-            ' Filter by category name or subcategory name
-            Return category IsNot Nothing AndAlso
-                   (category.categoryName.ToLower().Contains(searchText) OrElse
-                    category.subcategories.Any(Function(sc) sc.subcategoryName.ToLower().Contains(searchText)))
+            Return False
         End Function
 
-        ''' <summary>
-        ''' Event handler for TextBox TextChanged event to refresh filter
-        ''' </summary>
-        Private Sub TxtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
+        ' Event handler for TextBox TextChanged event
+        Private Sub txtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
             If view IsNot Nothing Then
                 view.Refresh() ' Refresh the DataGrid filter whenever the text changes
             End If
         End Sub
 
-        ''' <summary>
-        ''' Event Handler for Export Button Click
-        ''' </summary>
+        ' Event Handler for Export Button Click
         Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
             ' Check if DataGrid has data
             If dataGrid.Items.Count = 0 Then
@@ -139,16 +129,34 @@ Namespace DPC.Views.Stocks.ProductCategories
             End If
         End Sub
 
-        ''' <summary>
-        ''' Event handler for Add Category button click
-        ''' </summary>
         Private Sub addCategory(sender As Object, e As RoutedEventArgs)
             ' Create an instance of the AddCategory form
             Dim addCategoryWindow As New DPC.Components.Forms.AddCategory()
 
-            ' Pass the correct window reference to PopupHelper and center it
-            PopupHelper.OpenPopupWithControl(sender, addCategoryWindow, -50, 0, Me)
+            ' Subscribe to the event to reload data after adding a category
+            AddHandler addCategoryWindow.CategoryAdded, AddressOf OnCategoryAdded
 
+            ' Open the popup
+            PopupHelper.OpenPopupWithControl(sender, addCategoryWindow, "windowcenter", -50, 0, Me)
+        End Sub
+
+        ' Event handler to refresh the DataGrid
+        Private Sub OnCategoryAdded(sender As Object, e As EventArgs)
+            LoadData() ' Reloads the categories in the main view
+        End Sub
+
+        Private Sub addSubcategory(sender As Object, e As RoutedEventArgs)
+            Dim addSubcategoryWindow As New DPC.Components.Forms.AddSubcategory()
+
+            ' Subscribe to the event to reload data after adding a category
+            AddHandler addSubcategoryWindow.SubCategoryAdded, AddressOf OnSubCategoryAdded
+
+            ' Open the popup
+            PopupHelper.OpenPopupWithControl(sender, addSubcategoryWindow, "windowcenter", -50, 0, Me)
+        End Sub
+
+        Private Sub OnSubCategoryAdded(sender As Object, e As EventArgs)
+            LoadData() ' Reloads the subcategories in the main view
         End Sub
 
     End Class

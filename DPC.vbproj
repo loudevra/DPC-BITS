@@ -302,6 +302,9 @@
     <Compile Include="Components\Forms\AddRowPopout.xaml.vb">
       <DependentUpon>AddRowPopout.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\AddSubcategory.xaml.vb">
+      <DependentUpon>AddSubcategory.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\AddVariation.xaml.vb">
       <DependentUpon>AddVariation.xaml</DependentUpon>
     </Compile>
@@ -428,6 +431,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Forms\AddRowPopout.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\AddSubcategory.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\AddVariation.xaml">

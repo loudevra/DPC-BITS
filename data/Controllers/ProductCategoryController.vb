@@ -93,5 +93,36 @@ Namespace DPC.Data.Controllers
 
             Return categories
         End Function
+
+        Public Shared Sub GetProductCategory(comboBox As ComboBox)
+            Dim query As String = "
+                SELECT categoryID, categoryName
+                FROM category
+                ORDER BY categoryName ASC;
+            "
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            comboBox.Items.Clear()
+                            While reader.Read()
+                                Dim categoryName As String = reader("categoryName").ToString()
+                                Dim categoryId As Integer = Convert.ToInt32(reader("categoryID"))
+                                Dim item As New ComboBoxItem With {
+                                    .Content = categoryName,
+                                    .Tag = categoryId
+                                }
+                                comboBox.Items.Add(item)
+                            End While
+                        End Using
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show($"Error: {ex.Message}")
+                End Try
+            End Using
+        End Sub
+
     End Class
 End Namespace

@@ -7,22 +7,23 @@ Namespace DPC.Components.Forms
 
         Private categoryNameTextBoxes As New List(Of TextBox)()
         Private categoryDescriptionTextBoxes As New List(Of TextBox)()
+        Public Event CategoryAdded As EventHandler
+
 
         Public Sub New()
             InitializeComponent()
             CreateCategoryPanel()
         End Sub
 
-        ' Method to handle insert button click
         Private Sub InsertBtn()
             For i As Integer = 0 To categoryNameTextBoxes.Count - 1
                 Dim categoryName As String = categoryNameTextBoxes(i).Text
                 Dim categoryDescription As String = categoryDescriptionTextBoxes(i).Text
 
                 Dim newCategory As New ProductCategory With {
-                    .categoryName = categoryName,
-                    .categoryDescription = categoryDescription
-                }
+            .categoryName = categoryName,
+            .categoryDescription = categoryDescription
+        }
 
                 If String.IsNullOrWhiteSpace(newCategory.categoryName) OrElse String.IsNullOrWhiteSpace(categoryDescription) Then
                     MessageBox.Show("Please fill out both category name and description.")
@@ -31,11 +32,15 @@ Namespace DPC.Components.Forms
 
                 If ProductCategoryController.InsertCategory(newCategory) Then
                     MessageBox.Show("Category added successfully!")
+
+                    ' Notify that a new category has been added
+                    RaiseEvent CategoryAdded(Me, EventArgs.Empty)
                 Else
                     MessageBox.Show("Failed to add category.")
                 End If
             Next
         End Sub
+
 
         Private Sub CreateCategoryPanel()
             Dim categoryPanel As New StackPanel() With {.Name = "CategoryPanel"}
