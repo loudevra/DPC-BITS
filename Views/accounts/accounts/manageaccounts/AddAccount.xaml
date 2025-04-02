@@ -2,7 +2,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-    Background="#E0E0E0" Width="600" Height="700" >
+    Background="#E0E0E0" Width="600" Height="Auto" >
 
     <Grid Margin="20">
         <StackPanel>
@@ -26,11 +26,12 @@
 
             <!-- Business Locations -->
             <TextBlock Text="Business Locations:"/>
-            <ComboBox x:Name="cmbBusinessLocation" Margin="0,5,0,15"/>
+            <ComboBox x:Name="cmbBusinessLocation" Style="{StaticResource RoundedComboBoxStyle}"/>
 
             <!-- Account Type -->
             <TextBlock Text="Account Type:"/>
-            <ComboBox x:Name="cmbAccountType" Margin="0,5,0,15"/>
+            <ComboBox x:Name="cmbAccountType" Style="{StaticResource RoundedComboBoxStyle}" Margin="0,5,0,15"/>
+
 
             <!-- Add Button -->
             <Button Content="Add" x:Name="btnAddAccount" Click="BtnAddAccount_Click" Width="100" Height="40" Margin="0,20,0,0" HorizontalAlignment="Right" Background="#4CAF50" Foreground="White"/>

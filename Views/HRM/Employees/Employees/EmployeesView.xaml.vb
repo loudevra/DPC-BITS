@@ -41,7 +41,7 @@ Namespace DPC.Views.HRM.Employees.Employees
                     conn.Open()
                     Dim query As String = "SELECT e.*, r.RoleName, l.LocationName FROM Employee e " &
                                           "JOIN UserRoles r ON e.UserRoleID = r.RoleID " &
-                                          "JOIN BusinessLocations l ON e.BusinessLocationID = l.LocationID " &
+                                          "JOIN BusinessLocation l ON e.BusinessLocationID = l.LocationID " &
                                           "ORDER BY e.CreatedAt DESC"
                     Using cmd As New MySqlCommand(query, conn)
                         Using reader As MySqlDataReader = cmd.ExecuteReader()

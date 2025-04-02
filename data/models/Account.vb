@@ -1,4 +1,13 @@
 ﻿Namespace DPC.Data.Models
+    Public Enum AccountType
+        Basic
+        Assets
+        Expenses
+        Income
+        Liabilities
+        Equity
+    End Enum
+
     Public Class Account
         Public Property AccountID As Integer
         Public Property AccountName As String
@@ -7,7 +16,7 @@
         Public Property InitialBalance As Decimal
         Public Property Note As String
         Public Property BusinessLocation As Integer
-        Public Property AccountType As String
+        Public Property AccountType As AccountType
         Public Property CreatedAt As DateTime
         Public Property UpdatedAt As DateTime
     End Class
