@@ -8,11 +8,10 @@ Imports System.Reflection
 Imports System.ComponentModel
 Imports DPC.DPC.Data.Controllers
 Imports System.Windows.Controls.Primitives
-Imports DocumentFormat.OpenXml.Office.CustomUI
-Imports DPC.DPC.Components.Forms
-Imports DPC.DPC.Data.Model
 Imports MaterialDesignThemes.Wpf
 Imports MaterialDesignThemes.Wpf.Theme
+Imports DPC.DPC.DPC.Data.Model
+Imports DPC.DPC.Components.Forms
 
 Namespace DPC.Views.Stocks.ProductCategories
     ''' <summary>
@@ -22,6 +21,7 @@ Namespace DPC.Views.Stocks.ProductCategories
         Inherits Window
 
         Private view As ICollectionView
+        Private windowLoaded As Boolean = False
 
         Public Sub New()
             InitializeComponent()
@@ -41,28 +41,48 @@ Namespace DPC.Views.Stocks.ProductCategories
             If view IsNot Nothing Then
                 view.Filter = AddressOf FilterDataGrid
             End If
-
         End Sub
 
-        ' Function to filter DataGrid based on search text
+        ''' <summary>
+        ''' Load categories and subcategories into the DataGrid
+        ''' </summary>
+        Private Sub LoadData()
+            ' Get categories with subcategories from the controller
+            Dim categories As List(Of ProductCategory) = ProductCategoryController.GetAllCategoriesWithSubcategories()
+
+            ' Bind categories to the DataGrid
+            dataGrid.ItemsSource = categories
+        End Sub
+
+        ''' <summary>
+        ''' Function to filter DataGrid based on search text
+        ''' </summary>
         Private Function FilterDataGrid(item As Object) As Boolean
             If String.IsNullOrWhiteSpace(txtSearch.Text) Then
                 Return True ' Show all items if search is empty
             End If
 
             Dim searchText As String = txtSearch.Text.ToLower()
+            Dim category As ProductCategory = TryCast(item, ProductCategory)
 
-            Return False
+            ' Filter by category name or subcategory name
+            Return category IsNot Nothing AndAlso
+                   (category.categoryName.ToLower().Contains(searchText) OrElse
+                    category.subcategories.Any(Function(sc) sc.subcategoryName.ToLower().Contains(searchText)))
         End Function
 
-        ' Event handler for TextBox TextChanged event
+        ''' <summary>
+        ''' Event handler for TextBox TextChanged event to refresh filter
+        ''' </summary>
         Private Sub txtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
             If view IsNot Nothing Then
                 view.Refresh() ' Refresh the DataGrid filter whenever the text changes
             End If
         End Sub
 
-        ' Event Handler for Export Button Click
+        ''' <summary>
+        ''' Event Handler for Export Button Click
+        ''' </summary>
         Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
             ' Check if DataGrid has data
             If dataGrid.Items.Count = 0 Then
@@ -72,9 +92,9 @@ Namespace DPC.Views.Stocks.ProductCategories
 
             ' Open SaveFileDialog
             Dim saveFileDialog As New SaveFileDialog() With {
-     .Filter = "Excel Files (*.xlsx)|*.xlsx",
-     .FileName = "DataGridExport.xlsx"
- }
+                .Filter = "Excel Files (*.xlsx)|*.xlsx",
+                .FileName = "DataGridExport.xlsx"
+            }
 
             If saveFileDialog.ShowDialog() = True Then
                 Try
@@ -120,44 +140,17 @@ Namespace DPC.Views.Stocks.ProductCategories
                 End Try
             End If
         End Sub
-        Public Sub LoadData()
-            dataGrid.ItemsSource = ProductCategoryController.GetProductCategory()
-        End Sub
 
-
+        ''' <summary>
+        ''' Event handler for Add Category button click
+        ''' </summary>
         Private Sub addCategory(sender As Object, e As RoutedEventArgs)
-            ' Pass the button and the user control to the helper
+            ' Create an instance of the AddCategory form
             Dim addCategoryWindow As New DPC.Components.Forms.AddCategory()
-            PopupHelper.OpenPopupWithControl(sender, addCategoryWindow)
+
+            ' Pass the correct window reference to PopupHelper and center it
+            PopupHelper.OpenPopupWithControl(sender, addCategoryWindow, "windowcenter", -50, 0, Me)
         End Sub
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     End Class
 End Namespace

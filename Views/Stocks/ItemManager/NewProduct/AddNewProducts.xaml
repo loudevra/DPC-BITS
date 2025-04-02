@@ -83,10 +83,11 @@
 
                         <StackPanel Margin="0,10">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                <TextBlock Text="Product Image:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                                <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
-                            </StackPanel>
+                                    <TextBlock Text="Product Image:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                    <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                                </StackPanel>
                             <TextBlock Text="Please select a file to upload an image for the product." FontSize="13"/>
+                            <Image />
                         </StackPanel>
                     </StackPanel>
 
@@ -161,7 +162,7 @@
                         <StackPanel Margin="0,10" x:Name="StackPanelRetailPrice">
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                    <TextBlock Text="Product Retail Price:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                    <TextBlock Text="Product Selling Price:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                                     <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
                                 </StackPanel>
                                 <Border Style="{StaticResource RoundedBorderStyle}">
@@ -188,7 +189,7 @@
                         <StackPanel Margin="0,10,0,20" x:Name="StackPanelOrderPrice">
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                    <TextBlock Text="Purchase Order Price:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                    <TextBlock Text="Purchase Buying Price:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                                     <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
                                 </StackPanel>
                                 <Border Style="{StaticResource RoundedBorderStyle}">
