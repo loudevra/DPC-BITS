@@ -1,6 +1,5 @@
 ﻿Imports MySql.Data.MySqlClient
-Imports DPC.DPC.Data.Model
-Imports DPC.DPC.DPC.Data.Model
+Imports DPC.DPC.Data.Models
 
 Namespace DPC.Data.Controllers
     Public Class ProductCategoryController

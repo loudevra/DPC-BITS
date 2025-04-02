@@ -7,10 +7,8 @@ Imports System.IO
 Imports System.Reflection
 Imports System.ComponentModel
 Imports DPC.DPC.Data.Controllers
-Imports System.Windows.Controls.Primitives
-Imports MaterialDesignThemes.Wpf
 Imports MaterialDesignThemes.Wpf.Theme
-Imports DPC.DPC.DPC.Data.Model
+Imports DPC.DPC.Data.Models
 Imports DPC.DPC.Components.Forms
 
 Namespace DPC.Views.Stocks.ProductCategories
@@ -74,7 +72,7 @@ Namespace DPC.Views.Stocks.ProductCategories
         ''' <summary>
         ''' Event handler for TextBox TextChanged event to refresh filter
         ''' </summary>
-        Private Sub txtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
+        Private Sub TxtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
             If view IsNot Nothing Then
                 view.Refresh() ' Refresh the DataGrid filter whenever the text changes
             End If
@@ -149,7 +147,8 @@ Namespace DPC.Views.Stocks.ProductCategories
             Dim addCategoryWindow As New DPC.Components.Forms.AddCategory()
 
             ' Pass the correct window reference to PopupHelper and center it
-            PopupHelper.OpenPopupWithControl(sender, addCategoryWindow, "windowcenter", -50, 0, Me)
+            PopupHelper.OpenPopupWithControl(sender, addCategoryWindow, -50, 0, Me)
+
         End Sub
 
     End Class

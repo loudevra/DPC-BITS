@@ -1,7 +1,6 @@
 ﻿Imports DPC.DPC.Data.Controllers
 Imports MySql.Data.MySqlClient
-Imports DPC.DPC.Data.Model
-Imports DPC.DPC.DPC.Data.Model
+Imports DPC.DPC.Data.Models
 
 Namespace DPC.Components.Forms
     Public Class AddCategory

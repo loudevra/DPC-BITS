@@ -1,4 +1,4 @@
-﻿Namespace DPC.DPC.Data.Model
+﻿Namespace DPC.Data.Models
     Public Class ProductCategory
         Public Property categoryID As Integer
         Public Property categoryName As String
