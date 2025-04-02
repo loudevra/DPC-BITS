@@ -94,7 +94,7 @@ Namespace DPC.Data.Controllers
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "SELECT LocationID, LocationName FROM BusinessLocations"
+                    Dim query As String = "SELECT locationID, locationName FROM businessLocation"
                     Using cmd As New MySqlCommand(query, conn)
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
@@ -117,7 +117,7 @@ Namespace DPC.Data.Controllers
                     conn.Open()
                     Dim query As String = "SELECT e.*, r.RoleName, l.LocationName FROM Employee e " &
                                           "JOIN UserRoles r ON e.UserRoleID = r.RoleID " &
-                                          "JOIN BusinessLocations l ON e.BusinessLocationID = l.LocationID " &
+                                          "JOIN businessLocation l ON e.businessLocationID = l.LocationID " &
                                           "WHERE e.EmployeeID = @EmployeeID"
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@EmployeeID", employeeID)

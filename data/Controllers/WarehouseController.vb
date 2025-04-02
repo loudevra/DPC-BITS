@@ -13,7 +13,7 @@ Namespace DPC.Data.Controllers
                 ' Use connection from SplashScreen
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "SELECT LocationID, LocationName FROM businesslocations"
+                    Dim query As String = "SELECT locationID, locationName FROM businesslocation"
                     Using cmd As New MySqlCommand(query, conn)
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
