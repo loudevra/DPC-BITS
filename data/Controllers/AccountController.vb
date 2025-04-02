@@ -11,16 +11,16 @@ Namespace DPC.Data.Controllers
             acc.AccountID = GenerateAccountID()
 
             Dim query As String = "INSERT INTO Accounts (AccountID, AccountName, AccountNo, AccountType, InitialBalance, Note, BusinessLocation, CreatedAt, UpdatedAt) " &
-                              "VALUES (@AccountID, @AccountName, @AccountNo, @AccountType, @InitialBalance, @Note, @BusinessLocation, @CreatedAt, @UpdatedAt)"
+                          "VALUES (@AccountID, @AccountName, @AccountNo, @AccountType, @InitialBalance, @Note, @BusinessLocation, @CreatedAt, @UpdatedAt)"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
                     conn.Open()
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@AccountID", acc.AccountID)
-                        cmd.Parameters.AddWithValue("@AccountName", acc.Name)
+                        cmd.Parameters.AddWithValue("@AccountName", acc.AccountName) ' Fixed field
                         cmd.Parameters.AddWithValue("@AccountNo", acc.AccountNo)
-                        cmd.Parameters.AddWithValue("@AccountType", acc.AccountType)
+                        cmd.Parameters.AddWithValue("@AccountType", acc.AccountType.ToString()) ' Store enum as string
                         cmd.Parameters.AddWithValue("@InitialBalance", acc.InitialBalance)
                         cmd.Parameters.AddWithValue("@Note", acc.Note)
                         cmd.Parameters.AddWithValue("@BusinessLocation", acc.BusinessLocation)
@@ -36,6 +36,7 @@ Namespace DPC.Data.Controllers
                 End Try
             End Using
         End Function
+
 
         ' Function to fetch all accounts
         Public Shared Function GetAllAccounts() As ObservableCollection(Of Account)
@@ -78,7 +79,7 @@ Namespace DPC.Data.Controllers
 
         ' Function to get the next Account counter
         Private Shared Function GetNextAccountCounter(datePart As String) As Integer
-            Dim query As String = "SELECT MAX(CAST(SUBSTRING(AccountID, 11, 4) AS UNSIGNED)) FROM Accounts WHERE AccountID LIKE '13" & datePart & "%'"
+            Dim query As String = "SELECT MAX(CAST(SUBSTRING(AccountID, 11, 4) AS UNSIGNED)) FROM Accounts WHERE AccountID LIKE '60" & datePart & "%'"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
@@ -97,5 +98,6 @@ Namespace DPC.Data.Controllers
                 End Try
             End Using
         End Function
+
     End Class
 End Namespace

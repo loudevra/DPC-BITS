@@ -25,9 +25,9 @@ Public Class PopupHelper
 
         popup = New Popup With {
             .StaysOpen = False,
-            .AllowsTransparency = True
+            .AllowsTransparency = True,
+            .Child = control
         }
-        popup.Child = control
 
         AddHandler popup.Closed, Sub()
                                      recentlyClosed = True
