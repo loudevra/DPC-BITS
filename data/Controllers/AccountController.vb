@@ -59,7 +59,7 @@ Namespace DPC.Data.Controllers
                                 Dim account As New Account With {
                                     .AccountID = reader("AccountID").ToString(),
                                     .AccountName = reader("AccountName").ToString(),
-                                    .AccountType = reader("AccountType").ToString(),
+                                    .AccountType = CType([Enum].Parse(GetType(AccountType), reader("AccountType").ToString()), AccountType),
                                     .CreatedAt = Convert.ToDateTime(reader("CreatedAt")),
                                     .UpdatedAt = Convert.ToDateTime(reader("UpdatedAt"))
                                 }

@@ -108,6 +108,8 @@ Namespace DPC.Views.Accounts.Accounts.ManageAccounts
                 If AccountController.CreateAccount(newAccount) Then
                     MessageBox.Show("Account added successfully!",
                             "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+
+                    RaiseEvent AccountAdded(Me, EventArgs.Empty)
                 Else
                     MessageBox.Show("Failed to add account.",
                             "Error", MessageBoxButton.OK, MessageBoxImage.Error)
