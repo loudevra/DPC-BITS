@@ -34,7 +34,7 @@ Namespace DPC.Data.Controllers
                 ' Use connection from SplashScreen
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "INSERT INTO warehouse (name, description, buisnesslocationid) VALUES (@name, @description, @businessLocationID)"
+                    Dim query As String = "INSERT INTO warehouse (warehouseName, description, businessLocationID) VALUES (@name, @description, @businessLocationID)"
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@name", name)
                         cmd.Parameters.AddWithValue("@description", description)
@@ -57,13 +57,13 @@ Namespace DPC.Data.Controllers
                 ' Use connection from SplashScreen
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "SELECT warehouseid, name, description FROM warehouse;"
+                    Dim query As String = "SELECT warehouseID, warehouseName, description FROM warehouse;"
                     Using cmd As New MySqlCommand(query, conn)
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
                                 warehouseList.Add(New Warehouses With {
-                                    .ID = reader.GetInt32("warehouseid"),
-                                    .Name = reader.GetString("name"),
+                                    .ID = reader.GetInt32("warehouseID"),
+                                    .Name = reader.GetString("warehouseName"),
                                     .Description = reader.GetString("description")})
                             End While
                         End Using
