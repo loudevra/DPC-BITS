@@ -47,9 +47,7 @@ Namespace DPC.Views.Stocks.ProductCategories
             dataGrid.ItemsSource = New ObservableCollection(Of ProductCategory)(categories)
 
             ' Refresh the view
-            If view IsNot Nothing Then
-                view.Refresh()
-            End If
+            view?.Refresh()
         End Sub
 
         ' Function to filter DataGrid based on search text
@@ -65,9 +63,7 @@ Namespace DPC.Views.Stocks.ProductCategories
 
         ' Event handler for TextBox TextChanged event
         Private Sub TxtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
-            If view IsNot Nothing Then
-                view.Refresh() ' Refresh the DataGrid filter whenever the text changes
-            End If
+            view?.Refresh() ' Refresh the DataGrid filter whenever the text changes
         End Sub
 
         ' Event Handler for Export Button Click
