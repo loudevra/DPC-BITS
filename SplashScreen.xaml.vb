@@ -12,6 +12,7 @@ Namespace DPC
             $"server={EnvLoader.GetEnv("DB_HOST")};" &
             $"userid={EnvLoader.GetEnv("DB_USER")};" &
             $"password={EnvLoader.GetEnv("DB_PASS")};" &
+            $"port={EnvLoader.GetEnv("DB_PORT")};" &
             $"database={EnvLoader.GetEnv("DB_NAME")};" &
             $"Pooling=True;" &
             $"Min Pool Size={EnvLoader.GetEnv("DB_POOL_MIN")};" &
