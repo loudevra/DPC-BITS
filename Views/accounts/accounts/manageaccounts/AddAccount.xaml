@@ -26,7 +26,12 @@
 
             <!-- Business Locations -->
             <TextBlock Text="Business Locations:"/>
-            <ComboBox x:Name="cmbBusinessLocation" Style="{StaticResource RoundedComboBoxStyle}"/>
+            <ComboBox x:Name="cmbBusinessLocation" 
+              Style="{StaticResource RoundedComboBoxStyle}" 
+                DisplayMemberPath="Value" 
+                SelectedValuePath="Key" 
+                Margin="0,5,0,15"/>
+
 
             <!-- Account Type -->
             <TextBlock Text="Account Type:"/>

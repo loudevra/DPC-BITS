@@ -89,8 +89,13 @@ Namespace DPC.Data.Controllers
         End Function
 
         ' Fetch all business locations
-        Public Shared Function GetBusinessLocations() As List(Of KeyValuePair(Of Integer, String))
-            Dim locations As New List(Of KeyValuePair(Of Integer, String))
+        Public Class Location
+            Public Property Key As Integer
+            Public Property Value As String
+        End Class
+
+        Public Shared Function GetBusinessLocations() As List(Of Location)
+            Dim locations As New List(Of Location)
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
@@ -98,7 +103,10 @@ Namespace DPC.Data.Controllers
                     Using cmd As New MySqlCommand(query, conn)
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
-                                locations.Add(New KeyValuePair(Of Integer, String)(reader.GetInt32(0), reader.GetString(1)))
+                                locations.Add(New Location With {
+                            .Key = reader.GetInt32(0),
+                            .Value = reader.GetString(1)
+                        })
                             End While
                         End Using
                     End Using
