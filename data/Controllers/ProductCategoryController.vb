@@ -3,6 +3,7 @@ Imports DPC.DPC.Data.Models
 
 Namespace DPC.Data.Controllers
     Public Class ProductCategoryController
+        'Function to insert categories
         Public Shared Function InsertCategory(newCategory As ProductCategory) As Boolean
             ' Ensure the category name is not empty
             If String.IsNullOrWhiteSpace(newCategory.categoryName) Then
@@ -45,8 +46,44 @@ Namespace DPC.Data.Controllers
                 Return False
             End Try
         End Function
+        'Function to insert sub-categories
+        Public Shared Function InsertSubcategories(categoryID As Integer, subcategories As List(Of Subcategory)) As Boolean
+            If subcategories.Count = 0 Then
+                MessageBox.Show("Please add at least one subcategory.")
+                Return False
+            End If
 
-        ' New method to fetch all categories with subcategories
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+
+                    ' Insert each subcategory dynamically
+                    Dim query As String = "INSERT INTO Subcategory (categoryID, subcategoryName, dateCreated, dateModified) VALUES (@categoryID, @subcategoryName, NOW(), NOW())"
+
+                    For Each subcategory As Subcategory In subcategories
+                        ' Ensure subcategory name is not empty
+                        If String.IsNullOrWhiteSpace(subcategory.subcategoryName) Then
+                            MessageBox.Show("Subcategory name cannot be empty.")
+                            Continue For
+                        End If
+
+                        Using cmd As New MySqlCommand(query, conn)
+                            cmd.Parameters.AddWithValue("@categoryID", categoryID)
+                            cmd.Parameters.AddWithValue("@subcategoryName", subcategory.subcategoryName)
+                            cmd.ExecuteNonQuery()
+                        End Using
+                    Next
+
+                    MessageBox.Show("Subcategories added successfully!")
+                    Return True
+                End Using
+            Catch ex As Exception
+                MessageBox.Show($"An error occurred: {ex.Message}")
+                Return False
+            End Try
+        End Function
+
+        'Function to fetch all category data and add to grid
         Public Shared Function GetAllCategoriesWithSubcategories() As List(Of ProductCategory)
             Dim categories As New List(Of ProductCategory)()
             Dim connectionString As String = SplashScreen.GetDatabaseConnection().ConnectionString
@@ -94,6 +131,7 @@ Namespace DPC.Data.Controllers
             Return categories
         End Function
 
+        'Function to fetch all category and add into a combobox call by using GetProductCategory(yourComboboxName)
         Public Shared Sub GetProductCategory(comboBox As ComboBox)
             Dim query As String = "
                 SELECT categoryID, categoryName
@@ -116,6 +154,7 @@ Namespace DPC.Data.Controllers
                                 }
                                 comboBox.Items.Add(item)
                             End While
+                            comboBox.SelectedIndex = 0
                         End Using
                     End Using
                 Catch ex As Exception

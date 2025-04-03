@@ -43,11 +43,17 @@ Namespace DPC.Views.Stocks.ProductCategories
             ' Fetch data from the database
             Dim categories As List(Of ProductCategory) = ProductCategoryController.GetAllCategoriesWithSubcategories()
 
-            ' Set the data as the DataGrid's source
-            dataGrid.ItemsSource = New ObservableCollection(Of ProductCategory)(categories)
+            ' Convert the list to an ObservableCollection
+            Dim sortedCategories As New ObservableCollection(Of ProductCategory)(categories.OrderBy(Function(c) c.categoryID))
 
-            ' Refresh the view
+            ' Set the data as the DataGrid's source
+            dataGrid.ItemsSource = sortedCategories
+
+            ' Apply sorting on the DataGrid's default view
+            Dim view As ICollectionView = CollectionViewSource.GetDefaultView(dataGrid.ItemsSource)
             If view IsNot Nothing Then
+                view.SortDescriptions.Clear()
+                view.SortDescriptions.Add(New SortDescription("categoryID", ListSortDirection.Ascending))
                 view.Refresh()
             End If
         End Sub
