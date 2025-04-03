@@ -9,51 +9,51 @@ Namespace DPC.Data.Helpers
         Private Shared ReadOnly SmtpServer As String = EnvLoader.GetEnv("EMAIL_HOST")
         Private Shared ReadOnly SmtpPort As Integer = Convert.ToInt32(EnvLoader.GetEnv("EMAIL_PORT"))
         Private Shared ReadOnly SenderEmail As String = EnvLoader.GetEnv("EMAIL_USER")
-        Private Shared ReadOnly SenderPassword As String = EnvLoader.GetEnv("EMAIL_PASS")
+        Private Shared ReadOnly SenderPassword As String = EnvLoader.GetEnv("EMAIL_PASS_PROD")
 
-        ' Debugging: Print SMTP settings
-        Public Shared Sub DebugSMTPSettings()
-            Console.WriteLine("📌 SMTP Debug Info:")
-            Console.WriteLine("SMTP Server: " & SmtpServer)
-            Console.WriteLine("SMTP Port: " & SmtpPort)
-            Console.WriteLine("Sender Email: " & SenderEmail)
-            Console.WriteLine("Sender Password: " & If(String.IsNullOrEmpty(SenderPassword), "❌ NOT SET", "✅ SET (Hidden)"))
-        End Sub
-
-        ' Function to get email template path
+        ' Function to get email template path dynamically
         Private Shared Function GetEmailTemplatePath(filename As String) As String
-            Dim projectRoot As String = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.Parent.FullName
-            Return Path.Combine(projectRoot, "DPC", "Assets", "mails", filename)
+            ' Get the base directory of the running application
+            Dim basePath As String = AppDomain.CurrentDomain.BaseDirectory
+
+            ' Check multiple possible locations
+            Dim possiblePaths As String() = {
+                 Path.Combine(basePath, "Assets", "mails", filename), ' Normal path
+                 Path.Combine(basePath, "..", "..", "Assets", "mails", filename), ' For bin/debug
+                 Path.Combine(basePath, "..", "..", "..", "Assets", "mails", filename) ' For deeper structures
+            }
+
+            ' Return the first valid path found
+            For Each path In possiblePaths
+                If File.Exists(path) Then
+                    Return path
+                End If
+            Next
+
+            ' Log error if not found
+            Console.WriteLine("🚨 ERROR: Email template not found: " & filename)
+            Return String.Empty
         End Function
+
+
 
         ' Send Verification Code Email
         Public Shared Sub SendVerificationCode(recipientEmail As String, username As String, verificationCode As String)
             Try
-                DebugSMTPSettings()
-
                 ' Get email template path
                 Dim templatePath As String = GetEmailTemplatePath("password_reset_code.html")
-                If Not File.Exists(templatePath) Then
-                    Console.WriteLine("🚨 ERROR: Email template not found: " & templatePath)
-                    Exit Sub
-                End If
+                If String.IsNullOrEmpty(templatePath) Then Exit Sub
 
                 ' Read and customize the HTML template
                 Dim htmlBody As String = File.ReadAllText(templatePath)
-                htmlBody = htmlBody.Replace("{{USERNAME}}", username)
-                htmlBody = htmlBody.Replace("{{VERIFICATION_CODE}}", verificationCode)
+                htmlBody = htmlBody.Replace("{{USERNAME}}", username).Replace("{{VERIFICATION_CODE}}", verificationCode)
 
                 ' Create Email Message
                 Dim message As New MimeMessage()
                 message.From.Add(New MailboxAddress("Dream PC Support", SenderEmail))
                 message.To.Add(New MailboxAddress(username, recipientEmail))
                 message.Subject = "Your Password Reset Code"
-
-                ' Set Email Body
-                Dim bodyBuilder As New BodyBuilder With {
-                    .HtmlBody = htmlBody
-                }
-                message.Body = bodyBuilder.ToMessageBody()
+                message.Body = New BodyBuilder With {.HtmlBody = htmlBody}.ToMessageBody()
 
                 ' Send email using MailKit
                 Using smtpClient As New SmtpClient()
@@ -62,41 +62,27 @@ Namespace DPC.Data.Helpers
                     smtpClient.Send(message)
                     smtpClient.Disconnect(True)
                 End Using
-
-
             Catch ex As Exception
-                Console.WriteLine("🚨 Email Sending Error: " & ex.Message)
             End Try
         End Sub
 
         ' Send Password Reset Confirmation Email
         Public Shared Function SendPasswordResetConfirmation(toEmail As String, username As String, resetDate As DateTime) As Boolean
             Try
-                DebugSMTPSettings()
-
                 ' Get email template path
                 Dim templatePath As String = GetEmailTemplatePath("password_reset_success.html")
-                If Not File.Exists(templatePath) Then
-                    Console.WriteLine("🚨 ERROR: Email template not found: " & templatePath)
-                    Return False
-                End If
+                If String.IsNullOrEmpty(templatePath) Then Return False
 
                 ' Read and customize the HTML template
                 Dim htmlBody As String = File.ReadAllText(templatePath)
-                htmlBody = htmlBody.Replace("{{USERNAME}}", username)
-                htmlBody = htmlBody.Replace("{{RESET_DATE}}", resetDate.ToString("dddd, MMMM dd yyyy, hh:mm:ss tt"))
+                htmlBody = htmlBody.Replace("{{USERNAME}}", username).Replace("{{RESET_DATE}}", resetDate.ToString("dddd, MMMM dd yyyy, hh:mm:ss tt"))
 
                 ' Create Email Message
                 Dim message As New MimeMessage()
                 message.From.Add(New MailboxAddress("Dream PC Support", SenderEmail))
                 message.To.Add(New MailboxAddress(username, toEmail))
                 message.Subject = "Your Password Has Been Changed"
-
-                ' Set Email Body
-                Dim bodyBuilder As New BodyBuilder With {
-                    .HtmlBody = htmlBody
-                }
-                message.Body = bodyBuilder.ToMessageBody()
+                message.Body = New BodyBuilder With {.HtmlBody = htmlBody}.ToMessageBody()
 
                 ' Send email using MailKit
                 Using smtpClient As New SmtpClient()
@@ -105,12 +91,8 @@ Namespace DPC.Data.Helpers
                     smtpClient.Send(message)
                     smtpClient.Disconnect(True)
                 End Using
-
-                Console.WriteLine("✅ Password reset confirmation email sent successfully to " & toEmail)
                 Return True
-
             Catch ex As Exception
-                Console.WriteLine("🚨 Email Sending Error: " & ex.Message)
                 Return False
             End Try
         End Function
