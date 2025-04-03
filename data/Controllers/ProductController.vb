@@ -589,8 +589,8 @@ Namespace DPC.Data.Controllers
                 conn.Open()
                 Using transaction = conn.BeginTransaction()
                     ' Insert into product table first
-                    Dim productQuery As String = "INSERT INTO product (productID, productName, categoryID, subcategoryID, supplierID, brandID, dateCreated) 
-                                          VALUES (@productID, @ProductName, @Category, @SubCategory, @SupplierID, @BrandID, @DateCreated);"
+                    Dim productQuery As String = "INSERT INTO product (productID, productName, categoryID, subcategoryID, supplierID, brandID, dateCreated, productVariation) 
+                                          VALUES (@productID, @ProductName, @Category, @SubCategory, @SupplierID, @BrandID, @DateCreated, @variation);"
                     Using productCmd As New MySqlCommand(productQuery, conn, transaction)
                         productCmd.Parameters.AddWithValue("@productID", productID)
                         productCmd.Parameters.AddWithValue("@ProductName", ProductName.Text)
@@ -599,6 +599,7 @@ Namespace DPC.Data.Controllers
                         productCmd.Parameters.AddWithValue("@SupplierID", CType(Supplier.SelectedItem, ComboBoxItem).Tag)
                         productCmd.Parameters.AddWithValue("@BrandID", CType(Brand.SelectedItem, ComboBoxItem).Tag)
                         productCmd.Parameters.AddWithValue("@DateCreated", ValidDate.SelectedDate)
+                        productCmd.Parameters.AddWithValue("@variation", variation)
                         productCmd.ExecuteNonQuery()
                     End Using
 
