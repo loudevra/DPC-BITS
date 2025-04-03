@@ -17,7 +17,7 @@ Namespace DPC.Data.Controllers
                     conn.Open()
 
                     ' Check for duplicate category
-                    Dim checkQuery As String = "SELECT COUNT(*) FROM Category WHERE CategoryName = @CategoryName"
+                    Dim checkQuery As String = "SELECT COUNT(*) FROM category WHERE CategoryName = @CategoryName"
                     Using checkCmd As New MySqlCommand(checkQuery, conn)
                         checkCmd.Parameters.AddWithValue("@CategoryName", newCategory.categoryName)
 
@@ -29,7 +29,7 @@ Namespace DPC.Data.Controllers
                     End Using
 
                     ' Insert the new category
-                    Dim query As String = "INSERT INTO Category (CategoryName, categoryDescription, DateCreated, DateModified) " &
+                    Dim query As String = "INSERT INTO category (CategoryName, categoryDescription, DateCreated, DateModified) " &
                                           "VALUES (@CategoryName, @categoryDescription, NOW(), NOW())"
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@CategoryName", newCategory.categoryName)
@@ -58,7 +58,7 @@ Namespace DPC.Data.Controllers
                     conn.Open()
 
                     ' Insert each subcategory dynamically
-                    Dim query As String = "INSERT INTO Subcategory (categoryID, subcategoryName, dateCreated, dateModified) VALUES (@categoryID, @subcategoryName, NOW(), NOW())"
+                    Dim query As String = "INSERT INTO subcategory (categoryID, subcategoryName, dateCreated, dateModified) VALUES (@categoryID, @subcategoryName, NOW(), NOW())"
 
                     For Each subcategory As Subcategory In subcategories
                         ' Ensure subcategory name is not empty
@@ -94,8 +94,8 @@ Namespace DPC.Data.Controllers
                 ' Query to fetch categories along with subcategories (only relevant columns)
                 Dim query As String = "SELECT c.categoryID, c.categoryName, c.categoryDescription, " &
                                       "s.subcategoryID, s.subcategoryName " &
-                                      "FROM Category c " &
-                                      "LEFT JOIN Subcategory s ON c.categoryID = s.categoryID"
+                                      "FROM category c " &
+                                      "LEFT JOIN subcategory s ON c.categoryID = s.categoryID"
 
                 Dim cmd As New MySqlCommand(query, conn)
 

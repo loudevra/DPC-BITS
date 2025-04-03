@@ -39,9 +39,9 @@ Namespace DPC.Views.HRM.Employees.Employees
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "SELECT e.*, r.RoleName, l.LocationName FROM Employee e " &
-                                          "JOIN UserRoles r ON e.UserRoleID = r.RoleID " &
-                                          "JOIN BusinessLocation l ON e.BusinessLocationID = l.LocationID " &
+                    Dim query As String = "SELECT e.*, r.RoleName, l.LocationName FROM employee e " &
+                                          "JOIN userroles r ON e.UserRoleID = r.RoleID " &
+                                          "JOIN businesslocation l ON e.BusinessLocationID = l.LocationID " &
                                           "ORDER BY e.CreatedAt DESC"
                     Using cmd As New MySqlCommand(query, conn)
                         Using reader As MySqlDataReader = cmd.ExecuteReader()

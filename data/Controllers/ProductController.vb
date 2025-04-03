@@ -48,7 +48,7 @@ Namespace DPC.Data.Controllers
             Dim query As String = "
         SELECT s.supplierID, s.supplierName
         FROM supplier s
-        INNER JOIN SupplierBrand sb ON s.supplierID = sb.supplierID
+        INNER JOIN supplierbrand sb ON s.supplierID = sb.supplierID
         WHERE sb.brandID = @brandID
         ORDER BY s.supplierName ASC;
     "
@@ -458,7 +458,6 @@ Namespace DPC.Data.Controllers
                                 LEFT JOIN productvariation pv ON p.productID = pv.productID
                                 LEFT JOIN productvariationstock pvs ON pv.productID = pvs.productID
                                 WHERE p.productVariation = 1;
-
                                 "
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()

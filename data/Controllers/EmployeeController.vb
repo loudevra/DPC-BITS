@@ -15,7 +15,7 @@ Namespace DPC.Data.Controllers
             ' Hash the password before storing
             Dim hashedPassword As String = PBKDF2Hasher.HashPassword(emp.Password)
 
-            Dim query As String = "INSERT INTO Employee (EmployeeID, Username, Email, Password, UserRoleID, BusinessLocationID, Name, " &
+            Dim query As String = "INSERT INTO employee (EmployeeID, Username, Email, Password, UserRoleID, BusinessLocationID, Name, " &
               "StreetAddress, City, Region, Country, PostalCode, Phone, Salary, SalesCommission, Department, CreatedAt, UpdatedAt) " &
               "VALUES (@EmployeeID, @Username, @Email, @Password, @UserRoleID, @BusinessLocationID, @Name, @StreetAddress, " &
               "@City, @Region, @Country, @PostalCode, @Phone, @Salary, @SalesCommission, @Department, @CreatedAt, @UpdatedAt)"
@@ -73,7 +73,7 @@ Namespace DPC.Data.Controllers
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "SELECT RoleID, RoleName FROM UserRoles"
+                    Dim query As String = "SELECT RoleID, RoleName FROM userroles"
                     Using cmd As New MySqlCommand(query, conn)
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
@@ -99,7 +99,7 @@ Namespace DPC.Data.Controllers
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "SELECT locationID, locationName FROM businessLocation"
+                    Dim query As String = "SELECT locationID, locationName FROM businesslocation"
                     Using cmd As New MySqlCommand(query, conn)
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
@@ -123,9 +123,9 @@ Namespace DPC.Data.Controllers
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "SELECT e.*, r.RoleName, l.LocationName FROM Employee e " &
-                                          "JOIN UserRoles r ON e.UserRoleID = r.RoleID " &
-                                          "JOIN businessLocation l ON e.businessLocationID = l.LocationID " &
+                    Dim query As String = "SELECT e.*, r.RoleName, l.LocationName FROM employee e " &
+                                          "JOIN userroles r ON e.UserRoleID = r.RoleID " &
+                                          "JOIN businesslocation l ON e.businessLocationID = l.LocationID " &
                                           "WHERE e.EmployeeID = @EmployeeID"
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@EmployeeID", employeeID)
@@ -153,7 +153,7 @@ Namespace DPC.Data.Controllers
 
         ' Function to get the next Employee counter (last 4 digits) with reset condition
         Private Shared Function GetNextEmployeeCounter(datePart As String) As Integer
-            Dim query As String = "SELECT MAX(CAST(SUBSTRING(EmployeeID, 11, 4) AS UNSIGNED)) FROM Employee " &
+            Dim query As String = "SELECT MAX(CAST(SUBSTRING(EmployeeID, 11, 4) AS UNSIGNED)) FROM employee " &
                           "WHERE EmployeeID LIKE '10" & datePart & "%'"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()

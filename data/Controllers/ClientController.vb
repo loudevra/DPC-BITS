@@ -10,7 +10,7 @@ Namespace DPC.Data.Controllers
             ' Generate the custom Client ID
             client.ClientID = GenerateClientID()
 
-            Dim query As String = "INSERT INTO Client (ClientID, ClientGroupID, Name, Company, Phone, Email, BillingAddress, ShippingAddress, " &
+            Dim query As String = "INSERT INTO client (ClientID, ClientGroupID, Name, Company, Phone, Email, BillingAddress, ShippingAddress, " &
                                   "CustomerGroup, Language, CreatedAt, UpdatedAt) " &
                                   "VALUES (@ClientID, @ClientGroupID, @Name, @Company, @Phone, @Email, @BillingAddress, @ShippingAddress, " &
                                   "@CustomerGroup, @Language, @CreatedAt, @UpdatedAt)"
@@ -56,7 +56,7 @@ Namespace DPC.Data.Controllers
 
         ' Function to get the next Client counter (last 4 digits)
         Private Shared Function GetNextClientCounter(datePart As String) As Integer
-            Dim query As String = "SELECT MAX(CAST(SUBSTRING(ClientID, 11, 4) AS UNSIGNED)) FROM Client " &
+            Dim query As String = "SELECT MAX(CAST(SUBSTRING(ClientID, 11, 4) AS UNSIGNED)) FROM client " &
                                   "WHERE ClientID LIKE '12" & datePart & "%'"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
@@ -83,7 +83,7 @@ Namespace DPC.Data.Controllers
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "SELECT * FROM Client"
+                    Dim query As String = "SELECT * FROM client"
                     Using cmd As New MySqlCommand(query, conn)
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
@@ -123,7 +123,7 @@ Namespace DPC.Data.Controllers
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "SELECT * FROM Client WHERE ClientID = @ClientID"
+                    Dim query As String = "SELECT * FROM client WHERE ClientID = @ClientID"
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@ClientID", clientID)
                         Using reader As MySqlDataReader = cmd.ExecuteReader()

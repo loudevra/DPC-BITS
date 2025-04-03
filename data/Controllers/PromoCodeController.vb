@@ -8,7 +8,7 @@ Namespace DPC.Data.Controllers
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "INSERT INTO PromoCodes (Code, Amount, Quantity, ValidUntil, IsLinked, Account, Note) " &
+                    Dim query As String = "INSERT INTO promocodes (Code, Amount, Quantity, ValidUntil, IsLinked, Account, Note) " &
                                           "VALUES (@Code, @Amount, @Quantity, @ValidUntil, @IsLinked, @Account, @Note)"
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@Code", promo.Code)
@@ -34,7 +34,7 @@ Namespace DPC.Data.Controllers
                 Dim dt As New DataTable()
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "SELECT Code, Amount, Quantity, ValidUntil, IsLinked, Account, Note FROM PromoCodes"
+                    Dim query As String = "SELECT Code, Amount, Quantity, ValidUntil, IsLinked, Account, Note FROM promocodes"
                     Using cmd As New MySqlCommand(query, conn)
                         Using adapter As New MySqlDataAdapter(cmd)
                             adapter.Fill(dt)

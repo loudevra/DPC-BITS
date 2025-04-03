@@ -119,7 +119,7 @@ Namespace DPC.Data.Controllers
                     End Using
 
                     ' Insert into SupplierBrand table for each brand
-                    Dim brandQuery As String = "INSERT INTO SupplierBrand (SupplierID, BrandID) VALUES (@SupplierID, @BrandID);"
+                    Dim brandQuery As String = "INSERT INTO supplierbrand (SupplierID, BrandID) VALUES (@SupplierID, @BrandID);"
                     For Each brandID As String In brandIDs
                         Using cmdBrand As New MySqlCommand(brandQuery, conn)
                             cmdBrand.Parameters.AddWithValue("@SupplierID", supplierID)

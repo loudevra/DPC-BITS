@@ -15,7 +15,7 @@ Namespace DPC.Data.Controllers
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 conn.Open()
 
-                Dim query As String = "SELECT * FROM Documents WHERE EmployeeID = @EmployeeID ORDER BY UploadDate DESC"
+                Dim query As String = "SELECT * FROM documents WHERE EmployeeID = @EmployeeID ORDER BY UploadDate DESC"
                 Using command As New MySqlCommand(query, conn)
                     command.Parameters.AddWithValue("@EmployeeID", employeeID)
 
@@ -44,7 +44,7 @@ Namespace DPC.Data.Controllers
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 conn.Open()
 
-                Dim query As String = "SELECT * FROM Documents WHERE DocumentID = @DocumentID AND EmployeeID = @EmployeeID"
+                Dim query As String = "SELECT * FROM documents WHERE DocumentID = @DocumentID AND EmployeeID = @EmployeeID"
                 Using command As New MySqlCommand(query, conn)
                     command.Parameters.AddWithValue("@DocumentID", documentID)
                     command.Parameters.AddWithValue("@EmployeeID", employeeID)
@@ -75,7 +75,7 @@ Namespace DPC.Data.Controllers
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 conn.Open()
 
-                Dim query As String = "INSERT INTO Documents (EmployeeID, Title, FileName, FileContent, FileType, FileSize, UploadDate) " &
+                Dim query As String = "INSERT INTO documents (EmployeeID, Title, FileName, FileContent, FileType, FileSize, UploadDate) " &
                                     "VALUES (@EmployeeID, @Title, @FileName, @FileContent, @FileType, @FileSize, @UploadDate)"
 
                 Using command As New MySqlCommand(query, conn)
@@ -97,7 +97,7 @@ Namespace DPC.Data.Controllers
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 conn.Open()
 
-                Dim query As String = "DELETE FROM Documents WHERE DocumentID = @DocumentID AND EmployeeID = @EmployeeID"
+                Dim query As String = "DELETE FROM documents WHERE DocumentID = @DocumentID AND EmployeeID = @EmployeeID"
                 Using command As New MySqlCommand(query, conn)
                     command.Parameters.AddWithValue("@DocumentID", documentID)
                     command.Parameters.AddWithValue("@EmployeeID", employeeID)

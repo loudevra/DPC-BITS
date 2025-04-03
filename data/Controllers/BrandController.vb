@@ -6,7 +6,7 @@ Namespace DPC.Data.Controllers
     Public Class BrandController
         Public Shared Function GetBrands() As ObservableCollection(Of Brand)
             Dim brandList As New ObservableCollection(Of Brand)()
-            Dim query As String = "SELECT brandID, brandname FROM Brand;"
+            Dim query As String = "SELECT brandID, brandname FROM brand;"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
@@ -40,7 +40,7 @@ Namespace DPC.Data.Controllers
                     conn.Open()
 
                     ' Check for duplicate brand
-                    Dim checkQuery As String = "SELECT COUNT(*) FROM Brand WHERE BrandName = @BrandName"
+                    Dim checkQuery As String = "SELECT COUNT(*) FROM brand WHERE brandName = @BrandName"
                     Using checkCmd As New MySqlCommand(checkQuery, conn)
                         checkCmd.Parameters.AddWithValue("@BrandName", brandName)
 
@@ -55,7 +55,7 @@ Namespace DPC.Data.Controllers
                     End Using
 
                     ' Insert brand without BrandID
-                    Dim query As String = "INSERT INTO Brand (BrandName) VALUES (@BrandName)"
+                    Dim query As String = "INSERT INTO brand (BrandName) VALUES (@BrandName)"
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@BrandName", brandName)
                         cmd.ExecuteNonQuery()

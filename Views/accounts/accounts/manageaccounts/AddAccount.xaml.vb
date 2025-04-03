@@ -14,7 +14,7 @@ Namespace DPC.Views.Accounts.Accounts.ManageAccounts
         End Sub
 
         Public Shared Sub GetBusinessLocation(comboBox As ComboBox)
-            Dim query As String = "SELECT locationID, locationName FROM businessLocation"
+            Dim query As String = "SELECT locationID, locationName FROM businesslocation"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try

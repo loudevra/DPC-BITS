@@ -95,7 +95,7 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
                     conn.Open()
-                    Dim query As String = "SELECT brandid, brandname FROM Brand;"
+                    Dim query As String = "SELECT brandid, brandname FROM brand;"
                     Using cmd As New MySqlCommand(query, conn)
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()

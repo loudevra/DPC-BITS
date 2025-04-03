@@ -7,7 +7,7 @@ Namespace DPC.Data.Controllers
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "INSERT INTO ClientGroup (GroupName, Description) VALUES (@GroupName, @Description)"
+                    Dim query As String = "INSERT INTO clientGroup (GroupName, Description) VALUES (@GroupName, @Description)"
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@GroupName", group.GroupName)
                         cmd.Parameters.AddWithValue("@Description", group.Description)
@@ -26,7 +26,7 @@ Namespace DPC.Data.Controllers
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "SELECT * FROM ClientGroup"
+                    Dim query As String = "SELECT * FROM clientGroup"
                     Using cmd As New MySqlCommand(query, conn)
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()

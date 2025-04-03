@@ -24,7 +24,7 @@ Namespace DPC.Data.Controllers
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
                     conn.Open()
-                    Dim query As String = "SELECT EmployeeID, Password, UserRoleID FROM Employee WHERE Username = @Username"
+                    Dim query As String = "SELECT EmployeeID, Password, UserRoleID FROM employee WHERE Username = @Username"
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@Username", username)
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
@@ -86,7 +86,7 @@ Namespace DPC.Data.Controllers
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
                     conn.Open()
-                    Dim query As String = "SELECT RoleName FROM UserRoles WHERE RoleID = @RoleID"
+                    Dim query As String = "SELECT RoleName FROM userroles WHERE RoleID = @RoleID"
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@RoleID", roleID)
                         Dim result As Object = cmd.ExecuteScalar()
@@ -106,7 +106,7 @@ Namespace DPC.Data.Controllers
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
                     conn.Open()
-                    Dim query As String = "UPDATE Employee SET RefreshToken = @RefreshToken WHERE EmployeeID = @EmployeeID"
+                    Dim query As String = "UPDATE employee SET RefreshToken = @RefreshToken WHERE EmployeeID = @EmployeeID"
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@RefreshToken", refreshToken)
                         cmd.Parameters.AddWithValue("@EmployeeID", userID)
