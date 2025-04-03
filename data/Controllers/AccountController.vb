@@ -10,7 +10,7 @@ Namespace DPC.Data.Controllers
             acc.AccountID = GenerateAccountID()
 
             Dim query As String = "INSERT INTO Accounts (AccountID, AccountName, AccountNo, AccountType, InitialBalance, Note, BusinessLocation, CreatedAt, UpdatedAt) " &
-                                  "VALUES (@AccountID, @AccountName, @AccountNo, @AccountType, @InitialBalance, @Note, @BusinessLocation, @CreatedAt, @UpdatedAt)"
+                          "VALUES (@AccountID, @AccountName, @AccountNo, @AccountType, @InitialBalance, @Note, @BusinessLocation, @CreatedAt, @UpdatedAt)"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
@@ -26,15 +26,23 @@ Namespace DPC.Data.Controllers
                         cmd.Parameters.AddWithValue("@CreatedAt", DateTime.Now)
                         cmd.Parameters.AddWithValue("@UpdatedAt", DateTime.Now)
 
+                        ' Log the final SQL query and parameters
+                        Console.WriteLine($"Executing query: {query}")
+                        For Each param As MySqlParameter In cmd.Parameters
+                            Console.WriteLine($"{param.ParameterName}: {param.Value}")
+                        Next
+
                         Dim result As Integer = cmd.ExecuteNonQuery()
                         Return result > 0
                     End Using
+
                 Catch ex As Exception
                     MessageBox.Show("Error creating account: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
                     Return False
                 End Try
             End Using
         End Function
+
 
 
         ' Function to fetch all accounts

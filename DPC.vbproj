@@ -357,6 +357,7 @@
     <Compile Include="Data\Helpers\PopupHelper.vb" />
     <Compile Include="Data\Helpers\RelayCommand.vb" />
     <Compile Include="Data\Models\Account.vb" />
+    <Compile Include="Data\Models\BusinessLocation.vb" />
     <Compile Include="Data\Models\Client.vb" />
     <Compile Include="Data\Models\ClientGroup.vb" />
     <Compile Include="Data\Models\Employee.vb" />

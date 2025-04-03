@@ -1,4 +1,5 @@
-﻿Imports DPC.DPC.Components.Navigation
+﻿Imports System.Windows.Controls.Primitives
+Imports DPC.DPC.Components.Navigation
 Imports DPC.DPC.Data.Controllers
 
 Namespace DPC.Views.Accounts.Accounts.ManageAccounts
@@ -29,7 +30,7 @@ Namespace DPC.Views.Accounts.Accounts.ManageAccounts
             End Try
         End Sub
 
-        Private Sub AddAccount_Click(sender As Object, e As RoutedEventArgs)
+        Private Sub aAddAccount_Click(sender As Object, e As RoutedEventArgs)
             ' Create a new window to host the AddAccount UserControl
             Dim addAccountWindow As New Window With {
                 .Title = "Add New Account",
@@ -45,5 +46,20 @@ Namespace DPC.Views.Accounts.Accounts.ManageAccounts
             LoadAccounts()
         End Sub
 
+
+
+        Private Sub AddAccount_Click(sender As Object, e As RoutedEventArgs)
+            Dim addAccountWindow As New DPC.Views.Accounts.Accounts.ManageAccounts.AddAccount()
+
+            ' Subscribe to the event to reload data after adding a category
+            AddHandler addAccountWindow.AccountAdded, AddressOf OnAccountAdd
+
+            ' Open the popup
+            PopupHelper.OpenPopupWithControl(sender, addAccountWindow, "windowcenter", -50, 0, Me)
+        End Sub
+
+        Private Sub OnAccountAdd(sender As Object, e As EventArgs)
+            LoadAccounts() ' Reloads the subcategories in the main view
+        End Sub
     End Class
 End Namespace

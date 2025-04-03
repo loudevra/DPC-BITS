@@ -9,7 +9,7 @@
     End Enum
 
     Public Class Account
-        Public Property AccountID As Integer
+        Public Property AccountID As String
         Public Property AccountName As String
         Public Property AccountNo As String
         Public Property Name As String
