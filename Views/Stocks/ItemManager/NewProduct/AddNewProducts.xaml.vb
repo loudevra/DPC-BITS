@@ -1,10 +1,13 @@
-﻿Imports System.Windows.Controls.Primitives
+﻿Imports System.IO
+Imports System.Windows.Controls.Primitives
+Imports System.Windows.Threading
 Imports DocumentFormat.OpenXml.Office.CustomUI
 Imports DPC.DPC.Components.Forms
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Model
 Imports MaterialDesignThemes.Wpf
 Imports MaterialDesignThemes.Wpf.Theme
+Imports Microsoft.Win32
 
 Namespace DPC.Views.Stocks.ItemManager.NewProduct
     Public Class AddNewProducts
@@ -16,6 +19,9 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
         Public Sub New()
             InitializeComponent()
+
+            uploadTimer.Interval = TimeSpan.FromMilliseconds(100) ' Update every 100ms
+            AddHandler uploadTimer.Tick, AddressOf uploadTimer_Tick
 
             Dim sidebar As New Components.Navigation.Sidebar()
             SidebarContainer.Content = sidebar
@@ -71,21 +77,25 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                     StackPanelWarehouse.Visibility = Visibility.Collapsed
                     StackPanelRetailPrice.Visibility = Visibility.Collapsed
                     StackPanelOrderPrice.Visibility = Visibility.Collapsed
-                    BorderSeperator.Visibility = Visibility.Collapsed
+
                     StackPanelTaxRate.Visibility = Visibility.Collapsed
                     StackPanelDiscountRate.Visibility = Visibility.Collapsed
-                    StackPanelStockUnits.Visibility = Visibility.Collapsed
+                    BorderStocks.Visibility = Visibility.Collapsed
                     StackPanelAlertQuantity.Visibility = Visibility.Collapsed
+                    StackPanelStockUnits.Visibility = Visibility.Collapsed
+                    OuterStackPanel.Visibility = Visibility.Collapsed
                 Else
                     StackPanelVariation.Visibility = Visibility.Collapsed
                     StackPanelWarehouse.Visibility = Visibility.Visible
                     StackPanelRetailPrice.Visibility = Visibility.Visible
                     StackPanelOrderPrice.Visibility = Visibility.Visible
-                    BorderSeperator.Visibility = Visibility.Visible
+
                     StackPanelTaxRate.Visibility = Visibility.Visible
                     StackPanelDiscountRate.Visibility = Visibility.Visible
-                    StackPanelStockUnits.Visibility = Visibility.Visible
+                    BorderStocks.Visibility = Visibility.Visible
                     StackPanelAlertQuantity.Visibility = Visibility.Visible
+                    StackPanelStockUnits.Visibility = Visibility.Visible
+                    OuterStackPanel.Visibility = Visibility.Visible
                 End If
 
             Catch ex As Exception
@@ -112,9 +122,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 BorderStockUnits.BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#474747"))
             End If
         End Sub
-
-
-
         ' Start of inserting function for add product button
         Private Sub BtnAddProduct_Click(sender As Object, e As RoutedEventArgs)
             ProductController.InsertNewProduct(Toggle, CheckBoxSerialNumber,
@@ -207,11 +214,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 ComboBoxSupplier.Items.Clear()
             End If
         End Sub
-
-
-
-
-
         ' Handles the date picker component
         Public Sub StartDate_Click(sender As Object, e As RoutedEventArgs)
             SingleDatePicker.IsDropDownOpen = True
@@ -305,5 +307,114 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ' Open the popup
             popup.IsOpen = True
         End Sub
+
+        'Handles file input
+        ' Variable to track whether an image has been uploaded
+        Private isUploadLocked As Boolean = False
+        Private uploadTimer As New DispatcherTimer()
+
+        Private Sub Border_DragEnter(sender As Object, e As DragEventArgs)
+            ' Check if the dragged data is a file
+            If e.Data.GetDataPresent(DataFormats.FileDrop) Then
+                e.Effects = DragDropEffects.Copy
+            End If
+        End Sub
+
+        Private Sub BtnBrowse_Click(sender As Object, e As RoutedEventArgs)
+            If isUploadLocked Then Return ' Prevent new uploads
+
+            Dim openFileDialog As New OpenFileDialog With {
+        .Filter = "Image Files|*.jpg;*.jpeg;*.png",
+        .Title = "Select an Image"
+    }
+
+            If openFileDialog.ShowDialog() = True Then
+                Dim filePath As String = openFileDialog.FileName
+                If ValidateImageFile(filePath) Then
+                    StartFileUpload(filePath)
+                End If
+            End If
+        End Sub
+
+        Private Sub Border_Drop(sender As Object, e As DragEventArgs)
+            If isUploadLocked Then Return ' Prevent new uploads
+
+            If e.Data.GetDataPresent(DataFormats.FileDrop) Then
+                Dim files() As String = CType(e.Data.GetData(DataFormats.FileDrop), String())
+                Dim filePath As String = files(0)
+                If ValidateImageFile(filePath) Then
+                    StartFileUpload(filePath)
+                End If
+            End If
+        End Sub
+
+        ' Function to validate the image file
+        Private Function ValidateImageFile(filePath As String) As Boolean
+            Dim fileInfo As New FileInfo(filePath)
+
+            ' Check file size (2MB max)
+            If fileInfo.Length > 2 * 1024 * 1024 Then
+                MessageBox.Show("File is too large! Please upload an image under 2MB.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                Return False
+            End If
+
+            ' Check file extension
+            Dim validExtensions As String() = {".jpg", ".jpeg", ".png"}
+            If Not validExtensions.Contains(fileInfo.Extension.ToLower()) Then
+                MessageBox.Show("Invalid file format! Only JPG and PNG are allowed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                Return False
+            End If
+
+            Return True
+        End Function
+
+        Private Sub StartFileUpload(filePath As String)
+            UploadProgressBar.Value = 0
+            UploadStatus.Text = "Uploading..."
+
+            ' Update file info
+            ImgName.Text = Path.GetFileName(filePath)
+            ImgSize.Text = (New FileInfo(filePath).Length / 1024 / 1024).ToString("0.0") & " MB"
+
+            ' Show the panel
+            ImageInfoPanel.Visibility = Visibility.Visible
+
+            ' Disable browse button and drag-drop
+            BtnBrowse.IsEnabled = False
+            DropBorder.AllowDrop = False
+            isUploadLocked = True ' Lock uploading
+
+            ' Start the timer to simulate file upload
+            uploadTimer.Start()
+        End Sub
+
+        Private Sub uploadTimer_Tick(sender As Object, e As EventArgs)
+            ' Increase the progress bar value
+            If UploadProgressBar.Value < 100 Then
+                UploadProgressBar.Value += 2 ' Increase by 2% every tick
+            Else
+                ' Once the upload is complete
+                uploadTimer.Stop() ' Stop the timer
+                UploadStatus.Text = "Completed" ' Update status
+            End If
+        End Sub
+
+        Private Sub RemoveImage(sender As Object, e As RoutedEventArgs)
+            ' Reset UI elements
+            UploadProgressBar.Value = 0
+            UploadStatus.Text = ""
+            ImgName.Text = ""
+            ImgSize.Text = ""
+
+            ' Hide image info panel
+            ImageInfoPanel.Visibility = Visibility.Collapsed
+
+            ' Re-enable browse button and drag-drop
+            BtnBrowse.IsEnabled = True
+            DropBorder.AllowDrop = True
+            isUploadLocked = False
+        End Sub
+
+
     End Class
 End Namespace
