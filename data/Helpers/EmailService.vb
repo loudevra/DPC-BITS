@@ -9,7 +9,7 @@ Namespace DPC.Data.Helpers
         Private Shared ReadOnly SmtpServer As String = EnvLoader.GetEnv("EMAIL_HOST")
         Private Shared ReadOnly SmtpPort As Integer = Convert.ToInt32(EnvLoader.GetEnv("EMAIL_PORT"))
         Private Shared ReadOnly SenderEmail As String = EnvLoader.GetEnv("EMAIL_USER")
-        Private Shared ReadOnly SenderPassword As String = EnvLoader.GetEnv("EMAIL_PASS_PROD")
+        Private Shared ReadOnly SenderPassword As String = EnvLoader.GetEnv("EMAIL_PASS")
 
         ' Function to get email template path dynamically
         Private Shared Function GetEmailTemplatePath(filename As String) As String
