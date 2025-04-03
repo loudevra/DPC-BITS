@@ -234,137 +234,7 @@ Namespace DPC.Data.Controllers
                 End Try
             End Using
         End Function
-        Public Shared Sub InsertNewProduct(Toggle As System.Windows.Controls.Primitives.ToggleButton, Checkbox As Controls.CheckBox,
-                            ProductName As TextBox, Category As ComboBox, SubCategory As ComboBox, Warehouse As ComboBox,
-                            Brand As ComboBox, Supplier As ComboBox,
-                            RetailPrice As TextBox, PurchaseOrder As TextBox, DefaultTax As TextBox,
-                            DiscountRate As TextBox, StockUnits As TextBox, AlertQuantity As TextBox,
-                            MeasurementUnit As ComboBox, Description As TextBox, ValidDate As DatePicker,
-                            SerialNumbers As List(Of TextBox))
 
-            'Product is not a variation
-            If Toggle.IsChecked = False Then
-                'Include Serial Numbers
-                If Checkbox.IsChecked = True Then
-                    If String.IsNullOrWhiteSpace(ProductName.Text) OrElse
-                        Category.SelectedItem Is Nothing OrElse
-                        Warehouse.SelectedItem Is Nothing OrElse
-                        Brand.SelectedItem Is Nothing OrElse
-                        Supplier.SelectedItem Is Nothing OrElse
-                        String.IsNullOrWhiteSpace(RetailPrice.Text) OrElse
-                        String.IsNullOrWhiteSpace(PurchaseOrder.Text) OrElse
-                        String.IsNullOrWhiteSpace(DefaultTax.Text) OrElse
-                        String.IsNullOrWhiteSpace(DiscountRate.Text) OrElse
-                        String.IsNullOrWhiteSpace(StockUnits.Text) OrElse
-                        String.IsNullOrWhiteSpace(AlertQuantity.Text) OrElse
-                        MeasurementUnit.SelectedItem Is Nothing OrElse
-                        String.IsNullOrWhiteSpace(Description.Text) OrElse
-                        ValidDate.SelectedDate Is Nothing OrElse
-                        SerialNumbers.Any(Function(txt) String.IsNullOrWhiteSpace(txt.Text)) Then
-
-                        MessageBox.Show("Please fill in all required fields!", "Input Error", MessageBoxButton.OK)
-                        Exit Sub
-                    End If
-
-                    'Do Not Include Serial Numbers
-                Else
-                    If String.IsNullOrWhiteSpace(ProductName.Text) OrElse
-                        Category.SelectedItem Is Nothing OrElse
-                        Warehouse.SelectedItem Is Nothing OrElse
-                        Brand.SelectedItem Is Nothing OrElse
-                        Supplier.SelectedItem Is Nothing OrElse
-                        String.IsNullOrWhiteSpace(RetailPrice.Text) OrElse
-                        String.IsNullOrWhiteSpace(PurchaseOrder.Text) OrElse
-                        String.IsNullOrWhiteSpace(DefaultTax.Text) OrElse
-                        String.IsNullOrWhiteSpace(DiscountRate.Text) OrElse
-                        String.IsNullOrWhiteSpace(StockUnits.Text) OrElse
-                        String.IsNullOrWhiteSpace(AlertQuantity.Text) OrElse
-                        MeasurementUnit.SelectedItem Is Nothing OrElse
-                        String.IsNullOrWhiteSpace(Description.Text) OrElse
-                        ValidDate.SelectedDate Is Nothing Then
-
-                        MessageBox.Show("Please fill in all required fields!", "Input Error", MessageBoxButton.OK)
-                        Exit Sub
-                    End If
-                End If
-            End If
-
-            Try
-                Dim productCode As String = GenerateProductCode()
-                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                    conn.Open()
-                    Using transaction = conn.BeginTransaction()
-
-                        Dim query1 As String = "INSERT INTO storedproduct 
-                         (ProductID, ProductName, ProductCode, Category, SubCategory, Warehouse, BrandID, SupplierID,
-                         RetailPrice, PurchaseOrder, DefaultTax, DiscountRate, StockUnits,
-                         AlertQuantity, MeasurementUnit, Description, DateAdded)
-                         VALUES 
-                         (DEFAULT, @ProductName, @ProductCode, @Category, @SubCategory, @Warehouse, @BrandID, @SupplierID,
-                         @RetailPrice, @PurchaseOrder, @DefaultTax, @DiscountRate, @StockUnits,
-                         @AlertQuantity, @MeasurementUnit, @Description, @DateAdded);"
-
-                        Using cmd1 As New MySqlCommand(query1, conn, transaction)
-                            cmd1.Parameters.AddWithValue("@ProductName", ProductName.Text)
-                            cmd1.Parameters.AddWithValue("@ProductCode", productCode)
-
-                            Dim selectedCategoryItem As ComboBoxItem = TryCast(Category.SelectedItem, ComboBoxItem)
-                            cmd1.Parameters.AddWithValue("@Category", selectedCategoryItem?.Tag)
-
-                            Dim subCategoryText As String = If(SubCategory.SelectedItem IsNot Nothing, CType(SubCategory.SelectedItem, ComboBoxItem).Content.ToString(), "")
-                            Dim subCategoryValue As Object = If(String.IsNullOrWhiteSpace(subCategoryText) OrElse subCategoryText.ToLower() = "none", DBNull.Value, subCategoryText)
-                            cmd1.Parameters.AddWithValue("@SubCategory", subCategoryValue)
-
-                            cmd1.Parameters.AddWithValue("@Warehouse", CType(Warehouse.SelectedItem, ComboBoxItem).Content.ToString())
-
-                            ' Extract Brand and Supplier IDs
-                            Dim brandID As Integer = Convert.ToInt32(TryCast(Brand.SelectedItem, ComboBoxItem)?.Tag)
-                            Dim supplierID As String = Convert.ToString(TryCast(Supplier.SelectedItem, ComboBoxItem)?.Tag)
-
-                            cmd1.Parameters.AddWithValue("@BrandID", brandID)
-                            cmd1.Parameters.AddWithValue("@SupplierID", supplierID)
-
-                            cmd1.Parameters.AddWithValue("@RetailPrice", RetailPrice.Text)
-                            cmd1.Parameters.AddWithValue("@PurchaseOrder", PurchaseOrder.Text)
-                            cmd1.Parameters.AddWithValue("@DefaultTax", DefaultTax.Text)
-                            cmd1.Parameters.AddWithValue("@DiscountRate", DiscountRate.Text)
-                            cmd1.Parameters.AddWithValue("@StockUnits", StockUnits.Text)
-                            cmd1.Parameters.AddWithValue("@AlertQuantity", AlertQuantity.Text)
-                            cmd1.Parameters.AddWithValue("@MeasurementUnit", CType(MeasurementUnit.SelectedItem, ComboBoxItem).Content.ToString())
-                            cmd1.Parameters.AddWithValue("@Description", Description.Text)
-                            cmd1.Parameters.AddWithValue("@DateAdded", ValidDate.SelectedDate)
-
-                            ' Execute the query
-                            cmd1.ExecuteNonQuery()
-
-                            Dim productIDQuery As String = "SELECT LAST_INSERT_ID();"
-                            Using cmdGetID As New MySqlCommand(productIDQuery, conn, transaction)
-                                Dim productID As Integer = Convert.ToInt32(cmdGetID.ExecuteScalar())
-
-                                Dim query2 As String = "INSERT INTO serialnumberproduct (SerialNumber, ProductID) VALUES (@SerialNumber, @ProductID)"
-                                Using cmd2 As New MySqlCommand(query2, conn, transaction)
-                                    cmd2.Parameters.AddWithValue("@ProductID", productID)
-
-                                    For Each serialNumberTextBox As TextBox In SerialNumbers
-                                        If Not String.IsNullOrWhiteSpace(serialNumberTextBox.Text) Then
-                                            cmd2.Parameters.Clear()
-                                            cmd2.Parameters.AddWithValue("@SerialNumber", serialNumberTextBox.Text)
-                                            cmd2.Parameters.AddWithValue("@ProductID", productID)
-                                            cmd2.ExecuteNonQuery()
-                                        End If
-                                    Next
-                                End Using
-                            End Using
-
-                            transaction.Commit()
-                            MessageBox.Show($"Product {ProductName.Text} with Product Code {productCode} has been inserted successfully.")
-                        End Using
-                    End Using
-                End Using
-            Catch ex As Exception
-                MessageBox.Show($"An error occurred: {ex.Message}")
-            End Try
-        End Sub
         ' Add Row Function
         Public Shared Sub BtnAddRow_Click(sender As Object, e As RoutedEventArgs, Optional skipStockUpdate As Boolean = False)
             If MainContainer Is Nothing OrElse TxtStockUnits Is Nothing Then
@@ -623,6 +493,172 @@ Namespace DPC.Data.Controllers
             End If
         End Sub
 
-    End Class
+        'inserting data to database
+        Public Shared Sub InsertNewProduct(Toggle As System.Windows.Controls.Primitives.ToggleButton, Checkbox As Controls.CheckBox,
+        ProductName As TextBox, Category As ComboBox, SubCategory As ComboBox, Warehouse As ComboBox,
+        Brand As ComboBox, Supplier As ComboBox,
+        RetailPrice As TextBox, PurchaseOrder As TextBox, DefaultTax As TextBox,
+        DiscountRate As TextBox, StockUnits As TextBox, AlertQuantity As TextBox,
+        MeasurementUnit As ComboBox, Description As TextBox, ValidDate As DatePicker,
+        SerialNumbers As List(Of TextBox), ProductImage As String)
 
+            ' Determine if the product is a variation
+            Dim variation As Integer = If(Toggle.IsChecked = True, 1, 0)
+
+            ' Validate required fields
+            If Not ValidateProductFields(Checkbox, ProductName, Category, SubCategory, Warehouse, Brand, Supplier,
+                                  RetailPrice, PurchaseOrder, DefaultTax, DiscountRate, StockUnits,
+                                  AlertQuantity, MeasurementUnit, Description, ValidDate, SerialNumbers) Then
+                MessageBox.Show("Please fill in all required fields!", "Input Error", MessageBoxButton.OK)
+                Exit Sub
+            End If
+
+            ' Call the appropriate insertion function based on variation flag
+            If variation = 0 Then
+                InsertNonVariationProduct(ProductName, Category, SubCategory, Warehouse, Brand, Supplier,
+                                  RetailPrice, PurchaseOrder, DefaultTax, DiscountRate, StockUnits,
+                                  AlertQuantity, MeasurementUnit, Description, ValidDate, SerialNumbers, ProductImage, Checkbox)
+            Else
+                InsertVariationProduct(ProductName, Category, SubCategory, Warehouse, Brand, Supplier,
+                               RetailPrice, PurchaseOrder, DefaultTax, DiscountRate, StockUnits,
+                               AlertQuantity, MeasurementUnit, Description, ValidDate, SerialNumbers, ProductImage, Checkbox)
+            End If
+        End Sub
+
+        'validate data 
+        Private Shared Function ValidateProductFields(Checkbox As Controls.CheckBox, ProductName As TextBox, Category As ComboBox,
+                                              SubCategory As ComboBox, Warehouse As ComboBox, Brand As ComboBox,
+                                              Supplier As ComboBox, RetailPrice As TextBox, PurchaseOrder As TextBox,
+                                              DefaultTax As TextBox, DiscountRate As TextBox, StockUnits As TextBox,
+                                              AlertQuantity As TextBox, MeasurementUnit As ComboBox, Description As TextBox,
+                                              ValidDate As DatePicker, SerialNumbers As List(Of TextBox)) As Boolean
+
+            ' Check if any of the required fields are empty
+            If String.IsNullOrWhiteSpace(ProductName.Text) OrElse Category.SelectedItem Is Nothing OrElse
+       Warehouse.SelectedItem Is Nothing OrElse Brand.SelectedItem Is Nothing OrElse Supplier.SelectedItem Is Nothing OrElse
+       String.IsNullOrWhiteSpace(RetailPrice.Text) OrElse String.IsNullOrWhiteSpace(PurchaseOrder.Text) OrElse
+       String.IsNullOrWhiteSpace(DefaultTax.Text) OrElse String.IsNullOrWhiteSpace(DiscountRate.Text) OrElse
+       String.IsNullOrWhiteSpace(StockUnits.Text) OrElse String.IsNullOrWhiteSpace(AlertQuantity.Text) OrElse
+       MeasurementUnit.SelectedItem Is Nothing OrElse String.IsNullOrWhiteSpace(Description.Text) OrElse
+       ValidDate.SelectedDate Is Nothing OrElse
+       (Checkbox.IsChecked = True AndAlso SerialNumbers.Any(Function(txt) String.IsNullOrWhiteSpace(txt.Text))) Then
+                Return False
+            End If
+            Return True
+        End Function
+
+        'no variation insert
+        Private Shared Sub InsertNonVariationProduct(ProductName As TextBox, Category As ComboBox, SubCategory As ComboBox,
+                                             Warehouse As ComboBox, Brand As ComboBox, Supplier As ComboBox,
+                                             RetailPrice As TextBox, PurchaseOrder As TextBox, DefaultTax As TextBox,
+                                             DiscountRate As TextBox, StockUnits As TextBox, AlertQuantity As TextBox,
+                                             MeasurementUnit As ComboBox, Description As TextBox, ValidDate As DatePicker,
+                                             SerialNumbers As List(Of TextBox), ProductImage As String, Checkbox As Controls.CheckBox)
+
+            Dim productID As String = GenerateProductCode() ' Generate product code
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                conn.Open()
+                Using transaction = conn.BeginTransaction()
+
+                    ' Insert into product_novariation table
+                    Dim query1 As String = "INSERT INTO product_novariation 
+                                   (productID, productName, categoryID, subcategoryID, supplierID, brandID, productImage, 
+                                    measurementUnit, productDescription, dateCreated) 
+                                   VALUES 
+                                   (@productID, @ProductName, @Category, @SubCategory, @SupplierID, @BrandID, @ProductImage, 
+                                    @MeasurementUnit, @Description, @DateCreated);"
+                    Using cmd1 As New MySqlCommand(query1, conn, transaction)
+                        cmd1.Parameters.AddWithValue("@productID", productID)
+                        cmd1.Parameters.AddWithValue("@ProductName", ProductName.Text)
+                        cmd1.Parameters.AddWithValue("@Category", CType(Category.SelectedItem, ComboBoxItem).Tag)
+                        cmd1.Parameters.AddWithValue("@SubCategory", CType(SubCategory.SelectedItem, ComboBoxItem)?.Tag)
+                        cmd1.Parameters.AddWithValue("@SupplierID", CType(Supplier.SelectedItem, ComboBoxItem).Tag)
+                        cmd1.Parameters.AddWithValue("@BrandID", CType(Brand.SelectedItem, ComboBoxItem).Tag)
+                        cmd1.Parameters.AddWithValue("@ProductImage", ProductImage)
+                        cmd1.Parameters.AddWithValue("@MeasurementUnit", CType(MeasurementUnit.SelectedItem, ComboBoxItem).Content.ToString())
+                        cmd1.Parameters.AddWithValue("@Description", Description.Text)
+                        cmd1.Parameters.AddWithValue("@DateCreated", ValidDate.SelectedDate)
+
+                        cmd1.ExecuteNonQuery()
+                    End Using
+
+                    ' Check if the product has serial numbers and insert them
+                    If Checkbox.IsChecked = True Then
+                        InsertSerialNumbersForProduct(conn, transaction, SerialNumbers, productID)
+                    End If
+
+                    transaction.Commit()
+                    MessageBox.Show($"Product {ProductName.Text} with Product Code {productID} has been inserted successfully.")
+                End Using
+            End Using
+        End Sub
+
+
+        'variation insert
+        Private Shared Sub InsertVariationProduct(ProductName As TextBox, Category As ComboBox, SubCategory As ComboBox,
+                                           Warehouse As ComboBox, Brand As ComboBox, Supplier As ComboBox,
+                                           RetailPrice As TextBox, PurchaseOrder As TextBox, DefaultTax As TextBox,
+                                           DiscountRate As TextBox, StockUnits As TextBox, AlertQuantity As TextBox,
+                                           MeasurementUnit As ComboBox, Description As TextBox, ValidDate As DatePicker,
+                                           SerialNumbers As List(Of TextBox), ProductImage As String, Checkbox As Controls.CheckBox)
+
+            Dim productID As String = GenerateProductCode() ' Generate product code
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                conn.Open()
+                Using transaction = conn.BeginTransaction()
+
+                    ' Insert into product_variation table
+                    Dim query1 As String = "INSERT INTO product_variation 
+                                   (productID, productName, categoryID, subcategoryID, supplierID, brandID, productImage, 
+                                    measurementUnit, productDescription, dateCreated) 
+                                   VALUES 
+                                   (@productID, @ProductName, @Category, @SubCategory, @SupplierID, @BrandID, @ProductImage, 
+                                    @MeasurementUnit, @Description, @DateCreated);"
+                    Using cmd1 As New MySqlCommand(query1, conn, transaction)
+                        cmd1.Parameters.AddWithValue("@productID", productID)
+                        cmd1.Parameters.AddWithValue("@ProductName", ProductName.Text)
+                        cmd1.Parameters.AddWithValue("@Category", CType(Category.SelectedItem, ComboBoxItem).Tag)
+                        cmd1.Parameters.AddWithValue("@SubCategory", CType(SubCategory.SelectedItem, ComboBoxItem)?.Tag)
+                        cmd1.Parameters.AddWithValue("@SupplierID", CType(Supplier.SelectedItem, ComboBoxItem).Tag)
+                        cmd1.Parameters.AddWithValue("@BrandID", CType(Brand.SelectedItem, ComboBoxItem).Tag)
+                        cmd1.Parameters.AddWithValue("@ProductImage", ProductImage)
+                        cmd1.Parameters.AddWithValue("@MeasurementUnit", CType(MeasurementUnit.SelectedItem, ComboBoxItem).Content.ToString())
+                        cmd1.Parameters.AddWithValue("@Description", Description.Text)
+                        cmd1.Parameters.AddWithValue("@DateCreated", ValidDate.SelectedDate)
+
+                        cmd1.ExecuteNonQuery()
+                    End Using
+
+                    ' Check if the product has serial numbers and insert them
+                    If Checkbox.IsChecked = True Then
+                        InsertSerialNumbersForProduct(conn, transaction, SerialNumbers, productID)
+                    End If
+
+                    transaction.Commit()
+                    MessageBox.Show($"Product {ProductName.Text} with Product Code {productID} has been inserted successfully.")
+                End Using
+            End Using
+        End Sub
+
+        Private Shared Sub InsertSerialNumbersForProduct(conn As MySqlConnection, transaction As MySqlTransaction,
+                                                  SerialNumbers As List(Of TextBox), productID As String)
+            Dim query As String = "INSERT INTO serialnumberproduct (SerialNumber, ProductID) VALUES (@SerialNumber, @ProductID)"
+            Using cmd As New MySqlCommand(query, conn, transaction)
+                cmd.Parameters.AddWithValue("@ProductID", productID)
+
+                For Each serialNumberTextBox As TextBox In SerialNumbers
+                    If Not String.IsNullOrWhiteSpace(serialNumberTextBox.Text) Then
+                        cmd.Parameters.Clear()
+                        cmd.Parameters.AddWithValue("@SerialNumber", serialNumberTextBox.Text)
+                        cmd.Parameters.AddWithValue("@ProductID", productID)
+                        cmd.ExecuteNonQuery()
+                    End If
+                Next
+            End Using
+        End Sub
+
+
+    End Class
 End Namespace

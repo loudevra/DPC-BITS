@@ -128,7 +128,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 TxtProductName, ComboBoxCategory, ComboBoxSubCategory,
                 ComboBoxWarehouse, ComboBoxBrand, ComboBoxSupplier, TxtRetailPrice, TxtPurchaseOrder, TxtDefaultTax,
                 TxtDiscountRate, TxtStockUnits, TxtAlertQuantity, ComboBoxMeasurementUnit,
-                TxtDescription, SingleDatePicker, ProductController.SerialNumbers)
+                TxtDescription, SingleDatePicker, ProductController.SerialNumbers, base64Image)
 
             ClearInputFields()
 
