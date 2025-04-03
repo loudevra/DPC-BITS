@@ -6,10 +6,10 @@
         WindowStyle="None"
         ResizeMode="NoResize"
         Background="Transparent"
-	AllowsTransparency="True"
-	WindowStartupLocation="CenterScreen"
-	Width="450"
-	Height="Auto">
+		AllowsTransparency="True"
+		WindowStartupLocation="CenterScreen"
+		Width="450"
+		Height="Auto">
 
 	<Grid>
 		<!-- PopUp Card -->

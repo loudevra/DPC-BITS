@@ -7,11 +7,9 @@
              Foreground="#555555"
              Background="Transparent">
 
-    <UserControl.Resources>
-        <DropShadowEffect x:Key="ShadowEffect" Color="Black" Direction="320" ShadowDepth="5" Opacity="0.5" BlurRadius="10"/>
-    </UserControl.Resources>
-
-    <Border Background="#FDFDFD" CornerRadius="15" Padding="20" Width="450" Height="Auto">
+	<materialDesign:Card Width="450" Padding="20" Background="White"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            UniformCornerRadius="20">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -52,5 +50,5 @@
                 </Button>
             </StackPanel>
         </Grid>
-    </Border>
+    </materialDesign:Card>
 </UserControl>

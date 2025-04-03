@@ -6,8 +6,10 @@
              Background="Transparent"
              FontFamily="{StaticResource Lexend}"
              >
-    
-    <Border Background="#FDFDFD" CornerRadius="15" Width="480">
+
+    <materialDesign:Card Width="480" Padding="0" Background="White"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            UniformCornerRadius="20">
         <Grid  Margin="15,10,15,10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -118,7 +120,7 @@
                 </Button>
             </StackPanel>
         </Grid>
-    </Border>
+    </materialDesign:Card>
 
 
 </UserControl>
