@@ -3,12 +3,14 @@ Imports System.Security.Cryptography
 
 Namespace DPC.Data.Model
     Public Class Product
+
+        Public Property ProductImage As String
         Public Property ProductID As String
         Public Property ProductName As String
         Public Property CategoryID As String
         Public Property SubCategoryID As String
         Public Property WarehouseID As String
-        Public Property RetailPRice As Decimal
+        Public Property RetailPrice As Decimal
         Public Property PurchaseOrder As Decimal
         Public Property DefaultTax As Decimal
         Public Property DiscountRate As Decimal
@@ -16,7 +18,6 @@ Namespace DPC.Data.Model
         Public Property AlertQuantity As Integer
         Public Property ProductDescription As String
         Public Property MeasurementUnit As String
-        Public Property ProductImage As Base64
         Public Property CreatedAt As DateTime
         Public Property ModifiedAt As DateTime
     End Class
