@@ -172,7 +172,7 @@ Namespace DPC.Data.Controllers
         End Sub
 
         Public Shared Sub GetWarehouse(comboBox As ComboBox)
-            Dim query As String = "SELECT * FROM warehouse ORDER BY warehouseName ASC"
+            Dim query As String = "SELECT warehouseID, warehouseName FROM warehouse ORDER BY warehouseName ASC"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
@@ -184,12 +184,17 @@ Namespace DPC.Data.Controllers
                             If reader.HasRows Then
                                 While reader.Read()
                                     Dim warehouseName As String = reader("warehouseName").ToString().Trim()
-                                    comboBox.Items.Add(New ComboBoxItem With {.Content = warehouseName})
+                                    Dim warehouseId As Integer = Convert.ToInt32(reader("warehouseID"))
+
+                                    Dim item As New ComboBoxItem With {
+                                .Content = warehouseName,
+                                .Tag = warehouseId
+                            }
+                                    comboBox.Items.Add(item)
                                 End While
-                                comboBox.SelectedIndex = 0 ' Set first item as selected
+                                comboBox.SelectedIndex = 0 ' Select the first item by default
                             Else
-                                comboBox.Items.Add(New ComboBoxItem With {.Content = "No Warehouses Available"})
-                                comboBox.SelectedIndex = 0
+                                MessageBox.Show($"Error: No Warehouses Available!")
                             End If
                         End Using
                     End Using
@@ -198,6 +203,7 @@ Namespace DPC.Data.Controllers
                 End Try
             End Using
         End Sub
+
         ' Function to generate ProductCode in format 20MMDDYYYYXXXX
         Private Shared Function GenerateProductCode() As String
             Dim prefix As String = "20"
@@ -212,8 +218,8 @@ Namespace DPC.Data.Controllers
         End Function
         ' Function to get the next Product counter (last 4 digits) with reset condition
         Private Shared Function GetNextProductCounter(datePart As String) As Integer
-            Dim query As String = "SELECT MAX(CAST(SUBSTRING(ProductCode, 11, 4) AS UNSIGNED)) FROM storedproduct " &
-                  "WHERE ProductCode LIKE '20" & datePart & "%'"
+            Dim query As String = "SELECT MAX(CAST(SUBSTRING(productID, 11, 4) AS UNSIGNED)) FROM product " &
+                  "WHERE productID LIKE '20" & datePart & "%'"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
@@ -412,7 +418,48 @@ Namespace DPC.Data.Controllers
         End Sub
 
         Public Shared Sub LoadProductData(dataGrid As DataGrid)
-            Dim query As String = "SELECT productid AS ID, productname AS Name, stockunits AS StockQuantity, (retailprice * stockunits) AS Action FROM storedproduct;"
+            ' Query to load data from the appropriate product table based on productVariation flag
+            Dim query As String = "
+                                -- For products without variations
+                                SELECT 
+                                    p.productID AS ID,
+                                    p.productName AS Name,
+                                    c.categoryName AS Category,
+                                    sc.subcategoryName AS SubCategory,
+                                    b.brandName AS Brand,
+                                    s.supplierName AS Supplier,
+                                    pnv.warehouseID AS Warehouse,
+                                    pnv.stockUnit AS StockQuantity
+                                FROM product p
+                                LEFT JOIN category c ON p.categoryID = c.categoryID
+                                LEFT JOIN subcategory sc ON p.subcategoryID = sc.subcategoryID
+                                LEFT JOIN brand b ON p.brandID = b.brandID
+                                LEFT JOIN supplier s ON p.supplierID = s.supplierID
+                                LEFT JOIN productnovariation pnv ON p.productID = pnv.productID
+                                WHERE p.productVariation = 0
+
+                                UNION
+
+                                -- For products with variations
+                                SELECT 
+                                    p.productID AS ID,
+                                    p.productName AS Name,
+                                    c.categoryName AS Category,
+                                    sc.subcategoryName AS SubCategory,
+                                    b.brandName AS Brand,
+                                    s.supplierName AS Supplier,
+                                    pvs.optionCombination AS Warehouse,  -- This can represent the specific variation's option combination
+                                    pvs.stockUnit AS StockQuantity
+                                FROM product p
+                                LEFT JOIN category c ON p.categoryID = c.categoryID
+                                LEFT JOIN subcategory sc ON p.subcategoryID = sc.subcategoryID
+                                LEFT JOIN brand b ON p.brandID = b.brandID
+                                LEFT JOIN supplier s ON p.supplierID = s.supplierID
+                                LEFT JOIN productvariation pv ON p.productID = pv.productID
+                                LEFT JOIN productvariationstock pvs ON pv.productID = pvs.productID
+                                WHERE p.productVariation = 1;
+
+                                "
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
@@ -421,13 +468,14 @@ Namespace DPC.Data.Controllers
                     Dim table As New DataTable()
                     adapter.Fill(table)
 
-                    ' Calculate Total Products manually since SQL query doesn't return it
-                    If Not table.Columns.Contains("TotaProducts") Then
-                        table.Columns.Add("TotaProducts", GetType(Integer))
+                    ' Add a column for Total Products manually if not exists
+                    If Not table.Columns.Contains("TotalProducts") Then
+                        table.Columns.Add("TotalProducts", GetType(Integer))
                     End If
 
+                    ' Assuming we are marking the products with variation flag as 1
                     For Each row As DataRow In table.Rows
-                        row("TotaProducts") = 1 ' Since this is a product without variation
+                        row("TotalProducts") = 1 ' Flag for variation
                     Next
 
                     dataGrid.ItemsSource = table.DefaultView
@@ -436,6 +484,7 @@ Namespace DPC.Data.Controllers
                 End Try
             End Using
         End Sub
+
 
         Public Shared Sub ImportSerialNumbers_Click()
             Dim openFileDialog As New Microsoft.Win32.OpenFileDialog With {
@@ -494,38 +543,6 @@ Namespace DPC.Data.Controllers
         End Sub
 
         'inserting data to database
-        Public Shared Sub InsertNewProduct(Toggle As System.Windows.Controls.Primitives.ToggleButton, Checkbox As Controls.CheckBox,
-        ProductName As TextBox, Category As ComboBox, SubCategory As ComboBox, Warehouse As ComboBox,
-        Brand As ComboBox, Supplier As ComboBox,
-        RetailPrice As TextBox, PurchaseOrder As TextBox, DefaultTax As TextBox,
-        DiscountRate As TextBox, StockUnits As TextBox, AlertQuantity As TextBox,
-        MeasurementUnit As ComboBox, Description As TextBox, ValidDate As DatePicker,
-        SerialNumbers As List(Of TextBox), ProductImage As String)
-
-            ' Determine if the product is a variation
-            Dim variation As Integer = If(Toggle.IsChecked = True, 1, 0)
-
-            ' Validate required fields
-            If Not ValidateProductFields(Checkbox, ProductName, Category, SubCategory, Warehouse, Brand, Supplier,
-                                  RetailPrice, PurchaseOrder, DefaultTax, DiscountRate, StockUnits,
-                                  AlertQuantity, MeasurementUnit, Description, ValidDate, SerialNumbers) Then
-                MessageBox.Show("Please fill in all required fields!", "Input Error", MessageBoxButton.OK)
-                Exit Sub
-            End If
-
-            ' Call the appropriate insertion function based on variation flag
-            If variation = 0 Then
-                InsertNonVariationProduct(ProductName, Warehouse, RetailPrice, PurchaseOrder, DefaultTax,
-                          DiscountRate, StockUnits, AlertQuantity, ValidDate, SerialNumbers, Checkbox)
-
-            Else
-                InsertVariationProduct(ProductName, Category, SubCategory, Warehouse, Brand, Supplier,
-                               RetailPrice, PurchaseOrder, DefaultTax, DiscountRate, StockUnits,
-                               AlertQuantity, MeasurementUnit, Description, ValidDate, SerialNumbers, ProductImage, Checkbox)
-            End If
-        End Sub
-
-        'validate data 
         Private Shared Function ValidateProductFields(Checkbox As Controls.CheckBox, ProductName As TextBox, Category As ComboBox,
                                               SubCategory As ComboBox, Warehouse As ComboBox, Brand As ComboBox,
                                               Supplier As ComboBox, RetailPrice As TextBox, PurchaseOrder As TextBox,
@@ -547,44 +564,51 @@ Namespace DPC.Data.Controllers
             Return True
         End Function
 
-        'no variation insert
-        Private Shared Sub InsertNonVariationProduct(ProductName As TextBox, Warehouse As ComboBox,
-                                             SellingPrice As TextBox, BuyingPrice As TextBox,
-                                             DefaultTax As TextBox, DiscountRate As TextBox,
-                                             StockUnits As TextBox, AlertQuantity As TextBox,
-                                             ValidDate As DatePicker, SerialNumbers As List(Of TextBox),
-                                             Checkbox As Controls.CheckBox)
+        Public Shared Sub InsertNewProduct(Toggle As System.Windows.Controls.Primitives.ToggleButton, Checkbox As Controls.CheckBox,
+            ProductName As TextBox, Category As ComboBox, SubCategory As ComboBox, Warehouse As ComboBox,
+            Brand As ComboBox, Supplier As ComboBox,
+            RetailPrice As TextBox, PurchaseOrder As TextBox, DefaultTax As TextBox,
+            DiscountRate As TextBox, StockUnits As TextBox, AlertQuantity As TextBox,
+            MeasurementUnit As ComboBox, Description As TextBox, ValidDate As DatePicker,
+            SerialNumbers As List(Of TextBox), ProductImage As String)
 
-            Dim productID As String = GenerateProductCode() ' Generate product code
+            ' Determine if the product is a variation
+            Dim variation As Integer = If(Toggle.IsChecked = True, 1, 0)
+
+            ' Validate required fields
+            If Not ValidateProductFields(Checkbox, ProductName, Category, SubCategory, Warehouse, Brand, Supplier,
+                          RetailPrice, PurchaseOrder, DefaultTax, DiscountRate, StockUnits,
+                          AlertQuantity, MeasurementUnit, Description, ValidDate, SerialNumbers) Then
+                MessageBox.Show("Please fill in all required fields!", "Input Error", MessageBoxButton.OK)
+                Exit Sub
+            End If
+
+            ' Generate product ID
+            Dim productID As String = GenerateProductCode()
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 conn.Open()
                 Using transaction = conn.BeginTransaction()
-
-                    ' Insert into productnovariation table
-                    Dim query1 As String = "INSERT INTO productnovariation 
-                                   (productID, warehouseID, sellingPrice, buyingPrice, defaultTax, taxType, 
-                                    discountRate, discountType, stockUnit, alertQuantity, dateCreated, dateModified) 
-                                   VALUES 
-                                   (@productID, @WarehouseID, @SellingPrice, @BuyingPrice, @DefaultTax, NULL, 
-                                    @DiscountRate, NULL, @StockUnits, @AlertQuantity, @DateCreated, NULL);"
-                    Using cmd1 As New MySqlCommand(query1, conn, transaction)
-                        cmd1.Parameters.AddWithValue("@productID", productID)
-                        cmd1.Parameters.AddWithValue("@WarehouseID", CType(Warehouse.SelectedItem, ComboBoxItem).Tag)
-                        cmd1.Parameters.AddWithValue("@SellingPrice", SellingPrice.Text)
-                        cmd1.Parameters.AddWithValue("@BuyingPrice", BuyingPrice.Text)
-                        cmd1.Parameters.AddWithValue("@DefaultTax", DefaultTax.Text)
-                        cmd1.Parameters.AddWithValue("@DiscountRate", DiscountRate.Text)
-                        cmd1.Parameters.AddWithValue("@StockUnits", StockUnits.Text)
-                        cmd1.Parameters.AddWithValue("@AlertQuantity", AlertQuantity.Text)
-                        cmd1.Parameters.AddWithValue("@DateCreated", ValidDate.SelectedDate)
-
-                        cmd1.ExecuteNonQuery()
+                    ' Insert into product table first
+                    Dim productQuery As String = "INSERT INTO product (productID, productName, categoryID, subcategoryID, supplierID, brandID, dateCreated) 
+                                          VALUES (@productID, @ProductName, @Category, @SubCategory, @SupplierID, @BrandID, @DateCreated);"
+                    Using productCmd As New MySqlCommand(productQuery, conn, transaction)
+                        productCmd.Parameters.AddWithValue("@productID", productID)
+                        productCmd.Parameters.AddWithValue("@ProductName", ProductName.Text)
+                        productCmd.Parameters.AddWithValue("@Category", CType(Category.SelectedItem, ComboBoxItem).Tag)
+                        productCmd.Parameters.AddWithValue("@SubCategory", CType(SubCategory.SelectedItem, ComboBoxItem)?.Tag)
+                        productCmd.Parameters.AddWithValue("@SupplierID", CType(Supplier.SelectedItem, ComboBoxItem).Tag)
+                        productCmd.Parameters.AddWithValue("@BrandID", CType(Brand.SelectedItem, ComboBoxItem).Tag)
+                        productCmd.Parameters.AddWithValue("@DateCreated", ValidDate.SelectedDate)
+                        productCmd.ExecuteNonQuery()
                     End Using
 
-                    ' Check if the product has serial numbers and insert them
-                    If Checkbox.IsChecked = True Then
-                        InsertSerialNumbersForProduct(conn, transaction, SerialNumbers, productID)
+                    ' Call the appropriate insertion function based on variation flag
+                    If variation = 0 Then
+                        InsertNonVariationProduct(conn, transaction, productID, Warehouse, RetailPrice, PurchaseOrder, DefaultTax,
+                          DiscountRate, StockUnits, AlertQuantity, ValidDate, SerialNumbers, Checkbox)
+                    Else
+                        InsertVariationProduct(conn, transaction, productID, MeasurementUnit, Description, ProductImage)
                     End If
 
                     transaction.Commit()
@@ -593,56 +617,57 @@ Namespace DPC.Data.Controllers
             End Using
         End Sub
 
+        'no variation insert
+        Private Shared Sub InsertNonVariationProduct(conn As MySqlConnection, transaction As MySqlTransaction, productID As String,
+                                     Warehouse As ComboBox, SellingPrice As TextBox, BuyingPrice As TextBox,
+                                     DefaultTax As TextBox, DiscountRate As TextBox,
+                                     StockUnits As TextBox, AlertQuantity As TextBox,
+                                     ValidDate As DatePicker, SerialNumbers As List(Of TextBox),
+                                     Checkbox As Controls.CheckBox)
+
+            ' Insert into productnovariation table
+            Dim query As String = "INSERT INTO productnovariation (productID, warehouseID, sellingPrice, buyingPrice, defaultTax, taxType, 
+                                discountRate, discountType, stockUnit, alertQuantity, dateCreated, dateModified) 
+                           VALUES (@productID, @WarehouseID, @SellingPrice, @BuyingPrice, @DefaultTax, NULL, 
+                                @DiscountRate, NULL, @StockUnits, @AlertQuantity, @DateCreated, NULL);"
+            Using cmd As New MySqlCommand(query, conn, transaction)
+                cmd.Parameters.AddWithValue("@productID", productID)
+                cmd.Parameters.AddWithValue("@WarehouseID", CType(Warehouse.SelectedItem, ComboBoxItem).Tag)
+                cmd.Parameters.AddWithValue("@SellingPrice", SellingPrice.Text)
+                cmd.Parameters.AddWithValue("@BuyingPrice", BuyingPrice.Text)
+                cmd.Parameters.AddWithValue("@DefaultTax", DefaultTax.Text)
+                cmd.Parameters.AddWithValue("@DiscountRate", DiscountRate.Text)
+                cmd.Parameters.AddWithValue("@StockUnits", StockUnits.Text)
+                cmd.Parameters.AddWithValue("@AlertQuantity", AlertQuantity.Text)
+                cmd.Parameters.AddWithValue("@DateCreated", ValidDate.SelectedDate)
+                cmd.ExecuteNonQuery()
+            End Using
+
+            ' Check if the product has serial numbers and insert them
+            If Checkbox.IsChecked = True Then
+                InsertSerialNumbersForProduct(conn, transaction, SerialNumbers, productID)
+            End If
+        End Sub
 
         'variation insert
-        Private Shared Sub InsertVariationProduct(ProductName As TextBox, Category As ComboBox, SubCategory As ComboBox,
-                                           Warehouse As ComboBox, Brand As ComboBox, Supplier As ComboBox,
-                                           RetailPrice As TextBox, PurchaseOrder As TextBox, DefaultTax As TextBox,
-                                           DiscountRate As TextBox, StockUnits As TextBox, AlertQuantity As TextBox,
-                                           MeasurementUnit As ComboBox, Description As TextBox, ValidDate As DatePicker,
-                                           SerialNumbers As List(Of TextBox), ProductImage As String, Checkbox As Controls.CheckBox)
+        Private Shared Sub InsertVariationProduct(conn As MySqlConnection, transaction As MySqlTransaction, productID As String,
+                                   MeasurementUnit As ComboBox, Description As TextBox, ProductImage As String)
 
-            Dim productID As String = GenerateProductCode() ' Generate product code
-
-            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                conn.Open()
-                Using transaction = conn.BeginTransaction()
-
-                    ' Insert into product_variation table
-                    Dim query1 As String = "INSERT INTO productvariation 
-                                   (productID, productName, categoryID, subcategoryID, supplierID, brandID, productImage, 
-                                    measurementUnit, productDescription, dateCreated) 
-                                   VALUES 
-                                   (@productID, @ProductName, @Category, @SubCategory, @SupplierID, @BrandID, @ProductImage, 
-                                    @MeasurementUnit, @Description, @DateCreated);"
-                    Using cmd1 As New MySqlCommand(query1, conn, transaction)
-                        cmd1.Parameters.AddWithValue("@productID", productID)
-                        cmd1.Parameters.AddWithValue("@ProductName", ProductName.Text)
-                        cmd1.Parameters.AddWithValue("@Category", CType(Category.SelectedItem, ComboBoxItem).Tag)
-                        cmd1.Parameters.AddWithValue("@SubCategory", CType(SubCategory.SelectedItem, ComboBoxItem)?.Tag)
-                        cmd1.Parameters.AddWithValue("@SupplierID", CType(Supplier.SelectedItem, ComboBoxItem).Tag)
-                        cmd1.Parameters.AddWithValue("@BrandID", CType(Brand.SelectedItem, ComboBoxItem).Tag)
-                        cmd1.Parameters.AddWithValue("@ProductImage", ProductImage)
-                        cmd1.Parameters.AddWithValue("@MeasurementUnit", CType(MeasurementUnit.SelectedItem, ComboBoxItem).Content.ToString())
-                        cmd1.Parameters.AddWithValue("@Description", Description.Text)
-                        cmd1.Parameters.AddWithValue("@DateCreated", ValidDate.SelectedDate)
-
-                        cmd1.ExecuteNonQuery()
-                    End Using
-
-                    ' Check if the product has serial numbers and insert them
-                    If Checkbox.IsChecked = True Then
-                        InsertSerialNumbersForProduct(conn, transaction, SerialNumbers, productID)
-                    End If
-
-                    transaction.Commit()
-                    MessageBox.Show($"Product {ProductName.Text} with Product Code {productID} has been inserted successfully.")
-                End Using
+            ' Insert into productvariation table
+            Dim query As String = "INSERT INTO productvariation (productID, productImage, measurementUnit, productDescription, dateCreated) 
+                           VALUES (@productID, @ProductImage, @MeasurementUnit, @Description, @DateCreated);"
+            Using cmd As New MySqlCommand(query, conn, transaction)
+                cmd.Parameters.AddWithValue("@productID", productID)
+                cmd.Parameters.AddWithValue("@ProductImage", ProductImage)
+                cmd.Parameters.AddWithValue("@MeasurementUnit", CType(MeasurementUnit.SelectedItem, ComboBoxItem).Content.ToString())
+                cmd.Parameters.AddWithValue("@Description", Description.Text)
+                cmd.Parameters.AddWithValue("@DateCreated", DateTime.Now)
+                cmd.ExecuteNonQuery()
             End Using
         End Sub
 
         Private Shared Sub InsertSerialNumbersForProduct(conn As MySqlConnection, transaction As MySqlTransaction,
-                                                  SerialNumbers As List(Of TextBox), productID As String)
+                                          SerialNumbers As List(Of TextBox), productID As String)
             Dim query As String = "INSERT INTO serialnumberproduct (SerialNumber, ProductID) VALUES (@SerialNumber, @ProductID)"
             Using cmd As New MySqlCommand(query, conn, transaction)
                 cmd.Parameters.AddWithValue("@ProductID", productID)
