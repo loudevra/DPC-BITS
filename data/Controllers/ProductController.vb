@@ -515,9 +515,9 @@ Namespace DPC.Data.Controllers
 
             ' Call the appropriate insertion function based on variation flag
             If variation = 0 Then
-                InsertNonVariationProduct(ProductName, Category, SubCategory, Warehouse, Brand, Supplier,
-                                  RetailPrice, PurchaseOrder, DefaultTax, DiscountRate, StockUnits,
-                                  AlertQuantity, MeasurementUnit, Description, ValidDate, SerialNumbers, ProductImage, Checkbox)
+                InsertNonVariationProduct(ProductName, Warehouse, RetailPrice, PurchaseOrder, DefaultTax,
+                          DiscountRate, StockUnits, AlertQuantity, ValidDate, SerialNumbers, Checkbox)
+
             Else
                 InsertVariationProduct(ProductName, Category, SubCategory, Warehouse, Brand, Supplier,
                                RetailPrice, PurchaseOrder, DefaultTax, DiscountRate, StockUnits,
@@ -548,12 +548,12 @@ Namespace DPC.Data.Controllers
         End Function
 
         'no variation insert
-        Private Shared Sub InsertNonVariationProduct(ProductName As TextBox, Category As ComboBox, SubCategory As ComboBox,
-                                             Warehouse As ComboBox, Brand As ComboBox, Supplier As ComboBox,
-                                             RetailPrice As TextBox, PurchaseOrder As TextBox, DefaultTax As TextBox,
-                                             DiscountRate As TextBox, StockUnits As TextBox, AlertQuantity As TextBox,
-                                             MeasurementUnit As ComboBox, Description As TextBox, ValidDate As DatePicker,
-                                             SerialNumbers As List(Of TextBox), ProductImage As String, Checkbox As Controls.CheckBox)
+        Private Shared Sub InsertNonVariationProduct(ProductName As TextBox, Warehouse As ComboBox,
+                                             SellingPrice As TextBox, BuyingPrice As TextBox,
+                                             DefaultTax As TextBox, DiscountRate As TextBox,
+                                             StockUnits As TextBox, AlertQuantity As TextBox,
+                                             ValidDate As DatePicker, SerialNumbers As List(Of TextBox),
+                                             Checkbox As Controls.CheckBox)
 
             Dim productID As String = GenerateProductCode() ' Generate product code
 
@@ -561,23 +561,22 @@ Namespace DPC.Data.Controllers
                 conn.Open()
                 Using transaction = conn.BeginTransaction()
 
-                    ' Insert into product_novariation table
-                    Dim query1 As String = "INSERT INTO product_novariation 
-                                   (productID, productName, categoryID, subcategoryID, supplierID, brandID, productImage, 
-                                    measurementUnit, productDescription, dateCreated) 
+                    ' Insert into productnovariation table
+                    Dim query1 As String = "INSERT INTO productnovariation 
+                                   (productID, warehouseID, sellingPrice, buyingPrice, defaultTax, taxType, 
+                                    discountRate, discountType, stockUnit, alertQuantity, dateCreated, dateModified) 
                                    VALUES 
-                                   (@productID, @ProductName, @Category, @SubCategory, @SupplierID, @BrandID, @ProductImage, 
-                                    @MeasurementUnit, @Description, @DateCreated);"
+                                   (@productID, @WarehouseID, @SellingPrice, @BuyingPrice, @DefaultTax, NULL, 
+                                    @DiscountRate, NULL, @StockUnits, @AlertQuantity, @DateCreated, NULL);"
                     Using cmd1 As New MySqlCommand(query1, conn, transaction)
                         cmd1.Parameters.AddWithValue("@productID", productID)
-                        cmd1.Parameters.AddWithValue("@ProductName", ProductName.Text)
-                        cmd1.Parameters.AddWithValue("@Category", CType(Category.SelectedItem, ComboBoxItem).Tag)
-                        cmd1.Parameters.AddWithValue("@SubCategory", CType(SubCategory.SelectedItem, ComboBoxItem)?.Tag)
-                        cmd1.Parameters.AddWithValue("@SupplierID", CType(Supplier.SelectedItem, ComboBoxItem).Tag)
-                        cmd1.Parameters.AddWithValue("@BrandID", CType(Brand.SelectedItem, ComboBoxItem).Tag)
-                        cmd1.Parameters.AddWithValue("@ProductImage", ProductImage)
-                        cmd1.Parameters.AddWithValue("@MeasurementUnit", CType(MeasurementUnit.SelectedItem, ComboBoxItem).Content.ToString())
-                        cmd1.Parameters.AddWithValue("@Description", Description.Text)
+                        cmd1.Parameters.AddWithValue("@WarehouseID", CType(Warehouse.SelectedItem, ComboBoxItem).Tag)
+                        cmd1.Parameters.AddWithValue("@SellingPrice", SellingPrice.Text)
+                        cmd1.Parameters.AddWithValue("@BuyingPrice", BuyingPrice.Text)
+                        cmd1.Parameters.AddWithValue("@DefaultTax", DefaultTax.Text)
+                        cmd1.Parameters.AddWithValue("@DiscountRate", DiscountRate.Text)
+                        cmd1.Parameters.AddWithValue("@StockUnits", StockUnits.Text)
+                        cmd1.Parameters.AddWithValue("@AlertQuantity", AlertQuantity.Text)
                         cmd1.Parameters.AddWithValue("@DateCreated", ValidDate.SelectedDate)
 
                         cmd1.ExecuteNonQuery()
@@ -610,7 +609,7 @@ Namespace DPC.Data.Controllers
                 Using transaction = conn.BeginTransaction()
 
                     ' Insert into product_variation table
-                    Dim query1 As String = "INSERT INTO product_variation 
+                    Dim query1 As String = "INSERT INTO productvariation 
                                    (productID, productName, categoryID, subcategoryID, supplierID, brandID, productImage, 
                                     measurementUnit, productDescription, dateCreated) 
                                    VALUES 
