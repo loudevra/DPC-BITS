@@ -90,7 +90,6 @@
                 Background="White" AllowDrop="True"
                 DragEnter="Border_DragEnter" Drop="Border_Drop"
                 Margin="2">
-
                                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <materialDesign:PackIcon Kind="CloudUploadOutline" Width="60" Height="60" Margin="0,0,0,0" HorizontalAlignment="Center"/>
                                             <TextBlock Text="Drag And Drop File" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,5"/>
@@ -106,7 +105,7 @@
                                     </Border>
                                 </Grid>
 
-                                <!-- Image Info Panel -->
+                                <!-- Image Info Panel (Initially Visible, Will Be Collapsed After Upload) -->
                                 <StackPanel x:Name="ImageInfoPanel" Grid.Column="1" Margin="25,0" VerticalAlignment="Center" Visibility="Collapsed">
                                     <Border Background="#AEAEAE" CornerRadius="10" Padding="10">
                                         <Grid>
@@ -125,22 +124,27 @@
                                                 </StackPanel>
 
                                                 <!-- Progress Bar -->
-                                                <ProgressBar x:Name="UploadProgressBar" Value="0" Height="4" Foreground="LightBlue" Background="White" Margin="0,2,0,2"/>
+                                                <ProgressBar x:Name="UploadProgressBar" Value="0" Height="4" Foreground="#F3D7AE" Background="White" Margin="0,2,0,2"/>
 
                                                 <!-- Status -->
                                                 <TextBlock x:Name="UploadStatus" Text="Uploading..." Foreground="White" FontSize="12"/>
                                             </StackPanel>
                                         </Grid>
                                     </Border>
+                                </StackPanel>
 
-                                    <!-- Remove Image Button -->
+                                <!-- Image Display Panel (Initially Collapsed, Will Show Image After Upload) -->
+                                <StackPanel x:Name="ImageDisplayPanel" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Collapsed">
+                                    <Image x:Name="UploadedImage" Width="150" Height="150" Stretch="Uniform" Margin="10"/>
+
+                                    <!-- Remove Image Button (Initially Hidden, Will Be Shown After Upload) -->
                                     <Button x:Name="BtnRemoveImage" Click="RemoveImage"
-                Style="{StaticResource RoundedButtonStyle}" Margin="50,5,50,0" Height="30">
+                                        Style="{StaticResource RoundedButtonStyle}" Margin="50,5,50,0" Height="30" Visibility="Collapsed">
                                         <TextBlock Text="Remove Image" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                     </Button>
                                 </StackPanel>
                             </Grid>
-                        </StackPanel>
+                      </StackPanel>
                     </StackPanel>
 
                     <StackPanel Grid.Row="1">

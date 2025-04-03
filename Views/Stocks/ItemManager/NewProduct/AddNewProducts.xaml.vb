@@ -312,6 +312,19 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         ' Variable to track whether an image has been uploaded
         Private isUploadLocked As Boolean = False
         Private uploadTimer As New DispatcherTimer()
+        Private base64Image As String ' Variable to store Base64 string
+
+        Private Function ConvertImageToBase64(filePath As String) As String
+            Try
+                Dim imageBytes As Byte() = File.ReadAllBytes(filePath) ' Read file as byte array
+                Dim base64String As String = Convert.ToBase64String(imageBytes) ' Convert to Base64
+                Return base64String
+            Catch ex As Exception
+                MessageBox.Show("Error converting image to Base64: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                Return String.Empty
+            End Try
+        End Function
+
 
         Private Sub Border_DragEnter(sender As Object, e As DragEventArgs)
             ' Check if the dragged data is a file
@@ -373,31 +386,69 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             UploadStatus.Text = "Uploading..."
 
             ' Update file info
-            ImgName.Text = Path.GetFileName(filePath)
-            ImgSize.Text = (New FileInfo(filePath).Length / 1024 / 1024).ToString("0.0") & " MB"
+            Dim fileInfo As New FileInfo(filePath)
+            Dim fileSizeInBytes As Long = fileInfo.Length
+            Dim fileSizeText As String
 
-            ' Show the panel
+            ' Check file size and set the appropriate text
+            If fileSizeInBytes < 1024 Then
+                fileSizeText = fileSizeInBytes.ToString("0") & " Bytes"
+            ElseIf fileSizeInBytes < 1024 * 1024 Then
+                fileSizeText = (fileSizeInBytes / 1024).ToString("0") & " KB"
+            Else
+                fileSizeText = (fileSizeInBytes / 1024 / 1024).ToString("0.0") & " MB"
+            End If
+
+            ImgName.Text = Path.GetFileName(filePath)
+            ImgSize.Text = fileSizeText
+
+            ' Convert image to Base64 and store in variable
+            base64Image = ConvertImageToBase64(filePath)
+
+            ' Show Base64 string in a MessageBox
+            If Not String.IsNullOrEmpty(base64Image) Then
+                MessageBox.Show(base64Image, "Base64 String", MessageBoxButton.OK, MessageBoxImage.Information)
+            End If
+
+            ' Show the panel with image info
             ImageInfoPanel.Visibility = Visibility.Visible
 
-            ' Disable browse button and drag-drop
+            ' Disable browse button and drag-drop functionality
             BtnBrowse.IsEnabled = False
             DropBorder.AllowDrop = False
-            isUploadLocked = True ' Lock uploading
+            isUploadLocked = True ' Lock uploading process
 
-            ' Start the timer to simulate file upload
+            ' Start the timer to simulate the upload process
             uploadTimer.Start()
         End Sub
 
+
         Private Sub uploadTimer_Tick(sender As Object, e As EventArgs)
-            ' Increase the progress bar value
             If UploadProgressBar.Value < 100 Then
                 UploadProgressBar.Value += 2 ' Increase by 2% every tick
             Else
-                ' Once the upload is complete
-                uploadTimer.Stop() ' Stop the timer
-                UploadStatus.Text = "Completed" ' Update status
+                uploadTimer.Stop()
+                RemoveHandler uploadTimer.Tick, AddressOf uploadTimer_Tick ' Detach handler
+                UploadStatus.Text = "Upload Complete"
+
+                ' Hide Image Info Panel and Show Image Display Panel
+                ImageInfoPanel.Visibility = Visibility.Collapsed
+                ImageDisplayPanel.Visibility = Visibility.Visible
+
+                ' Display Image using Base64 string
+                Dim imageSource As New BitmapImage()
+                imageSource.BeginInit()
+                imageSource.StreamSource = New MemoryStream(Convert.FromBase64String(base64Image))
+                imageSource.EndInit()
+
+                ' Display the image in the Image control
+                UploadedImage.Source = imageSource
+
+                ' Make the Remove Image button visible
+                BtnRemoveImage.Visibility = Visibility.Visible
             End If
         End Sub
+
 
         Private Sub RemoveImage(sender As Object, e As RoutedEventArgs)
             ' Reset UI elements
@@ -406,13 +457,17 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ImgName.Text = ""
             ImgSize.Text = ""
 
-            ' Hide image info panel
+            ' Hide image info panel and image display panel
             ImageInfoPanel.Visibility = Visibility.Collapsed
+            ImageDisplayPanel.Visibility = Visibility.Collapsed
 
-            ' Re-enable browse button and drag-drop
+            ' Re-enable browse button and drag-drop functionality
             BtnBrowse.IsEnabled = True
             DropBorder.AllowDrop = True
             isUploadLocked = False
+
+            ' Hide the Remove Image button again
+            BtnRemoveImage.Visibility = Visibility.Collapsed
         End Sub
 
 
