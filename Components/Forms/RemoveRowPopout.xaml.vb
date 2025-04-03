@@ -31,18 +31,24 @@ Namespace DPC.Components.Forms
         End Sub
 
         Private Sub Add_Click(sender As Object, e As RoutedEventArgs)
-            If TxtRowNum IsNot Nothing Then
+            If TxtRowNum IsNot Nothing AndAlso ProductController.MainContainer IsNot Nothing Then
                 Dim currentValue As Integer
+                Dim latestRowCount As Integer = ProductController.MainContainer.Children.Count
+
+                ' Ensure TxtRowNum does not exceed latest row count - 1
                 If Integer.TryParse(TxtRowNum.Text, currentValue) Then
-                    currentValue += 1
-                    TxtRowNum.Text = currentValue.ToString()
+                    If currentValue < latestRowCount - 1 Then
+                        currentValue += 1
+                        TxtRowNum.Text = currentValue.ToString()
+                    End If
                 Else
                     TxtRowNum.Text = "1"
                 End If
             Else
-                MessageBox.Show("TxtRowNum is not found or not initialized.")
+                MessageBox.Show("TxtRowNum or MainContainer is not initialized.")
             End If
         End Sub
+
 
         Private Sub Subtract_Click(sender As Object, e As RoutedEventArgs)
             If TxtRowNum IsNot Nothing Then

@@ -4,6 +4,7 @@ Imports DPC.DPC.Data.Model
 Imports System.Web
 Imports System.Windows.Controls.Primitives
 Imports System.Data
+Imports DPC.DPC.Data.Models
 
 
 Namespace DPC.Data.Controllers
@@ -86,28 +87,7 @@ Namespace DPC.Data.Controllers
 
         Public Shared Sub GetProductCategory(comboBox As ComboBox)
             Dim query As String = "
-                SELECT productcategoryid, TRIM(CONCAT(
-                    IF(category = 'fdas', 
-                       UPPER(category), 
-                       IF(CHAR_LENGTH(SUBSTRING_INDEX(category, ' ', 1)) <= 3,
-                          UPPER(SUBSTRING_INDEX(category, ' ', 1)),
-                          CONCAT(UPPER(LEFT(SUBSTRING_INDEX(category, ' ', 1), 1)),
-                                 LOWER(SUBSTRING(SUBSTRING_INDEX(category, ' ', 1), 2)))
-                       )
-                    ),
-                    IF(LOCATE(' ', category) > 0, CONCAT(' ',
-                        IF(category = 'fdas', 
-                           UPPER(category),
-                           IF(CHAR_LENGTH(SUBSTRING_INDEX(category, ' ', -1)) <= 3,
-                              UPPER(SUBSTRING_INDEX(category, ' ', -1)),
-                              CONCAT(UPPER(LEFT(SUBSTRING_INDEX(category, ' ', -1), 1)),
-                                     LOWER(SUBSTRING(SUBSTRING_INDEX(category, ' ', -1), 2)))
-                           )
-                        )
-                    ), '')
-                )) AS category
-                FROM productcategory
-                ORDER BY category ASC;
+                SELECT * FROM category ORDER BY categoryName ASC;
                 "
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
@@ -117,8 +97,8 @@ Namespace DPC.Data.Controllers
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             comboBox.Items.Clear()
                             While reader.Read()
-                                Dim categoryName As String = reader("category").ToString()
-                                Dim categoryId As Integer = Convert.ToInt32(reader("productcategoryid"))
+                                Dim categoryName As String = reader("categoryName").ToString()
+                                Dim categoryId As Integer = Convert.ToInt32(reader("categoryID"))
                                 Dim item As New ComboBoxItem With {
                             .Content = categoryName,
                             .Tag = categoryId
@@ -134,7 +114,8 @@ Namespace DPC.Data.Controllers
         End Sub
 
         Public Shared Sub GetProductSubcategory(categoryName As String, comboBox As ComboBox, label As TextBlock, stackPanel As StackPanel)
-            Dim query As String = "SELECT subcategory FROM productcategory WHERE LOWER(category) = LOWER(@categoryName)"
+            ' SQL query to get subcategoryID and subcategoryName for the given category
+            Dim query As String = "SELECT subcategoryID, subcategoryName FROM subcategory WHERE categoryID = (SELECT categoryID FROM category WHERE LOWER(categoryName) = LOWER(@categoryName))"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
@@ -144,32 +125,37 @@ Namespace DPC.Data.Controllers
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             comboBox.Items.Clear()
 
-                            If reader.Read() Then
-                                Dim subcategoryData As String = reader("subcategory").ToString().Trim()
+                            If reader.HasRows Then
+                                Dim subcategories As New List(Of Subcategory)()
 
-                                ' Remove unwanted characters and check for empty or None data
-                                subcategoryData = subcategoryData.Replace("""", "").Replace("[", "").Replace("]", "").Trim()
+                                While reader.Read()
+                                    ' Create Subcategory object for each record
+                                    Dim subcategory As New Subcategory() With {
+.subcategoryID = Convert.ToInt32(reader("subcategoryID")),
+                                .subcategoryName = reader("subcategoryName").ToString().Trim()
+                            }
 
-                                If String.IsNullOrWhiteSpace(subcategoryData) OrElse subcategoryData.ToLower() = "none" Then
-                                    comboBox.Visibility = Visibility.Collapsed
-                                    label.Visibility = Visibility.Collapsed
-                                    comboBox.SelectedItem = Nothing ' Set to NULL equivalent
-                                    stackPanel.Visibility = Visibility.Collapsed
-                                Else
+                                    ' Add subcategory to the list
+                                    subcategories.Add(subcategory)
+                                End While
+
+                                If subcategories.Count > 0 Then
                                     label.Visibility = Visibility.Visible
                                     comboBox.Visibility = Visibility.Visible
                                     stackPanel.Visibility = Visibility.Visible
 
-                                    ' Format and add subcategories to ComboBox
-                                    Dim subcategories As String() = subcategoryData.Split(","c).
-                                        Select(Function(s) StrConv(s.Trim(), VbStrConv.ProperCase)).
-                                        ToArray()
-
-                                    For Each subcategory As String In subcategories
-                                        comboBox.Items.Add(New ComboBoxItem With {.Content = subcategory})
+                                    ' Add subcategory items to ComboBox
+                                    For Each subcategory In subcategories
+                                        comboBox.Items.Add(New ComboBoxItem With {.Content = subcategory.subcategoryName, .Tag = subcategory.subcategoryID})
                                     Next
 
+                                    ' Optionally, set default selected item (first subcategory)
                                     comboBox.SelectedIndex = 0
+                                Else
+                                    comboBox.Visibility = Visibility.Collapsed
+                                    label.Visibility = Visibility.Collapsed
+                                    comboBox.SelectedItem = Nothing
+                                    stackPanel.Visibility = Visibility.Collapsed
                                 End If
                             Else
                                 comboBox.Visibility = Visibility.Collapsed
@@ -184,8 +170,9 @@ Namespace DPC.Data.Controllers
                 End Try
             End Using
         End Sub
+
         Public Shared Sub GetWarehouse(comboBox As ComboBox)
-            Dim query As String = "SELECT name FROM warehouse ORDER BY name ASC"
+            Dim query As String = "SELECT * FROM warehouse ORDER BY warehouseName ASC"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
@@ -196,7 +183,7 @@ Namespace DPC.Data.Controllers
 
                             If reader.HasRows Then
                                 While reader.Read()
-                                    Dim warehouseName As String = reader("name").ToString().Trim()
+                                    Dim warehouseName As String = reader("warehouseName").ToString().Trim()
                                     comboBox.Items.Add(New ComboBoxItem With {.Content = warehouseName})
                                 End While
                                 comboBox.SelectedIndex = 0 ' Set first item as selected
@@ -456,6 +443,13 @@ Namespace DPC.Data.Controllers
             If parentGrid IsNot Nothing Then
                 Dim parentStackPanel As StackPanel = TryCast(parentGrid.Parent, StackPanel)
 
+                ' Check the current value of TxtStockUnits
+                Dim currentValue As Integer
+                If Integer.TryParse(TxtStockUnits.Text, currentValue) Then
+                    ' If the current value is 1, stop execution
+                    If currentValue = 1 Then Return
+                End If
+
                 ' Find the TextBox inside the grid and remove it from SerialNumbers
                 Dim serialTextBox As TextBox = TryCast(parentGrid.Children.OfType(Of TextBox)().FirstOrDefault(), TextBox)
                 If serialTextBox IsNot Nothing AndAlso SerialNumbers.Contains(serialTextBox) Then
@@ -466,13 +460,12 @@ Namespace DPC.Data.Controllers
                 If parentStackPanel IsNot Nothing AndAlso MainContainer.Children.Contains(parentStackPanel) Then
                     MainContainer.Children.Remove(parentStackPanel)
 
-                    Dim currentValue As Integer
-                    If Integer.TryParse(TxtStockUnits.Text, currentValue) Then
-                        TxtStockUnits.Text = Math.Max(currentValue - 1, 0).ToString()
-                    End If
+                    ' Update TxtStockUnits only if the value is greater than 1
+                    TxtStockUnits.Text = Math.Max(currentValue - 1, 0).ToString()
                 End If
             End If
         End Sub
+
         ' Helper function to find the parent grid
         Private Shared Function FindParentGrid(element As DependencyObject) As Grid
             While element IsNot Nothing AndAlso Not (TypeOf element Is Grid)
