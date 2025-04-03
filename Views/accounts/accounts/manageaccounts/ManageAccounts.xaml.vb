@@ -30,23 +30,6 @@ Namespace DPC.Views.Accounts.Accounts.ManageAccounts
             End Try
         End Sub
 
-        Private Sub aAddAccount_Click(sender As Object, e As RoutedEventArgs)
-            ' Create a new window to host the AddAccount UserControl
-            Dim addAccountWindow As New Window With {
-                .Title = "Add New Account",
-                .Content = New AddAccount(),
-                .SizeToContent = SizeToContent.WidthAndHeight,
-                .WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                .Owner = Application.Current.MainWindow ' Set the owner to the main window
-            }
-
-            addAccountWindow.ShowDialog()
-
-            ' Reload the data after adding a new account
-            LoadAccounts()
-        End Sub
-
-
 
         Private Sub AddAccount_Click(sender As Object, e As RoutedEventArgs)
             Dim addAccountWindow As New DPC.Views.Accounts.Accounts.ManageAccounts.AddAccount()

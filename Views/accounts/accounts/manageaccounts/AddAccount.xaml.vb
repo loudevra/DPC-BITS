@@ -53,7 +53,7 @@ Namespace DPC.Views.Accounts.Accounts.ManageAccounts
                 Dim selectedAccountType As AccountType = CType([Enum].Parse(GetType(AccountType), cmbAccountType.SelectedItem.ToString()), AccountType)
 
                 ' Sanitize the input balance
-                Dim sanitizedBalance As String = New String(txtInitialBalance.Text.Where(Function(c) Char.IsDigit(c) OrElse c = "."c).ToArray())
+                Dim sanitizedBalance As New String(txtInitialBalance.Text.Where(Function(c) Char.IsDigit(c) OrElse c = "."c).ToArray())
 
                 ' Ensure the balance is not empty and sanitize it
                 If String.IsNullOrEmpty(sanitizedBalance) Then
