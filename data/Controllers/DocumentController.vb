@@ -5,7 +5,7 @@ Imports DPC.DPC.Data.Models
 Imports System.Collections.ObjectModel
 Imports System.Convert
 
-Namespace DPC.Controllers
+Namespace DPC.Data.Controllers
     Public Class DocumentController
 
         ' Get all documents for a specific employee

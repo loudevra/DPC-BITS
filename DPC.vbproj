@@ -338,6 +338,7 @@
     <Compile Include="Data\Controllers\BuissnessLocationController.vb" />
     <Compile Include="Data\Controllers\ClientController.vb" />
     <Compile Include="Data\Controllers\ClientGroupController.vb" />
+    <Compile Include="Data\Controllers\DocumentController.vb" />
     <Compile Include="Data\Controllers\EmployeeController.vb" />
     <Compile Include="Data\Controllers\CalendarController.vb" />
     <Compile Include="Data\Controllers\ManageProductsController.vb" />
@@ -351,6 +352,7 @@
     <Compile Include="Data\Converters\PasswordMaskingBehavior.vb" />
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
+    <Compile Include="Data\Helpers\Base64Utility.vb" />
     <Compile Include="Data\Helpers\EmailService.vb" />
     <Compile Include="Data\Helpers\EnvLoader.vb" />
     <Compile Include="Data\Helpers\PBKDF2Hasher.vb" />
@@ -360,6 +362,7 @@
     <Compile Include="Data\Models\BusinessLocation.vb" />
     <Compile Include="Data\Models\Client.vb" />
     <Compile Include="Data\Models\ClientGroup.vb" />
+    <Compile Include="Data\Models\Document.vb" />
     <Compile Include="Data\Models\Employee.vb" />
     <Compile Include="Data\Models\ManageProducts.vb" />
     <Compile Include="Data\Models\Product.vb" />
