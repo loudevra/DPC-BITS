@@ -693,6 +693,11 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+   <ItemGroup>
+    <Content Include=".env">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <ItemGroup>
     <Import Include="System.Threading.Tasks" />
     <Import Include="System.Linq" />
