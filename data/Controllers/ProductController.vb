@@ -593,8 +593,8 @@ Namespace DPC.Data.Controllers
                 conn.Open()
                 Using transaction = conn.BeginTransaction()
                     ' Insert into product table first
-                    Dim productQuery As String = "INSERT INTO product (productID, productName, categoryID, subcategoryID, supplierID, brandID, dateCreated, productVariation) 
-                                          VALUES (@productID, @ProductName, @Category, @SubCategory, @SupplierID, @BrandID, @DateCreated, @variation);"
+                    Dim productQuery As String = "INSERT INTO product (productID, productName, categoryID, subcategoryID, supplierID, brandID, dateCreated, productVariation, productImage, measurementUnit, productDescription) 
+                                          VALUES (@productID, @ProductName, @Category, @SubCategory, @SupplierID, @BrandID, @DateCreated, @variation, @ProductImage, @Description, @MeasurementUnit);"
                     Using productCmd As New MySqlCommand(productQuery, conn, transaction)
                         productCmd.Parameters.AddWithValue("@productID", productID)
                         productCmd.Parameters.AddWithValue("@ProductName", ProductName.Text)
@@ -604,6 +604,9 @@ Namespace DPC.Data.Controllers
                         productCmd.Parameters.AddWithValue("@BrandID", CType(Brand.SelectedItem, ComboBoxItem).Tag)
                         productCmd.Parameters.AddWithValue("@DateCreated", ValidDate.SelectedDate)
                         productCmd.Parameters.AddWithValue("@variation", variation)
+                        productCmd.Parameters.AddWithValue("@ProductImage", ProductImage)
+                        productCmd.Parameters.AddWithValue("@Description", Description.Text)
+                        productCmd.Parameters.AddWithValue("@MeasurementUnit", CType(MeasurementUnit.SelectedItem, ComboBoxItem).Tag)
                         productCmd.ExecuteNonQuery()
                     End Using
 
@@ -612,7 +615,7 @@ Namespace DPC.Data.Controllers
                         InsertNonVariationProduct(conn, transaction, productID, Warehouse, RetailPrice, PurchaseOrder, DefaultTax,
                   DiscountRate, StockUnits, AlertQuantity, ValidDate, SerialNumbers, Checkbox)
                     Else
-                        InsertVariationProduct(conn, transaction, productID, MeasurementUnit, Description, ProductImage)
+                        InsertVariationProduct(conn, transaction, productID)
                     End If
 
                     transaction.Commit()
@@ -654,17 +657,13 @@ Namespace DPC.Data.Controllers
         End Sub
 
         'variation insert
-        Private Shared Sub InsertVariationProduct(conn As MySqlConnection, transaction As MySqlTransaction, productID As String,
-                                   MeasurementUnit As ComboBox, Description As TextBox, ProductImage As String)
+        Private Shared Sub InsertVariationProduct(conn As MySqlConnection, transaction As MySqlTransaction, productID As String)
 
             ' Insert into productvariation table
-            Dim query As String = "INSERT INTO productvariation (productID, productImage, measurementUnit, productDescription, dateCreated) 
-                           VALUES (@productID, @ProductImage, @MeasurementUnit, @Description, @DateCreated);"
+            Dim query As String = "INSERT INTO productvariation (productID, dateCreated) 
+                           VALUES (@productID, @DateCreated);"
             Using cmd As New MySqlCommand(query, conn, transaction)
                 cmd.Parameters.AddWithValue("@productID", productID)
-                cmd.Parameters.AddWithValue("@ProductImage", ProductImage)
-                cmd.Parameters.AddWithValue("@MeasurementUnit", CType(MeasurementUnit.SelectedItem, ComboBoxItem).Content.ToString())
-                cmd.Parameters.AddWithValue("@Description", Description.Text)
                 cmd.Parameters.AddWithValue("@DateCreated", DateTime.Now)
                 cmd.ExecuteNonQuery()
             End Using
