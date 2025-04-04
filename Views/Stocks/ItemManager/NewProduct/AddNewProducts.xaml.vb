@@ -311,40 +311,11 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         Private recentlyClosed As Boolean = False
 
         Private Sub OpenAddVariation(sender As Object, e As RoutedEventArgs)
-            Dim clickedButton As System.Windows.Controls.Button = CType(sender, System.Windows.Controls.Button)
-            If clickedButton Is Nothing Then Return
-
-            ' Reuse or create a new Popup if it doesn't exist
-            If popup Is Nothing Then
-                popup = New Popup With {
-            .PlacementTarget = clickedButton,
-            .Placement = PlacementMode.Relative,
-            .StaysOpen = False,
-            .AllowsTransparency = True
-        }
-            End If
-
-            Dim popOutContent As New DPC.Components.Forms.AddVariation()
-            popup.Child = popOutContent
-
-            ' Adjust position once the content is loaded
-            AddHandler popOutContent.Loaded, Sub()
-                                                 Dim targetElement As FrameworkElement = TryCast(popup.PlacementTarget, FrameworkElement)
-                                                 If targetElement IsNot Nothing Then
-                                                     ' Center horizontally and position below the parent
-                                                     popup.HorizontalOffset = -(popup.Child.DesiredSize.Width - targetElement.ActualWidth) / 2
-                                                     popup.VerticalOffset = targetElement.ActualHeight
-                                                 End If
-                                             End Sub
-
-            ' Handle popup closure
-            AddHandler popup.Closed, Sub()
-                                         recentlyClosed = True
-                                         Task.Delay(100).ContinueWith(Sub() recentlyClosed = False, TaskScheduler.FromCurrentSynchronizationContext())
-                                     End Sub
+            ' Create an instance of the AddCategory form
+            Dim openAddVariation As New DPC.Components.Forms.AddVariation()
 
             ' Open the popup
-            popup.IsOpen = True
+            PopupHelper.OpenPopupWithControl(sender, openAddVariation, "windowcenter", -50, 0, Me)
         End Sub
 
         'Handles file input
