@@ -16,7 +16,7 @@ Namespace DPC.Data.Controllers
                            s.supplierPhone,
                            COALESCE(GROUP_CONCAT(b.brandName SEPARATOR ', '), '') AS Brands
                     FROM supplier s
-                    LEFT JOIN SupplierBrand sb ON sb.supplierID = s.supplierID
+                    LEFT JOIN supplierbrand sb ON sb.supplierID = s.supplierID
                     LEFT JOIN brand b ON b.brandID = sb.brandID
                     GROUP BY s.supplierID, s.supplierName, s.supplierCompany, s.officeAddress, s.city, s.region, s.country, s.postalCode, s.supplierEmail, s.supplierPhone;
                     "
