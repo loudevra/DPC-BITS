@@ -160,7 +160,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             TxtDescription.Clear()
             base64Image = String.Empty
 
-
             ' Reset ComboBoxes to first item (index 0)
             ComboBoxCategory.SelectedIndex = 0
             ComboBoxSubCategory.SelectedIndex = 0
@@ -184,7 +183,33 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ' Add back one row for Serial Number input
             ProductController.BtnAddRow_Click(Nothing, Nothing)
             TxtStockUnits.Text = "1"
+
+            ' Clear Image-related elements
+            ' Reset the uploaded image source
+            UploadedImage.Source = Nothing
+
+            ' Hide the Image Display Panel
+            ImageDisplayPanel.Visibility = Visibility.Collapsed
+
+            ' Optionally, remove the temporary image file
+            Dim tempImagePath As String = Path.Combine(Path.GetTempPath(), "decoded_image.png")
+            If File.Exists(tempImagePath) Then
+                GC.Collect()
+                GC.WaitForPendingFinalizers()
+                File.Delete(tempImagePath)
+            End If
+
+            ' Reset image info
+            ImgName.Text = ""
+            ImgSize.Text = ""
+
+            ' Reset the Base64 string
+            base64Image = String.Empty
+
+            ' Hide the Remove Image button
+            BtnRemoveImage.Visibility = Visibility.Collapsed
         End Sub
+
 
         Private TxtSerialNumber As TextBox
 

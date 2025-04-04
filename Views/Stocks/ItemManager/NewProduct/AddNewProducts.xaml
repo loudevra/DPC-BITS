@@ -235,9 +235,9 @@
                             </StackPanel>
                             <!--Measurement Unit Value-->
                             <ComboBox x:Name="ComboBoxMeasurementUnit" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0">
-                                <ComboBoxItem Content="None"/>
-                                <ComboBoxItem Content="cm"/>
-                                <ComboBoxItem Content="mm"/>
+                                <ComboBoxItem Content="None" Tag="None"/>
+                                <ComboBoxItem Content="cm" Tag="Cm"/>
+                                <ComboBoxItem Content="mm" Tag="Mm"/>
                             </ComboBox>
                         </StackPanel>
 
