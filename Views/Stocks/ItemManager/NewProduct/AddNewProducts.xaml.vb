@@ -4,6 +4,7 @@ Imports System.Windows.Threading
 Imports DocumentFormat.OpenXml.Office.CustomUI
 Imports DPC.DPC.Components.Forms
 Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
 Imports MaterialDesignThemes.Wpf
 Imports MaterialDesignThemes.Wpf.Theme
@@ -157,12 +158,15 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             TxtStockUnits.Text = "1"
             TxtAlertQuantity.Clear()
             TxtDescription.Clear()
+            base64Image = String.Empty
 
             ' Reset ComboBoxes to first item (index 0)
             ComboBoxCategory.SelectedIndex = 0
             ComboBoxSubCategory.SelectedIndex = 0
             ComboBoxWarehouse.SelectedIndex = 0
             ComboBoxMeasurementUnit.SelectedIndex = 0
+            ComboBoxBrand.SelectedIndex = 0
+            ComboBoxSupplier.SelectedIndex = 0
 
             ' Set DatePicker to current date
             SingleDatePicker.SelectedDate = DateTime.Now
@@ -179,7 +183,33 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ' Add back one row for Serial Number input
             ProductController.BtnAddRow_Click(Nothing, Nothing)
             TxtStockUnits.Text = "1"
+
+            ' Clear Image-related elements
+            ' Reset the uploaded image source
+            UploadedImage.Source = Nothing
+
+            ' Hide the Image Display Panel
+            ImageDisplayPanel.Visibility = Visibility.Collapsed
+
+            ' Optionally, remove the temporary image file
+            Dim tempImagePath As String = Path.Combine(Path.GetTempPath(), "decoded_image.png")
+            If File.Exists(tempImagePath) Then
+                GC.Collect()
+                GC.WaitForPendingFinalizers()
+                File.Delete(tempImagePath)
+            End If
+
+            ' Reset image info
+            ImgName.Text = ""
+            ImgSize.Text = ""
+
+            ' Reset the Base64 string
+            base64Image = String.Empty
+
+            ' Hide the Remove Image button
+            BtnRemoveImage.Visibility = Visibility.Collapsed
         End Sub
+
 
         Private TxtSerialNumber As TextBox
 
@@ -334,7 +364,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             End Try
         End Function
 
-
         Private Sub Border_DragEnter(sender As Object, e As DragEventArgs)
             ' Check if the dragged data is a file
             If e.Data.GetDataPresent(DataFormats.FileDrop) Then
@@ -389,35 +418,25 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             Return True
         End Function
-
         Private Sub StartFileUpload(filePath As String)
+            ' Reset upload progress
             UploadProgressBar.Value = 0
             UploadStatus.Text = "Uploading..."
 
             ' Update file info
             Dim fileInfo As New FileInfo(filePath)
-            Dim fileSizeInBytes As Long = fileInfo.Length
-            Dim fileSizeText As String
-
-            ' Check file size and set the appropriate text
-            If fileSizeInBytes < 1024 Then
-                fileSizeText = fileSizeInBytes.ToString("0") & " Bytes"
-            ElseIf fileSizeInBytes < 1024 * 1024 Then
-                fileSizeText = (fileSizeInBytes / 1024).ToString("0") & " KB"
-            Else
-                fileSizeText = (fileSizeInBytes / 1024 / 1024).ToString("0.0") & " MB"
-            End If
+            Dim fileSizeText As String = Base64Utility.GetReadableFileSize(fileInfo.Length)
 
             ImgName.Text = Path.GetFileName(filePath)
             ImgSize.Text = fileSizeText
 
-            ' Convert image to Base64 and store in variable
-            base64Image = ConvertImageToBase64(filePath)
-
-            ' Show Base64 string in a MessageBox
-            If Not String.IsNullOrEmpty(base64Image) Then
-                MessageBox.Show(base64Image, "Base64 String", MessageBoxButton.OK, MessageBoxImage.Information)
-            End If
+            ' Convert image to Base64 using Base64Utility
+            Try
+                base64Image = Base64Utility.EncodeFileToBase64(filePath)
+            Catch ex As Exception
+                MessageBox.Show("Error encoding image: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                Exit Sub
+            End Try
 
             ' Show the panel with image info
             ImageInfoPanel.Visibility = Visibility.Visible
@@ -427,39 +446,67 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             DropBorder.AllowDrop = False
             isUploadLocked = True ' Lock uploading process
 
-            ' Start the timer to simulate the upload process
+            ' Reset and configure the timer properly before starting
+            If uploadTimer.IsEnabled Then
+                uploadTimer.Stop()
+                RemoveHandler uploadTimer.Tick, AddressOf uploadTimer_Tick
+            End If
+            AddHandler uploadTimer.Tick, AddressOf uploadTimer_Tick
+            uploadTimer.Interval = TimeSpan.FromMilliseconds(100)
             uploadTimer.Start()
         End Sub
-
-
         Private Sub uploadTimer_Tick(sender As Object, e As EventArgs)
             If UploadProgressBar.Value < 100 Then
                 UploadProgressBar.Value += 2 ' Increase by 2% every tick
             Else
                 uploadTimer.Stop()
-                RemoveHandler uploadTimer.Tick, AddressOf uploadTimer_Tick ' Detach handler
+                RemoveHandler uploadTimer.Tick, AddressOf uploadTimer_Tick
                 UploadStatus.Text = "Upload Complete"
 
                 ' Hide Image Info Panel and Show Image Display Panel
                 ImageInfoPanel.Visibility = Visibility.Collapsed
                 ImageDisplayPanel.Visibility = Visibility.Visible
 
-                ' Display Image using Base64 string
-                Dim imageSource As New BitmapImage()
-                imageSource.BeginInit()
-                imageSource.StreamSource = New MemoryStream(Convert.FromBase64String(base64Image))
-                imageSource.EndInit()
+                ' Decode Base64 string to an image file
+                Try
+                    Dim tempImagePath As String = Path.Combine(Path.GetTempPath(), "decoded_image.png")
 
-                ' Display the image in the Image control
-                UploadedImage.Source = imageSource
+                    ' Ensure the previous file is released before writing a new one
+                    If File.Exists(tempImagePath) Then
+                        GC.Collect()
+                        GC.WaitForPendingFinalizers()
+                        File.Delete(tempImagePath)
+                    End If
+
+                    ' Decode and write the new file
+                    Base64Utility.DecodeBase64ToFile(base64Image, tempImagePath)
+
+                    ' Load image safely
+                    Dim imageSource As New BitmapImage()
+                    Using stream As New FileStream(tempImagePath, FileMode.Open, FileAccess.Read, FileShare.Read)
+                        imageSource.BeginInit()
+                        imageSource.CacheOption = BitmapCacheOption.OnLoad
+                        imageSource.StreamSource = stream
+                        imageSource.EndInit()
+                    End Using
+                    imageSource.Freeze() ' Allow image to be accessed in different threads
+
+                    ' Set the image source
+                    UploadedImage.Source = imageSource
+                Catch ex As Exception
+                    MessageBox.Show("Error decoding image: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                End Try
 
                 ' Make the Remove Image button visible
                 BtnRemoveImage.Visibility = Visibility.Visible
             End If
         End Sub
 
-
         Private Sub RemoveImage(sender As Object, e As RoutedEventArgs)
+            ' Stop and reset the upload timer
+            uploadTimer.Stop()
+            RemoveHandler uploadTimer.Tick, AddressOf uploadTimer_Tick
+
             ' Reset UI elements
             UploadProgressBar.Value = 0
             UploadStatus.Text = ""
@@ -475,8 +522,11 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             DropBorder.AllowDrop = True
             isUploadLocked = False
 
-            ' Hide the Remove Image button again
+            ' Hide the Remove Image button
             BtnRemoveImage.Visibility = Visibility.Collapsed
+
+            ' Reset Base64 string
+            base64Image = String.Empty
         End Sub
 
 

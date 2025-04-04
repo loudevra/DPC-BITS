@@ -235,9 +235,9 @@
                             </StackPanel>
                             <!--Measurement Unit Value-->
                             <ComboBox x:Name="ComboBoxMeasurementUnit" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0">
-                                <ComboBoxItem Content="None"/>
-                                <ComboBoxItem Content="cm"/>
-                                <ComboBoxItem Content="mm"/>
+                                <ComboBoxItem Content="None" Tag="None"/>
+                                <ComboBoxItem Content="cm" Tag="Cm"/>
+                                <ComboBoxItem Content="mm" Tag="Mm"/>
                             </ComboBox>
                         </StackPanel>
 
@@ -437,10 +437,12 @@
                                     <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
                                 </StackPanel>
                             </Border>
-
-                            <StackPanel x:Name="MainContainer" Background="white">
-                                <!-- Other UI elements -->
-                            </StackPanel>
+                            
+                            
+                                <StackPanel x:Name="MainContainer" Background="white">
+                                    <!-- Other UI elements -->
+                                </StackPanel>
+                                
                         </StackPanel>
 
                         <Button Background="Transparent" HorizontalAlignment="Right" BorderThickness="0" Margin="0,15,0,0" x:Name="btnAddProduct"  Click="BtnAddProduct_Click">

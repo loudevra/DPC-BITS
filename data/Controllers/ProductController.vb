@@ -412,45 +412,47 @@ Namespace DPC.Data.Controllers
         Public Shared Sub LoadProductData(dataGrid As DataGrid)
             ' Query to load data from the appropriate product table based on productVariation flag
             Dim query As String = "
-                                -- For products without variations
-                                SELECT 
-                                    p.productID AS ID,
-                                    p.productName AS Name,
-                                    c.categoryName AS Category,
-                                    sc.subcategoryName AS SubCategory,
-                                    b.brandName AS Brand,
-                                    s.supplierName AS Supplier,
-                                    pnv.warehouseID AS Warehouse,
-                                    pnv.stockUnit AS StockQuantity
-                                FROM product p
-                                LEFT JOIN category c ON p.categoryID = c.categoryID
-                                LEFT JOIN subcategory sc ON p.subcategoryID = sc.subcategoryID
-                                LEFT JOIN brand b ON p.brandID = b.brandID
-                                LEFT JOIN supplier s ON p.supplierID = s.supplierID
-                                LEFT JOIN productnovariation pnv ON p.productID = pnv.productID
-                                WHERE p.productVariation = 0
+                            -- For products without variations
+                            SELECT 
+                                p.productID AS ID,
+                                p.productName AS Name,
+                                c.categoryName AS Category,
+                                sc.subcategoryName AS SubCategory,
+                                b.brandName AS Brand,
+                                s.supplierName AS Supplier,
+                                pnv.warehouseID AS Warehouse,
+                                pnv.stockUnit AS StockQuantity,
+                                p.productImage AS ProductImage -- Fetching the productImage
+                            FROM product p
+                            LEFT JOIN category c ON p.categoryID = c.categoryID
+                            LEFT JOIN subcategory sc ON p.subcategoryID = sc.subcategoryID
+                            LEFT JOIN brand b ON p.brandID = b.brandID
+                            LEFT JOIN supplier s ON p.supplierID = s.supplierID
+                            LEFT JOIN productnovariation pnv ON p.productID = pnv.productID
+                            WHERE p.productVariation = 0
 
-                                UNION
+                            UNION
 
-                                -- For products with variations
-                                SELECT 
-                                    p.productID AS ID,
-                                    p.productName AS Name,
-                                    c.categoryName AS Category,
-                                    sc.subcategoryName AS SubCategory,
-                                    b.brandName AS Brand,
-                                    s.supplierName AS Supplier,
-                                    pvs.optionCombination AS Warehouse,  -- This can represent the specific variation's option combination
-                                    pvs.stockUnit AS StockQuantity
-                                FROM product p
-                                LEFT JOIN category c ON p.categoryID = c.categoryID
-                                LEFT JOIN subcategory sc ON p.subcategoryID = sc.subcategoryID
-                                LEFT JOIN brand b ON p.brandID = b.brandID
-                                LEFT JOIN supplier s ON p.supplierID = s.supplierID
-                                LEFT JOIN productvariation pv ON p.productID = pv.productID
-                                LEFT JOIN productvariationstock pvs ON pv.productID = pvs.productID
-                                WHERE p.productVariation = 1;
-                                "
+                            -- For products with variations
+                            SELECT 
+                                p.productID AS ID,
+                                p.productName AS Name,
+                                c.categoryName AS Category,
+                                sc.subcategoryName AS SubCategory,
+                                b.brandName AS Brand,
+                                s.supplierName AS Supplier,
+                                pvs.optionCombination AS Warehouse,  -- This can represent the specific variation's option combination
+                                pvs.stockUnit AS StockQuantity,
+                                p.productImage AS ProductImage -- Fetching the productImage
+                            FROM product p
+                            LEFT JOIN category c ON p.categoryID = c.categoryID
+                            LEFT JOIN subcategory sc ON p.subcategoryID = sc.subcategoryID
+                            LEFT JOIN brand b ON p.brandID = b.brandID
+                            LEFT JOIN supplier s ON p.supplierID = s.supplierID
+                            LEFT JOIN productvariation pv ON p.productID = pv.productID
+                            LEFT JOIN productvariationstock pvs ON pv.productID = pvs.productID
+                            WHERE p.productVariation = 1;
+                        "
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
@@ -464,9 +466,28 @@ Namespace DPC.Data.Controllers
                         table.Columns.Add("TotalProducts", GetType(Integer))
                     End If
 
+                    ' Add a column to hold the image (if necessary)
+                    If Not table.Columns.Contains("ImageSource") Then
+                        table.Columns.Add("ImageSource", GetType(Byte()))
+                    End If
+
                     ' Assuming we are marking the products with variation flag as 1
                     For Each row As DataRow In table.Rows
                         row("TotalProducts") = 1 ' Flag for variation
+
+                        ' Fetch and process the image from the productImage column
+                        If row("ProductImage") IsNot DBNull.Value Then
+                            ' Convert the base64 string to byte array and store it in the ImageSource column
+                            Dim base64String As String = row("ProductImage").ToString()
+                            Try
+                                ' Decode the base64 string to bytes and store them
+                                Dim imageBytes As Byte() = Convert.FromBase64String(base64String)
+                                row("ImageSource") = imageBytes ' You can store the image as a byte array or convert to base64 string
+                            Catch ex As Exception
+                                ' Handle any base64 decoding errors here
+                                MessageBox.Show($"Error decoding image: {ex.Message}")
+                            End Try
+                        End If
                     Next
 
                     dataGrid.ItemsSource = table.DefaultView
@@ -593,8 +614,8 @@ Namespace DPC.Data.Controllers
                 conn.Open()
                 Using transaction = conn.BeginTransaction()
                     ' Insert into product table first
-                    Dim productQuery As String = "INSERT INTO product (productID, productName, categoryID, subcategoryID, supplierID, brandID, dateCreated, productVariation) 
-                                          VALUES (@productID, @ProductName, @Category, @SubCategory, @SupplierID, @BrandID, @DateCreated, @variation);"
+                    Dim productQuery As String = "INSERT INTO product (productID, productName, categoryID, subcategoryID, supplierID, brandID, dateCreated, productVariation, productImage, measurementUnit, productDescription) 
+                                          VALUES (@productID, @ProductName, @Category, @SubCategory, @SupplierID, @BrandID, @DateCreated, @variation, @ProductImage, @Description, @MeasurementUnit);"
                     Using productCmd As New MySqlCommand(productQuery, conn, transaction)
                         productCmd.Parameters.AddWithValue("@productID", productID)
                         productCmd.Parameters.AddWithValue("@ProductName", ProductName.Text)
@@ -604,6 +625,9 @@ Namespace DPC.Data.Controllers
                         productCmd.Parameters.AddWithValue("@BrandID", CType(Brand.SelectedItem, ComboBoxItem).Tag)
                         productCmd.Parameters.AddWithValue("@DateCreated", ValidDate.SelectedDate)
                         productCmd.Parameters.AddWithValue("@variation", variation)
+                        productCmd.Parameters.AddWithValue("@ProductImage", ProductImage)
+                        productCmd.Parameters.AddWithValue("@Description", Description.Text)
+                        productCmd.Parameters.AddWithValue("@MeasurementUnit", CType(MeasurementUnit.SelectedItem, ComboBoxItem).Tag)
                         productCmd.ExecuteNonQuery()
                     End Using
 
@@ -612,7 +636,7 @@ Namespace DPC.Data.Controllers
                         InsertNonVariationProduct(conn, transaction, productID, Warehouse, RetailPrice, PurchaseOrder, DefaultTax,
                   DiscountRate, StockUnits, AlertQuantity, ValidDate, SerialNumbers, Checkbox)
                     Else
-                        InsertVariationProduct(conn, transaction, productID, MeasurementUnit, Description, ProductImage)
+                        InsertVariationProduct(conn, transaction, productID)
                     End If
 
                     transaction.Commit()
@@ -654,17 +678,13 @@ Namespace DPC.Data.Controllers
         End Sub
 
         'variation insert
-        Private Shared Sub InsertVariationProduct(conn As MySqlConnection, transaction As MySqlTransaction, productID As String,
-                                   MeasurementUnit As ComboBox, Description As TextBox, ProductImage As String)
+        Private Shared Sub InsertVariationProduct(conn As MySqlConnection, transaction As MySqlTransaction, productID As String)
 
             ' Insert into productvariation table
-            Dim query As String = "INSERT INTO productvariation (productID, productImage, measurementUnit, productDescription, dateCreated) 
-                           VALUES (@productID, @ProductImage, @MeasurementUnit, @Description, @DateCreated);"
+            Dim query As String = "INSERT INTO productvariation (productID, dateCreated) 
+                           VALUES (@productID, @DateCreated);"
             Using cmd As New MySqlCommand(query, conn, transaction)
                 cmd.Parameters.AddWithValue("@productID", productID)
-                cmd.Parameters.AddWithValue("@ProductImage", ProductImage)
-                cmd.Parameters.AddWithValue("@MeasurementUnit", CType(MeasurementUnit.SelectedItem, ComboBoxItem).Content.ToString())
-                cmd.Parameters.AddWithValue("@Description", Description.Text)
                 cmd.Parameters.AddWithValue("@DateCreated", DateTime.Now)
                 cmd.ExecuteNonQuery()
             End Using
