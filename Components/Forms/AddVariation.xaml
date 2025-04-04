@@ -72,7 +72,7 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch">
+                        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" x:Name="VariationListPanel" Orientation="Vertical"  >
                             <TextBlock Text="Variation Name:" Margin="0,0,0,10" Foreground="#555555" FontSize="14" FontWeight="SemiBold"/>
                             <Border Style="{StaticResource RoundedBorderStyle}" BorderBrush="#555555" Margin="0,0,0,15">
                                 <Grid>
