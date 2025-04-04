@@ -125,18 +125,27 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         ' Start of inserting function for add product button
         Private Sub BtnAddProduct_Click(sender As Object, e As RoutedEventArgs)
             ProductController.InsertNewProduct(Toggle, CheckBoxSerialNumber,
-                TxtProductName, ComboBoxCategory, ComboBoxSubCategory,
-                ComboBoxWarehouse, ComboBoxBrand, ComboBoxSupplier, TxtRetailPrice, TxtPurchaseOrder, TxtDefaultTax,
-                TxtDiscountRate, TxtStockUnits, TxtAlertQuantity, ComboBoxMeasurementUnit,
-                TxtDescription, SingleDatePicker, ProductController.SerialNumbers, base64Image)
+        TxtProductName, ComboBoxCategory, ComboBoxSubCategory,
+        ComboBoxWarehouse, ComboBoxBrand, ComboBoxSupplier, TxtRetailPrice, TxtPurchaseOrder, TxtDefaultTax,
+        TxtDiscountRate, TxtStockUnits, TxtAlertQuantity, ComboBoxMeasurementUnit,
+        TxtDescription, SingleDatePicker, ProductController.SerialNumbers, base64Image)
 
             ClearInputFields()
 
-            Dim CategoryID As String = ComboBoxCategory.Tag
+            ' Get Category ID from the selected ComboBox item
+            Dim CategoryID As String = If(ComboBoxCategory.SelectedItem IsNot Nothing,
+                                  CType(ComboBoxCategory.SelectedItem, ComboBoxItem).Tag.ToString(), "")
+
+            ' Get Subcategory ID from the selected ComboBox item
+            Dim SubCategoryID As String = If(ComboBoxSubCategory.SelectedItem IsNot Nothing,
+                                     CType(ComboBoxSubCategory.SelectedItem, ComboBoxItem).Tag.ToString(), "")
+
             Dim newProduct As New Product With {
-                .CategoryID = CategoryID
-            }
+        .CategoryID = CategoryID,
+        .SubCategoryID = SubCategoryID
+    }
         End Sub
+
 
         Private Sub ClearInputFields()
             ' Clear TextBoxes

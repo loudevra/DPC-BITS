@@ -122,51 +122,43 @@ Namespace DPC.Data.Controllers
                     conn.Open()
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@categoryName", categoryName)
+
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             comboBox.Items.Clear()
 
                             If reader.HasRows Then
-                                Dim subcategories As New List(Of Subcategory)()
-
                                 While reader.Read()
-                                    ' Create Subcategory object for each record
-                                    Dim subcategory As New Subcategory() With {
-.subcategoryID = Convert.ToInt32(reader("subcategoryID")),
-                                .subcategoryName = reader("subcategoryName").ToString().Trim()
+                                    Dim subcategoryName As String = reader("subcategoryName").ToString()
+                                    Dim subcategoryId As Integer = Convert.ToInt32(reader("subcategoryID"))
+
+                                    ' Create ComboBoxItem for each subcategory
+                                    Dim item As New ComboBoxItem With {
+                                .Content = subcategoryName,
+                                .Tag = subcategoryId
                             }
 
-                                    ' Add subcategory to the list
-                                    subcategories.Add(subcategory)
+                                    comboBox.Items.Add(item)
                                 End While
 
-                                If subcategories.Count > 0 Then
-                                    label.Visibility = Visibility.Visible
-                                    comboBox.Visibility = Visibility.Visible
-                                    stackPanel.Visibility = Visibility.Visible
+                                ' Show UI elements if subcategories exist
+                                label.Visibility = Visibility.Visible
+                                comboBox.Visibility = Visibility.Visible
+                                stackPanel.Visibility = Visibility.Visible
 
-                                    ' Add subcategory items to ComboBox
-                                    For Each subcategory In subcategories
-                                        comboBox.Items.Add(New ComboBoxItem With {.Content = subcategory.subcategoryName, .Tag = subcategory.subcategoryID})
-                                    Next
-
-                                    ' Optionally, set default selected item (first subcategory)
+                                ' Optionally, set default selected item (first subcategory)
+                                If comboBox.Items.Count > 0 Then
                                     comboBox.SelectedIndex = 0
-                                Else
-                                    comboBox.Visibility = Visibility.Collapsed
-                                    label.Visibility = Visibility.Collapsed
-                                    comboBox.SelectedItem = Nothing
-                                    stackPanel.Visibility = Visibility.Collapsed
                                 End If
                             Else
+                                ' Hide UI elements if no subcategories found
                                 comboBox.Visibility = Visibility.Collapsed
                                 label.Visibility = Visibility.Collapsed
-                                comboBox.SelectedItem = Nothing
                                 stackPanel.Visibility = Visibility.Collapsed
                             End If
                         End Using
                     End Using
                 Catch ex As Exception
-                    MessageBox.Show($"Error: {ex.Message}")
+                    MessageBox.Show($"Error: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 End Try
             End Using
         End Sub
@@ -541,7 +533,6 @@ Namespace DPC.Data.Controllers
             End If
         End Sub
 
-        'inserting data to database
         Private Shared Function ValidateProductFields(Checkbox As Controls.CheckBox, ProductName As TextBox, Category As ComboBox,
                                               SubCategory As ComboBox, Warehouse As ComboBox, Brand As ComboBox,
                                               Supplier As ComboBox, RetailPrice As TextBox, PurchaseOrder As TextBox,
@@ -549,41 +540,54 @@ Namespace DPC.Data.Controllers
                                               AlertQuantity As TextBox, MeasurementUnit As ComboBox, Description As TextBox,
                                               ValidDate As DatePicker, SerialNumbers As List(Of TextBox)) As Boolean
 
-            ' Check if any of the required fields are empty
-            If String.IsNullOrWhiteSpace(ProductName.Text) OrElse Category.SelectedItem Is Nothing OrElse
-       Warehouse.SelectedItem Is Nothing OrElse Brand.SelectedItem Is Nothing OrElse Supplier.SelectedItem Is Nothing OrElse
-       String.IsNullOrWhiteSpace(RetailPrice.Text) OrElse String.IsNullOrWhiteSpace(PurchaseOrder.Text) OrElse
-       String.IsNullOrWhiteSpace(DefaultTax.Text) OrElse String.IsNullOrWhiteSpace(DiscountRate.Text) OrElse
-       String.IsNullOrWhiteSpace(StockUnits.Text) OrElse String.IsNullOrWhiteSpace(AlertQuantity.Text) OrElse
-       MeasurementUnit.SelectedItem Is Nothing OrElse String.IsNullOrWhiteSpace(Description.Text) OrElse
+            ' Check if any of the required fields are empty (except SubCategory, which can be Nothing)
+            If String.IsNullOrWhiteSpace(ProductName.Text) OrElse
+       Category.SelectedItem Is Nothing OrElse
+       Warehouse.SelectedItem Is Nothing OrElse
+       Brand.SelectedItem Is Nothing OrElse
+       Supplier.SelectedItem Is Nothing OrElse
+       String.IsNullOrWhiteSpace(RetailPrice.Text) OrElse
+       String.IsNullOrWhiteSpace(PurchaseOrder.Text) OrElse
+       String.IsNullOrWhiteSpace(DefaultTax.Text) OrElse
+       String.IsNullOrWhiteSpace(DiscountRate.Text) OrElse
+       String.IsNullOrWhiteSpace(StockUnits.Text) OrElse
+       String.IsNullOrWhiteSpace(AlertQuantity.Text) OrElse
+       MeasurementUnit.SelectedItem Is Nothing OrElse
+       String.IsNullOrWhiteSpace(Description.Text) OrElse
        ValidDate.SelectedDate Is Nothing OrElse
        (Checkbox.IsChecked = True AndAlso SerialNumbers.Any(Function(txt) String.IsNullOrWhiteSpace(txt.Text))) Then
                 Return False
             End If
+
+            ' ✅ If SubCategory is Nothing, set it to 0 when saving later
             Return True
         End Function
 
+
         Public Shared Sub InsertNewProduct(Toggle As System.Windows.Controls.Primitives.ToggleButton, Checkbox As Controls.CheckBox,
-            ProductName As TextBox, Category As ComboBox, SubCategory As ComboBox, Warehouse As ComboBox,
-            Brand As ComboBox, Supplier As ComboBox,
-            RetailPrice As TextBox, PurchaseOrder As TextBox, DefaultTax As TextBox,
-            DiscountRate As TextBox, StockUnits As TextBox, AlertQuantity As TextBox,
-            MeasurementUnit As ComboBox, Description As TextBox, ValidDate As DatePicker,
-            SerialNumbers As List(Of TextBox), ProductImage As String)
+    ProductName As TextBox, Category As ComboBox, SubCategory As ComboBox, Warehouse As ComboBox,
+    Brand As ComboBox, Supplier As ComboBox,
+    RetailPrice As TextBox, PurchaseOrder As TextBox, DefaultTax As TextBox,
+    DiscountRate As TextBox, StockUnits As TextBox, AlertQuantity As TextBox,
+    MeasurementUnit As ComboBox, Description As TextBox, ValidDate As DatePicker,
+    SerialNumbers As List(Of TextBox), ProductImage As String)
 
             ' Determine if the product is a variation
             Dim variation As Integer = If(Toggle.IsChecked = True, 1, 0)
 
             ' Validate required fields
             If Not ValidateProductFields(Checkbox, ProductName, Category, SubCategory, Warehouse, Brand, Supplier,
-                          RetailPrice, PurchaseOrder, DefaultTax, DiscountRate, StockUnits,
-                          AlertQuantity, MeasurementUnit, Description, ValidDate, SerialNumbers) Then
+                  RetailPrice, PurchaseOrder, DefaultTax, DiscountRate, StockUnits,
+                  AlertQuantity, MeasurementUnit, Description, ValidDate, SerialNumbers) Then
                 MessageBox.Show("Please fill in all required fields!", "Input Error", MessageBoxButton.OK)
                 Exit Sub
             End If
 
             ' Generate product ID
             Dim productID As String = GenerateProductCode()
+
+            ' ✅ Handle SubCategory when it's Nothing
+            Dim subCategoryId As Integer = If(SubCategory.SelectedItem IsNot Nothing, CType(SubCategory.SelectedItem, ComboBoxItem).Tag, 0)
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 conn.Open()
@@ -595,7 +599,7 @@ Namespace DPC.Data.Controllers
                         productCmd.Parameters.AddWithValue("@productID", productID)
                         productCmd.Parameters.AddWithValue("@ProductName", ProductName.Text)
                         productCmd.Parameters.AddWithValue("@Category", CType(Category.SelectedItem, ComboBoxItem).Tag)
-                        productCmd.Parameters.AddWithValue("@SubCategory", CType(SubCategory.SelectedItem, ComboBoxItem)?.Tag)
+                        productCmd.Parameters.AddWithValue("@SubCategory", subCategoryId) ' ✅ Now using 0 if Nothing
                         productCmd.Parameters.AddWithValue("@SupplierID", CType(Supplier.SelectedItem, ComboBoxItem).Tag)
                         productCmd.Parameters.AddWithValue("@BrandID", CType(Brand.SelectedItem, ComboBoxItem).Tag)
                         productCmd.Parameters.AddWithValue("@DateCreated", ValidDate.SelectedDate)
@@ -606,7 +610,7 @@ Namespace DPC.Data.Controllers
                     ' Call the appropriate insertion function based on variation flag
                     If variation = 0 Then
                         InsertNonVariationProduct(conn, transaction, productID, Warehouse, RetailPrice, PurchaseOrder, DefaultTax,
-                          DiscountRate, StockUnits, AlertQuantity, ValidDate, SerialNumbers, Checkbox)
+                  DiscountRate, StockUnits, AlertQuantity, ValidDate, SerialNumbers, Checkbox)
                     Else
                         InsertVariationProduct(conn, transaction, productID, MeasurementUnit, Description, ProductImage)
                     End If
