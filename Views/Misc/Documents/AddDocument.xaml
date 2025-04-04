@@ -1,0 +1,59 @@
+<!-- AddDocument.xaml -->
+<Window x:Class="DPC.Views.Misc.Documents.AddDocument"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="namespace:DPC.Views.Misc.Documents"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Upload New Document"
+        Height="300" Width="600"
+        Background="#F5F5F5"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title -->
+        <TextBlock Grid.Row="0" Text="Title" Margin="0,0,0,5"/>
+        <TextBox x:Name="TxtTitle" Grid.Row="1" Margin="0,0,0,15" 
+                 materialDesign:HintAssist.Hint="Document Title"/>
+
+        <!-- File Upload -->
+        <TextBlock Grid.Row="2" Text="Document (docx,docs,txt,pdf,xls)" Margin="0,0,0,5"/>
+        <Grid Grid.Row="3" Margin="0,0,0,15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="BtnChooseFile" Grid.Column="0" Content="Choose File" 
+                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                    Margin="0,0,10,0" Click="BtnChooseFile_Click"/>
+            <TextBlock x:Name="TxtFileName" Grid.Column="1" 
+                       Text="No file chosen" VerticalAlignment="Center"/>
+        </Grid>
+
+        <!-- Buttons -->
+        <Grid Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="BtnCancel" Grid.Column="1" Content="Cancel" 
+                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                    Margin="0,0,10,0" Click="BtnCancel_Click"/>
+            <Button x:Name="BtnUpload" Grid.Column="2" Content="Upload Document" 
+                    Background="#26a69a" Foreground="White" 
+                    IsEnabled="False" Click="BtnUpload_Click"/>
+        </Grid>
+    </Grid>
+</Window>
