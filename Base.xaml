@@ -9,56 +9,48 @@
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         AllowsTransparency="True">
-
     <!-- Main Grid Layout -->
     <Grid>
-
         <!-- Material Design Card -->
         <md:Card Background="White"
                  UniformCornerRadius="8"
                  Padding="25"
                  md:ElevationAssist.Elevation="Dp4"
                  Margin="10">
-
             <!-- Sidebar + Main Content -->
             <Grid>
                 <Grid.ColumnDefinitions>
                     <!-- Sidebar -->
-                    <ColumnDefinition x:Name="SidebarColumn" Width="Auto"/>
-                    <!-- Main Content -->
-                    <ColumnDefinition x:Name="MainContentColumn" Width="*"/>
+                    <ColumnDefinition x:Name="SidebarColumn" Width="260" />
+                    <ColumnDefinition x:Name="MainContentColumn" Width="*" />
                 </Grid.ColumnDefinitions>
-
-
                 <!-- Sidebar -->
                 <Border x:Name="SidebarContainer" Grid.Column="0" Background="Transparent"/>
-                
+
                 <!-- Main Content Wrapper -->
                 <Grid x:Name="MainContainer" Grid.Column="1">
-
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <!-- TopNavBar -->
                         <RowDefinition Height="*"/>
                         <!-- Dynamic Content -->
                     </Grid.RowDefinitions>
-
                     <!-- Top Navigation Bar -->
                     <md:Card x:Name="TopNavBarContainer"
                              Grid.Row="0"
                              Background="#FAFAFA"
                              Padding="10"
+                             Width="Auto"
                              md:ElevationAssist.Elevation="Dp24"/>
-
                     <!-- Dynamic Content -->
                     <md:Card Grid.Row="1"
                              Background="#FAFAFA"
                              Padding="10"
                              UniformCornerRadius="8"
-                             md:ElevationAssist.Elevation="Dp16">
+                             md:ElevationAssist.Elevation="Dp16"
+                             Width="Auto">
                         <ContentPresenter Content="{Binding CurrentView}" />
                     </md:Card>
-
                 </Grid>
             </Grid>
         </md:Card>

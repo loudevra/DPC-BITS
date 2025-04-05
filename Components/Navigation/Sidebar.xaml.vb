@@ -94,9 +94,6 @@ Namespace DPC.Components.Navigation
             RaiseEvent SidebarToggled(IsExpanded)
         End Sub
 
-
-
-
         ''' <summary>
         ''' Handles sidebar logo button click to toggle sidebar.
         ''' </summary>
@@ -257,6 +254,5 @@ Namespace DPC.Components.Navigation
             Dim currentWindow As Window = Window.GetWindow(Me)
             If currentWindow IsNot Nothing Then currentWindow.Close()
         End Sub
-
     End Class
 End Namespace
