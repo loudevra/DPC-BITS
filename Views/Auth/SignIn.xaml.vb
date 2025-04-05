@@ -32,24 +32,28 @@ Namespace DPC.Views.Auth
             Dim accessToken As String = authResult.Item1
             Dim refreshToken As String = authResult.Item2
 
-
             If Not String.IsNullOrEmpty(accessToken) AndAlso Not String.IsNullOrEmpty(refreshToken) Then
                 MessageBox.Show("Login Successful!", "Welcome", MessageBoxButton.OK, MessageBoxImage.Information)
 
                 ' Store tokens for session
                 SessionManager.SetSessionTokens(accessToken, refreshToken)
 
-                ' Redirect to Dashboard.xaml
-                Dim dashboard As New Views.Dashboard.Dashboard()
-                dashboard.Show()
+                ' Redirect to Base.xaml and load Dashboard view
+                Dim baseWindow As New Base With {
+                    .CurrentView = DynamicView.Load("dashboard") ' Set CurrentView to Dashboard
+                    } ' Create instance of Base.xaml
 
-                ' Close the parent window
-                Dim parentWindow As Window = Window.GetWindow(Me)
-                parentWindow?.Close()
+                ' Show the Base window
+                baseWindow.Show()
+
+                ' Close the current window (SignIn window)
+                Dim currentWindow As Window = Window.GetWindow(Me)
+                currentWindow?.Close()
             Else
                 MessageBox.Show("Invalid username or password. Please try again.", "Authentication Failed", MessageBoxButton.OK, MessageBoxImage.Warning)
             End If
         End Sub
+
 
         ' Handle text input correctly while masking
         Private Sub TxtPassword_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)

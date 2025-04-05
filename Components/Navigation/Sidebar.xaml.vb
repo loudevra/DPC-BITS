@@ -2,6 +2,7 @@
 Imports System.Windows.Controls
 Imports System.Windows.Media.Animation
 Imports DPC.DPC.Components.UI
+Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Components.Navigation
     Public Class Sidebar
@@ -104,14 +105,15 @@ Namespace DPC.Components.Navigation
         ''' Opens the Dashboard and closes the current window.
         ''' </summary>
         Private Sub OpenDashboard(sender As Object, e As RoutedEventArgs)
-            ' Open Dashboard
-            Dim dashboardWindow As New Views.Dashboard.Dashboard()
-            dashboardWindow.Show()
+            ' Get reference to the main window (Base)
+            Dim mainWindow As Base = TryCast(Application.Current.MainWindow, Base)
 
-            ' Close the current window where this UserControl is being used
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
+            If mainWindow IsNot Nothing Then
+                ' Use the DynamicView loader to switch content
+                mainWindow.CurrentView = DynamicView.Load("dashboard")
+            End If
         End Sub
+
 
         ''' <summary>
         ''' Opens the Sales popup menu.
