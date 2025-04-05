@@ -1,4 +1,5 @@
 ﻿Imports System.Windows.Controls.Primitives
+Imports MaterialDesignThemes.Wpf
 
 Namespace DPC.Components.Forms
     Public Class AddVariation
@@ -59,6 +60,8 @@ Namespace DPC.Components.Forms
                 .FontSize = 14,
                 .FontWeight = FontWeights.SemiBold
             }
+
+
 
             Dim nameBorder As New Border With {
                 .Style = CType(FindResource("RoundedBorderStyle"), Style),
@@ -157,6 +160,102 @@ Namespace DPC.Components.Forms
 
             VariationListPanel.Children.Add(variationGrid)
         End Sub
+
+        Private Sub AddBtnVariationsOptionPanel(sender As Object, e As RoutedEventArgs)
+            ' Create a new Grid
+            Dim optionGrid As New Grid With {
+        .Margin = New Thickness(0, 5, 0, 5)
+    }
+
+            ' Define 4 columns
+            optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
+            optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
+            optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
+            optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
+
+            ' Image placeholder (Border + Icon)
+            Dim imageBorder As New Border With {
+        .Width = 40,
+        .Height = 40,
+        .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
+        .BorderThickness = New Thickness(1),
+        .CornerRadius = New CornerRadius(5),
+        .VerticalAlignment = VerticalAlignment.Center,
+        .HorizontalAlignment = HorizontalAlignment.Center
+    }
+
+            Dim imageIcon As New PackIcon With {
+        .Kind = PackIconKind.ImagePlus,
+        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
+        .Width = 20,
+        .Height = 20,
+        .VerticalAlignment = VerticalAlignment.Center
+    }
+
+            Dim imageStack As New StackPanel With {
+        .Orientation = Orientation.Vertical,
+        .HorizontalAlignment = HorizontalAlignment.Center,
+        .VerticalAlignment = VerticalAlignment.Center
+    }
+
+            imageStack.Children.Add(imageIcon)
+            imageBorder.Child = imageStack
+            Grid.SetColumn(imageBorder, 0)
+
+            ' Variation Option Name
+            Dim optionText As New TextBlock With {
+        .Text = "New Option",
+        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
+        .FontSize = 14,
+        .FontWeight = FontWeights.SemiBold,
+        .VerticalAlignment = VerticalAlignment.Center,
+        .Margin = New Thickness(10, 0, 0, 0)
+    }
+            Grid.SetColumn(optionText, 1)
+
+            ' Edit Button
+            Dim editBtnIcon As New PackIcon With {
+        .Kind = PackIconKind.PencilOutline,
+        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
+        .Width = 20,
+        .Height = 20
+    }
+
+            Dim editBtn As New Button With {
+        .Background = Brushes.Transparent,
+        .BorderThickness = New Thickness(0),
+        .Padding = New Thickness(5),
+        .Margin = New Thickness(5, 0, 0, 0),
+        .Content = editBtnIcon
+    }
+            Grid.SetColumn(editBtn, 2)
+
+            ' Delete Button
+            Dim deleteBtnIcon As New PackIcon With {
+        .Kind = PackIconKind.TrashCanOutline,
+        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636")),
+        .Width = 20,
+        .Height = 20
+    }
+
+            Dim deleteBtn As New Button With {
+        .Background = Brushes.Transparent,
+        .BorderThickness = New Thickness(0),
+        .Padding = New Thickness(5),
+        .Content = deleteBtnIcon
+    }
+            Grid.SetColumn(deleteBtn, 3)
+
+            ' Add all children to the Grid
+            optionGrid.Children.Add(imageBorder)
+            optionGrid.Children.Add(optionText)
+            optionGrid.Children.Add(editBtn)
+            optionGrid.Children.Add(deleteBtn)
+
+            ' Finally, add the Grid to the StackPanel
+            VariationOptionsPanel.Children.Add(optionGrid)
+        End Sub
+
 
     End Class
 End Namespace
