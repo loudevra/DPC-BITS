@@ -409,6 +409,52 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+
+            <!-- Fade transition template -->
+            <ControlTemplate x:Key="FadeTransitionTemplate">
+                <Grid>
+                    <ContentPresenter x:Name="OldContent" Content="{Binding PreviousView}" Opacity="1">
+                        <ContentPresenter.RenderTransform>
+                            <TranslateTransform X="0" Y="0" />
+                        </ContentPresenter.RenderTransform>
+                    </ContentPresenter>
+                    <ContentPresenter x:Name="NewContent" Content="{Binding CurrentView}" Opacity="0">
+                        <ContentPresenter.RenderTransform>
+                            <TranslateTransform X="0" Y="0" />
+                        </ContentPresenter.RenderTransform>
+                    </ContentPresenter>
+                </Grid>
+                <ControlTemplate.Triggers>
+                    <EventTrigger RoutedEvent="ContentControl.Loaded">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <!-- Fade out old content -->
+                                <DoubleAnimation Storyboard.TargetName="OldContent" 
+                                                 Storyboard.TargetProperty="Opacity"
+                                                 From="1" To="0" Duration="0:0:0.3">
+                                    <DoubleAnimation.EasingFunction>
+                                        <QuadraticEase EasingMode="EaseInOut"/>
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+
+                                <!-- Fade in new content -->
+                                <DoubleAnimation Storyboard.TargetName="NewContent" 
+                                                 Storyboard.TargetProperty="Opacity"
+                                                 From="0" To="1" Duration="0:0:0.3">
+                                    <DoubleAnimation.EasingFunction>
+                                        <QuadraticEase EasingMode="EaseInOut"/>
+                                    </DoubleAnimation.EasingFunction>
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+
+            <!-- Create style for ContentControl with transition -->
+            <Style x:Key="FadeTransitionContentControl" TargetType="ContentControl">
+                <Setter Property="Template" Value="{StaticResource FadeTransitionTemplate}" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
