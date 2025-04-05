@@ -8,13 +8,13 @@
              >
 
     <materialDesign:Card Width="480" Padding="0" Background="White"
-                            HorizontalAlignment="Center" VerticalAlignment="Center"
-                            UniformCornerRadius="20">
-        <Grid  Margin="15,10,15,10">
+                     HorizontalAlignment="Center" VerticalAlignment="Center"
+                     UniformCornerRadius="20">
+        <Grid Margin="15,10,15,10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <!-- Header -->
@@ -36,76 +36,100 @@
                 </StackPanel>
             </Grid>
 
-            <!--
-            <StackPanel Grid.Row="1">
-                <TextBlock Text="Variation Name:" Margin="10,10" Foreground="#555555" FontSize="14" FontWeight="SemiBold"/>
-                <Border Style="{StaticResource RoundedBorderStyle}">
-                    <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
-                </Border>
-                <Border BorderBrush="#AEAEAE" BorderThickness=".5" Margin="-5,0"/>
-            </StackPanel>
+            <!-- Scrollable Content -->
+            <Grid Grid.Row="1">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="300">
+                    <!-- Variation List Panel -->
+                    <StackPanel x:Name="VariationListPanel" Orientation="Vertical">
 
-            <StackPanel Grid.Row="2">
-                
-            </StackPanel>
-
-             Separator and Edit Section 
-            <Separator Grid.Row="2" Background="#E0E0E0" Height="1"/>
-
-             Variations Tabs 
-            <Separator Grid.Row="4" Background="#E0E0E0" Height="1"/>
-
-            Field
-
-             Add Button 
-            -->
-
-            <Grid Grid.Row="1" x:Name="DynamicRow">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <Grid x:Name="VariationData">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" x:Name="VariationListPanel" Orientation="Vertical"  >
-                            <TextBlock Text="Variation Name:" Margin="0,0,0,10" Foreground="#555555" FontSize="14" FontWeight="SemiBold"/>
-                            <Border Style="{StaticResource RoundedBorderStyle}" BorderBrush="#555555" Margin="0,0,0,15">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBox Grid.Column="0" x:Name="TxtVariationName" Text="Variation 1" Foreground="#555555" FontSize="13" FontWeight="SemiBold" Margin="20,0,5,0" Style="{StaticResource RoundedTextboxStyle}" IsReadOnly="True"/>
-                                    <Button Grid.Column="1" Margin="5,0,10,0" Background="Transparent" BorderThickness="0" Padding="5" Click="BtnEditVariationName">
-                                        <materialDesign:PackIcon x:Name="BtnIconVariationName" Kind="PencilOffOutline" Foreground="#AEAEAE" Width="25" Height="25" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                                    </Button>
-                                    <Button Grid.Column="2" Margin="0,0,15,0"  VerticalAlignment="Center" HorizontalAlignment="Right" Background="Transparent" BorderThickness="0" Padding="5" Click="BtnClearVariationName">
-                                        <materialDesign:PackIcon Kind="TrashCanOutline" Foreground="#D23636" Width="25" Height="25"/>
-                                    </Button>
-                                </Grid>
-                            </Border>
+                        <!-- Variation Name -->
+                        <TextBlock Text="Variation Name:" Margin="0,0,0,10" Foreground="#555555" FontSize="14" FontWeight="SemiBold"/>
+                        <Border Style="{StaticResource RoundedBorderStyle}" BorderBrush="#555555" Margin="0,0,0,15">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width=".25*"/>
-                                    <ColumnDefinition Width=".5*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="Variation Images" Margin="0,0,0,0" Foreground="#555555" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                                <ToggleButton Grid.Column="1" x:Name="Toggle" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
+                                <TextBox Grid.Column="0" x:Name="TxtVariationName" Text="Variation 1" Foreground="#555555" FontSize="13" FontWeight="SemiBold" Margin="20,0,5,0" Style="{StaticResource RoundedTextboxStyle}" IsReadOnly="True"/>
+                                <Button Grid.Column="1" Margin="5,0,10,0" Background="Transparent" BorderThickness="0" Padding="5" Click="BtnEditVariationName">
+                                    <materialDesign:PackIcon x:Name="BtnIconVariationName" Kind="PencilOffOutline" Foreground="#AEAEAE" Width="25" Height="25" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                </Button>
+                                <Button Grid.Column="2" Margin="0,0,15,0" VerticalAlignment="Center" HorizontalAlignment="Right" Background="Transparent" BorderThickness="0" Padding="5" Click="BtnClearVariationName">
+                                    <materialDesign:PackIcon Kind="TrashCanOutline" Foreground="#D23636" Width="25" Height="25"/>
+                                </Button>
                             </Grid>
-                        </StackPanel>
-                    </Grid>
+                        </Border>
+
+                        <!-- Variation Images Toggle -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width=".25*"/>
+                                <ColumnDefinition Width=".5*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Variation Images" Margin="0,0,0,0" Foreground="#555555" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            <ToggleButton Grid.Column="1" x:Name="Toggle" Style="{StaticResource ToggleSwitchStyle}" IsChecked="True"/>
+                        </Grid>
+
+                        <!-- Scrollable Options Panel -->
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="180" Margin="0,10,0,0">
+                            <StackPanel x:Name="VariationOptionsPanel" Orientation="Vertical">
+                                <!-- Option 1 -->
+                                <Grid Margin="0,5,0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border Grid.Column="0" Width="40" Height="40" BorderBrush="#AEAEAE" BorderThickness="1" CornerRadius="5" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <materialDesign:PackIcon Kind="ImagePlus" Foreground="#555555" Width="20" Height="20" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <TextBlock Grid.Column="1" Text="White" Foreground="#555555" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                    <Button Grid.Column="2" Background="Transparent" BorderThickness="0" Padding="5" Margin="5,0">
+                                        <materialDesign:PackIcon Kind="PencilOutline" Foreground="#AEAEAE" Width="20" Height="20"/>
+                                    </Button>
+                                    <Button Grid.Column="3" Background="Transparent" BorderThickness="0" Padding="5">
+                                        <materialDesign:PackIcon Kind="TrashCanOutline" Foreground="#D23636" Width="20" Height="20"/>
+                                    </Button>
+                                </Grid>
+
+                                <!-- Option 2 (Add more options here) -->
+                                <Grid Margin="0,5,0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                </Grid>
+
+                            </StackPanel>
+                        </ScrollViewer>
+
+                        <!-- Add Option Button -->
+                        <Button Background="#AEAEAE" Style="{StaticResource RoundedButtonStyle}" BorderBrush="Transparent" BorderThickness="0" Padding="10" Margin="0,10" Click="AddBtnVariationsOptionPanel">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Background="Transparent">
+                                <materialDesign:PackIcon Kind="PlusCircleOutline" Foreground="White" Width="20" Height="20" Margin="0,0,5,0"/>
+                                <TextBlock Text="Add Option" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+                            </StackPanel>
+                        </Button>
+
+                    </StackPanel>
+
                 </ScrollViewer>
             </Grid>
 
+
+
+            <!-- Footer Buttons -->
             <StackPanel Grid.Row="2" Margin="0,10">
                 <Border BorderBrush="#AEAEAE" BorderThickness=".5" Margin="-5,0,-5,20"/>
-                <Button Background="#555555" Style="{StaticResource RoundedButtonStyle}" BorderBrush="Transparent" BorderThickness="0" Margin="0,0,0,20" Click="AddBtnVariationsPanel" >
+                <Button Background="#555555" Style="{StaticResource RoundedButtonStyle}" BorderBrush="Transparent" BorderThickness="0" Margin="0,0,0,20" Click="AddBtnVariationsPanel">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Background="Transparent" Margin="0,5">
                         <materialDesign:PackIcon Kind="PlusCircleOutline" Foreground="#FDFDFD" VerticalAlignment="Center" Margin="0,0,5,0" Width="20" Height="20"/>
                         <TextBlock Text="Add Variation" Foreground="#FDFDFD" VerticalAlignment="Center" FontSize="15" FontWeight="SemiBold"/>
@@ -121,6 +145,7 @@
             </StackPanel>
         </Grid>
     </materialDesign:Card>
+
 
 
 </UserControl>
