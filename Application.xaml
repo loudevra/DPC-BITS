@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="namespace:DPC" 
     xmlns:local2="clr-namespace:DPC.DPC.Data.Converters.ValueConverter"
-    StartupUri="SplashScreen.xaml">
+    StartupUri="Base.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
