@@ -40,7 +40,7 @@ Namespace DPC.Components.Navigation
 
             ' Sidebar Width Animation
             sidebarAnimation.To = newSidebarWidth
-            sidebarAnimation.Duration = TimeSpan.FromSeconds(0.3)
+            sidebarAnimation.Duration = TimeSpan.FromSeconds(0.6)
             sidebarAnimation.EasingFunction = New QuadraticEase() With {.EasingMode = EasingMode.EaseInOut}
 
             ' Apply Animation to Sidebar

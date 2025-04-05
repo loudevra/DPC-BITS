@@ -3,9 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              Height="Auto" Width="Auto"
-             Background="#F5F5F5">
+             Background="Transparent">
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <ScrollViewer Style="{StaticResource ModernScrollViewerStyle}" 
+              VerticalScrollBarVisibility="Auto" 
+              HorizontalScrollBarVisibility="Disabled">
         <StackPanel Margin="20">
             <!-- Dashboard Title -->
             <TextBlock Text="Dashboard" FontSize="24" FontWeight="Bold" Margin="0,0,0,10"/>

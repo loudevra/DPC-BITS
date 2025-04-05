@@ -12,7 +12,7 @@
     <!-- Main Grid Layout -->
     <Grid>
         <!-- Material Design Card -->
-        <md:Card Background="White"
+        <md:Card Background="#FDFDFD"
                  UniformCornerRadius="8"
                  Padding="25"
                  md:ElevationAssist.Elevation="Dp4"
@@ -38,16 +38,15 @@
                     <!-- Top Navigation Bar -->
                     <md:Card x:Name="TopNavBarContainer"
                              Grid.Row="0"
-                             Background="#FAFAFA"
+                             Background="#D9D9D9"
                              Padding="10"
                              Width="Auto"
-                             md:ElevationAssist.Elevation="Dp24"/>
+                             Margin="0,0,0,9"/>
                     <!-- Dynamic Content -->
                     <md:Card Grid.Row="1"
-                             Background="#FAFAFA"
+                             Background="#D9D9D9"
                              Padding="10"
                              UniformCornerRadius="8"
-                             md:ElevationAssist.Elevation="Dp16"
                              Width="Auto">
                         <ContentPresenter Content="{Binding CurrentView}" />
                     </md:Card>

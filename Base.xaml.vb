@@ -12,7 +12,7 @@ Namespace DPC
         ' Sidebar animation settings
         Private SidebarExpandedWidth As Double = 260
         Private SidebarCollapsedWidth As Double = 80
-        Private AnimationDuration As TimeSpan = TimeSpan.FromSeconds(0.3)
+        Private AnimationDuration As TimeSpan = TimeSpan.FromSeconds(0.5)
         Private SidebarAnimClock As AnimationClock
 
         ' Property: CurrentView for dynamic content
