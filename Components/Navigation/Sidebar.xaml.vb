@@ -49,8 +49,7 @@ Namespace DPC.Components.Navigation
             AddHandler sidebarAnimation.Completed, Sub()
                                                        If Not IsExpanded Then
                                                            ' Collapsing Sidebar: Hide labels AFTER animation finishes
-                                                           SidebarTitle.Visibility = Visibility.Hidden
-                                                           SidebarSubtitle.Visibility = Visibility.Hidden
+
                                                            UserProfile.Visibility = Visibility.Collapsed
 
                                                            ' Hide text inside buttons
@@ -68,8 +67,7 @@ Namespace DPC.Components.Navigation
 
                                                        Else
                                                            ' Expanding Sidebar: Show labels immediately
-                                                           SidebarTitle.Visibility = Visibility.Visible
-                                                           SidebarSubtitle.Visibility = Visibility.Visible
+
                                                            UserProfile.Visibility = Visibility.Visible
 
                                                            ' Show text inside buttons
