@@ -13,7 +13,7 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
         Inherits Window
 
         Private brandList As ObservableCollection(Of Brand)
-        Private _autocompleteHelper As AutocompleteHelper(Of Brand)
+        Private autocompleteHelper As AutocompleteHelper(Of Brand)
 
         Public Sub New()
             InitializeComponent()
@@ -28,13 +28,13 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
             LoadBrands()
 
             ' Initialize autocomplete helper
-            _autocompleteHelper = New AutocompleteHelper(Of Brand)(
+            autocompleteHelper = New AutocompleteHelper(Of Brand)(
                 Function(b) b.ID,
                 Function(b) b.Name
             )
 
             ' Configure and initialize autocomplete control
-            _autocompleteHelper.Initialize(
+            autocompleteHelper.Initialize(
                 TxtItem,                   ' TextBox for input
                 LstItems,                  ' ListBox for suggestions
                 ChipPanel,                 ' Panel for chips
@@ -92,7 +92,7 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
                 End If
 
                 ' Get selected brand IDs from the helper
-                Dim brandIDs As List(Of String) = _autocompleteHelper.SelectedItems.Select(Function(b) b.ID.ToString()).ToList()
+                Dim brandIDs As List(Of String) = autocompleteHelper.SelectedItems.Select(Function(b) b.ID.ToString()).ToList()
 
                 ' Call the InsertSupplier function
                 SupplierController.InsertSupplier(supplierName, companyName, phone, email, address, city, region, country, postalCode, tinID, brandIDs)
@@ -120,7 +120,7 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
             TxtItem.Clear()
 
             ' Clear selected brands using the helper
-            _autocompleteHelper.ClearSelection(ChipPanel)
+            autocompleteHelper.ClearSelection(ChipPanel)
 
             MessageBox.Show("Form cleared!", "Info", MessageBoxButton.OK, MessageBoxImage.Information)
         End Sub

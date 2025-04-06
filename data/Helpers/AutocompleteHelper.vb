@@ -24,14 +24,21 @@ Namespace DPC.Components.Forms
         Private _getItemId As Func(Of T, Object)
         Private _getItemName As Func(Of T, String)
         Private _createUIElement As Func(Of T, UIElement)
+        Private _getAdditionalSearchField As Func(Of T, String)
+        Private _useAdditionalField As Boolean = False
 
         ' Popup reference
         Private _autoCompletePopup As Popup
 
         ' Constructor
-        Public Sub New(getItemId As Func(Of T, Object), getItemName As Func(Of T, String))
+        Public Sub New(getItemId As Func(Of T, Object), getItemName As Func(Of T, String), Optional getAdditionalSearchField As Func(Of T, String) = Nothing)
             _getItemId = getItemId
             _getItemName = getItemName
+
+            If getAdditionalSearchField IsNot Nothing Then
+                _getAdditionalSearchField = getAdditionalSearchField
+                _useAdditionalField = True
+            End If
 
             ' Default chip creation function
             _createUIElement = Function(item)
@@ -111,7 +118,7 @@ Namespace DPC.Components.Forms
         End Sub
 
         ' Method to handle TextChanged event for filtering items
-        Private Sub HandleTextChanged(sender As Object, e As TextChangedEventArgs, itemsSource As IEnumerable(Of T), listBox As ListBox)
+        Public Sub HandleTextChanged(sender As Object, e As TextChangedEventArgs, itemsSource As IEnumerable(Of T), listBox As ListBox)
             Dim textBox = DirectCast(sender, TextBox)
             Dim searchText = textBox.Text.ToLower()
 
@@ -120,11 +127,23 @@ Namespace DPC.Components.Forms
                 Return
             End If
 
-            ' Filter items based on search text
-            Dim filteredItems = itemsSource.
-                Where(Function(i) _getItemName(i).ToLower().Contains(searchText) AndAlso
-                              Not _selectedItems.Any(Function(si) Object.Equals(_getItemId(si), _getItemId(i)))).
-                ToList()
+            ' Filter items based on search text - now with condition for additional field
+            Dim filteredItems As IEnumerable(Of T)
+
+            If _useAdditionalField Then
+                ' Search by both name and additional field
+                filteredItems = itemsSource.
+            Where(Function(i) _getItemName(i).ToLower().Contains(searchText) OrElse
+                          _getAdditionalSearchField(i).ToLower().Contains(searchText) AndAlso
+                          Not _selectedItems.Any(Function(si) Object.Equals(_getItemId(si), _getItemId(i)))).
+            ToList()
+            Else
+                ' Original search by name only
+                filteredItems = itemsSource.
+            Where(Function(i) _getItemName(i).ToLower().Contains(searchText) AndAlso
+                          Not _selectedItems.Any(Function(si) Object.Equals(_getItemId(si), _getItemId(i)))).
+            ToList()
+            End If
 
             ' Update ListBox and show/hide popup
             listBox.ItemsSource = filteredItems
@@ -132,7 +151,7 @@ Namespace DPC.Components.Forms
         End Sub
 
         ' Method to handle KeyDown event (Enter, Escape, Backspace)
-        Private Sub HandleKeyDown(sender As Object, e As KeyEventArgs, listBox As ListBox, textBox As TextBox, chipPanel As Panel)
+        Public Sub HandleKeyDown(sender As Object, e As KeyEventArgs, listBox As ListBox, textBox As TextBox, chipPanel As Panel)
             ' Handle Enter key to select the currently highlighted item
             If e.Key = Key.Enter AndAlso listBox.SelectedItem IsNot Nothing Then
                 AddItemToSelection(DirectCast(listBox.SelectedItem, T), chipPanel)
@@ -153,7 +172,7 @@ Namespace DPC.Components.Forms
         End Sub
 
         ' Method to handle ListBox selection changed event
-        Private Sub HandleSelectionChanged(sender As Object, e As SelectionChangedEventArgs, listBox As ListBox, textBox As TextBox, chipPanel As Panel)
+        Public Sub HandleSelectionChanged(sender As Object, e As SelectionChangedEventArgs, listBox As ListBox, textBox As TextBox, chipPanel As Panel)
             If listBox.SelectedItem IsNot Nothing Then
                 ' Add the selected item as a chip
                 AddItemToSelection(DirectCast(listBox.SelectedItem, T), chipPanel)
@@ -166,7 +185,7 @@ Namespace DPC.Components.Forms
         End Sub
 
         ' Method to add an item to the selection
-        Private Sub AddItemToSelection(item As T, chipPanel As Panel)
+        Public Sub AddItemToSelection(item As T, chipPanel As Panel)
             If Not _selectedItems.Any(Function(i) Object.Equals(_getItemId(i), _getItemId(item))) Then
                 ' Add to internal collection
                 _selectedItems.Add(item)
@@ -189,14 +208,14 @@ Namespace DPC.Components.Forms
         End Sub
 
         ' Method to remove an item from the selection
-        Private Sub RemoveItemFromSelection(item As T, chip As UIElement, chipPanel As Panel)
+        Public Sub RemoveItemFromSelection(item As T, chip As UIElement, chipPanel As Panel)
             _selectedItems.Remove(item)
             chipPanel.Children.Remove(chip)
             RaiseEvent SelectedItemsChanged(Me, _selectedItems)
         End Sub
 
         ' Method to remove the last chip from the panel
-        Private Sub RemoveLastChip(chipPanel As Panel)
+        Public Sub RemoveLastChip(chipPanel As Panel)
             If _selectedItems.Count > 0 Then
                 Dim lastItem = _selectedItems.Last()
 

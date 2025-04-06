@@ -350,6 +350,7 @@
     <Compile Include="Data\Controllers\PromoCodeController.vb" />
     <Compile Include="Data\Controllers\ResetPassController.vb" />
     <Compile Include="Data\Controllers\SessionManager.vb" />
+    <Compile Include="Data\Controllers\StocksTransferController.vb" />
     <Compile Include="Data\Controllers\SupplierController.vb" />
     <Compile Include="Data\Controllers\WarehouseController.vb" />
     <Compile Include="Data\Converters\PasswordMaskingBehavior.vb" />
