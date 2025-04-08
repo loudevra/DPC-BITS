@@ -315,10 +315,11 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
         Private Sub OpenAddVariation(sender As Object, e As RoutedEventArgs)
             ' Create an instance of the AddCategory form
-            Dim openAddVariation As New DPC.Components.Forms.AddVariation()
+            Dim openAddVariation As New DPC.Views.Stocks.ItemManager.NewProduct.ProductVariationDetails()
 
             ' Open the popup
-            PopupHelper.OpenPopupWithControl(sender, openAddVariation, "windowcenter", -50, 0, Me)
+            Me.Close()
+            openAddVariation.Show()
         End Sub
 
         'Handles file input

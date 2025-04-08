@@ -418,6 +418,9 @@
     <Compile Include="Views\PromoCodes\ManagePromoCodes.xaml.vb">
       <DependentUpon>ManagePromoCodes.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Stocks\ItemManager\NewProduct\ProductVariationDetails.xaml.vb">
+      <DependentUpon>ProductVariationDetails.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stocks\ProductCategories\AddNewCategory.xaml.vb">
       <DependentUpon>AddNewCategory.xaml</DependentUpon>
     </Compile>
@@ -648,6 +651,9 @@
     <Page Include="Views\PromoCodes\ManagePromoCodes.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Stocks\ItemManager\NewProduct\ProductVariationDetails.xaml">
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Stocks\ProductCategories\AddNewCategory.xaml">
       <SubType>Designer</SubType>
