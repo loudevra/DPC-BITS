@@ -290,6 +290,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Base.xaml.vb">
+      <DependentUpon>Base.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\ConfirmationModals\CancelClientAdding.xaml.vb">
       <DependentUpon>CancelClientAdding.xaml</DependentUpon>
     </Compile>
@@ -361,6 +364,7 @@
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
     <Compile Include="Data\Helpers\AutocompleteHelper.vb" />
     <Compile Include="Data\Helpers\Base64Utility.vb" />
+    <Compile Include="Data\Helpers\DynamicView.vb" />
     <Compile Include="Data\Helpers\EmailService.vb" />
     <Compile Include="Data\Helpers\EnvLoader.vb" />
     <Compile Include="Data\Helpers\PBKDF2Hasher.vb" />
@@ -372,7 +376,7 @@
     <Compile Include="Data\Models\ClientGroup.vb" />
     <Compile Include="Data\Models\Document.vb" />
     <Compile Include="Data\Models\Employee.vb" />
-    <Compile Include="Data\Models\ExcelExporter.vb" />
+    <Compile Include="Data\Helpers\ExcelExporter.vb" />
     <Compile Include="Data\Models\ManageProducts.vb" />
     <Compile Include="Data\Models\Product.vb" />
     <Compile Include="Data\Models\ProductCategory.vb" />
@@ -433,6 +437,9 @@
     <Compile Include="Views\Stocks\Warehouses\Warehouses.xaml.vb">
       <DependentUpon>Warehouses.xaml</DependentUpon>
     </Compile>
+    <Page Include="Base.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\ConfirmationModals\CancelClientAdding.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -779,6 +786,7 @@
   <ItemGroup>
     <Folder Include="API\" />
     <Folder Include="Config\" />
+    <Folder Include="Data\Animations\" />
     <Folder Include="Installer\" />
     <Folder Include="Themes\" />
     <Folder Include="Views\HRM\Departments\" />
@@ -795,6 +803,7 @@
     <Resource Include="Assets\images\logo.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Assets\images\logosidebar.png" />
     <Content Include="Assets\mails\password_reset_code.html" />
     <Content Include="Assets\mails\password_reset_success.html" />
   </ItemGroup>

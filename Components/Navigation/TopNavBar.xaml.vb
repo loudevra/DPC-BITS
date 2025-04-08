@@ -55,5 +55,7 @@ Namespace DPC.Components.Navigation
                 MessageBox.Show("Clocked Out!")
             End If
         End Sub
+
+
     End Class
 End Namespace
