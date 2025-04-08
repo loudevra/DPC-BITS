@@ -60,6 +60,8 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             'MessageBox.Show("MainContainer and TxtStockUnits have been initialized.")
 
             ProductController.BtnAddRow_Click(Nothing, Nothing)
+
+            TxtDefaultTax.Text = 12
         End Sub
 
         Private Sub Toggle_Click(sender As Object, e As RoutedEventArgs)
@@ -154,6 +156,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             TxtRetailPrice.Clear()
             TxtPurchaseOrder.Clear()
             TxtDefaultTax.Clear()
+            TxtDefaultTax.Text = 12
             TxtDiscountRate.Clear()
             TxtStockUnits.Text = "1"
             TxtAlertQuantity.Clear()

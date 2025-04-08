@@ -1,4 +1,4 @@
-﻿Imports DPC.DPC.Data.Helpers
+Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Controllers
 Imports System.Windows
 
