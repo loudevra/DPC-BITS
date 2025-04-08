@@ -14,9 +14,11 @@ Namespace DPC.Data.Helpers
             Try
                 Select Case viewName.ToLower()
                     Case "dashboard"
-                        Return New Dashboard.Dashboard() ' This is now a UserControl
+                        Return New Dashboard.Dashboard() ' This is a UserControl
                     Case "stockstransfer"
-                        Return New Stocks.StocksTransfer.StocksTransfer() ' This is now a UserControl
+                        Return New Stocks.StocksTransfer.StocksTransfer() ' This is a UserControl
+                    Case "newsuppliers"
+                        Return New Stocks.Supplier.NewSuppliers.NewSuppliers() ' This is now a UserControl
                     Case Else
                         ' Return a placeholder UserControl with error text
                         Dim errorContent As New TextBlock With {
@@ -100,6 +102,8 @@ Namespace DPC.Data.Helpers
                 Return "dashboard"
             ElseIf typeName = "stockstransfer" Then
                 Return "stocks.stocktransfer"
+            ElseIf typeName = "newsuppliers" Then
+                Return "newsuppliers"
             Else
                 Return typeName
             End If
@@ -115,7 +119,6 @@ Namespace DPC.Data.Helpers
             Return Nothing
         End Function
 
-        ' Helper method to close parent popup if present
         ' Helper method to close parent popup if present
         Private Shared Sub CloseParentPopup(control As DependencyObject)
             Try

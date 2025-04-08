@@ -315,12 +315,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
         End Sub
 
         Private Sub BtnAddSupplier_Click(sender As Object, e As RoutedEventArgs) Handles btnAddSupplier.Click
-            Dim NewSupplierWindow As New Views.Stocks.Supplier.NewSuppliers.NewSuppliers()
-            NewSupplierWindow.Show()
-
-            ' Close the current window where this UserControl is being used
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
+            DPC.Data.Helpers.DynamicView.NavigateToView("newsuppliers", Me)
         End Sub
     End Class
 End Namespace

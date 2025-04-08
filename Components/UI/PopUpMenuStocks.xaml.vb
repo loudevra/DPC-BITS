@@ -159,13 +159,7 @@ Namespace DPC.Components.UI
 
 
         Private Sub NavigateToNewSuppliers(sender As Object, e As RoutedEventArgs)
-            ' Open EmployeesView
-            Dim NewSupplierWindow As New Views.Stocks.Supplier.NewSuppliers.NewSuppliers()
-            NewSupplierWindow.Show()
-
-            ' Close the current window where this UserControl is being used
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
+            DPC.Data.Helpers.DynamicView.NavigateToView("newsuppliers", Me)
         End Sub
 
         Private Sub NavigateToManageSuppliers(sender As Object, e As RoutedEventArgs)

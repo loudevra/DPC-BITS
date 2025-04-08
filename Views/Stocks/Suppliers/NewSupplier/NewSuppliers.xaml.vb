@@ -3,26 +3,18 @@ Imports System.Windows.Controls
 Imports DPC.DPC.Data.Model
 Imports MySql.Data.MySqlClient
 Imports DPC.DPC.Data.Controllers
-Imports System.Windows
-Imports DPC.DPC.Components
 Imports DPC.DPC.Components.Forms
 
 
 Namespace DPC.Views.Stocks.Supplier.NewSuppliers
     Public Class NewSuppliers
-        Inherits Window
+        Inherits UserControl
 
         Private brandList As ObservableCollection(Of Brand)
         Private autocompleteHelper As AutocompleteHelper(Of Brand)
 
         Public Sub New()
             InitializeComponent()
-
-            ' Set up the Sidebar and TopNavBar
-            Dim sidebar As New Components.Navigation.Sidebar()
-            SidebarContainer.Content = sidebar
-            Dim topNav As New Components.Navigation.TopNavBar()
-            TopNavBarContainer.Content = topNav
 
             ' Load Brands from the database
             LoadBrands()
@@ -42,8 +34,6 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
                 brandList                  ' Data source
             )
         End Sub
-
-
 
         ' Load brands from the database
         Private Sub LoadBrands()
