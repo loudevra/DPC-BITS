@@ -5,94 +5,109 @@
              Height="Auto" Width="Auto"
              Background="Transparent">
 
-    <ScrollViewer Style="{StaticResource ModernScrollViewerStyle}" 
-              VerticalScrollBarVisibility="Auto" 
-              HorizontalScrollBarVisibility="Disabled">
-        <StackPanel Margin="20">
-            <!-- Dashboard Title -->
-            <TextBlock Text="Dashboard" FontSize="24" FontWeight="Bold" Margin="0,0,0,10"/>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Title -->
+            <RowDefinition Height="*"/>
+            <!-- Scrollable content -->
+        </Grid.RowDefinitions>
 
-            <!-- Stats Section -->
-            <Grid Margin="0,0,0,20">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+        <!-- Static Dashboard Title -->
+        <TextBlock Text="Dashboard"
+                   FontSize="24"
+                   FontWeight="Bold"
+                   Margin="20,20,20,10"
+                   Grid.Row="0"/>
 
-                <!-- Cards -->
-                <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="15" Margin="10" Height="100">
-                    <StackPanel>
-                        <TextBlock Text="Today Invoices" FontWeight="Bold"/>
-                        <TextBlock Text="20" FontSize="24" Foreground="Black"/>
-                    </StackPanel>
+        <!-- Scrollable Content -->
+        <ScrollViewer Style="{StaticResource ModernScrollViewerStyle}" 
+                      VerticalScrollBarVisibility="Auto" 
+                      HorizontalScrollBarVisibility="Disabled"
+                      Grid.Row="1">
+            <StackPanel Margin="20,0,20,20">
+                <!-- Stats Section -->
+                <Grid Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Cards -->
+                    <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="15" Margin="10" Height="100">
+                        <StackPanel>
+                            <TextBlock Text="Today Invoices" FontWeight="Bold"/>
+                            <TextBlock Text="20" FontSize="24" Foreground="Black"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="15" Margin="10" Height="100">
+                        <StackPanel>
+                            <TextBlock Text="This Month Invoices" FontWeight="Bold"/>
+                            <TextBlock Text="20" FontSize="24" Foreground="Black"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="2" Background="White" CornerRadius="8" Padding="15" Margin="10" Height="100">
+                        <StackPanel>
+                            <TextBlock Text="Today Sales" FontWeight="Bold"/>
+                            <TextBlock Text="+P0.00" FontSize="24" Foreground="Black"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="3" Background="White" CornerRadius="8" Padding="15" Margin="10" Height="100">
+                        <StackPanel>
+                            <TextBlock Text="This Month Sales" FontWeight="Bold"/>
+                            <TextBlock Text="+P0.00" FontSize="24" Foreground="Black"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- Overview Section -->
+                <Border Background="White" CornerRadius="8" Padding="15" Margin="10" Height="200">
+                    <TextBlock Text="Overview" FontSize="16" FontWeight="Bold"/>
                 </Border>
 
-                <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="15" Margin="10" Height="100">
-                    <StackPanel>
-                        <TextBlock Text="This Month Invoices" FontWeight="Bold"/>
-                        <TextBlock Text="20" FontSize="24" Foreground="Black"/>
-                    </StackPanel>
-                </Border>
+                <!-- Recent Buyers, Invoices, Cash Flow -->
+                <Grid Margin="0,20,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                <Border Grid.Column="2" Background="White" CornerRadius="8" Padding="15" Margin="10" Height="100">
-                    <StackPanel>
-                        <TextBlock Text="Today Sales" FontWeight="Bold"/>
-                        <TextBlock Text="+P0.00" FontSize="24" Foreground="Black"/>
-                    </StackPanel>
-                </Border>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                <Border Grid.Column="3" Background="White" CornerRadius="8" Padding="15" Margin="10" Height="100">
-                    <StackPanel>
-                        <TextBlock Text="This Month Sales" FontWeight="Bold"/>
-                        <TextBlock Text="+P0.00" FontSize="24" Foreground="Black"/>
-                    </StackPanel>
-                </Border>
-            </Grid>
+                    <Border Grid.Row="0" Grid.Column="0" Background="White" CornerRadius="8" Padding="15" Margin="10" Height="100">
+                        <TextBlock Text="Recent Buyers" FontSize="16" FontWeight="Bold"/>
+                    </Border>
 
-            <!-- Overview Section -->
-            <Border Background="White" CornerRadius="8" Padding="15" Margin="10" Height="200">
-                <TextBlock Text="Overview" FontSize="16" FontWeight="Bold"/>
-            </Border>
+                    <Border Grid.Row="0" Grid.Column="1" Background="White" CornerRadius="8" Padding="15" Margin="10" Height="100">
+                        <TextBlock Text="Recent Invoices" FontSize="16" FontWeight="Bold"/>
+                    </Border>
 
-            <!-- Recent Buyers, Invoices, Cash Flow -->
-            <Grid Margin="0,20,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+                    <Border Grid.Row="1" Grid.Column="0" Background="White" CornerRadius="8" Padding="15" Margin="10" Height="150">
+                        <TextBlock Text="Cash Flow" FontSize="16" FontWeight="Bold"/>
+                    </Border>
 
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+                    <Border Grid.Row="1" Grid.Column="1" Background="White" CornerRadius="8" Padding="15" Margin="10" Height="150">
+                        <TextBlock Text="Income/Expenses" FontSize="16" FontWeight="Bold"/>
+                    </Border>
 
-                <Border Grid.Row="0" Grid.Column="0" Background="White" CornerRadius="8" Padding="15" Margin="10" Height="100">
-                    <TextBlock Text="Recent Buyers" FontSize="16" FontWeight="Bold"/>
-                </Border>
+                    <Border Grid.Row="2" Grid.Column="0" Background="White" CornerRadius="8" Padding="15" Margin="10" Height="100">
+                        <TextBlock Text="Recent Transactions" FontSize="16" FontWeight="Bold"/>
+                    </Border>
 
-                <Border Grid.Row="0" Grid.Column="1" Background="White" CornerRadius="8" Padding="15" Margin="10" Height="100">
-                    <TextBlock Text="Recent Invoices" FontSize="16" FontWeight="Bold"/>
-                </Border>
-
-                <Border Grid.Row="1" Grid.Column="0" Background="White" CornerRadius="8" Padding="15" Margin="10" Height="150">
-                    <TextBlock Text="Cash Flow" FontSize="16" FontWeight="Bold"/>
-                </Border>
-
-                <Border Grid.Row="1" Grid.Column="1" Background="White" CornerRadius="8" Padding="15" Margin="10" Height="150">
-                    <TextBlock Text="Income/Expenses" FontSize="16" FontWeight="Bold"/>
-                </Border>
-
-                <Border Grid.Row="2" Grid.Column="0" Background="White" CornerRadius="8" Padding="15" Margin="10" Height="100">
-                    <TextBlock Text="Recent Transactions" FontSize="16" FontWeight="Bold"/>
-                </Border>
-
-                <Border Grid.Row="2" Grid.Column="1" Background="White" CornerRadius="8" Padding="15" Margin="10" Height="100">
-                    <TextBlock Text="Task Manager" FontSize="16" FontWeight="Bold"/>
-                </Border>
-            </Grid>
-        </StackPanel>
-    </ScrollViewer>
+                    <Border Grid.Row="2" Grid.Column="1" Background="White" CornerRadius="8" Padding="15" Margin="10" Height="100">
+                        <TextBlock Text="Task Manager" FontSize="16" FontWeight="Bold"/>
+                    </Border>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
 </UserControl>

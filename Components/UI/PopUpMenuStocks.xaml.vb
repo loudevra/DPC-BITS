@@ -1,5 +1,6 @@
 ﻿Imports System.Windows.Controls.Primitives
 Imports System.Windows
+Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Components.UI
     Public Class PopUpMenuStocks
@@ -136,14 +137,8 @@ Namespace DPC.Components.UI
             currentWindow?.Close()
         End Sub
         Private Sub NavigateToStocksTransfer(sender As Object, e As RoutedEventArgs)
-            Dim StockTransferWindow As New Views.Stocks.StocksTransfer.StocksTransfer()
-            StockTransferWindow.Show()
-
-            ' Close the current window where this UserControl is being used
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
+            DPC.Data.Helpers.DynamicView.NavigateToView("stocks.stocktransfer", Me)
         End Sub
-
 
         Private Sub NavigateToSupplierRecords(sender As Object, e As RoutedEventArgs)
             Dim SupplierRecordWindow As New Views.Stocks.StockReturn.SupplierRecords.SuppliersRecords()

@@ -49,8 +49,8 @@
                              UniformCornerRadius="8"
                              Width="Auto">
                         <ContentControl x:Name="ViewContentControl" 
-                                  Style="{StaticResource FadeTransitionContentControl}"
-                                  DataContext="{Binding}" />
+                Content="{Binding CurrentView}"
+                Style="{StaticResource FadeTransitionContentControl}" />
                     </md:Card>
                 </Grid>
             </Grid>

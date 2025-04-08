@@ -105,13 +105,7 @@ Namespace DPC.Components.Navigation
         ''' Opens the Dashboard and closes the current window.
         ''' </summary>
         Private Sub OpenDashboard(sender As Object, e As RoutedEventArgs)
-            ' Get reference to the main window (Base)
-            Dim mainWindow As Base = TryCast(Application.Current.MainWindow, Base)
-
-            If mainWindow IsNot Nothing Then
-                ' Use the DynamicView loader to switch content
-                mainWindow.CurrentView = DynamicView.Load("dashboard")
-            End If
+            DPC.Data.Helpers.DynamicView.NavigateToView("dashboard", Me)
         End Sub
 
 

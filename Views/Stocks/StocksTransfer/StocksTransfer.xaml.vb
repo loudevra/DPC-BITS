@@ -3,17 +3,10 @@
 Namespace DPC.Views.Stocks.StocksTransfer
 
     Public Class StocksTransfer
-        Inherits Window
+        Inherits UserControl
 
         Public Sub New()
             InitializeComponent()
-
-            Dim sidebar As New Components.Navigation.Sidebar()
-            SidebarContainer.Content = sidebar
-
-            ' Load Top Navigation Bar
-            Dim topNav As New Components.Navigation.TopNavBar()
-            TopNavBarContainer.Content = topNav
 
             ' Select the product to transfer
             StocksTransferController.GetProducts(ComboBoxProduct)
@@ -89,7 +82,7 @@ Namespace DPC.Views.Stocks.StocksTransfer
         End Sub
 
         'Transfer btn
-        Private Sub btnTransfer(sender As Object, e As RoutedEventArgs)
+        Private Sub BtnTransfer(sender As Object, e As RoutedEventArgs)
             ' Retrieve selected product and warehouse data
             Dim selectedProduct As ComboBoxItem = CType(ComboBoxProduct.SelectedItem, ComboBoxItem)
             Dim productID As String = CType(selectedProduct.Tag, String)
@@ -140,8 +133,5 @@ Namespace DPC.Views.Stocks.StocksTransfer
                 StocksTransferController.GetAvailableTransferToWarehouses(warehouseIDFrom, ComboBoxTransferTo)
             End If
         End Sub
-
-
-
     End Class
 End Namespace
