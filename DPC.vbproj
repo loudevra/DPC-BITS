@@ -320,6 +320,9 @@
     <Compile Include="Components\Forms\FilterPopOut.xaml.vb">
       <DependentUpon>FilterPopOut.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\VariationDetails.xaml.vb">
+      <DependentUpon>VariationDetails.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\VariationModal102.xaml.vb">
       <DependentUpon>VariationModal102.xaml</DependentUpon>
     </Compile>
@@ -463,6 +466,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Forms\FilterPopOut.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\VariationDetails.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\VariationModal102.xaml">
