@@ -543,7 +543,7 @@ Namespace DPC.Data.Controllers
                             End If
                         Next
 
-                        MessageBox.Show($"Successfully imported {serialNumbersData.Count} serial numbers.")
+                        'MessageBox.Show($"Successfully imported {serialNumbersData.Count} serial numbers.")
                     Else
                         MessageBox.Show("No valid serial numbers found.")
                     End If

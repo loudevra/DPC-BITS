@@ -1,4 +1,4 @@
-Imports DPC.DPC.Data.Helpers
+﻿Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Controllers
 Imports System.Windows
 
@@ -22,38 +22,34 @@ Namespace DPC.Views.Auth
             Dim password As String = realPassword
 
             ' Check if fields are empty
-            If String.IsNullOrWhiteSpace(username) OrElse String.IsNullOrWhiteSpace(password) Then
-                MessageBox.Show("Please enter both username and password.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
-                Return
-            End If
+            'If String.IsNullOrWhiteSpace(username) OrElse String.IsNullOrWhiteSpace(password) Then
+            'MessageBox.Show("Please enter both username and password.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            'Return
+            'End If
 
             ' Authenticate user
             Dim authResult As (String, String) = AuthController.SignIn(username, password)
             Dim accessToken As String = authResult.Item1
             Dim refreshToken As String = authResult.Item2
 
-            If Not String.IsNullOrEmpty(accessToken) AndAlso Not String.IsNullOrEmpty(refreshToken) Then
-                MessageBox.Show("Login Successful!", "Welcome", MessageBoxButton.OK, MessageBoxImage.Information)
 
-                ' Store tokens for session
-                SessionManager.SetSessionTokens(accessToken, refreshToken)
+            'If Not String.IsNullOrEmpty(accessToken) AndAlso Not String.IsNullOrEmpty(refreshToken) Then
+            'MessageBox.Show("Login Successful!", "Welcome", MessageBoxButton.OK, MessageBoxImage.Information)
 
-                ' Redirect to Base.xaml and load Dashboard view
-                Dim baseWindow As New Base With {
-                    .CurrentView = DynamicView.Load("dashboard") ' Set CurrentView to Dashboard
-                    } ' Create instance of Base.xaml
+            ' Store tokens for session
+            'SessionManager.SetSessionTokens(accessToken, refreshToken)
 
-                ' Show the Base window
-                baseWindow.Show()
+            ' Redirect to Dashboard.xaml
+            Dim dashboard As New Views.Dashboard.Dashboard()
+                dashboard.Show()
 
-                ' Close the current window (SignIn window)
-                Dim currentWindow As Window = Window.GetWindow(Me)
-                currentWindow?.Close()
-            Else
-                MessageBox.Show("Invalid username or password. Please try again.", "Authentication Failed", MessageBoxButton.OK, MessageBoxImage.Warning)
-            End If
+                ' Close the parent window
+                Dim parentWindow As Window = Window.GetWindow(Me)
+                parentWindow?.Close()
+            'Else
+            'MessageBox.Show("Invalid username or password. Please try again.", "Authentication Failed", MessageBoxButton.OK, MessageBoxImage.Warning)
+            'End If
         End Sub
-
 
         ' Handle text input correctly while masking
         Private Sub TxtPassword_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)

@@ -6,7 +6,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
-             Height="60" Background="Transparent">
+             Height="60" Background="#E0E0E0">
 
     <!-- Top Navigation Grid -->
     <Grid>
@@ -31,39 +31,32 @@
 
         <!-- Search Bar (Expands Dynamically) -->
         <!-- Search Bar (Limited to 50% of Navbar Width) -->
-        <!-- Search Bar (Limited to 50% of Navbar Width) -->
-        <Grid Grid.Column="1" HorizontalAlignment="Left">
-            <Border CornerRadius="18" Background="#FDFDFD" Height="35" x:Name="SearchBorder">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
+        <Grid Grid.Column="1" HorizontalAlignment="Left" MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=UserControl}}">
 
-                    <TextBox x:Name="SearchBar"
-                materialDesign:HintAssist.Hint="Search customer..."
-                FontSize="14"
-                Padding="15,0,40,0"
-                Background="Transparent"
-                BorderThickness="0"
-                VerticalContentAlignment="Center"
-                materialDesign:HintAssist.IsFloating="True"
-                Grid.Column="0"
-                Width="250"
-                Margin="5,0,0,0"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <!-- TextBox Expands -->
+                <ColumnDefinition Width="Auto"/>
+                <!-- Search Button -->
+            </Grid.ColumnDefinitions>
 
-                    <Button x:Name="SearchButton" 
-                Background="Transparent" 
-                BorderThickness="0"
-                Width="40" 
-                Height="35"
-                Click="SearchCustomer"
-                Grid.Column="1"
-                Margin="0,0,5,0">
-                        <materialDesign:PackIcon Kind="Magnify" Width="20" Height="20" Foreground="Gray"/>
-                    </Button>
-                </Grid>
-            </Border>
+            <TextBox x:Name="SearchBar" Height="35"
+             materialDesign:HintAssist.Hint="Search customer..."
+             FontSize="14"
+             Padding="10,0,40,0"
+             Background="White"
+             BorderThickness="0"
+             VerticalContentAlignment="Center"
+             materialDesign:HintAssist.IsFloating="True"
+             Grid.Column="0"
+             Width="500"/>
+
+            <Button x:Name="SearchButton" Background="Transparent" BorderThickness="0"
+            Width="40" Height="35"
+            Click="SearchCustomer"
+            Grid.Column="1">
+                <materialDesign:PackIcon Kind="Magnify" Width="24" Height="24" Foreground="Gray"/>
+            </Button>
         </Grid>
 
         <!-- Right Icons (Notifications, Messages, Clock In/Out) -->
