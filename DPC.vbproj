@@ -290,6 +290,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Base.xaml.vb">
+      <DependentUpon>Base.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\ConfirmationModals\CancelClientAdding.xaml.vb">
       <DependentUpon>CancelClientAdding.xaml</DependentUpon>
     </Compile>
@@ -319,6 +322,9 @@
     </Compile>
     <Compile Include="Components\Forms\FilterPopOut.xaml.vb">
       <DependentUpon>FilterPopOut.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\VariationDetails.xaml.vb">
+      <DependentUpon>VariationDetails.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\VariationModal102.xaml.vb">
       <DependentUpon>VariationModal102.xaml</DependentUpon>
@@ -358,6 +364,7 @@
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
     <Compile Include="Data\Helpers\AutocompleteHelper.vb" />
     <Compile Include="Data\Helpers\Base64Utility.vb" />
+    <Compile Include="Data\Helpers\DynamicView.vb" />
     <Compile Include="Data\Helpers\EmailService.vb" />
     <Compile Include="Data\Helpers\EnvLoader.vb" />
     <Compile Include="Data\Helpers\PBKDF2Hasher.vb" />
@@ -369,7 +376,7 @@
     <Compile Include="Data\Models\ClientGroup.vb" />
     <Compile Include="Data\Models\Document.vb" />
     <Compile Include="Data\Models\Employee.vb" />
-    <Compile Include="Data\Models\ExcelExporter.vb" />
+    <Compile Include="Data\Helpers\ExcelExporter.vb" />
     <Compile Include="Data\Models\ManageProducts.vb" />
     <Compile Include="Data\Models\Product.vb" />
     <Compile Include="Data\Models\ProductCategory.vb" />
@@ -418,9 +425,6 @@
     <Compile Include="Views\PromoCodes\ManagePromoCodes.xaml.vb">
       <DependentUpon>ManagePromoCodes.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Stocks\ItemManager\NewProduct\ProductVariationDetails.xaml.vb">
-      <DependentUpon>ProductVariationDetails.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Stocks\ProductCategories\AddNewCategory.xaml.vb">
       <DependentUpon>AddNewCategory.xaml</DependentUpon>
     </Compile>
@@ -433,6 +437,9 @@
     <Compile Include="Views\Stocks\Warehouses\Warehouses.xaml.vb">
       <DependentUpon>Warehouses.xaml</DependentUpon>
     </Compile>
+    <Page Include="Base.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\ConfirmationModals\CancelClientAdding.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -466,6 +473,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Forms\FilterPopOut.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\VariationDetails.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\VariationModal102.xaml">
@@ -652,9 +662,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Stocks\ItemManager\NewProduct\ProductVariationDetails.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Stocks\ProductCategories\AddNewCategory.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -779,6 +786,7 @@
   <ItemGroup>
     <Folder Include="API\" />
     <Folder Include="Config\" />
+    <Folder Include="Data\Animations\" />
     <Folder Include="Installer\" />
     <Folder Include="Themes\" />
     <Folder Include="Views\HRM\Departments\" />
@@ -795,6 +803,7 @@
     <Resource Include="Assets\images\logo.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Assets\images\logosidebar.png" />
     <Content Include="Assets\mails\password_reset_code.html" />
     <Content Include="Assets\mails\password_reset_success.html" />
   </ItemGroup>
