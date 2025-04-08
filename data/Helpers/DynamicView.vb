@@ -15,7 +15,7 @@ Namespace DPC.Data.Helpers
                 Select Case viewName.ToLower()
                     Case "dashboard"
                         Return New Dashboard.Dashboard() ' This is now a UserControl
-                    Case "stocks.stocktransfer"
+                    Case "stockstransfer"
                         Return New Stocks.StocksTransfer.StocksTransfer() ' This is now a UserControl
                     Case Else
                         ' Return a placeholder UserControl with error text

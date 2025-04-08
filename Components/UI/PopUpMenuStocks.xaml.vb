@@ -137,7 +137,7 @@ Namespace DPC.Components.UI
             currentWindow?.Close()
         End Sub
         Private Sub NavigateToStocksTransfer(sender As Object, e As RoutedEventArgs)
-            DPC.Data.Helpers.DynamicView.NavigateToView("stocks.stocktransfer", Me)
+            DPC.Data.Helpers.DynamicView.NavigateToView("stockstransfer", Me)
         End Sub
 
         Private Sub NavigateToSupplierRecords(sender As Object, e As RoutedEventArgs)
