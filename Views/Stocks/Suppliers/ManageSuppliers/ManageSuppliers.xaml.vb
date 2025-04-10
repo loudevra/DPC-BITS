@@ -1,26 +1,15 @@
-﻿Imports System.Windows
-Imports DPC.DPC.Data.Controllers
-Imports DPC.DPC.Components
-Imports System.Windows.Controls
+﻿Imports System.Windows.Controls
 Imports System.ComponentModel
+Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Views.Stocks.Suppliers.ManageSuppliers
     Public Class ManageSuppliers
-        Inherits Window
-
+        Inherits UserControl
         Private view As ICollectionView
 
         Public Sub New()
             InitializeComponent()
-
-            Dim sidebar As New Components.Navigation.Sidebar()
-            SidebarContainer.Child = sidebar
-
-            ' Load Top Navigation Bar
-            Dim topNav As New Components.Navigation.TopNavBar()
-            TopNavBarContainer.Child = topNav
-
             LoadData()
 
             ' Load DataGrid with items and create a CollectionViewSource for filtering
@@ -40,7 +29,6 @@ Namespace DPC.Views.Stocks.Suppliers.ManageSuppliers
             End If
 
             Dim searchText As String = txtSearch.Text.ToLower()
-
             ' Get the supplier from the item
             Dim supplier = TryCast(item, Data.Model.Supplier)
             If supplier IsNot Nothing Then
@@ -52,7 +40,6 @@ Namespace DPC.Views.Stocks.Suppliers.ManageSuppliers
                        supplier.SupplierPhone?.ToLower().Contains(searchText) OrElse
                        supplier.BrandNames?.ToLower().Contains(searchText)
             End If
-
             Return False
         End Function
 
@@ -65,7 +52,6 @@ Namespace DPC.Views.Stocks.Suppliers.ManageSuppliers
         Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
             ' Create a list of column headers to exclude
             Dim columnsToExclude As New List(Of String) From {"Settings", "Actions"}
-
             ' Use the ExcelExporter helper with column exclusions
             ExcelExporter.ExportDataGridToExcel(dataGrid, columnsToExclude, "Suppliers", "Suppliers List")
         End Sub

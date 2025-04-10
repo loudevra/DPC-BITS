@@ -90,6 +90,8 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
                 ' Clear form and reset fields after successful insertion
                 ClearForm()
 
+                DPC.Data.Helpers.DynamicView.NavigateToView("managesuppliers", Me)
+
             Catch ex As Exception
                 MessageBox.Show("An error occurred while adding the supplier: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
