@@ -320,13 +320,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ' Open the popup
             PopupHelper.OpenPopupWithControl(sender, openAddVariation, "windowcenter", -50, 0, Me)
         End Sub
-        Private Sub eOpenAddVariation(sender As Object, e As RoutedEventArgs)
-            ' Create an instance of the AddCategory form
-            Dim openAddVariation As New ProductVariationDetails()
-
-            Me.Close()
-            openAddVariation.Show()
-        End Sub
 
         'Handles file input
         ' Variable to track whether an image has been uploaded

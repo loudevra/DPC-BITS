@@ -21,4 +21,8 @@ Namespace DPC.Data.Model
         Public Property CreatedAt As DateTime
         Public Property ModifiedAt As DateTime
     End Class
+
+    Public Class ProductVariation
+
+    End Class
 End Namespace
