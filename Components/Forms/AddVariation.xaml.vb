@@ -6,351 +6,362 @@ Namespace DPC.Components.Forms
         Inherits UserControl
 
         Private variationCount As Integer = 1
+        Private ChangeIcon As Boolean = False
 
         Public Sub New()
             InitializeComponent()
+
+            ' Add the first variation
+            AddNewVariation()
         End Sub
 
-        Private Sub BtnEditVariationName(sender As Object, e As RoutedEventArgs)
-            EditVariationFunction(TxtVariationName, True)
-        End Sub
+        Private Sub AddNewVariation()
+            ' Create the main StackPanel for this variation
+            Dim variationPanel As New StackPanel With {
+            .Orientation = Orientation.Vertical,
+            .Margin = New Thickness(0, 0, 0, 20)
+        }
 
-        Private Sub BtnClearVariationName(sender As Object, e As RoutedEventArgs)
-            TxtVariationName.Focus()
-            TxtVariationName.Clear()
+            ' === Variation Name Section ===
+            Dim lblName As New TextBlock With {
+            .Text = "Variation Name:",
+            .Margin = New Thickness(0, 0, 0, 10),
+            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
+            .FontSize = 14,
+            .FontWeight = FontWeights.SemiBold
+        }
 
-            ' Do not toggle the read-only state when clearing
-            EditVariationFunction(TxtVariationName, False)
-        End Sub
-
-        Private Sub EditVariationFunction(VariationName As TextBox, shouldToggle As Boolean)
-            If shouldToggle Then
-                VariationName.IsReadOnly = Not VariationName.IsReadOnly
-            End If
-
-            If VariationName.IsReadOnly Then
-                BtnIconVariationName.Kind = MaterialDesignThemes.Wpf.PackIconKind.PencilOffOutline
-            Else
-                BtnIconVariationName.Kind = MaterialDesignThemes.Wpf.PackIconKind.RenameOutline
-                VariationName.Focus()
-                VariationName.SelectAll()
-            End If
-        End Sub
-
-        Private Sub AddBtnVariationsPanel(sender As Object, e As RoutedEventArgs)
-            variationCount += 1
-
-            ' Create the container grid (with 2 rows: one for name/toggle and one for options)
-            Dim variationGrid As New Grid With {
-        .Margin = New Thickness(0, 10, 0, 0)
-    }
-            variationGrid.RowDefinitions.Add(New RowDefinition With {.Height = GridLength.Auto}) ' Row 0 - Variation info
-            variationGrid.RowDefinitions.Add(New RowDefinition With {.Height = GridLength.Auto}) ' Row 1 - Options
-
-            ' Column definitions
-            variationGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
-
-            ' Create the variation details stack
-            Dim variationStack As New StackPanel With {
-        .HorizontalAlignment = HorizontalAlignment.Stretch
-    }
-
-            ' Label
-            Dim lbl As New TextBlock With {
-        .Text = "Variation Name:",
-        .Margin = New Thickness(0, 0, 0, 10),
-        .Foreground = CType((New BrushConverter()).ConvertFrom("#555555"), Brush),
-        .FontSize = 14,
-        .FontWeight = FontWeights.SemiBold
-    }
-
-            ' Border with TextBox inside
             Dim nameBorder As New Border With {
-        .Style = CType(FindResource("RoundedBorderStyle"), Style),
-        .BorderBrush = CType((New BrushConverter()).ConvertFrom("#555555"), Brush),
-        .Margin = New Thickness(0, 0, 0, 15)
-    }
+            .Style = CType(FindResource("RoundedBorderStyle"), Style),
+            .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
+            .Margin = New Thickness(0, 0, 0, 15)
+        }
 
             Dim nameGrid As New Grid()
             nameGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
             nameGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
             nameGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
 
-            Dim variationName As New TextBox With {
-        .Text = $"Variation {variationCount}",
-        .Foreground = CType((New BrushConverter()).ConvertFrom("#555555"), Brush),
-        .FontSize = 13,
-        .FontWeight = FontWeights.SemiBold,
-        .Margin = New Thickness(20, 0, 5, 0),
-        .Style = CType(FindResource("RoundedTextboxStyle"), Style),
-        .IsReadOnly = True
-    }
-            Grid.SetColumn(variationName, 0)
+            Dim txtVariationName As New TextBox With {
+            .Text = $"Variation {variationCount}",
+            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
+            .FontSize = 13,
+            .FontWeight = FontWeights.SemiBold,
+            .Margin = New Thickness(20, 0, 5, 0),
+            .Style = CType(FindResource("RoundedTextboxStyle"), Style),
+            .IsReadOnly = True,
+            .VerticalAlignment = VerticalAlignment.Center
+        }
 
-            Dim editBtn As New Button With {
-        .Margin = New Thickness(5, 0, 10, 0),
-        .Background = Brushes.Transparent,
-        .BorderThickness = New Thickness(0),
-        .Padding = New Thickness(5)
-    }
-            Grid.SetColumn(editBtn, 1)
+            Dim btnEditName As New Button With {
+            .Background = Brushes.Transparent,
+            .BorderThickness = New Thickness(0),
+            .Margin = New Thickness(0),
+            .Style = CType(FindResource("RoundedButtonStyle"), Style),
+            .Tag = txtVariationName
+        }
 
-            Dim editIcon As New MaterialDesignThemes.Wpf.PackIcon With {
-        .Kind = MaterialDesignThemes.Wpf.PackIconKind.PencilOffOutline,
-        .Foreground = CType((New BrushConverter()).ConvertFrom("#AEAEAE"), Brush),
-        .Width = 25,
-        .Height = 25
-    }
-            editBtn.Content = editIcon
+            Dim editIcon As New PackIcon With {
+            .Kind = PackIconKind.PencilOffOutline,
+            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
+            .Width = 25,
+            .Height = 25,
+            .VerticalAlignment = VerticalAlignment.Center
+        }
+            btnEditName.Content = editIcon
+            AddHandler btnEditName.Click, Sub(sender, e)
+                                              Dim isEditing = EditFunction(txtVariationName, True)
+                                              editIcon.Kind = If(isEditing, PackIconKind.PencilOffOutline, PackIconKind.PencilOutline)
+                                          End Sub
 
-            Dim clearBtn As New Button With {
-        .Margin = New Thickness(0, 0, 15, 0),
-        .Background = Brushes.Transparent,
-        .BorderThickness = New Thickness(0),
-        .Padding = New Thickness(5)
-    }
-            Grid.SetColumn(clearBtn, 2)
+            Dim btnDeleteName As New Button With {
+            .Background = Brushes.Transparent,
+            .BorderThickness = New Thickness(0),
+            .Margin = New Thickness(0, 0, 15, 0),
+            .Style = CType(FindResource("RoundedButtonStyle"), Style)
+        }
 
-            Dim clearIcon As New MaterialDesignThemes.Wpf.PackIcon With {
-        .Kind = MaterialDesignThemes.Wpf.PackIconKind.TrashCanOutline,
-        .Foreground = CType((New BrushConverter()).ConvertFrom("#D23636"), Brush),
-        .Width = 25,
-        .Height = 25
-    }
-            clearBtn.Content = clearIcon
+            Dim deleteIcon As New PackIcon With {
+            .Kind = PackIconKind.TrashCanOutline,
+            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636")),
+            .Width = 25,
+            .Height = 25
+        }
+            btnDeleteName.Content = deleteIcon
 
-            nameGrid.Children.Add(variationName)
-            nameGrid.Children.Add(editBtn)
-            nameGrid.Children.Add(clearBtn)
+            ' Add handler to remove the variation panel when delete button is clicked
+            AddHandler btnDeleteName.Click, Sub()
+                                                MainVariationContainer.Children.Remove(variationPanel)
+                                            End Sub
+
+            Grid.SetColumn(txtVariationName, 0)
+            Grid.SetColumn(btnEditName, 1)
+            Grid.SetColumn(btnDeleteName, 2)
+
+            nameGrid.Children.Add(txtVariationName)
+            nameGrid.Children.Add(btnEditName)
+            nameGrid.Children.Add(btnDeleteName)
+
             nameBorder.Child = nameGrid
 
-            ' Toggle Grid
+            ' === Toggle Section ===
             Dim toggleGrid As New Grid()
             toggleGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(0.25, GridUnitType.Star)})
             toggleGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(0.5, GridUnitType.Star)})
 
-            Dim toggleLabel As New TextBlock With {
-        .Text = "Variation Images",
-        .Foreground = CType((New BrushConverter()).ConvertFrom("#555555"), Brush),
-        .FontSize = 14,
-        .FontWeight = FontWeights.SemiBold,
-        .VerticalAlignment = VerticalAlignment.Center
-    }
-            Grid.SetColumn(toggleLabel, 0)
+            Dim lblToggle As New TextBlock With {
+            .Text = "Variation Images",
+            .FontSize = 14,
+            .FontWeight = FontWeights.SemiBold,
+            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
+            .VerticalAlignment = VerticalAlignment.Center
+        }
 
-            Dim toggleSwitch As New ToggleButton With {
-        .Style = CType(FindResource("ToggleSwitchStyle"), Style),
-        .IsChecked = True
-    }
-            Grid.SetColumn(toggleSwitch, 1)
+            Dim toggle As New ToggleButton With {
+            .IsChecked = True,
+            .Style = CType(FindResource("ToggleSwitchStyle"), Style)
+        }
 
-            toggleGrid.Children.Add(toggleLabel)
-            toggleGrid.Children.Add(toggleSwitch)
+            Grid.SetColumn(lblToggle, 0)
+            Grid.SetColumn(toggle, 1)
 
-            ' Add to stack
-            variationStack.Children.Add(lbl)
-            variationStack.Children.Add(nameBorder)
-            variationStack.Children.Add(toggleGrid)
+            toggleGrid.Children.Add(lblToggle)
+            toggleGrid.Children.Add(toggle)
 
-            ' Place variationStack in row 0
-            Grid.SetRow(variationStack, 0)
-            variationGrid.Children.Add(variationStack)
+            ' === Divider ===
+            Dim divider As New Border With {
+            .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
+            .BorderThickness = New Thickness(0, 1, 0, 0),
+            .Height = 1,
+            .Margin = New Thickness(-5, 10, -5, 10)
+        }
 
-            ' Add VariationOptionsPanel in ScrollViewer
-            Dim optionsScrollViewer As New ScrollViewer With {
-        .VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-        .MaxHeight = 180,
-        .Margin = New Thickness(0, 10, 0, 0)
-    }
+            ' === Options Container ===
+            ' Create container for options
+            Dim optionsContainer As New StackPanel With {
+            .Name = $"OptionsContainer_{variationCount}"
+        }
 
-            Dim optionsStack As New StackPanel With {
-        .Orientation = Orientation.Vertical
-    }
+            ' Scrollable options area
+            Dim scrollOptions As New ScrollViewer With {
+            .VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            .MaxHeight = 150,
+            .Content = optionsContainer,
+            .Style = CType(FindResource("ModernScrollViewerStyle"), Style)
+        }
 
-            ' Sample Option UI
-            Dim optionGrid As New Grid With {.Margin = New Thickness(0, 5, 0, 5)}
+            ' Add Option Button
+            Dim btnAddOption As New Button With {
+            .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
+            .Style = CType(FindResource("RoundedButtonStyle"), Style),
+            .BorderThickness = New Thickness(0),
+            .Margin = New Thickness(0, 10, 0, 0)
+        }
+
+            Dim stackBtnContent As New StackPanel With {
+            .Orientation = Orientation.Horizontal,
+            .HorizontalAlignment = HorizontalAlignment.Center
+        }
+
+            Dim plusIcon As New PackIcon With {
+            .Kind = PackIconKind.PlusCircleOutline,
+            .Foreground = Brushes.White,
+            .Width = 20,
+            .Height = 20,
+            .Margin = New Thickness(0, 0, 5, 0)
+        }
+
+            Dim plusText As New TextBlock With {
+            .Text = "Add Option",
+            .Foreground = Brushes.White,
+            .FontSize = 14,
+            .FontWeight = FontWeights.SemiBold
+        }
+
+            stackBtnContent.Children.Add(plusIcon)
+            stackBtnContent.Children.Add(plusText)
+            btnAddOption.Content = stackBtnContent
+
+            ' Add click handler for the Add Option button
+            AddHandler btnAddOption.Click, Sub()
+                                               AddOptionToPanel(optionsContainer)
+                                           End Sub
+
+            ' Add all elements to variation panel
+            variationPanel.Children.Add(lblName)
+            variationPanel.Children.Add(nameBorder)
+            variationPanel.Children.Add(toggleGrid)
+            variationPanel.Children.Add(divider)
+            variationPanel.Children.Add(scrollOptions)
+            variationPanel.Children.Add(btnAddOption)
+
+            ' Add the new variation panel to the main container
+            MainVariationContainer.Children.Add(variationPanel)
+
+            ' Add the first option to this variation
+            AddOptionToPanel(optionsContainer)
+
+            ' Increment the variation counter for the next variation
+            variationCount += 1
+        End Sub
+
+        Private Sub AddOptionToPanel(targetPanel As StackPanel)
+            ' Create Grid for option row
+            Dim optionGrid As New Grid With {.Margin = New Thickness(0, 0, 0, 10)}
+
+            ' Define grid columns
             optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
             optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
             optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
             optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
 
+            ' Image placeholder
             Dim imageBorder As New Border With {
-        .Width = 40,
-        .Height = 40,
-        .BorderBrush = CType((New BrushConverter()).ConvertFrom("#AEAEAE"), Brush),
-        .BorderThickness = New Thickness(1),
-        .CornerRadius = New CornerRadius(5),
-        .VerticalAlignment = VerticalAlignment.Center,
-        .HorizontalAlignment = HorizontalAlignment.Center
-    }
+            .Width = 40,
+            .Height = 40,
+            .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
+            .BorderThickness = New Thickness(1),
+            .CornerRadius = New CornerRadius(5),
+            .VerticalAlignment = VerticalAlignment.Center,
+            .HorizontalAlignment = HorizontalAlignment.Center,
+            .Margin = New Thickness(0, 0, 10, 0)
+        }
 
             Dim imageStack As New StackPanel With {
-        .Orientation = Orientation.Vertical,
-        .HorizontalAlignment = HorizontalAlignment.Center,
-        .VerticalAlignment = VerticalAlignment.Center
-    }
+            .Orientation = Orientation.Vertical,
+            .HorizontalAlignment = HorizontalAlignment.Center,
+            .VerticalAlignment = VerticalAlignment.Center
+        }
 
-            Dim imageIcon As New MaterialDesignThemes.Wpf.PackIcon With {
-        .Kind = MaterialDesignThemes.Wpf.PackIconKind.ImagePlus,
-        .Foreground = CType((New BrushConverter()).ConvertFrom("#555555"), Brush),
-        .Width = 20,
-        .Height = 20
-    }
-            imageStack.Children.Add(imageIcon)
+            Dim packIcon As New PackIcon With {
+            .Kind = PackIconKind.ImagePlus,
+            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
+            .Width = 20,
+            .Height = 20,
+            .VerticalAlignment = VerticalAlignment.Center
+        }
+
+            imageStack.Children.Add(packIcon)
             imageBorder.Child = imageStack
             Grid.SetColumn(imageBorder, 0)
-
-            Dim colorText As New TextBlock With {
-        .Text = "White",
-        .Foreground = CType((New BrushConverter()).ConvertFrom("#555555"), Brush),
-        .FontSize = 14,
-        .FontWeight = FontWeights.SemiBold,
-        .VerticalAlignment = VerticalAlignment.Center,
-        .Margin = New Thickness(10, 0, 0, 0)
-    }
-            Grid.SetColumn(colorText, 1)
-
-            Dim pencilBtn As New Button With {
-        .Background = Brushes.Transparent,
-        .BorderThickness = New Thickness(0),
-        .Padding = New Thickness(5),
-        .Margin = New Thickness(5, 0, 0, 0)
-    }
-            Dim pencilIcon As New MaterialDesignThemes.Wpf.PackIcon With {
-        .Kind = MaterialDesignThemes.Wpf.PackIconKind.PencilOutline,
-        .Foreground = CType((New BrushConverter()).ConvertFrom("#AEAEAE"), Brush),
-        .Width = 20,
-        .Height = 20
-    }
-            pencilBtn.Content = pencilIcon
-            Grid.SetColumn(pencilBtn, 2)
-
-            Dim deleteBtn As New Button With {
-        .Background = Brushes.Transparent,
-        .BorderThickness = New Thickness(0),
-        .Padding = New Thickness(5)
-    }
-            Dim deleteIcon As New MaterialDesignThemes.Wpf.PackIcon With {
-        .Kind = MaterialDesignThemes.Wpf.PackIconKind.TrashCanOutline,
-        .Foreground = CType((New BrushConverter()).ConvertFrom("#D23636"), Brush),
-        .Width = 20,
-        .Height = 20
-    }
-            deleteBtn.Content = deleteIcon
-            Grid.SetColumn(deleteBtn, 3)
-
-            ' Add to grid
             optionGrid.Children.Add(imageBorder)
-            optionGrid.Children.Add(colorText)
-            optionGrid.Children.Add(pencilBtn)
-            optionGrid.Children.Add(deleteBtn)
 
-            optionsStack.Children.Add(optionGrid)
-            optionsScrollViewer.Content = optionsStack
+            ' Option text field
+            Dim txtOption As New TextBox With {
+            .Text = "Option",
+            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
+            .FontSize = 14,
+            .FontWeight = FontWeights.SemiBold,
+            .VerticalAlignment = VerticalAlignment.Center,
+            .Margin = New Thickness(0),
+            .IsReadOnly = True,
+            .Style = CType(FindResource("RoundedTextboxStyle"), Style)
+        }
+            Grid.SetColumn(txtOption, 1)
+            optionGrid.Children.Add(txtOption)
 
-            ' Add the ScrollViewer (VariationOptionsPanel) to row 1 of grid
-            Grid.SetRow(optionsScrollViewer, 1)
-            variationGrid.Children.Add(optionsScrollViewer)
+            ' Edit button
+            Dim btnEdit As New Button With {
+            .Margin = New Thickness(0, 0, 5, 0),
+            .BorderThickness = New Thickness(0),
+            .Style = CType(FindResource("RoundedButtonStyle"), Style)
+        }
 
-            ' Finally, add everything to the VariationListPanel
-            VariationListPanel.Children.Add(variationGrid)
+            Dim editIcon As New PackIcon With {
+            .Kind = PackIconKind.PencilOffOutline,
+            .Width = 25,
+            .Height = 25,
+            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
+        }
+            btnEdit.Content = editIcon
+            AddHandler btnEdit.Click, AddressOf BtnEditOption
+            Grid.SetColumn(btnEdit, 2)
+            optionGrid.Children.Add(btnEdit)
+
+            ' Delete button
+            Dim btnDelete As New Button With {
+            .Background = Brushes.Transparent,
+            .BorderThickness = New Thickness(0),
+            .Padding = New Thickness(5)
+        }
+
+            Dim deleteIcon As New PackIcon With {
+            .Kind = PackIconKind.TrashCanOutline,
+            .Width = 25,
+            .Height = 25,
+            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636"))
+        }
+            btnDelete.Content = deleteIcon
+            AddHandler btnDelete.Click, AddressOf DeleteOptionRow
+            Grid.SetColumn(btnDelete, 3)
+            optionGrid.Children.Add(btnDelete)
+
+            ' Add the option grid to the target panel
+            targetPanel.Children.Add(optionGrid)
         End Sub
 
-        Private Sub AddBtnVariationsOptionPanel(sender As Object, e As RoutedEventArgs)
-            ' Create a new Grid
-            Dim optionGrid As New Grid With {
-        .Margin = New Thickness(0, 5, 0, 5)
-    }
+        Private Sub BtnEditOption(sender As Object, e As RoutedEventArgs)
+            Dim btn As Button = TryCast(sender, Button)
+            If btn Is Nothing Then Exit Sub
 
-            ' Define 4 columns
-            optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
-            optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
-            optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
-            optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
+            ' The icon is the direct content of the button
+            Dim icon As PackIcon = TryCast(btn.Content, PackIcon)
+            If icon Is Nothing Then Exit Sub
 
-            ' Image placeholder (Border + Icon)
-            Dim imageBorder As New Border With {
-        .Width = 40,
-        .Height = 40,
-        .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
-        .BorderThickness = New Thickness(1),
-        .CornerRadius = New CornerRadius(5),
-        .VerticalAlignment = VerticalAlignment.Center,
-        .HorizontalAlignment = HorizontalAlignment.Center
-    }
+            ' Get the parent Grid of the button
+            Dim parentGrid As Grid = TryCast(VisualTreeHelper.GetParent(btn), Grid)
+            If parentGrid Is Nothing Then Exit Sub
 
-            Dim imageIcon As New PackIcon With {
-        .Kind = PackIconKind.ImagePlus,
-        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
-        .Width = 20,
-        .Height = 20,
-        .VerticalAlignment = VerticalAlignment.Center
-    }
+            ' Find the TextBox in the grid
+            Dim txtOption As TextBox = Nothing
+            For Each child As UIElement In parentGrid.Children
+                If TypeOf child Is TextBox Then
+                    txtOption = CType(child, TextBox)
+                    Exit For
+                End If
+            Next
 
-            Dim imageStack As New StackPanel With {
-        .Orientation = Orientation.Vertical,
-        .HorizontalAlignment = HorizontalAlignment.Center,
-        .VerticalAlignment = VerticalAlignment.Center
-    }
-
-            imageStack.Children.Add(imageIcon)
-            imageBorder.Child = imageStack
-            Grid.SetColumn(imageBorder, 0)
-
-            ' Variation Option Name
-            Dim optionText As New TextBlock With {
-        .Text = "New Option",
-        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
-        .FontSize = 14,
-        .FontWeight = FontWeights.SemiBold,
-        .VerticalAlignment = VerticalAlignment.Center,
-        .Margin = New Thickness(10, 0, 0, 0)
-    }
-            Grid.SetColumn(optionText, 1)
-
-            ' Edit Button
-            Dim editBtnIcon As New PackIcon With {
-        .Kind = PackIconKind.PencilOutline,
-        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
-        .Width = 20,
-        .Height = 20
-    }
-
-            Dim editBtn As New Button With {
-        .Background = Brushes.Transparent,
-        .BorderThickness = New Thickness(0),
-        .Padding = New Thickness(5),
-        .Margin = New Thickness(5, 0, 0, 0),
-        .Content = editBtnIcon
-    }
-            Grid.SetColumn(editBtn, 2)
-
-            ' Delete Button
-            Dim deleteBtnIcon As New PackIcon With {
-        .Kind = PackIconKind.TrashCanOutline,
-        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636")),
-        .Width = 20,
-        .Height = 20
-    }
-
-            Dim deleteBtn As New Button With {
-        .Background = Brushes.Transparent,
-        .BorderThickness = New Thickness(0),
-        .Padding = New Thickness(5),
-        .Content = deleteBtnIcon
-    }
-            Grid.SetColumn(deleteBtn, 3)
-
-            ' Add all children to the Grid
-            optionGrid.Children.Add(imageBorder)
-            optionGrid.Children.Add(optionText)
-            optionGrid.Children.Add(editBtn)
-            optionGrid.Children.Add(deleteBtn)
-
-            ' Finally, add the Grid to the StackPanel
-            VariationOptionsPanel.Children.Add(optionGrid)
+            If txtOption IsNot Nothing Then
+                Dim isReadOnlyNow As Boolean = EditFunction(txtOption, True)
+                icon.Kind = If(isReadOnlyNow, PackIconKind.PencilOffOutline, PackIconKind.PencilOutline)
+            End If
         End Sub
 
+        Private Sub DeleteOptionRow(sender As Object, e As RoutedEventArgs)
+            ' Get the button that was clicked
+            Dim btn As Button = CType(sender, Button)
 
+            ' Get the Grid that is the row (the button's parent)
+            Dim rowGrid As Grid = TryCast(VisualTreeHelper.GetParent(btn), Grid)
+
+            ' Find the parent StackPanel
+            If rowGrid IsNot Nothing Then
+                Dim parentPanel As StackPanel = TryCast(VisualTreeHelper.GetParent(rowGrid), StackPanel)
+                If parentPanel IsNot Nothing Then
+                    parentPanel.Children.Remove(rowGrid)
+                End If
+            End If
+        End Sub
+
+        Private Function EditFunction(TxtBoxName As TextBox, shouldToggle As Boolean) As Boolean
+            If shouldToggle Then
+                TxtBoxName.IsReadOnly = Not TxtBoxName.IsReadOnly
+            End If
+
+            If TxtBoxName.IsReadOnly Then
+                ChangeIcon = True
+                Return ChangeIcon
+            Else
+                ChangeIcon = False
+                TxtBoxName.Focus()
+                TxtBoxName.SelectAll()
+                Return ChangeIcon
+            End If
+        End Function
+
+        ' Add this method to handle the "Add Variation" button click
+        Private Sub BtnAddVariation_Click(sender As Object, e As RoutedEventArgs)
+            AddNewVariation()
+        End Sub
     End Class
 End Namespace
