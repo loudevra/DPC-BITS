@@ -6,6 +6,7 @@ Namespace DPC.Components.Forms
         Inherits UserControl
 
         Private variationCount As Integer = 1
+        Private Const MaxVariations As Integer = 2
         Private ChangeIcon As Boolean = False
 
         Public Sub New()
@@ -18,24 +19,28 @@ Namespace DPC.Components.Forms
         Private Sub AddNewVariation()
             ' Create the main StackPanel for this variation
             Dim variationPanel As New StackPanel With {
-            .Orientation = Orientation.Vertical,
-            .Margin = New Thickness(0, 0, 0, 20)
-        }
+        .Orientation = Orientation.Vertical,
+        .Margin = New Thickness(0, 0, 0, 20)
+    }
+
+            Dim optionsContainer As New StackPanel With {
+        .Name = $"OptionsContainer_{variationCount}"
+    }
 
             ' === Variation Name Section ===
             Dim lblName As New TextBlock With {
-            .Text = "Variation Name:",
-            .Margin = New Thickness(0, 0, 0, 10),
-            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
-            .FontSize = 14,
-            .FontWeight = FontWeights.SemiBold
-        }
+        .Text = "Variation Name:",
+        .Margin = New Thickness(0, 0, 0, 10),
+        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
+        .FontSize = 14,
+        .FontWeight = FontWeights.SemiBold
+    }
 
             Dim nameBorder As New Border With {
-            .Style = CType(FindResource("RoundedBorderStyle"), Style),
-            .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
-            .Margin = New Thickness(0, 0, 0, 15)
-        }
+        .Style = CType(FindResource("RoundedBorderStyle"), Style),
+        .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
+        .Margin = New Thickness(0, 0, 0, 15)
+    }
 
             Dim nameGrid As New Grid()
             nameGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
@@ -43,31 +48,31 @@ Namespace DPC.Components.Forms
             nameGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
 
             Dim txtVariationName As New TextBox With {
-            .Text = $"Variation {variationCount}",
-            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
-            .FontSize = 13,
-            .FontWeight = FontWeights.SemiBold,
-            .Margin = New Thickness(20, 0, 5, 0),
-            .Style = CType(FindResource("RoundedTextboxStyle"), Style),
-            .IsReadOnly = True,
-            .VerticalAlignment = VerticalAlignment.Center
-        }
+        .Text = $"Variation {variationCount}",
+        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
+        .FontSize = 13,
+        .FontWeight = FontWeights.SemiBold,
+        .Margin = New Thickness(20, 0, 5, 0),
+        .Style = CType(FindResource("RoundedTextboxStyle"), Style),
+        .IsReadOnly = True,
+        .VerticalAlignment = VerticalAlignment.Center
+    }
 
             Dim btnEditName As New Button With {
-            .Background = Brushes.Transparent,
-            .BorderThickness = New Thickness(0),
-            .Margin = New Thickness(0),
-            .Style = CType(FindResource("RoundedButtonStyle"), Style),
-            .Tag = txtVariationName
-        }
+        .Background = Brushes.Transparent,
+        .BorderThickness = New Thickness(0),
+        .Margin = New Thickness(0),
+        .Style = CType(FindResource("RoundedButtonStyle"), Style),
+        .Tag = txtVariationName
+    }
 
             Dim editIcon As New PackIcon With {
-            .Kind = PackIconKind.PencilOffOutline,
-            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
-            .Width = 25,
-            .Height = 25,
-            .VerticalAlignment = VerticalAlignment.Center
-        }
+        .Kind = PackIconKind.PencilOffOutline,
+        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
+        .Width = 25,
+        .Height = 25,
+        .VerticalAlignment = VerticalAlignment.Center
+    }
             btnEditName.Content = editIcon
             AddHandler btnEditName.Click, Sub(sender, e)
                                               Dim isEditing = EditFunction(txtVariationName, True)
@@ -75,18 +80,19 @@ Namespace DPC.Components.Forms
                                           End Sub
 
             Dim btnDeleteName As New Button With {
-            .Background = Brushes.Transparent,
-            .BorderThickness = New Thickness(0),
-            .Margin = New Thickness(0, 0, 15, 0),
-            .Style = CType(FindResource("RoundedButtonStyle"), Style)
-        }
+        .Background = Brushes.Transparent,
+        .BorderThickness = New Thickness(0),
+        .Margin = New Thickness(0, 0, 15, 0),
+        .Style = CType(FindResource("RoundedButtonStyle"), Style),
+        .HorizontalAlignment = HorizontalAlignment.Right
+    }
 
             Dim deleteIcon As New PackIcon With {
-            .Kind = PackIconKind.TrashCanOutline,
-            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636")),
-            .Width = 25,
-            .Height = 25
-        }
+        .Kind = PackIconKind.TrashCanOutline,
+        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636")),
+        .Width = 25,
+        .Height = 25
+    }
             btnDeleteName.Content = deleteIcon
 
             ' Add handler to remove the variation panel when delete button is clicked
@@ -110,17 +116,22 @@ Namespace DPC.Components.Forms
             toggleGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(0.5, GridUnitType.Star)})
 
             Dim lblToggle As New TextBlock With {
-            .Text = "Variation Images",
-            .FontSize = 14,
-            .FontWeight = FontWeights.SemiBold,
-            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
-            .VerticalAlignment = VerticalAlignment.Center
-        }
+                .Text = "Variation Images",
+                .FontSize = 14,
+                .FontWeight = FontWeights.SemiBold,
+                .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
+                .VerticalAlignment = VerticalAlignment.Center
+            }
 
             Dim toggle As New ToggleButton With {
-            .IsChecked = True,
-            .Style = CType(FindResource("ToggleSwitchStyle"), Style)
-        }
+                .IsChecked = True,
+                .Style = CType(FindResource("ToggleSwitchStyle"), Style),
+                .Tag = optionsContainer ' Now this reference works because optionsContainer is declared
+            }
+
+            ' Add event handler for toggle state changes
+            AddHandler toggle.Checked, AddressOf Toggle_CheckedChanged
+            AddHandler toggle.Unchecked, AddressOf Toggle_CheckedChanged
 
             Grid.SetColumn(lblToggle, 0)
             Grid.SetColumn(toggle, 1)
@@ -130,53 +141,49 @@ Namespace DPC.Components.Forms
 
             ' === Divider ===
             Dim divider As New Border With {
-            .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
-            .BorderThickness = New Thickness(0, 1, 0, 0),
-            .Height = 1,
-            .Margin = New Thickness(-5, 10, -5, 10)
-        }
+                .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
+                .BorderThickness = New Thickness(0, 1, 0, 0),
+                .Height = 1,
+                .Margin = New Thickness(-5, 10, -5, 10)
+            }
 
             ' === Options Container ===
-            ' Create container for options
-            Dim optionsContainer As New StackPanel With {
-            .Name = $"OptionsContainer_{variationCount}"
-        }
 
             ' Scrollable options area
             Dim scrollOptions As New ScrollViewer With {
-            .VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-            .MaxHeight = 150,
-            .Content = optionsContainer,
-            .Style = CType(FindResource("ModernScrollViewerStyle"), Style)
-        }
+                .VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                .MaxHeight = 150,
+                .Content = optionsContainer,
+                .Style = CType(FindResource("ModernScrollViewerStyle"), Style)
+            }
 
             ' Add Option Button
             Dim btnAddOption As New Button With {
-            .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
-            .Style = CType(FindResource("RoundedButtonStyle"), Style),
-            .BorderThickness = New Thickness(0),
-            .Margin = New Thickness(0, 10, 0, 0)
-        }
+                .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
+                .Style = CType(FindResource("RoundedButtonStyle"), Style),
+                .BorderThickness = New Thickness(0),
+                .Margin = New Thickness(0, 10, 0, 0)
+            }
 
             Dim stackBtnContent As New StackPanel With {
-            .Orientation = Orientation.Horizontal,
-            .HorizontalAlignment = HorizontalAlignment.Center
-        }
+        .Orientation = Orientation.Horizontal,
+        .HorizontalAlignment = HorizontalAlignment.Center
+    }
 
             Dim plusIcon As New PackIcon With {
-            .Kind = PackIconKind.PlusCircleOutline,
-            .Foreground = Brushes.White,
-            .Width = 20,
-            .Height = 20,
-            .Margin = New Thickness(0, 0, 5, 0)
-        }
+        .Kind = PackIconKind.PlusCircleOutline,
+        .Foreground = Brushes.White,
+        .Width = 20,
+        .Height = 20,
+        .Margin = New Thickness(0, 0, 5, 0)
+    }
 
             Dim plusText As New TextBlock With {
-            .Text = "Add Option",
-            .Foreground = Brushes.White,
-            .FontSize = 14,
-            .FontWeight = FontWeights.SemiBold
-        }
+        .Text = "Add Option",
+        .Foreground = Brushes.White,
+        .FontSize = 14,
+        .FontWeight = FontWeights.SemiBold
+    }
 
             stackBtnContent.Children.Add(plusIcon)
             stackBtnContent.Children.Add(plusText)
@@ -215,17 +222,41 @@ Namespace DPC.Components.Forms
             optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
             optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
 
-            ' Image placeholder
+            ' Find the parent container and check for the toggle state
+            Dim parentVariationPanel As StackPanel = TryCast(VisualTreeHelper.GetParent(targetPanel), StackPanel)
+            Dim isImagesVisible As Boolean = True ' Default to visible
+
+            If parentVariationPanel IsNot Nothing Then
+                For Each child As UIElement In parentVariationPanel.Children
+                    If TypeOf child Is Grid Then
+                        Dim grid As Grid = TryCast(child, Grid)
+                        For Each gridChild As UIElement In grid.Children
+                            If TypeOf gridChild Is ToggleButton Then
+                                Dim toggle As ToggleButton = TryCast(gridChild, ToggleButton)
+                                isImagesVisible = toggle.IsChecked
+                                Exit For
+                            End If
+                        Next
+                        If Not isImagesVisible Then Exit For
+                    End If
+                Next
+            End If
+
+            ' Image placeholder with visibility set based on toggle state
             Dim imageBorder As New Border With {
-            .Width = 40,
-            .Height = 40,
-            .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
-            .BorderThickness = New Thickness(1),
-            .CornerRadius = New CornerRadius(5),
-            .VerticalAlignment = VerticalAlignment.Center,
-            .HorizontalAlignment = HorizontalAlignment.Center,
-            .Margin = New Thickness(0, 0, 10, 0)
-        }
+                .Width = 40,
+                .Height = 40,
+                .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
+                .BorderThickness = New Thickness(1),
+                .CornerRadius = New CornerRadius(5),
+                .VerticalAlignment = VerticalAlignment.Center,
+                .HorizontalAlignment = HorizontalAlignment.Center,
+                .Margin = New Thickness(0, 0, 10, 0),
+                .Visibility = If(isImagesVisible, Visibility.Visible, Visibility.Collapsed),
+                .Cursor = Cursors.Hand  ' Change cursor to indicate it's clickable
+            }
+
+
 
             Dim imageStack As New StackPanel With {
             .Orientation = Orientation.Vertical,
@@ -359,9 +390,38 @@ Namespace DPC.Components.Forms
             End If
         End Function
 
+        Private Sub Toggle_CheckedChanged(sender As Object, e As RoutedEventArgs)
+            Dim toggle As ToggleButton = TryCast(sender, ToggleButton)
+            If toggle Is Nothing Then Exit Sub
+
+            ' Get the options container from the toggle's Tag
+            Dim optionsContainer As StackPanel = TryCast(toggle.Tag, StackPanel)
+            If optionsContainer Is Nothing Then Exit Sub
+
+            ' Get all option rows in the container
+            For Each child As UIElement In optionsContainer.Children
+                Dim grid As Grid = TryCast(child, Grid)
+                If grid IsNot Nothing Then
+                    ' Find the image border in each row (it should be in column 0)
+                    For Each gridChild As UIElement In grid.Children
+                        If TypeOf gridChild Is Border AndAlso Grid.GetColumn(gridChild) = 0 Then
+                            ' Set visibility based on toggle state
+                            gridChild.Visibility = If(toggle.IsChecked, Visibility.Visible, Visibility.Collapsed)
+                            Exit For
+                        End If
+                    Next
+                End If
+            Next
+        End Sub
+
         ' Add this method to handle the "Add Variation" button click
         Private Sub BtnAddVariation_Click(sender As Object, e As RoutedEventArgs)
-            AddNewVariation()
+            ' Check if the number of variations is less than the maximum allowed
+            If variationCount <= MaxVariations Then
+                AddNewVariation()
+            Else
+                MessageBox.Show("You can only add up to 2 variations.", "Limit Reached", MessageBoxButton.OK, MessageBoxImage.Information)
+            End If
         End Sub
     End Class
 End Namespace
