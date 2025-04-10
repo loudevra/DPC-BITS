@@ -97,6 +97,12 @@ Namespace DPC.Components.Forms
 
             ' Add handler to remove the variation panel when delete button is clicked
             AddHandler btnDeleteName.Click, Sub()
+                                                ' Check if this is the only variation
+                                                If MainVariationContainer.Children.Count <= 1 Then
+                                                    MessageBox.Show("You cannot delete the last variation.", "Deletion Restricted", MessageBoxButton.OK, MessageBoxImage.Information)
+                                                    Return
+                                                End If
+
                                                 MainVariationContainer.Children.Remove(variationPanel)
                                             End Sub
 
@@ -256,8 +262,6 @@ Namespace DPC.Components.Forms
                 .Cursor = Cursors.Hand  ' Change cursor to indicate it's clickable
             }
 
-
-
             Dim imageStack As New StackPanel With {
             .Orientation = Orientation.Vertical,
             .HorizontalAlignment = HorizontalAlignment.Center,
@@ -369,6 +373,12 @@ Namespace DPC.Components.Forms
             If rowGrid IsNot Nothing Then
                 Dim parentPanel As StackPanel = TryCast(VisualTreeHelper.GetParent(rowGrid), StackPanel)
                 If parentPanel IsNot Nothing Then
+                    ' Check if this is the last option in this variation
+                    If parentPanel.Children.Count <= 1 Then
+                        MessageBox.Show("You cannot delete the last option.", "Deletion Restricted", MessageBoxButton.OK, MessageBoxImage.Information)
+                        Return
+                    End If
+
                     parentPanel.Children.Remove(rowGrid)
                 End If
             End If
