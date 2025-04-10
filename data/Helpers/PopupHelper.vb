@@ -7,12 +7,17 @@ Public Class PopupHelper
     Private Shared currentControl As UserControl
     Private Shared currentWindow As Window
     Private Shared mouseHandlerAttached As Boolean = False
-    Private Shared mousePreviewHandler As MouseButtonEventHandler  ' Changed to the correct type
+    Private Shared mousePreviewHandler As MouseButtonEventHandler
+    Private Shared closeOnBackgroundClick As Boolean = True  ' Default value for background closing
+    Private Shared sizeChangedHandler As SizeChangedEventHandler  ' Correct event handler type
+    Private Shared originalOwner As Window = Nothing
 
     Public Shared Sub OpenPopupWithControl(sender As Object, control As UserControl, position As String,
                                           Optional verticalOffset As Double = 0,
                                           Optional horizontalOffset As Double = 0,
-                                          Optional window As Window = Nothing)
+                                          Optional closeOnBackground As Boolean = True,
+                                          Optional window As Window = Nothing
+                                         )
         Dim clickedElement As FrameworkElement = TryCast(sender, FrameworkElement)
         If clickedElement Is Nothing Then Return
 
@@ -30,39 +35,70 @@ Public Class PopupHelper
         ' Store references for reuse
         currentControl = control
         currentWindow = window
+        closeOnBackgroundClick = closeOnBackground  ' Store the parameter value
+
+        ' Get the proper parent window
+        Dim parentWindow As Window = If(window IsNot Nothing, window, Application.Current.MainWindow)
 
         ' Create a new popup with improved settings
         activePopup = New Popup With {
-            .StaysOpen = True, ' Changed to True to prevent auto-closing
+            .StaysOpen = True,
             .AllowsTransparency = True,
-            .Child = control,
-            .IsOpen = True
+            .Child = control
         }
+
+        ' Set proper placement settings
+        If position.ToLower() = "windowcenter" Then
+            ' For window center, we'll use the window as placement target
+            activePopup.PlacementTarget = parentWindow
+            activePopup.Placement = PlacementMode.Center
+        Else
+            ' For other positions, use the clicked element
+            activePopup.PlacementTarget = clickedElement
+            activePopup.Placement = PlacementMode.Custom
+        End If
 
         ' Add event handlers for popup
         AddHandler activePopup.Closed, AddressOf OnPopupClosed
 
         ' Add event handler to detect clicks outside the popup
         mousePreviewHandler = AddressOf OnGlobalMouseDown
-        If window IsNot Nothing Then
-            AddHandler window.PreviewMouseDown, mousePreviewHandler
-        Else
-            ' If no window is provided, attach to application main window
-            If Application.Current.MainWindow IsNot Nothing Then
-                AddHandler Application.Current.MainWindow.PreviewMouseDown, mousePreviewHandler
-            End If
+        If parentWindow IsNot Nothing Then
+            AddHandler parentWindow.PreviewMouseDown, mousePreviewHandler
         End If
         mouseHandlerAttached = True
 
         ' Add handler for window deactivation
-        If window IsNot Nothing Then
-            AddHandler window.Deactivated, AddressOf OnWindowDeactivated
-            AddHandler window.Activated, AddressOf OnWindowActivated
+        If parentWindow IsNot Nothing Then
+            AddHandler parentWindow.Deactivated, AddressOf OnWindowDeactivated
+            AddHandler parentWindow.Activated, AddressOf OnWindowActivated
         End If
 
+        ' Handler for window resizing to keep popup positioned correctly
+        sizeChangedHandler = AddressOf OnWindowSizeChanged  ' Using named method for clarity
+        If parentWindow IsNot Nothing Then
+            AddHandler parentWindow.SizeChanged, sizeChangedHandler
+        End If
+
+        ' Now open the popup
+        activePopup.IsOpen = True
+
+        ' Position the popup after it's opened
         AddHandler control.Loaded, Sub()
-                                       PositionPopup(clickedElement, control, position, horizontalOffset, verticalOffset)
+                                       UpdatePopupPosition(clickedElement, control, position, horizontalOffset, verticalOffset)
                                    End Sub
+    End Sub
+
+    Private Shared Sub OnWindowSizeChanged(sender As Object, e As SizeChangedEventArgs)
+        ' Get the proper parent window
+        Dim parentWindow As Window = If(currentWindow IsNot Nothing, currentWindow, Application.Current.MainWindow)
+        Dim clickedElement = activePopup.PlacementTarget
+
+        If currentControl IsNot Nothing AndAlso activePopup IsNot Nothing Then
+            ' Find the position by checking the current placement mode
+            Dim position As String = If(activePopup.Placement = PlacementMode.Center, "windowcenter", "default")
+            UpdatePopupPosition(TryCast(clickedElement, FrameworkElement), currentControl, position, activePopup.HorizontalOffset, activePopup.VerticalOffset)
+        End If
     End Sub
 
     Private Shared Sub OnPopupClosed(sender As Object, e As EventArgs)
@@ -72,8 +108,8 @@ Public Class PopupHelper
     End Sub
 
     Private Shared Sub OnGlobalMouseDown(sender As Object, e As MouseButtonEventArgs)
-        ' Skip if popup is already closed
-        If activePopup Is Nothing OrElse Not activePopup.IsOpen Then
+        ' Skip if popup is already closed or background clicking is disabled
+        If activePopup Is Nothing OrElse Not activePopup.IsOpen OrElse Not closeOnBackgroundClick Then
             Return
         End If
 
@@ -136,10 +172,14 @@ Public Class PopupHelper
 
         ' Remove mouse handler if attached
         If mouseHandlerAttached AndAlso mousePreviewHandler IsNot Nothing Then
-            If currentWindow IsNot Nothing Then
-                RemoveHandler currentWindow.PreviewMouseDown, mousePreviewHandler
-            ElseIf Application.Current.MainWindow IsNot Nothing Then
-                RemoveHandler Application.Current.MainWindow.PreviewMouseDown, mousePreviewHandler
+            Dim parentWindow As Window = If(currentWindow IsNot Nothing, currentWindow, Application.Current.MainWindow)
+            If parentWindow IsNot Nothing Then
+                RemoveHandler parentWindow.PreviewMouseDown, mousePreviewHandler
+
+                ' Also remove SizeChanged handler with correct type
+                If sizeChangedHandler IsNot Nothing Then
+                    RemoveHandler parentWindow.SizeChanged, sizeChangedHandler
+                End If
             End If
             mouseHandlerAttached = False
         End If
@@ -150,81 +190,64 @@ Public Class PopupHelper
         End If
     End Sub
 
-    Private Shared Sub PositionPopup(clickedElement As FrameworkElement, control As UserControl, position As String,
-                                    horizontalOffset As Double, verticalOffset As Double)
+    Private Shared Sub UpdatePopupPosition(clickedElement As FrameworkElement, control As UserControl, position As String,
+                                          horizontalOffset As Double, verticalOffset As Double)
+        If activePopup Is Nothing Then Return
+
+        ' Ensure the control has been measured
         control.Measure(New Size(Double.PositiveInfinity, Double.PositiveInfinity))
         Dim popupWidth As Double = control.DesiredSize.Width
         Dim popupHeight As Double = control.DesiredSize.Height
 
+        ' Use ActualWidth/Height if DesiredSize returned 0
         If popupWidth = 0 Then popupWidth = control.ActualWidth
         If popupHeight = 0 Then popupHeight = control.ActualHeight
 
+        ' Get the proper parent window
+        Dim parentWindow As Window = If(currentWindow IsNot Nothing, currentWindow, Application.Current.MainWindow)
+
+        ' Adjust position based on requested placement
         If position.ToLower() = "windowcenter" Then
-            If currentWindow IsNot Nothing Then
-                ' Ensure the window is fully rendered before calculations
-                Dim CenterPopup = Sub()
-                                      currentWindow.UpdateLayout()
+            ' For window center positioning - use PlacementMode.Center with offsets
+            activePopup.HorizontalOffset = horizontalOffset
+            activePopup.VerticalOffset = verticalOffset
 
-                                      Dim updatedWindowWidth As Double
-                                      Dim updatedWindowHeight As Double
-                                      Dim updatedWindowLeft As Double
-                                      Dim updatedWindowTop As Double
-
-                                      ' Check if window is maximized
-                                      If currentWindow.WindowState = WindowState.Maximized Then
-                                          ' Get usable screen area (excludes taskbar)
-                                          Dim screenBounds As Rect = SystemParameters.WorkArea
-                                          updatedWindowWidth = screenBounds.Width
-                                          updatedWindowHeight = screenBounds.Height
-                                          updatedWindowLeft = screenBounds.Left
-                                          updatedWindowTop = screenBounds.Top
-                                      Else
-                                          ' Use actual window dimensions
-                                          updatedWindowWidth = currentWindow.ActualWidth
-                                          updatedWindowHeight = currentWindow.ActualHeight
-                                          updatedWindowLeft = currentWindow.Left
-                                          updatedWindowTop = currentWindow.Top
-                                      End If
-
-                                      ' Calculate absolute center with customizable offsets
-                                      Dim updatedCenterX As Double = updatedWindowLeft + (updatedWindowWidth - popupWidth) / 2 + horizontalOffset
-                                      Dim updatedCenterY As Double = updatedWindowTop + (updatedWindowHeight - popupHeight) / 2 + verticalOffset
-
-                                      ' Apply new position
-                                      activePopup.HorizontalOffset = updatedCenterX
-                                      activePopup.VerticalOffset = updatedCenterY
-                                  End Sub
-
-                ' Set initial position
-                currentWindow.Dispatcher.InvokeAsync(CenterPopup, System.Windows.Threading.DispatcherPriority.Render)
-
-                ' Keep the popup centered when the window resizes
-                AddHandler currentWindow.SizeChanged, Sub()
-                                                          currentWindow.Dispatcher.InvokeAsync(CenterPopup, System.Windows.Threading.DispatcherPriority.Render)
-                                                      End Sub
+            ' Force update if needed
+            If parentWindow IsNot Nothing Then
+                parentWindow.UpdateLayout()
             End If
         Else
-            ' Positioning logic for other cases (left, right, etc.)
+            ' For element-based positioning
             activePopup.PlacementTarget = clickedElement
-            activePopup.Placement = PlacementMode.Relative
 
-            Select Case position.ToLower()
-                Case "center"
-                    activePopup.HorizontalOffset = (clickedElement.ActualWidth - popupWidth) / 2 + horizontalOffset
-                    activePopup.VerticalOffset = clickedElement.ActualHeight + verticalOffset
+            ' Set custom placement callback for precise control
+            activePopup.CustomPopupPlacementCallback = Function(popupSize, targetSize, offset)
+                                                           Dim placements As New List(Of CustomPopupPlacement)()
+                                                           Dim point As Point
 
-                Case "left"
-                    activePopup.HorizontalOffset = -popupWidth - 5 + horizontalOffset
-                    activePopup.VerticalOffset = 0 + verticalOffset
+                                                           Select Case position.ToLower()
+                                                               Case "center"
+                                                                   point = New Point((targetSize.Width - popupSize.Width) / 2 + horizontalOffset,
+                                                                                    targetSize.Height + verticalOffset)
 
-                Case "right"
-                    activePopup.HorizontalOffset = clickedElement.ActualWidth + 5 + horizontalOffset
-                    activePopup.VerticalOffset = 0 + verticalOffset
+                                                               Case "left"
+                                                                   point = New Point(-popupSize.Width - 5 + horizontalOffset,
+                                                                                    verticalOffset)
 
-                Case Else
-                    activePopup.HorizontalOffset = (clickedElement.ActualWidth - popupWidth) / 2 + horizontalOffset
-                    activePopup.VerticalOffset = clickedElement.ActualHeight + 5 + verticalOffset
-            End Select
+                                                               Case "right"
+                                                                   point = New Point(targetSize.Width + 5 + horizontalOffset,
+                                                                                    verticalOffset)
+
+                                                               Case Else ' Default positioning
+                                                                   point = New Point((targetSize.Width - popupSize.Width) / 2 + horizontalOffset,
+                                                                                    targetSize.Height + 5 + verticalOffset)
+                                                           End Select
+
+                                                           placements.Add(New CustomPopupPlacement(point, PopupPrimaryAxis.None))
+                                                           Return placements.ToArray()
+                                                       End Function
         End If
     End Sub
+
+
 End Class

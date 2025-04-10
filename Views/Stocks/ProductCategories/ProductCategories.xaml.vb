@@ -142,7 +142,7 @@ Namespace DPC.Views.Stocks.ProductCategories
             AddHandler addCategoryWindow.CategoryAdded, AddressOf OnCategoryAdded
 
             ' Open the popup
-            PopupHelper.OpenPopupWithControl(sender, addCategoryWindow, "windowcenter", -50, 0, Me)
+            PopupHelper.OpenPopupWithControl(sender, addCategoryWindow, "windowcenter", -50, 0, True, Me)
         End Sub
 
         ' Event handler to refresh the DataGrid
@@ -157,7 +157,7 @@ Namespace DPC.Views.Stocks.ProductCategories
             AddHandler addSubcategoryWindow.SubCategoryAdded, AddressOf OnSubCategoryAdded
 
             ' Open the popup
-            PopupHelper.OpenPopupWithControl(sender, addSubcategoryWindow, "windowcenter", -50, 0, Me)
+            PopupHelper.OpenPopupWithControl(sender, addSubcategoryWindow, "windowcenter", -50, 0, True, Me)
         End Sub
 
         Private Sub OnSubCategoryAdded(sender As Object, e As EventArgs)

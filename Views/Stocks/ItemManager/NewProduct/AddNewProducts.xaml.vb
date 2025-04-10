@@ -318,7 +318,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Dim openAddVariation As New DPC.Components.Forms.AddVariation()
 
             ' Open the popup
-            PopupHelper.OpenPopupWithControl(sender, openAddVariation, "windowcenter", -50, 0, Me)
+            PopupHelper.OpenPopupWithControl(sender, openAddVariation, "windowcenter", 0, 0, False, Me)
         End Sub
 
         'Handles file input
