@@ -1,5 +1,9 @@
 ﻿Imports System.Windows.Controls.Primitives
 Imports MaterialDesignThemes.Wpf
+Imports Microsoft.Win32
+Imports System.IO
+Imports DPC.Data.Helpers
+Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Components.Forms
     Public Class AddVariation
@@ -19,28 +23,29 @@ Namespace DPC.Components.Forms
         Private Sub AddNewVariation()
             ' Create the main StackPanel for this variation
             Dim variationPanel As New StackPanel With {
-        .Orientation = Orientation.Vertical,
-        .Margin = New Thickness(0, 0, 0, 20)
-    }
+                .Orientation = Orientation.Vertical,
+                .Margin = New Thickness(0, 0, 0, 20),
+                .Tag = variationCount ' Store the variation number in the Tag property
+            }
 
             Dim optionsContainer As New StackPanel With {
-        .Name = $"OptionsContainer_{variationCount}"
-    }
+                .Name = $"OptionsContainer_{variationCount}"
+            }
 
             ' === Variation Name Section ===
             Dim lblName As New TextBlock With {
-        .Text = "Variation Name:",
-        .Margin = New Thickness(0, 0, 0, 10),
-        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
-        .FontSize = 14,
-        .FontWeight = FontWeights.SemiBold
-    }
+                .Text = "Variation Name:",
+                .Margin = New Thickness(0, 0, 0, 10),
+                .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
+                .FontSize = 14,
+                .FontWeight = FontWeights.SemiBold
+            }
 
             Dim nameBorder As New Border With {
-        .Style = CType(FindResource("RoundedBorderStyle"), Style),
-        .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
-        .Margin = New Thickness(0, 0, 0, 15)
-    }
+                .Style = CType(FindResource("RoundedBorderStyle"), Style),
+                .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
+                .Margin = New Thickness(0, 0, 0, 15)
+            }
 
             Dim nameGrid As New Grid()
             nameGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
@@ -48,31 +53,31 @@ Namespace DPC.Components.Forms
             nameGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
 
             Dim txtVariationName As New TextBox With {
-        .Text = $"Variation {variationCount}",
-        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
-        .FontSize = 13,
-        .FontWeight = FontWeights.SemiBold,
-        .Margin = New Thickness(20, 0, 5, 0),
-        .Style = CType(FindResource("RoundedTextboxStyle"), Style),
-        .IsReadOnly = True,
-        .VerticalAlignment = VerticalAlignment.Center
-    }
+                .Text = $"Variation {variationCount}",
+                .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
+                .FontSize = 13,
+                .FontWeight = FontWeights.SemiBold,
+                .Margin = New Thickness(20, 0, 5, 0),
+                .Style = CType(FindResource("RoundedTextboxStyle"), Style),
+                .IsReadOnly = True,
+                .VerticalAlignment = VerticalAlignment.Center
+            }
 
             Dim btnEditName As New Button With {
-        .Background = Brushes.Transparent,
-        .BorderThickness = New Thickness(0),
-        .Margin = New Thickness(0),
-        .Style = CType(FindResource("RoundedButtonStyle"), Style),
-        .Tag = txtVariationName
-    }
+                .Background = Brushes.Transparent,
+                .BorderThickness = New Thickness(0),
+                .Margin = New Thickness(0),
+                .Style = CType(FindResource("RoundedButtonStyle"), Style),
+                .Tag = txtVariationName
+            }
 
             Dim editIcon As New PackIcon With {
-        .Kind = PackIconKind.PencilOffOutline,
-        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
-        .Width = 25,
-        .Height = 25,
-        .VerticalAlignment = VerticalAlignment.Center
-    }
+                .Kind = PackIconKind.PencilOffOutline,
+                .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
+                .Width = 25,
+                .Height = 25,
+                .VerticalAlignment = VerticalAlignment.Center
+            }
             btnEditName.Content = editIcon
             AddHandler btnEditName.Click, Sub(sender, e)
                                               Dim isEditing = EditFunction(txtVariationName, True)
@@ -80,19 +85,19 @@ Namespace DPC.Components.Forms
                                           End Sub
 
             Dim btnDeleteName As New Button With {
-        .Background = Brushes.Transparent,
-        .BorderThickness = New Thickness(0),
-        .Margin = New Thickness(0, 0, 15, 0),
-        .Style = CType(FindResource("RoundedButtonStyle"), Style),
-        .HorizontalAlignment = HorizontalAlignment.Right
-    }
+                .Background = Brushes.Transparent,
+                .BorderThickness = New Thickness(0),
+                .Margin = New Thickness(0, 0, 15, 0),
+                .Style = CType(FindResource("RoundedButtonStyle"), Style),
+                .HorizontalAlignment = HorizontalAlignment.Right
+            }
 
             Dim deleteIcon As New PackIcon With {
-        .Kind = PackIconKind.TrashCanOutline,
-        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636")),
-        .Width = 25,
-        .Height = 25
-    }
+                .Kind = PackIconKind.TrashCanOutline,
+                .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636")),
+                .Width = 25,
+                .Height = 25
+            }
             btnDeleteName.Content = deleteIcon
 
             ' Add handler to remove the variation panel when delete button is clicked
@@ -103,7 +108,11 @@ Namespace DPC.Components.Forms
                                                     Return
                                                 End If
 
+                                                ' Remove the panel from the container
                                                 MainVariationContainer.Children.Remove(variationPanel)
+
+                                                ' Update variationCount if needed
+                                                RecalculateVariationCount()
                                             End Sub
 
             Grid.SetColumn(txtVariationName, 0)
@@ -172,24 +181,24 @@ Namespace DPC.Components.Forms
             }
 
             Dim stackBtnContent As New StackPanel With {
-        .Orientation = Orientation.Horizontal,
-        .HorizontalAlignment = HorizontalAlignment.Center
-    }
+                .Orientation = Orientation.Horizontal,
+                .HorizontalAlignment = HorizontalAlignment.Center
+            }
 
             Dim plusIcon As New PackIcon With {
-        .Kind = PackIconKind.PlusCircleOutline,
-        .Foreground = Brushes.White,
-        .Width = 20,
-        .Height = 20,
-        .Margin = New Thickness(0, 0, 5, 0)
-    }
+                .Kind = PackIconKind.PlusCircleOutline,
+                .Foreground = Brushes.White,
+                .Width = 20,
+                .Height = 20,
+                .Margin = New Thickness(0, 0, 5, 0)
+            }
 
             Dim plusText As New TextBlock With {
-        .Text = "Add Option",
-        .Foreground = Brushes.White,
-        .FontSize = 14,
-        .FontWeight = FontWeights.SemiBold
-    }
+                .Text = "Add Option",
+                .Foreground = Brushes.White,
+                .FontSize = 14,
+                .FontWeight = FontWeights.SemiBold
+            }
 
             stackBtnContent.Children.Add(plusIcon)
             stackBtnContent.Children.Add(plusText)
@@ -218,9 +227,38 @@ Namespace DPC.Components.Forms
             variationCount += 1
         End Sub
 
+        ' Add this method to recalculate variationCount after deletion
+        Private Sub RecalculateVariationCount()
+            ' Find the highest variation number used
+            Dim highestVariationNumber As Integer = 0
+
+            For Each child As UIElement In MainVariationContainer.Children
+                If TypeOf child Is StackPanel Then
+                    Dim panel As StackPanel = DirectCast(child, StackPanel)
+                    If panel.Tag IsNot Nothing AndAlso TypeOf panel.Tag Is Integer Then
+                        Dim panelNumber As Integer = DirectCast(panel.Tag, Integer)
+                        If panelNumber > highestVariationNumber Then
+                            highestVariationNumber = panelNumber
+                        End If
+                    End If
+                End If
+            Next
+
+            ' Set variationCount to be one more than the highest current number
+            variationCount = highestVariationNumber + 1
+
+            ' Make sure variationCount doesn't exceed MaxVariations
+            If variationCount > MaxVariations Then
+                variationCount = MaxVariations
+            End If
+        End Sub
+
         Private Sub AddOptionToPanel(targetPanel As StackPanel)
             ' Create Grid for option row
             Dim optionGrid As New Grid With {.Margin = New Thickness(0, 0, 0, 10)}
+
+            ' Store image data
+            optionGrid.Tag = New ImageData()
 
             ' Define grid columns
             optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
@@ -263,18 +301,21 @@ Namespace DPC.Components.Forms
             }
 
             Dim imageStack As New StackPanel With {
-            .Orientation = Orientation.Vertical,
-            .HorizontalAlignment = HorizontalAlignment.Center,
-            .VerticalAlignment = VerticalAlignment.Center
-        }
+                .Orientation = Orientation.Vertical,
+                .HorizontalAlignment = HorizontalAlignment.Center,
+                .VerticalAlignment = VerticalAlignment.Center
+            }
 
             Dim packIcon As New PackIcon With {
-            .Kind = PackIconKind.ImagePlus,
-            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
-            .Width = 20,
-            .Height = 20,
-            .VerticalAlignment = VerticalAlignment.Center
-        }
+                .Kind = PackIconKind.ImagePlus,
+                .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
+                .Width = 20,
+                .Height = 20,
+                .VerticalAlignment = VerticalAlignment.Center
+            }
+
+            ' Add click handler for image selection
+            AddHandler imageBorder.MouseDown, Sub(sender, e) SelectImage(optionGrid, imageBorder)
 
             imageStack.Children.Add(packIcon)
             imageBorder.Child = imageStack
@@ -283,31 +324,31 @@ Namespace DPC.Components.Forms
 
             ' Option text field
             Dim txtOption As New TextBox With {
-            .Text = "Option",
-            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
-            .FontSize = 14,
-            .FontWeight = FontWeights.SemiBold,
-            .VerticalAlignment = VerticalAlignment.Center,
-            .Margin = New Thickness(0),
-            .IsReadOnly = True,
-            .Style = CType(FindResource("RoundedTextboxStyle"), Style)
-        }
+                .Text = "Option",
+                .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
+                .FontSize = 14,
+                .FontWeight = FontWeights.SemiBold,
+                .VerticalAlignment = VerticalAlignment.Center,
+                .Margin = New Thickness(0),
+                .IsReadOnly = True,
+                .Style = CType(FindResource("RoundedTextboxStyle"), Style)
+            }
             Grid.SetColumn(txtOption, 1)
             optionGrid.Children.Add(txtOption)
 
             ' Edit button
             Dim btnEdit As New Button With {
-            .Margin = New Thickness(0, 0, 5, 0),
-            .BorderThickness = New Thickness(0),
-            .Style = CType(FindResource("RoundedButtonStyle"), Style)
-        }
+                .Margin = New Thickness(0, 0, 5, 0),
+                .BorderThickness = New Thickness(0),
+                .Style = CType(FindResource("RoundedButtonStyle"), Style)
+            }
 
             Dim editIcon As New PackIcon With {
-            .Kind = PackIconKind.PencilOffOutline,
-            .Width = 25,
-            .Height = 25,
-            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
-        }
+                .Kind = PackIconKind.PencilOffOutline,
+                .Width = 25,
+                .Height = 25,
+                .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
+            }
             btnEdit.Content = editIcon
             AddHandler btnEdit.Click, AddressOf BtnEditOption
             Grid.SetColumn(btnEdit, 2)
@@ -315,17 +356,17 @@ Namespace DPC.Components.Forms
 
             ' Delete button
             Dim btnDelete As New Button With {
-            .Background = Brushes.Transparent,
-            .BorderThickness = New Thickness(0),
-            .Padding = New Thickness(5)
-        }
+                .Background = Brushes.Transparent,
+                .BorderThickness = New Thickness(0),
+                .Padding = New Thickness(5)
+            }
 
             Dim deleteIcon As New PackIcon With {
-            .Kind = PackIconKind.TrashCanOutline,
-            .Width = 25,
-            .Height = 25,
-            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636"))
-        }
+                .Kind = PackIconKind.TrashCanOutline,
+                .Width = 25,
+                .Height = 25,
+                .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636"))
+            }
             btnDelete.Content = deleteIcon
             AddHandler btnDelete.Click, AddressOf DeleteOptionRow
             Grid.SetColumn(btnDelete, 3)
@@ -333,6 +374,61 @@ Namespace DPC.Components.Forms
 
             ' Add the option grid to the target panel
             targetPanel.Children.Add(optionGrid)
+        End Sub
+
+        ' New method to handle image selection
+        Private Sub SelectImage(optionGrid As Grid, imageBorder As Border)
+            ' Create OpenFileDialog to select an image
+            Dim openFileDialog As New OpenFileDialog With {
+                .Filter = "Image files (*.jpg, *.jpeg, *.png)|*.jpg;*.jpeg;*.png",
+                .Title = "Select an Image"
+            }
+
+            ' Show the dialog and get the result
+            If openFileDialog.ShowDialog() = True Then
+                Try
+                    ' Get selected file path
+                    Dim filePath As String = openFileDialog.FileName
+
+                    ' Convert image to Base64 string
+                    Dim base64String As String = Base64Utility.EncodeFileToBase64(filePath)
+                    Dim fileExtension As String = Base64Utility.GetFileExtension(filePath)
+
+                    ' Store image data in the grid's Tag property
+                    Dim imgData As ImageData = DirectCast(optionGrid.Tag, ImageData)
+                    imgData.Base64String = base64String
+                    imgData.FileExtension = fileExtension
+                    imgData.FileName = Path.GetFileName(filePath)
+                    optionGrid.Tag = imgData
+
+                    ' Update the image display
+                    UpdateImageDisplay(imageBorder, filePath)
+
+                Catch ex As Exception
+                    MessageBox.Show("Error loading image: " & ex.Message, "Image Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                End Try
+            End If
+        End Sub
+
+        ' New method to update the image display
+        Private Sub UpdateImageDisplay(imageBorder As Border, imagePath As String)
+            ' Create a new Image control
+            Dim img As New System.Windows.Controls.Image With {
+                .Stretch = Stretch.Uniform
+            }
+
+            ' Create BitmapImage from file
+            Dim bitmap As New BitmapImage()
+            bitmap.BeginInit()
+            bitmap.UriSource = New Uri(imagePath)
+            bitmap.CacheOption = BitmapCacheOption.OnLoad ' Load image right away and close the file
+            bitmap.EndInit()
+
+            ' Set the image source
+            img.Source = bitmap
+
+            ' Replace the content of the border with the image
+            imageBorder.Child = img
         End Sub
 
         Private Sub BtnEditOption(sender As Object, e As RoutedEventArgs)
@@ -426,12 +522,19 @@ Namespace DPC.Components.Forms
 
         ' Add this method to handle the "Add Variation" button click
         Private Sub BtnAddVariation_Click(sender As Object, e As RoutedEventArgs)
-            ' Check if the number of variations is less than the maximum allowed
-            If variationCount <= MaxVariations Then
+            ' Check if the current number of variations is less than the maximum allowed
+            If MainVariationContainer.Children.Count < MaxVariations Then
                 AddNewVariation()
             Else
                 MessageBox.Show("You can only add up to 2 variations.", "Limit Reached", MessageBoxButton.OK, MessageBoxImage.Information)
             End If
         End Sub
+
+        ' Helper class to store image data
+        Private Class ImageData
+            Public Property Base64String As String
+            Public Property FileExtension As String
+            Public Property FileName As String
+        End Class
     End Class
 End Namespace
