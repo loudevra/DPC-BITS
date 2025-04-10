@@ -4,9 +4,9 @@ Imports System.Windows
 Imports System.Windows.Controls
 Imports DPC.DPC.Components.Navigation
 Imports DPC.DPC.Data.Controllers
-Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Models
-Imports Microsoft.Win32
+Imports System.Diagnostics
+Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Views.Misc.Documents
     Partial Public Class Documents
@@ -37,6 +37,11 @@ Namespace DPC.Views.Misc.Documents
 
             ' Load documents for the current employee
             LoadDocuments()
+
+            ' Initialize combobox selection
+            If CmbEntriesCount.Items.Count > 0 Then
+                CmbEntriesCount.SelectedIndex = 0
+            End If
         End Sub
 
         Private Sub LoadDocuments()
@@ -53,12 +58,16 @@ Namespace DPC.Views.Misc.Documents
                 _filteredDocuments = New ObservableCollection(Of Document)(_documents)
             Else
                 _filteredDocuments = New ObservableCollection(Of Document)(
-                    _documents.Where(Function(d) d.Title.ToLower().Contains(_searchText.ToLower()))
+                    _documents.Where(Function(d) _
+                        d.Title.ToLower().Contains(_searchText.ToLower()) OrElse
+                        d.FileName.ToLower().Contains(_searchText.ToLower()) OrElse
+                        d.FileType.ToLower().Contains(_searchText.ToLower())
+                    )
                 )
             End If
 
             ' Calculate total pages
-            _totalPages = Math.Ceiling(_filteredDocuments.Count / _itemsPerPage)
+            _totalPages = Math.Ceiling(_filteredDocuments.Count / CDbl(_itemsPerPage))
             If _totalPages < 1 Then _totalPages = 1
 
             ' Ensure current page is valid
@@ -76,6 +85,15 @@ Namespace DPC.Views.Misc.Documents
             ' Update button states
             BtnPrevious.IsEnabled = (_currentPage > 1)
             BtnNext.IsEnabled = (_currentPage < _totalPages)
+
+            ' Update empty state visibility
+            If _filteredDocuments.Count = 0 Then
+                DocumentsDataGrid.Visibility = Visibility.Collapsed
+                EmptyStatePanel.Visibility = Visibility.Visible
+            Else
+                DocumentsDataGrid.Visibility = Visibility.Visible
+                EmptyStatePanel.Visibility = Visibility.Collapsed
+            End If
         End Sub
 
         Private Sub BtnAddNew_Click(sender As Object, e As RoutedEventArgs)
@@ -99,15 +117,24 @@ Namespace DPC.Views.Misc.Documents
             Dim document = _documentController.GetDocumentByID(documentID, _currentEmployeeID)
 
             If document IsNot Nothing Then
-                ' Create a temporary file path
-                Dim tempFilePath As String = Path.Combine(Path.GetTempPath(), document.FileName)
-
                 Try
+                    ' Create a temp directory specifically for our app
+                    Dim tempDir As String = Path.Combine(Path.GetTempPath(), "DPC_Documents")
+                    If Not Directory.Exists(tempDir) Then
+                        Directory.CreateDirectory(tempDir)
+                    End If
+
+                    ' Create a temporary file path with a unique name
+                    Dim tempFilePath As String = Path.Combine(tempDir, $"{document.DocumentID}_{document.FileName}")
+
                     ' Save the file content to the temp location
                     DocumentController.Base64ToFile(document.FileContent, tempFilePath)
 
                     ' Open the file with default application
-                    Process.Start(tempFilePath)
+                    Process.Start(New ProcessStartInfo() With {
+                        .FileName = tempFilePath,
+                        .UseShellExecute = True
+                    })
                 Catch ex As Exception
                     MessageBox.Show($"Error opening document: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 End Try
@@ -122,8 +149,12 @@ Namespace DPC.Views.Misc.Documents
             Dim button = DirectCast(sender, Button)
             Dim documentID = Convert.ToInt32(button.Tag)
 
+            ' Find the document title
+            Dim document = _filteredDocuments.FirstOrDefault(Function(d) d.DocumentID = documentID)
+            Dim documentTitle = If(document IsNot Nothing, document.Title, "this document")
+
             ' Confirm deletion
-            Dim result = MessageBox.Show("Are you sure you want to delete this document?",
+            Dim result = MessageBox.Show($"Are you sure you want to delete '{documentTitle}'?",
                                        "Confirm Deletion", MessageBoxButton.YesNo, MessageBoxImage.Question)
 
             If result = MessageBoxResult.Yes Then
@@ -138,25 +169,19 @@ Namespace DPC.Views.Misc.Documents
         End Sub
 
         Private Sub BtnExcel_Click(sender As Object, e As RoutedEventArgs)
-            ' Export documents to Excel
-            Try
-                ' Create save file dialog
-                Dim saveFileDialog As New SaveFileDialog With {
-                    .Filter = "Excel files (*.xlsx)|*.xlsx",
-                    .Title = "Export Documents to Excel",
-                    .FileName = "Documents_Export_" & DateTime.Now.ToString("yyyyMMdd")
-                }
+            ' Export documents to Excel using the static ExcelExporter helper
+            If _filteredDocuments.Count = 0 Then
+                MessageBox.Show("No documents to export.", "Information", MessageBoxButton.OK, MessageBoxImage.Information)
+                Return
+            End If
 
-                If saveFileDialog.ShowDialog() = True Then
-                    ' Create Excel export (using a helper class that would need to be implemented)
-                    Dim excelExporter As New ExcelExporter()
-                    excelExporter.ExportDocuments(_filteredDocuments, saveFileDialog.FileName)
+            Dim defaultFileName As String = $"Documents_Export_{DateTime.Now:yyyyMMdd}"
+            Dim worksheetName As String = "Documents"
 
-                    MessageBox.Show("Documents exported successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
-                End If
-            Catch ex As Exception
-                MessageBox.Show($"Error exporting to Excel: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
-            End Try
+            ' Use the ExcelExporter static method
+            If ExcelExporter.ExportCollectionToExcel(_filteredDocuments, defaultFileName, worksheetName) Then
+                ' Success message is handled by the ExcelExporter
+            End If
         End Sub
 
         Private Sub TxtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
@@ -166,10 +191,13 @@ Namespace DPC.Views.Misc.Documents
         End Sub
 
         Private Sub CmbEntriesCount_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
-            Dim comboBoxItem = DirectCast(CmbEntriesCount.SelectedItem, ComboBoxItem)
-            _itemsPerPage = Integer.Parse(comboBoxItem.Content.ToString())
-            _currentPage = 1
-            ApplyFilters()
+            If CmbEntriesCount.SelectedItem IsNot Nothing Then
+                Dim comboBoxItem = DirectCast(CmbEntriesCount.SelectedItem, ComboBoxItem)
+                If Integer.TryParse(comboBoxItem.Content.ToString(), _itemsPerPage) Then
+                    _currentPage = 1
+                    ApplyFilters()
+                End If
+            End If
         End Sub
 
         Private Sub BtnPrevious_Click(sender As Object, e As RoutedEventArgs)

@@ -2,18 +2,15 @@
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Components
 Imports System.Windows.Controls
-Imports ClosedXML.Excel
-Imports Microsoft.Win32
-Imports System.Data
-Imports System.IO
-Imports System.Reflection
 Imports System.ComponentModel
+Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Views.Stocks.Suppliers.ManageSuppliers
     Public Class ManageSuppliers
         Inherits Window
 
         Private view As ICollectionView
+
         Public Sub New()
             InitializeComponent()
 
@@ -31,6 +28,9 @@ Namespace DPC.Views.Stocks.Suppliers.ManageSuppliers
             If view IsNot Nothing Then
                 view.Filter = AddressOf FilterDataGrid
             End If
+
+            ' Set up search text box event handler
+            AddHandler txtSearch.TextChanged, AddressOf TxtSearch_TextChanged
         End Sub
 
         ' Function to filter DataGrid based on search text
@@ -41,66 +41,33 @@ Namespace DPC.Views.Stocks.Suppliers.ManageSuppliers
 
             Dim searchText As String = txtSearch.Text.ToLower()
 
+            ' Get the supplier from the item
+            Dim supplier = TryCast(item, Data.Model.Supplier)
+            If supplier IsNot Nothing Then
+                ' Check each relevant property for a match
+                Return supplier.SupplierName?.ToLower().Contains(searchText) OrElse
+                       supplier.SupplierCompany?.ToLower().Contains(searchText) OrElse
+                       supplier.OfficeAddress?.ToLower().Contains(searchText) OrElse
+                       supplier.SupplierEmail?.ToLower().Contains(searchText) OrElse
+                       supplier.SupplierPhone?.ToLower().Contains(searchText) OrElse
+                       supplier.BrandNames?.ToLower().Contains(searchText)
+            End If
+
             Return False
         End Function
 
-        ' Event Handler for Export Button Click
+        ' Event handler for search text changes
+        Private Sub TxtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
+            view?.Refresh() ' Refresh the view to apply the filter
+        End Sub
+
+        ' Event Handler for Export Button Click - Using the new ExcelExporter helper
         Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
-            ' Check if DataGrid has data
-            If dataGrid.Items.Count = 0 Then
-                MessageBox.Show("No data to export!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning)
-                Exit Sub
-            End If
+            ' Create a list of column headers to exclude
+            Dim columnsToExclude As New List(Of String) From {"Settings", "Actions"}
 
-            ' Open SaveFileDialog
-            Dim saveFileDialog As New SaveFileDialog() With {
-     .Filter = "Excel Files (*.xlsx)|*.xlsx",
-     .FileName = "DataGridExport.xlsx"
- }
-
-            If saveFileDialog.ShowDialog() = True Then
-                Try
-                    ' Create Excel workbook
-                    Using workbook As New XLWorkbook()
-                        Dim dt As New DataTable()
-
-                        ' Add DataGrid columns as table headers
-                        For Each column As DataGridColumn In dataGrid.Columns
-                            dt.Columns.Add(column.Header.ToString())
-                        Next
-
-                        ' Add rows from DataGrid items
-                        For Each item In dataGrid.Items
-                            Dim row As DataRow = dt.NewRow()
-                            For i As Integer = 0 To dataGrid.Columns.Count - 1
-                                Dim column As DataGridColumn = dataGrid.Columns(i)
-                                Dim boundColumn = TryCast(column, DataGridBoundColumn)
-                                If boundColumn IsNot Nothing AndAlso boundColumn.Binding IsNot Nothing Then
-                                    Dim binding As Binding = TryCast(boundColumn.Binding, Binding)
-                                    If binding IsNot Nothing AndAlso binding.Path IsNot Nothing Then
-                                        Dim bindingPath As String = binding.Path.Path
-                                        Dim prop As PropertyInfo = item.GetType().GetProperty(bindingPath)
-                                        If prop IsNot Nothing Then
-                                            row(i) = prop.GetValue(item, Nothing)?.ToString()
-                                        End If
-                                    End If
-                                End If
-                            Next
-                            dt.Rows.Add(row)
-                        Next
-
-                        ' Add table to Excel sheet
-                        Dim worksheet = workbook.Worksheets.Add(dt, "DataGridData")
-                        worksheet.Columns().AdjustToContents()
-
-                        ' Save Excel file
-                        workbook.SaveAs(saveFileDialog.FileName)
-                        MessageBox.Show("Export Successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
-                    End Using
-                Catch ex As Exception
-                    MessageBox.Show("Error exporting data: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
-                End Try
-            End If
+            ' Use the ExcelExporter helper with column exclusions
+            ExcelExporter.ExportDataGridToExcel(dataGrid, columnsToExclude, "Suppliers", "Suppliers List")
         End Sub
 
         ' Load Data Using SupplierController
