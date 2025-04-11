@@ -5,7 +5,7 @@
         xmlns:local="namespace:DPC.Views.HRM.Employees.AddEmployee" 
         xmlns:local1="namespace:DPC.Components.Forms"
         Title="Add Employee"
-        Height="1416" Width="1200"
+        Height="800" Width="1200"
         Background="#F5F5F5"
         FontFamily="{StaticResource Lexend}"
         WindowStartupLocation="CenterScreen">
