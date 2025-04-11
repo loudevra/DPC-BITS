@@ -415,6 +415,20 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             End If
         End Sub
 
+        Private Sub BtnBack(sender As Object, e As RoutedEventArgs)
+            ' Notify the parent window to update its variation text
+            Dim parentWindow = Window.GetWindow(Me)
+            If parentWindow IsNot Nothing AndAlso TypeOf parentWindow Is DPC.Views.Stocks.ItemManager.NewProduct.ProductVariationDetails Then
+                Dim addNewProductsWindow = DirectCast(parentWindow, DPC.Views.Stocks.ItemManager.NewProduct.ProductVariationDetails)
+            End If
+
+            Dim VariationDetails As New Views.Stocks.ItemManager.NewProduct.AddNewProducts()
+            VariationDetails.Show()
+
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
+        End Sub
+
         Protected Overrides Sub OnClosing(e As System.ComponentModel.CancelEventArgs)
             ' Save current form data before closing
             If Not String.IsNullOrEmpty(variationManager.CurrentCombination) Then
