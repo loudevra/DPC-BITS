@@ -64,11 +64,11 @@ Namespace DPC.Components.UI
             If sidebarWidth <= 80 Then
                 ' Sidebar is collapsed - position menu farther right
                 popup.HorizontalOffset = 60
-                popup.VerticalOffset = -button.ActualHeight * 3 ' Align with button
+                popup.VerticalOffset = -button.ActualHeight * 6.301
             Else
                 ' Sidebar is expanded - position menu immediately to the right
                 popup.HorizontalOffset = sidebarWidth - button.Margin.Left
-                popup.VerticalOffset = -button.ActualHeight * 3 ' Align with button
+                popup.VerticalOffset = -button.ActualHeight * 6.301
             End If
 
             ' Store references to event handlers so we can remove them later
