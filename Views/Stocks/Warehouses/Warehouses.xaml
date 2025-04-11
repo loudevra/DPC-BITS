@@ -271,15 +271,15 @@
                             </DataGrid.ColumnHeaderStyle>
 
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="#" Binding="{Binding ID}" Width="Auto"/>
-                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto"/>
-                                <DataGridTextColumn Header="Total Products" Binding="{Binding TotaProducts}" Width="Auto"/>
-                                <DataGridTextColumn Header="Stock Quantity" Binding="{Binding StockQuantity}" Width="Auto"/>
-                                <DataGridTextColumn Header="Worth (Sales/Sales)" Binding="{Binding Action}" Width="Auto"/>
+                                <DataGridTextColumn Header="#" Binding="{Binding ID}" Width="Auto" FontFamily="Lexend" Foreground="#474747" />
+                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto" FontFamily="Lexend" Foreground="#474747" />
+                                <DataGridTextColumn Header="Total Products" Binding="{Binding TotaProducts}" Width="Auto" FontFamily="Lexend" Foreground="#474747" />
+                                <DataGridTextColumn Header="Stock Quantity" Binding="{Binding StockQuantity}" Width="Auto" FontFamily="Lexend" Foreground="#474747" />
+                                <DataGridTextColumn Header="Worth (Sales/Sales)" Binding="{Binding Action}" Width="Auto" FontFamily="Lexend" Foreground="#474747" />
                                 <DataGridTemplateColumn Header="Action" Width="*">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Button Content="⚙" Width="30" Height="30" Background="Transparent"/>
+                                            <Button Content="⚙" Width="30" Height="30" Background="Transparent" FontFamily="Lexend" Foreground="#474747" />
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
