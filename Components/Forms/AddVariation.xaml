@@ -49,13 +49,6 @@
                         </StackPanel>
                     </Button>
 
-                    <Button Background="LightGreen" Style="{StaticResource RoundedButtonStyle}" BorderBrush="Transparent" BorderThickness="0" Click="BtnSaveVariation">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Background="Transparent" Margin="0,5">
-                            <materialDesign:PackIcon Kind="ChevronRight" Foreground="#FDFDFD" VerticalAlignment="Center" Margin="0,0,5,0" Width="25" Height="25"/>
-                            <TextBlock Text="Save Variation" Foreground="#FDFDFD" VerticalAlignment="Center" FontSize="15" FontWeight="SemiBold"/>
-                        </StackPanel>
-                    </Button>
-
                     <Button Background="#2E466B" Style="{StaticResource RoundedButtonStyle}" BorderBrush="Transparent" BorderThickness="0" Click="BtnVariationDetails">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Background="Transparent" Margin="0,5">
                             <materialDesign:PackIcon Kind="ChevronRight" Foreground="#FDFDFD" VerticalAlignment="Center" Margin="0,0,5,0" Width="25" Height="25"/>

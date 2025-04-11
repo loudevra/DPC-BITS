@@ -11,6 +11,7 @@ Public Class PopupHelper
     Private Shared closeOnBackgroundClick As Boolean = True  ' Default value for background closing
     Private Shared sizeChangedHandler As SizeChangedEventHandler  ' Correct event handler type
     Private Shared originalOwner As Window = Nothing
+    Private Shared isDialogActive As Boolean = False  ' Track if a dialog is currently open
 
     Public Shared Sub OpenPopupWithControl(sender As Object, control As UserControl, position As String,
                                           Optional verticalOffset As Double = 0,
@@ -39,6 +40,7 @@ Public Class PopupHelper
 
         ' Get the proper parent window
         Dim parentWindow As Window = If(window IsNot Nothing, window, Application.Current.MainWindow)
+        originalOwner = parentWindow  ' Store the original owner
 
         ' Create a new popup with improved settings
         activePopup = New Popup With {
@@ -46,6 +48,9 @@ Public Class PopupHelper
             .AllowsTransparency = True,
             .Child = control
         }
+
+        ' Set proper Z-index to allow dialogs to show in front
+        Panel.SetZIndex(activePopup, 1000)  ' Lower Z-index than dialogs would have
 
         ' Set proper placement settings
         If position.ToLower() = "windowcenter" Then
@@ -68,7 +73,7 @@ Public Class PopupHelper
         End If
         mouseHandlerAttached = True
 
-        ' Add handler for window deactivation
+        ' Add handler for window deactivation and activation
         If parentWindow IsNot Nothing Then
             AddHandler parentWindow.Deactivated, AddressOf OnWindowDeactivated
             AddHandler parentWindow.Activated, AddressOf OnWindowActivated
@@ -80,6 +85,9 @@ Public Class PopupHelper
             AddHandler parentWindow.SizeChanged, sizeChangedHandler
         End If
 
+        ' Hook into dialog events by overriding owner behavior
+        AttachDialogMonitoring(parentWindow)
+
         ' Now open the popup
         activePopup.IsOpen = True
 
@@ -87,6 +95,47 @@ Public Class PopupHelper
         AddHandler control.Loaded, Sub()
                                        UpdatePopupPosition(clickedElement, control, position, horizontalOffset, verticalOffset)
                                    End Sub
+    End Sub
+
+    ' New method to monitor dialog creation
+    Private Shared Sub AttachDialogMonitoring(parentWindow As Window)
+        ' Hook into application dispatcher to monitor for new windows
+        AddHandler Application.Current.Dispatcher.Hooks.DispatcherInactive, AddressOf CheckForDialogs
+    End Sub
+
+    ' Handle dispatcher checks for new dialog windows
+    Private Shared Sub CheckForDialogs(sender As Object, e As EventArgs)
+        ' Check for new windows that might be dialogs
+        For Each window In Application.Current.Windows
+            If TypeOf window Is Window AndAlso window IsNot originalOwner Then
+                Dim dialog = TryCast(window, Window)
+                If dialog IsNot Nothing AndAlso dialog.Owner Is originalOwner Then
+                    ' This is likely a dialog, ensure popup is temporarily hidden
+                    TemporarilyHidePopup(True)
+                    isDialogActive = True
+                    Return
+                End If
+            End If
+        Next
+
+        ' No dialogs found, ensure popup is visible if it was previously hidden
+        If isDialogActive Then
+            isDialogActive = False
+            TemporarilyHidePopup(False)
+        End If
+    End Sub
+
+    ' Temporarily hide/show popup for dialogs
+    Private Shared Sub TemporarilyHidePopup(hide As Boolean)
+        If activePopup IsNot Nothing AndAlso activePopup.IsOpen Then
+            If hide Then
+                ' Store current visibility and hide
+                activePopup.Visibility = Visibility.Hidden
+            Else
+                ' Restore visibility
+                activePopup.Visibility = Visibility.Visible
+            End If
+        End If
     End Sub
 
     Private Shared Sub OnWindowSizeChanged(sender As Object, e As SizeChangedEventArgs)
@@ -118,53 +167,41 @@ Public Class PopupHelper
         Dim hitTestResult = VisualTreeHelper.HitTest(popupChild, e.GetPosition(popupChild))
 
         ' If click was outside the popup and no dialog is open, close the popup
-        If hitTestResult Is Nothing AndAlso Not IsDialogOpen() Then
+        If hitTestResult Is Nothing AndAlso Not isDialogActive Then
             ClosePopup()
         End If
     End Sub
 
     Private Shared Sub OnWindowDeactivated(sender As Object, e As EventArgs)
-        ' Don't close the popup when the window is deactivated
-        ' This allows MessageBox and OpenFileDialog to open without closing the popup
+        ' When window is deactivated, check if a dialog is being shown
+        ' Don't close popup, but check if we need to handle dialog visibility
+        CheckForDialogs(sender, e)
     End Sub
 
     Private Shared Sub OnWindowActivated(sender As Object, e As EventArgs)
+        ' When window is reactivated, check if a dialog was closed
+        CheckForDialogs(sender, e)
+
         ' Check if we should restore focus to the popup content
-        If activePopup IsNot Nothing AndAlso activePopup.IsOpen AndAlso currentControl IsNot Nothing Then
-            ' Optional: Force focus back to popup content
+        If activePopup IsNot Nothing AndAlso activePopup.IsOpen AndAlso currentControl IsNot Nothing AndAlso Not isDialogActive Then
+            ' Ensure popup is visible
+            activePopup.Visibility = Visibility.Visible
         End If
     End Sub
-
-    Private Shared Function IsDialogOpen() As Boolean
-        ' Check if any of the dialogs are currently open
-        ' This is an approximation as there's no direct way to check for all dialogs
-        Return DialogPanes.Count > 0
-    End Function
-
-    Private Shared ReadOnly Property DialogPanes As ICollection(Of DependencyObject)
-        Get
-            Dim list As New List(Of DependencyObject)
-            For Each window In Application.Current.Windows
-                If TypeOf window Is Window Then
-                    If CType(window, Window).Owner Is currentWindow Then
-                        ' This is likely a dialog
-                        list.Add(CType(window, DependencyObject))
-                    End If
-                End If
-            Next
-            Return list
-        End Get
-    End Property
 
     Public Shared Sub ClosePopup()
         If activePopup IsNot Nothing Then
             activePopup.IsOpen = False
             RemoveAllHandlers()
             activePopup = Nothing
+            isDialogActive = False
         End If
     End Sub
 
     Private Shared Sub RemoveAllHandlers()
+        ' Remove dispatcher hook
+        RemoveHandler Application.Current.Dispatcher.Hooks.DispatcherInactive, AddressOf CheckForDialogs
+
         ' Clean up event handlers
         If activePopup IsNot Nothing Then
             RemoveHandler activePopup.Closed, AddressOf OnPopupClosed
@@ -248,6 +285,4 @@ Public Class PopupHelper
                                                        End Function
         End If
     End Sub
-
-
 End Class

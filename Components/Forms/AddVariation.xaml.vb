@@ -284,24 +284,18 @@ Namespace DPC.Components.Forms
             ' Save variations before navigating
             SaveVariations()
 
-            Dim VariationDetails As New Views.Stocks.ItemManager.NewProduct.ProductVariationDetails()
-            VariationDetails.Show()
-
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
-        End Sub
-
-        ' New Save Variations button method
-        Private Sub BtnSaveVariation(sender As Object, e As RoutedEventArgs)
-            SaveVariations()
-            MessageBox.Show("Variations saved successfully!", "Save Complete", MessageBoxButton.OK, MessageBoxImage.Information)
-
             ' Notify the parent window to update its variation text
             Dim parentWindow = Window.GetWindow(Me)
             If parentWindow IsNot Nothing AndAlso TypeOf parentWindow Is DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts Then
                 Dim addNewProductsWindow = DirectCast(parentWindow, DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts)
                 addNewProductsWindow.LoadProductVariations()
             End If
+
+            Dim VariationDetails As New Views.Stocks.ItemManager.NewProduct.ProductVariationDetails()
+            VariationDetails.Show()
+
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
         End Sub
 
         ' Also update the ClosePopup method to ensure variations are saved and the display is updated
