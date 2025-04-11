@@ -1,4 +1,4 @@
-﻿Imports System.IO
+Imports System.IO
 
 Namespace DPC.Data.Helpers
     Public Class EnvLoader
