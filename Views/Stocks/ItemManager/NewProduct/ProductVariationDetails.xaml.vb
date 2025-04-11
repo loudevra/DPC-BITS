@@ -15,6 +15,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
     Public Class ProductVariationDetails
         Inherits Window
 
+        Private variationManager As ProductVariationManager
         Public Sub New()
             InitializeComponent()
 
@@ -37,6 +38,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             TxtDefaultTax.Text = 12
 
+            variationManager = New ProductVariationManager()
             ' Initialize dynamic variations panel
             InitializeVariations()
         End Sub
@@ -283,26 +285,24 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
         ' Method to load details for selected variation
         Private Sub LoadVariationDetails(combinationName As String)
-            ' Parse the combination name to get individual option values
-            Dim options As String() = combinationName.Split(New Char() {","c}, StringSplitOptions.RemoveEmptyEntries)
+            ' Get current values before switching (save current data)
+            If Not String.IsNullOrEmpty(variationManager.CurrentCombination) Then
+                SaveCurrentFormData(variationManager.CurrentCombination)
+            End If
 
-            ' Trim whitespace from each option
-            For i As Integer = 0 To options.Length - 1
-                options(i) = options(i).Trim()
-            Next
+            ' Select the new combination
+            variationManager.SelectVariationCombination(combinationName)
 
-            ' TODO: Load specific data for this variation combination
-            ' This would access any saved data for this specific combination
-            ' or create default values if this is a new combination
+            ' Load data for the selected combination
+            LoadFormData(combinationName)
 
-            ' For now, we'll just update a title or display the current selection
+            ' Update the selection title (if it exists)
             Dim titleTextBlock As TextBlock = TryCast(FindName("SelectedVariationTitle"), TextBlock)
             If titleTextBlock IsNot Nothing Then
                 titleTextBlock.Text = $"Selected: {combinationName}"
             End If
         End Sub
 
-        ' To be called when the form loads
         ' To be called when the form loads
         Public Sub InitializeVariations()
             ' Call this during form initialization
@@ -318,5 +318,119 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 End If
             End If
         End Sub
+
+        Private Sub SaveCurrentFormData(combinationName As String)
+            ' Get the current variation data
+            Dim variationData As ProductVariationData = variationManager.GetVariationData(combinationName)
+
+            ' Save form values to the model
+            If TxtRetailPrice.Text.Trim() <> "" Then
+                variationData.RetailPrice = Decimal.Parse(TxtRetailPrice.Text)
+            End If
+
+            If TxtPurchaseOrder.Text.Trim() <> "" Then
+                variationData.PurchaseOrder = Decimal.Parse(TxtPurchaseOrder.Text)
+            End If
+
+            If TxtDefaultTax.Text.Trim() <> "" Then
+                variationData.DefaultTax = Decimal.Parse(TxtDefaultTax.Text)
+            End If
+
+            If TxtDiscountRate.Text.Trim() <> "" Then
+                variationData.DiscountRate = Decimal.Parse(TxtDiscountRate.Text)
+            End If
+
+            If TxtStockUnits.Text.Trim() <> "" Then
+                variationData.StockUnits = Integer.Parse(TxtStockUnits.Text)
+            End If
+
+            If TxtAlertQuantity.Text.Trim() <> "" Then
+                variationData.AlertQuantity = Integer.Parse(TxtAlertQuantity.Text)
+            End If
+
+            ' Save serial number settings
+            variationData.IncludeSerialNumbers = CheckBoxSerialNumber.IsChecked.Value
+
+            ' Save serial numbers if needed
+            If variationData.IncludeSerialNumbers Then
+                variationData.SerialNumbers.Clear()
+                ' Save serial numbers from your serial number controls
+                ' This depends on how your ProductController stores serial numbers
+                ' For example:
+                For Each serialNumber As System.Windows.Controls.TextBox In ProductController.SerialNumbers
+                    variationData.SerialNumbers.Add(serialNumber.Text)
+                Next
+
+            End If
+        End Sub
+
+        Private Sub LoadFormData(combinationName As String)
+            ' Get the variation data
+            Dim variationData As ProductVariationData = variationManager.GetVariationData(combinationName)
+
+            ' Load data into form controls
+            TxtRetailPrice.Text = If(variationData.RetailPrice = 0, "", variationData.RetailPrice.ToString())
+            TxtPurchaseOrder.Text = If(variationData.PurchaseOrder = 0, "", variationData.PurchaseOrder.ToString())
+            TxtDefaultTax.Text = If(variationData.DefaultTax = 0, "12", variationData.DefaultTax.ToString())
+            TxtDiscountRate.Text = If(variationData.DiscountRate = 0, "", variationData.DiscountRate.ToString())
+            TxtStockUnits.Text = If(variationData.StockUnits = 0, "", variationData.StockUnits.ToString())
+            TxtAlertQuantity.Text = If(variationData.AlertQuantity = 0, "", variationData.AlertQuantity.ToString())
+
+            ' Set checkbox state
+            CheckBoxSerialNumber.IsChecked = variationData.IncludeSerialNumbers
+
+            ' Update SerialNumber section visibility
+            SerialNumberChecker(CheckBoxSerialNumber)
+
+            ' Clear existing serial numbers
+            ProductController.SerialNumbers.Clear()
+            MainContainer.Children.Clear()
+
+            ' If we have serial numbers, load them
+            If variationData.IncludeSerialNumbers And variationData.SerialNumbers.Count > 0 Then
+                ' Load serial numbers into UI
+                For Each serialNumber As String In variationData.SerialNumbers
+                    ' Add a row for each serial number
+                    ProductController.BtnAddRow_Click(Nothing, Nothing)
+
+                    ' Now set the value of the last added row
+                    ' This might need customization based on how your ProductController creates rows
+                    If MainContainer.Children.Count > 0 Then
+                        Dim lastGrid As Grid = TryCast(MainContainer.Children(MainContainer.Children.Count - 1), Grid)
+                        If lastGrid IsNot Nothing Then
+                            ' Find the TextBox in the grid
+                            For Each child As UIElement In lastGrid.Children
+                                If TypeOf child Is System.Windows.Controls.TextBox Then
+                                    Dim textBox As System.Windows.Controls.TextBox = DirectCast(child, System.Windows.Controls.TextBox)
+                                    textBox.Text = serialNumber
+                                    Exit For
+                                End If
+                            Next
+                        End If
+                    End If
+                Next
+            Else
+                ' Add at least one empty row for serial input
+                ProductController.BtnAddRow_Click(Nothing, Nothing)
+            End If
+        End Sub
+
+        Protected Overrides Sub OnClosing(e As System.ComponentModel.CancelEventArgs)
+            ' Save current form data before closing
+            If Not String.IsNullOrEmpty(variationManager.CurrentCombination) Then
+                SaveCurrentFormData(variationManager.CurrentCombination)
+            End If
+
+            MyBase.OnClosing(e)
+        End Sub
+
+        Public Function GetAllVariationData() As Dictionary(Of String, ProductVariationData)
+            ' Make sure current form data is saved
+            If Not String.IsNullOrEmpty(variationManager.CurrentCombination) Then
+                SaveCurrentFormData(variationManager.CurrentCombination)
+            End If
+
+            Return variationManager.GetAllVariationData()
+        End Function
     End Class
 End Namespace
