@@ -39,7 +39,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             TxtDefaultTax.Text = 12
         End Sub
 
-
         Private Sub BtnBatchEdit(sender As Object, e As RoutedEventArgs)
             ' Create an instance of the AddCategory form
             Dim OpenBatchEdit As New ProductBatchEdit()

@@ -65,10 +65,22 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,10">
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                        <materialDesign:PackIcon Kind="FormatListBulleted" Width="40" Height="40" Margin="0,0,15,0"/>
-                        <TextBlock Text="Variation Details" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="#555555"/>
-                    </StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10" Grid.Column="0">
+                            <materialDesign:PackIcon Kind="FormatListBulleted" Width="40" Height="40" Margin="0,0,15,0"/>
+                            <TextBlock Text="Variation Details" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="#555555"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" >
+                            <Button Style="{StaticResource RoundedButtonStyle}" Margin="0" HorizontalAlignment="Right" BorderThickness="0" Background="Transparent" Padding="0">
+                                <materialDesign:PackIcon Kind="ArrowLeftTop" Width="20" Height="20" Margin="0,0,0,20"/>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
 
                     <Border BorderBrush="#AEAEAE" BorderThickness="0,1,0,0" Height="1" Margin="-10,0,-10,0"/>
 

@@ -31,7 +31,7 @@
 
                     <StackPanel Grid.Column="1" VerticalAlignment="Top">
                         <Button Background="Transparent" BorderThickness="0" HorizontalAlignment="Right" Click="ClosePopup">
-                            <materialDesign:PackIcon Kind="ArrowULeftTop" Foreground="#555555" Width="20" Height="20"/>
+                            <materialDesign:PackIcon Kind="close" Foreground="#555555" Width="20" Height="20"/>
                         </Button>
                     </StackPanel>
                 </Grid>
