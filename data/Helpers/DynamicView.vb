@@ -21,6 +21,8 @@ Namespace DPC.Data.Helpers
                         Return New Stocks.Supplier.NewSuppliers.NewSuppliers() ' This is now a UserControl
                     Case "managesuppliers"
                         Return New Stocks.Suppliers.ManageSuppliers.ManageSuppliers() ' This is now a UserControl
+                    Case "managebrands"
+                        Return New Stocks.Suppliers.ManageBrands.ManageBrands() ' This is now a UserControl
                     Case Else
                         ' Return a placeholder UserControl with error text
                         Dim errorContent As New TextBlock With {
@@ -108,6 +110,8 @@ Namespace DPC.Data.Helpers
                 Return "newsuppliers"
             ElseIf typeName = "managesuppliers" Then
                 Return "managesuppliers"
+            ElseIf typeName = "managebrands" Then
+                Return "managebrands"
             Else
                 Return typeName
             End If

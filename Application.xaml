@@ -521,6 +521,48 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+
+            <!-- Pagination Styles -->
+            <Style x:Key="PaginationStyle">
+                <Setter Property="Control.Margin" Value="3,0" />
+                <Setter Property="Control.FontFamily" Value="Lexend" />
+                <Setter Property="Control.FontSize" Value="14" />
+            </Style>
+
+            <Style x:Key="PaginationButtonStyle" TargetType="Button" BasedOn="{StaticResource PaginationStyle}">
+                <Setter Property="Width" Value="35" />
+                <Setter Property="Height" Value="35" />
+                <Setter Property="Background" Value="White" />
+                <Setter Property="Foreground" Value="#474747" />
+                <Setter Property="BorderBrush" Value="#DDDDDD" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="17.5">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="PaginationCurrentPageButtonStyle" TargetType="Button" BasedOn="{StaticResource PaginationButtonStyle}">
+                <Setter Property="Background" Value="#474747" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="BorderBrush" Value="#474747" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+            </Style>
+
+            <Style x:Key="PaginationNavButtonStyle" TargetType="Button" BasedOn="{StaticResource PaginationButtonStyle}">
+                <Setter Property="Width" Value="40" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="#CCCCCC" />
+            </Style>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

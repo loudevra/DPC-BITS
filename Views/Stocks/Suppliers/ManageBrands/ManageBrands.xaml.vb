@@ -3,107 +3,81 @@ Imports DPC.DPC.Components
 Imports System.Windows.Controls.Primitives
 Imports System.Collections.ObjectModel
 Imports System.Windows.Controls
-Imports ClosedXML.Excel
-Imports Microsoft.Win32
 Imports System.Data
-Imports System.IO
-Imports System.Reflection
 Imports System.ComponentModel
+Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Views.Stocks.Suppliers.ManageBrands
     Public Class ManageBrands
-        Inherits Window
+        Inherits UserControl
 
+        ' Properties for popup and data handling
         Private popup As Popup
         Private recentlyClosed As Boolean = False
         Private view As ICollectionView
 
+        ' UI elements for direct access
+
+
+        ' Properties for pagination
+        Private _paginationHelper As PaginationHelper
+        Private _searchFilterHelper As SearchFilterHelper
+
+        Public Sub New(lblPageInfo As TextBlock)
+            ' Constructor for testing or other uses that might provide a page info label
+            InitializeComponent()
+            InitializeControls()
+        End Sub
+
         Public Sub New()
             InitializeComponent()
-            Dim sidebar As New Components.Navigation.Sidebar()
-            SidebarContainer.Content = sidebar
+            InitializeControls()
+        End Sub
 
-            ' Load Top Navigation Bar
-            Dim topNav As New Components.Navigation.TopNavBar()
-            TopNavBarContainer.Content = topNav
+        Private Sub InitializeControls()
+            ' Find UI elements using their name
+            dataGrid = TryCast(FindName("dataGrid"), DataGrid)
+            txtSearch = TryCast(FindName("txtSearch"), TextBox)
+            cboItemsPerPage = TryCast(FindName("cboItemsPerPage"), ComboBox)
+            paginationPanel = TryCast(FindName("paginationPanel"), StackPanel)
 
-            ' Load DataGrid with items and create a CollectionViewSource for filtering
-            view = CollectionViewSource.GetDefaultView(dataGrid.ItemsSource)
-            If view IsNot Nothing Then
-                view.Filter = AddressOf FilterDataGrid
+            ' Verify that required controls are found
+            If dataGrid Is Nothing Then
+                MessageBox.Show("DataGrid not found in the XAML.", "Initialization Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                Return
             End If
 
+            If paginationPanel Is Nothing Then
+                MessageBox.Show("Pagination panel not found in the XAML.", "Initialization Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                Return
+            End If
+
+            ' Wire up event handlers
+            If txtSearch IsNot Nothing Then
+                AddHandler txtSearch.TextChanged, AddressOf TxtSearch_TextChanged
+            End If
+
+            If cboItemsPerPage IsNot Nothing Then
+                AddHandler cboItemsPerPage.SelectionChanged, AddressOf CboItemsPerPage_SelectionChanged
+            End If
+
+            ' Initialize and load brands data
             LoadBrands()
         End Sub
 
-        ' Function to filter DataGrid based on search text
-        Private Function FilterDataGrid(item As Object) As Boolean
-            If String.IsNullOrWhiteSpace(txtSearch.Text) Then
-                Return True ' Show all items if search is empty
+        ' Event handler for TextChanged to update the filter
+        Private Sub TxtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
+            If _searchFilterHelper IsNot Nothing Then
+                _searchFilterHelper.SearchText = txtSearch.Text
             End If
+        End Sub
 
-            Dim searchText As String = txtSearch.Text.ToLower()
-
-            Return False
-        End Function
-
-        ' Event Handler for Export Button Click
+        ' Event Handler for Export Button Click - Updated to use ExcelExporter
         Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
-            ' Check if DataGrid has data
-            If dataGrid.Items.Count = 0 Then
-                MessageBox.Show("No data to export!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning)
-                Exit Sub
-            End If
+            If dataGrid Is Nothing Then Return
 
-            ' Open SaveFileDialog
-            Dim saveFileDialog As New SaveFileDialog() With {
-     .Filter = "Excel Files (*.xlsx)|*.xlsx",
-     .FileName = "DataGridExport.xlsx"
- }
-
-            If saveFileDialog.ShowDialog() = True Then
-                Try
-                    ' Create Excel workbook
-                    Using workbook As New XLWorkbook()
-                        Dim dt As New DataTable()
-
-                        ' Add DataGrid columns as table headers
-                        For Each column As DataGridColumn In dataGrid.Columns
-                            dt.Columns.Add(column.Header.ToString())
-                        Next
-
-                        ' Add rows from DataGrid items
-                        For Each item In dataGrid.Items
-                            Dim row As DataRow = dt.NewRow()
-                            For i As Integer = 0 To dataGrid.Columns.Count - 1
-                                Dim column As DataGridColumn = dataGrid.Columns(i)
-                                Dim boundColumn = TryCast(column, DataGridBoundColumn)
-                                If boundColumn IsNot Nothing AndAlso boundColumn.Binding IsNot Nothing Then
-                                    Dim binding As Binding = TryCast(boundColumn.Binding, Binding)
-                                    If binding IsNot Nothing AndAlso binding.Path IsNot Nothing Then
-                                        Dim bindingPath As String = binding.Path.Path
-                                        Dim prop As PropertyInfo = item.GetType().GetProperty(bindingPath)
-                                        If prop IsNot Nothing Then
-                                            row(i) = prop.GetValue(item, Nothing)?.ToString()
-                                        End If
-                                    End If
-                                End If
-                            Next
-                            dt.Rows.Add(row)
-                        Next
-
-                        ' Add table to Excel sheet
-                        Dim worksheet = workbook.Worksheets.Add(dt, "DataGridData")
-                        worksheet.Columns().AdjustToContents()
-
-                        ' Save Excel file
-                        workbook.SaveAs(saveFileDialog.FileName)
-                        MessageBox.Show("Export Successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
-                    End Using
-                Catch ex As Exception
-                    MessageBox.Show("Error exporting data: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
-                End Try
-            End If
+            Dim columnsToExclude As New List(Of String) From {"Settings"}
+            ExcelExporter.ExportDataGridToExcel(dataGrid, columnsToExclude, "BrandsExport", "Brands")
         End Sub
 
         Private Sub OpenAddBrand(sender As Object, e As RoutedEventArgs)
@@ -149,8 +123,72 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
         End Sub
 
         Private Sub LoadBrands()
-            Dim brands = BrandController.GetBrands()
-            dataGrid.ItemsSource = brands
+            Try
+                ' Check if DataGrid exists
+                If dataGrid Is Nothing Then
+                    MessageBox.Show("DataGrid control not found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return
+                End If
+
+                ' Get all brands with error handling
+                Dim allBrands As ObservableCollection(Of Object)
+                Try
+                    Dim brandList = BrandController.GetBrands()
+                    If brandList Is Nothing Then
+                        MessageBox.Show("Brand data returned null.", "Data Error", MessageBoxButton.OK, MessageBoxImage.Warning)
+                        allBrands = New ObservableCollection(Of Object)()
+                    Else
+                        allBrands = New ObservableCollection(Of Object)(brandList)
+                    End If
+                Catch ex As Exception
+                    MessageBox.Show("Error retrieving brand data: " & ex.Message, "Data Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    allBrands = New ObservableCollection(Of Object)()
+                End Try
+
+                ' Clear the pagination panel to avoid duplicate controls
+                paginationPanel.Children.Clear()
+
+                ' Initialize pagination helper with our DataGrid and pagination panel
+                _paginationHelper = New PaginationHelper(dataGrid, paginationPanel)
+
+                ' Set the items per page from the combo box if available
+                If cboItemsPerPage IsNot Nothing Then
+                    Dim selectedItem = TryCast(cboItemsPerPage.SelectedItem, ComboBoxItem)
+                    If selectedItem IsNot Nothing Then
+                        Dim itemsPerPageText As String = TryCast(selectedItem.Content, String)
+                        Dim itemsPerPage As Integer
+                        If Integer.TryParse(itemsPerPageText, itemsPerPage) Then
+                            _paginationHelper.ItemsPerPage = itemsPerPage
+                        End If
+                    End If
+                End If
+
+                ' Set the all items to the helper
+                _paginationHelper.AllItems = allBrands
+
+                ' Initialize search filter helper with our pagination helper
+                _searchFilterHelper = New SearchFilterHelper(_paginationHelper, "ID", "Name", "TotalSupplier")
+
+            Catch ex As Exception
+                MessageBox.Show("Error in LoadBrands: " & ex.Message & vbCrLf & "Stack Trace: " & ex.StackTrace,
+                                "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+        End Sub
+
+        Private Sub CboItemsPerPage_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+            If _paginationHelper Is Nothing Then Return
+
+            ' Get the selected value from the ComboBox
+            Dim selectedComboBoxItem As ComboBoxItem = TryCast(cboItemsPerPage.SelectedItem, ComboBoxItem)
+            If selectedComboBoxItem IsNot Nothing Then
+                Dim itemsPerPageText As String = TryCast(selectedComboBoxItem.Content, String)
+                Dim newItemsPerPage As Integer
+
+                If Integer.TryParse(itemsPerPageText, newItemsPerPage) Then
+                    ' Update the pagination helper's items per page
+                    _paginationHelper.ItemsPerPage = newItemsPerPage
+                End If
+            End If
         End Sub
     End Class
 End Namespace

@@ -367,6 +367,7 @@
     <Compile Include="Data\Helpers\DynamicView.vb" />
     <Compile Include="Data\Helpers\EmailService.vb" />
     <Compile Include="Data\Helpers\EnvLoader.vb" />
+    <Compile Include="Data\Helpers\PaginationHelper.vb" />
     <Compile Include="Data\Helpers\PBKDF2Hasher.vb" />
     <Compile Include="Data\Helpers\PopupHelper.vb" />
     <Compile Include="Data\Helpers\RelayCommand.vb" />

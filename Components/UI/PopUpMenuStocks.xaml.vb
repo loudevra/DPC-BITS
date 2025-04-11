@@ -169,12 +169,7 @@ Namespace DPC.Components.UI
 
         Private Sub NavigateToManageBrands(sender As Object, e As RoutedEventArgs)
 
-            Dim ManageBrandsWindow As New Views.Stocks.Suppliers.ManageBrands.ManageBrands()
-            ManageBrandsWindow.Show()
-
-            ' Close the current window where this UserControl is being used
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
+            DPC.Data.Helpers.DynamicView.NavigateToView("managebrands", Me)
         End Sub
 
         Private Sub NavigateToCustomLabel(sender As Object, e As RoutedEventArgs)
