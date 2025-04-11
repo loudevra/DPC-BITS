@@ -5,7 +5,7 @@
         xmlns:local="namespace:DPC.Views.HRM.Employees.AddEmployee" 
         xmlns:local1="namespace:DPC.Components.Forms"
         Title="Add Employee"
-        Height="800" Width="1200"
+        Height="1416" Width="1200"
         Background="#F5F5F5"
         FontFamily="{StaticResource Lexend}"
         WindowStartupLocation="CenterScreen">
@@ -56,58 +56,58 @@
                         <!-- Username -->
                         <TextBlock Text="Username:" Margin="0,0,0,5" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                         <Border Style="{StaticResource RoundedBorderStyle}">
-                            <TextBox x:Name="txtUsername" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" VerticalAlignment="Center" Width="556"/>
+                            <TextBox x:Name="txtUsername" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="744"/>
                         </Border>
 
 
                         <!-- Email -->
                         <TextBlock Text="Email:" Margin="0,5,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                         <Border Style="{StaticResource RoundedBorderStyle}">
-                            <TextBox x:Name="txtEmail" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="560"/>
+                            <TextBox x:Name="txtEmail" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="734"/>
                         </Border>
 
                         <!-- Password -->
                         <TextBlock Text="Password:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                         <Border Style="{StaticResource RoundedBorderStyle}">
-                            <TextBox x:Name="txtPassword" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="561"/>
+                            <TextBox x:Name="txtPassword" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="736"/>
                         </Border>
 
                         <!-- Full Name -->
                         <TextBlock Text="Full Name:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                         <Border Style="{StaticResource RoundedBorderStyle}">
-                            <TextBox x:Name="txtName" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="557"/>
+                            <TextBox x:Name="txtName" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="735"/>
                         </Border>
 
                         <!-- Address Fields -->
                         <TextBlock Text="Street Address:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                         <Border Style="{StaticResource RoundedBorderStyle}">
-                            <TextBox x:Name="txtStreetAddress" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="557"/>
+                            <TextBox x:Name="txtStreetAddress" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="729"/>
                         </Border>
 
                         <TextBlock Text="City:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                         <Border Style="{StaticResource RoundedBorderStyle}">
-                            <TextBox x:Name="txtCity" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="557"/>
+                            <TextBox x:Name="txtCity" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="738"/>
                         </Border>
 
                         <TextBlock Text="Region:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                         <Border Style="{StaticResource RoundedBorderStyle}">
-                            <TextBox x:Name="txtRegion" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="557"/>
+                            <TextBox x:Name="txtRegion" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="730"/>
                         </Border>
 
                         <TextBlock Text="Country:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                         <Border Style="{StaticResource RoundedBorderStyle}">
-                            <TextBox x:Name="txtCountry" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="557"/>
+                            <TextBox x:Name="txtCountry" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="728"/>
                         </Border>
 
                         <TextBlock Text="Postal Code:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                         <Border Style="{StaticResource RoundedBorderStyle}">
-                            <TextBox x:Name="txtPostalCode" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="557"/>
+                            <TextBox x:Name="txtPostalCode" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="730"/>
                         </Border>
 
                         <!-- Phone Number -->
                         <TextBlock Text="Phone Number:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                         <Border Style="{StaticResource RoundedBorderStyle}">
-                            <TextBox x:Name="txtPhone" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="557"/>
+                            <TextBox x:Name="txtPhone" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="729"/>
                         </Border>
 
                         <!-- Role -->
@@ -123,19 +123,19 @@
                         <!-- Salary -->
                         <TextBlock Text="Salary:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                         <Border Style="{StaticResource RoundedBorderStyle}">
-                            <TextBox x:Name="txtSalary" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="557"/>
+                            <TextBox x:Name="txtSalary" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="732"/>
                         </Border>
 
                         <!-- Sales Commission -->
                         <TextBlock Text="Sales Commission (%):" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                         <Border Style="{StaticResource RoundedBorderStyle}">
-                            <TextBox x:Name="txtSalesCommission" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="557"/>
+                            <TextBox x:Name="txtSalesCommission" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="735"/>
                         </Border>
 
                         <!-- Department -->
                         <TextBlock Text="Department:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                         <Border Style="{StaticResource RoundedBorderStyle}">
-                            <TextBox x:Name="txtDepartment" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="557"/>
+                            <TextBox x:Name="txtDepartment" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="740"/>
                         </Border>
 
                     </StackPanel>
