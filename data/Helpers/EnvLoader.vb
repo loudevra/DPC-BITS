@@ -1,8 +1,8 @@
-﻿Imports System.IO
+Imports System.IO
 
 Namespace DPC.Data.Helpers
     Public Class EnvLoader
-        Private Shared envVariables As New Dictionary(Of String, String)
+        Private Shared ReadOnly envVariables As New Dictionary(Of String, String)
 
         ''' <summary>
         ''' Loads environment variables from the .env file.

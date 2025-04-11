@@ -12,6 +12,13 @@ Namespace DPC.Views.Stocks.StockReturn.CustomersRecords
         ' Constructor
         Public Sub New()
             InitializeComponent()
+            Dim sidebar As New Components.Navigation.Sidebar()
+            SidebarContainer.Content = sidebar
+
+            ' Load Top Navigation Bar
+            Dim topNav As New Components.Navigation.TopNavBar()
+            TopNavBarContainer.Content = topNav
+
             DataContext = DateRangeVM ' Bind DataContext to ViewModel
         End Sub
 

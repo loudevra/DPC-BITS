@@ -21,7 +21,7 @@
         </Border>
 
         <!-- Card Container -->
-        <materialDesign:Card Padding="20" Background="#1E1E1E" UniformCornerRadius="30"
+        <materialDesign:Card Padding="20" Background="#090909" UniformCornerRadius="30"
                              Width="500" Height="400"
                              VerticalAlignment="Center" HorizontalAlignment="Center">
 
@@ -53,11 +53,11 @@
 
                 <!-- Progress Bar -->
                 <ProgressBar x:Name="LoadingProgressBar" Grid.Row="4"
-                    Width="200" Height="7"
-                    Foreground="White" Background="#333"
-                    IsIndeterminate="True"
-                    HorizontalAlignment="Center"
-                    Margin="0,10,0,0"/>
+    Width="200" Height="4"
+    Style="{StaticResource AnimatedMonochromeProgressBarStyle}"
+    IsIndeterminate="True"
+    HorizontalAlignment="Center"
+    Margin="0,10,0,0"/>
 
             </Grid>
         </materialDesign:Card>

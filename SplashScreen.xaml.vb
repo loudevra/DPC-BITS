@@ -1,9 +1,9 @@
-﻿Imports MySql.Data.MySqlClient
+Imports MySql.Data.MySqlClient
 Imports System.Threading.Tasks
 Imports System.Windows.Media.Animation
 Imports System.Windows.Media
 Imports System.Windows.Media.Effects
-Imports DPC.DPC.Data.Helpers ' Import EnvLoader
+Imports DPC.DPC.Data.Helpers
 
 Namespace DPC
     Public Class SplashScreen
@@ -12,6 +12,7 @@ Namespace DPC
             $"server={EnvLoader.GetEnv("DB_HOST")};" &
             $"userid={EnvLoader.GetEnv("DB_USER")};" &
             $"password={EnvLoader.GetEnv("DB_PASS")};" &
+            $"port={EnvLoader.GetEnv("DB_PORT")};" &
             $"database={EnvLoader.GetEnv("DB_NAME")};" &
             $"Pooling=True;" &
             $"Min Pool Size={EnvLoader.GetEnv("DB_POOL_MIN")};" &
@@ -43,6 +44,15 @@ Namespace DPC
             colorAnimation.KeyFrames.Add(New LinearColorKeyFrame(Colors.Green, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(1))))
             colorAnimation.KeyFrames.Add(New LinearColorKeyFrame(Colors.Blue, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(2))))
             colorAnimation.KeyFrames.Add(New LinearColorKeyFrame(Colors.Red, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(3))))
+
+            ' Apply animation to Glow Effect
+            Dim glowEffect As New DropShadowEffect With {
+                .Color = Colors.Red,
+                .BlurRadius = 120,
+                .ShadowDepth = 0
+            }
+            glowEffect = glowEffect
+            glowEffect.BeginAnimation(DropShadowEffect.ColorProperty, colorAnimation)
 
             ' Apply animation to Logo Glow
             Dim logoEffect As New DropShadowEffect With {

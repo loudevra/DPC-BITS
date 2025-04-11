@@ -1,39 +1,89 @@
 ﻿Imports System.Collections.ObjectModel
 Imports DPC.DPC.Components.Navigation
 Imports DPC.DPC.Data.Model
+Imports DPC.DPC.Data.Controllers
+Imports MySql.Data.MySqlClient
 
 Namespace DPC.Views.HRM.Employees.Employees
     Partial Public Class EmployeesView
         Inherits Window
 
-        Private Employees As ObservableCollection(Of Employee)
+        Private Employees As New ObservableCollection(Of Employee)()
 
         ' Declare Pagination Variables
         Private CurrentPage As Integer = 1
         Private TotalPages As Integer = 1
+        Private PageSize As Integer = 10
 
         Public Sub New()
             InitializeComponent()
+            LoadEmployees()
 
-            ' Initialize Sample Data
-            Employees = New ObservableCollection(Of Employee) From {
-                New Employee With {.Id = 1, .Name = "John Doe", .Role = "Manager", .Status = "Active"},
-                New Employee With {.Id = 2, .Name = "Jane Smith", .Role = "HR", .Status = "Inactive"},
-                New Employee With {.Id = 3, .Name = "Alice Johnson", .Role = "Sales", .Status = "Active"}
-            }
-
-            EmployeesDataGrid.ItemsSource = Employees
+            Dim topNavBar As New Components.Navigation.TopNavBar()
+            TopNavBarContainer.Child = topNavBar
 
             ' Add Sidebar to SidebarContainer
             Dim sidebar As New Sidebar()
             SidebarContainer.Child = sidebar
 
             ' Initialize Pagination
-            TotalPages = 1
-            CurrentPage = 1
             UpdatePagination()
         End Sub
 
+        ''' <summary>
+        ''' Load Employees from Database
+        ''' </summary>
+        Private Sub LoadEmployees()
+            Employees.Clear()
+
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "SELECT e.*, r.RoleName, l.LocationName FROM employee e " &
+                                          "JOIN userroles r ON e.UserRoleID = r.RoleID " &
+                                          "JOIN businesslocation l ON e.BusinessLocationID = l.LocationID " &
+                                          "ORDER BY e.CreatedAt DESC"
+                    Using cmd As New MySqlCommand(query, conn)
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            While reader.Read()
+                                Employees.Add(New Employee() With {
+                                    .EmployeeID = reader("EmployeeID").ToString(),
+                                    .Username = reader("Username").ToString(),
+                                    .Email = reader("Email").ToString(),
+                                    .Name = reader("Name").ToString(),
+                                    .RoleName = reader("RoleName").ToString(),
+                                    .LocationName = reader("LocationName").ToString(),
+                                    .CreatedAt = Convert.ToDateTime(reader("CreatedAt")),
+                                    .UpdatedAt = Convert.ToDateTime(reader("UpdatedAt"))
+                                })
+                            End While
+                        End Using
+                    End Using
+                End Using
+
+                ' Refresh DataGrid
+                EmployeesDataGrid.ItemsSource = Employees
+
+            Catch ex As Exception
+                MessageBox.Show($"Error loading employees: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+        End Sub
+
+        ''' <summary>
+        ''' View Employee Details
+        ''' </summary>
+        Private Sub ViewEmployee(sender As Object, e As RoutedEventArgs)
+            Dim selectedEmployee As Employee = CType(EmployeesDataGrid.SelectedItem, Employee)
+            If selectedEmployee IsNot Nothing Then
+                MessageBox.Show($"Employee: {selectedEmployee.Name}" & vbCrLf &
+                                $"Role: {selectedEmployee.RoleName}" & vbCrLf &
+                                $"Location: {selectedEmployee.LocationName}", "Employee Info", MessageBoxButton.OK, MessageBoxImage.Information)
+            End If
+        End Sub
+
+        ''' <summary>
+        ''' Update Pagination Display
+        ''' </summary>
         Private Sub UpdatePagination()
             TxtPageNumber.Text = $"Page {CurrentPage} of {TotalPages}"
             BtnFirstPage.IsEnabled = (CurrentPage > 1)
@@ -42,6 +92,9 @@ Namespace DPC.Views.HRM.Employees.Employees
             BtnLastPage.IsEnabled = (CurrentPage < TotalPages)
         End Sub
 
+        ''' <summary>
+        ''' Pagination Controls
+        ''' </summary>
         Private Sub BtnFirstPage_Click(sender As Object, e As RoutedEventArgs)
             CurrentPage = 1
             UpdatePagination()
@@ -66,12 +119,12 @@ Namespace DPC.Views.HRM.Employees.Employees
             UpdatePagination()
         End Sub
 
+        ''' <summary>
+        ''' Open Add Employee Window
+        ''' </summary>
         Private Sub AddEmployee(sender As Object, e As RoutedEventArgs)
-            ' Open EmployeeAdd.xaml
-            Dim addEmployeeWindow As New EmployeeAdd()
+            Dim addEmployeeWindow As New AddEmployee()
             addEmployeeWindow.Show()
-
-            ' Close the current EmployeesView window
             Me.Close()
         End Sub
 

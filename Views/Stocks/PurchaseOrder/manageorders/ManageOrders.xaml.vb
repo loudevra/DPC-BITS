@@ -31,6 +31,15 @@ Namespace DPC.Views.Stocks.PurchaseOrder.ManageOrders
         Private Sub EndDate_Click(sender As Object, e As RoutedEventArgs)
             EndDatePicker.IsDropDownOpen = True
         End Sub
+
+        Private Sub BtnAddNew_Click(sender As Object, e As RoutedEventArgs) Handles btnAddNew.Click
+            Dim NewOrderWindow As New Views.Stocks.PurchaseOrder.NewOrder.NewOrder()
+            NewOrderWindow.Show()
+
+            ' Close the current window where this UserControl is being used
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
+        End Sub
     End Class
 
     ' ViewModel for Date Range Picker

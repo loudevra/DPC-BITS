@@ -1,0 +1,45 @@
+﻿<UserControl x:Class="DPC.Views.Accounts.Accounts.ManageAccounts.AddAccount"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    Background="#E0E0E0" Width="600" Height="Auto" >
+
+    <Grid Margin="20">
+        <StackPanel>
+            <TextBlock Text=" Add New Account" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
+
+            <!-- Account No -->
+            <TextBlock Text="Account No:"/>
+            <TextBox x:Name="txtAccountNo" Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,5,0,15"/>
+
+            <!-- Name -->
+            <TextBlock Text="Name:"/>
+            <TextBox x:Name="txtName" Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,5,0,15"/>
+
+            <!-- Initial Balance -->
+            <TextBlock Text="Initial Balance:"/>
+            <TextBox x:Name="txtInitialBalance" Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,5,0,15"/>
+
+            <!-- Note -->
+            <TextBlock Text="Note:"/>
+            <TextBox x:Name="txtNote" Style="{StaticResource MaterialDesignOutlinedTextBox}" Margin="0,5,0,15"/>
+
+            <!-- Business Locations -->
+            <TextBlock Text="Business Locations:"/>
+            <ComboBox x:Name="cmbBusinessLocation" 
+              Style="{StaticResource RoundedComboBoxStyle}" 
+                DisplayMemberPath="Value" 
+                SelectedValuePath="Key" 
+                Margin="0,5,0,15"/>
+
+
+            <!-- Account Type -->
+            <TextBlock Text="Account Type:"/>
+            <ComboBox x:Name="cmbAccountType" Style="{StaticResource RoundedComboBoxStyle}" Margin="0,5,0,15"/>
+
+
+            <!-- Add Button -->
+            <Button Content="Add" x:Name="btnAddAccount" Click="BtnAddAccount_Click" Width="100" Height="40" Margin="0,20,0,0" HorizontalAlignment="Right" Background="#4CAF50" Foreground="White"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

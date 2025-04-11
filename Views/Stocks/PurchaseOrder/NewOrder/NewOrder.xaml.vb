@@ -1,18 +1,35 @@
-﻿Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
+﻿Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Controllers.CalendarController
+Imports DPC.DPC.Data.Helpers
+
+Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
     Public Class NewOrder
         Private rowCount As Integer = 0
         Private MyDynamicGrid As Grid
+
+        Public Property OrderDate As New CalendarController.SingleCalendar()
+        Public Property OrderDueDate As New CalendarController.SingleCalendar()
 
         Public Sub New()
             InitializeComponent()
 
             SidebarContainer.Content = New Components.Navigation.Sidebar()
             TopNavBarContainer.Content = New Components.Navigation.TopNavBar()
+            OrderDate.SelectedDate = Date.Today
+            OrderDueDate.SelectedDate = Date.Today.AddDays(1)
 
-            orderDate.SelectedDate = Date.Today
-            orderDueDate.SelectedDate = Date.Today.AddDays(1)
+            DataContext = Me
+
             MyDynamicGrid = CType(TableGridPanel.Children(0), Grid)
             AddNewRow()
+        End Sub
+
+        Private Sub OrderDate_Click(sender As Object, e As RoutedEventArgs)
+            OrderDatePicker.IsDropDownOpen = True
+        End Sub
+
+        Private Sub OrderDueDate_Click(sender As Object, e As RoutedEventArgs)
+            OrderDueDatePicker.IsDropDownOpen = True
         End Sub
 
         ' ➜ Add a New Row
@@ -49,12 +66,11 @@
             End If
 
             ' Create TextBox
-            Dim txt As New TextBox() With {
-        .Name = txtName
-    }
-
             ' Apply TextBox style dynamically
-            txt.Style = CType(Me.FindResource("RoundedTextboxStyle"), Style)
+            Dim txt As New TextBox With {
+                .Name = txtName,
+                .Style = CType(Me.FindResource("RoundedTextboxStyle"), Style)
+            }
 
             ' Attach numeric validation and event handlers
             If column = 1 Or column = 2 Or column = 3 Or column = 4 Or column = 5 Or column = 6 Then
@@ -63,13 +79,12 @@
             End If
 
             ' Create a Border and apply the style
-            Dim border As New Border() With {
-        .Margin = New Thickness(5, 5, 5, 5) ' Custom margin to maintain spacing
-    }
-            border.Style = CType(Me.FindResource("RoundedBorderStyle"), Style)
-
             ' Wrap TextBox inside the Border
-            border.Child = txt
+            Dim border As New Border With {
+                .Margin = New Thickness(5, 5, 5, 5), ' Custom margin to maintain spacing
+                .Style = CType(Me.FindResource("RoundedBorderStyle"), Style),
+                .Child = txt
+            }
 
             ' Set Grid position
             Grid.SetRow(border, row)
@@ -93,24 +108,22 @@
             End If
 
             ' Create TextBox
-            Dim fullWidthTextBox As New TextBox() With {
-        .Name = txtName,
-        .Height = 60, ' Adjust height for full-width text box
-        .VerticalContentAlignment = VerticalAlignment.Top,
-        .Padding = New Thickness(0, 5, 0, 0)
-    }
-
             ' Apply the existing TextBox style
-            fullWidthTextBox.Style = CType(Me.FindResource("RoundedTextboxStyle"), Style)
+            Dim fullWidthTextBox As New TextBox With {
+                .Name = txtName,
+.Height = 60, ' Adjust height for full-width text box
+.VerticalContentAlignment = VerticalAlignment.Top,
+.Padding = New Thickness(0, 5, 0, 0),
+                .Style = CType(Me.FindResource("RoundedTextboxStyle"), Style)
+            }
 
             ' Create a Border and apply the existing style
-            Dim border As New Border() With {
-        .Margin = New Thickness(5, 5, 5, 5) ' Consistent margin for spacing
-    }
-            border.Style = CType(Me.FindResource("RoundedBorderStyle"), Style)
-
             ' Wrap TextBox inside the Border
-            border.Child = fullWidthTextBox
+            Dim border As New Border With {
+                .Margin = New Thickness(5, 5, 5, 5), ' Consistent margin for spacing
+                .Style = CType(Me.FindResource("RoundedBorderStyle"), Style),
+                .Child = fullWidthTextBox
+            }
 
             ' Set Grid position
             Grid.SetRow(border, row + 1) ' Place it in the next row
@@ -242,8 +255,6 @@
             AddNewRow()
         End Sub
 
-        'Calculations for the data table
-
         ' Function to retrieve the TextBox from a Border element
         Private Function GetTextBoxFromBorder(borderName As String) As TextBox
             Dim border As Border = TryCast(Me.FindName(borderName), Border)
@@ -304,5 +315,8 @@
             End If
         End Sub
 
+        Private Sub BtnAddSupplier_Click(sender As Object, e As RoutedEventArgs) Handles btnAddSupplier.Click
+            ViewLoader.DynamicView.NavigateToView("newsuppliers", Me)
+        End Sub
     End Class
 End Namespace

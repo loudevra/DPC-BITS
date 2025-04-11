@@ -1,4 +1,6 @@
 ﻿Imports System.Windows.Controls.Primitives
+Imports System.Windows
+Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Components.UI
     Public Class PopUpMenuAccounts
@@ -7,68 +9,145 @@ Namespace DPC.Components.UI
         Public Sub New()
             InitializeComponent()
         End Sub
+
         Friend Sub ShowPopup(parent As UIElement, sender As Object)
             ' Ensure sender is a Button
-            Dim button As Button = CType(sender, Button)
-
-            ' Check if the button has a valid parent (it must be part of the visual tree)
-            If button Is Nothing Then
-                MessageBox.Show("Button is null.")
-                Return
-            End If
-
-            ' Get the button's position relative to the parent container (Main Window or Panel)
-            Dim buttonPosition As Point = button.TransformToAncestor(parent).Transform(New Point(0, 0))
-
-            ' Adjust the offset values based on button's actual size and desired placement
-            Dim horizontalOffset As Double = buttonPosition.X + button.ActualWidth + 10  ' 10px to the right of the button
-            Dim verticalOffset As Double = buttonPosition.Y  ' Same Y position as the button
-
-            ' Create the popup
-            Dim popup As New Popup With {
-                .Child = Me,
-                .StaysOpen = False,
-                .Placement = PlacementMode.Relative,
-                .PlacementTarget = button,
-                .HorizontalOffset = 233,  ' Set the horizontal offset
-                .VerticalOffset = -150,      ' Set the vertical offset
-                .IsOpen = True
-            }
-
-            ' Ensure the Popup adjusts when the window is resized or moved
-            AddHandler parent.LayoutUpdated, AddressOf OnLayoutUpdated
-        End Sub
-
-        ''' <summary>
-        ''' This handler will be triggered when the layout of the parent (window or panel) is updated.
-        ''' We can reposition the popup based on the new layout.
-        ''' </summary>
-        Private Sub OnLayoutUpdated(sender As Object, e As EventArgs)
-            ' Ensure the sender is a valid Button
             Dim button As Button = TryCast(sender, Button)
             If button Is Nothing Then
                 Return
             End If
 
-            ' Get the parent of the button (ensure it exists)
-            Dim parent As UIElement = TryCast(VisualTreeHelper.GetParent(button), UIElement)
-            If parent Is Nothing Then
+            ' Get the window containing the button
+            Dim window As Window = Window.GetWindow(button)
+            If window Is Nothing Then
                 Return
             End If
 
-            ' Get the position of the button relative to the parent
-            Dim buttonPosition As Point = button.TransformToAncestor(parent).Transform(New Point(0, 0))
+            ' Get sidebar width - determine if sidebar is expanded or collapsed
+            Dim sidebarWidth As Double = 0
 
-            ' Adjust the popup's position dynamically
-            Dim horizontalOffset As Double = buttonPosition.X + button.ActualWidth + 10
-            Dim verticalOffset As Double = buttonPosition.Y
+            ' Get parent sidebar if available
+            Dim parentControl = TryCast(button.Parent, FrameworkElement)
+            While parentControl IsNot Nothing
+                If TypeOf parentControl Is StackPanel AndAlso parentControl.Name = "SidebarMenu" Then
+                    ' Found the sidebar menu container, get its parent (likely the sidebar)
+                    Dim sidebarContainer = TryCast(parentControl.Parent, FrameworkElement)
+                    If sidebarContainer IsNot Nothing Then
+                        sidebarWidth = sidebarContainer.ActualWidth
+                        Exit While
+                    End If
+                ElseIf TypeOf parentControl.Parent Is DPC.Components.Navigation.Sidebar Then
+                    ' Direct parent is sidebar
+                    sidebarWidth = CType(parentControl.Parent, FrameworkElement).ActualWidth
+                    Exit While
+                End If
+                parentControl = TryCast(parentControl.Parent, FrameworkElement)
+            End While
 
-            ' Update the position of the popup (for example, you can reposition it if needed)
-            ' popup.HorizontalOffset = horizontalOffset
-            ' popup.VerticalOffset = verticalOffset
+            ' If we couldn't find sidebar, use a default value
+            If sidebarWidth = 0 Then
+                ' Default to expanded sidebar width
+                sidebarWidth = 260
+            End If
+
+            ' Create the popup with proper positioning
+            Dim popup As New Popup With {
+                .Child = Me,
+                .StaysOpen = False,
+                .Placement = PlacementMode.Relative,
+                .PlacementTarget = button,
+                .IsOpen = True,
+                .AllowsTransparency = True
+            }
+
+            ' Calculate optimal position based on sidebar width
+            If sidebarWidth <= 80 Then
+                ' Sidebar is collapsed - position menu farther right
+                popup.HorizontalOffset = 60
+                popup.VerticalOffset = -button.ActualHeight * 3 ' Align with button
+            Else
+                ' Sidebar is expanded - position menu immediately to the right
+                popup.HorizontalOffset = sidebarWidth - button.Margin.Left
+                popup.VerticalOffset = -button.ActualHeight * 3 ' Align with button
+            End If
+
+            ' Store references to event handlers so we can remove them later
+            Dim locationChangedHandler As EventHandler = Nothing
+            Dim sizeChangedHandler As SizeChangedEventHandler = Nothing
+
+            ' Define event handlers
+            locationChangedHandler = Sub(s, e)
+                                         If popup.IsOpen Then
+                                             ' Recalculate position when window moves
+                                             popup.HorizontalOffset = popup.HorizontalOffset
+                                             popup.VerticalOffset = popup.VerticalOffset
+                                         End If
+                                     End Sub
+
+            sizeChangedHandler = Sub(s, e)
+                                     If popup.IsOpen Then
+                                         ' Recalculate position when window resizes
+                                         popup.HorizontalOffset = popup.HorizontalOffset
+                                         popup.VerticalOffset = popup.VerticalOffset
+                                     End If
+                                 End Sub
+
+            ' Add event handlers
+            AddHandler window.LocationChanged, locationChangedHandler
+            AddHandler window.SizeChanged, sizeChangedHandler
+
+            ' Handle popup closed to cleanup event handlers
+            AddHandler popup.Closed, Sub(s, e)
+                                         RemoveHandler window.LocationChanged, locationChangedHandler
+                                         RemoveHandler window.SizeChanged, sizeChangedHandler
+                                     End Sub
         End Sub
-        Private Sub NavigateToNewInvoice(sender As Object, e As RoutedEventArgs)
-            MessageBox.Show("Navigate to New Invoice", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+
+        Private Sub NavigateToManageAccounts(sender As Object, e As RoutedEventArgs)
+            Dim ManageAcctWindow As New Views.Accounts.Accounts.ManageAccounts.ManageAccounts()
+            ManageAcctWindow.Show()
+
+            ' Close the current window where this UserControl is being used
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
+        End Sub
+
+        Private Sub NavigateToBalanceSheets(sender As Object, e As RoutedEventArgs)
+            ' Implementation for navigating to Balance Sheets
+            ViewLoader.DynamicView.NavigateToView("balancesheets", Me)
+        End Sub
+
+        Private Sub NavigateToAccountStatement(sender As Object, e As RoutedEventArgs)
+            ' Implementation for navigating to Account Statement
+            ViewLoader.DynamicView.NavigateToView("accountstatement", Me)
+        End Sub
+
+        Private Sub NavigateToViewTransactions(sender As Object, e As RoutedEventArgs)
+            ' Implementation for navigating to View Transactions
+            ViewLoader.DynamicView.NavigateToView("viewtransactions", Me)
+        End Sub
+
+        Private Sub NavigateToNewTransaction(sender As Object, e As RoutedEventArgs)
+
+        End Sub
+
+        Private Sub NavigateToNewTransfer(sender As Object, e As RoutedEventArgs)
+
+        End Sub
+
+        Private Sub NavigateToClientsTransaction(sender As Object, e As RoutedEventArgs)
+            ' Implementation for navigating to Clients Transaction
+            ViewLoader.DynamicView.NavigateToView("clientstransaction", Me)
+        End Sub
+
+        Private Sub NavigateToIncome(sender As Object, e As RoutedEventArgs)
+            ' Implementation for navigating to Income
+            ViewLoader.DynamicView.NavigateToView("income", Me)
+        End Sub
+
+        Private Sub NavigateToExpense(sender As Object, e As RoutedEventArgs)
+            ' Implementation for navigating to Expense
+            ViewLoader.DynamicView.NavigateToView("expense", Me)
         End Sub
     End Class
 End Namespace

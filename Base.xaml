@@ -1,0 +1,59 @@
+<Window x:Class="DPC.Base"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="namespace:DPC.Components.Navigation"
+        Title="DPC - Dashboard"
+        Height="800" Width="1200"
+        Background="Transparent"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True">
+    <!-- Main Grid Layout -->
+    <Grid>
+        <!-- Material Design Card -->
+        <md:Card Background="#FDFDFD"
+                 UniformCornerRadius="8"
+                 Padding="25"
+                 md:ElevationAssist.Elevation="Dp4"
+                 Margin="10">
+            <!-- Sidebar + Main Content -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <!-- Sidebar -->
+                    <ColumnDefinition x:Name="SidebarColumn" Width="260" />
+                    <ColumnDefinition x:Name="MainContentColumn" Width="*" />
+                </Grid.ColumnDefinitions>
+                <!-- Sidebar -->
+                <Border x:Name="SidebarContainer" Grid.Column="0" Background="Transparent"/>
+
+                <!-- Main Content Wrapper -->
+                <Grid x:Name="MainContainer" Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- TopNavBar -->
+                        <RowDefinition Height="*"/>
+                        <!-- Dynamic Content -->
+                    </Grid.RowDefinitions>
+                    <!-- Top Navigation Bar -->
+                    <md:Card x:Name="TopNavBarContainer"
+                             Grid.Row="0"
+                             Background="#D9D9D9"
+                             Padding="10"
+                             Width="Auto"
+                             Margin="0,0,0,9"/>
+                    <!-- Dynamic Content -->
+                    <md:Card Grid.Row="1"
+                             Background="#D9D9D9"
+                             Padding="10"
+                             UniformCornerRadius="8"
+                             Width="Auto">
+                        <ContentControl x:Name="ViewContentControl" 
+                Content="{Binding CurrentView}"
+                Style="{StaticResource FadeTransitionContentControl}" />
+                    </md:Card>
+                </Grid>
+            </Grid>
+        </md:Card>
+    </Grid>
+</Window>
