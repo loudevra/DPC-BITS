@@ -40,7 +40,7 @@ Namespace DPC.Views.Auth
 
                 ' Redirect to Base.xaml and load Dashboard view
                 Dim baseWindow As New Base With {
-                    .CurrentView = DynamicView.Load("dashboard") ' Set CurrentView to Dashboard
+                    .CurrentView = ViewLoader.DynamicView.Load("dashboard") ' Set CurrentView to Dashboard
                     } ' Create instance of Base.xaml
 
                 ' Show the Base window

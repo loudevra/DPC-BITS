@@ -364,13 +364,15 @@
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
     <Compile Include="Data\Helpers\AutocompleteHelper.vb" />
     <Compile Include="Data\Helpers\Base64Utility.vb" />
-    <Compile Include="Data\Helpers\DynamicView.vb" />
+    <Compile Include="Data\Helpers\ViewLoader\DynamicView.vb" />
     <Compile Include="Data\Helpers\EmailService.vb" />
     <Compile Include="Data\Helpers\EnvLoader.vb" />
     <Compile Include="Data\Helpers\PaginationHelper.vb" />
     <Compile Include="Data\Helpers\PBKDF2Hasher.vb" />
     <Compile Include="Data\Helpers\PopupHelper.vb" />
     <Compile Include="Data\Helpers\RelayCommand.vb" />
+    <Compile Include="Data\Helpers\ViewLoader\ViewLoader.vb" />
+    <Compile Include="Data\Helpers\ViewLoader\ViewNavigation.vb" />
     <Compile Include="Data\Models\Account.vb" />
     <Compile Include="Data\Models\BusinessLocation.vb" />
     <Compile Include="Data\Models\Client.vb" />

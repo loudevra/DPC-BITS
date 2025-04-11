@@ -95,14 +95,14 @@ Namespace DPC.Components.UI
         ''' </summary>
         '''
         Private Sub NavigateToProductCategories(sender As Object, e As RoutedEventArgs)
-            DPC.Data.Helpers.DynamicView.NavigateToView("productcategories", Me)
+            ViewLoader.DynamicView.NavigateToView("productcategories", Me)
         End Sub
 
         ''' <summary>
         ''' Navigate to Warehouses Page
         ''' </summary>
         Private Sub NavigateToWarehouses(sender As Object, e As RoutedEventArgs)
-            DPC.Data.Helpers.DynamicView.NavigateToView("warehouses", Me)
+            ViewLoader.DynamicView.NavigateToView("warehouses", Me)
         End Sub
 
         ''' <summary>
@@ -126,7 +126,7 @@ Namespace DPC.Components.UI
             currentWindow?.Close()
         End Sub
         Private Sub NavigateToStocksTransfer(sender As Object, e As RoutedEventArgs)
-            DPC.Data.Helpers.DynamicView.NavigateToView("stockstransfer", Me)
+            ViewLoader.DynamicView.NavigateToView("stockstransfer", Me)
         End Sub
 
         Private Sub NavigateToSupplierRecords(sender As Object, e As RoutedEventArgs)
@@ -148,17 +148,17 @@ Namespace DPC.Components.UI
 
 
         Private Sub NavigateToNewSuppliers(sender As Object, e As RoutedEventArgs)
-            DPC.Data.Helpers.DynamicView.NavigateToView("newsuppliers", Me)
+            ViewLoader.DynamicView.NavigateToView("newsuppliers", Me)
         End Sub
 
         Private Sub NavigateToManageSuppliers(sender As Object, e As RoutedEventArgs)
 
-            DPC.Data.Helpers.DynamicView.NavigateToView("managesuppliers", Me)
+            ViewLoader.DynamicView.NavigateToView("managesuppliers", Me)
         End Sub
 
         Private Sub NavigateToManageBrands(sender As Object, e As RoutedEventArgs)
 
-            DPC.Data.Helpers.DynamicView.NavigateToView("managebrands", Me)
+            ViewLoader.DynamicView.NavigateToView("managebrands", Me)
         End Sub
 
         Private Sub NavigateToCustomLabel(sender As Object, e As RoutedEventArgs)

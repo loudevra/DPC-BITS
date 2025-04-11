@@ -4,54 +4,19 @@ Imports System.Windows.Controls
 Imports System.Windows.Controls.Primitives
 Imports System.Windows.Media
 
-Namespace DPC.Data.Helpers
-    Public Class DynamicView
+Namespace DPC.Data.Helpers.ViewLoader
+    ''' <summary>
+    ''' Manages navigation between different views in the application
+    ''' </summary>
+    Public Class ViewNavigation
         ' Flag to prevent recursive navigation
         Private Shared _isNavigating As Boolean = False
 
-        ' Load the requested view
-        Public Shared Function Load(viewName As String) As UserControl
-            Try
-                Select Case viewName.ToLower()
-                    Case "dashboard"
-                        Return New Dashboard.Dashboard() ' This is a UserControl
-                    Case "stockstransfer"
-                        Return New Stocks.StocksTransfer.StocksTransfer() ' This is a UserControl
-                    Case "newsuppliers"
-                        Return New Stocks.Supplier.NewSuppliers.NewSuppliers() ' This is now a UserControl
-                    Case "managesuppliers"
-                        Return New Stocks.Suppliers.ManageSuppliers.ManageSuppliers() ' This is now a UserControl
-                    Case "managebrands"
-                        Return New Stocks.Suppliers.ManageBrands.ManageBrands() ' This is now a UserControl
-                    Case "warehouses"
-                        Return New Stocks.Warehouses.Warehouses() ' Added the Warehouses UserControl
-                    Case "productcategories"
-                        Return New Stocks.ProductCategories.ProductCategories() ' Added the ProductCategories UserControl
-                    Case Else
-                        ' Return a placeholder UserControl with error text
-                        Dim errorContent As New TextBlock With {
-                            .Text = $"View not found: {viewName}",
-                            .FontSize = 20,
-                            .HorizontalAlignment = HorizontalAlignment.Center,
-                            .VerticalAlignment = VerticalAlignment.Center
-                        }
-                        Return New UserControl With {.Content = errorContent}
-                End Select
-            Catch ex As Exception
-                MessageBox.Show($"Error loading view '{viewName}': {ex.Message}")
-                ' Return an error UserControl in case of exception
-                Dim errorContent As New TextBlock With {
-                    .Text = $"Error loading view: {viewName}",
-                    .FontSize = 20,
-                    .Foreground = New SolidColorBrush(Colors.Red),
-                    .HorizontalAlignment = HorizontalAlignment.Center,
-                    .VerticalAlignment = VerticalAlignment.Center
-                }
-                Return New UserControl With {.Content = errorContent}
-            End Try
-        End Function
-
-        ' Navigate to the specified view
+        ''' <summary>
+        ''' Navigate to the specified view
+        ''' </summary>
+        ''' <param name="viewName">Name of the view to navigate to</param>
+        ''' <param name="senderControl">The control that initiated the navigation</param>
         Public Shared Sub NavigateToView(viewName As String, senderControl As DependencyObject)
             ' Prevent reentrancy which could cause freezing
             If _isNavigating Then Return
@@ -71,12 +36,12 @@ Namespace DPC.Data.Helpers
                 If mainWindow IsNot Nothing Then
                     ' Get the currently displayed view for comparison
                     Dim currentView = mainWindow.CurrentView
-                    Dim currentViewName = GetViewName(currentView)
+                    Dim currentViewName = ViewLoader.GetViewName(currentView)
 
                     ' Only navigate if we're going to a different view
                     If currentViewName <> viewName.ToLower() Then
                         ' Load the new view
-                        Dim newView = Load(viewName)
+                        Dim newView = ViewLoader.Load(viewName)
 
                         ' Navigate to the requested view
                         mainWindow.CurrentView = newView
@@ -100,32 +65,9 @@ Namespace DPC.Data.Helpers
             End Try
         End Sub
 
-        ' Helper function to get the name of a view
-        Private Shared Function GetViewName(view As Object) As String
-            If view Is Nothing Then Return String.Empty
-
-            Dim typeName As String = view.GetType().Name.ToLower()
-
-            If typeName = "dashboard" Then
-                Return "dashboard"
-            ElseIf typeName = "stockstransfer" Then
-                Return "stocks.stocktransfer"
-            ElseIf typeName = "newsuppliers" Then
-                Return "newsuppliers"
-            ElseIf typeName = "managesuppliers" Then
-                Return "managesuppliers"
-            ElseIf typeName = "managebrands" Then
-                Return "managebrands"
-            ElseIf typeName = "warehouses" Then
-                Return "warehouses"
-            ElseIf typeName = "productcategories" Then
-                Return "productcategories" ' Added the ProductCategories view type
-            Else
-                Return typeName
-            End If
-        End Function
-
-        ' Helper method to find the main window
+        ''' <summary>
+        ''' Helper method to find the main window
+        ''' </summary>
         Private Shared Function FindMainWindow() As DPC.Base
             For Each window In Application.Current.Windows
                 If TypeOf window Is DPC.Base Then
@@ -135,7 +77,9 @@ Namespace DPC.Data.Helpers
             Return Nothing
         End Function
 
-        ' Helper method to close parent popup if present
+        ''' <summary>
+        ''' Helper method to close parent popup if present
+        ''' </summary>
         Private Shared Sub CloseParentPopup(control As DependencyObject)
             Try
                 ' Simple parent traversal without complex tree walking

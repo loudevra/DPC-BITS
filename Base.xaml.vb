@@ -40,7 +40,7 @@ Namespace DPC
             TopNavBarContainer.Content = topNavBar
 
             ' 🔥 Set default view using DynamicView
-            CurrentView = DynamicView.Load("dashboard")
+            CurrentView = ViewLoader.DynamicView.Load("dashboard")
 
             ' 🔥 Bind data context to this class for ContentPresenter binding
             Me.DataContext = Me

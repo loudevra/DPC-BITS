@@ -105,7 +105,7 @@ Namespace DPC.Components.Navigation
         ''' Opens the Dashboard and closes the current window.
         ''' </summary>
         Private Sub OpenDashboard(sender As Object, e As RoutedEventArgs)
-            DPC.Data.Helpers.DynamicView.NavigateToView("dashboard", Me)
+            ViewLoader.DynamicView.NavigateToView("dashboard", Me)
         End Sub
 
 

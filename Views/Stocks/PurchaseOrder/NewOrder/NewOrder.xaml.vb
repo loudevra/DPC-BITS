@@ -1,5 +1,6 @@
 ﻿Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Controllers.CalendarController
+Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
     Public Class NewOrder
@@ -315,7 +316,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
         End Sub
 
         Private Sub BtnAddSupplier_Click(sender As Object, e As RoutedEventArgs) Handles btnAddSupplier.Click
-            DPC.Data.Helpers.DynamicView.NavigateToView("newsuppliers", Me)
+            ViewLoader.DynamicView.NavigateToView("newsuppliers", Me)
         End Sub
     End Class
 End Namespace

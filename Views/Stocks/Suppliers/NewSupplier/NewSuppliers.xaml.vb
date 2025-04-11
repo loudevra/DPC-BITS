@@ -4,6 +4,7 @@ Imports DPC.DPC.Data.Model
 Imports MySql.Data.MySqlClient
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Components.Forms
+Imports DPC.DPC.Data.Helpers
 
 
 Namespace DPC.Views.Stocks.Supplier.NewSuppliers
@@ -90,8 +91,7 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
                 ' Clear form and reset fields after successful insertion
                 ClearForm()
 
-                DPC.Data.Helpers.DynamicView.NavigateToView("managesuppliers", Me)
-
+                ViewLoader.DynamicView.NavigateToView("managesupplier", Me)
             Catch ex As Exception
                 MessageBox.Show("An error occurred while adding the supplier: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try

@@ -149,7 +149,7 @@ Namespace DPC.Views.Stocks.Suppliers.ManageSuppliers
         End Sub
 
         Private Sub BtnAddNew_Click(sender As Object, e As RoutedEventArgs)
-            DPC.Data.Helpers.DynamicView.NavigateToView("newsuppliers", Me)
+            ViewLoader.DynamicView.NavigateToView("newsuppliers", Me)
         End Sub
     End Class
 End Namespace

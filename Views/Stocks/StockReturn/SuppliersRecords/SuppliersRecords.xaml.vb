@@ -1,7 +1,9 @@
 ﻿Imports System.ComponentModel
 Imports System.Windows
 Imports DPC.DPC.Data.Controllers
-Imports DPC.DPC.Components
+Imports System.Windows.Input
+Imports DPC.DPC.Data.Helpers
+
 
 Namespace DPC.Views.Stocks.StockReturn.SupplierRecords
 
@@ -35,7 +37,7 @@ Namespace DPC.Views.Stocks.StockReturn.SupplierRecords
         End Sub
 
         Private Sub BtnAddNew_Click(sender As Object, e As RoutedEventArgs) Handles btnAddNew.Click
-            DPC.Data.Helpers.DynamicView.NavigateToView("newsuppliers", Me)
+            ViewLoader.DynamicView.NavigateToView("newsuppliers", Me)
         End Sub
     End Class
 
