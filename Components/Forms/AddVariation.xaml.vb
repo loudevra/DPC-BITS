@@ -14,6 +14,7 @@ Namespace DPC.Components.Forms
         Private Const MaxVariations As Integer = 2
         Private ChangeIcon As Boolean = False
 
+
         ' Add data model properties for saving state
         Private _variations As New List(Of ProductVariation)
 
