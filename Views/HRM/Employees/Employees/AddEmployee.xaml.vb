@@ -96,6 +96,28 @@ Namespace DPC.Views.HRM.Employees
             ShowIfSatisfied(chkSpecial, pwd.Any(Function(c) Not Char.IsLetterOrDigit(c)))
             ShowIfSatisfied(chkNumber, pwd.Any(Function(c) Char.IsDigit(c)))
         End Sub
+        Private Sub txtUsername_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim input As String = txtUsername.Text
+
+            ' Check each condition
+            Dim hasMinLength As Boolean = input.Length >= 6
+            Dim hasMaxLength As Boolean = input.Length < 20
+            Dim hasUppercase As Boolean = input.Any(Function(c) Char.IsUpper(c))
+            Dim hasLowercase As Boolean = input.Any(Function(c) Char.IsLower(c))
+            Dim hasSpecialChar As Boolean = input.Any(Function(c) Not Char.IsLetterOrDigit(c))
+            Dim hasDigit As Boolean = input.Any(Function(c) Char.IsDigit(c))
+
+            ' Combine all checks
+            Dim isValid As Boolean = hasMinLength AndAlso hasMaxLength AndAlso
+                             hasUppercase AndAlso hasLowercase AndAlso
+                             hasSpecialChar AndAlso hasDigit
+
+            ' Show red error if NOT valid
+            txtInvalidChars.Visibility = If(isValid, Visibility.Collapsed, Visibility.Visible)
+        End Sub
+
+
+
 
         Private Sub ShowIfSatisfied(textBlock As TextBlock, isMet As Boolean)
             textBlock.Visibility = If(isMet, Visibility.Visible, Visibility.Collapsed)
