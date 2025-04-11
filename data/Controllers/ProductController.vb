@@ -707,6 +707,7 @@ Namespace DPC.Data.Controllers
             End Using
         End Sub
 
+        'added for local storing of variations
         Public Function GetProductVariations() As List(Of ProductVariation)
             Return DPC.Components.Forms.AddVariation.SavedVariations
         End Function
