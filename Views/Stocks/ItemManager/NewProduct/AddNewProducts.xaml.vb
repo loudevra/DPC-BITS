@@ -1,4 +1,5 @@
 ﻿Imports System.IO
+Imports System.Text
 Imports System.Windows.Controls.Primitives
 Imports System.Windows.Threading
 Imports DocumentFormat.OpenXml.Office.CustomUI
@@ -62,6 +63,11 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ProductController.BtnAddRow_Click(Nothing, Nothing)
 
             TxtDefaultTax.Text = 12
+
+            Dim existingVariations As List(Of ProductVariation) = productController.GetProductVariations()
+            If existingVariations IsNot Nothing Then
+                UpdateProductVariationText(existingVariations)
+            End If
         End Sub
 
         Private Sub Toggle_Click(sender As Object, e As RoutedEventArgs)
@@ -317,9 +323,13 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ' Create an instance of the AddCategory form
             Dim openAddVariation As New DPC.Components.Forms.AddVariation()
 
+            ' Subscribe to the ClosePopup method directly
+            AddHandler openAddVariation.close, AddressOf AddVariation_Closed
+
             ' Open the popup
-            PopupHelper.OpenPopupWithControl(sender, openAddVariation, "windowcenter", 0, 0, False, Me)
+            PopupHelper.OpenPopupWithControl(sender, openAddVariation, "windowcenter", -100, 0, False, Me)
         End Sub
+
 
         'Handles file input
         ' Variable to track whether an image has been uploaded
@@ -503,6 +513,72 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             base64Image = String.Empty
         End Sub
 
+        'testing if variation display is working
+        ' Function to update the Product Variation display text
+        Public Sub LoadProductVariations()
+            Dim variations As List(Of ProductVariation) = productController.GetProductVariations()
+            UpdateProductVariationText(variations)
+        End Sub
+
+        ' Modify the AddVariation_Closed method to ensure it updates properly
+        Private Sub AddVariation_Closed(sender As Object, e As RoutedEventArgs)
+            ' Reload variations after the popup is closed
+            Dim variations As List(Of ProductVariation) = productController.GetProductVariations()
+            If variations IsNot Nothing Then
+                UpdateProductVariationText(variations)
+            End If
+        End Sub
+        ' Function to update the Product Variation display text
+        Private Sub UpdateProductVariationText(variations As List(Of ProductVariation))
+            Try
+                If variations IsNot Nothing AndAlso variations.Count > 0 Then
+                    ' Build a string to display the variation information
+                    Dim variationText As New StringBuilder()
+
+                    For i As Integer = 0 To variations.Count - 1
+                        Dim variation As ProductVariation = variations(i)
+                        variationText.Append(variation.VariationName)
+
+                        ' Add options summary
+                        If variation.Options IsNot Nothing AndAlso variation.Options.Count > 0 Then
+                            variationText.Append(" (")
+
+                            ' Limit to showing first 3 options if there are many
+                            Dim maxOptions As Integer = Math.Min(3, variation.Options.Count)
+                            For j As Integer = 0 To maxOptions - 1
+                                variationText.Append(variation.Options(j).OptionName)
+
+                                If j < maxOptions - 1 Then
+                                    variationText.Append(", ")
+                                End If
+                            Next
+
+                            ' If there are more options than we're showing
+                            If variation.Options.Count > 3 Then
+                                variationText.Append($", +{variation.Options.Count - 3} more")
+                            End If
+
+                            variationText.Append(")")
+                        End If
+
+                        ' Add separator between variations
+                        If i < variations.Count - 1 Then
+                            variationText.Append(" | ")
+                        End If
+                    Next
+
+                    ' Update the TextBlock with the variation information
+                    TxtProductVariation.Text = variationText.ToString()
+                    TxtProductVariation.Visibility = Visibility.Visible
+                Else
+                    ' No variations, clear the text
+                    TxtProductVariation.Text = "No variations defined"
+                    TxtProductVariation.Visibility = Visibility.Collapsed
+                End If
+            Catch ex As Exception
+                MessageBox.Show($"Error updating product variation text: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+        End Sub
 
     End Class
 End Namespace

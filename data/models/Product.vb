@@ -22,7 +22,18 @@ Namespace DPC.Data.Model
         Public Property ModifiedAt As DateTime
     End Class
 
+    ' Represents a single variation (e.g., "Color", "Size")
     Public Class ProductVariation
+        Public Property VariationName As String              ' Name of the variation (e.g., "Color")
+        Public Property EnableImage As Boolean               ' Whether image is used for this variation
+        Public Property Options As List(Of VariationOption)  ' List of options (e.g., "Red", "Blue")
+    End Class
 
+    ' Represents a single option within a variation (e.g., "Red" for "Color")
+    Public Class VariationOption
+        Public Property OptionName As String
+        Public Property ImageBase64 As String      ' Base64 encoded image data
+        Public Property ImageFileName As String    ' Original filename
+        Public Property ImageFileExtension As String ' File extension (jpg, png, etc.)
     End Class
 End Namespace
