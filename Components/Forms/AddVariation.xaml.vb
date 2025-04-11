@@ -20,6 +20,14 @@ Namespace DPC.Components.Forms
             AddNewVariation()
         End Sub
 
+        Private Sub BtnVariationDetails(sender As Object, e As RoutedEventArgs)
+            Dim VariationDetails As New Views.Stocks.ItemManager.NewProduct.ProductVariationDetails()
+            VariationDetails.Show()
+
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
+        End Sub
+
         Private Sub AddNewVariation()
             ' Create the main StackPanel for this variation
             Dim variationPanel As New StackPanel With {
