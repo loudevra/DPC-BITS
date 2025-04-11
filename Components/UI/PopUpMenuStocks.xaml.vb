@@ -95,13 +95,7 @@ Namespace DPC.Components.UI
         ''' </summary>
         '''
         Private Sub NavigateToProductCategories(sender As Object, e As RoutedEventArgs)
-            ' Open EmployeesView
-            Dim ProductCategoriesWindow As New Views.Stocks.ProductCategories.ProductCategories()
-            ProductCategoriesWindow.Show()
-
-            ' Close the current window where this UserControl is being used
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
+            DPC.Data.Helpers.DynamicView.NavigateToView("productcategories", Me)
         End Sub
 
         ''' <summary>

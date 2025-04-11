@@ -2,77 +2,141 @@
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Model
 Imports DPC.DPC.Data.Models
+Imports DPC.DPC.Data.Helpers
 Imports Microsoft.Win32
 Imports System.Collections.ObjectModel
 Imports System.ComponentModel
 Imports System.Data
 Imports System.Reflection
+Imports System.Windows.Controls.Primitives
 
 Namespace DPC.Views.Stocks.ProductCategories
     ''' <summary>
     ''' Interaction logic for ProductCategories.xaml
     ''' </summary>
     Public Class ProductCategories
-        Inherits Window
+        Inherits UserControl
 
-        Private view As ICollectionView
-        Private windowLoaded As Boolean = False
+        ' Properties for pagination
+        Private _paginationHelper As PaginationHelper
+        Private _searchFilterHelper As SearchFilterHelper
+
+        ' UI elements for direct access
+        Private popup As Popup
+        Private recentlyClosed As Boolean = False
 
         Public Sub New()
             InitializeComponent()
+            InitializeControls()
+        End Sub
 
-            Dim sidebar As New Components.Navigation.Sidebar()
-            SidebarContainer.Child = sidebar
+        Private Sub InitializeControls()
+            ' Find UI elements using their name
+            dataGrid = TryCast(FindName("dataGrid"), DataGrid)
+            txtSearch = TryCast(FindName("txtSearch"), TextBox)
+            cboPageSize = TryCast(FindName("cboPageSize"), ComboBox)
+            paginationPanel = TryCast(FindName("paginationPanel"), StackPanel)
 
-            ' Load Top Navigation Bar
-            Dim topNav As New Components.Navigation.TopNavBar()
-            TopNavBarContainer.Child = topNav
+            ' Verify that required controls are found
+            If dataGrid Is Nothing Then
+                MessageBox.Show("DataGrid not found in the XAML.", "Initialization Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                Return
+            End If
 
-            ' Load Data
+            If paginationPanel Is Nothing Then
+                MessageBox.Show("Pagination panel not found in the XAML.", "Initialization Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                Return
+            End If
+
+            ' Wire up event handlers
+            If txtSearch IsNot Nothing Then
+                AddHandler txtSearch.TextChanged, AddressOf TxtSearch_TextChanged
+            End If
+
+            If cboPageSize IsNot Nothing Then
+                AddHandler cboPageSize.SelectionChanged, AddressOf CboPageSize_SelectionChanged
+            End If
+
+            ' Initialize and load product categories data
             LoadData()
-
-            ' Load DataGrid with items and create a CollectionViewSource for filtering
-            view = CollectionViewSource.GetDefaultView(dataGrid.ItemsSource)
-            If view IsNot Nothing Then
-                view.Filter = AddressOf FilterDataGrid
-            End If
         End Sub
 
-        ' Function to load data into the DataGrid
-        Private Sub LoadData()
-            ' Fetch data from the database
-            Dim categories As List(Of ProductCategory) = ProductCategoryController.GetAllCategoriesWithSubcategories()
-
-            ' Convert the list to an ObservableCollection
-            Dim sortedCategories As New ObservableCollection(Of ProductCategory)(categories.OrderBy(Function(c) c.categoryID))
-
-            ' Set the data as the DataGrid's source
-            dataGrid.ItemsSource = sortedCategories
-
-            ' Apply sorting on the DataGrid's default view
-            Dim view As ICollectionView = CollectionViewSource.GetDefaultView(dataGrid.ItemsSource)
-            If view IsNot Nothing Then
-                view.SortDescriptions.Clear()
-                view.SortDescriptions.Add(New SortDescription("categoryID", ListSortDirection.Ascending))
-                view.Refresh()
-            End If
-
-        End Sub
-
-        ' Function to filter DataGrid based on search text
-        Private Function FilterDataGrid(item As Object) As Boolean
-            If String.IsNullOrWhiteSpace(txtSearch.Text) Then
-                Return True ' Show all items if search is empty
-            End If
-
-            Dim searchText As String = txtSearch.Text.ToLower()
-
-            Return False
-        End Function
-
-        ' Event handler for TextBox TextChanged event
+        ' Event handler for TextChanged to update the filter
         Private Sub TxtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
-            view?.Refresh() ' Refresh the DataGrid filter whenever the text changes
+            If _searchFilterHelper IsNot Nothing Then
+                _searchFilterHelper.SearchText = txtSearch.Text
+            End If
+        End Sub
+
+        ' Load Data Using ProductCategoryController
+        Public Sub LoadData()
+            Try
+                ' Check if DataGrid exists
+                If dataGrid Is Nothing Then
+                    MessageBox.Show("DataGrid control not found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return
+                End If
+
+                ' Get all categories with error handling
+                Dim allCategories As ObservableCollection(Of Object)
+                Try
+                    Dim categoryList = ProductCategoryController.GetAllCategoriesWithSubcategories()
+                    If categoryList Is Nothing Then
+                        MessageBox.Show("Category data returned null.", "Data Error", MessageBoxButton.OK, MessageBoxImage.Warning)
+                        allCategories = New ObservableCollection(Of Object)()
+                    Else
+                        allCategories = New ObservableCollection(Of Object)(categoryList.OrderBy(Function(c) c.categoryID))
+                    End If
+                Catch ex As Exception
+                    MessageBox.Show("Error retrieving category data: " & ex.Message, "Data Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    allCategories = New ObservableCollection(Of Object)()
+                End Try
+
+                ' Clear the pagination panel to avoid duplicate controls
+                paginationPanel.Children.Clear()
+
+                ' Initialize pagination helper with our DataGrid and pagination panel
+                _paginationHelper = New PaginationHelper(dataGrid, paginationPanel)
+
+                ' Set the items per page from the combo box if available
+                If cboPageSize IsNot Nothing Then
+                    Dim selectedItem = TryCast(cboPageSize.SelectedItem, ComboBoxItem)
+                    If selectedItem IsNot Nothing Then
+                        Dim itemsPerPageText As String = TryCast(selectedItem.Content, String)
+                        Dim itemsPerPage As Integer
+                        If Integer.TryParse(itemsPerPageText, itemsPerPage) Then
+                            _paginationHelper.ItemsPerPage = itemsPerPage
+                        End If
+                    End If
+                End If
+
+                ' Set the all items to the helper
+                _paginationHelper.AllItems = allCategories
+
+                ' Initialize search filter helper with our pagination helper
+                _searchFilterHelper = New SearchFilterHelper(_paginationHelper,
+                    "categoryID", "categoryName", "categoryDescription")
+
+            Catch ex As Exception
+                MessageBox.Show("Error in LoadData: " & ex.Message & vbCrLf & "Stack Trace: " & ex.StackTrace,
+                                "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+        End Sub
+
+        Private Sub CboPageSize_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+            If _paginationHelper Is Nothing Then Return
+
+            ' Get the selected value from the ComboBox
+            Dim selectedComboBoxItem As ComboBoxItem = TryCast(cboPageSize.SelectedItem, ComboBoxItem)
+            If selectedComboBoxItem IsNot Nothing Then
+                Dim itemsPerPageText As String = TryCast(selectedComboBoxItem.Content, String)
+                Dim newItemsPerPage As Integer
+
+                If Integer.TryParse(itemsPerPageText, newItemsPerPage) Then
+                    ' Update the pagination helper's items per page
+                    _paginationHelper.ItemsPerPage = newItemsPerPage
+                End If
+            End If
         End Sub
 
         ' Event Handler for Export Button Click
@@ -83,55 +147,10 @@ Namespace DPC.Views.Stocks.ProductCategories
                 Exit Sub
             End If
 
-            ' Open SaveFileDialog
-            Dim saveFileDialog As New SaveFileDialog() With {
-                .Filter = "Excel Files (*.xlsx)|*.xlsx",
-                .FileName = "DataGridExport.xlsx"
-            }
-
-            If saveFileDialog.ShowDialog() = True Then
-                Try
-                    ' Create Excel workbook
-                    Using workbook As New XLWorkbook()
-                        Dim dt As New DataTable()
-
-                        ' Add DataGrid columns as table headers
-                        For Each column As DataGridColumn In dataGrid.Columns
-                            dt.Columns.Add(column.Header.ToString())
-                        Next
-
-                        ' Add rows from DataGrid items
-                        For Each item In dataGrid.Items
-                            Dim row As DataRow = dt.NewRow()
-                            For i As Integer = 0 To dataGrid.Columns.Count - 1
-                                Dim column As DataGridColumn = dataGrid.Columns(i)
-                                Dim boundColumn = TryCast(column, DataGridBoundColumn)
-                                If boundColumn IsNot Nothing AndAlso boundColumn.Binding IsNot Nothing Then
-                                    Dim binding As Binding = TryCast(boundColumn.Binding, Binding)
-                                    If binding IsNot Nothing AndAlso binding.Path IsNot Nothing Then
-                                        Dim bindingPath As String = binding.Path.Path
-                                        Dim prop As PropertyInfo = item.GetType().GetProperty(bindingPath)
-                                        If prop IsNot Nothing Then
-                                            row(i) = prop.GetValue(item, Nothing)?.ToString()
-                                        End If
-                                    End If
-                                End If
-                            Next
-                            dt.Rows.Add(row)
-                        Next
-
-                        ' Add table to Excel sheet
-                        Dim worksheet = workbook.Worksheets.Add(dt, "DataGridData")
-                        worksheet.Columns().AdjustToContents()
-
-                        ' Save Excel file
-                        workbook.SaveAs(saveFileDialog.FileName)
-                        MessageBox.Show("Export Successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
-                    End Using
-                Catch ex As Exception
-                    MessageBox.Show("Error exporting data: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
-                End Try
-            End If
+            ' Create a list of column headers to exclude
+            Dim columnsToExclude As New List(Of String) From {"Settings"}
+            ' Use the ExcelExporter helper with column exclusions
+            ExcelExporter.ExportDataGridToExcel(dataGrid, columnsToExclude, "ProductCategories", "Product Categories List")
         End Sub
 
         Private Sub AddCategory(sender As Object, e As RoutedEventArgs)
@@ -141,8 +160,11 @@ Namespace DPC.Views.Stocks.ProductCategories
             ' Subscribe to the event to reload data after adding a category
             AddHandler addCategoryWindow.CategoryAdded, AddressOf OnCategoryAdded
 
+            ' Get the parent window to center the popup
+            Dim parentWindow = Window.GetWindow(Me)
+
             ' Open the popup
-            PopupHelper.OpenPopupWithControl(sender, addCategoryWindow, "windowcenter", -50, 0, Me)
+            PopupHelper.OpenPopupWithControl(sender, addCategoryWindow, "windowcenter", -50, 0, parentWindow)
         End Sub
 
         ' Event handler to refresh the DataGrid
@@ -156,13 +178,15 @@ Namespace DPC.Views.Stocks.ProductCategories
             ' Subscribe to the event to reload data after adding a category
             AddHandler addSubcategoryWindow.SubCategoryAdded, AddressOf OnSubCategoryAdded
 
+            ' Get the parent window to center the popup
+            Dim parentWindow = Window.GetWindow(Me)
+
             ' Open the popup
-            PopupHelper.OpenPopupWithControl(sender, addSubcategoryWindow, "windowcenter", -50, 0, Me)
+            PopupHelper.OpenPopupWithControl(sender, addSubcategoryWindow, "windowcenter", -50, 0, parentWindow)
         End Sub
 
         Private Sub OnSubCategoryAdded(sender As Object, e As EventArgs)
             LoadData() ' Reloads the subcategories in the main view
         End Sub
-
     End Class
 End Namespace
