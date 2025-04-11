@@ -2,7 +2,6 @@
 Imports MaterialDesignThemes.Wpf
 Imports Microsoft.Win32
 Imports System.IO
-Imports DPC.Data.Helpers
 Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Components.Forms
