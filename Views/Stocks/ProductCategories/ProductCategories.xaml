@@ -281,15 +281,15 @@
                             </DataGrid.ColumnHeaderStyle>
 
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="#" Binding="{Binding categoryID}" Width="Auto"/>
-                                <DataGridTextColumn Header="Name" Binding="{Binding categoryName}" Width="Auto"/>
-                                <DataGridTextColumn Header="Description" Binding="{Binding categoryDescription}" Width="Auto"/>
+                                <DataGridTextColumn Header="#" Binding="{Binding categoryID}" Width="Auto" FontFamily="Lexend" Foreground="#474747" />
+                                <DataGridTextColumn Header="Name" Binding="{Binding categoryName}" Width="Auto" FontFamily="Lexend" Foreground="#474747"  />
+                                <DataGridTextColumn Header="Description" Binding="{Binding categoryDescription}" Width="Auto" FontFamily="Lexend" Foreground="#474747" />
 
                                 <!-- Subcategories column with ListBox to display subcategories -->
                                 <DataGridTemplateColumn Header="Subcategories" Width="Auto">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <ListBox ItemsSource="{Binding subcategories}" DisplayMemberPath="subcategoryName" />
+                                            <ListBox ItemsSource="{Binding subcategories}" DisplayMemberPath="subcategoryName"  FontFamily="Lexend" Foreground="#474747" />
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>

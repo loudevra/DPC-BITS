@@ -138,12 +138,12 @@
                             </DataGrid.ColumnHeaderStyle>
 
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="#" Binding="{Binding SupplierID}" Width="Auto"/>
-                                <DataGridTextColumn Header="Name" Binding="{Binding SupplierName}" Width="Auto"/>
-                                <DataGridTextColumn Header="Company" Binding="{Binding SupplierCompany}" Width="Auto"/>
-                                <DataGridTextColumn Header="Address" Binding="{Binding OfficeAddress}" Width="Auto"/>
-                                <DataGridTextColumn Header="Email" Binding="{Binding SupplierEmail}" Width="Auto"/>
-                                <DataGridTextColumn Header="Phone" Binding="{Binding SupplierPhone}" Width="Auto"/>
+                                <DataGridTextColumn Header="#" Binding="{Binding SupplierID}" Width="Auto" FontFamily="Lexend" Foreground="#474747" />
+                                <DataGridTextColumn Header="Name" Binding="{Binding SupplierName}" Width="Auto" FontFamily="Lexend" Foreground="#474747" />
+                                <DataGridTextColumn Header="Company" Binding="{Binding SupplierCompany}" Width="Auto" FontFamily="Lexend" Foreground="#474747" />
+                                <DataGridTextColumn Header="Address" Binding="{Binding OfficeAddress}" Width="Auto" FontFamily="Lexend" Foreground="#474747" />
+                                <DataGridTextColumn Header="Email" Binding="{Binding SupplierEmail}" Width="Auto" FontFamily="Lexend" Foreground="#474747" />
+                                <DataGridTextColumn Header="Phone" Binding="{Binding SupplierPhone}" Width="Auto" FontFamily="Lexend" Foreground="#474747" />
 
                                 <!-- Brands Column Without Converter -->
                                 <DataGridTextColumn Header="Brands" Binding="{Binding BrandNames}" Width="Auto"/>
