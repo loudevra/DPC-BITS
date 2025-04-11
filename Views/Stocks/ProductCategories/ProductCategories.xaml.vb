@@ -164,7 +164,7 @@ Namespace DPC.Views.Stocks.ProductCategories
             Dim parentWindow = Window.GetWindow(Me)
 
             ' Open the popup
-            PopupHelper.OpenPopupWithControl(sender, addCategoryWindow, "windowcenter", -50, 0, parentWindow)
+            PopupHelper.OpenPopupWithControl(sender, addCategoryWindow, "windowcenter", True, -50, 0, parentWindow)
         End Sub
 
         ' Event handler to refresh the DataGrid
@@ -182,7 +182,7 @@ Namespace DPC.Views.Stocks.ProductCategories
             Dim parentWindow = Window.GetWindow(Me)
 
             ' Open the popup
-            PopupHelper.OpenPopupWithControl(sender, addSubcategoryWindow, "windowcenter", -50, 0, parentWindow)
+            PopupHelper.OpenPopupWithControl(sender, addSubcategoryWindow, "windowcenter", True, -50, 0, parentWindow)
         End Sub
 
         Private Sub OnSubCategoryAdded(sender As Object, e As EventArgs)
