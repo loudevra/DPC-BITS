@@ -108,12 +108,7 @@ Namespace DPC.Components.UI
         ''' Navigate to Warehouses Page
         ''' </summary>
         Private Sub NavigateToWarehouses(sender As Object, e As RoutedEventArgs)
-            ' Open EmployeesView
-            Dim WarehouseWindow As New Views.Stocks.Warehouses.Warehouses()
-            WarehouseWindow.Show()
-            ' Close the current window where this UserControl is being used
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
+            DPC.Data.Helpers.DynamicView.NavigateToView("warehouses", Me)
         End Sub
 
         ''' <summary>
