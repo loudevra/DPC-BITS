@@ -3,19 +3,19 @@ Imports System.Windows
 Imports DPC.DPC.Components.Navigation
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Model
+Imports DPC.DPC.Components.Forms
 
 Namespace DPC.Views.HRM.Employees
     Public Class AddEmployee
         Public Sub New()
             InitializeComponent()
 
-            ' Add Sidebar to SidebarContainer
-            Dim sidebar As New Sidebar()
-            SidebarContainer.Child = sidebar
+            Dim sidebar As New Components.Navigation.Sidebar()
+            SidebarContainer.Content = sidebar
 
-            ' Add TopNavBar to TopNavBarContainer
-            Dim topNavBar As New TopNavBar()
-            TopNavBarContainer.Child = topNavBar
+            ' Load Top Navigation Bar
+            Dim topNav As New Components.Navigation.TopNavBar()
+            TopNavBarContainer.Content = topNav
 
             LoadUserRoles()
             LoadBusinessLocations()
@@ -24,7 +24,7 @@ Namespace DPC.Views.HRM.Employees
             ' Validate required fields
             If String.IsNullOrWhiteSpace(txtUsername.Text) OrElse
                String.IsNullOrWhiteSpace(txtEmail.Text) OrElse
-               String.IsNullOrWhiteSpace(txtPassword.Password) OrElse
+               String.IsNullOrWhiteSpace(txtPassword.Text) OrElse
                String.IsNullOrWhiteSpace(txtName.Text) OrElse
                String.IsNullOrWhiteSpace(txtPhone.Text) Then
 
@@ -57,7 +57,7 @@ Namespace DPC.Views.HRM.Employees
             Dim newEmployee As New Employee With {
                 .Username = txtUsername.Text,
                 .Email = txtEmail.Text,
-                .Password = txtPassword.Password, ' Hash before storing in production
+                .Password = txtPassword.Text, ' Hash before storing in production
                 .UserRoleID = CType(cmbUserRole.SelectedValue, Integer),
                 .BusinessLocationID = CType(cmbBusinessLocation.SelectedValue, Integer),
                 .Name = txtName.Text,
