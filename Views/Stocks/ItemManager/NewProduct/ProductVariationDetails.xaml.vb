@@ -6,9 +6,10 @@ Imports DPC.DPC.Components.Forms
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
-Imports MaterialDesignThemes.Wpf
 Imports MaterialDesignThemes.Wpf.Theme
 Imports Microsoft.Win32
+
+
 
 Namespace DPC.Views.Stocks.ItemManager.NewProduct
     Public Class ProductVariationDetails
@@ -24,7 +25,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Dim topNav As New Components.Navigation.TopNavBar()
             TopNavBarContainer.Content = topNav
 
-
             ProductController.GetWarehouse(ComboBoxWarehouse)
 
             Dim calendarViewModel As New CalendarController.SingleCalendar()
@@ -32,11 +32,13 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             ProductController.MainContainer = MainContainer
             ProductController.TxtStockUnits = TxtStockUnits
-            'MessageBox.Show("MainContainer and TxtStockUnits have been initialized.")
 
             ProductController.BtnAddRow_Click(Nothing, Nothing)
 
             TxtDefaultTax.Text = 12
+
+            ' Initialize dynamic variations panel
+            InitializeVariations()
         End Sub
 
         Private Sub BtnBatchEdit(sender As Object, e As RoutedEventArgs)
@@ -134,5 +136,187 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             End While
             Return TryCast(element, Grid)
         End Function
+
+        'loading variations and combining options
+        Public Sub LoadVariationCombinations()
+            ' Clear existing buttons in the variations panel
+            Dim variationsPanel As StackPanel = FindName("VariationsPanel")
+            If variationsPanel Is Nothing Then
+                ' If the panel doesn't exist in XAML, we need to create it
+                variationsPanel = New StackPanel()
+                variationsPanel.Name = "VariationsPanel"
+                variationsPanel.Orientation = Orientation.Horizontal
+
+                ' Replace the existing hardcoded panel with our dynamic one
+                ' Find the container that holds the current hardcoded buttons
+                Dim currentPanel = FindName("StackPanel1") ' Update this name to match your actual container
+                If currentPanel IsNot Nothing AndAlso TypeOf currentPanel.Parent Is Grid Then
+                    Dim parentGrid As Grid = DirectCast(currentPanel.Parent, Grid)
+                    Dim row As Integer = Grid.GetRow(currentPanel)
+                    Dim column As Integer = Grid.GetColumn(currentPanel)
+
+                    parentGrid.Children.Remove(currentPanel)
+                    Grid.SetRow(variationsPanel, row)
+                    Grid.SetColumn(variationsPanel, column)
+                    parentGrid.Children.Add(variationsPanel)
+                End If
+            Else
+                variationsPanel.Children.Clear()
+            End If
+
+            ' Get variations from the shared static property
+            Dim variations As List(Of ProductVariation) = DPC.Components.Forms.AddVariation.SavedVariations
+
+            ' Check if we have any variations
+            If variations Is Nothing OrElse variations.Count = 0 Then
+                ' No variations, add a placeholder
+                AddVariationButton(variationsPanel, "No Variations", True)
+                Return
+            End If
+
+            ' Check if we have one or two variations
+            If variations.Count = 1 Then
+                ' Single variation case - just show options
+                Dim variation As ProductVariation = variations(0)
+                If variation.Options IsNot Nothing AndAlso variation.Options.Count > 0 Then
+                    Dim isFirst As Boolean = True
+                    For Each opt As VariationOption In variation.Options
+                        AddVariationButton(variationsPanel, opt.OptionName, isFirst)
+                        isFirst = False
+                    Next
+                End If
+            ElseIf variations.Count = 2 Then
+                ' Two variations case - create combinations
+                Dim variation1 As ProductVariation = variations(0)
+                Dim variation2 As ProductVariation = variations(1)
+
+                If variation1.Options IsNot Nothing AndAlso variation1.Options.Count > 0 AndAlso
+               variation2.Options IsNot Nothing AndAlso variation2.Options.Count > 0 Then
+
+                    Dim isFirst As Boolean = True
+                    For Each option1 As VariationOption In variation1.Options
+                        For Each option2 As VariationOption In variation2.Options
+                            ' Create combination label: "Color, Size"
+                            Dim combinationName As String = $"{option1.OptionName}, {option2.OptionName}"
+                            AddVariationButton(variationsPanel, combinationName, isFirst)
+                            isFirst = False
+                        Next
+                    Next
+                End If
+            End If
+        End Sub
+
+        ' Helper method to add a variation button with consistent styling
+        ' Helper method to add a variation button with consistent styling
+        Private Sub AddVariationButton(container As StackPanel, labelText As String, isSelected As Boolean)
+            Dim btn As New System.Windows.Controls.Button With {
+        .Style = CType(FindResource("RoundedButtonStyle"), Style),
+        .Width = Double.NaN,  ' Auto width
+        .Height = Double.NaN, ' Auto height
+        .Background = Brushes.Transparent,
+        .HorizontalAlignment = HorizontalAlignment.Left,
+        .BorderThickness = New Thickness(0),
+        .VerticalAlignment = VerticalAlignment.Center,
+        .Margin = New Thickness(0, 0, 15, 0)
+    }
+
+            ' Create the Grid layout for the button content
+            Dim grid As New Grid()
+            grid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
+            grid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
+
+            ' Add vertical line if selected
+            Dim border As New Border With {
+        .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
+        .BorderThickness = New Thickness(1, 0, 0, 0),
+        .Width = 1,
+        .Height = Double.NaN,  ' Auto height
+        .Margin = New Thickness(0),
+        .Visibility = If(isSelected, Visibility.Visible, Visibility.Collapsed)
+    }
+            Grid.SetColumn(border, 0)
+            grid.Children.Add(border)
+
+            ' Add the text
+            Dim textBlock As New TextBlock With {
+        .Text = labelText,
+        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString(If(isSelected, "#555555", "#AEAEAE"))),
+        .FontSize = 14,
+        .FontWeight = FontWeights.SemiBold,
+        .Margin = New Thickness(5, 0, 0, 0),
+        .VerticalAlignment = VerticalAlignment.Center
+    }
+            Grid.SetColumn(textBlock, 1)
+            grid.Children.Add(textBlock)
+
+            ' Set the grid as button content
+            btn.Content = grid
+
+            ' Add click handler to select this variation
+            AddHandler btn.Click, Sub(sender, e)
+                                      ' Update UI to show this variation is selected
+                                      For Each child As UIElement In container.Children
+                                          If TypeOf child Is System.Windows.Controls.Button Then
+                                              Dim childBtn As System.Windows.Controls.Button = DirectCast(child, System.Windows.Controls.Button)
+                                              Dim childGrid As Grid = TryCast(childBtn.Content, Grid)
+                                              If childGrid IsNot Nothing Then
+                                                  ' Update the border visibility and text color for all buttons
+                                                  For Each gridChild As UIElement In childGrid.Children
+                                                      If TypeOf gridChild Is Border Then
+                                                          DirectCast(gridChild, Border).Visibility = If(child Is sender, Visibility.Visible, Visibility.Collapsed)
+                                                      ElseIf TypeOf gridChild Is TextBlock Then
+                                                          DirectCast(gridChild, TextBlock).Foreground = New SolidColorBrush(
+                                                      ColorConverter.ConvertFromString(If(child Is sender, "#555555", "#AEAEAE")))
+                                                      End If
+                                                  Next
+                                              End If
+                                          End If
+                                      Next
+
+                                      ' Load the specific variation data here
+                                      LoadVariationDetails(labelText)
+                                  End Sub
+
+            ' Add to container
+            container.Children.Add(btn)
+        End Sub
+
+        ' Method to load details for selected variation
+        Private Sub LoadVariationDetails(combinationName As String)
+            ' Parse the combination name to get individual option values
+            Dim options As String() = combinationName.Split(New Char() {","c}, StringSplitOptions.RemoveEmptyEntries)
+
+            ' Trim whitespace from each option
+            For i As Integer = 0 To options.Length - 1
+                options(i) = options(i).Trim()
+            Next
+
+            ' TODO: Load specific data for this variation combination
+            ' This would access any saved data for this specific combination
+            ' or create default values if this is a new combination
+
+            ' For now, we'll just update a title or display the current selection
+            Dim titleTextBlock As TextBlock = TryCast(FindName("SelectedVariationTitle"), TextBlock)
+            If titleTextBlock IsNot Nothing Then
+                titleTextBlock.Text = $"Selected: {combinationName}"
+            End If
+        End Sub
+
+        ' To be called when the form loads
+        ' To be called when the form loads
+        Public Sub InitializeVariations()
+            ' Call this during form initialization
+            LoadVariationCombinations()
+
+            ' Set the first variation as selected by default
+            Dim variationsPanel As StackPanel = TryCast(FindName("VariationsPanel"), StackPanel)
+            If variationsPanel IsNot Nothing AndAlso variationsPanel.Children.Count > 0 Then
+                Dim firstButton As System.Windows.Controls.Button = TryCast(variationsPanel.Children(0), System.Windows.Controls.Button)
+                If firstButton IsNot Nothing Then
+                    ' Simulate click on first button
+                    firstButton.RaiseEvent(New RoutedEventArgs(System.Windows.Controls.Button.ClickEvent))
+                End If
+            End If
+        End Sub
     End Class
 End Namespace
