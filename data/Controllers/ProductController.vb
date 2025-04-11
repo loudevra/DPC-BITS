@@ -707,6 +707,8 @@ Namespace DPC.Data.Controllers
             End Using
         End Sub
 
-
+        Public Function GetProductVariations() As List(Of ProductVariation)
+            Return DPC.Components.Forms.AddVariation.SavedVariations
+        End Function
     End Class
 End Namespace

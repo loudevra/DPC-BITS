@@ -7,98 +7,288 @@
         Background="#F5F5F5"
         WindowStartupLocation="CenterScreen">
 
+    <Window.Resources>
+        <Style x:Key="AddNewButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="120"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Background" Value="#D9D9D9"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush" Value="#474747"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="15" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Border Style -->
+        <Style x:Key="RoundedBorderStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="15"/>
+        </Style>
+
+        <!-- Button Style -->
+        <Style x:Key="RoundedButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Style="{StaticResource RoundedBorderStyle}" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="RoundedComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="FontFamily" Value="Lexend"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Border Style="{StaticResource RoundedBorderStyle}" 
+                    Background="{TemplateBinding Background}" 
+                    BorderBrush="{TemplateBinding BorderBrush}" 
+                    BorderThickness="1">
+                            <Grid>
+                                <!-- Define two columns, Content on left, Arrow on right -->
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="35" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Selected Item Content -->
+                                <ContentPresenter Name="ContentSite"
+                                      IsHitTestVisible="False"
+                                      Content="{TemplateBinding SelectionBoxItem}"
+                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                      VerticalAlignment="Center"
+                                      Margin="10,0,5,0"/>
+
+                                <!-- Arrow Button (Right) -->
+                                <ToggleButton Name="ToggleButton" 
+                                  Grid.Column="1"
+                                  Focusable="False"
+                                  IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                  Background="Transparent"
+                                  BorderBrush="Transparent"
+                                  BorderThickness="0"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Center"
+                                  Margin="0,0,5,0">
+                                    <ToggleButton.Style>
+                                        <Style TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="BorderBrush" Value="Transparent"/>
+                                            <Setter Property="Padding" Value="0"/>
+                                            <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ToggleButton">
+                                                        <Border Background="Transparent" BorderThickness="0">
+                                                            <materialDesign:PackIcon Kind="ChevronDown" Width="20" Height="20" Foreground="Black"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ToggleButton.Style>
+                                </ToggleButton>
+
+                                <!-- Dropdown Items -->
+                                <Popup Name="Popup"
+                           Placement="Bottom"
+                           IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                           AllowsTransparency="True"
+                           Focusable="False"
+                           MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                    <!-- MATCH WIDTH -->
+                                    <Border Style="{StaticResource RoundedBorderStyle}" 
+                                Background="White" 
+                                BorderBrush="Black"
+                                Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                        <!-- MATCH WIDTH -->
+                                        <ScrollViewer>
+                                            <StackPanel>
+                                                <ItemsPresenter/>
+                                            </StackPanel>
+                                        </ScrollViewer>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="RoundedGridStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+
+    </Window.Resources>
+
     <Grid>
-        <!-- Sidebar and Main Content Columns -->
+        <!-- Define Sidebar and Main Content Columns -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
+            <!-- Sidebar -->
             <ColumnDefinition Width="*"/>
+            <!-- Main Content -->
         </Grid.ColumnDefinitions>
 
         <!-- Sidebar -->
-        <Border x:Name="SidebarContainer" Grid.Column="0" Background="Black"/>
+        <Border Grid.Column="0"
+                x:Name="SidebarContainer"
+                Width="250"
+                Background="White"
+                BorderBrush="#E0E0E0"
+                BorderThickness="0,0,1,0"/>
 
-        <!-- Wrapper for TopNavBar + Main Content -->
+        <!-- Main Content Area -->
         <Grid Grid.Column="1">
+            <!-- Define Rows for TopNavBar and Content -->
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <!-- TopNavBar -->
                 <RowDefinition Height="*"/>
+                <!-- Content -->
             </Grid.RowDefinitions>
 
             <!-- Top Navigation Bar -->
-            <Border x:Name="TopNavBarContainer" Grid.Row="0" Background="White" Height="Auto" MinHeight="50"/>
+            <Border x:Name="TopNavBarContainer"
+                    Grid.Row="0"
+                    Background="White"
+                    BorderBrush="#E0E0E0"
+                    BorderThickness="0,0,0,1"/>
 
-            <!-- Main Content -->
-            <StackPanel Grid.Row="1" Margin="20">
-                <!-- Header Section -->
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
-                    <TextBlock Text="Employee" FontSize="24" FontWeight="Bold"/>
-                    <Button Content="+ Employee" Margin="10,0,0,0"
-                            Style="{StaticResource MaterialDesignOutlinedButton}"
-                            VerticalAlignment="Center" Click="AddEmployee"/>
-                </StackPanel>
+            <!-- Main Content (ScrollViewer) -->
+            <ScrollViewer Grid.Row="1"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <Grid Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <!-- Main Content -->
+                    <StackPanel Grid.Row="1" Margin="20">
+                        <!-- Header Section -->
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
+                            <TextBlock Text="Employee" FontSize="35" FontWeight="Bold" FontFamily="Lexend" Foreground="#474747" />
 
-                <!-- Table and Controls -->
-                <Border Background="White" CornerRadius="8" Padding="15">
-                    <StackPanel>
-
-                        <!-- Table Header -->
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10" HorizontalAlignment="Stretch">
-                            <ComboBox Width="100" Margin="0,0,10,0">
-                                <ComboBoxItem Content="10"/>
-                                <ComboBoxItem Content="25"/>
-                                <ComboBoxItem Content="50"/>
-                            </ComboBox>
-                            <TextBox Width="200" HorizontalAlignment="Right" materialDesign:HintAssist.Hint="Search"/>
+                            <Button x:Name="BtnEmployee"
+                                Style="{StaticResource AddNewButtonStyle}"
+                                Margin="20,0,0,0" Click="AddEmployee" >
+                                <StackPanel Orientation="Horizontal">
+                                    <materialDesign:PackIcon Kind="AccountPlus" Width="25" Height="25" Foreground="#474747"/>
+                                    <TextBlock Text="Employee" FontSize="17" Foreground="#474747"  />
+                                </StackPanel>
+                            </Button>
                         </StackPanel>
 
-                        <!-- Data Grid -->
-                        <DataGrid x:Name="EmployeesDataGrid"
+                        <!-- Filters and Controls -->
+                        <Border Grid.Row="1" Padding="2" Background="White" CornerRadius="10" BorderBrush="White" Margin="0,0,0,15" >
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Left Controls -->
+                                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                    <!-- Excel Button -->
+                                    <Button Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" Foreground="White" Width="75"   >
+                                        <materialDesign:PackIcon Kind="MicrosoftExcel" Width="25" Height="25"/>
+                                    </Button>
+
+                                    <TextBlock Text="Show" FontSize="14" Margin="10,0,5,0" Height="19" FontFamily="Lexend" Foreground="#474747"/>
+                                    <ComboBox Width="75" Style="{StaticResource RoundedComboBoxStyle}">
+                                        <ComboBoxItem Content="10" IsSelected="True"/>
+                                        <ComboBoxItem Content="25"/>
+                                        <ComboBoxItem Content="50"/>
+                                        <ComboBoxItem Content="100"/>
+                                    </ComboBox>
+                                </StackPanel>
+
+                                <!-- Right Controls -->
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200">
+                                        <Grid>
+                                            <TextBox BorderThickness="0" Background="Transparent" FontFamily="Lexend"  />
+                                            <materialDesign:PackIcon Kind="Magnify" Width="20" Height="25" Foreground="Black" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- Table and Controls -->
+                        <Border Background="White" CornerRadius="8" Padding="15">
+                            <StackPanel>
+
+
+
+                                <!-- Data Grid -->
+                                <DataGrid x:Name="EmployeesDataGrid"
                                   AutoGenerateColumns="False"
                                   CanUserAddRows="False"
                                   CanUserResizeRows="False"
                                   CanUserResizeColumns="False"
                                   IsReadOnly="True"
-                                  RowHeight="40">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="#" Binding="{Binding EmployeeID}" Width="50"/>
-                                <DataGridTemplateColumn Header="Name" Width="200">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Ellipse Width="30" Height="30" Fill="Gray" Margin="0,0,10,0"/>
-                                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                                <DataGridTextColumn Header="Role" Binding="{Binding RoleName}" Width="200"/>
-                                <DataGridTextColumn Header="Location" Binding="{Binding LocationName}" Width="200"/>
-                                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
-                                <DataGridTemplateColumn Header="Actions" Width="150">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Button Content="👁" Click="ViewEmployee" Margin="2"/>
-                                                <Button Content="🖋" Command="{Binding EditCommand}" Margin="2"/>
-                                                <Button Content="🗑" Command="{Binding DeleteCommand}" Margin="2"/>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                            </DataGrid.Columns>
-                        </DataGrid>
+                                  RowHeight="40" FontFamily="Lexend" Foreground="#474747">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="#" Binding="{Binding EmployeeID}" Width="50"/>
+                                        <DataGridTemplateColumn Header="Name" Width="200">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Ellipse Width="30" Height="30" Fill="Gray" Margin="0,0,10,0"/>
+                                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTextColumn Header="Role" Binding="{Binding RoleName}" Width="200"/>
+                                        <DataGridTextColumn Header="Location" Binding="{Binding LocationName}" Width="200"/>
+                                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
+                                        <DataGridTemplateColumn Header="Actions" Width="150">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Button Content="👁" Click="ViewEmployee" Margin="2"/>
+                                                        <Button Content="🖋" Command="{Binding EditCommand}" Margin="2"/>
+                                                        <Button Content="🗑" Command="{Binding DeleteCommand}" Margin="2"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
 
-                        <!-- Pagination Controls -->
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-                            <Button Content="«" x:Name="BtnFirstPage" Click="BtnFirstPage_Click"/>
-                            <Button Content="‹" x:Name="BtnPrevPage" Click="BtnPrevPage_Click" Margin="5,0"/>
-                            <TextBlock x:Name="TxtPageNumber" Text="Page 1 of 10" VerticalAlignment="Center"/>
-                            <Button Content="›" x:Name="BtnNextPage" Click="BtnNextPage_Click" Margin="5,0"/>
-                            <Button Content="»" x:Name="BtnLastPage" Click="BtnLastPage_Click"/>
-                        </StackPanel>
+                                <!-- Pagination Controls -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                                    <Button Content="«" x:Name="BtnFirstPage" Click="BtnFirstPage_Click" FontFamily="Lexend" Foreground="#474747" />
+                                    <Button Content="‹" x:Name="BtnPrevPage" Click="BtnPrevPage_Click" Margin="5,0" FontFamily="Lexend" Foreground="#474747" />
+                                    <TextBlock x:Name="TxtPageNumber" Text="Page 1 of 10" VerticalAlignment="Center" FontFamily="Lexend" Foreground="#474747" />
+                                    <Button Content="›" x:Name="BtnNextPage" Click="BtnNextPage_Click" Margin="5,0" FontFamily="Lexend" Foreground="#474747" />
+                                    <Button Content="»" x:Name="BtnLastPage" Click="BtnLastPage_Click" FontFamily="Lexend" Foreground="#474747" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
-                </Border>
-            </StackPanel>
+                </Grid>
+            </ScrollViewer>
         </Grid>
     </Grid>
 </Window>

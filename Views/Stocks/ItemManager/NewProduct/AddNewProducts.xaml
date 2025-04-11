@@ -268,7 +268,7 @@
 
                                         <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left">
                                             <TextBlock Text="Product Variation" Margin="10,0,10,0" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                                            <TextBlock x:Name="ProductVariation" Text="White" Foreground="#AEAEAE" Margin="0,0,0,0" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="TxtProductVariation" Foreground="#AEAEAE" Margin="0,0,0,0" FontWeight="SemiBold" VerticalAlignment="Center"/>
                                         </StackPanel>
                                         <materialDesign:PackIcon Kind="MenuRight" Grid.Column="1" Height="20" Width="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
                                     </Grid>

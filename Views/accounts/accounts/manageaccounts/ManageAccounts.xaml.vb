@@ -38,7 +38,7 @@ Namespace DPC.Views.Accounts.Accounts.ManageAccounts
             AddHandler addAccountWindow.AccountAdded, AddressOf OnAccountAdd
 
             ' Open the popup
-            PopupHelper.OpenPopupWithControl(sender, addAccountWindow, "windowcenter", -50, 0, Me)
+            PopupHelper.OpenPopupWithControl(sender, addAccountWindow, "windowcenter", -50, 0, True, Me)
         End Sub
 
         Private Sub OnAccountAdd(sender As Object, e As EventArgs)

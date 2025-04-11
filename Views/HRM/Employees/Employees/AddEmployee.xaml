@@ -1,102 +1,165 @@
-<Window x:Class="DPC.Views.HRM.Employees.AddEmployee"
+﻿<Window x:Class="DPC.Views.HRM.Employees.AddEmployee"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="namespace:DPC.Views.HRM.Employees.AddEmployee" 
+        xmlns:local1="namespace:DPC.Components.Forms"
         Title="Add Employee"
         Height="800" Width="1200"
         Background="#F5F5F5"
+        FontFamily="{StaticResource Lexend}"
         WindowStartupLocation="CenterScreen">
 
     <Grid>
-        <!-- Sidebar and Main Content Columns -->
+        <!-- Define Column Structure -->
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="250"/>
+            <!-- Sidebar Width -->
             <ColumnDefinition Width="*"/>
+            <!-- Main Content -->
         </Grid.ColumnDefinitions>
 
         <!-- Sidebar -->
-        <Border x:Name="SidebarContainer" Grid.Row="0" Grid.Column="0" Background="Black"/>
+        <Border Grid.Column="0"
+        Background="White"
+        BorderBrush="#E0E0E0"
+        BorderThickness="0,0,1,0">
+            <ContentControl x:Name="SidebarContainer"/>
+        </Border>
 
-        <!-- Wrapper for TopNavBar + Content -->
+        <!-- Main Content -->
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="60"/>
+                <!-- Top Navigation Bar -->
                 <RowDefinition Height="*"/>
+                <!-- Form Content -->
             </Grid.RowDefinitions>
 
             <!-- Top Navigation Bar -->
-            <Border x:Name="TopNavBarContainer" Grid.Row="0" Background="White" Height="Auto" MinHeight="50"/>
+            <Border Grid.Row="0"
+            Background="White"
+            BorderBrush="#E0E0E0"
+            BorderThickness="0,0,0,1">
+                <ContentControl x:Name="TopNavBarContainer"/>
+            </Border>
 
-            <!-- Main Content (Employee Form) -->
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                <StackPanel Margin="40" Width="600">
+            <!-- Main Form Content -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Margin="20" Width="800">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                        <materialDesign:PackIcon Kind="AccountPlus" Width="70" Height="60" Margin="0,0,15,0"  Foreground="#474747" />
+                        <TextBlock Text="Employee Details" FontSize="35" FontWeight="Bold" VerticalAlignment="Center" FontFamily="Lexend" Foreground="#474747" />
+                    </StackPanel>
 
-                    <!-- Title -->
-                    <TextBlock Text="Add New Employee" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
+                    <StackPanel Grid.Row="1">
+                        <!-- Username -->
+                        <TextBlock Text="Username:" Margin="0,0,0,5" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <TextBox x:Name="txtUsername" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="744"/>
+                        </Border>
 
-                    <!-- Username -->
-                    <TextBlock Text="Username" FontWeight="Bold"/>
-                    <TextBox x:Name="txtUsername" Height="30" Margin="0,5,0,15"/>
 
-                    <!-- Email -->
-                    <TextBlock Text="Email" FontWeight="Bold"/>
-                    <TextBox x:Name="txtEmail" Height="30" Margin="0,5,0,15"/>
+                        <!-- Email -->
+                        <TextBlock Text="Email:" Margin="0,5,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <TextBox x:Name="txtEmail" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="734"/>
+                        </Border>
 
-                    <!-- Password -->
-                    <TextBlock Text="Password" FontWeight="Bold"/>
-                    <PasswordBox x:Name="txtPassword" Height="30" Margin="0,5,0,15"/>
+                        <!-- Password -->
+                        <TextBlock Text="Password:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <TextBox x:Name="txtPassword" Height="30" Margin="0,0,0,5"
+         Style="{StaticResource RoundedTextboxStyle}" Width="736"
+         TextChanged="txtPassword_TextChanged"/>
+                            
+                        </Border>
+                        <StackPanel x:Name="PasswordCriteriaPanel" Margin="10,0,0,0">
+                            <TextBlock x:Name="chkLength" Text="✓ At least 6 characters" Foreground="Green" Visibility="Collapsed" FontWeight="SemiBold" FontFamily="Lexend" />
+                            <TextBlock x:Name="chkMaxLength" Text="✓ Under 20 characters" Foreground="Green" Visibility="Collapsed" FontWeight="SemiBold" FontFamily="Lexend" />
+                            <TextBlock x:Name="chkUpper" Text="✓ 1 uppercase letter" Foreground="Green" Visibility="Collapsed" FontWeight="SemiBold" FontFamily="Lexend" />
+                            <TextBlock x:Name="chkLower" Text="✓ 1 lowercase letter" Foreground="Green" Visibility="Collapsed" FontWeight="SemiBold" FontFamily="Lexend" />
+                            <TextBlock x:Name="chkSpecial" Text="✓ 1 special character" Foreground="Green" Visibility="Collapsed" FontWeight="SemiBold" FontFamily="Lexend" />
+                            <TextBlock x:Name="chkNumber" Text="✓ 1 number" Foreground="Green" Visibility="Collapsed" FontWeight="SemiBold" FontFamily="Lexend" />
+                        </StackPanel>
 
-                    <!-- Full Name -->
-                    <TextBlock Text="Full Name" FontWeight="Bold"/>
-                    <TextBox x:Name="txtName" Height="30" Margin="0,5,0,15"/>
 
-                    <!-- Address Fields -->
-                    <TextBlock Text="Street Address" FontWeight="Bold"/>
-                    <TextBox x:Name="txtStreetAddress" Height="30" Margin="0,5,0,15"/>
+                        <!-- Full Name -->
+                        <TextBlock Text="Full Name:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <TextBox x:Name="txtName" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="735"/>
+                        </Border>
 
-                    <TextBlock Text="City" FontWeight="Bold"/>
-                    <TextBox x:Name="txtCity" Height="30" Margin="0,5,0,15"/>
+                        <!-- Address Fields -->
+                        <TextBlock Text="Street Address:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <TextBox x:Name="txtStreetAddress" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="729"/>
+                        </Border>
 
-                    <TextBlock Text="Region" FontWeight="Bold"/>
-                    <TextBox x:Name="txtRegion" Height="30" Margin="0,5,0,15"/>
+                        <TextBlock Text="City:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <TextBox x:Name="txtCity" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="738"/>
+                        </Border>
 
-                    <TextBlock Text="Country" FontWeight="Bold"/>
-                    <TextBox x:Name="txtCountry" Height="30" Margin="0,5,0,15"/>
+                        <TextBlock Text="Region:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <TextBox x:Name="txtRegion" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="730"/>
+                        </Border>
 
-                    <TextBlock Text="Postal Code" FontWeight="Bold"/>
-                    <TextBox x:Name="txtPostalCode" Height="30" Margin="0,5,0,15"/>
+                        <TextBlock Text="Country:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <TextBox x:Name="txtCountry" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="728"/>
+                        </Border>
 
-                    <!-- Phone Number -->
-                    <TextBlock Text="Phone Number" FontWeight="Bold"/>
-                    <TextBox x:Name="txtPhone" Height="30" Margin="0,5,0,15"/>
+                        <TextBlock Text="Postal Code:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <TextBox x:Name="txtPostalCode" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="730"/>
+                        </Border>
 
-                    <!-- Role -->
-                    <TextBlock Text="User Role" FontWeight="Bold"/>
-                    <ComboBox x:Name="cmbUserRole" Height="30" Margin="0,5,0,15"/>
+                        <!-- Phone Number -->
+                        <TextBlock Text="Phone Number:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <TextBox x:Name="txtPhone" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="729"/>
+                        </Border>
 
-                    <!-- Business Location -->
-                    <TextBlock Text="Business Location" FontWeight="Bold"/>
-                    <ComboBox x:Name="cmbBusinessLocation" Height="30" Margin="0,5,0,15"/>
+                        <!-- Role -->
+                        <TextBlock Text="User Role:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
+                        <ComboBox x:Name="cmbUserRole" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0">
+                        </ComboBox>
 
-                    <!-- Salary -->
-                    <TextBlock Text="Salary" FontWeight="Bold"/>
-                    <TextBox x:Name="txtSalary" Height="30" Margin="0,5,0,15"/>
+                        <!-- Business Location -->
+                        <TextBlock Text="Business Location:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
+                        <ComboBox x:Name="cmbBusinessLocation" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0">
+                        </ComboBox>
 
-                    <!-- Sales Commission -->
-                    <TextBlock Text="Sales Commission (%)" FontWeight="Bold"/>
-                    <TextBox x:Name="txtSalesCommission" Height="30" Margin="0,5,0,15"/>
+                        <!-- Salary -->
+                        <TextBlock Text="Salary:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <TextBox x:Name="txtSalary" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="732"/>
+                        </Border>
 
-                    <!-- Department -->
-                    <TextBlock Text="Department" FontWeight="Bold"/>
-                    <TextBox x:Name="txtDepartment" Height="30" Margin="0,5,0,20"/>
+                        <!-- Sales Commission -->
+                        <TextBlock Text="Sales Commission (%):" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <TextBox x:Name="txtSalesCommission" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="735"/>
+                        </Border>
+
+                        <!-- Department -->
+                        <TextBlock Text="Department:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <TextBox x:Name="txtDepartment" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="740"/>
+                        </Border>
+
+                    </StackPanel>
 
                     <!-- Submit Button -->
-                    <Button x:Name="btnAddEmployee"
-                            Content="Add Employee"
-                            Background="#0078D7" Foreground="White"
-                            Padding="10"
-                            FontWeight="Bold"
-                            Click="BtnAddEmployee_Click"/>
+                    <Button x:Name="btnAddEmployee" Background="Transparent" HorizontalAlignment="Right" BorderThickness="0" VerticalAlignment="Center" Click="BtnAddEmployee_Click" Margin="0,25,0,15">
+                        <Border Style="{StaticResource RoundedBorderStyle}" Padding="1" Background="#52C69D" BorderBrush="#52C69D">
+                            <StackPanel Orientation="Horizontal" Background="#52C69D" Margin="200,10,200,10">
+                                <TextBlock Text="Add Employee" Foreground="White" VerticalAlignment="Center" Margin="155,5" FontWeight="Bold" FontFamily="Lexend" />
+                            </StackPanel>
+                        </Border>
+                    </Button>
                 </StackPanel>
             </ScrollViewer>
         </Grid>

@@ -341,6 +341,7 @@
     <Compile Include="Components\Navigation\TopNavbar.xaml.vb">
       <DependentUpon>TopNavBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Data.vb" />
     <Compile Include="Data\Controllers\AccountController.vb" />
     <Compile Include="Data\Controllers\AuthController.vb" />
     <Compile Include="Data\Controllers\BrandController.vb" />
@@ -427,6 +428,12 @@
     </Compile>
     <Compile Include="Views\PromoCodes\ManagePromoCodes.xaml.vb">
       <DependentUpon>ManagePromoCodes.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\ItemManager\NewProduct\ProductBatchEdit.xaml.vb">
+      <DependentUpon>ProductBatchEdit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\ItemManager\NewProduct\ProductVariationDetails.xaml.vb">
+      <DependentUpon>ProductVariationDetails.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Stocks\ProductCategories\AddNewCategory.xaml.vb">
       <DependentUpon>AddNewCategory.xaml</DependentUpon>
@@ -664,6 +671,12 @@
     <Page Include="Views\PromoCodes\ManagePromoCodes.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Stocks\ItemManager\NewProduct\ProductBatchEdit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\ItemManager\NewProduct\ProductVariationDetails.xaml">
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Stocks\ProductCategories\AddNewCategory.xaml">
       <SubType>Designer</SubType>
