@@ -1,4 +1,4 @@
-<Window x:Class="DPC.Views.HRM.Employees.AddEmployee"
+﻿<Window x:Class="DPC.Views.HRM.Employees.AddEmployee"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -69,8 +69,20 @@
                         <!-- Password -->
                         <TextBlock Text="Password:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                         <Border Style="{StaticResource RoundedBorderStyle}">
-                            <TextBox x:Name="txtPassword" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="736"/>
+                            <TextBox x:Name="txtPassword" Height="30" Margin="0,0,0,5"
+         Style="{StaticResource RoundedTextboxStyle}" Width="736"
+         TextChanged="txtPassword_TextChanged"/>
+                            
                         </Border>
+                        <StackPanel x:Name="PasswordCriteriaPanel" Margin="10,0,0,0">
+                            <TextBlock x:Name="chkLength" Text="✓ At least 6 characters" Foreground="Green" Visibility="Collapsed" FontWeight="SemiBold" FontFamily="Lexend" />
+                            <TextBlock x:Name="chkMaxLength" Text="✓ Under 20 characters" Foreground="Green" Visibility="Collapsed" FontWeight="SemiBold" FontFamily="Lexend" />
+                            <TextBlock x:Name="chkUpper" Text="✓ 1 uppercase letter" Foreground="Green" Visibility="Collapsed" FontWeight="SemiBold" FontFamily="Lexend" />
+                            <TextBlock x:Name="chkLower" Text="✓ 1 lowercase letter" Foreground="Green" Visibility="Collapsed" FontWeight="SemiBold" FontFamily="Lexend" />
+                            <TextBlock x:Name="chkSpecial" Text="✓ 1 special character" Foreground="Green" Visibility="Collapsed" FontWeight="SemiBold" FontFamily="Lexend" />
+                            <TextBlock x:Name="chkNumber" Text="✓ 1 number" Foreground="Green" Visibility="Collapsed" FontWeight="SemiBold" FontFamily="Lexend" />
+                        </StackPanel>
+
 
                         <!-- Full Name -->
                         <TextBlock Text="Full Name:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>

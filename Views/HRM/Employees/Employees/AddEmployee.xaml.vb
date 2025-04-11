@@ -84,6 +84,26 @@ Namespace DPC.Views.HRM.Employees
                 MessageBox.Show("Failed to add employee.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End If
         End Sub
+
+        Private Sub txtPassword_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim pwd As String = txtPassword.Text
+
+            ' Show each rule only when satisfied
+            ShowIfSatisfied(chkLength, pwd.Length >= 6)
+            ShowIfSatisfied(chkMaxLength, pwd.Length < 20)
+            ShowIfSatisfied(chkUpper, pwd.Any(Function(c) Char.IsUpper(c)))
+            ShowIfSatisfied(chkLower, pwd.Any(Function(c) Char.IsLower(c)))
+            ShowIfSatisfied(chkSpecial, pwd.Any(Function(c) Not Char.IsLetterOrDigit(c)))
+            ShowIfSatisfied(chkNumber, pwd.Any(Function(c) Char.IsDigit(c)))
+        End Sub
+
+        Private Sub ShowIfSatisfied(textBlock As TextBlock, isMet As Boolean)
+            textBlock.Visibility = If(isMet, Visibility.Visible, Visibility.Collapsed)
+        End Sub
+
+        Private Sub ToggleCriteria(textBlock As TextBlock, isMet As Boolean)
+            textBlock.Visibility = If(isMet, Visibility.Collapsed, Visibility.Visible)
+        End Sub
         ' Load User Roles into ComboBox
         Private Sub LoadUserRoles()
             Dim roles = EmployeeController.GetUserRoles()
