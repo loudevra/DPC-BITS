@@ -30,6 +30,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Stocks.Warehouses.Warehouses() ' Added the Warehouses UserControl
                     Case "productcategories"
                         Return New Stocks.ProductCategories.ProductCategories() ' Added the ProductCategories UserControl
+                    Case "promocodes"
+                        Return New Views.PromoCodes.ManagePromoCodes() ' Added the ManagePromoCodes UserControl
                     Case Else
                         ' Return a placeholder UserControl with error text
                         Dim errorContent As New TextBlock With {
@@ -76,6 +78,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "warehouses"
             ElseIf typeName = "productcategories" Then
                 Return "productcategories" ' Added the ProductCategories view type
+            ElseIf typeName = "promocodes" Then
+                Return "promocodes" ' Added the ManagePromoCodes view type
             Else
                 Return typeName
             End If
