@@ -336,7 +336,7 @@
       <DependentUpon>TopNavBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Data.vb" />
-    <Compile Include="Data\Controllers\AccountController.vb" />
+    <Compile Include="Data\Controllers\Account\AccountController.vb" />
     <Compile Include="Data\Controllers\AuthController.vb" />
     <Compile Include="Data\Controllers\BrandController.vb" />
     <Compile Include="Data\Controllers\BuissnessLocationController.vb" />

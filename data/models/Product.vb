@@ -47,6 +47,8 @@ Namespace DPC.Data.Model
         ' Array of individual variation options that make up this combination
         Public Property VariationOptions As String()
 
+        Public Property WarehouseId As Integer = 0
+
         ' Properties that can be different per variation
         Public Property RetailPrice As Decimal
         Public Property PurchaseOrder As Decimal
@@ -94,7 +96,6 @@ Namespace DPC.Data.Model
     Public Class ProductVariationManager
         ' Dictionary to store variation data, keyed by combination name
         Private Property VariationDataDict As Dictionary(Of String, ProductVariationData)
-
         ' Currently selected variation combination
         Public Property CurrentCombination As String
 
@@ -113,14 +114,17 @@ Namespace DPC.Data.Model
 
         ' Get variation data for a specific combination
         Public Function GetVariationData(combinationName As String) As ProductVariationData
-            If VariationDataDict.ContainsKey(combinationName) Then
-                Return VariationDataDict(combinationName)
-            Else
-                ' Create and add if doesn't exist
+            If String.IsNullOrEmpty(combinationName) Then
+                Return Nothing
+            End If
+
+            ' Create and add if doesn't exist
+            If Not VariationDataDict.ContainsKey(combinationName) Then
                 Dim newData As New ProductVariationData(combinationName)
                 VariationDataDict.Add(combinationName, newData)
-                Return newData
             End If
+
+            Return VariationDataDict(combinationName)
         End Function
 
         ' Select a variation combination
@@ -133,7 +137,6 @@ Namespace DPC.Data.Model
             If String.IsNullOrEmpty(CurrentCombination) Then
                 Return Nothing
             End If
-
             Return GetVariationData(CurrentCombination)
         End Function
 
