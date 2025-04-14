@@ -3,7 +3,6 @@ Imports System.Security.Cryptography
 
 Namespace DPC.Data.Model
     Public Class Product
-
         Public Property ProductImage As String
         Public Property ProductID As String
         Public Property ProductName As String
@@ -20,6 +19,13 @@ Namespace DPC.Data.Model
         Public Property MeasurementUnit As String
         Public Property CreatedAt As DateTime
         Public Property ModifiedAt As DateTime
+    End Class
+
+    ' Helper class to store image data
+    Public Class ImageData
+        Public Property Base64String As String
+        Public Property FileExtension As String
+        Public Property FileName As String
     End Class
 
     ' Represents a single variation (e.g., "Color", "Size")
@@ -47,6 +53,8 @@ Namespace DPC.Data.Model
         ' Array of individual variation options that make up this combination
         Public Property VariationOptions As String()
 
+
+
         Public Property WarehouseId As Integer = 0
 
         ' Properties that can be different per variation
@@ -66,7 +74,7 @@ Namespace DPC.Data.Model
         ' Common constructor
         Public Sub New()
             SerialNumbers = New List(Of String)()
-            IncludeSerialNumbers = False
+            IncludeSerialNumbers = True
         End Sub
 
         ' Constructor with combination name

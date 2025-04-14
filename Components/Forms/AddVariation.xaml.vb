@@ -802,12 +802,7 @@ Namespace DPC.Components.Forms
             End If
         End Sub
 
-        ' Helper class to store image data
-        Private Class ImageData
-            Public Property Base64String As String
-            Public Property FileExtension As String
-            Public Property FileName As String
-        End Class
+
 
         Private Function Base64StringToBitmapImage(base64String As String) As BitmapImage
             Dim bytes As Byte() = Convert.FromBase64String(base64String)

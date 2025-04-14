@@ -40,11 +40,13 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             variationManager = New ProductVariationManager()
 
-            ' Initialize dynamic content
-            InitializeVariations()
+
 
             ' Load variations panel
             LoadVariationCombinations()
+
+            ' Initialize dynamic content
+            InitializeVariations()
         End Sub
 
         Private Sub BtnBatchEdit(sender As Object, e As RoutedEventArgs)
@@ -62,35 +64,21 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         End Sub
 
         Private Sub TxtStockUnits_KeyDown(sender As Object, e As KeyEventArgs)
-            ' Check if Enter key is pressed
-            If e.Key = Key.Enter Then
-                Dim stockUnits As Integer
-
-                ' Validate if input is a valid number and greater than zero
-                If Integer.TryParse(TxtStockUnits.Text, stockUnits) Then
-                    If stockUnits > 0 Then
-                        ' Clear previous rows
-                        MainContainer.Children.Clear()
-
-                        ' Clear SerialNumbers to remove old references
-                        ProductController.SerialNumbers.Clear()
-
-                        ' Call BtnAddRow_Click the specified number of times
-                        For i As Integer = 1 To stockUnits
-                            BtnAddRow_Click(Nothing, Nothing)
-                        Next
-
-                        ' Ensure the textbox retains the correct value
-                        TxtStockUnits.Text = stockUnits.ToString()
-                    Else
-                        MessageBox.Show("Please enter a number greater than zero.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning)
-                    End If
-                Else
-                    MessageBox.Show("Please enter a valid number.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning)
-                End If
-
-                ' Prevent further propagation of the event
+            ' Call the centralized method in ProductController
+            Dim handled As Boolean = ProductController.HandleStockUnitsKeyDown(TxtStockUnits, MainContainer, e)
+            If handled Then
                 e.Handled = True
+            End If
+
+            ' Any additional code specific to this form (if needed)
+            ' Update the current variation's data
+            If Not String.IsNullOrEmpty(variationManager.CurrentCombination) AndAlso e.Key = Key.Enter Then
+                Dim variationData As ProductVariationData = variationManager.GetVariationData(variationManager.CurrentCombination)
+                If variationData IsNot Nothing Then
+                    If Integer.TryParse(TxtStockUnits.Text, Nothing) Then
+                        variationData.StockUnits = Integer.Parse(TxtStockUnits.Text)
+                    End If
+                End If
             End If
         End Sub
 
@@ -106,7 +94,12 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             End If
         End Sub
         Private Sub IncludeSerial_Click(sender As Object, e As RoutedEventArgs)
-            SerialNumberChecker(CheckBoxSerialNumber)
+            ' Call the centralized method in ProductController
+            ProductController.SerialNumberChecker(CheckBoxSerialNumber,
+                                         serialRowPanel,
+                                         TxtStockUnits,
+                                         BorderStockUnits,
+                                         MainContainer)
         End Sub
 
         Private Sub SerialNumberChecker(Checkbox As Controls.CheckBox)
@@ -127,10 +120,48 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             If Checkbox.IsChecked = True Then
                 If StackPanelSerialRow IsNot Nothing Then
                     StackPanelSerialRow.Visibility = Visibility.Visible
+
+                    ' Ensure we have the correct number of serial rows based on stock units
+                    If MainContainer.Children.Count = 0 Then
+                        Dim stockUnits As Integer = 1 ' Default
+
+                        If Not String.IsNullOrEmpty(TxtStockUnits.Text) AndAlso Integer.TryParse(TxtStockUnits.Text, stockUnits) Then
+                            ' We have a valid number
+                            If MainContainer.Children.Count <> stockUnits Then
+                                MainContainer.Children.Clear()
+                                If ProductController.SerialNumbers IsNot Nothing Then
+                                    ProductController.SerialNumbers.Clear()
+                                End If
+
+                                ' Create the correct number of rows
+                                For i As Integer = 1 To stockUnits
+                                    ProductController.BtnAddRow_Click(Nothing, Nothing)
+                                Next
+                            End If
+                        Else
+                            ' Default to 1 row if no valid stock units
+                            TxtStockUnits.Text = "1"
+                            If MainContainer.Children.Count <> 1 Then
+                                MainContainer.Children.Clear()
+                                If ProductController.SerialNumbers IsNot Nothing Then
+                                    ProductController.SerialNumbers.Clear()
+                                End If
+                                ProductController.BtnAddRow_Click(Nothing, Nothing)
+                            End If
+                        End If
+                    End If
                 End If
 
                 If TxtStockUnits IsNot Nothing Then
                     TxtStockUnits.IsReadOnly = True
+                End If
+
+                ' Make sure to save the checkbox state to current variation
+                If Not String.IsNullOrEmpty(variationManager.CurrentCombination) Then
+                    Dim variationData As ProductVariationData = variationManager.GetVariationData(variationManager.CurrentCombination)
+                    If variationData IsNot Nothing Then
+                        variationData.IncludeSerialNumbers = True
+                    End If
                 End If
             Else
                 If StackPanelSerialRow IsNot Nothing Then
@@ -140,13 +171,13 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 If TxtStockUnits IsNot Nothing Then
                     TxtStockUnits.IsReadOnly = False
                 End If
-            End If
 
-            If TxtStockUnits IsNot Nothing AndAlso BorderStockUnits IsNot Nothing Then
-                If TxtStockUnits.IsReadOnly = True Then
-                    BorderStockUnits.BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
-                Else
-                    BorderStockUnits.BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#474747"))
+                ' Save the checkbox state to current variation
+                If Not String.IsNullOrEmpty(variationManager.CurrentCombination) Then
+                    Dim variationData As ProductVariationData = variationManager.GetVariationData(variationManager.CurrentCombination)
+                    If variationData IsNot Nothing Then
+                        variationData.IncludeSerialNumbers = False
+                    End If
                 End If
             End If
         End Sub
@@ -166,28 +197,20 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ProductController.BtnRemoveRow_Click(Nothing, Nothing)
         End Sub
 
-        Private Function FindParentGrid(element As DependencyObject) As Grid
-            ' Traverse up the visual tree to find the Grid
-            While element IsNot Nothing AndAlso Not TypeOf element Is Grid
-                element = VisualTreeHelper.GetParent(element)
-            End While
-            Return TryCast(element, Grid)
-        End Function
 
 
         'loading variations and combining options
+        ' Replace the existing LoadVariationCombinations method with:
         Public Sub LoadVariationCombinations()
-            ' Clear existing buttons in the variations panel
             Dim variationsPanel As StackPanel = FindName("VariationsPanel")
             If variationsPanel Is Nothing Then
-                ' If the panel doesn't exist in XAML, we need to create it
+                ' Create the panel if it doesn't exist
                 variationsPanel = New StackPanel()
                 variationsPanel.Name = "VariationsPanel"
                 variationsPanel.Orientation = Orientation.Horizontal
 
-                ' Replace the existing hardcoded panel with our dynamic one
-                ' Find the container that holds the current hardcoded buttons
-                Dim currentPanel = FindName("StackPanel1") ' Update this name to match your actual container
+                ' Add to parent container (same code as before)
+                Dim currentPanel = FindName("StackPanel1")
                 If currentPanel IsNot Nothing AndAlso TypeOf currentPanel.Parent Is Grid Then
                     Dim parentGrid As Grid = DirectCast(currentPanel.Parent, Grid)
                     Dim row As Integer = Grid.GetRow(currentPanel)
@@ -198,64 +221,39 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                     Grid.SetColumn(variationsPanel, column)
                     parentGrid.Children.Add(variationsPanel)
                 End If
-            Else
-                variationsPanel.Children.Clear()
             End If
 
-            ' Get variations from the shared static property
-            Dim variations As List(Of ProductVariation) = DPC.Components.Forms.AddVariation.SavedVariations
+            ' Call the ProductController method to load the variations
+            ProductController.LoadVariationCombinations(variationsPanel, AddressOf VariationButton_Click)
+        End Sub
 
-            ' Check if we have any variations
-            If variations Is Nothing OrElse variations.Count = 0 Then
-                ' No variations, add a default placeholder option
-                AddVariationButton(variationsPanel, "Default Variation", True)
-                Return
+        ' Add a click handler method for variation buttons
+        Private Sub VariationButton_Click(sender As Object, e As RoutedEventArgs)
+            Dim btn As System.Windows.Controls.Button = DirectCast(sender, System.Windows.Controls.Button)
+            Dim combinationName As String = TryCast(btn.Tag, String)
+
+            ' Update the UI to show this variation is selected
+            Dim variationsPanel As StackPanel = FindName("VariationsPanel")
+            If variationsPanel IsNot Nothing Then
+                ProductController.UpdateVariationSelection(variationsPanel, btn)
             End If
 
-            ' Check if we have one or two variations
-            If variations.Count = 1 Then
-                ' Single variation case - just show options
-                Dim variation As ProductVariation = variations(0)
-                If variation.Options IsNot Nothing AndAlso variation.Options.Count > 0 Then
-                    Dim isFirst As Boolean = True
-                    For Each opt As VariationOption In variation.Options
-                        AddVariationButton(variationsPanel, opt.OptionName, isFirst)
-                        isFirst = False
-                    Next
-                End If
-            ElseIf variations.Count = 2 Then
-                ' Two variations case - create combinations
-                Dim variation1 As ProductVariation = variations(0)
-                Dim variation2 As ProductVariation = variations(1)
-
-                If variation1.Options IsNot Nothing AndAlso variation1.Options.Count > 0 AndAlso
-               variation2.Options IsNot Nothing AndAlso variation2.Options.Count > 0 Then
-
-                    Dim isFirst As Boolean = True
-                    For Each option1 As VariationOption In variation1.Options
-                        For Each option2 As VariationOption In variation2.Options
-                            ' Create combination label: "Color, Size"
-                            Dim combinationName As String = $"{option1.OptionName}, {option2.OptionName}"
-                            AddVariationButton(variationsPanel, combinationName, isFirst)
-                            isFirst = False
-                        Next
-                    Next
-                End If
-            End If
+            ' Load the specific variation data
+            LoadVariationDetails(combinationName)
         End Sub
 
         ' Helper method to add a variation button with consistent styling
         Private Sub AddVariationButton(container As StackPanel, labelText As String, isSelected As Boolean)
             Dim btn As New System.Windows.Controls.Button With {
-        .Style = CType(FindResource("RoundedButtonStyle"), Style),
-        .Width = Double.NaN,  ' Auto width
-        .Height = Double.NaN, ' Auto height
-        .Background = Brushes.Transparent,
-        .HorizontalAlignment = HorizontalAlignment.Left,
-        .BorderThickness = New Thickness(0),
-        .VerticalAlignment = VerticalAlignment.Center,
-        .Margin = New Thickness(0, 0, 15, 0)
-    }
+            .Style = CType(FindResource("RoundedButtonStyle"), Style),
+            .Width = Double.NaN,  ' Auto width
+            .Height = Double.NaN, ' Auto height
+            .Background = Brushes.Transparent,
+            .HorizontalAlignment = HorizontalAlignment.Left,
+            .BorderThickness = New Thickness(0),
+            .VerticalAlignment = VerticalAlignment.Center,
+            .Margin = New Thickness(0, 0, 15, 0)
+        }
 
             ' Create the Grid layout for the button content
             Dim grid As New Grid()
@@ -264,25 +262,25 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             ' Add vertical line if selected
             Dim border As New Border With {
-        .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
-        .BorderThickness = New Thickness(1, 0, 0, 0),
-        .Width = 1,
-        .Height = Double.NaN,  ' Auto height
-        .Margin = New Thickness(0),
-        .Visibility = If(isSelected, Visibility.Visible, Visibility.Collapsed)
-    }
+            .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
+            .BorderThickness = New Thickness(1, 0, 0, 0),
+            .Width = 1,
+            .Height = Double.NaN,  ' Auto height
+            .Margin = New Thickness(0),
+            .Visibility = If(isSelected, Visibility.Visible, Visibility.Collapsed)
+        }
             Grid.SetColumn(border, 0)
             grid.Children.Add(border)
 
             ' Add the text
             Dim textBlock As New TextBlock With {
-        .Text = labelText,
-        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString(If(isSelected, "#555555", "#AEAEAE"))),
-        .FontSize = 14,
-        .FontWeight = FontWeights.SemiBold,
-        .Margin = New Thickness(5, 0, 0, 0),
-        .VerticalAlignment = VerticalAlignment.Center
-    }
+            .Text = labelText,
+            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString(If(isSelected, "#555555", "#AEAEAE"))),
+            .FontSize = 14,
+            .FontWeight = FontWeights.SemiBold,
+            .Margin = New Thickness(5, 0, 0, 0),
+            .VerticalAlignment = VerticalAlignment.Center
+        }
             Grid.SetColumn(textBlock, 1)
             grid.Children.Add(textBlock)
 
@@ -303,7 +301,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                                                           DirectCast(gridChild, Border).Visibility = If(child Is sender, Visibility.Visible, Visibility.Collapsed)
                                                       ElseIf TypeOf gridChild Is TextBlock Then
                                                           DirectCast(gridChild, TextBlock).Foreground = New SolidColorBrush(
-                                                      ColorConverter.ConvertFromString(If(child Is sender, "#555555", "#AEAEAE")))
+                                                          ColorConverter.ConvertFromString(If(child Is sender, "#555555", "#AEAEAE")))
                                                       End If
                                                   Next
                                               End If
@@ -372,7 +370,9 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             End If
 
             ' Add an initial serial number row
-            ProductController.BtnAddRow_Click(Nothing, Nothing)
+            If ProductController.SerialNumbers.Count = 0 Then
+                ProductController.BtnAddRow_Click(Nothing, Nothing)
+            End If
 
             ' Set default tax value
             Dim txtDefaultTax As System.Windows.Controls.TextBox = FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtDefaultTax")
@@ -384,13 +384,42 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             LoadVariationCombinations()
 
             ' Set the first variation as selected by default
-            Dim variationsPanel As System.Windows.Controls.StackPanel = TryCast(FindName("VariationsPanel"), System.Windows.Controls.StackPanel)
-            If variationsPanel IsNot Nothing AndAlso variationsPanel.Children.Count > 0 Then
-                Dim firstButton As System.Windows.Controls.Button = TryCast(variationsPanel.Children(0), System.Windows.Controls.Button)
-                If firstButton IsNot Nothing Then
-                    ' Simulate click on first button
-                    firstButton.RaiseEvent(New RoutedEventArgs(System.Windows.Controls.Button.ClickEvent))
+            Dim variations As List(Of ProductVariation) = DPC.Components.Forms.AddVariation.SavedVariations
+            If variations IsNot Nothing AndAlso variations.Count > 0 Then
+                Dim allCombinations As New List(Of String)
+
+                If variations.Count = 1 Then
+                    ' Single variation case
+                    Dim variation As ProductVariation = variations(0)
+                    If variation.Options IsNot Nothing AndAlso variation.Options.Count > 0 Then
+                        For Each opt As VariationOption In variation.Options
+                            allCombinations.Add(opt.OptionName)
+                        Next
+                    End If
+                ElseIf variations.Count = 2 Then
+                    ' Two variations case - create combinations
+                    Dim variation1 As ProductVariation = variations(0)
+                    Dim variation2 As ProductVariation = variations(1)
+
+                    If variation1.Options IsNot Nothing AndAlso variation1.Options.Count > 0 AndAlso
+                   variation2.Options IsNot Nothing AndAlso variation2.Options.Count > 0 Then
+                        For Each option1 As VariationOption In variation1.Options
+                            For Each option2 As VariationOption In variation2.Options
+                                ' Create combination label: "Color, Size"
+                                Dim combinationName As String = $"{option1.OptionName}, {option2.OptionName}"
+                                allCombinations.Add(combinationName)
+                            Next
+                        Next
+                    End If
                 End If
+
+                ' Initialize each variation with default values
+                For Each combination As String In allCombinations
+                    Dim variationData As ProductVariationData = variationManager.GetVariationData(combination)
+                    If variationData.StockUnits = 0 Then
+                        variationData.StockUnits = 1 ' Default to 1 stock unit
+                    End If
+                Next
             End If
         End Sub
 
@@ -415,17 +444,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         End Function
 
         Private Sub SaveCurrentFormData(combinationName As String)
-            If String.IsNullOrEmpty(combinationName) Then
-                Return
-            End If
-
-            ' Get the current variation data
-            Dim variationData As ProductVariationData = variationManager.GetVariationData(combinationName)
-            If variationData Is Nothing Then
-                Return
-            End If
-
-            ' Find controls in the dynamic form container
+            ' Find required controls
             Dim txtRetailPrice As System.Windows.Controls.TextBox = FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtRetailPrice")
             Dim txtPurchaseOrder As System.Windows.Controls.TextBox = FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtPurchaseOrder")
             Dim txtDefaultTax As System.Windows.Controls.TextBox = FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtDefaultTax")
@@ -433,216 +452,32 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Dim txtStockUnits As System.Windows.Controls.TextBox = FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtStockUnits")
             Dim txtAlertQuantity As System.Windows.Controls.TextBox = FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtAlertQuantity")
             Dim checkBoxSerialNumber As System.Windows.Controls.CheckBox = FindVisualChild(Of System.Windows.Controls.CheckBox)(SerialNumberContainer, "CheckBoxSerialNumber")
-            Dim comboBoxWarehouse As System.Windows.Controls.ComboBox = _comboBoxWarehouse
+            Dim mainContainer As StackPanel = FindVisualChild(Of StackPanel)(SerialNumberContainer, "MainContainer")
 
-
-            ' Save form values to the model (with improved error handling)
-            Try
-                If txtRetailPrice IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtRetailPrice.Text) Then
-                    variationData.RetailPrice = Decimal.Parse(txtRetailPrice.Text)
-                End If
-
-                If txtPurchaseOrder IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtPurchaseOrder.Text) Then
-                    variationData.PurchaseOrder = Decimal.Parse(txtPurchaseOrder.Text)
-                End If
-
-                If txtDefaultTax IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtDefaultTax.Text) Then
-                    variationData.DefaultTax = Decimal.Parse(txtDefaultTax.Text)
-                End If
-
-                If txtDiscountRate IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtDiscountRate.Text) Then
-                    variationData.DiscountRate = Decimal.Parse(txtDiscountRate.Text)
-                End If
-
-                If txtStockUnits IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtStockUnits.Text) Then
-                    variationData.StockUnits = Integer.Parse(txtStockUnits.Text)
-                End If
-
-                If txtAlertQuantity IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtAlertQuantity.Text) Then
-                    variationData.AlertQuantity = Integer.Parse(txtAlertQuantity.Text)
-                End If
-
-                If comboBoxWarehouse IsNot Nothing AndAlso comboBoxWarehouse.SelectedItem IsNot Nothing Then
-                    Dim selectedItem As ComboBoxItem = DirectCast(comboBoxWarehouse.SelectedItem, ComboBoxItem)
-                    If selectedItem IsNot Nothing AndAlso selectedItem.Tag IsNot Nothing Then
-                        variationData.WarehouseId = Convert.ToInt32(selectedItem.Tag)
-                    End If
-                End If
-
-                ' Save serial number settings
-                If checkBoxSerialNumber IsNot Nothing Then
-                    variationData.IncludeSerialNumbers = checkBoxSerialNumber.IsChecked.Value
-
-                    ' Save serial numbers if needed
-                    If variationData.IncludeSerialNumbers Then
-                        variationData.SerialNumbers.Clear()
-
-                        ' Find all serial number TextBoxes in MainContainer
-                        Dim mainContainer As System.Windows.Controls.StackPanel = FindVisualChild(Of System.Windows.Controls.StackPanel)(SerialNumberContainer, "MainContainer")
-                        If mainContainer IsNot Nothing Then
-                            For Each child As UIElement In mainContainer.Children
-                                If TypeOf child Is Grid Then
-                                    Dim grid As Grid = DirectCast(child, Grid)
-                                    For Each gridChild As UIElement In grid.Children
-                                        If TypeOf gridChild Is System.Windows.Controls.TextBox Then
-                                            Dim serialTextBox As System.Windows.Controls.TextBox = DirectCast(gridChild, System.Windows.Controls.TextBox)
-                                            If Not String.IsNullOrWhiteSpace(serialTextBox.Text) Then
-                                                variationData.SerialNumbers.Add(serialTextBox.Text)
-                                            End If
-                                        End If
-                                    Next
-                                End If
-                            Next
-                        End If
-                    End If
-                End If
-            Catch ex As Exception
-                ' Handle parsing errors gracefully
-                MessageBox.Show("An error occurred while saving form data: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
-            End Try
+            ' Call the controller method to save the data
+            ProductController.SaveVariationData(combinationName, txtRetailPrice, txtPurchaseOrder,
+                                      txtDefaultTax, txtDiscountRate, txtStockUnits,
+                                      txtAlertQuantity, checkBoxSerialNumber,
+                                      _comboBoxWarehouse, mainContainer)
         End Sub
 
         Private Sub LoadFormData(combinationName As String)
-            ' Get the variation data
-            Dim variationData As ProductVariationData = variationManager.GetVariationData(combinationName)
+            ' Call the controller method to load the data
+            ProductController.LoadVariationData(combinationName,
+                                      FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtRetailPrice"),
+                                      FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtPurchaseOrder"),
+                                      FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtDefaultTax"),
+                                      FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtDiscountRate"),
+                                      FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtStockUnits"),
+                                      FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtAlertQuantity"),
+                                      FindVisualChild(Of System.Windows.Controls.CheckBox)(SerialNumberContainer, "CheckBoxSerialNumber"),
+                                      _comboBoxWarehouse,
+                                      FindVisualChild(Of StackPanel)(SerialNumberContainer, "MainContainer"))
 
-            ' Find controls in the dynamic form container
-            Dim txtRetailPrice As System.Windows.Controls.TextBox = FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtRetailPrice")
-            Dim txtPurchaseOrder As System.Windows.Controls.TextBox = FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtPurchaseOrder")
-            Dim txtDefaultTax As System.Windows.Controls.TextBox = FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtDefaultTax")
-            Dim txtDiscountRate As System.Windows.Controls.TextBox = FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtDiscountRate")
-            Dim txtStockUnits As System.Windows.Controls.TextBox = FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtStockUnits")
-            Dim txtAlertQuantity As System.Windows.Controls.TextBox = FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtAlertQuantity")
-            Dim checkBoxSerialNumber As System.Windows.Controls.CheckBox = FindVisualChild(Of System.Windows.Controls.CheckBox)(SerialNumberContainer, "CheckBoxSerialNumber")
-
-            ' Find the warehouse ComboBox
-            Dim comboBoxWarehouse As System.Windows.Controls.ComboBox = _comboBoxWarehouse
-
-            ' Debug message to check if ComboBox is found
-            If comboBoxWarehouse Is Nothing Then
-                MessageBox.Show("Debug: ComboBoxWarehouse was not found in the visual tree")
-            Else
-                ' Ensure the ComboBox is populated
-                Try
-                    ProductController.GetWarehouse(comboBoxWarehouse)
-
-                    ' Set the selected warehouse if one was previously saved
-                    If variationData.WarehouseId > 0 Then
-                        For i As Integer = 0 To comboBoxWarehouse.Items.Count - 1
-                            Dim item As ComboBoxItem = DirectCast(comboBoxWarehouse.Items(i), ComboBoxItem)
-                            If item IsNot Nothing AndAlso item.Tag IsNot Nothing AndAlso CInt(item.Tag) = variationData.WarehouseId Then
-                                comboBoxWarehouse.SelectedIndex = i
-                                Exit For
-                            End If
-                        Next
-                    End If
-                Catch ex As Exception
-                    MessageBox.Show("Error initializing warehouse dropdown: " & ex.Message)
-                End Try
-            End If
-
-            ' Load data into form controls
-            If txtRetailPrice IsNot Nothing Then
-                txtRetailPrice.Text = If(variationData.RetailPrice = 0, "", variationData.RetailPrice.ToString())
-            End If
-
-            If txtPurchaseOrder IsNot Nothing Then
-                txtPurchaseOrder.Text = If(variationData.PurchaseOrder = 0, "", variationData.PurchaseOrder.ToString())
-            End If
-
-            If txtDefaultTax IsNot Nothing Then
-                txtDefaultTax.Text = If(variationData.DefaultTax = 0, "12", variationData.DefaultTax.ToString())
-            End If
-
-            If txtDiscountRate IsNot Nothing Then
-                txtDiscountRate.Text = If(variationData.DiscountRate = 0, "", variationData.DiscountRate.ToString())
-            End If
-
-            If txtStockUnits IsNot Nothing Then
-                txtStockUnits.Text = If(variationData.StockUnits = 0, "", variationData.StockUnits.ToString())
-            End If
-
-            If txtAlertQuantity IsNot Nothing Then
-                txtAlertQuantity.Text = If(variationData.AlertQuantity = 0, "", variationData.AlertQuantity.ToString())
-            End If
-
-            ' Set checkbox state and update visibility
-            If checkBoxSerialNumber IsNot Nothing Then
-                checkBoxSerialNumber.IsChecked = variationData.IncludeSerialNumbers
-                SerialNumberChecker(checkBoxSerialNumber)
-            End If
-
-            If comboBoxWarehouse IsNot Nothing AndAlso variationData.WarehouseId > 0 Then
-                For i As Integer = 0 To comboBoxWarehouse.Items.Count - 1
-                    Dim item As ComboBoxItem = DirectCast(comboBoxWarehouse.Items(i), ComboBoxItem)
-                    If item IsNot Nothing AndAlso item.Tag IsNot Nothing AndAlso CInt(item.Tag) = variationData.WarehouseId Then
-                        comboBoxWarehouse.SelectedIndex = i
-                        Exit For
-                    End If
-                Next
-            End If
-
-            If ProductController.SerialNumbers IsNot Nothing Then
-                ProductController.SerialNumbers.Clear()
-            End If
-
-            ' Find MainContainer
-            Dim mainContainer As System.Windows.Controls.StackPanel = FindVisualChild(Of System.Windows.Controls.StackPanel)(SerialNumberContainer, "MainContainer")
-            If mainContainer IsNot Nothing Then
-                mainContainer.Children.Clear()
-
-                ' If we have serial numbers, load them for this specific variation
-                If variationData.IncludeSerialNumbers AndAlso variationData.SerialNumbers.Count > 0 Then
-                    ' Load each serial number from this variation's data
-                    For Each serialNumber As String In variationData.SerialNumbers
-                        ' Create a new row for each serial number
-                        Dim grid As New Grid With {.Margin = New Thickness(0)}
-
-                        ' Create TextBox for the serial number
-                        Dim txtSerial As New System.Windows.Controls.TextBox With {
-                .Text = serialNumber,
-                .Style = CType(FindResource("RoundedTextboxStyle"), Style),
-                .Margin = New Thickness(10, 5, 10, 5),
-                .BorderThickness = New Thickness(1),
-                .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
-            }
-                        Grid.SetColumn(txtSerial, 0)
-
-                        ' Create remove button
-                        Dim btnRemove As New System.Windows.Controls.Button With {
-                .Content = "Remove",
-                .Style = CType(FindResource("RoundedButtonStyle"), Style),
-                .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#d23636")),
-                .Foreground = Brushes.White,
-                .Margin = New Thickness(5),
-                .Padding = New Thickness(10, 5, 10, 5),
-                .BorderThickness = New Thickness(0),
-                .HorizontalAlignment = HorizontalAlignment.Right
-            }
-                        Grid.SetColumn(btnRemove, 1)
-                        AddHandler btnRemove.Click, AddressOf BtnRemoveRow_Click
-
-                        grid.Children.Add(txtSerial)
-                        grid.Children.Add(btnRemove)
-
-                        ' Add to container and track the textbox
-                        mainContainer.Children.Add(grid)
-                        If ProductController.SerialNumbers IsNot Nothing Then
-                            ProductController.SerialNumbers.Add(txtSerial)
-                        End If
-                    Next
-                Else
-                    ' Add at least one empty row for serial input
-                    ProductController.BtnAddRow_Click(Nothing, Nothing)
-                End If
-            End If
-
-            If txtStockUnits IsNot Nothing Then
-                If variationData.StockUnits > 0 Then
-                    txtStockUnits.Text = variationData.StockUnits.ToString()
-                Else
-                    txtStockUnits.Text = ""
-                End If
+            ' Update the selection title (this part stays in the UI class)
+            Dim titleTextBlock As TextBlock = TryCast(FindName("SelectedVariationTitle"), TextBlock)
+            If titleTextBlock IsNot Nothing Then
+                titleTextBlock.Text = $"Selected: {combinationName}"
             End If
         End Sub
 
@@ -673,57 +508,11 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             End Try
         End Sub
         Private Function ValidateForm() As Boolean
-            ' Find controls to validate
-            Dim txtRetailPrice As System.Windows.Controls.TextBox = FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtRetailPrice")
-            Dim txtPurchaseOrder As System.Windows.Controls.TextBox = FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtPurchaseOrder")
-            Dim comboBoxWarehouse As System.Windows.Controls.ComboBox = _comboBoxWarehouse
-
-
-            ' Check for required fields
-            If txtRetailPrice Is Nothing OrElse String.IsNullOrWhiteSpace(txtRetailPrice.Text) Then
-                MessageBox.Show("Please enter a selling price.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
-                If txtRetailPrice IsNot Nothing Then
-                    txtRetailPrice.Focus()
-                End If
-                Return False
-            End If
-
-            If txtPurchaseOrder Is Nothing OrElse String.IsNullOrWhiteSpace(txtPurchaseOrder.Text) Then
-                MessageBox.Show("Please enter a buying price.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
-                If txtPurchaseOrder IsNot Nothing Then
-                    txtPurchaseOrder.Focus()
-                End If
-                Return False
-            End If
-
-            If comboBoxWarehouse Is Nothing OrElse comboBoxWarehouse.SelectedIndex < 0 Then
-                MessageBox.Show("Please select a warehouse.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
-                If comboBoxWarehouse IsNot Nothing Then
-                    comboBoxWarehouse.Focus()
-                End If
-                Return False
-            End If
-
-            ' Add validation for serial numbers if included
-            Dim checkBoxSerialNumber As System.Windows.Controls.CheckBox = FindVisualChild(Of System.Windows.Controls.CheckBox)(SerialNumberContainer, "CheckBoxSerialNumber")
-            If checkBoxSerialNumber IsNot Nothing AndAlso checkBoxSerialNumber.IsChecked.Value Then
-                ' Check if any serial numbers are added
-                If ProductController.SerialNumbers Is Nothing OrElse ProductController.SerialNumbers.Count = 0 Then
-                    MessageBox.Show("Please add at least one serial number.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
-                    Return False
-                End If
-
-                ' Check if all serial numbers have values
-                For Each serialNumber As System.Windows.Controls.TextBox In ProductController.SerialNumbers
-                    If String.IsNullOrWhiteSpace(serialNumber.Text) Then
-                        MessageBox.Show("All serial numbers must have a value.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
-                        serialNumber.Focus()
-                        Return False
-                    End If
-                Next
-            End If
-
-            Return True
+            Return ProductController.ValidateForm(
+        FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtRetailPrice"),
+        FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtPurchaseOrder"),
+        _comboBoxWarehouse,
+        FindVisualChild(Of System.Windows.Controls.CheckBox)(SerialNumberContainer, "CheckBoxSerialNumber"))
         End Function
 
         ' Add a serial number row
@@ -816,11 +605,11 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 Case "dynamicform"
                     ' Create the dynamic form content
                     Dim scrollViewer As New System.Windows.Controls.ScrollViewer With {
-                .VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Auto,
-                .HorizontalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Disabled,
-                .VerticalAlignment = VerticalAlignment.Stretch,
-                .Style = CType(FindResource("ModernScrollViewerStyle"), Style)
-            }
+                    .VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Auto,
+                    .HorizontalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Disabled,
+                    .VerticalAlignment = VerticalAlignment.Stretch,
+                    .Style = CType(FindResource("ModernScrollViewerStyle"), Style)
+                }
 
                     Dim stackPanel As New System.Windows.Controls.StackPanel()
 
@@ -832,12 +621,12 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                     warehousePanel.Children.Add(warehouseHeaderPanel)
 
                     Dim comboBoxWarehouse As New System.Windows.Controls.ComboBox With {
-    .Name = "ComboBoxWarehouse",
-    .Style = CType(FindResource("RoundedComboBoxStyle"), Style),
-    .Width = Double.NaN,
-    .Height = 40,
-    .Margin = New Thickness(0)
-}
+        .Name = "ComboBoxWarehouse",
+        .Style = CType(FindResource("RoundedComboBoxStyle"), Style),
+        .Width = Double.NaN,
+        .Height = 40,
+        .Margin = New Thickness(0)
+    }
 
                     ' Add the ComboBox to the parent panel
                     warehousePanel.Children.Add(comboBoxWarehouse)
@@ -866,19 +655,19 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                     retailPriceGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
 
                     Dim retailPriceIcon As New PackIcon With {
-                .Kind = PackIconKind.CurrencyPhp,
-                .Width = 25,
-                .Height = 20,
-                .Margin = New Thickness(10, 0, 0, 0),
-                .VerticalAlignment = VerticalAlignment.Center
-            }
+                    .Kind = PackIconKind.CurrencyPhp,
+                    .Width = 25,
+                    .Height = 20,
+                    .Margin = New Thickness(10, 0, 0, 0),
+                    .VerticalAlignment = VerticalAlignment.Center
+                }
                     Grid.SetColumn(retailPriceIcon, 0)
 
                     Dim txtRetailPrice As New System.Windows.Controls.TextBox With {
-                .Name = "TxtRetailPrice",
-                .Style = CType(FindResource("RoundedTextboxStyle"), Style),
-                .Margin = New Thickness(0, 0, 25, 0)
-            }
+                    .Name = "TxtRetailPrice",
+                    .Style = CType(FindResource("RoundedTextboxStyle"), Style),
+                    .Margin = New Thickness(0, 0, 25, 0)
+                }
                     AddHandler txtRetailPrice.PreviewTextInput, AddressOf IntegerOnlyTextInputHandler
                     ' Fix DataObject.Pasting by using a separate method for attaching the event handler
                     DataObject.AddPastingHandler(txtRetailPrice, New DataObjectPastingEventHandler(AddressOf IntegerOnlyPasteHandler))
@@ -905,19 +694,19 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                     purchaseOrderGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
 
                     Dim purchaseOrderIcon As New PackIcon With {
-                .Kind = PackIconKind.CurrencyPhp,
-                .Width = 25,
-                .Height = 20,
-                .Margin = New Thickness(10, 0, 0, 0),
-                .VerticalAlignment = VerticalAlignment.Center
-            }
+                    .Kind = PackIconKind.CurrencyPhp,
+                    .Width = 25,
+                    .Height = 20,
+                    .Margin = New Thickness(10, 0, 0, 0),
+                    .VerticalAlignment = VerticalAlignment.Center
+                }
                     Grid.SetColumn(purchaseOrderIcon, 0)
 
                     Dim txtPurchaseOrder As New System.Windows.Controls.TextBox With {
-                .Name = "TxtPurchaseOrder",
-                .Style = CType(FindResource("RoundedTextboxStyle"), Style),
-                .Margin = New Thickness(0, 0, 25, 0)
-            }
+                    .Name = "TxtPurchaseOrder",
+                    .Style = CType(FindResource("RoundedTextboxStyle"), Style),
+                    .Margin = New Thickness(0, 0, 25, 0)
+                }
                     AddHandler txtPurchaseOrder.PreviewTextInput, AddressOf IntegerOnlyTextInputHandler
                     ' Fix DataObject.Pasting
                     DataObject.AddPastingHandler(txtPurchaseOrder, New DataObjectPastingEventHandler(AddressOf IntegerOnlyPasteHandler))
@@ -943,23 +732,23 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                     taxRateGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
 
                     Dim txtDefaultTax As New System.Windows.Controls.TextBox With {
-                .Name = "TxtDefaultTax",
-                .Style = CType(FindResource("RoundedTextboxStyle"), Style),
-                .Margin = New Thickness(25, 0, 0, 0),
-                .Text = "12"
-            }
+                    .Name = "TxtDefaultTax",
+                    .Style = CType(FindResource("RoundedTextboxStyle"), Style),
+                    .Margin = New Thickness(25, 0, 0, 0),
+                    .Text = "12"
+                }
                     AddHandler txtDefaultTax.PreviewTextInput, AddressOf IntegerOnlyTextInputHandler
                     ' Fix DataObject.Pasting
                     DataObject.AddPastingHandler(txtDefaultTax, New DataObjectPastingEventHandler(AddressOf IntegerOnlyPasteHandler))
                     Grid.SetColumn(txtDefaultTax, 0)
 
                     Dim taxRateIcon As New PackIcon With {
-                .Kind = PackIconKind.PercentOutline,
-                .Width = 25,
-                .Height = 20,
-                .Margin = New Thickness(0, 0, 10, 0),
-                .VerticalAlignment = VerticalAlignment.Center
-            }
+                    .Kind = PackIconKind.PercentOutline,
+                    .Width = 25,
+                    .Height = 20,
+                    .Margin = New Thickness(0, 0, 10, 0),
+                    .VerticalAlignment = VerticalAlignment.Center
+                }
                     Grid.SetColumn(taxRateIcon, 1)
 
                     taxRateGrid.Children.Add(txtDefaultTax)
@@ -981,22 +770,22 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                     discountRateGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
 
                     Dim txtDiscountRate As New System.Windows.Controls.TextBox With {
-                .Name = "TxtDiscountRate",
-                .Style = CType(FindResource("RoundedTextboxStyle"), Style),
-                .Margin = New Thickness(25, 0, 0, 0)
-            }
+                    .Name = "TxtDiscountRate",
+                    .Style = CType(FindResource("RoundedTextboxStyle"), Style),
+                    .Margin = New Thickness(25, 0, 0, 0)
+                }
                     AddHandler txtDiscountRate.PreviewTextInput, AddressOf IntegerOnlyTextInputHandler
                     ' Fix DataObject.Pasting
                     DataObject.AddPastingHandler(txtDiscountRate, New DataObjectPastingEventHandler(AddressOf IntegerOnlyPasteHandler))
                     Grid.SetColumn(txtDiscountRate, 0)
 
                     Dim discountRateIcon As New PackIcon With {
-                .Kind = PackIconKind.PercentOutline,
-                .Width = 25,
-                .Height = 20,
-                .Margin = New Thickness(0, 0, 10, 0),
-                .VerticalAlignment = VerticalAlignment.Center
-            }
+                    .Kind = PackIconKind.PercentOutline,
+                    .Width = 25,
+                    .Height = 20,
+                    .Margin = New Thickness(0, 0, 10, 0),
+                    .VerticalAlignment = VerticalAlignment.Center
+                }
                     Grid.SetColumn(discountRateIcon, 1)
 
                     discountRateGrid.Children.Add(txtDiscountRate)
@@ -1012,13 +801,13 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                     stockUnitsPanel.Children.Add(stockUnitsHeaderPanel)
 
                     BorderStockUnits = New Border With {
-                .Style = CType(FindResource("RoundedBorderStyle"), Style),
-                .Name = "BorderStockUnits"
-            }
+                    .Style = CType(FindResource("RoundedBorderStyle"), Style),
+                    .Name = "BorderStockUnits"
+                }
                     TxtStockUnits = New System.Windows.Controls.TextBox With {
-                .Name = "TxtStockUnits",
-                .Style = CType(FindResource("RoundedTextboxStyle"), Style)
-            }
+                    .Name = "TxtStockUnits",
+                    .Style = CType(FindResource("RoundedTextboxStyle"), Style)
+                }
                     AddHandler TxtStockUnits.PreviewTextInput, AddressOf IntegerOnlyTextInputHandler
                     DataObject.AddPastingHandler(TxtStockUnits, New DataObjectPastingEventHandler(AddressOf IntegerOnlyPasteHandler))
 
@@ -1038,9 +827,9 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
                     Dim alertQuantityBorder As New Border With {.Style = CType(FindResource("RoundedBorderStyle"), Style)}
                     Dim txtAlertQuantity As New System.Windows.Controls.TextBox With {
-                .Name = "TxtAlertQuantity",
-                .Style = CType(FindResource("RoundedTextboxStyle"), Style)
-            }
+                    .Name = "TxtAlertQuantity",
+                    .Style = CType(FindResource("RoundedTextboxStyle"), Style)
+                }
                     AddHandler txtAlertQuantity.PreviewTextInput, AddressOf IntegerOnlyTextInputHandler
                     ' Fix DataObject.Pasting
                     DataObject.AddPastingHandler(txtAlertQuantity, New DataObjectPastingEventHandler(AddressOf IntegerOnlyPasteHandler))
@@ -1059,9 +848,9 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
                     ' Serial Checkbox
                     Dim serialCheckboxPanel As New System.Windows.Controls.StackPanel With {
-                        .Margin = New Thickness(0, 10, 0, 10),
-                        .Name = "StackPanelSerialNumber"
-                    }
+                            .Margin = New Thickness(0, 10, 0, 10),
+                            .Name = "StackPanelSerialNumber"
+                        }
 
                     Dim checkboxStack As New StackPanel With {.Orientation = Orientation.Horizontal}
                     CheckBoxSerialNumber = New System.Windows.Controls.CheckBox With {.Name = "CheckBoxSerialNumber"}
@@ -1069,58 +858,58 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
                     checkboxStack.Children.Add(CheckBoxSerialNumber)
                     checkboxStack.Children.Add(New System.Windows.Controls.TextBlock With {
-                        .Text = "Include Serial Number:",
-                        .FontSize = 14,
-                        .FontWeight = FontWeights.SemiBold,
-                        .Margin = New Thickness(10, 0, 0, 0)
-                    })
+                            .Text = "Include Serial Number:",
+                            .FontSize = 14,
+                            .FontWeight = FontWeights.SemiBold,
+                            .Margin = New Thickness(10, 0, 0, 0)
+                        })
 
                     serialCheckboxPanel.Children.Add(checkboxStack)
                     stackPanel.Children.Add(serialCheckboxPanel)
 
                     ' Serial Number Row
                     Dim StackPanelSerialRow = New System.Windows.Controls.StackPanel With {
-                        .Margin = New Thickness(0, 10, 0, 10),  ' Left, Top, Right, Bottom
-                        .Name = "StackPanelSerialRow"
-                    }
+                            .Margin = New Thickness(0, 10, 0, 10),  ' Left, Top, Right, Bottom
+                            .Name = "StackPanelSerialRow"
+                        }
 
                     ' Header border with label
                     Dim headerBorder As New Border With {
-                        .Style = CType(FindResource("RoundedBorderStyle"), Style),
-                        .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#474747")),
-                        .BorderThickness = New Thickness(0),
-                        .CornerRadius = New CornerRadius(15, 15, 0, 0)
-                    }
+                            .Style = CType(FindResource("RoundedBorderStyle"), Style),
+                            .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#474747")),
+                            .BorderThickness = New Thickness(0),
+                            .CornerRadius = New CornerRadius(15, 15, 0, 0)
+                        }
 
                     Dim headerPanel As New System.Windows.Controls.StackPanel With {
-                        .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#474747")),
-                        .Orientation = Orientation.Horizontal,
-                        .Margin = New Thickness(20, 10, 20, 10)  ' Left, Top, Right, Bottom
-                    }
+                            .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#474747")),
+                            .Orientation = Orientation.Horizontal,
+                            .Margin = New Thickness(20, 10, 20, 10)  ' Left, Top, Right, Bottom
+                        }
 
                     headerPanel.Children.Add(New System.Windows.Controls.TextBlock With {
-                        .Text = "Serial Number:",
-                        .Foreground = Brushes.White,
-                        .FontSize = 14,
-                        .FontWeight = FontWeights.SemiBold,
-                        .Margin = New Thickness(0, 0, 5, 0)
-                    })
+                            .Text = "Serial Number:",
+                            .Foreground = Brushes.White,
+                            .FontSize = 14,
+                            .FontWeight = FontWeights.SemiBold,
+                            .Margin = New Thickness(0, 0, 5, 0)
+                        })
 
                     headerPanel.Children.Add(New System.Windows.Controls.TextBlock With {
-                        .Text = "*",
-                        .FontSize = 14,
-                        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636")),
-                        .FontWeight = FontWeights.Bold
-                    })
+                            .Text = "*",
+                            .FontSize = 14,
+                            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636")),
+                            .FontWeight = FontWeights.Bold
+                        })
 
                     headerBorder.Child = headerPanel
                     StackPanelSerialRow.Children.Add(headerBorder)
 
                     ' Main container for serial numbers
                     MainContainer = New System.Windows.Controls.StackPanel With {
-                        .Name = "MainContainer",
-                        .Background = Brushes.White
-                    }
+                            .Name = "MainContainer",
+                            .Background = Brushes.White
+                        }
 
                     ProductController.MainContainer = MainContainer
                     If ProductController.SerialNumbers Is Nothing Then
@@ -1129,7 +918,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
                     ' Add an initial serial number row if needed
                     If MainContainer.Children.Count = 0 AndAlso TxtStockUnits IsNot Nothing AndAlso
-                        (String.IsNullOrEmpty(TxtStockUnits.Text) OrElse CInt(TxtStockUnits.Text) > 0) Then
+                            (String.IsNullOrEmpty(TxtStockUnits.Text) OrElse CInt(TxtStockUnits.Text) > 0) Then
                         ProductController.BtnAddRow_Click(Nothing, Nothing)
                     End If
 
