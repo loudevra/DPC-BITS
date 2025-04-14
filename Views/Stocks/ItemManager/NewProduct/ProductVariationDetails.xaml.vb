@@ -58,9 +58,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         End Sub
         ' Function to handle integer only input on textboxes
         Private Sub IntegerOnlyTextInputHandler(sender As Object, e As TextCompositionEventArgs)
-            If Not IsNumeric(e.Text) OrElse Not Integer.TryParse(e.Text, New Integer()) Then
-                e.Handled = True ' Block non-integer input
-            End If
+            ProductController.IntegerOnlyTextInputHandler(sender, e)
         End Sub
 
         Private Sub TxtStockUnits_KeyDown(sender As Object, e As KeyEventArgs)
@@ -82,17 +80,26 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             End If
         End Sub
 
-        ' Function to handle pasting
-        Private Sub IntegerOnlyPasteHandler(sender As Object, e As DataObjectPastingEventArgs)
-            If e.DataObject.GetDataPresent(GetType(String)) Then
-                Dim pastedText As String = CStr(e.DataObject.GetData(GetType(String)))
-                If Not Integer.TryParse(pastedText, New Integer()) Then
-                    e.CancelCommand() ' Cancel if pasted data is not an integer
+        Public Function HandleStockUnitsKeyDown(stockUnitsTextBox As System.Windows.Controls.TextBox,
+                                      mainContainer As System.Windows.Controls.StackPanel,
+                                      e As KeyEventArgs) As Boolean
+            ' General input validation logic
+            If e.Key = Key.Enter Then
+                ' Logic for updating UI elements based on stock unit changes
+                If Not String.IsNullOrEmpty(stockUnitsTextBox.Text) AndAlso Integer.TryParse(stockUnitsTextBox.Text, Nothing) Then
+                    Dim stockUnits As Integer = Integer.Parse(stockUnitsTextBox.Text)
+                    ' Additional logic for updating UI components
+                    Return True ' Event was handled
                 End If
-            Else
-                e.CancelCommand()
             End If
+
+            Return False ' Event was not handled
+        End Function
+
+        Private Sub IntegerOnlyPasteHandler(sender As Object, e As DataObjectPastingEventArgs)
+            ProductController.IntegerOnlyPasteHandler(sender, e)
         End Sub
+
         Private Sub IncludeSerial_Click(sender As Object, e As RoutedEventArgs)
             ' Call the centralized method in ProductController
             ProductController.SerialNumberChecker(CheckBoxSerialNumber,
@@ -100,86 +107,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                                          TxtStockUnits,
                                          BorderStockUnits,
                                          MainContainer)
-        End Sub
-
-        Private Sub SerialNumberChecker(Checkbox As Controls.CheckBox)
-            ' Find the controls if they're null
-            If StackPanelSerialRow Is Nothing Then
-                StackPanelSerialRow = FindVisualChild(Of Grid)(SerialNumberContainer, "StackPanelSerialRow")
-            End If
-
-            If TxtStockUnits Is Nothing Then
-                TxtStockUnits = FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtStockUnits")
-            End If
-
-            If BorderStockUnits Is Nothing Then
-                BorderStockUnits = FindVisualChild(Of Border)(DynamicFormContainer, "BorderStockUnits")
-            End If
-
-            ' Now check if the controls were found before using them
-            If Checkbox.IsChecked = True Then
-                If StackPanelSerialRow IsNot Nothing Then
-                    StackPanelSerialRow.Visibility = Visibility.Visible
-
-                    ' Ensure we have the correct number of serial rows based on stock units
-                    If MainContainer.Children.Count = 0 Then
-                        Dim stockUnits As Integer = 1 ' Default
-
-                        If Not String.IsNullOrEmpty(TxtStockUnits.Text) AndAlso Integer.TryParse(TxtStockUnits.Text, stockUnits) Then
-                            ' We have a valid number
-                            If MainContainer.Children.Count <> stockUnits Then
-                                MainContainer.Children.Clear()
-                                If ProductController.SerialNumbers IsNot Nothing Then
-                                    ProductController.SerialNumbers.Clear()
-                                End If
-
-                                ' Create the correct number of rows
-                                For i As Integer = 1 To stockUnits
-                                    ProductController.BtnAddRow_Click(Nothing, Nothing)
-                                Next
-                            End If
-                        Else
-                            ' Default to 1 row if no valid stock units
-                            TxtStockUnits.Text = "1"
-                            If MainContainer.Children.Count <> 1 Then
-                                MainContainer.Children.Clear()
-                                If ProductController.SerialNumbers IsNot Nothing Then
-                                    ProductController.SerialNumbers.Clear()
-                                End If
-                                ProductController.BtnAddRow_Click(Nothing, Nothing)
-                            End If
-                        End If
-                    End If
-                End If
-
-                If TxtStockUnits IsNot Nothing Then
-                    TxtStockUnits.IsReadOnly = True
-                End If
-
-                ' Make sure to save the checkbox state to current variation
-                If Not String.IsNullOrEmpty(variationManager.CurrentCombination) Then
-                    Dim variationData As ProductVariationData = variationManager.GetVariationData(variationManager.CurrentCombination)
-                    If variationData IsNot Nothing Then
-                        variationData.IncludeSerialNumbers = True
-                    End If
-                End If
-            Else
-                If StackPanelSerialRow IsNot Nothing Then
-                    StackPanelSerialRow.Visibility = Visibility.Collapsed
-                End If
-
-                If TxtStockUnits IsNot Nothing Then
-                    TxtStockUnits.IsReadOnly = False
-                End If
-
-                ' Save the checkbox state to current variation
-                If Not String.IsNullOrEmpty(variationManager.CurrentCombination) Then
-                    Dim variationData As ProductVariationData = variationManager.GetVariationData(variationManager.CurrentCombination)
-                    If variationData IsNot Nothing Then
-                        variationData.IncludeSerialNumbers = False
-                    End If
-                End If
-            End If
         End Sub
 
         ' Handles the serial table components

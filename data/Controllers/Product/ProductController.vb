@@ -225,13 +225,13 @@ Namespace DPC.Data.Controllers
             Return True
         End Function
 
-        Public Sub IntegerOnlyTextInputHandler(sender As Object, e As TextCompositionEventArgs)
+        Public Shared Sub IntegerOnlyTextInputHandler(sender As Object, e As TextCompositionEventArgs)
             If Not IsNumeric(e.Text) OrElse Not Integer.TryParse(e.Text, New Integer()) Then
                 e.Handled = True ' Block non-integer input
             End If
         End Sub
 
-        Public Sub IntegerOnlyPasteHandler(sender As Object, e As DataObjectPastingEventArgs)
+        Public Shared Sub IntegerOnlyPasteHandler(sender As Object, e As DataObjectPastingEventArgs)
             If e.DataObject.GetDataPresent(GetType(String)) Then
                 Dim pastedText As String = CStr(e.DataObject.GetData(GetType(String)))
                 If Not Integer.TryParse(pastedText, New Integer()) Then
@@ -241,6 +241,7 @@ Namespace DPC.Data.Controllers
                 e.CancelCommand()
             End If
         End Sub
+
 
         Public Sub ProcessStockUnitsEntry(txtStockUnits As TextBox, mainContainer As Panel)
             Dim stockUnits As Integer
