@@ -110,24 +110,56 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         End Sub
 
         Private Sub SerialNumberChecker(Checkbox As Controls.CheckBox)
-            If Checkbox.IsChecked = True Then
-                StackPanelSerialRow.Visibility = Visibility.Visible
-                TxtStockUnits.IsReadOnly = True
-            Else
-                StackPanelSerialRow.Visibility = Visibility.Collapsed
-                TxtStockUnits.IsReadOnly = False
+            ' Find the controls if they're null
+            If StackPanelSerialRow Is Nothing Then
+                StackPanelSerialRow = FindVisualChild(Of Grid)(SerialNumberContainer, "StackPanelSerialRow")
             End If
 
-            If TxtStockUnits.IsReadOnly = True Then
-                BorderStockUnits.BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
+            If TxtStockUnits Is Nothing Then
+                TxtStockUnits = FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtStockUnits")
+            End If
+
+            If BorderStockUnits Is Nothing Then
+                BorderStockUnits = FindVisualChild(Of Border)(DynamicFormContainer, "BorderStockUnits")
+            End If
+
+            ' Now check if the controls were found before using them
+            If Checkbox.IsChecked = True Then
+                If StackPanelSerialRow IsNot Nothing Then
+                    StackPanelSerialRow.Visibility = Visibility.Visible
+                End If
+
+                If TxtStockUnits IsNot Nothing Then
+                    TxtStockUnits.IsReadOnly = True
+                End If
             Else
-                BorderStockUnits.BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#474747"))
+                If StackPanelSerialRow IsNot Nothing Then
+                    StackPanelSerialRow.Visibility = Visibility.Collapsed
+                End If
+
+                If TxtStockUnits IsNot Nothing Then
+                    TxtStockUnits.IsReadOnly = False
+                End If
+            End If
+
+            If TxtStockUnits IsNot Nothing AndAlso BorderStockUnits IsNot Nothing Then
+                If TxtStockUnits.IsReadOnly = True Then
+                    BorderStockUnits.BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
+                Else
+                    BorderStockUnits.BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#474747"))
+                End If
             End If
         End Sub
 
         ' Handles the serial table components
         Private Sub BtnAddRow_Click(sender As Object, e As RoutedEventArgs)
+            ' Simply call the ProductController's implementation
             ProductController.BtnAddRow_Click(Nothing, Nothing)
+
+            ' Update the stock units textbox to match row count
+            If MainContainer IsNot Nothing AndAlso TxtStockUnits IsNot Nothing Then
+                TxtStockUnits.Text = MainContainer.Children.Count.ToString()
+            End If
         End Sub
 
         Private Sub BtnRemoveRow_Click(sender As Object, e As RoutedEventArgs)
@@ -362,6 +394,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             End If
         End Sub
 
+
         Private Function FindVisualChild(Of T As DependencyObject)(parent As DependencyObject, name As String) As T
             For i As Integer = 0 To VisualTreeHelper.GetChildrenCount(parent) - 1
                 Dim child As DependencyObject = VisualTreeHelper.GetChild(parent, i)
@@ -444,12 +477,20 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                     If variationData.IncludeSerialNumbers Then
                         variationData.SerialNumbers.Clear()
 
-                        ' Make sure ProductController.SerialNumbers is not null
-                        If ProductController.SerialNumbers IsNot Nothing Then
-                            ' Save serial numbers from your serial number controls
-                            For Each serialNumber As System.Windows.Controls.TextBox In ProductController.SerialNumbers
-                                If serialNumber IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(serialNumber.Text) Then
-                                    variationData.SerialNumbers.Add(serialNumber.Text)
+                        ' Find all serial number TextBoxes in MainContainer
+                        Dim mainContainer As System.Windows.Controls.StackPanel = FindVisualChild(Of System.Windows.Controls.StackPanel)(SerialNumberContainer, "MainContainer")
+                        If mainContainer IsNot Nothing Then
+                            For Each child As UIElement In mainContainer.Children
+                                If TypeOf child Is Grid Then
+                                    Dim grid As Grid = DirectCast(child, Grid)
+                                    For Each gridChild As UIElement In grid.Children
+                                        If TypeOf gridChild Is System.Windows.Controls.TextBox Then
+                                            Dim serialTextBox As System.Windows.Controls.TextBox = DirectCast(gridChild, System.Windows.Controls.TextBox)
+                                            If Not String.IsNullOrWhiteSpace(serialTextBox.Text) Then
+                                                variationData.SerialNumbers.Add(serialTextBox.Text)
+                                            End If
+                                        End If
+                                    Next
                                 End If
                             Next
                         End If
@@ -477,7 +518,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ' Find the warehouse ComboBox
             Dim comboBoxWarehouse As System.Windows.Controls.ComboBox = _comboBoxWarehouse
 
-
             ' Debug message to check if ComboBox is found
             If comboBoxWarehouse Is Nothing Then
                 MessageBox.Show("Debug: ComboBoxWarehouse was not found in the visual tree")
@@ -500,7 +540,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                     MessageBox.Show("Error initializing warehouse dropdown: " & ex.Message)
                 End Try
             End If
-
 
             ' Load data into form controls
             If txtRetailPrice IsNot Nothing Then
@@ -543,39 +582,66 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 Next
             End If
 
-            ' Clear existing serial numbers
-            ProductController.SerialNumbers.Clear()
+            If ProductController.SerialNumbers IsNot Nothing Then
+                ProductController.SerialNumbers.Clear()
+            End If
 
             ' Find MainContainer
             Dim mainContainer As System.Windows.Controls.StackPanel = FindVisualChild(Of System.Windows.Controls.StackPanel)(SerialNumberContainer, "MainContainer")
             If mainContainer IsNot Nothing Then
                 mainContainer.Children.Clear()
 
-                ' If we have serial numbers, load them
-                If variationData.IncludeSerialNumbers And variationData.SerialNumbers.Count > 0 Then
-                    ' Load serial numbers into UI
+                ' If we have serial numbers, load them for this specific variation
+                If variationData.IncludeSerialNumbers AndAlso variationData.SerialNumbers.Count > 0 Then
+                    ' Load each serial number from this variation's data
                     For Each serialNumber As String In variationData.SerialNumbers
-                        ' Add a row for each serial number
-                        ProductController.BtnAddRow_Click(Nothing, Nothing)
+                        ' Create a new row for each serial number
+                        Dim grid As New Grid With {.Margin = New Thickness(0)}
 
-                        ' Now set the value of the last added row
-                        If mainContainer.Children.Count > 0 Then
-                            Dim lastGrid As System.Windows.Controls.Grid = TryCast(mainContainer.Children(mainContainer.Children.Count - 1), System.Windows.Controls.Grid)
-                            If lastGrid IsNot Nothing Then
-                                ' Find the TextBox in the grid
-                                For Each child As UIElement In lastGrid.Children
-                                    If TypeOf child Is System.Windows.Controls.TextBox Then
-                                        Dim textBox As System.Windows.Controls.TextBox = DirectCast(child, System.Windows.Controls.TextBox)
-                                        textBox.Text = serialNumber
-                                        Exit For
-                                    End If
-                                Next
-                            End If
+                        ' Create TextBox for the serial number
+                        Dim txtSerial As New System.Windows.Controls.TextBox With {
+                .Text = serialNumber,
+                .Style = CType(FindResource("RoundedTextboxStyle"), Style),
+                .Margin = New Thickness(10, 5, 10, 5),
+                .BorderThickness = New Thickness(1),
+                .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
+            }
+                        Grid.SetColumn(txtSerial, 0)
+
+                        ' Create remove button
+                        Dim btnRemove As New System.Windows.Controls.Button With {
+                .Content = "Remove",
+                .Style = CType(FindResource("RoundedButtonStyle"), Style),
+                .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#d23636")),
+                .Foreground = Brushes.White,
+                .Margin = New Thickness(5),
+                .Padding = New Thickness(10, 5, 10, 5),
+                .BorderThickness = New Thickness(0),
+                .HorizontalAlignment = HorizontalAlignment.Right
+            }
+                        Grid.SetColumn(btnRemove, 1)
+                        AddHandler btnRemove.Click, AddressOf BtnRemoveRow_Click
+
+                        grid.Children.Add(txtSerial)
+                        grid.Children.Add(btnRemove)
+
+                        ' Add to container and track the textbox
+                        mainContainer.Children.Add(grid)
+                        If ProductController.SerialNumbers IsNot Nothing Then
+                            ProductController.SerialNumbers.Add(txtSerial)
                         End If
                     Next
                 Else
                     ' Add at least one empty row for serial input
                     ProductController.BtnAddRow_Click(Nothing, Nothing)
+                End If
+            End If
+
+            If txtStockUnits IsNot Nothing Then
+                If variationData.StockUnits > 0 Then
+                    txtStockUnits.Text = variationData.StockUnits.ToString()
+                Else
+                    txtStockUnits.Text = ""
                 End If
             End If
         End Sub
@@ -659,6 +725,57 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             Return True
         End Function
+
+        ' Add a serial number row
+        Private Sub AddSerialRow(Optional initialValue As String = "")
+            ' Simply forward the call to ProductController
+            ProductController.BtnAddRow_Click(Nothing, Nothing)
+
+            ' If an initial value was provided, set it on the last added textbox
+            If Not String.IsNullOrEmpty(initialValue) AndAlso ProductController.SerialNumbers IsNot Nothing AndAlso ProductController.SerialNumbers.Count > 0 Then
+                ProductController.SerialNumbers(ProductController.SerialNumbers.Count - 1).Text = initialValue
+            End If
+
+            ' Update the stock units textbox to match row count
+            If TxtStockUnits IsNot Nothing AndAlso MainContainer IsNot Nothing Then
+                TxtStockUnits.Text = MainContainer.Children.Count.ToString()
+            End If
+        End Sub
+
+        ' Remove a serial number row
+        Private Sub BtnRemove_Click(sender As Object, e As RoutedEventArgs)
+            Dim button As System.Windows.Controls.Button = TryCast(sender, System.Windows.Controls.Button)
+            If button Is Nothing Then Return
+
+            ' Find the parent grid and remove it
+            Dim grid As Grid = TryCast(button.Parent, Grid)
+            If grid Is Nothing Then Return
+
+            Dim mainContainer As System.Windows.Controls.StackPanel = TryCast(grid.Parent, System.Windows.Controls.StackPanel)
+            If mainContainer Is Nothing Then Return
+
+            ' Find the textbox to remove from tracking
+            Dim txtToRemove As System.Windows.Controls.TextBox = Nothing
+            For Each child As UIElement In grid.Children
+                If TypeOf child Is System.Windows.Controls.TextBox Then
+                    txtToRemove = DirectCast(child, System.Windows.Controls.TextBox)
+                    Exit For
+                End If
+            Next
+
+            ' Remove from tracking
+            If txtToRemove IsNot Nothing AndAlso ProductController.SerialNumbers IsNot Nothing Then
+                ProductController.SerialNumbers.Remove(txtToRemove)
+            End If
+
+            ' Remove from UI
+            mainContainer.Children.Remove(grid)
+
+            ' Update the stock units textbox to match row count
+            If TxtStockUnits IsNot Nothing Then
+                TxtStockUnits.Text = mainContainer.Children.Count.ToString()
+            End If
+        End Sub
 
         Private Sub BtnBack(sender As Object, e As RoutedEventArgs)
             ' Notify the parent window to update its variation text
@@ -937,115 +1054,90 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
                 Case "serialnumber"
                     ' Create the serial number content
-                    Dim grid As New Grid()
-                    grid.RowDefinitions.Add(New RowDefinition With {.Height = GridLength.Auto})
-                    grid.RowDefinitions.Add(New RowDefinition With {.Height = New GridLength(1, GridUnitType.Star)})
-
+                    Dim stackPanel As New StackPanel With {.Name = "OuterStackPanel"}
+                    Grid.SetRow(stackPanel, 4)
 
                     ' Serial Checkbox
                     Dim serialCheckboxPanel As New System.Windows.Controls.StackPanel With {
-                .Margin = New Thickness(0, 10, 0, 10),
-                .Name = "StackPanelSerialNumber",
-                .Orientation = Orientation.Horizontal
-            }
-                    Grid.SetRow(serialCheckboxPanel, 0)
+                        .Margin = New Thickness(0, 10, 0, 10),
+                        .Name = "StackPanelSerialNumber"
+                    }
 
-                    CheckBoxSerialNumber = New System.Windows.Controls.CheckBox With {.Name = "CheckBoxSerialNumber", .IsChecked = True}
+                    Dim checkboxStack As New StackPanel With {.Orientation = Orientation.Horizontal}
+                    CheckBoxSerialNumber = New System.Windows.Controls.CheckBox With {.Name = "CheckBoxSerialNumber"}
                     AddHandler CheckBoxSerialNumber.Click, AddressOf IncludeSerial_Click
-                    serialCheckboxPanel.Children.Add(CheckBoxSerialNumber)
-                    serialCheckboxPanel.Children.Add(New System.Windows.Controls.TextBlock With {
-                .Text = "Include Serial Number:",
-                .FontSize = 14,
-                .FontWeight = FontWeights.SemiBold,
-                .Margin = New Thickness(10, 0, 0, 0)
-            })
 
-                    grid.Children.Add(serialCheckboxPanel)
+                    checkboxStack.Children.Add(CheckBoxSerialNumber)
+                    checkboxStack.Children.Add(New System.Windows.Controls.TextBlock With {
+                        .Text = "Include Serial Number:",
+                        .FontSize = 14,
+                        .FontWeight = FontWeights.SemiBold,
+                        .Margin = New Thickness(10, 0, 0, 0)
+                    })
 
-                    ' Serial Number Section with Scroll
-                    StackPanelSerialRow = New Grid With {
-                .Name = "StackPanelSerialRow",
-                .VerticalAlignment = VerticalAlignment.Stretch
-            }
-                    StackPanelSerialRow.RowDefinitions.Add(New RowDefinition With {.Height = GridLength.Auto})
-                    StackPanelSerialRow.RowDefinitions.Add(New RowDefinition With {.Height = New GridLength(1, GridUnitType.Star)})
-                    Grid.SetRow(StackPanelSerialRow, 1)
+                    serialCheckboxPanel.Children.Add(checkboxStack)
+                    stackPanel.Children.Add(serialCheckboxPanel)
 
-                    ' Serial Label Header
+                    ' Serial Number Row
+                    Dim StackPanelSerialRow = New System.Windows.Controls.StackPanel With {
+                        .Margin = New Thickness(0, 10, 0, 10),  ' Left, Top, Right, Bottom
+                        .Name = "StackPanelSerialRow"
+                    }
+
+                    ' Header border with label
                     Dim headerBorder As New Border With {
-        .Style = CType(FindResource("RoundedBorderStyle"), Style),
-        .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#474747")),
-        .BorderThickness = New Thickness(0),
-        .CornerRadius = New CornerRadius(15, 15, 0, 0)
-    }
+                        .Style = CType(FindResource("RoundedBorderStyle"), Style),
+                        .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#474747")),
+                        .BorderThickness = New Thickness(0),
+                        .CornerRadius = New CornerRadius(15, 15, 0, 0)
+                    }
 
                     Dim headerPanel As New System.Windows.Controls.StackPanel With {
-        .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#474747")),
-        .Orientation = Orientation.Horizontal,
-        .Margin = New Thickness(20, 10, 20, 10)
-    }
+                        .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#474747")),
+                        .Orientation = Orientation.Horizontal,
+                        .Margin = New Thickness(20, 10, 20, 10)  ' Left, Top, Right, Bottom
+                    }
 
                     headerPanel.Children.Add(New System.Windows.Controls.TextBlock With {
-        .Text = "Serial Number:",
-        .Foreground = Brushes.White,
-        .FontSize = 14,
-        .FontWeight = FontWeights.SemiBold,
-        .Margin = New Thickness(0, 0, 5, 0)
-    })
+                        .Text = "Serial Number:",
+                        .Foreground = Brushes.White,
+                        .FontSize = 14,
+                        .FontWeight = FontWeights.SemiBold,
+                        .Margin = New Thickness(0, 0, 5, 0)
+                    })
 
                     headerPanel.Children.Add(New System.Windows.Controls.TextBlock With {
-        .Text = "*",
-        .FontSize = 14,
-        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636")),
-        .FontWeight = FontWeights.Bold
-    })
+                        .Text = "*",
+                        .FontSize = 14,
+                        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636")),
+                        .FontWeight = FontWeights.Bold
+                    })
 
                     headerBorder.Child = headerPanel
-                    Grid.SetRow(headerBorder, 0)
-                    serialRowPanel.Children.Add(headerBorder)
+                    StackPanelSerialRow.Children.Add(headerBorder)
 
-                    ' Scrollable Serial Input Container
-                    Dim serialBorder As New Border With {
-        .Background = Brushes.White,
-        .BorderThickness = New Thickness(1),
-        .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#E0E0E0"))
-    }
-
-                    Dim serialScrollViewer As New ScrollViewer With {
-        .VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-        .HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
-        .Style = CType(FindResource("ModernScrollViewerStyle"), Style),
-        .Height = 400,
-        .MinHeight = 300
-    }
-
+                    ' Main container for serial numbers
                     MainContainer = New System.Windows.Controls.StackPanel With {
-                .Name = "MainContainer",
-                .Margin = New Thickness(10)
-            }
+                        .Name = "MainContainer",
+                        .Background = Brushes.White
+                    }
+
                     ProductController.MainContainer = MainContainer
                     If ProductController.SerialNumbers Is Nothing Then
                         ProductController.SerialNumbers = New List(Of System.Windows.Controls.TextBox)()
                     End If
 
                     ' Add an initial serial number row if needed
-                    If mainContainer.Children.Count = 0 AndAlso TxtStockUnits IsNot Nothing AndAlso
-               (String.IsNullOrEmpty(TxtStockUnits.Text) OrElse CInt(TxtStockUnits.Text) > 0) Then
+                    If MainContainer.Children.Count = 0 AndAlso TxtStockUnits IsNot Nothing AndAlso
+                        (String.IsNullOrEmpty(TxtStockUnits.Text) OrElse CInt(TxtStockUnits.Text) > 0) Then
                         ProductController.BtnAddRow_Click(Nothing, Nothing)
                     End If
 
+                    StackPanelSerialRow.Children.Add(MainContainer)
+                    stackPanel.Children.Add(StackPanelSerialRow)
 
-                    serialScrollViewer.Content = mainContainer
-                    serialBorder.Child = serialScrollViewer
-                    Grid.SetRow(serialBorder, 1)
-                    serialRowPanel.Children.Add(serialBorder)
-
-                    grid.Children.Add(serialRowPanel)
-
-                    container.Content = grid
-
+                    container.Content = stackPanel
             End Select
-
             Return container
         End Function
     End Class
