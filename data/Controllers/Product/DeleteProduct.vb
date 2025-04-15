@@ -1,7 +1,7 @@
 ﻿Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Data.Controllers
-    Public Class DeleteProductData
+    Public Class DeleteProduct
         Private Shared ReadOnly Property MainContainer As StackPanel
             Get
                 Return ProductController.MainContainer

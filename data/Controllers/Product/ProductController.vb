@@ -7,6 +7,7 @@ Imports System.Data
 Imports DPC.DPC.Data.Models
 Imports System.IO
 Imports System.Text
+Imports DocumentFormat.OpenXml.Bibliography
 
 Namespace DPC.Data.Controllers
     Public Class ProductController
@@ -24,73 +25,67 @@ Namespace DPC.Data.Controllers
         'Get functions
         '(For comboboxes only)
         Public Shared Sub GetBrands(comboBox As ComboBox)
-            GetProductData.GetBrands(comboBox)
+            GetProduct.GetBrands(comboBox)
         End Sub
 
         Public Shared Sub GetSuppliersByBrand(brandID As Integer, comboBox As ComboBox)
-            GetProductData.GetSuppliersByBrand(brandID, comboBox)
+            GetProduct.GetSuppliersByBrand(brandID, comboBox)
         End Sub
 
         Public Shared Sub GetProductCategory(comboBox As ComboBox)
-            GetProductData.GetProductCategory(comboBox)
+            GetProduct.GetProductCategory(comboBox)
         End Sub
 
         Public Shared Sub GetProductSubcategory(categoryName As String, comboBox As ComboBox, label As TextBlock, stackPanel As StackPanel)
-            GetProductData.GetProductSubcategory(categoryName, comboBox, label, stackPanel)
+            GetProduct.GetProductSubcategory(categoryName, comboBox, label, stackPanel)
         End Sub
 
         Public Shared Sub GetWarehouse(comboBox As ComboBox)
-            GetProductData.GetWarehouse(comboBox)
+            GetProduct.GetWarehouse(comboBox)
         End Sub
 
         Public Shared Function GenerateProductCode() As String
-            Return CreateProductData.GenerateProductCode()
+            Return GenerateProduct.GenerateProductCode()
         End Function
 
         Public Shared Function GetNextProductCounter(datePart As String) As Integer
-            Return CreateProductData.GetNextProductCounter(datePart)
+            Return GenerateProduct.GetNextProductCounter(datePart)
         End Function
 
 
 
         'Serial Row Functions
         Public Shared Sub BtnAddRow_Click(sender As Object, e As RoutedEventArgs, Optional skipStockUpdate As Boolean = False)
-            CreateProductData.AddSerialRow(sender, e, skipStockUpdate)
+            RenderProduct.AddSerialRow(sender, e, skipStockUpdate)
         End Sub
 
         ' Remove Row Function
         Public Shared Sub BtnRemoveRow_Click(sender As Object, e As RoutedEventArgs)
-            DeleteProductData.RemoveSerialRow(sender, e)
+            DeleteProduct.RemoveSerialRow(sender, e)
         End Sub
 
         ' Row Controller Handler
         Public Shared Sub BtnRowController_Click(sender As Object, e As RoutedEventArgs)
-            CreateProductData.OpenRowController(sender, e)
+            RenderProduct.OpenRowController(sender, e)
         End Sub
 
         ' Remove Latest Row Function
         Public Shared Sub RemoveLatestRow()
-            DeleteProductData.RemoveLatestRow()
+            DeleteProduct.RemoveLatestRow()
         End Sub
 
         'Import serialnumbers
         Public Shared Sub ImportSerialNumbers_Click()
-            CreateProductData.ImportSerialNumbers()
+            UploadProduct.ImportSerialNumbers()
         End Sub
-
-
 
         ' Load Product Data
         Public Shared Sub LoadProductData(dataGrid As DataGrid)
-            GetProductData.LoadProductData(dataGrid)
+            GetProduct.LoadProductData(dataGrid)
         End Sub
 
-
-
-        ' Add these methods to your ProductController class
-
-#Region "UI State Management"
-        Public Sub VariationChecker(toggle As ToggleButton,
+        'Check if yes or no variation
+        Public Shared Sub VariationChecker(toggle As ToggleButton,
                           stackPanelVariation As StackPanel,
                           stackPanelWarehouse As StackPanel,
                           stackPanelRetailPrice As StackPanel,
@@ -101,60 +96,34 @@ Namespace DPC.Data.Controllers
                           stackPanelAlertQuantity As StackPanel,
                           stackPanelStockUnits As StackPanel,
                           outerStackPanel As StackPanel)
-            Try
-                If toggle Is Nothing Then
-                    Throw New Exception("ToggleButton is not initialized.")
-                End If
 
-                ' Update UI based on IsChecked state
-                If toggle.IsChecked = True Then
-                    stackPanelVariation.Visibility = Visibility.Visible
-                    stackPanelWarehouse.Visibility = Visibility.Collapsed
-                    stackPanelRetailPrice.Visibility = Visibility.Collapsed
-                    stackPanelOrderPrice.Visibility = Visibility.Collapsed
-                    stackPanelTaxRate.Visibility = Visibility.Collapsed
-                    stackPanelDiscountRate.Visibility = Visibility.Collapsed
-                    borderStocks.Visibility = Visibility.Collapsed
-                    stackPanelAlertQuantity.Visibility = Visibility.Collapsed
-                    stackPanelStockUnits.Visibility = Visibility.Collapsed
-                    outerStackPanel.Visibility = Visibility.Collapsed
-                Else
-                    stackPanelVariation.Visibility = Visibility.Collapsed
-                    stackPanelWarehouse.Visibility = Visibility.Visible
-                    stackPanelRetailPrice.Visibility = Visibility.Visible
-                    stackPanelOrderPrice.Visibility = Visibility.Visible
-                    stackPanelTaxRate.Visibility = Visibility.Visible
-                    stackPanelDiscountRate.Visibility = Visibility.Visible
-                    borderStocks.Visibility = Visibility.Visible
-                    stackPanelAlertQuantity.Visibility = Visibility.Visible
-                    stackPanelStockUnits.Visibility = Visibility.Visible
-                    outerStackPanel.Visibility = Visibility.Visible
-                End If
-            Catch ex As Exception
-                MessageBox.Show($"Error: {ex.Message}")
-            End Try
+            LogicProduct.VariationChecker(toggle,
+                          stackPanelVariation,
+                          stackPanelWarehouse,
+                          stackPanelRetailPrice,
+                          stackPanelOrderPrice,
+                          stackPanelTaxRate,
+                          stackPanelDiscountRate,
+                          borderStocks,
+                          stackPanelAlertQuantity,
+                          stackPanelStockUnits,
+                          outerStackPanel)
         End Sub
 
-        Public Sub SerialNumberChecker(checkbox As CheckBox,
-                             stackPanelSerialRow As StackPanel,
-                             txtStockUnits As TextBox,
-                             borderStockUnits As Border)
-            If checkbox.IsChecked = True Then
-                stackPanelSerialRow.Visibility = Visibility.Visible
-                txtStockUnits.IsReadOnly = True
-            Else
-                stackPanelSerialRow.Visibility = Visibility.Collapsed
-                txtStockUnits.IsReadOnly = False
-            End If
+        'Check if product has serial number or no serial number
+        Public Shared Sub SerialNumberChecker(checkbox As CheckBox,
+                     stackPanelSerialRow As StackPanel,
+                     txtStockUnits As TextBox,
+                     borderStockUnits As Border)
 
-            If txtStockUnits.IsReadOnly = True Then
-                borderStockUnits.BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
-            Else
-                borderStockUnits.BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#474747"))
-            End If
+            LogicProduct.SerialNumberChecker(checkbox,
+                     stackPanelSerialRow,
+                     txtStockUnits,
+                     borderStockUnits)
         End Sub
 
-        Public Sub ClearInputFields(txtProductName As TextBox,
+        'Clear fields in add product, not including variation popup and variation detail page
+        Public Shared Sub ClearInputFields(txtProductName As TextBox,
                           txtRetailPrice As TextBox,
                           txtPurchaseOrder As TextBox,
                           txtDefaultTax As TextBox,
@@ -170,159 +139,45 @@ Namespace DPC.Data.Controllers
                           comboBoxSupplier As ComboBox,
                           singleDatePicker As DatePicker,
                           mainContainer As Panel)
-            ' Clear TextBoxes
-            txtProductName.Clear()
-            txtRetailPrice.Clear()
-            txtPurchaseOrder.Clear()
-            txtDefaultTax.Text = "12"
-            txtDiscountRate.Clear()
-            txtStockUnits.Text = "1"
-            txtAlertQuantity.Clear()
-            txtDescription.Clear()
 
-            ' Reset ComboBoxes to first item (index 0)
-            If comboBoxCategory.Items.Count > 0 Then comboBoxCategory.SelectedIndex = 0
-            If comboBoxSubCategory.Items.Count > 0 Then comboBoxSubCategory.SelectedIndex = 0
-            If comboBoxWarehouse.Items.Count > 0 Then comboBoxWarehouse.SelectedIndex = 0
-            If comboBoxMeasurementUnit.Items.Count > 0 Then comboBoxMeasurementUnit.SelectedIndex = 0
-            If comboBoxBrand.Items.Count > 0 Then comboBoxBrand.SelectedIndex = 0
-            If comboBoxSupplier.Items.Count > 0 Then comboBoxSupplier.SelectedIndex = 0
-
-            ' Set DatePicker to current date
-            singleDatePicker.SelectedDate = DateTime.Now
-
-            ' Clear Serial Numbers and reset to one row
-            If SerialNumbers IsNot Nothing Then
-                SerialNumbers.Clear()
-            End If
-
-            If mainContainer IsNot Nothing Then
-                mainContainer.Children.Clear()
-            End If
-
-            ' Add back one row for Serial Number input
-            BtnAddRow_Click(Nothing, Nothing)
+            RenderProduct.ClearInputFieldsNoVariation(txtProductName,
+                          txtRetailPrice,
+                          txtPurchaseOrder,
+                          txtDefaultTax,
+                          txtDiscountRate,
+                          txtStockUnits,
+                          txtAlertQuantity,
+                          txtDescription,
+                          comboBoxCategory,
+                          comboBoxSubCategory,
+                          comboBoxWarehouse,
+                          comboBoxMeasurementUnit,
+                          comboBoxBrand,
+                          comboBoxSupplier,
+                          singleDatePicker,
+                          mainContainer)
         End Sub
-#End Region
 
-#Region "Validation"
         Public Function ValidateImageFile(filePath As String) As Boolean
-            Dim fileInfo As New FileInfo(filePath)
-
-            ' Check file size (2MB max)
-            If fileInfo.Length > 2 * 1024 * 1024 Then
-                MessageBox.Show("File is too large! Please upload an image under 2MB.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
-                Return False
-            End If
-
-            ' Check file extension
-            Dim validExtensions As String() = {".jpg", ".jpeg", ".png"}
-            If Not validExtensions.Contains(fileInfo.Extension.ToLower()) Then
-                MessageBox.Show("Invalid file format! Only JPG and PNG are allowed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
-                Return False
-            End If
-
-            Return True
+            Return LogicProduct.ValidateImageFile(filePath)
         End Function
 
         Public Shared Sub IntegerOnlyTextInputHandler(sender As Object, e As TextCompositionEventArgs)
-            If Not IsNumeric(e.Text) OrElse Not Integer.TryParse(e.Text, New Integer()) Then
-                e.Handled = True ' Block non-integer input
-            End If
+            LogicProduct.IntegerOnlyTextInputHandler(sender, e)
         End Sub
 
         Public Shared Sub IntegerOnlyPasteHandler(sender As Object, e As DataObjectPastingEventArgs)
-            If e.DataObject.GetDataPresent(GetType(String)) Then
-                Dim pastedText As String = CStr(e.DataObject.GetData(GetType(String)))
-                If Not Integer.TryParse(pastedText, New Integer()) Then
-                    e.CancelCommand() ' Cancel if pasted data is not an integer
-                End If
-            Else
-                e.CancelCommand()
-            End If
+            LogicProduct.IntegerOnlyPasteHandler(sender, e)
         End Sub
-
 
         Public Sub ProcessStockUnitsEntry(txtStockUnits As TextBox, mainContainer As Panel)
-            Dim stockUnits As Integer
-
-            ' Validate if input is a valid number and greater than zero
-            If Integer.TryParse(txtStockUnits.Text, stockUnits) Then
-                If stockUnits > 0 Then
-                    ' Clear previous rows
-                    mainContainer.Children.Clear()
-
-                    ' Clear SerialNumbers to remove old references
-                    SerialNumbers.Clear()
-
-                    ' Call BtnAddRow_Click the specified number of times
-                    For i As Integer = 1 To stockUnits
-                        BtnAddRow_Click(Nothing, Nothing)
-                    Next
-
-                    ' Ensure the textbox retains the correct value
-                    txtStockUnits.Text = stockUnits.ToString()
-                Else
-                    MessageBox.Show("Please enter a number greater than zero.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning)
-                End If
-            Else
-                MessageBox.Show("Please enter a valid number.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning)
-            End If
+            LogicProduct.ProcessStockUnitsEntry(txtStockUnits, mainContainer)
         End Sub
-#End Region
 
-#Region "Variation Management"
         Public Sub UpdateProductVariationText(variations As List(Of ProductVariation), txtProductVariation As TextBlock)
-            Try
-                If variations IsNot Nothing AndAlso variations.Count > 0 Then
-                    ' Build a string to display the variation information
-                    Dim variationText As New StringBuilder()
-
-                    For i As Integer = 0 To variations.Count - 1
-                        Dim variation As ProductVariation = variations(i)
-                        variationText.Append(variation.VariationName)
-
-                        ' Add options summary
-                        If variation.Options IsNot Nothing AndAlso variation.Options.Count > 0 Then
-                            variationText.Append(" (")
-
-                            ' Limit to showing first 3 options if there are many
-                            Dim maxOptions As Integer = Math.Min(3, variation.Options.Count)
-                            For j As Integer = 0 To maxOptions - 1
-                                variationText.Append(variation.Options(j).OptionName)
-
-                                If j < maxOptions - 1 Then
-                                    variationText.Append(", ")
-                                End If
-                            Next
-
-                            ' If there are more options than we're showing
-                            If variation.Options.Count > 3 Then
-                                variationText.Append($", +{variation.Options.Count - 3} more")
-                            End If
-
-                            variationText.Append(")")
-                        End If
-
-                        ' Add separator between variations
-                        If i < variations.Count - 1 Then
-                            variationText.Append(" | ")
-                        End If
-                    Next
-
-                    ' Update the TextBlock with the variation information
-                    txtProductVariation.Text = variationText.ToString()
-                    txtProductVariation.Visibility = Visibility.Visible
-                Else
-                    ' No variations, clear the text
-                    txtProductVariation.Text = "No variations defined"
-                    txtProductVariation.Visibility = Visibility.Collapsed
-                End If
-            Catch ex As Exception
-                MessageBox.Show($"Error updating product variation text: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
-            End Try
+            LogicProduct.UpdateProductVariationText(variations, txtProductVariation)
         End Sub
-#End Region
+
 
 
         Private Shared Function ValidateProductFields(Checkbox As Controls.CheckBox, ProductName As TextBox, Category As ComboBox,
@@ -332,27 +187,10 @@ Namespace DPC.Data.Controllers
                                               AlertQuantity As TextBox, MeasurementUnit As ComboBox, Description As TextBox,
                                               ValidDate As DatePicker, SerialNumbers As List(Of TextBox)) As Boolean
 
-            ' Check if any of the required fields are empty (except SubCategory, which can be Nothing)
-            If String.IsNullOrWhiteSpace(ProductName.Text) OrElse
-       Category.SelectedItem Is Nothing OrElse
-       Warehouse.SelectedItem Is Nothing OrElse
-       Brand.SelectedItem Is Nothing OrElse
-       Supplier.SelectedItem Is Nothing OrElse
-       String.IsNullOrWhiteSpace(RetailPrice.Text) OrElse
-       String.IsNullOrWhiteSpace(PurchaseOrder.Text) OrElse
-       String.IsNullOrWhiteSpace(DefaultTax.Text) OrElse
-       String.IsNullOrWhiteSpace(DiscountRate.Text) OrElse
-       String.IsNullOrWhiteSpace(StockUnits.Text) OrElse
-       String.IsNullOrWhiteSpace(AlertQuantity.Text) OrElse
-       MeasurementUnit.SelectedItem Is Nothing OrElse
-       String.IsNullOrWhiteSpace(Description.Text) OrElse
-       ValidDate.SelectedDate Is Nothing OrElse
-       (Checkbox.IsChecked = True AndAlso SerialNumbers.Any(Function(txt) String.IsNullOrWhiteSpace(txt.Text))) Then
-                Return False
-            End If
-
-            ' ✅ If SubCategory is Nothing, set it to 0 when saving later
-            Return True
+            Return LogicProduct.ValidateProductFields(Checkbox, ProductName, Category,
+                                              SubCategory, Warehouse, Brand, Supplier, RetailPrice, PurchaseOrder,
+                                              DefaultTax, DiscountRate, StockUnits, AlertQuantity, MeasurementUnit,
+                                              Description, ValidDate, SerialNumbers)
         End Function
 
 

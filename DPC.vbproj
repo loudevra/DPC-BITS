@@ -347,10 +347,14 @@
     <Compile Include="Data\Controllers\CalendarController.vb" />
     <Compile Include="Data\Controllers\ManageProductsController.vb" />
     <Compile Include="Data\Controllers\ProductCategoryController.vb" />
-    <Compile Include="Data\Controllers\Product\CreateProductData.vb" />
-    <Compile Include="Data\Controllers\Product\DeleteProductData.vb" />
-    <Compile Include="Data\Controllers\Product\GetProductData.vb" />
+    <Compile Include="Data\Controllers\Product\CreateProduct.vb" />
+    <Compile Include="Data\Controllers\Product\DeleteProduct.vb" />
+    <Compile Include="Data\Controllers\Product\GenerateProduct.vb" />
+    <Compile Include="Data\Controllers\Product\GetProduct.vb" />
+    <Compile Include="Data\Controllers\Product\LogicProduct.vb" />
     <Compile Include="Data\Controllers\Product\ProductController.vb" />
+    <Compile Include="Data\Controllers\Product\RenderProduct.vb" />
+    <Compile Include="Data\Controllers\Product\UploadProduct.vb" />
     <Compile Include="Data\Controllers\PromoCodeController.vb" />
     <Compile Include="Data\Controllers\ResetPassController.vb" />
     <Compile Include="Data\Controllers\SessionManager.vb" />

@@ -8,45 +8,7 @@ Imports DPC.DPC.Data.Models
 Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Data.Controllers
-    Public Class CreateProductData
-        ' Function to generate ProductCode in format 20MMDDYYYYXXXX
-        Public Shared Function GenerateProductCode() As String
-            Dim prefix As String = "20"
-            Dim datePart As String = DateTime.Now.ToString("MMddyyyy") ' MMDDYYYY format
-            Dim counter As Integer = GetNextProductCounter(datePart)
-
-            ' Format counter to be 4 digits (e.g., 0001, 0025, 0150)
-            Dim counterPart As String = counter.ToString("D4")
-
-            ' Concatenate to get full ProductCode
-            Return prefix & datePart & counterPart
-        End Function
-
-        ' Function to get the next Product counter (last 4 digits) with reset condition
-        Public Shared Function GetNextProductCounter(datePart As String) As Integer
-            Dim query As String = "SELECT MAX(CAST(SUBSTRING(productID, 11, 4) AS UNSIGNED)) FROM product " &
-                  "WHERE productID LIKE '20" & datePart & "%'"
-
-            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                Try
-                    conn.Open()
-                    Using cmd As New MySqlCommand(query, conn)
-                        Dim result As Object = cmd.ExecuteScalar()
-
-                        ' If no previous records exist for today, start with 0001
-                        If result IsNot DBNull.Value AndAlso result IsNot Nothing Then
-                            Return Convert.ToInt32(result) + 1
-                        Else
-                            Return 1
-                        End If
-                    End Using
-                Catch ex As Exception
-                    MessageBox.Show("Error generating Product Code: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
-                    Return 1
-                End Try
-            End Using
-        End Function
-
+    Public Class RenderProduct
         Private Shared ReadOnly Property MainContainer As StackPanel
             Get
                 Return ProductController.MainContainer
@@ -108,7 +70,7 @@ Namespace DPC.Data.Controllers
             Dim rowControllerButton As New Button With {.Background = Brushes.White, .BorderThickness = New Thickness(0), .Name = "BtnRowController"}
             Dim menuIcon As New MaterialDesignThemes.Wpf.PackIcon With {.Kind = MaterialDesignThemes.Wpf.PackIconKind.MenuDown, .Width = 30, .Height = 30, .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))}
             rowControllerButton.Content = menuIcon
-            AddHandler rowControllerButton.Click, AddressOf OpenRowController
+            AddHandler rowControllerButton.Click, AddressOf ProductController.BtnRowController_Click
             buttonPanel.Children.Add(rowControllerButton)
 
             Grid.SetColumn(buttonPanel, 1)
@@ -127,7 +89,8 @@ Namespace DPC.Data.Controllers
                 End If
             End If
         End Sub
-        'Open row controller
+
+        'Open Row Controller Popup
         Public Shared Sub OpenRowController(sender As Object, e As RoutedEventArgs)
             Dim clickedButton As Button = TryCast(sender, Button)
             If clickedButton Is Nothing Then Return
@@ -166,60 +129,55 @@ Namespace DPC.Data.Controllers
             ProductController.popup.IsOpen = True
         End Sub
 
-        'function to import serialnumber
-        Public Shared Sub ImportSerialNumbers()
-            Dim openFileDialog As New Microsoft.Win32.OpenFileDialog With {
-                .Filter = "CSV Files (*.csv)|*.csv"
-            }
+        'Clear fields in firstpage of add product
+        Public Shared Sub ClearInputFieldsNoVariation(txtProductName As TextBox,
+                         txtRetailPrice As TextBox,
+                         txtPurchaseOrder As TextBox,
+                         txtDefaultTax As TextBox,
+                         txtDiscountRate As TextBox,
+                         txtStockUnits As TextBox,
+                         txtAlertQuantity As TextBox,
+                         txtDescription As TextBox,
+                         comboBoxCategory As ComboBox,
+                         comboBoxSubCategory As ComboBox,
+                         comboBoxWarehouse As ComboBox,
+                         comboBoxMeasurementUnit As ComboBox,
+                         comboBoxBrand As ComboBox,
+                         comboBoxSupplier As ComboBox,
+                         singleDatePicker As DatePicker,
+                         mainContainer As Panel)
+            ' Clear TextBoxes
+            txtProductName.Clear()
+            txtRetailPrice.Clear()
+            txtPurchaseOrder.Clear()
+            txtDefaultTax.Text = "12"
+            txtDiscountRate.Clear()
+            txtStockUnits.Text = "1"
+            txtAlertQuantity.Clear()
+            txtDescription.Clear()
 
-            If openFileDialog.ShowDialog() = True Then
-                Try
-                    Dim filePath As String = openFileDialog.FileName
-                    Dim lines As List(Of String) = IO.File.ReadAllLines(filePath).ToList()
+            ' Reset ComboBoxes to first item (index 0)
+            If comboBoxCategory.Items.Count > 0 Then comboBoxCategory.SelectedIndex = 0
+            If comboBoxSubCategory.Items.Count > 0 Then comboBoxSubCategory.SelectedIndex = 0
+            If comboBoxWarehouse.Items.Count > 0 Then comboBoxWarehouse.SelectedIndex = 0
+            If comboBoxMeasurementUnit.Items.Count > 0 Then comboBoxMeasurementUnit.SelectedIndex = 0
+            If comboBoxBrand.Items.Count > 0 Then comboBoxBrand.SelectedIndex = 0
+            If comboBoxSupplier.Items.Count > 0 Then comboBoxSupplier.SelectedIndex = 0
 
-                    ' Ensure there are serial numbers available
-                    If lines.Count <= 1 Then
-                        MessageBox.Show("No serial numbers found in the file.")
-                        Return
-                    End If
+            ' Set DatePicker to current date
+            singleDatePicker.SelectedDate = DateTime.Now
 
-                    ' Remove the first line (title "Serial Number") and read the rest
-                    lines.RemoveAt(0)
-
-                    ' Clear existing rows if any
-                    MainContainer.Children.Clear()
-                    SerialNumbers.Clear()
-
-                    ' Process serial numbers
-                    Dim serialNumbersData As New List(Of String)
-                    For Each line In lines
-                        Dim serialNumber As String = line.Trim()
-                        If Not String.IsNullOrWhiteSpace(serialNumber) Then
-                            serialNumbersData.Add(serialNumber)
-                        End If
-                    Next
-
-                    If serialNumbersData.Any() Then
-                        ' Update stock units once
-                        TxtStockUnits.Text = serialNumbersData.Count.ToString()
-
-                        ' Dynamically add rows for each serial number
-                        For Each serialNumber In serialNumbersData
-                            ProductController.BtnAddRow_Click(Nothing, Nothing, True)
-                            If SerialNumbers.Count > 0 Then
-                                SerialNumbers.Last().Text = serialNumber
-                            End If
-                        Next
-
-                        'MessageBox.Show($"Successfully imported {serialNumbersData.Count} serial numbers.")
-                    Else
-                        MessageBox.Show("No valid serial numbers found.")
-                    End If
-
-                Catch ex As Exception
-                    MessageBox.Show($"Error importing serial numbers: {ex.Message}")
-                End Try
+            ' Clear Serial Numbers and reset to one row
+            If SerialNumbers IsNot Nothing Then
+                SerialNumbers.Clear()
             End If
+
+            If mainContainer IsNot Nothing Then
+                mainContainer.Children.Clear()
+            End If
+
+            ' Add back one row for Serial Number input
+            ProductController.BtnAddRow_Click(Nothing, Nothing)
         End Sub
     End Class
 End Namespace

@@ -7,7 +7,7 @@ Imports System.Data
 Imports DPC.DPC.Data.Models
 
 Namespace DPC.Data.Controllers
-    Public Class GetProductData
+    Public Class GetProduct
 
         'Call this on comboboxes to get brands
         Public Shared Sub GetBrands(comboBox As ComboBox)
