@@ -221,5 +221,73 @@ Namespace DPC.Data.Controllers
             ' ✅ If SubCategory is Nothing, set it to 0 when saving later
             Return True
         End Function
+
+        Public Shared Sub Toggle_CheckedChanged(sender As Object, e As RoutedEventArgs, MainVariationContainer As StackPanel)
+            Dim toggle As ToggleButton = TryCast(sender, ToggleButton)
+            If toggle Is Nothing Then Exit Sub
+
+            ' Get the options container from the toggle's Tag
+            Dim optionsContainer As StackPanel = TryCast(toggle.Tag, StackPanel)
+            If optionsContainer Is Nothing Then Exit Sub
+
+            ' Get all option rows in the container
+            For Each child As UIElement In optionsContainer.Children
+                Dim grid As Grid = TryCast(child, Grid)
+                If grid IsNot Nothing Then
+                    ' Find the image border in each row (it should be in column 0)
+                    For Each gridChild As UIElement In grid.Children
+                        If TypeOf gridChild Is Border AndAlso Grid.GetColumn(gridChild) = 0 Then
+                            ' Set visibility based on toggle state
+                            gridChild.Visibility = If(toggle.IsChecked, Visibility.Visible, Visibility.Collapsed)
+                            Exit For
+                        End If
+                    Next
+                End If
+            Next
+
+            ' Save after toggling image visibility
+            ProductController.SaveVariations(MainVariationContainer)
+        End Sub
+
+        Public Shared ReadOnly Property variationCount As Integer
+            Get
+                Return variationCount
+            End Get
+        End Property
+        Public Shared ReadOnly Property MaxVariations As Integer
+            Get
+                Return MaxVariations
+            End Get
+        End Property
+
+        ' this method recalculates variationCount after deletion
+        Public Shared Sub RecalculateVariationCount(MainVariationContainer As StackPanel)
+            ' Find the highest variation number used
+            Dim highestVariationNumber As Integer = 0
+
+            For Each child As UIElement In MainVariationContainer.Children
+                If TypeOf child Is StackPanel Then
+                    Dim panel As StackPanel = DirectCast(child, StackPanel)
+                    If panel.Tag IsNot Nothing AndAlso TypeOf panel.Tag Is Integer Then
+                        Dim panelNumber As Integer = DirectCast(panel.Tag, Integer)
+                        If panelNumber > highestVariationNumber Then
+                            highestVariationNumber = panelNumber
+                        End If
+                    End If
+                End If
+            Next
+
+            ' Set variationCount to be one more than the highest current number
+            ProductController.variationCount = highestVariationNumber + 1
+
+            ' Make sure variationCount doesn't exceed MaxVariations
+            If variationCount > MaxVariations Then
+                ProductController.variationCount = MaxVariations
+            End If
+        End Sub
+
+        ' In ProductController class
+        ' Add a method to make sure combination data is initialized for all variations
+
     End Class
 End Namespace

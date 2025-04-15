@@ -351,6 +351,7 @@
     <Compile Include="Data\Controllers\Product\DeleteProduct.vb" />
     <Compile Include="Data\Controllers\Product\GenerateProduct.vb" />
     <Compile Include="Data\Controllers\Product\GetProduct.vb" />
+    <Compile Include="Data\Controllers\Product\InsertProduct.vb" />
     <Compile Include="Data\Controllers\Product\LogicProduct.vb" />
     <Compile Include="Data\Controllers\Product\ProductController.vb" />
     <Compile Include="Data\Controllers\Product\RenderProduct.vb" />

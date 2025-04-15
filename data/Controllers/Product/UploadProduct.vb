@@ -80,5 +80,98 @@ Namespace DPC.Data.Controllers
                 End Try
             End If
         End Sub
+
+        ' Static property to store variations data globally
+        Private Shared _savedVariations As List(Of ProductVariation) = New List(Of ProductVariation)
+
+
+
+        ' Save all variations data
+        Public Shared Sub SaveVariations(MainVariationContainer As StackPanel)
+            ' Clear the current saved variations
+            _savedVariations.Clear()
+
+            ' Loop through each variation panel in the UI
+            For Each child As UIElement In MainVariationContainer.Children
+                If TypeOf child Is StackPanel Then
+                    Dim variationPanel As StackPanel = DirectCast(child, StackPanel)
+
+                    ' Create new variation object
+                    Dim variation As New ProductVariation With {
+                .Options = New List(Of VariationOption)()
+            }
+
+                    ' Extract variation name
+                    Dim nameBorder As Border = TryCast(variationPanel.Children(1), Border)
+                    If nameBorder IsNot Nothing Then
+                        Dim nameGrid As Grid = TryCast(nameBorder.Child, Grid)
+                        If nameGrid IsNot Nothing Then
+                            For Each gridChild As UIElement In nameGrid.Children
+                                If TypeOf gridChild Is TextBox Then
+                                    variation.VariationName = DirectCast(gridChild, TextBox).Text
+                                    Exit For
+                                End If
+                            Next
+                        End If
+                    End If
+
+                    ' Extract enabled image state
+                    Dim toggleGrid As Grid = TryCast(variationPanel.Children(2), Grid)
+                    If toggleGrid IsNot Nothing Then
+                        For Each gridChild As UIElement In toggleGrid.Children
+                            If TypeOf gridChild Is ToggleButton Then
+                                variation.EnableImage = DirectCast(gridChild, ToggleButton).IsChecked
+                                Exit For
+                            End If
+                        Next
+                    End If
+
+                    ' Extract options
+                    Dim scrollViewer As ScrollViewer = TryCast(variationPanel.Children(4), ScrollViewer)
+                    If scrollViewer IsNot Nothing Then
+                        Dim optionsContainer As StackPanel = TryCast(scrollViewer.Content, StackPanel)
+                        If optionsContainer IsNot Nothing Then
+                            For Each optionChild As UIElement In optionsContainer.Children
+                                If TypeOf optionChild Is Grid Then
+                                    Dim optionGrid As Grid = DirectCast(optionChild, Grid)
+                                    Dim optionName As String = String.Empty
+                                    Dim imageData As ImageData = TryCast(optionGrid.Tag, ImageData)
+
+                                    ' Find the text box for option name
+                                    For Each gridChild As UIElement In optionGrid.Children
+                                        If TypeOf gridChild Is TextBox Then
+                                            Dim optionTextBox As TextBox = DirectCast(gridChild, TextBox)
+                                            optionName = optionTextBox.Text
+                                            Exit For
+                                        End If
+                                    Next
+
+                                    ' Create new option with image data
+                                    Dim opt As New VariationOption With {
+                                .OptionName = optionName
+                            }
+
+                                    ' Add image data if available
+                                    If imageData IsNot Nothing Then
+                                        opt.ImageBase64 = imageData.Base64String
+                                        opt.ImageFileName = imageData.FileName
+                                        opt.ImageFileExtension = imageData.FileExtension
+                                    End If
+
+                                    ' Add to options list
+                                    variation.Options.Add(opt)
+                                End If
+                            Next
+                        End If
+                    End If
+
+                    ' Add the variation to the saved list
+                    _savedVariations.Add(variation)
+                End If
+            Next
+
+            ProductController.InitializeVariationCombinations()
+        End Sub
+
     End Class
 End Namespace
