@@ -189,7 +189,7 @@
 
                             <Button x:Name="BtnEmployee"
                                 Style="{StaticResource AddNewButtonStyle}"
-                                Margin="20,0,0,0" Click="AddEmployee" >
+                                Margin="20,0,0,0" Click="AddEmployee" Height="35" >
                                 <StackPanel Orientation="Horizontal">
                                     <materialDesign:PackIcon Kind="AccountPlus" Width="25" Height="25" Foreground="#474747"/>
                                     <TextBlock Text="Employee" FontSize="17" Foreground="#474747"  />
@@ -207,6 +207,8 @@
 
                                 <!-- Left Controls -->
                                 <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                    <!-- Excel Button -->
+
                                     <!-- Excel Button -->
                                     <Button Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" Foreground="White" Width="75"   >
                                         <materialDesign:PackIcon Kind="MicrosoftExcel" Width="25" Height="25"/>
