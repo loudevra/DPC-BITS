@@ -140,7 +140,7 @@
                             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
                                 <Border BorderBrush="#555555" BorderThickness="2" CornerRadius="20" MinWidth="200" Width="211" Height="34">
                                     <Grid>
-                                        <TextBox BorderThickness="0" Background="Transparent" FontFamily="Lexend"  Name="txtSearch" Style="{StaticResource RoundedTextboxStyle}" Height="23" Margin="20,0,20,0" VerticalAlignment="Center" />
+                                        <TextBox BorderThickness="0" Background="Transparent" FontFamily="Lexend"  Name="txtSearch" Style="{StaticResource RoundedTextboxStyle}" Height="23" Margin="20,0,20,0" VerticalAlignment="Center" TextChanged="txtSearch_TextChanged" />
                                         <materialDesign:PackIcon Kind="Magnify" Width="25" Height="25" Foreground="Black" Margin="159,0,0,0" VerticalAlignment="Center"/>
                                     </Grid>
                                 </Border>
@@ -149,7 +149,7 @@
                     </Border>
                     <!-- DataGrid Section -->
                     <StackPanel Grid.Row="2" Margin="0,10" >
-                        <DataGrid Name="dataGrid"
+                        <DataGrid x:Name="dataGrid"
                             AutoGenerateColumns="False"
                             CanUserAddRows="False"
                             HeadersVisibility="Column"

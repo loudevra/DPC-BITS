@@ -157,10 +157,10 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
 
         Private Sub txtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
             Dim searchText As String = txtSearch.Text.Trim()
-            SearchEmployee(searchText)
+            SearchBrand(searchText)
         End Sub
 
-        Private Sub SearchEmployee(query As String)
+        Private Sub SearchBrand(query As String)
             Dim conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
             Try
                 conn.Open()

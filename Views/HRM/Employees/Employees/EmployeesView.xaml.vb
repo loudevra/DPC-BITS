@@ -138,7 +138,7 @@ Namespace DPC.Views.HRM.Employees.Employees
             Dim conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
             Try
                 conn.Open()
-                Dim sql As String = "SELECT * FROM employee WHERE EmployeeID LIKE @query OR Username LIKE @query"
+                Dim sql As String = "SELECT * FROM employee WHERE EmployeeID LIKE @query OR Name LIKE @query"
                 Dim cmd As New MySqlCommand(sql, conn)
                 cmd.Parameters.AddWithValue("@query", "%" & query & "%")
 

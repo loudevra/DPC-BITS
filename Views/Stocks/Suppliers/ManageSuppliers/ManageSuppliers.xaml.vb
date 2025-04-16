@@ -8,6 +8,7 @@ Imports System.Data
 Imports System.IO
 Imports System.Reflection
 Imports System.ComponentModel
+Imports MySql.Data.MySqlClient
 
 Namespace DPC.Views.Stocks.Suppliers.ManageSuppliers
     Public Class ManageSuppliers
@@ -115,6 +116,34 @@ Namespace DPC.Views.Stocks.Suppliers.ManageSuppliers
             ' Close the current window where this UserControl is being used
             Dim currentWindow As Window = Window.GetWindow(Me)
             currentWindow?.Close()
+        End Sub
+
+
+        Private Sub txtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim searchText As String = txtSearch.Text.Trim()
+            SearchSupplier(searchText)
+        End Sub
+
+        Private Sub SearchSupplier(query As String)
+            Dim conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+            Try
+                conn.Open()
+                Dim sql As String = "SELECT * FROM supplier WHERE supplierID LIKE @query OR supplierName LIKE @query"
+                Dim cmd As New MySqlCommand(sql, conn)
+                cmd.Parameters.AddWithValue("@query", "%" & query & "%")
+
+                Dim adapter As New MySqlDataAdapter(cmd)
+                Dim dt As New DataTable()
+                adapter.Fill(dt)
+
+                ' TODO: bind dt to your result display control like a DataGrid or ListView
+                dataGrid.ItemsSource = dt.DefaultView
+
+            Catch ex As Exception
+                MessageBox.Show("Search error: " & ex.Message)
+            Finally
+                conn.Close()
+            End Try
         End Sub
     End Class
 End Namespace
