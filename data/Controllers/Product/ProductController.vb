@@ -479,56 +479,6 @@ Namespace DPC.Data.Controllers
         ''' <param name="txtStockUnits">The stock units text box</param>
         ''' <param name="borderStockUnits">The border around the stock units text box</param>
         ''' <param name="mainContainer">The container for serial number rows</param>
-        Public Shared Sub SerialNumberChecker(checkbox As CheckBox,
-                                     serialRowPanel As Panel,
-                                     txtStockUnits As TextBox,
-                                     borderStockUnits As Border,
-                                     mainContainer As Panel)
-            If checkbox.IsChecked = True Then
-                serialRowPanel.Visibility = Visibility.Visible
-                txtStockUnits.IsReadOnly = True
-
-                ' Ensure we have the correct number of serial rows based on stock units
-                If mainContainer.Children.Count = 0 Then
-                    Dim stockUnits As Integer = 1 ' Default
-
-                    If Not String.IsNullOrEmpty(txtStockUnits.Text) AndAlso Integer.TryParse(txtStockUnits.Text, stockUnits) Then
-                        ' We have a valid number
-                        If mainContainer.Children.Count <> stockUnits Then
-                            mainContainer.Children.Clear()
-                            If SerialNumbers IsNot Nothing Then
-                                SerialNumbers.Clear()
-                            End If
-
-                            ' Create the correct number of rows
-                            For i As Integer = 1 To stockUnits
-                                BtnAddRow_Click(Nothing, Nothing)
-                            Next
-                        End If
-                    Else
-                        ' Default to 1 row if no valid stock units
-                        txtStockUnits.Text = "1"
-                        If mainContainer.Children.Count <> 1 Then
-                            mainContainer.Children.Clear()
-                            If SerialNumbers IsNot Nothing Then
-                                SerialNumbers.Clear()
-                            End If
-                            BtnAddRow_Click(Nothing, Nothing)
-                        End If
-                    End If
-                End If
-            Else
-                serialRowPanel.Visibility = Visibility.Collapsed
-                txtStockUnits.IsReadOnly = False
-            End If
-
-            ' Update border color based on readonly status
-            If txtStockUnits.IsReadOnly = True Then
-                borderStockUnits.BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
-            Else
-                borderStockUnits.BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#474747"))
-            End If
-        End Sub
 
         ''' <summary>
         ''' Handles stock units text input and updates serial number rows
@@ -772,7 +722,7 @@ Namespace DPC.Data.Controllers
                     ' Create a row for each saved serial number
                     If variationData.SerialNumbers.Count > 0 Then
                         For Each serialNumber As String In variationData.SerialNumbers
-                            AddSerialRow(mainContainer, serialNumber)
+                            BtnAddRow_Click(Nothing, Nothing)
                         Next
                     Else
                         ' Add a default row if no serial numbers saved but feature is enabled
@@ -788,43 +738,6 @@ Namespace DPC.Data.Controllers
                     txtStockUnits.Text = mainContainer.Children.Count.ToString()
                 End If
             End If
-        End Sub
-
-        ' Add a helper function for adding single serial row with value
-        Public Shared Sub AddSerialRow(mainContainer As StackPanel, Optional initialValue As String = "")
-            ' Create a new row
-            Dim grid As New Grid With {.Margin = New Thickness(0)}
-
-            ' Create TextBox for the serial number
-            Dim txtSerial As New TextBox With {
-                .Text = initialValue,
-                .Style = TryCast(Application.Current.FindResource("RoundedTextboxStyle"), Style),
-                .Margin = New Thickness(10, 5, 10, 5),
-                .BorderThickness = New Thickness(1),
-                .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
-            }
-            Grid.SetColumn(txtSerial, 0)
-
-            ' Create remove button
-            Dim btnRemove As New Button With {
-                .Content = "Remove",
-                .Style = TryCast(Application.Current.FindResource("RoundedButtonStyle"), Style),
-                .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#d23636")),
-                .Foreground = Brushes.White,
-                .Margin = New Thickness(5),
-                .Padding = New Thickness(10, 5, 10, 5),
-                .BorderThickness = New Thickness(0),
-                .HorizontalAlignment = HorizontalAlignment.Right
-            }
-            Grid.SetColumn(btnRemove, 1)
-            AddHandler btnRemove.Click, AddressOf BtnRemoveRow_Click
-
-            grid.Children.Add(txtSerial)
-            grid.Children.Add(btnRemove)
-
-            ' Add to container and track the textbox
-            mainContainer.Children.Add(grid)
-            SerialNumbers.Add(txtSerial)
         End Sub
 
         ' Form validation logic

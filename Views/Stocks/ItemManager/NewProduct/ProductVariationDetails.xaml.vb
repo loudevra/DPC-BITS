@@ -43,6 +43,8 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             ' Initialize dynamic content
             InitializeVariations()
+
+            LoadVariationCombinations()
         End Sub
 
         Private Sub BtnBatchEdit(sender As Object, e As RoutedEventArgs)
@@ -99,10 +101,10 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         Private Sub IncludeSerial_Click(sender As Object, e As RoutedEventArgs)
             ' Call the centralized method in ProductController
             ProductController.SerialNumberChecker(CheckBoxSerialNumber,
-                                         serialRowPanel,
+                                         MainContainer,
                                          TxtStockUnits,
-                                         BorderStockUnits,
-                                         MainContainer)
+                                         BorderStockUnits
+                                         )
         End Sub
 
         ' Handles the serial table components
@@ -241,7 +243,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
         ' Method to load details for selected variation
         Private Sub LoadVariationDetails(combinationName As String)
-            ' Get current values before switching (save current data)
+            ' Save current values before switching
             If Not String.IsNullOrEmpty(variationManager.CurrentCombination) Then
                 SaveCurrentFormData(variationManager.CurrentCombination)
             End If
@@ -249,7 +251,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ' Select the new combination
             variationManager.SelectVariationCombination(combinationName)
 
-            ' Create and set up dynamic containers if they don't exist yet
+            ' Create dynamic containers if needed
             If DynamicFormContainer.Content Is Nothing Then
                 DynamicFormContainer.Content = RenderProduct.CreateDynamicContainer("dynamicform", Me)
             End If
@@ -258,7 +260,11 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 SerialNumberContainer.Content = RenderProduct.CreateDynamicContainer("serialnumber", Me)
             End If
 
-            ' Load data for the selected combination
+            ' Get references to all needed controls after containers are created
+            Dim checkBoxSerialNumber As System.Windows.Controls.CheckBox = FindVisualChild(Of System.Windows.Controls.CheckBox)(SerialNumberContainer, "CheckBoxSerialNumber")
+            Me.CheckBoxSerialNumber = checkBoxSerialNumber
+
+            ' Load data for the selected combination - make sure this passes the correct checkbox reference
             LoadFormData(combinationName)
 
             ' Update the selection title
@@ -269,8 +275,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         End Sub
 
         ' To be called when the form loads
-        ' To be called when the form loads
-        Public Sub InitializeVariations()
+        Private Sub InitializeVariations()
             ' Create dynamic containers
             DynamicFormContainer.Content = RenderProduct.CreateDynamicContainer("dynamicform", Me)
             SerialNumberContainer.Content = RenderProduct.CreateDynamicContainer("serialnumber", Me)
@@ -278,95 +283,49 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ' Initialize warehouse dropdown and other controls
             Dim comboBox As System.Windows.Controls.ComboBox = FindVisualChild(Of System.Windows.Controls.ComboBox)(DynamicFormContainer, "ComboBoxWarehouse")
             If comboBox IsNot Nothing Then
+                _comboBoxWarehouse = comboBox  ' Store reference to the class-level field
                 ProductController.GetWarehouse(comboBox)
             End If
 
             ' Set up other references
             Dim mainContainer As System.Windows.Controls.StackPanel = FindVisualChild(Of System.Windows.Controls.StackPanel)(SerialNumberContainer, "MainContainer")
             If mainContainer IsNot Nothing Then
+                Me.MainContainer = mainContainer  ' Store reference to the class-level field
                 ProductController.MainContainer = mainContainer
             End If
 
             Dim txtStockUnits As System.Windows.Controls.TextBox = FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtStockUnits")
             If txtStockUnits IsNot Nothing Then
+                Me.TxtStockUnits = txtStockUnits  ' Store reference to the class-level field
                 ProductController.TxtStockUnits = txtStockUnits
                 AddHandler txtStockUnits.KeyDown, AddressOf TxtStockUnits_KeyDown
             End If
 
-            ' Add an initial serial number row
-            If ProductController.SerialNumbers.Count = 0 Then
-                ProductController.BtnAddRow_Click(Nothing, Nothing)
+            Dim checkBoxSerialNumber As System.Windows.Controls.CheckBox = FindVisualChild(Of System.Windows.Controls.CheckBox)(SerialNumberContainer, "CheckBoxSerialNumber")
+            If checkBoxSerialNumber IsNot Nothing Then
+                ' Store a reference to the checkbox at the class level
+                Me.CheckBoxSerialNumber = checkBoxSerialNumber
+                ' Add event handler
+                AddHandler checkBoxSerialNumber.Click, AddressOf IncludeSerial_Click
             End If
+
+            Dim borderStockUnits As Border = FindVisualChild(Of Border)(DynamicFormContainer, "BorderStockUnits")
+            If borderStockUnits IsNot Nothing Then
+                Me.BorderStockUnits = borderStockUnits
+            End If
+
+            ' Load variation combinations - do this before adding any serial rows
+            LoadVariationCombinations()
+
+            ' Don't add any default rows here - let LoadVariationDetails handle it
+            ' The variations will be initialized in LoadVariationCombinations
 
             ' Set default tax value
             Dim txtDefaultTax As System.Windows.Controls.TextBox = FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtDefaultTax")
             If txtDefaultTax IsNot Nothing Then
                 txtDefaultTax.Text = "12"
             End If
-
-            ' Call this during form initialization
-            LoadVariationCombinations()
-
-            ' Set the first variation as selected by default
-            Dim variations As List(Of ProductVariation) = DPC.Components.Forms.AddVariation.SavedVariations
-            If variations IsNot Nothing AndAlso variations.Count > 0 Then
-                Dim allCombinations As New List(Of String)
-
-                If variations.Count = 1 Then
-                    ' Single variation case
-                    Dim variation As ProductVariation = variations(0)
-                    If variation.Options IsNot Nothing AndAlso variation.Options.Count > 0 Then
-                        For Each opt As VariationOption In variation.Options
-                            allCombinations.Add(opt.OptionName)
-                        Next
-                    End If
-                ElseIf variations.Count = 2 Then
-                    ' Two variations case - create combinations
-                    Dim variation1 As ProductVariation = variations(0)
-                    Dim variation2 As ProductVariation = variations(1)
-
-                    If variation1.Options IsNot Nothing AndAlso variation1.Options.Count > 0 AndAlso
-           variation2.Options IsNot Nothing AndAlso variation2.Options.Count > 0 Then
-                        For Each option1 As VariationOption In variation1.Options
-                            For Each option2 As VariationOption In variation2.Options
-                                ' Create combination label: "Color, Size"
-                                Dim combinationName As String = $"{option1.OptionName}, {option2.OptionName}"
-                                allCombinations.Add(combinationName)
-                            Next
-                        Next
-                    End If
-                End If
-
-                ' Initialize each variation with default values
-                For Each combination As String In allCombinations
-                    Dim variationData As ProductVariationData = variationManager.GetVariationData(combination)
-                    If variationData.StockUnits = 0 Then
-                        variationData.StockUnits = 1 ' Default to 1 stock unit
-                    End If
-                Next
-
-                ' Auto-select the first variation button
-                If allCombinations.Count > 0 Then
-                    ' Find the variations panel and the first button
-                    Dim variationsPanel As StackPanel = FindName("VariationsPanel")
-                    If variationsPanel IsNot Nothing AndAlso variationsPanel.Children.Count > 0 Then
-                        ' Get the first button
-                        Dim firstButton As System.Windows.Controls.Button = TryCast(variationsPanel.Children(0), System.Windows.Controls.Button)
-                        If firstButton IsNot Nothing Then
-                            ' Programmatically click the first button
-                            firstButton.RaiseEvent(New RoutedEventArgs(ButtonBase.ClickEvent))
-                        Else
-                            ' If we can't find the button, load the first variation directly
-                            LoadVariationDetails(allCombinations(0))
-                        End If
-                    Else
-                        ' If the panel is not ready yet, load the first variation directly
-                        LoadVariationDetails(allCombinations(0))
-                    End If
-                End If
-            End If
         End Sub
-
         Private Function FindVisualChild(Of T As DependencyObject)(parent As DependencyObject, name As String) As T
             For i As Integer = 0 To VisualTreeHelper.GetChildrenCount(parent) - 1
                 Dim child As DependencyObject = VisualTreeHelper.GetChild(parent, i)
