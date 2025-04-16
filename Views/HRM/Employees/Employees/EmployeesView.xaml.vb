@@ -3,6 +3,7 @@ Imports DPC.DPC.Components.Navigation
 Imports DPC.DPC.Data.Model
 Imports DPC.DPC.Data.Controllers
 Imports MySql.Data.MySqlClient
+Imports System.Data
 
 Namespace DPC.Views.HRM.Employees.Employees
     Partial Public Class EmployeesView
@@ -126,6 +127,33 @@ Namespace DPC.Views.HRM.Employees.Employees
             Dim addEmployeeWindow As New AddEmployee()
             addEmployeeWindow.Show()
             Me.Close()
+        End Sub
+
+        Private Sub txtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim searchText As String = txtSearch.Text.Trim()
+            SearchEmployee(searchText)
+        End Sub
+
+        Private Sub SearchEmployee(query As String)
+            Dim conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+            Try
+                conn.Open()
+                Dim sql As String = "SELECT * FROM employee WHERE EmployeeID LIKE @query OR Username LIKE @query"
+                Dim cmd As New MySqlCommand(sql, conn)
+                cmd.Parameters.AddWithValue("@query", "%" & query & "%")
+
+                Dim adapter As New MySqlDataAdapter(cmd)
+                Dim dt As New DataTable()
+                adapter.Fill(dt)
+
+                ' TODO: bind dt to your result display control like a DataGrid or ListView
+                EmployeesDataGrid.ItemsSource = dt.DefaultView
+
+            Catch ex As Exception
+                MessageBox.Show("Search error: " & ex.Message)
+            Finally
+                conn.Close()
+            End Try
         End Sub
 
     End Class
