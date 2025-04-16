@@ -152,5 +152,9 @@ Namespace DPC.Data.Model
         Public Function GetAllVariationData() As Dictionary(Of String, ProductVariationData)
             Return VariationDataDict
         End Function
+
+
     End Class
+
+
 End Namespace
