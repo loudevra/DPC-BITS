@@ -169,8 +169,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             LoadVariationDetails(combinationName)
         End Sub
 
-
-
         ' Helper method to add a variation button with consistent styling
         Private Sub AddVariationButton(container As StackPanel, labelText As String, isSelected As Boolean)
             Dim btn As New System.Windows.Controls.Button With {
@@ -313,7 +311,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             LoadVariationCombinations()
 
             ' Set the first variation as selected by default
-            Dim variations As List(Of ProductVariation) = ProductController._savedVariations
+            Dim variations As List(Of ProductVariation) = DPC.Components.Forms.AddVariation.SavedVariations
             If variations IsNot Nothing AndAlso variations.Count > 0 Then
                 Dim allCombinations As New List(Of String)
 

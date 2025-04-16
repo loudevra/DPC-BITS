@@ -66,20 +66,5 @@ Namespace DPC.Data.Helpers
                     Return "application/octet-stream"
             End Select
         End Function
-
-        Public Shared Function Base64StringToBitmapImage(base64String As String) As BitmapImage
-            Dim bytes As Byte() = Convert.FromBase64String(base64String)
-            Dim bitmap As New BitmapImage()
-
-            Using stream As New MemoryStream(bytes)
-                bitmap.BeginInit()
-                bitmap.CacheOption = BitmapCacheOption.OnLoad
-                bitmap.StreamSource = stream
-                bitmap.EndInit()
-                bitmap.Freeze()
-            End Using
-
-            Return bitmap
-        End Function
     End Class
 End Namespace
