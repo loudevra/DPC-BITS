@@ -107,7 +107,7 @@
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width=".25*"/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBox Grid.Column="0" Style="{StaticResource RoundedTextboxStyle}" Margin="20,0,0,0"  Name="txtSearch" />
+                                            <TextBox Grid.Column="0" Style="{StaticResource RoundedTextboxStyle}" Margin="20,0,0,0"  Name="txtSearch"  TextChanged="txtSearch_TextChanged" />
                                             <materialDesign:PackIcon Kind="Magnify" Width="20" Height="20" Foreground="Black" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0"/>
                                         </Grid>
                                     </Border>
