@@ -41,10 +41,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             variationManager = New ProductVariationManager()
 
 
-
-            ' Load variations panel
-            LoadVariationCombinations()
-
             ' Initialize dynamic content
             InitializeVariations()
         End Sub
@@ -255,11 +251,11 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             ' Create and set up dynamic containers if they don't exist yet
             If DynamicFormContainer.Content Is Nothing Then
-                DynamicFormContainer.Content = CreateDynamicContainer("dynamicform")
+                DynamicFormContainer.Content = RenderProduct.CreateDynamicContainer("dynamicform", Me)
             End If
 
             If SerialNumberContainer.Content Is Nothing Then
-                SerialNumberContainer.Content = CreateDynamicContainer("serialnumber")
+                SerialNumberContainer.Content = RenderProduct.CreateDynamicContainer("serialnumber", Me)
             End If
 
             ' Load data for the selected combination
@@ -273,10 +269,11 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         End Sub
 
         ' To be called when the form loads
+        ' To be called when the form loads
         Public Sub InitializeVariations()
             ' Create dynamic containers
-            DynamicFormContainer.Content = CreateDynamicContainer("dynamicform")
-            SerialNumberContainer.Content = CreateDynamicContainer("serialnumber")
+            DynamicFormContainer.Content = RenderProduct.CreateDynamicContainer("dynamicform", Me)
+            SerialNumberContainer.Content = RenderProduct.CreateDynamicContainer("serialnumber", Me)
 
             ' Initialize warehouse dropdown and other controls
             Dim comboBox As System.Windows.Controls.ComboBox = FindVisualChild(Of System.Windows.Controls.ComboBox)(DynamicFormContainer, "ComboBoxWarehouse")
@@ -329,7 +326,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                     Dim variation2 As ProductVariation = variations(1)
 
                     If variation1.Options IsNot Nothing AndAlso variation1.Options.Count > 0 AndAlso
-                   variation2.Options IsNot Nothing AndAlso variation2.Options.Count > 0 Then
+           variation2.Options IsNot Nothing AndAlso variation2.Options.Count > 0 Then
                         For Each option1 As VariationOption In variation1.Options
                             For Each option2 As VariationOption In variation2.Options
                                 ' Create combination label: "Color, Size"
@@ -347,9 +344,28 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                         variationData.StockUnits = 1 ' Default to 1 stock unit
                     End If
                 Next
+
+                ' Auto-select the first variation button
+                If allCombinations.Count > 0 Then
+                    ' Find the variations panel and the first button
+                    Dim variationsPanel As StackPanel = FindName("VariationsPanel")
+                    If variationsPanel IsNot Nothing AndAlso variationsPanel.Children.Count > 0 Then
+                        ' Get the first button
+                        Dim firstButton As System.Windows.Controls.Button = TryCast(variationsPanel.Children(0), System.Windows.Controls.Button)
+                        If firstButton IsNot Nothing Then
+                            ' Programmatically click the first button
+                            firstButton.RaiseEvent(New RoutedEventArgs(ButtonBase.ClickEvent))
+                        Else
+                            ' If we can't find the button, load the first variation directly
+                            LoadVariationDetails(allCombinations(0))
+                        End If
+                    Else
+                        ' If the panel is not ready yet, load the first variation directly
+                        LoadVariationDetails(allCombinations(0))
+                    End If
+                End If
             End If
         End Sub
-
 
         Private Function FindVisualChild(Of T As DependencyObject)(parent As DependencyObject, name As String) As T
             For i As Integer = 0 To VisualTreeHelper.GetChildrenCount(parent) - 1
@@ -525,336 +541,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Return variationManager.GetAllVariationData()
         End Function
 
-        Private Function CreateDynamicContainer(containerType As String) As ContentControl
-            Dim container As New ContentControl()
 
-            Select Case containerType
-                Case "dynamicform"
-                    ' Create the dynamic form content
-                    Dim scrollViewer As New System.Windows.Controls.ScrollViewer With {
-                    .VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Auto,
-                    .HorizontalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Disabled,
-                    .VerticalAlignment = VerticalAlignment.Stretch,
-                    .Style = CType(FindResource("ModernScrollViewerStyle"), Style)
-                }
-
-                    Dim stackPanel As New System.Windows.Controls.StackPanel()
-
-                    ' Warehouse
-                    Dim warehousePanel As New System.Windows.Controls.StackPanel With {.Margin = New Thickness(0, 0, 0, 10), .Name = "StackPanelWarehouse"}
-                    Dim warehouseHeaderPanel As New System.Windows.Controls.StackPanel With {.Orientation = Orientation.Horizontal, .Margin = New Thickness(0, 0, 0, 5)}
-                    warehouseHeaderPanel.Children.Add(New System.Windows.Controls.TextBlock With {.Text = "Warehouse:", .FontSize = 14, .FontWeight = FontWeights.SemiBold, .Margin = New Thickness(0, 0, 5, 0)})
-                    warehouseHeaderPanel.Children.Add(New System.Windows.Controls.TextBlock With {.Text = "*", .FontSize = 14, .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636")), .FontWeight = FontWeights.Bold})
-                    warehousePanel.Children.Add(warehouseHeaderPanel)
-
-                    Dim comboBoxWarehouse As New System.Windows.Controls.ComboBox With {
-        .Name = "ComboBoxWarehouse",
-        .Style = CType(FindResource("RoundedComboBoxStyle"), Style),
-        .Width = Double.NaN,
-        .Height = 40,
-        .Margin = New Thickness(0)
-    }
-
-                    ' Add the ComboBox to the parent panel
-                    warehousePanel.Children.Add(comboBoxWarehouse)
-                    stackPanel.Children.Add(warehousePanel)
-
-                    ' Initialize the ComboBox right after creating it to ensure it's correctly set up
-                    Try
-                        ProductController.GetWarehouse(comboBoxWarehouse)
-                    Catch ex As Exception
-                        MessageBox.Show("Error initializing ComboBox: " & ex.Message)
-                    End Try
-                    _comboBoxWarehouse = comboBoxWarehouse
-
-
-                    ' Retail Price
-                    Dim retailPricePanel As New System.Windows.Controls.StackPanel With {.Margin = New Thickness(0, 10, 0, 0), .Name = "StackPanelRetailPrice"}
-                    Dim retailPriceInnerPanel As New System.Windows.Controls.StackPanel()
-                    Dim retailPriceHeaderPanel As New System.Windows.Controls.StackPanel With {.Orientation = Orientation.Horizontal, .Margin = New Thickness(0, 0, 0, 5)}
-                    retailPriceHeaderPanel.Children.Add(New System.Windows.Controls.TextBlock With {.Text = "Selling Price:", .FontSize = 14, .FontWeight = FontWeights.SemiBold, .Margin = New Thickness(0, 0, 5, 0)})
-                    retailPriceHeaderPanel.Children.Add(New System.Windows.Controls.TextBlock With {.Text = "*", .FontSize = 14, .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636")), .FontWeight = FontWeights.Bold})
-                    retailPriceInnerPanel.Children.Add(retailPriceHeaderPanel)
-
-                    Dim retailPriceBorder As New Border With {.Style = CType(FindResource("RoundedBorderStyle"), Style)}
-                    Dim retailPriceGrid As New System.Windows.Controls.Grid()
-                    retailPriceGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
-                    retailPriceGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
-
-                    Dim retailPriceIcon As New PackIcon With {
-                    .Kind = PackIconKind.CurrencyPhp,
-                    .Width = 25,
-                    .Height = 20,
-                    .Margin = New Thickness(10, 0, 0, 0),
-                    .VerticalAlignment = VerticalAlignment.Center
-                }
-                    Grid.SetColumn(retailPriceIcon, 0)
-
-                    Dim txtRetailPrice As New System.Windows.Controls.TextBox With {
-                    .Name = "TxtRetailPrice",
-                    .Style = CType(FindResource("RoundedTextboxStyle"), Style),
-                    .Margin = New Thickness(0, 0, 25, 0)
-                }
-                    AddHandler txtRetailPrice.PreviewTextInput, AddressOf IntegerOnlyTextInputHandler
-                    ' Fix DataObject.Pasting by using a separate method for attaching the event handler
-                    DataObject.AddPastingHandler(txtRetailPrice, New DataObjectPastingEventHandler(AddressOf IntegerOnlyPasteHandler))
-                    Grid.SetColumn(txtRetailPrice, 1)
-
-                    retailPriceGrid.Children.Add(retailPriceIcon)
-                    retailPriceGrid.Children.Add(txtRetailPrice)
-                    retailPriceBorder.Child = retailPriceGrid
-                    retailPriceInnerPanel.Children.Add(retailPriceBorder)
-                    retailPricePanel.Children.Add(retailPriceInnerPanel)
-                    stackPanel.Children.Add(retailPricePanel)
-
-                    ' Purchase Order
-                    Dim purchaseOrderPanel As New System.Windows.Controls.StackPanel With {.Margin = New Thickness(0, 10, 0, 20), .Name = "StackPanelOrderPrice"}
-                    Dim purchaseOrderInnerPanel As New System.Windows.Controls.StackPanel()
-                    Dim purchaseOrderHeaderPanel As New System.Windows.Controls.StackPanel With {.Orientation = Orientation.Horizontal, .Margin = New Thickness(0, 0, 0, 5)}
-                    purchaseOrderHeaderPanel.Children.Add(New System.Windows.Controls.TextBlock With {.Text = "Buying Price:", .FontSize = 14, .FontWeight = FontWeights.SemiBold, .Margin = New Thickness(0, 0, 5, 0)})
-                    purchaseOrderHeaderPanel.Children.Add(New System.Windows.Controls.TextBlock With {.Text = "*", .FontSize = 14, .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636")), .FontWeight = FontWeights.Bold})
-                    purchaseOrderInnerPanel.Children.Add(purchaseOrderHeaderPanel)
-
-                    Dim purchaseOrderBorder As New Border With {.Style = CType(FindResource("RoundedBorderStyle"), Style)}
-                    Dim purchaseOrderGrid As New System.Windows.Controls.Grid()
-                    purchaseOrderGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
-                    purchaseOrderGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
-
-                    Dim purchaseOrderIcon As New PackIcon With {
-                    .Kind = PackIconKind.CurrencyPhp,
-                    .Width = 25,
-                    .Height = 20,
-                    .Margin = New Thickness(10, 0, 0, 0),
-                    .VerticalAlignment = VerticalAlignment.Center
-                }
-                    Grid.SetColumn(purchaseOrderIcon, 0)
-
-                    Dim txtPurchaseOrder As New System.Windows.Controls.TextBox With {
-                    .Name = "TxtPurchaseOrder",
-                    .Style = CType(FindResource("RoundedTextboxStyle"), Style),
-                    .Margin = New Thickness(0, 0, 25, 0)
-                }
-                    AddHandler txtPurchaseOrder.PreviewTextInput, AddressOf IntegerOnlyTextInputHandler
-                    ' Fix DataObject.Pasting
-                    DataObject.AddPastingHandler(txtPurchaseOrder, New DataObjectPastingEventHandler(AddressOf IntegerOnlyPasteHandler))
-                    Grid.SetColumn(txtPurchaseOrder, 1)
-
-                    purchaseOrderGrid.Children.Add(purchaseOrderIcon)
-                    purchaseOrderGrid.Children.Add(txtPurchaseOrder)
-                    purchaseOrderBorder.Child = purchaseOrderGrid
-                    purchaseOrderInnerPanel.Children.Add(purchaseOrderBorder)
-                    purchaseOrderPanel.Children.Add(purchaseOrderInnerPanel)
-                    stackPanel.Children.Add(purchaseOrderPanel)
-
-                    ' Tax Rate
-                    Dim taxRatePanel As New System.Windows.Controls.StackPanel With {.Margin = New Thickness(0, 0, 0, 10), .Name = "StackPanelTaxRate"}
-                    Dim taxRateHeaderPanel As New System.Windows.Controls.StackPanel With {.Orientation = Orientation.Horizontal, .Margin = New Thickness(0, 0, 0, 5)}
-                    taxRateHeaderPanel.Children.Add(New System.Windows.Controls.TextBlock With {.Text = "Default Tax Rate:", .FontSize = 14, .FontWeight = FontWeights.SemiBold, .Margin = New Thickness(0, 0, 5, 0)})
-                    taxRateHeaderPanel.Children.Add(New System.Windows.Controls.TextBlock With {.Text = "*", .FontSize = 14, .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636")), .FontWeight = FontWeights.Bold})
-                    taxRatePanel.Children.Add(taxRateHeaderPanel)
-
-                    Dim taxRateBorder As New Border With {.Style = CType(FindResource("RoundedBorderStyle"), Style)}
-                    Dim taxRateGrid As New System.Windows.Controls.Grid()
-                    taxRateGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
-                    taxRateGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
-
-                    Dim txtDefaultTax As New System.Windows.Controls.TextBox With {
-                    .Name = "TxtDefaultTax",
-                    .Style = CType(FindResource("RoundedTextboxStyle"), Style),
-                    .Margin = New Thickness(25, 0, 0, 0),
-                    .Text = "12"
-                }
-                    AddHandler txtDefaultTax.PreviewTextInput, AddressOf IntegerOnlyTextInputHandler
-                    ' Fix DataObject.Pasting
-                    DataObject.AddPastingHandler(txtDefaultTax, New DataObjectPastingEventHandler(AddressOf IntegerOnlyPasteHandler))
-                    Grid.SetColumn(txtDefaultTax, 0)
-
-                    Dim taxRateIcon As New PackIcon With {
-                    .Kind = PackIconKind.PercentOutline,
-                    .Width = 25,
-                    .Height = 20,
-                    .Margin = New Thickness(0, 0, 10, 0),
-                    .VerticalAlignment = VerticalAlignment.Center
-                }
-                    Grid.SetColumn(taxRateIcon, 1)
-
-                    taxRateGrid.Children.Add(txtDefaultTax)
-                    taxRateGrid.Children.Add(taxRateIcon)
-                    taxRateBorder.Child = taxRateGrid
-                    taxRatePanel.Children.Add(taxRateBorder)
-                    stackPanel.Children.Add(taxRatePanel)
-
-                    ' Discount Rate
-                    Dim discountRatePanel As New System.Windows.Controls.StackPanel With {.Margin = New Thickness(0, 10, 0, 0), .Name = "StackPanelDiscountRate"}
-                    Dim discountRateHeaderPanel As New System.Windows.Controls.StackPanel With {.Orientation = Orientation.Horizontal, .Margin = New Thickness(0, 0, 0, 5)}
-                    discountRateHeaderPanel.Children.Add(New System.Windows.Controls.TextBlock With {.Text = "Default Discount Rate:", .FontSize = 14, .FontWeight = FontWeights.SemiBold, .Margin = New Thickness(0, 0, 5, 0)})
-                    discountRateHeaderPanel.Children.Add(New System.Windows.Controls.TextBlock With {.Text = "*", .FontSize = 14, .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636")), .FontWeight = FontWeights.Bold})
-                    discountRatePanel.Children.Add(discountRateHeaderPanel)
-
-                    Dim discountRateBorder As New Border With {.Style = CType(FindResource("RoundedBorderStyle"), Style)}
-                    Dim discountRateGrid As New System.Windows.Controls.Grid()
-                    discountRateGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
-                    discountRateGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
-
-                    Dim txtDiscountRate As New System.Windows.Controls.TextBox With {
-                    .Name = "TxtDiscountRate",
-                    .Style = CType(FindResource("RoundedTextboxStyle"), Style),
-                    .Margin = New Thickness(25, 0, 0, 0)
-                }
-                    AddHandler txtDiscountRate.PreviewTextInput, AddressOf IntegerOnlyTextInputHandler
-                    ' Fix DataObject.Pasting
-                    DataObject.AddPastingHandler(txtDiscountRate, New DataObjectPastingEventHandler(AddressOf IntegerOnlyPasteHandler))
-                    Grid.SetColumn(txtDiscountRate, 0)
-
-                    Dim discountRateIcon As New PackIcon With {
-                    .Kind = PackIconKind.PercentOutline,
-                    .Width = 25,
-                    .Height = 20,
-                    .Margin = New Thickness(0, 0, 10, 0),
-                    .VerticalAlignment = VerticalAlignment.Center
-                }
-                    Grid.SetColumn(discountRateIcon, 1)
-
-                    discountRateGrid.Children.Add(txtDiscountRate)
-                    discountRateGrid.Children.Add(discountRateIcon)
-                    discountRateBorder.Child = discountRateGrid
-                    discountRatePanel.Children.Add(discountRateBorder)
-                    stackPanel.Children.Add(discountRatePanel)
-
-                    ' Stock Units
-                    Dim stockUnitsPanel As New System.Windows.Controls.StackPanel With {.Margin = New Thickness(0, 10, 0, 0), .Name = "StackPanelStockUnits"}
-                    Dim stockUnitsHeaderPanel As New System.Windows.Controls.StackPanel With {.Orientation = Orientation.Horizontal, .Margin = New Thickness(0, 0, 0, 5)}
-                    stockUnitsHeaderPanel.Children.Add(New System.Windows.Controls.TextBlock With {.Text = "Stock Units:", .FontSize = 14, .FontWeight = FontWeights.SemiBold, .Margin = New Thickness(0, 0, 5, 0)})
-                    stockUnitsPanel.Children.Add(stockUnitsHeaderPanel)
-
-                    BorderStockUnits = New Border With {
-                    .Style = CType(FindResource("RoundedBorderStyle"), Style),
-                    .Name = "BorderStockUnits"
-                }
-                    TxtStockUnits = New System.Windows.Controls.TextBox With {
-                    .Name = "TxtStockUnits",
-                    .Style = CType(FindResource("RoundedTextboxStyle"), Style)
-                }
-                    AddHandler TxtStockUnits.PreviewTextInput, AddressOf IntegerOnlyTextInputHandler
-                    DataObject.AddPastingHandler(TxtStockUnits, New DataObjectPastingEventHandler(AddressOf IntegerOnlyPasteHandler))
-
-                    ProductController.TxtStockUnits = TxtStockUnits
-                    AddHandler TxtStockUnits.KeyDown, AddressOf TxtStockUnits_KeyDown
-
-                    BorderStockUnits.Child = TxtStockUnits
-                    stockUnitsPanel.Children.Add(BorderStockUnits)
-                    stackPanel.Children.Add(stockUnitsPanel)
-
-                    ' Alert Quantity
-                    Dim alertQuantityPanel As New System.Windows.Controls.StackPanel With {.Margin = New Thickness(0, 10, 0, 0), .Name = "StackPanelAlertQuantity"}
-                    Dim alertQuantityHeaderPanel As New System.Windows.Controls.StackPanel With {.Orientation = Orientation.Horizontal, .Margin = New Thickness(0)}
-                    alertQuantityHeaderPanel.Children.Add(New System.Windows.Controls.TextBlock With {.Text = "Alert Quantity:", .FontSize = 14, .FontWeight = FontWeights.SemiBold, .Margin = New Thickness(0, 0, 5, 0)})
-                    alertQuantityHeaderPanel.Children.Add(New System.Windows.Controls.TextBlock With {.Text = "*", .FontSize = 14, .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636")), .FontWeight = FontWeights.Bold})
-                    alertQuantityPanel.Children.Add(alertQuantityHeaderPanel)
-
-                    Dim alertQuantityBorder As New Border With {.Style = CType(FindResource("RoundedBorderStyle"), Style)}
-                    Dim txtAlertQuantity As New System.Windows.Controls.TextBox With {
-                    .Name = "TxtAlertQuantity",
-                    .Style = CType(FindResource("RoundedTextboxStyle"), Style)
-                }
-                    AddHandler txtAlertQuantity.PreviewTextInput, AddressOf IntegerOnlyTextInputHandler
-                    ' Fix DataObject.Pasting
-                    DataObject.AddPastingHandler(txtAlertQuantity, New DataObjectPastingEventHandler(AddressOf IntegerOnlyPasteHandler))
-
-                    alertQuantityBorder.Child = txtAlertQuantity
-                    alertQuantityPanel.Children.Add(alertQuantityBorder)
-                    stackPanel.Children.Add(alertQuantityPanel)
-
-                    scrollViewer.Content = stackPanel
-                    container.Content = scrollViewer
-
-                Case "serialnumber"
-                    ' Create the serial number content
-                    Dim stackPanel As New StackPanel With {.Name = "OuterStackPanel"}
-                    Grid.SetRow(stackPanel, 4)
-
-                    ' Serial Checkbox
-                    Dim serialCheckboxPanel As New System.Windows.Controls.StackPanel With {
-                            .Margin = New Thickness(0, 10, 0, 10),
-                            .Name = "StackPanelSerialNumber"
-                        }
-
-                    Dim checkboxStack As New StackPanel With {.Orientation = Orientation.Horizontal}
-                    CheckBoxSerialNumber = New System.Windows.Controls.CheckBox With {.Name = "CheckBoxSerialNumber"}
-                    AddHandler CheckBoxSerialNumber.Click, AddressOf IncludeSerial_Click
-
-                    checkboxStack.Children.Add(CheckBoxSerialNumber)
-                    checkboxStack.Children.Add(New System.Windows.Controls.TextBlock With {
-                            .Text = "Include Serial Number:",
-                            .FontSize = 14,
-                            .FontWeight = FontWeights.SemiBold,
-                            .Margin = New Thickness(10, 0, 0, 0)
-                        })
-
-                    serialCheckboxPanel.Children.Add(checkboxStack)
-                    stackPanel.Children.Add(serialCheckboxPanel)
-
-                    ' Serial Number Row
-                    Dim StackPanelSerialRow = New System.Windows.Controls.StackPanel With {
-                            .Margin = New Thickness(0, 10, 0, 10),  ' Left, Top, Right, Bottom
-                            .Name = "StackPanelSerialRow"
-                        }
-
-                    ' Header border with label
-                    Dim headerBorder As New Border With {
-                            .Style = CType(FindResource("RoundedBorderStyle"), Style),
-                            .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#474747")),
-                            .BorderThickness = New Thickness(0),
-                            .CornerRadius = New CornerRadius(15, 15, 0, 0)
-                        }
-
-                    Dim headerPanel As New System.Windows.Controls.StackPanel With {
-                            .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#474747")),
-                            .Orientation = Orientation.Horizontal,
-                            .Margin = New Thickness(20, 10, 20, 10)  ' Left, Top, Right, Bottom
-                        }
-
-                    headerPanel.Children.Add(New System.Windows.Controls.TextBlock With {
-                            .Text = "Serial Number:",
-                            .Foreground = Brushes.White,
-                            .FontSize = 14,
-                            .FontWeight = FontWeights.SemiBold,
-                            .Margin = New Thickness(0, 0, 5, 0)
-                        })
-
-                    headerPanel.Children.Add(New System.Windows.Controls.TextBlock With {
-                            .Text = "*",
-                            .FontSize = 14,
-                            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636")),
-                            .FontWeight = FontWeights.Bold
-                        })
-
-                    headerBorder.Child = headerPanel
-                    StackPanelSerialRow.Children.Add(headerBorder)
-
-                    ' Main container for serial numbers
-                    MainContainer = New System.Windows.Controls.StackPanel With {
-                            .Name = "MainContainer",
-                            .Background = Brushes.White
-                        }
-
-                    ProductController.MainContainer = MainContainer
-                    If ProductController.SerialNumbers Is Nothing Then
-                        ProductController.SerialNumbers = New List(Of System.Windows.Controls.TextBox)()
-                    End If
-
-                    ' Add an initial serial number row if needed
-                    If MainContainer.Children.Count = 0 AndAlso TxtStockUnits IsNot Nothing AndAlso
-                            (String.IsNullOrEmpty(TxtStockUnits.Text) OrElse CInt(TxtStockUnits.Text) > 0) Then
-                        ProductController.BtnAddRow_Click(Nothing, Nothing)
-                    End If
-
-                    StackPanelSerialRow.Children.Add(MainContainer)
-                    stackPanel.Children.Add(StackPanelSerialRow)
-
-                    container.Content = stackPanel
-            End Select
-            Return container
-        End Function
     End Class
 End Namespace
