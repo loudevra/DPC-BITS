@@ -269,6 +269,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         End Sub
 
         ' To be called when the form loads
+        ' To be called when the form loads
         Public Sub InitializeVariations()
             ' Create dynamic containers
             DynamicFormContainer.Content = RenderProduct.CreateDynamicContainer("dynamicform", Me)
@@ -325,7 +326,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                     Dim variation2 As ProductVariation = variations(1)
 
                     If variation1.Options IsNot Nothing AndAlso variation1.Options.Count > 0 AndAlso
-                   variation2.Options IsNot Nothing AndAlso variation2.Options.Count > 0 Then
+           variation2.Options IsNot Nothing AndAlso variation2.Options.Count > 0 Then
                         For Each option1 As VariationOption In variation1.Options
                             For Each option2 As VariationOption In variation2.Options
                                 ' Create combination label: "Color, Size"
@@ -343,9 +344,28 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                         variationData.StockUnits = 1 ' Default to 1 stock unit
                     End If
                 Next
+
+                ' Auto-select the first variation button
+                If allCombinations.Count > 0 Then
+                    ' Find the variations panel and the first button
+                    Dim variationsPanel As StackPanel = FindName("VariationsPanel")
+                    If variationsPanel IsNot Nothing AndAlso variationsPanel.Children.Count > 0 Then
+                        ' Get the first button
+                        Dim firstButton As System.Windows.Controls.Button = TryCast(variationsPanel.Children(0), System.Windows.Controls.Button)
+                        If firstButton IsNot Nothing Then
+                            ' Programmatically click the first button
+                            firstButton.RaiseEvent(New RoutedEventArgs(ButtonBase.ClickEvent))
+                        Else
+                            ' If we can't find the button, load the first variation directly
+                            LoadVariationDetails(allCombinations(0))
+                        End If
+                    Else
+                        ' If the panel is not ready yet, load the first variation directly
+                        LoadVariationDetails(allCombinations(0))
+                    End If
+                End If
             End If
         End Sub
-
 
         Private Function FindVisualChild(Of T As DependencyObject)(parent As DependencyObject, name As String) As T
             For i As Integer = 0 To VisualTreeHelper.GetChildrenCount(parent) - 1
