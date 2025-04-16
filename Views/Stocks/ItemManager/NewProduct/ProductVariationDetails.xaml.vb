@@ -23,7 +23,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         Private TxtStockUnits As System.Windows.Controls.TextBox
         Private serialRowPanel As New Grid With {.Name = "StackPanelSerialRow"}
         Public Shared SerialNumbers As New List(Of TextBox)()
-        Private _comboBoxWarehouse As System.Windows.Controls.ComboBox
+        Public Shared _comboBoxWarehouse As System.Windows.Controls.ComboBox
 
         Public Sub New()
             InitializeComponent()
@@ -264,7 +264,14 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Dim checkBoxSerialNumber As System.Windows.Controls.CheckBox = FindVisualChild(Of System.Windows.Controls.CheckBox)(SerialNumberContainer, "CheckBoxSerialNumber")
             Me.CheckBoxSerialNumber = checkBoxSerialNumber
 
-            ' Load data for the selected combination - make sure this passes the correct checkbox reference
+            ' Get the main container for serial numbers
+            Dim mainContainer As StackPanel = FindVisualChild(Of StackPanel)(SerialNumberContainer, "MainContainer")
+            If mainContainer IsNot Nothing Then
+                Me.MainContainer = mainContainer
+                ProductController.MainContainer = mainContainer
+            End If
+
+            ' Load data for the selected combination
             LoadFormData(combinationName)
 
             ' Update the selection title
@@ -273,7 +280,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 titleTextBlock.Text = $"Selected: {combinationName}"
             End If
         End Sub
-
         ' To be called when the form loads
         Private Sub InitializeVariations()
             ' Create dynamic containers
@@ -358,9 +364,9 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             ' Call the controller method to save the data
             ProductController.SaveVariationData(combinationName, txtRetailPrice, txtPurchaseOrder,
-                                      txtDefaultTax, txtDiscountRate, txtStockUnits,
-                                      txtAlertQuantity, checkBoxSerialNumber,
-                                      _comboBoxWarehouse, mainContainer)
+                                txtDefaultTax, txtDiscountRate, txtStockUnits,
+                                txtAlertQuantity, checkBoxSerialNumber,
+                                _comboBoxWarehouse, mainContainer)
         End Sub
 
         Private Sub LoadFormData(combinationName As String)

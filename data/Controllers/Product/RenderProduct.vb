@@ -7,6 +7,7 @@ Imports System.Data
 Imports DPC.DPC.Data.Models
 Imports DPC.DPC.Data.Helpers
 Imports MaterialDesignThemes.Wpf
+Imports DPC.DPC.Views.Stocks.ItemManager.NewProduct
 
 Namespace DPC.Data.Controllers
     Public Class RenderProduct
