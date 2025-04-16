@@ -54,8 +54,8 @@ Namespace DPC.Data.Model
         Public Property VariationOptions As String()
 
 
-
         Public Property WarehouseId As Integer = 0
+        Public Property SelectedWarehouseIndex As Integer = -1
 
         ' Properties that can be different per variation
         Public Property RetailPrice As Decimal

@@ -554,7 +554,6 @@ Namespace DPC.Data.Controllers
             Return Nothing
         End Function
 #End Region
-
         ' In ProductController class
 
         ' Class-level properties to store forms data
@@ -562,15 +561,15 @@ Namespace DPC.Data.Controllers
 
         ' Migrated function for saving form data
         Public Shared Sub SaveVariationData(combinationName As String,
-                                           txtRetailPrice As TextBox,
-                                           txtPurchaseOrder As TextBox,
-                                           txtDefaultTax As TextBox,
-                                           txtDiscountRate As TextBox,
-                                           txtStockUnits As TextBox,
-                                           txtAlertQuantity As TextBox,
-                                           checkBoxSerialNumber As CheckBox,
-                                           comboBoxWarehouse As ComboBox,
-                                           mainContainer As StackPanel)
+                               txtRetailPrice As TextBox,
+                               txtPurchaseOrder As TextBox,
+                               txtDefaultTax As TextBox,
+                               txtDiscountRate As TextBox,
+                               txtStockUnits As TextBox,
+                               txtAlertQuantity As TextBox,
+                               checkBoxSerialNumber As CheckBox,
+                               comboBoxWarehouse As ComboBox,
+                               mainContainer As StackPanel)
 
             If String.IsNullOrEmpty(combinationName) Then
                 Return
@@ -582,7 +581,7 @@ Namespace DPC.Data.Controllers
                 Return
             End If
 
-            ' Save form values to the model (with improved error handling)
+            ' Save form values to the model
             Try
                 If txtRetailPrice IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtRetailPrice.Text) Then
                     variationData.RetailPrice = Decimal.Parse(txtRetailPrice.Text)
@@ -608,8 +607,9 @@ Namespace DPC.Data.Controllers
                     variationData.AlertQuantity = Integer.Parse(txtAlertQuantity.Text)
                 End If
 
+                ' Save warehouse selection - important for individual variation warehouse
                 If comboBoxWarehouse IsNot Nothing AndAlso comboBoxWarehouse.SelectedItem IsNot Nothing Then
-                    Dim selectedItem As ComboBoxItem = DirectCast(comboBoxWarehouse.SelectedItem, ComboBoxItem)
+                    Dim selectedItem As ComboBoxItem = TryCast(comboBoxWarehouse.SelectedItem, ComboBoxItem)
                     If selectedItem IsNot Nothing AndAlso selectedItem.Tag IsNot Nothing Then
                         variationData.WarehouseId = Convert.ToInt32(selectedItem.Tag)
                     End If
@@ -618,7 +618,7 @@ Namespace DPC.Data.Controllers
                 ' Save serial number settings
                 If checkBoxSerialNumber IsNot Nothing Then
                     ' Save the checkbox state
-                    variationData.IncludeSerialNumbers = checkBoxSerialNumber.IsChecked.Value
+                    variationData.IncludeSerialNumbers = checkBoxSerialNumber.IsChecked.GetValueOrDefault(False)
 
                     ' Clear previous serial numbers before adding current ones
                     variationData.SerialNumbers.Clear()
@@ -633,7 +633,7 @@ Namespace DPC.Data.Controllers
                                 For Each gridChild As UIElement In grid.Children
                                     If TypeOf gridChild Is TextBox Then
                                         Dim serialTextBox As TextBox = DirectCast(gridChild, TextBox)
-                                        ' Add the serial number to our collection (even if empty - we'll filter on load)
+                                        ' Add the serial number to our collection
                                         variationData.SerialNumbers.Add(serialTextBox.Text)
                                         Exit For ' We only want one TextBox per row
                                     End If
@@ -647,18 +647,17 @@ Namespace DPC.Data.Controllers
                 MessageBox.Show("An error occurred while saving form data: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Sub
-
         ' Migrated function for loading form data
         Public Shared Sub LoadVariationData(combinationName As String,
-                                          txtRetailPrice As TextBox,
-                                          txtPurchaseOrder As TextBox,
-                                          txtDefaultTax As TextBox,
-                                          txtDiscountRate As TextBox,
-                                          txtStockUnits As TextBox,
-                                          txtAlertQuantity As TextBox,
-                                          checkBoxSerialNumber As CheckBox,
-                                          comboBoxWarehouse As ComboBox,
-                                          mainContainer As StackPanel)
+                                      txtRetailPrice As TextBox,
+                                      txtPurchaseOrder As TextBox,
+                                      txtDefaultTax As TextBox,
+                                      txtDiscountRate As TextBox,
+                                      txtStockUnits As TextBox,
+                                      txtAlertQuantity As TextBox,
+                                      checkBoxSerialNumber As CheckBox,
+                                      comboBoxWarehouse As ComboBox,
+                                      mainContainer As StackPanel)
 
             ' Get the variation data
             Dim variationData As ProductVariationData = VariationManager.GetVariationData(combinationName)
@@ -691,10 +690,10 @@ Namespace DPC.Data.Controllers
                 txtAlertQuantity.Text = If(variationData.AlertQuantity = 0, "", variationData.AlertQuantity.ToString())
             End If
 
-            ' Set warehouse selection
+            ' Set warehouse selection - this ensures each variation can have a different warehouse
             If comboBoxWarehouse IsNot Nothing AndAlso variationData.WarehouseId > 0 Then
                 For i As Integer = 0 To comboBoxWarehouse.Items.Count - 1
-                    Dim item As ComboBoxItem = DirectCast(comboBoxWarehouse.Items(i), ComboBoxItem)
+                    Dim item As ComboBoxItem = TryCast(comboBoxWarehouse.Items(i), ComboBoxItem)
                     If item IsNot Nothing AndAlso item.Tag IsNot Nothing AndAlso CInt(item.Tag) = variationData.WarehouseId Then
                         comboBoxWarehouse.SelectedIndex = i
                         Exit For
@@ -702,17 +701,19 @@ Namespace DPC.Data.Controllers
                 Next
             End If
 
+            ' Reset the serial numbers tracking list
+            If SerialNumbers IsNot Nothing Then
+                SerialNumbers.Clear()
+            Else
+                SerialNumbers = New List(Of TextBox)()
+            End If
+
             ' Set serial number checkbox state first
             If checkBoxSerialNumber IsNot Nothing Then
                 checkBoxSerialNumber.IsChecked = variationData.IncludeSerialNumbers
             End If
 
-            ' Clear existing serial numbers
-            If SerialNumbers IsNot Nothing Then
-                SerialNumbers.Clear()
-            End If
-
-            ' Find MainContainer to manage serial number rows
+            ' Handle serial number UI
             If mainContainer IsNot Nothing Then
                 ' Clear existing rows
                 mainContainer.Children.Clear()
@@ -722,7 +723,7 @@ Namespace DPC.Data.Controllers
                     ' Create a row for each saved serial number
                     If variationData.SerialNumbers.Count > 0 Then
                         For Each serialNumber As String In variationData.SerialNumbers
-                            BtnAddRow_Click(Nothing, Nothing)
+                            BtnAddRow_Click(Nothing, Nothing, serialNumber)
                         Next
                     Else
                         ' Add a default row if no serial numbers saved but feature is enabled
@@ -731,6 +732,9 @@ Namespace DPC.Data.Controllers
                 Else
                     ' Just add one default row if serial numbers are not being used
                     BtnAddRow_Click(Nothing, Nothing)
+
+                    ' If serial numbers are disabled, hide the serial number container
+                    mainContainer.Visibility = If(variationData.IncludeSerialNumbers, Visibility.Visible, Visibility.Collapsed)
                 End If
 
                 ' Update stock units to match the number of serial rows if serial numbers are enabled
@@ -739,7 +743,6 @@ Namespace DPC.Data.Controllers
                 End If
             End If
         End Sub
-
         ' Form validation logic
         Public Shared Function ValidateForm(txtRetailPrice As TextBox,
                                              txtPurchaseOrder As TextBox,
