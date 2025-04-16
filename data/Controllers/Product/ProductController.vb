@@ -559,7 +559,6 @@ Namespace DPC.Data.Controllers
         ' Class-level properties to store forms data
         Public Shared VariationManager As New ProductVariationManager()
 
-        ' Migrated function for saving form data
         Public Shared Sub SaveVariationData(combinationName As String,
                                txtRetailPrice As TextBox,
                                txtPurchaseOrder As TextBox,
@@ -620,11 +619,11 @@ Namespace DPC.Data.Controllers
                     ' Save the checkbox state
                     variationData.IncludeSerialNumbers = checkBoxSerialNumber.IsChecked.GetValueOrDefault(False)
 
-                    ' Clear previous serial numbers before adding current ones
-                    variationData.SerialNumbers.Clear()
-
-                    ' If serial numbers are enabled, collect all serial numbers
+                    ' Only update serial numbers if they are enabled and the container exists
                     If variationData.IncludeSerialNumbers AndAlso mainContainer IsNot Nothing Then
+                        ' Create a new list to hold the current serial numbers
+                        Dim currentSerialNumbers As New List(Of String)
+
                         ' Iterate through all rows in MainContainer
                         For Each child As UIElement In mainContainer.Children
                             If TypeOf child Is Grid Then
@@ -634,12 +633,16 @@ Namespace DPC.Data.Controllers
                                     If TypeOf gridChild Is TextBox Then
                                         Dim serialTextBox As TextBox = DirectCast(gridChild, TextBox)
                                         ' Add the serial number to our collection
-                                        variationData.SerialNumbers.Add(serialTextBox.Text)
+                                        currentSerialNumbers.Add(serialTextBox.Text)
                                         Exit For ' We only want one TextBox per row
                                     End If
                                 Next
                             End If
                         Next
+
+                        ' Update the variation data with the current serial numbers
+                        ' Instead of clearing, we replace the entire collection
+                        variationData.SerialNumbers = currentSerialNumbers
                     End If
                 End If
             Catch ex As Exception
@@ -647,17 +650,18 @@ Namespace DPC.Data.Controllers
                 MessageBox.Show("An error occurred while saving form data: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Sub
+
         ' Migrated function for loading form data
         Public Shared Sub LoadVariationData(combinationName As String,
-                                      txtRetailPrice As TextBox,
-                                      txtPurchaseOrder As TextBox,
-                                      txtDefaultTax As TextBox,
-                                      txtDiscountRate As TextBox,
-                                      txtStockUnits As TextBox,
-                                      txtAlertQuantity As TextBox,
-                                      checkBoxSerialNumber As CheckBox,
-                                      comboBoxWarehouse As ComboBox,
-                                      mainContainer As StackPanel)
+                              txtRetailPrice As TextBox,
+                              txtPurchaseOrder As TextBox,
+                              txtDefaultTax As TextBox,
+                              txtDiscountRate As TextBox,
+                              txtStockUnits As TextBox,
+                              txtAlertQuantity As TextBox,
+                              checkBoxSerialNumber As CheckBox,
+                              comboBoxWarehouse As ComboBox,
+                              mainContainer As StackPanel)
 
             ' Get the variation data
             Dim variationData As ProductVariationData = VariationManager.GetVariationData(combinationName)
@@ -721,7 +725,7 @@ Namespace DPC.Data.Controllers
                 ' Handle serial numbers based on saved state
                 If variationData.IncludeSerialNumbers Then
                     ' Create a row for each saved serial number
-                    If variationData.SerialNumbers.Count > 0 Then
+                    If variationData.SerialNumbers IsNot Nothing AndAlso variationData.SerialNumbers.Count > 0 Then
                         For Each serialNumber As String In variationData.SerialNumbers
                             BtnAddRow_Click(Nothing, Nothing, serialNumber)
                         Next
