@@ -561,15 +561,15 @@ Namespace DPC.Data.Controllers
 
         ' Migrated function for saving form data
         Public Shared Sub SaveVariationData(combinationName As String,
-                                     txtRetailPrice As TextBox,
-                                     txtPurchaseOrder As TextBox,
-                                     txtDefaultTax As TextBox,
-                                     txtDiscountRate As TextBox,
-                                     txtStockUnits As TextBox,
-                                     txtAlertQuantity As TextBox,
-                                     checkBoxSerialNumber As CheckBox,
-                                     comboBoxWarehouse As ComboBox,
-                                     mainContainer As StackPanel)
+                               txtRetailPrice As TextBox,
+                               txtPurchaseOrder As TextBox,
+                               txtDefaultTax As TextBox,
+                               txtDiscountRate As TextBox,
+                               txtStockUnits As TextBox,
+                               txtAlertQuantity As TextBox,
+                               checkBoxSerialNumber As CheckBox,
+                               comboBoxWarehouse As ComboBox,
+                               mainContainer As StackPanel)
 
             If String.IsNullOrEmpty(combinationName) Then
                 Return

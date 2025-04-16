@@ -23,8 +23,8 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         Private TxtStockUnits As System.Windows.Controls.TextBox
         Private serialRowPanel As New Grid With {.Name = "StackPanelSerialRow"}
         Public Shared SerialNumbers As New List(Of TextBox)()
-        Public Shared _comboBoxWarehouse As System.Windows.Controls.ComboBox
 
+        Private _currentWarehouseComboBox As System.Windows.Controls.ComboBox
         Public Sub New()
             InitializeComponent()
 
@@ -264,6 +264,14 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Dim checkBoxSerialNumber As System.Windows.Controls.CheckBox = FindVisualChild(Of System.Windows.Controls.CheckBox)(SerialNumberContainer, "CheckBoxSerialNumber")
             Me.CheckBoxSerialNumber = checkBoxSerialNumber
 
+            ' Get the warehouse ComboBox specific to this variation
+            Dim comboBoxWarehouse As System.Windows.Controls.ComboBox = FindVisualChild(Of System.Windows.Controls.ComboBox)(DynamicFormContainer, "ComboBoxWarehouse")
+
+            ' Ensure the warehouse ComboBox is populated - do this before loading the data
+            If comboBoxWarehouse IsNot Nothing AndAlso comboBoxWarehouse.Items.Count = 0 Then
+                ProductController.GetWarehouse(comboBoxWarehouse)
+            End If
+
             ' Get the main container for serial numbers
             Dim mainContainer As StackPanel = FindVisualChild(Of StackPanel)(SerialNumberContainer, "MainContainer")
             If mainContainer IsNot Nothing Then
@@ -279,18 +287,18 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             If titleTextBlock IsNot Nothing Then
                 titleTextBlock.Text = $"Selected: {combinationName}"
             End If
-        End Sub
-        ' To be called when the form loads
+        End Sub        ' To be called when the form loads
         Private Sub InitializeVariations()
             ' Create dynamic containers
             DynamicFormContainer.Content = RenderProduct.CreateDynamicContainer("dynamicform", Me)
             SerialNumberContainer.Content = RenderProduct.CreateDynamicContainer("serialnumber", Me)
 
-            ' Initialize warehouse dropdown and other controls
+            ' Initialize warehouse dropdown (but don't store it in a shared field)
             Dim comboBox As System.Windows.Controls.ComboBox = FindVisualChild(Of System.Windows.Controls.ComboBox)(DynamicFormContainer, "ComboBoxWarehouse")
             If comboBox IsNot Nothing Then
-                _comboBoxWarehouse = comboBox  ' Store reference to the class-level field
+                ' Initialize with warehouse items but don't store in shared field
                 ProductController.GetWarehouse(comboBox)
+                _currentWarehouseComboBox = comboBox  ' Store in the instance field
             End If
 
             ' Set up other references
@@ -362,25 +370,31 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Dim checkBoxSerialNumber As System.Windows.Controls.CheckBox = FindVisualChild(Of System.Windows.Controls.CheckBox)(SerialNumberContainer, "CheckBoxSerialNumber")
             Dim mainContainer As StackPanel = FindVisualChild(Of StackPanel)(SerialNumberContainer, "MainContainer")
 
-            ' Call the controller method to save the data
+            ' Get the current variation's warehouse combobox
+            Dim comboBoxWarehouse As System.Windows.Controls.ComboBox = FindVisualChild(Of System.Windows.Controls.ComboBox)(DynamicFormContainer, "ComboBoxWarehouse")
+
+            ' Call the controller method to save the data with the current warehouse ComboBox
             ProductController.SaveVariationData(combinationName, txtRetailPrice, txtPurchaseOrder,
-                                txtDefaultTax, txtDiscountRate, txtStockUnits,
-                                txtAlertQuantity, checkBoxSerialNumber,
-                                _comboBoxWarehouse, mainContainer)
+                            txtDefaultTax, txtDiscountRate, txtStockUnits,
+                            txtAlertQuantity, checkBoxSerialNumber,
+                            comboBoxWarehouse, mainContainer)
         End Sub
 
         Private Sub LoadFormData(combinationName As String)
+            ' Get the specific warehouse ComboBox for this variation form
+            Dim comboBoxWarehouse As System.Windows.Controls.ComboBox = FindVisualChild(Of System.Windows.Controls.ComboBox)(DynamicFormContainer, "ComboBoxWarehouse")
+
             ' Call the controller method to load the data
             ProductController.LoadVariationData(combinationName,
-                                      FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtRetailPrice"),
-                                      FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtPurchaseOrder"),
-                                      FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtDefaultTax"),
-                                      FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtDiscountRate"),
-                                      FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtStockUnits"),
-                                      FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtAlertQuantity"),
-                                      FindVisualChild(Of System.Windows.Controls.CheckBox)(SerialNumberContainer, "CheckBoxSerialNumber"),
-                                      _comboBoxWarehouse,
-                                      FindVisualChild(Of StackPanel)(SerialNumberContainer, "MainContainer"))
+                          FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtRetailPrice"),
+                          FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtPurchaseOrder"),
+                          FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtDefaultTax"),
+                          FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtDiscountRate"),
+                          FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtStockUnits"),
+                          FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtAlertQuantity"),
+                          FindVisualChild(Of System.Windows.Controls.CheckBox)(SerialNumberContainer, "CheckBoxSerialNumber"),
+                          comboBoxWarehouse,
+                          FindVisualChild(Of StackPanel)(SerialNumberContainer, "MainContainer"))
 
             ' Update the selection title (this part stays in the UI class)
             Dim titleTextBlock As TextBlock = TryCast(FindName("SelectedVariationTitle"), TextBlock)
@@ -416,10 +430,13 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             End Try
         End Sub
         Private Function ValidateForm() As Boolean
+            ' Get the current warehouse ComboBox
+            Dim comboBoxWarehouse As System.Windows.Controls.ComboBox = FindVisualChild(Of System.Windows.Controls.ComboBox)(DynamicFormContainer, "ComboBoxWarehouse")
+
             Return ProductController.ValidateForm(
         FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtRetailPrice"),
         FindVisualChild(Of System.Windows.Controls.TextBox)(DynamicFormContainer, "TxtPurchaseOrder"),
-        _comboBoxWarehouse,
+        comboBoxWarehouse,
         FindVisualChild(Of System.Windows.Controls.CheckBox)(SerialNumberContainer, "CheckBoxSerialNumber"))
         End Function
 
