@@ -53,6 +53,8 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         End Sub
 #End Region
 
+        ' For the serial number management region, replacing the problematic code
+
 #Region "Serial Number Management"
         ''' <summary>
         ''' Initializes the serial number controls in the existing StackPanelSerialRow
@@ -60,60 +62,70 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         Private Sub InitializeSerialNumberControls()
             ' Clear existing items in the stack panel
             StackPanelSerialRow.Children.Clear()
+            serialNumberTextBoxes.Clear()
 
             ' Create header for serial numbers
             Dim headerBorder As New Border With {
-        .Style = CType(FindResource("RoundedBorderStyle"), Style),
-        .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#474747")),
-        .BorderThickness = New Thickness(0),
-        .CornerRadius = New CornerRadius(15, 15, 0, 0)
-    }
+            .Style = CType(FindResource("RoundedBorderStyle"), Style),
+            .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#474747")),
+            .BorderThickness = New Thickness(0),
+            .CornerRadius = New CornerRadius(15, 15, 0, 0)
+        }
 
             Dim headerPanel As New StackPanel With {
-        .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#474747")),
-        .Orientation = Orientation.Horizontal,
-        .Margin = New Thickness(20, 10, 20, 10)
-    }
+            .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#474747")),
+            .Orientation = Orientation.Horizontal,
+            .Margin = New Thickness(20, 10, 20, 10)
+        }
 
             Dim headerText As New TextBlock With {
-        .Text = "Serial Numbers:",
-        .Foreground = Brushes.White,
-        .FontSize = 14,
-        .FontWeight = FontWeights.SemiBold,
-        .Margin = New Thickness(0, 0, 5, 0)
-    }
+            .Text = "Serial Numbers:",
+            .Foreground = Brushes.White,
+            .FontSize = 14,
+            .FontWeight = FontWeights.SemiBold,
+            .Margin = New Thickness(0, 0, 5, 0)
+        }
 
             Dim requiredIndicator As New TextBlock With {
-        .Text = "*",
-        .FontSize = 14,
-        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636")),
-        .FontWeight = FontWeights.Bold
-    }
+            .Text = "*",
+            .FontSize = 14,
+            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636")),
+            .FontWeight = FontWeights.Bold
+        }
 
             headerPanel.Children.Add(headerText)
             headerPanel.Children.Add(requiredIndicator)
             headerBorder.Child = headerPanel
             StackPanelSerialRow.Children.Add(headerBorder)
 
+            ' Create container for serial number textboxes
+            Dim containerBorder As New Border With {
+            .Background = Brushes.White,
+            .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
+            .BorderThickness = New Thickness(1, 0, 1, 1),
+            .CornerRadius = New CornerRadius(0, 0, 15, 15)
+        }
+
             ' Create ScrollViewer for serial number entries
             Dim scrollViewer As New ScrollViewer With {
-        .VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-        .HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
-        .MaxHeight = 400  ' Set maximum height before scrolling begins
-    }
+            .VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            .HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+            .MaxHeight = 400,  ' Set maximum height before scrolling begins
+            .Padding = New Thickness(0, 0, 5, 0)  ' Add padding for scrollbar
+        }
 
             ' Create container for serial number textboxes
             Dim serialNumbersContainer As New StackPanel With {
-        .Name = "MainContainer",
-        .Background = Brushes.White,
-        .Margin = New Thickness(0, 0, 0, 10)
-    }
+            .Name = "SerialNumbersContainer",
+            .Margin = New Thickness(0, 0, 0, 10)
+        }
 
             ' Add the container to the ScrollViewer
             scrollViewer.Content = serialNumbersContainer
+            containerBorder.Child = scrollViewer
 
-            ' Add the ScrollViewer to the stack panel
-            StackPanelSerialRow.Children.Add(scrollViewer)
+            ' Add the container to the stack panel
+            StackPanelSerialRow.Children.Add(containerBorder)
 
             ' Initially set visibility based on checkbox state
             UpdateSerialNumberPanelVisibility()
@@ -133,24 +145,15 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         ''' Creates serial number textboxes based on stock units value
         ''' </summary>
         Private Sub CreateSerialNumberTextBoxes()
-            ' Find the container for serial number textboxes
-            Dim serialNumbersContainer As StackPanel = Nothing
-            For Each child In StackPanelSerialRow.Children
-                If TypeOf child Is StackPanel AndAlso DirectCast(child, StackPanel).Name = "MainContainer" Then
-                    serialNumbersContainer = DirectCast(child, StackPanel)
-                    Exit For
-                End If
-            Next
+            ' Find the ScrollViewer and then the container for serial number textboxes
+            Dim containerBorder As Border = TryCast(StackPanelSerialRow.Children(1), Border)
+            If containerBorder Is Nothing Then Return
 
-            If serialNumbersContainer Is Nothing Then
-                ' If not found, create a new one
-                serialNumbersContainer = New StackPanel With {
-            .Name = "MainContainer",
-            .Background = Brushes.White,
-            .Margin = New Thickness(0, 0, 0, 10)
-        }
-                StackPanelSerialRow.Children.Add(serialNumbersContainer)
-            End If
+            Dim scrollViewer As ScrollViewer = TryCast(containerBorder.Child, ScrollViewer)
+            If scrollViewer Is Nothing Then Return
+
+            Dim serialNumbersContainer As StackPanel = TryCast(scrollViewer.Content, StackPanel)
+            If serialNumbersContainer Is Nothing Then Return
 
             ' Clear existing textboxes
             serialNumbersContainer.Children.Clear()
@@ -161,99 +164,230 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             If Not String.IsNullOrEmpty(TxtStockUnits.Text) AndAlso Integer.TryParse(TxtStockUnits.Text, stockUnits) Then
                 ' Create textboxes based on stock units
                 For i As Integer = 1 To stockUnits
-                    Dim outerStackPanel As New StackPanel With {.Margin = New Thickness(25, 20, 10, 20)}
-
-                    Dim grid As New Grid()
-                    grid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
-                    grid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
-
-                    ' Create the text box with style
-                    Dim textBox As New TextBox With {
-                .Name = $"TxtSerial_{i}",
-                .Style = CType(Application.Current.TryFindResource("RoundedTextboxStyle"), Style)
-            }
-                    serialNumberTextBoxes.Add(textBox)
-
-                    ' Create border for the text box
-                    Dim textBoxBorder As New Border With {
-                .Style = CType(Application.Current.TryFindResource("RoundedBorderStyle"), Style),
-                .Child = textBox
-            }
-
-                    ' Add textbox border directly to grid (like in AddSerialRow)
-                    Grid.SetColumn(textBoxBorder, 0)
-                    grid.Children.Add(textBoxBorder)
-
-                    ' Create button panel
-                    Dim buttonPanel As New StackPanel With {
-                .Orientation = Orientation.Horizontal,
-                .Margin = New Thickness(10, 0, 0, 0)
-            }
-
-                    ' Add Row Button
-                    Dim addRowButton As New Button With {
-                .Background = Brushes.White,
-                .BorderThickness = New Thickness(0),
-                .Name = "BtnAddRow"
-            }
-                    Dim addIcon As New MaterialDesignThemes.Wpf.PackIcon With {
-                .Kind = MaterialDesignThemes.Wpf.PackIconKind.TableRowAddAfter,
-                .Width = 40,
-                .Height = 30,
-                .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#456B2E"))
-            }
-                    addRowButton.Content = addIcon
-                    AddHandler addRowButton.Click, Sub(s, ev) CreateSerialNumberTextBoxes()
-                    buttonPanel.Children.Add(addRowButton)
-
-                    ' Remove Row Button
-                    Dim removeRowButton As New Button With {
-                .Background = Brushes.White,
-                .BorderThickness = New Thickness(0),
-                .Name = "BtnRemoveRow"
-            }
-                    Dim removeIcon As New MaterialDesignThemes.Wpf.PackIcon With {
-                .Kind = MaterialDesignThemes.Wpf.PackIconKind.TableRowRemove,
-                .Width = 40,
-                .Height = 30,
-                .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636"))
-            }
-                    removeRowButton.Content = removeIcon
-                    AddHandler removeRowButton.Click, Sub(s, ev) ProductController.BtnRemoveRow_Click(s, ev)
-                    buttonPanel.Children.Add(removeRowButton)
-
-                    ' Separator Border
-                    Dim separatorBorder As New Border With {
-                .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
-                .BorderThickness = New Thickness(1),
-                .Height = 30
-            }
-                    buttonPanel.Children.Add(separatorBorder)
-
-                    ' Row Controller Button
-                    Dim rowControllerButton As New Button With {
-                .Background = Brushes.White,
-                .BorderThickness = New Thickness(0),
-                .Name = "BtnRowController"
-            }
-                    Dim menuIcon As New MaterialDesignThemes.Wpf.PackIcon With {
-                .Kind = MaterialDesignThemes.Wpf.PackIconKind.MenuDown,
-                .Width = 30,
-                .Height = 30,
-                .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
-            }
-                    rowControllerButton.Content = menuIcon
-                    AddHandler rowControllerButton.Click, AddressOf ProductController.BtnRowController_Click
-                    buttonPanel.Children.Add(rowControllerButton)
-
-                    Grid.SetColumn(buttonPanel, 1)
-                    grid.Children.Add(buttonPanel)
-                    outerStackPanel.Children.Add(grid)
-
-                    ' Add the row to the container
-                    serialNumbersContainer.Children.Add(outerStackPanel)
+                    AddSerialNumberRow(serialNumbersContainer, i)
                 Next
             End If
+        End Sub
+
+        ''' <summary>
+        ''' Adds a new serial number row to the specified container
+        ''' </summary>
+        Private Sub AddSerialNumberRow(container As StackPanel, rowIndex As Integer)
+            Dim outerStackPanel As New StackPanel With {.Margin = New Thickness(25, 10, 10, 10)}
+
+            Dim grid As New Grid()
+            grid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
+            grid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
+
+            ' Create the text box with style
+            Dim textBox As New TextBox With {
+            .Name = $"TxtSerial_{rowIndex}",
+            .Style = CType(Application.Current.TryFindResource("RoundedTextboxStyle"), Style)
+        }
+            serialNumberTextBoxes.Add(textBox)
+
+            ' Create border for the text box
+            Dim textBoxBorder As New Border With {
+            .Style = CType(Application.Current.TryFindResource("RoundedBorderStyle"), Style),
+            .Child = textBox
+        }
+
+            ' Add textbox border directly to grid
+            Grid.SetColumn(textBoxBorder, 0)
+            grid.Children.Add(textBoxBorder)
+
+            ' Create button panel
+            Dim buttonPanel As New StackPanel With {
+            .Orientation = Orientation.Horizontal,
+            .Margin = New Thickness(10, 0, 0, 0)
+        }
+
+            ' Add Row Button
+            Dim addRowButton As New Button With {
+            .Background = Brushes.White,
+            .BorderThickness = New Thickness(0),
+            .Name = "BtnAddRow",
+            .Tag = container  ' Pass the container as Tag for easy access
+        }
+            Dim addIcon As New MaterialDesignThemes.Wpf.PackIcon With {
+            .Kind = MaterialDesignThemes.Wpf.PackIconKind.TableRowAddAfter,
+            .Width = 40,
+            .Height = 30,
+            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#456B2E"))
+        }
+            addRowButton.Content = addIcon
+            AddHandler addRowButton.Click, AddressOf BtnAddSerialRow_Click
+            buttonPanel.Children.Add(addRowButton)
+
+            ' Remove Row Button
+            Dim removeRowButton As New Button With {
+            .Background = Brushes.White,
+            .BorderThickness = New Thickness(0),
+            .Name = "BtnRemoveRow",
+            .Tag = outerStackPanel  ' Pass the row as Tag for easy access
+        }
+            Dim removeIcon As New MaterialDesignThemes.Wpf.PackIcon With {
+            .Kind = MaterialDesignThemes.Wpf.PackIconKind.TableRowRemove,
+            .Width = 40,
+            .Height = 30,
+            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636"))
+        }
+            removeRowButton.Content = removeIcon
+            AddHandler removeRowButton.Click, AddressOf BtnRemoveSerialRow_Click
+            buttonPanel.Children.Add(removeRowButton)
+
+            ' Separator Border
+            Dim separatorBorder As New Border With {
+            .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
+            .BorderThickness = New Thickness(1),
+            .Height = 30
+        }
+            buttonPanel.Children.Add(separatorBorder)
+
+            ' Row Controller Button (we'll keep it but not implement for now)
+            Dim rowControllerButton As New Button With {
+            .Background = Brushes.White,
+            .BorderThickness = New Thickness(0),
+            .Name = "BtnRowController"
+        }
+            Dim menuIcon As New MaterialDesignThemes.Wpf.PackIcon With {
+            .Kind = MaterialDesignThemes.Wpf.PackIconKind.MenuDown,
+            .Width = 30,
+            .Height = 30,
+            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
+        }
+            rowControllerButton.Content = menuIcon
+            ' We'll leave this handler as is for now
+            AddHandler rowControllerButton.Click, AddressOf ProductController.BtnRowController_Click
+            buttonPanel.Children.Add(rowControllerButton)
+
+            Grid.SetColumn(buttonPanel, 1)
+            grid.Children.Add(buttonPanel)
+            outerStackPanel.Children.Add(grid)
+
+            ' Add the row to the container
+            container.Children.Add(outerStackPanel)
+        End Sub
+
+        ''' <summary>
+        ''' Handles the Add Serial Row button click
+        ''' </summary>
+        Private Sub BtnAddSerialRow_Click(sender As Object, e As RoutedEventArgs)
+            Dim button = TryCast(sender, Button)
+            If button Is Nothing Then Return
+
+            ' Get the container from the button's Tag property
+            Dim container = TryCast(button.Tag, StackPanel)
+            If container Is Nothing Then Return
+
+            ' Add a new row with index based on current count
+            Dim newIndex = container.Children.Count + 1
+            AddSerialNumberRow(container, newIndex)
+
+            ' Update the stock units textbox to match the number of rows
+            TxtStockUnits.Text = container.Children.Count.ToString()
+
+            ' Update our current variation data with the new count
+            Dim currentData = variationManager.GetCurrentVariationData()
+            If currentData IsNot Nothing Then
+                currentData.StockUnits = container.Children.Count
+            End If
+
+            ' Scroll to the new row
+            Dim containerBorder As Border = TryCast(StackPanelSerialRow.Children(1), Border)
+            If containerBorder IsNot Nothing Then
+                Dim scrollViewer As ScrollViewer = TryCast(containerBorder.Child, ScrollViewer)
+                If scrollViewer IsNot Nothing Then
+                    ' Scroll to the bottom
+                    scrollViewer.ScrollToEnd()
+                End If
+            End If
+        End Sub
+
+        ''' <summary>
+        ''' Handles the Remove Serial Row button click
+        ''' </summary>
+        Private Sub BtnRemoveSerialRow_Click(sender As Object, e As RoutedEventArgs)
+            Dim button = TryCast(sender, Button)
+            If button Is Nothing Then Return
+
+            ' Get the row panel from the button's Tag property
+            Dim rowPanel = TryCast(button.Tag, StackPanel)
+            If rowPanel Is Nothing Then Return
+
+            ' Find the parent container
+            Dim parent = FindParentContainer(rowPanel)
+            If parent Is Nothing Then Return
+
+            ' Remove the row from its parent
+            Dim rowIndex = parent.Children.IndexOf(rowPanel)
+            If rowIndex >= 0 Then
+                ' Remove the textbox from our list
+                If rowIndex < serialNumberTextBoxes.Count Then
+                    serialNumberTextBoxes.RemoveAt(rowIndex)
+                End If
+
+                ' Remove the row from the container
+                parent.Children.Remove(rowPanel)
+
+                ' Update the remaining rows' indices and serialNumberTextBoxes list
+                UpdateSerialNumberIndices(parent)
+
+                ' Update the stock units textbox to match the number of rows
+                TxtStockUnits.Text = parent.Children.Count.ToString()
+
+                ' Update our current variation data with the new count
+                Dim currentData = variationManager.GetCurrentVariationData()
+                If currentData IsNot Nothing Then
+                    currentData.StockUnits = parent.Children.Count
+                End If
+            End If
+        End Sub
+
+        ''' <summary>
+        ''' Finds the parent container of a row panel
+        ''' </summary>
+        Private Function FindParentContainer(rowPanel As StackPanel) As StackPanel
+            ' Find the ScrollViewer and then the container
+            Dim containerBorder As Border = TryCast(StackPanelSerialRow.Children(1), Border)
+            If containerBorder Is Nothing Then Return Nothing
+
+            Dim scrollViewer As ScrollViewer = TryCast(containerBorder.Child, ScrollViewer)
+            If scrollViewer Is Nothing Then Return Nothing
+
+            Dim container As StackPanel = TryCast(scrollViewer.Content, StackPanel)
+            Return container
+        End Function
+
+        ''' <summary>
+        ''' Updates the indices of all serial number rows after a removal
+        ''' </summary>
+        Private Sub UpdateSerialNumberIndices(container As StackPanel)
+            ' Clear and rebuild the serialNumberTextBoxes list
+            serialNumberTextBoxes.Clear()
+
+            ' Go through each row and update indices
+            For i As Integer = 0 To container.Children.Count - 1
+                Dim rowPanel = TryCast(container.Children(i), StackPanel)
+                If rowPanel IsNot Nothing Then
+                    ' Get the grid
+                    Dim grid = TryCast(rowPanel.Children(0), Grid)
+                    If grid IsNot Nothing Then
+                        ' Get the textbox border
+                        Dim textBoxBorder = TryCast(grid.Children(0), Border)
+                        If textBoxBorder IsNot Nothing Then
+                            ' Get the textbox
+                            Dim textBox = TryCast(textBoxBorder.Child, TextBox)
+                            If textBox IsNot Nothing Then
+                                ' Update the name
+                                textBox.Name = $"TxtSerial_{i + 1}"
+                                ' Add to our list
+                                serialNumberTextBoxes.Add(textBox)
+                            End If
+                        End If
+                    End If
+                End If
+            Next
         End Sub
 
         ''' <summary>
