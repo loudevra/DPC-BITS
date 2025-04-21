@@ -10,81 +10,150 @@ Imports System.Text
 Imports DocumentFormat.OpenXml.Bibliography
 
 Namespace DPC.Data.Controllers
+    ''' <summary>
+    ''' Controller class for managing product-related operations
+    ''' </summary>
     Public Class ProductController
+#Region "Properties and Fields"
+        ''' <summary>
+        ''' List to store serial number TextBox controls
+        ''' </summary>
         Public Shared SerialNumbers As New List(Of TextBox)
+
+        ''' <summary>
+        ''' Main container for the UI
+        ''' </summary>
         Public Shared Property MainContainer As StackPanel
+
+        ''' <summary>
+        ''' TextBox for stock units
+        ''' </summary>
         Public Shared Property TxtStockUnits As TextBox
+
+        ''' <summary>
+        ''' Popup control for UI
+        ''' </summary>
         Public Shared popup As Popup
+
+        ''' <summary>
+        ''' Flag to indicate if a popup was recently closed
+        ''' </summary>
         Public Shared RecentlyClosed As Boolean = False
 
+        ''' <summary>
+        ''' Local list of product variations
+        ''' </summary>
         Public _variations As New List(Of ProductVariation)
 
-        ' Static property to store variations data globally
+        ''' <summary>
+        ''' Static list to store variations data globally
+        ''' </summary>
         Public Shared _savedVariations As List(Of ProductVariation) = New List(Of ProductVariation)
+#End Region
 
-        'Get functions
-        '(For comboboxes only)
+#Region "Combobox Data Loading Methods"
+        ''' <summary>
+        ''' Populates a combobox with brand data
+        ''' </summary>
         Public Shared Sub GetBrands(comboBox As ComboBox)
             GetProduct.GetBrands(comboBox)
         End Sub
 
+        ''' <summary>
+        ''' Populates a combobox with suppliers filtered by brand
+        ''' </summary>
         Public Shared Sub GetSuppliersByBrand(brandID As Integer, comboBox As ComboBox)
             GetProduct.GetSuppliersByBrand(brandID, comboBox)
         End Sub
 
+        ''' <summary>
+        ''' Populates a combobox with product categories
+        ''' </summary>
         Public Shared Sub GetProductCategory(comboBox As ComboBox)
             GetProduct.GetProductCategory(comboBox)
         End Sub
 
+        ''' <summary>
+        ''' Populates a combobox with product subcategories based on the selected category
+        ''' </summary>
         Public Shared Sub GetProductSubcategory(categoryName As String, comboBox As ComboBox, label As TextBlock, stackPanel As StackPanel)
             GetProduct.GetProductSubcategory(categoryName, comboBox, label, stackPanel)
         End Sub
 
+        ''' <summary>
+        ''' Populates a combobox with warehouse data
+        ''' </summary>
         Public Shared Sub GetWarehouse(comboBox As ComboBox)
             GetProduct.GetWarehouse(comboBox)
         End Sub
+#End Region
 
+#Region "Product Code Generation"
+        ''' <summary>
+        ''' Generates a unique product code
+        ''' </summary>
         Public Shared Function GenerateProductCode() As String
             Return GenerateProduct.GenerateProductCode()
         End Function
 
+        ''' <summary>
+        ''' Gets the next product counter for generating product codes
+        ''' </summary>
         Public Shared Function GetNextProductCounter(datePart As String) As Integer
             Return GenerateProduct.GetNextProductCounter(datePart)
         End Function
+#End Region
 
-
-
-        'Serial Row Functions
+#Region "Serial Number Management (Non-Variations)"
+        ''' <summary>
+        ''' Event handler for adding a new serial number row
+        ''' </summary>
         Public Shared Sub BtnAddRow_Click(sender As Object, e As RoutedEventArgs, Optional skipStockUpdate As Boolean = False)
             RenderProduct.AddSerialRow(sender, e, skipStockUpdate)
         End Sub
 
-        ' Remove Row Function
+        ''' <summary>
+        ''' Event handler for removing a serial number row
+        ''' </summary>
         Public Shared Sub BtnRemoveRow_Click(sender As Object, e As RoutedEventArgs)
             DeleteProduct.RemoveSerialRow(sender, e)
         End Sub
 
-        ' Row Controller Handler
+        ''' <summary>
+        ''' Event handler for opening the row controller
+        ''' </summary>
         Public Shared Sub BtnRowController_Click(sender As Object, e As RoutedEventArgs)
             RenderProduct.OpenRowController(sender, e)
         End Sub
 
-        ' Remove Latest Row Function
+        ''' <summary>
+        ''' Removes the most recently added serial number row
+        ''' </summary>
         Public Shared Sub RemoveLatestRow()
             DeleteProduct.RemoveLatestRow()
         End Sub
 
-        'Import serialnumbers
+        ''' <summary>
+        ''' Imports serial numbers from external source
+        ''' </summary>
         Public Shared Sub ImportSerialNumbers_Click()
             UploadProduct.ImportSerialNumbers()
         End Sub
+#End Region
 
-        ' Load Product Data
+#Region "Product Data Management"
+        ''' <summary>
+        ''' Loads product data into the specified DataGrid
+        ''' </summary>
         Public Shared Sub LoadProductData(dataGrid As DataGrid)
             GetProduct.LoadProductData(dataGrid)
         End Sub
+#End Region
 
-        'Check if yes or no variation
+#Region "UI Logic Methods"
+        ''' <summary>
+        ''' Handles the logic for checking if a product has variations
+        ''' </summary>
         Public Shared Sub VariationChecker(toggle As ToggleButton,
                           stackPanelVariation As StackPanel,
                           stackPanelWarehouse As StackPanel,
@@ -110,7 +179,9 @@ Namespace DPC.Data.Controllers
                           outerStackPanel)
         End Sub
 
-        'Check if product has serial number or no serial number
+        ''' <summary>
+        ''' Handles the logic for checking if a product has serial numbers
+        ''' </summary>
         Public Shared Sub SerialNumberChecker(checkbox As CheckBox,
                      stackPanelSerialRow As StackPanel,
                      txtStockUnits As TextBox,
@@ -122,7 +193,9 @@ Namespace DPC.Data.Controllers
                      borderStockUnits)
         End Sub
 
-        'Clear fields in add product, not including variation popup and variation detail page
+        ''' <summary>
+        ''' Clears all input fields in the product form
+        ''' </summary>
         Public Shared Sub ClearInputFields(txtProductName As TextBox,
                           txtRetailPrice As TextBox,
                           txtPurchaseOrder As TextBox,
@@ -157,30 +230,48 @@ Namespace DPC.Data.Controllers
                           singleDatePicker,
                           mainContainer)
         End Sub
+#End Region
 
+#Region "Validation Methods"
+        ''' <summary>
+        ''' Validates if the provided file is a valid image
+        ''' </summary>
         Public Function ValidateImageFile(filePath As String) As Boolean
             Return LogicProduct.ValidateImageFile(filePath)
         End Function
 
+        ''' <summary>
+        ''' Ensures that only integer values can be input in a TextBox
+        ''' </summary>
         Public Shared Sub IntegerOnlyTextInputHandler(sender As Object, e As TextCompositionEventArgs)
             LogicProduct.IntegerOnlyTextInputHandler(sender, e)
         End Sub
 
+        ''' <summary>
+        ''' Ensures that only integer values can be pasted into a TextBox
+        ''' </summary>
         Public Shared Sub IntegerOnlyPasteHandler(sender As Object, e As DataObjectPastingEventArgs)
             LogicProduct.IntegerOnlyPasteHandler(sender, e)
         End Sub
 
+        ''' <summary>
+        ''' Processes stock units entry and updates UI accordingly
+        ''' </summary>
         Public Sub ProcessStockUnitsEntry(txtStockUnits As TextBox, mainContainer As Panel)
             LogicProduct.ProcessStockUnitsEntry(txtStockUnits, mainContainer)
         End Sub
 
+        ''' <summary>
+        ''' Updates the product variation text display
+        ''' </summary>
         Public Sub UpdateProductVariationText(variations As List(Of ProductVariation), txtProductVariation As TextBlock)
             LogicProduct.UpdateProductVariationText(variations, txtProductVariation)
         End Sub
 
-
-
-        Private Shared Function ValidateProductFields(Checkbox As Controls.CheckBox, ProductName As TextBox, Category As ComboBox,
+        ''' <summary>
+        ''' Validates all product fields before saving
+        ''' </summary>
+        Public Shared Function ValidateProductFields(Checkbox As Controls.CheckBox, ProductName As TextBox, Category As ComboBox,
                                               SubCategory As ComboBox, Warehouse As ComboBox, Brand As ComboBox,
                                               Supplier As ComboBox, RetailPrice As TextBox, PurchaseOrder As TextBox,
                                               DefaultTax As TextBox, DiscountRate As TextBox, StockUnits As TextBox,
@@ -192,102 +283,51 @@ Namespace DPC.Data.Controllers
                                               DefaultTax, DiscountRate, StockUnits, AlertQuantity, MeasurementUnit,
                                               Description, ValidDate, SerialNumbers)
         End Function
+#End Region
 
-
+#Region "Product Creation Methods"
+        ''' <summary>
+        ''' Inserts a new product into the database
+        ''' </summary>
         Public Shared Sub InsertNewProduct(Toggle As System.Windows.Controls.Primitives.ToggleButton, Checkbox As Controls.CheckBox,
-    ProductName As TextBox, Category As ComboBox, SubCategory As ComboBox, Warehouse As ComboBox,
-    Brand As ComboBox, Supplier As ComboBox,
-    RetailPrice As TextBox, PurchaseOrder As TextBox, DefaultTax As TextBox,
-    DiscountRate As TextBox, StockUnits As TextBox, AlertQuantity As TextBox,
-    MeasurementUnit As ComboBox, Description As TextBox, ValidDate As DatePicker,
-    SerialNumbers As List(Of TextBox), ProductImage As String)
+            ProductName As TextBox, Category As ComboBox, SubCategory As ComboBox, Warehouse As ComboBox,
+            Brand As ComboBox, Supplier As ComboBox,
+            RetailPrice As TextBox, PurchaseOrder As TextBox, DefaultTax As TextBox,
+            DiscountRate As TextBox, StockUnits As TextBox, AlertQuantity As TextBox,
+            MeasurementUnit As ComboBox, Description As TextBox, ValidDate As DatePicker,
+            SerialNumbers As List(Of TextBox), ProductImage As String)
 
-            ' Determine if the product is a variation
-            Dim variation As Integer = If(Toggle.IsChecked = True, 1, 0)
-
-            ' Validate required fields
-            If Not ValidateProductFields(Checkbox, ProductName, Category, SubCategory, Warehouse, Brand, Supplier,
-                  RetailPrice, PurchaseOrder, DefaultTax, DiscountRate, StockUnits,
-                  AlertQuantity, MeasurementUnit, Description, ValidDate, SerialNumbers) Then
-                MessageBox.Show("Please fill in all required fields!", "Input Error", MessageBoxButton.OK)
-                Exit Sub
-            End If
-
-            ' Generate product ID
-            Dim productID As String = GenerateProductCode()
-
-            ' ✅ Handle SubCategory when it's Nothing
-            Dim subCategoryId As Integer = If(SubCategory.SelectedItem IsNot Nothing, CType(SubCategory.SelectedItem, ComboBoxItem).Tag, 0)
-
-            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                conn.Open()
-                Using transaction = conn.BeginTransaction()
-                    ' Insert into product table first
-                    Dim productQuery As String = "INSERT INTO product (productID, productName, categoryID, subcategoryID, supplierID, brandID, dateCreated, productVariation, productImage, measurementUnit, productDescription) 
-                                          VALUES (@productID, @ProductName, @Category, @SubCategory, @SupplierID, @BrandID, @DateCreated, @variation, @ProductImage, @Description, @MeasurementUnit);"
-                    Using productCmd As New MySqlCommand(productQuery, conn, transaction)
-                        productCmd.Parameters.AddWithValue("@productID", productID)
-                        productCmd.Parameters.AddWithValue("@ProductName", ProductName.Text)
-                        productCmd.Parameters.AddWithValue("@Category", CType(Category.SelectedItem, ComboBoxItem).Tag)
-                        productCmd.Parameters.AddWithValue("@SubCategory", subCategoryId) ' ✅ Now using 0 if Nothing
-                        productCmd.Parameters.AddWithValue("@SupplierID", CType(Supplier.SelectedItem, ComboBoxItem).Tag)
-                        productCmd.Parameters.AddWithValue("@BrandID", CType(Brand.SelectedItem, ComboBoxItem).Tag)
-                        productCmd.Parameters.AddWithValue("@DateCreated", ValidDate.SelectedDate)
-                        productCmd.Parameters.AddWithValue("@variation", variation)
-                        productCmd.Parameters.AddWithValue("@ProductImage", ProductImage)
-                        productCmd.Parameters.AddWithValue("@Description", Description.Text)
-                        productCmd.Parameters.AddWithValue("@MeasurementUnit", CType(MeasurementUnit.SelectedItem, ComboBoxItem).Tag)
-                        productCmd.ExecuteNonQuery()
-                    End Using
-
-                    ' Call the appropriate insertion function based on variation flag
-                    If variation = 0 Then
-                        InsertNonVariationProduct(conn, transaction, productID, Warehouse, RetailPrice, PurchaseOrder, DefaultTax,
-                  DiscountRate, StockUnits, AlertQuantity, ValidDate, SerialNumbers, Checkbox)
-                    Else
-                        InsertVariationProduct(conn, transaction, productID)
-                    End If
-
-                    transaction.Commit()
-                    MessageBox.Show($"Product {ProductName.Text} with Product Code {productID} has been inserted successfully.")
-                End Using
-            End Using
+            CreateProduct.InsertNewProduct(Toggle, Checkbox,
+                ProductName, Category, SubCategory, Warehouse,
+                Brand, Supplier,
+                RetailPrice, PurchaseOrder, DefaultTax,
+                DiscountRate, StockUnits, AlertQuantity,
+                MeasurementUnit, Description, ValidDate,
+                SerialNumbers, ProductImage)
         End Sub
 
-        'no variation insert
-        Private Shared Sub InsertNonVariationProduct(conn As MySqlConnection, transaction As MySqlTransaction, productID As String,
+        ''' <summary>
+        ''' Inserts a product without variations into the database
+        ''' </summary>
+        Public Shared Sub InsertNonVariationProduct(conn As MySqlConnection, transaction As MySqlTransaction, productID As String,
                                      Warehouse As ComboBox, SellingPrice As TextBox, BuyingPrice As TextBox,
                                      DefaultTax As TextBox, DiscountRate As TextBox,
                                      StockUnits As TextBox, AlertQuantity As TextBox,
                                      ValidDate As DatePicker, SerialNumbers As List(Of TextBox),
                                      Checkbox As Controls.CheckBox)
 
-            ' Insert into productnovariation table
-            Dim query As String = "INSERT INTO productnovariation (productID, warehouseID, sellingPrice, buyingPrice, defaultTax, taxType, 
-                                discountRate, discountType, stockUnit, alertQuantity, dateCreated, dateModified) 
-                           VALUES (@productID, @WarehouseID, @SellingPrice, @BuyingPrice, @DefaultTax, NULL, 
-                                @DiscountRate, NULL, @StockUnits, @AlertQuantity, @DateCreated, NULL);"
-            Using cmd As New MySqlCommand(query, conn, transaction)
-                cmd.Parameters.AddWithValue("@productID", productID)
-                cmd.Parameters.AddWithValue("@WarehouseID", CType(Warehouse.SelectedItem, ComboBoxItem).Tag)
-                cmd.Parameters.AddWithValue("@SellingPrice", SellingPrice.Text)
-                cmd.Parameters.AddWithValue("@BuyingPrice", BuyingPrice.Text)
-                cmd.Parameters.AddWithValue("@DefaultTax", DefaultTax.Text)
-                cmd.Parameters.AddWithValue("@DiscountRate", DiscountRate.Text)
-                cmd.Parameters.AddWithValue("@StockUnits", StockUnits.Text)
-                cmd.Parameters.AddWithValue("@AlertQuantity", AlertQuantity.Text)
-                cmd.Parameters.AddWithValue("@DateCreated", ValidDate.SelectedDate)
-                cmd.ExecuteNonQuery()
-            End Using
-
-            ' Check if the product has serial numbers and insert them
-            If Checkbox.IsChecked = True Then
-                InsertSerialNumbersForProduct(conn, transaction, SerialNumbers, productID)
-            End If
+            InsertNonVariationProduct(conn, transaction, productID,
+                                    Warehouse, SellingPrice, BuyingPrice,
+                                    DefaultTax, DiscountRate,
+                                    StockUnits, AlertQuantity,
+                                    ValidDate, SerialNumbers,
+                                    Checkbox)
         End Sub
 
-        'variation insert
-        Private Shared Sub InsertVariationProduct(conn As MySqlConnection, transaction As MySqlTransaction, productID As String)
+        ''' <summary>
+        ''' Inserts a product with variations into the database
+        ''' </summary>
+        Public Shared Sub InsertVariationProduct(conn As MySqlConnection, transaction As MySqlTransaction, productID As String)
 
             ' Insert into productvariation table
             Dim query As String = "INSERT INTO productvariation (productID, dateCreated) 
@@ -299,7 +339,10 @@ Namespace DPC.Data.Controllers
             End Using
         End Sub
 
-        Private Shared Sub InsertSerialNumbersForProduct(conn As MySqlConnection, transaction As MySqlTransaction,
+        ''' <summary>
+        ''' Inserts serial numbers for a product into the database
+        ''' </summary>
+        Public Shared Sub InsertSerialNumbersForProduct(conn As MySqlConnection, transaction As MySqlTransaction,
                                           SerialNumbers As List(Of TextBox), productID As String)
             Dim query As String = "INSERT INTO serialnumberproduct (SerialNumber, ProductID) VALUES (@SerialNumber, @ProductID)"
             Using cmd As New MySqlCommand(query, conn, transaction)
@@ -315,302 +358,94 @@ Namespace DPC.Data.Controllers
                 Next
             End Using
         End Sub
+#End Region
 
+#Region "Variation Methods"
+        ''' <summary>
+        ''' Gets the list of product variations
+        ''' </summary>
         Public Function GetProductVariations() As List(Of ProductVariation)
             Return DPC.Components.Forms.AddVariation.SavedVariations
         End Function
+#End Region
+    End Class
 
-        ' New methods migrated from ProductVariationDetails
-
-#Region "Variation UI Management"
+    ''' <summary>
+    ''' Manager class to handle all variation data for a product
+    ''' </summary>
+    Public Class ProductVariationManager
+#Region "Properties"
         ''' <summary>
-        ''' Loads variation combinations into a UI panel
+        ''' Dictionary to store variation data, keyed by combination name
         ''' </summary>
-        ''' <param name="variationsPanel">The StackPanel that will contain the variation buttons</param>
-        ''' <param name="buttonClickHandler">Event handler for when variation buttons are clicked</param>
-        Public Shared Sub LoadVariationCombinations(variationsPanel As StackPanel, buttonClickHandler As RoutedEventHandler)
-            ' Clear existing buttons in the variations panel
-            If variationsPanel IsNot Nothing Then
-                variationsPanel.Children.Clear()
-            End If
+        Private Property VariationDataDict As Dictionary(Of String, ProductVariationData)
 
-            ' Get variations from the saved variations collection
-            Dim variations As List(Of ProductVariation) = DPC.Components.Forms.AddVariation.SavedVariations
+        ''' <summary>
+        ''' Currently selected variation combination
+        ''' </summary>
+        Public Property CurrentCombination As String
+#End Region
 
-            ' Check if we have any variations
-            If variations Is Nothing OrElse variations.Count = 0 Then
-                ' No variations, add a default placeholder option
-                AddVariationButton(variationsPanel, "Default Variation", True, buttonClickHandler)
-                Return
-            End If
+#Region "Constructor"
+        ''' <summary>
+        ''' Initializes a new instance of the ProductVariationManager class
+        ''' </summary>
+        Public Sub New()
+            VariationDataDict = New Dictionary(Of String, ProductVariationData)()
+            CurrentCombination = String.Empty
+        End Sub
+#End Region
 
-            ' Check if we have one or two variations
-            If variations.Count = 1 Then
-                ' Single variation case - just show options
-                Dim variation As ProductVariation = variations(0)
-                If variation.Options IsNot Nothing AndAlso variation.Options.Count > 0 Then
-                    Dim isFirst As Boolean = True
-                    For Each opt As VariationOption In variation.Options
-                        AddVariationButton(variationsPanel, opt.OptionName, isFirst, buttonClickHandler)
-                        isFirst = False
-                    Next
-                End If
-            ElseIf variations.Count = 2 Then
-                ' Two variations case - create combinations
-                Dim variation1 As ProductVariation = variations(0)
-                Dim variation2 As ProductVariation = variations(1)
-
-                If variation1.Options IsNot Nothing AndAlso variation1.Options.Count > 0 AndAlso
-                   variation2.Options IsNot Nothing AndAlso variation2.Options.Count > 0 Then
-
-                    Dim isFirst As Boolean = True
-                    For Each option1 As VariationOption In variation1.Options
-                        For Each option2 As VariationOption In variation2.Options
-                            ' Create combination label: "Color, Size"
-                            Dim combinationName As String = $"{option1.OptionName}, {option2.OptionName}"
-                            AddVariationButton(variationsPanel, combinationName, isFirst, buttonClickHandler)
-                            isFirst = False
-                        Next
-                    Next
-                End If
+#Region "Variation Management Methods"
+        ''' <summary>
+        ''' Adds a new variation combination
+        ''' </summary>
+        Public Sub AddVariationCombination(combinationName As String)
+            If Not VariationDataDict.ContainsKey(combinationName) Then
+                VariationDataDict.Add(combinationName, New ProductVariationData(combinationName))
             End If
         End Sub
 
         ''' <summary>
-        ''' Creates a variation button with consistent styling
+        ''' Gets variation data for a specific combination
         ''' </summary>
-        ''' <param name="container">The container to add the button to</param>
-        ''' <param name="labelText">The text to display on the button</param>
-        ''' <param name="isSelected">Whether this button is selected by default</param>
-        ''' <param name="clickHandler">The event handler for button clicks</param>
-        Public Shared Sub AddVariationButton(container As StackPanel, labelText As String, isSelected As Boolean, clickHandler As RoutedEventHandler)
-            Dim btn As New System.Windows.Controls.Button With {
-                .Width = Double.NaN,  ' Auto width
-                .Height = Double.NaN, ' Auto height
-                .Background = Brushes.Transparent,
-                .HorizontalAlignment = HorizontalAlignment.Left,
-                .BorderThickness = New Thickness(0),
-                .VerticalAlignment = VerticalAlignment.Center,
-                .Margin = New Thickness(0, 0, 15, 0),
-                .Tag = labelText ' Store the combination name in the Tag property
-            }
-
-            ' Try to apply the style if it exists, otherwise use default styling
-            Try
-                btn.Style = Application.Current.FindResource("RoundedButtonStyle")
-            Catch ex As Exception
-                ' Style not found, use default styling
-            End Try
-
-            ' Create the Grid layout for the button content
-            Dim grid As New Grid()
-            grid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
-            grid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
-
-            ' Add vertical line if selected
-            Dim border As New Border With {
-                .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
-                .BorderThickness = New Thickness(1, 0, 0, 0),
-                .Width = 1,
-                .Height = Double.NaN,  ' Auto height
-                .Margin = New Thickness(0),
-                .Visibility = If(isSelected, Visibility.Visible, Visibility.Collapsed)
-            }
-            Grid.SetColumn(border, 0)
-            grid.Children.Add(border)
-
-            ' Add the text
-            Dim textBlock As New TextBlock With {
-                .Text = labelText,
-                .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString(If(isSelected, "#555555", "#AEAEAE"))),
-                .FontSize = 14,
-                .FontWeight = FontWeights.SemiBold,
-                .Margin = New Thickness(5, 0, 0, 0),
-                .VerticalAlignment = VerticalAlignment.Center
-            }
-            Grid.SetColumn(textBlock, 1)
-            grid.Children.Add(textBlock)
-
-            ' Set the grid as button content
-            btn.Content = grid
-
-            ' Add click handler
-            If clickHandler IsNot Nothing Then
-                AddHandler btn.Click, clickHandler
+        Public Function GetVariationData(combinationName As String) As ProductVariationData
+            If String.IsNullOrEmpty(combinationName) Then
+                Return Nothing
             End If
 
-            ' Add to container
-            container.Children.Add(btn)
+            ' Create and add if doesn't exist
+            If Not VariationDataDict.ContainsKey(combinationName) Then
+                Dim newData As New ProductVariationData(combinationName)
+                VariationDataDict.Add(combinationName, newData)
+            End If
+
+            Return VariationDataDict(combinationName)
+        End Function
+
+        ''' <summary>
+        ''' Selects a variation combination
+        ''' </summary>
+        Public Sub SelectVariationCombination(combinationName As String)
+            CurrentCombination = combinationName
         End Sub
 
         ''' <summary>
-        ''' Updates the UI to show the selected variation
+        ''' Gets currently selected variation data
         ''' </summary>
-        ''' <param name="container">The container with buttons</param>
-        ''' <param name="selectedButton">The button that was clicked</param>
-        Public Shared Sub UpdateVariationSelection(container As StackPanel, selectedButton As System.Windows.Controls.Button)
-            ' Update UI to show this variation is selected
-            For Each child As UIElement In container.Children
-                If TypeOf child Is System.Windows.Controls.Button Then
-                    Dim childBtn As System.Windows.Controls.Button = DirectCast(child, System.Windows.Controls.Button)
-                    Dim childGrid As Grid = TryCast(childBtn.Content, Grid)
-                    If childGrid IsNot Nothing Then
-                        ' Update the border visibility and text color for all buttons
-                        For Each gridChild As UIElement In childGrid.Children
-                            If TypeOf gridChild Is Border Then
-                                DirectCast(gridChild, Border).Visibility = If(child Is selectedButton, Visibility.Visible, Visibility.Collapsed)
-                            ElseIf TypeOf gridChild Is TextBlock Then
-                                DirectCast(gridChild, TextBlock).Foreground = New SolidColorBrush(
-                                ColorConverter.ConvertFromString(If(child Is selectedButton, "#555555", "#AEAEAE")))
-                            End If
-                        Next
-                    End If
-                End If
-            Next
-        End Sub
-#End Region
-
-#Region "Serial Number Management"
-        ''' <summary>
-        ''' Updates the UI when the serial number checkbox changes
-        ''' </summary>
-        ''' <param name="checkbox">The serial number checkbox</param>
-        ''' <param name="serialRowPanel">The panel containing serial number rows</param>
-        ''' <param name="txtStockUnits">The stock units text box</param>
-        ''' <param name="borderStockUnits">The border around the stock units text box</param>
-        ''' <param name="mainContainer">The container for serial number rows</param>
-
-        ''' <summary>
-        ''' Handles stock units text input and updates serial number rows
-        ''' </summary>
-        ''' <param name="txtStockUnits">The stock units textbox</param>
-        ''' <param name="mainContainer">The container for serial number rows</param>
-        ''' <param name="e">The key event args</param>
-        ''' <returns>True if the event was handled, False otherwise</returns>
-        Public Shared Function HandleStockUnitsKeyDown(txtStockUnits As TextBox, mainContainer As Panel, e As KeyEventArgs) As Boolean
-            ' Check if Enter key is pressed
-            If e.Key = Key.Enter Then
-                Dim stockUnits As Integer
-
-                ' Validate if input is a valid number and greater than zero
-                If Integer.TryParse(txtStockUnits.Text, stockUnits) Then
-                    If stockUnits > 0 Then
-                        ' Clear previous rows
-                        If mainContainer IsNot Nothing Then
-                            mainContainer.Children.Clear()
-                        End If
-
-                        ' Clear SerialNumbers to remove old references
-                        If SerialNumbers IsNot Nothing Then
-                            SerialNumbers.Clear()
-                        End If
-
-                        ' Call BtnAddRow_Click the specified number of times
-                        For i As Integer = 1 To stockUnits
-                            BtnAddRow_Click(Nothing, Nothing)
-                        Next
-
-                        ' Ensure the textbox retains the correct value
-                        txtStockUnits.Text = stockUnits.ToString()
-                        Return True
-                    Else
-                        MessageBox.Show("Please enter a number greater than zero.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning)
-                        Return True
-                    End If
-                Else
-                    MessageBox.Show("Please enter a valid number.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning)
-                    Return True
-                End If
+        Public Function GetCurrentVariationData() As ProductVariationData
+            If String.IsNullOrEmpty(CurrentCombination) Then
+                Return Nothing
             End If
-
-            Return False
-        End Function
-#End Region
-
-#Region "Helper Methods"
-        ''' <summary>
-        ''' Finds a visual child element by name within a parent control
-        ''' </summary>
-        ''' <typeparam name="T">Type of the child element</typeparam>
-        ''' <param name="parent">Parent element to search in</param>
-        ''' <param name="name">Name of the child element to find</param>
-        ''' <returns>The found element or Nothing</returns>
-        Public Shared Function FindVisualChild(Of T As DependencyObject)(parent As DependencyObject, name As String) As T
-            For i As Integer = 0 To VisualTreeHelper.GetChildrenCount(parent) - 1
-                Dim child As DependencyObject = VisualTreeHelper.GetChild(parent, i)
-
-                ' Check if this is the element we're looking for
-                If TypeOf child Is T AndAlso (TryCast(child, FrameworkElement)).Name = name Then
-                    Return DirectCast(child, T)
-                End If
-
-                ' Search in this child's children
-                Dim result As T = FindVisualChild(Of T)(child, name)
-                If result IsNot Nothing Then
-                    Return result
-                End If
-            Next
-
-            Return Nothing
-        End Function
-#End Region
-        ' In ProductController class
-
-        ' Class-level properties to store forms data
-        Public Shared VariationManager As New ProductVariationManager()
-
-        ' Form validation logic
-        Public Shared Function ValidateForm(txtRetailPrice As TextBox,
-                                             txtPurchaseOrder As TextBox,
-                                             comboBoxWarehouse As ComboBox,
-                                             checkBoxSerialNumber As CheckBox) As Boolean
-
-            ' Check for required fields
-            If txtRetailPrice Is Nothing OrElse String.IsNullOrWhiteSpace(txtRetailPrice.Text) Then
-                MessageBox.Show("Please enter a selling price.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
-                If txtRetailPrice IsNot Nothing Then
-                    txtRetailPrice.Focus()
-                End If
-                Return False
-            End If
-
-            If txtPurchaseOrder Is Nothing OrElse String.IsNullOrWhiteSpace(txtPurchaseOrder.Text) Then
-                MessageBox.Show("Please enter a buying price.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
-                If txtPurchaseOrder IsNot Nothing Then
-                    txtPurchaseOrder.Focus()
-                End If
-                Return False
-            End If
-
-            If comboBoxWarehouse Is Nothing OrElse comboBoxWarehouse.SelectedIndex < 0 Then
-                MessageBox.Show("Please select a warehouse.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
-                If comboBoxWarehouse IsNot Nothing Then
-                    comboBoxWarehouse.Focus()
-                End If
-                Return False
-            End If
-
-            ' Add validation for serial numbers if included
-            If checkBoxSerialNumber IsNot Nothing AndAlso checkBoxSerialNumber.IsChecked.Value Then
-                ' Check if any serial numbers are added
-                If SerialNumbers Is Nothing OrElse SerialNumbers.Count = 0 Then
-                    MessageBox.Show("Please add at least one serial number.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
-                    Return False
-                End If
-
-                ' Check if all serial numbers have values
-                For Each serialNumber As TextBox In SerialNumbers
-                    If String.IsNullOrWhiteSpace(serialNumber.Text) Then
-                        MessageBox.Show("All serial numbers must have a value.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
-                        serialNumber.Focus()
-                        Return False
-                    End If
-                Next
-            End If
-
-            Return True
+            Return GetVariationData(CurrentCombination)
         End Function
 
-
+        ''' <summary>
+        ''' Gets all variation data
+        ''' </summary>
+        Public Function GetAllVariationData() As Dictionary(Of String, ProductVariationData)
+            Return VariationDataDict
+        End Function
+#End Region
     End Class
 End Namespace
