@@ -11,11 +11,14 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
     Public Class ProductVariationDetails
         Inherits Window
 
+#Region "Fields and Properties"
         ' Product variation manager instance to handle all variations
         Private variationManager As New ProductVariationManager()
         ' Keep track of serial number textboxes
         Private serialNumberTextBoxes As New List(Of TextBox)
+#End Region
 
+#Region "Initialization and Constructor"
         Public Sub New()
             InitializeComponent()
 
@@ -48,10 +51,9 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ' Add TextChanged event handler for stock units textbox to update serial number fields
             AddHandler TxtStockUnits.TextChanged, AddressOf StockUnits_TextChanged
         End Sub
+#End Region
 
-        ''' <summary>
-        ''' Initializes the serial number controls in the existing StackPanelSerialRow
-        ''' </summary>
+#Region "Serial Number Management"
         ''' <summary>
         ''' Initializes the serial number controls in the existing StackPanelSerialRow
         ''' </summary>
@@ -116,6 +118,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ' Initially set visibility based on checkbox state
             UpdateSerialNumberPanelVisibility()
         End Sub
+
         ''' <summary>
         ''' Handles text changes in the stock units textbox
         ''' </summary>
@@ -252,6 +255,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 Next
             End If
         End Sub
+
         ''' <summary>
         ''' Handles changes to the serial number checkbox
         ''' </summary>
@@ -282,8 +286,37 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             End If
         End Sub
 
-#Region "Variation Loading and Management"
+        ''' <summary>
+        ''' Loads the serial number data into controls
+        ''' </summary>
+        Private Sub LoadSerialNumberData()
+            ' Get the current variation data
+            Dim currentData = variationManager.GetCurrentVariationData()
 
+            ' Set the data to controls
+            If currentData IsNot Nothing Then
+                ' Set checkbox state
+                CheckBoxSerialNumber.IsChecked = currentData.IncludeSerialNumbers
+
+                ' Update visibility based on checkbox state
+                UpdateSerialNumberPanelVisibility()
+
+                ' Create textboxes based on stock units
+                If currentData.IncludeSerialNumbers Then
+                    CreateSerialNumberTextBoxes()
+
+                    ' Load serial numbers into textboxes
+                    If currentData.SerialNumbers IsNot Nothing AndAlso currentData.SerialNumbers.Count > 0 Then
+                        For i As Integer = 0 To Math.Min(currentData.SerialNumbers.Count - 1, serialNumberTextBoxes.Count - 1)
+                            serialNumberTextBoxes(i).Text = currentData.SerialNumbers(i)
+                        Next
+                    End If
+                End If
+            End If
+        End Sub
+#End Region
+
+#Region "Variation Loading and Management"
         ''' <summary>
         ''' Loads saved variation data and generates all combinations
         ''' </summary>
@@ -311,6 +344,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         ''' <summary>
         ''' Generates all possible combinations of variation options
         ''' </summary>
+
         Private Sub GenerateVariationCombinations()
             ' Check if we have saved variations
             If AddVariation.SavedVariations.Count = 0 Then
@@ -337,10 +371,31 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ' Create variation data entries for each combination
             For Each combo In combinations
                 Dim combinationName = String.Join(", ", combo)
+
+                ' Add the combination with default name
                 variationManager.AddVariationCombination(combinationName)
+
+                ' Get the newly added variation and set default values
+                Dim newVariation = variationManager.GetVariationData(combinationName)
+                If newVariation IsNot Nothing Then
+                    ' Set default values as specified
+                    newVariation.RetailPrice = 0             ' Selling price set to 0
+                    newVariation.PurchaseOrder = 0           ' Buying price set to 0
+                    newVariation.DefaultTax = 12             ' Default tax rate set to 12
+                    newVariation.DiscountRate = 0            ' Discount rate set to 0
+                    newVariation.StockUnits = 1              ' Stock units set to 1
+                    newVariation.AlertQuantity = 0           ' Alert quantity set to 0
+                    newVariation.SelectedWarehouseIndex = 0  ' Warehouse set to index 1
+                    newVariation.IncludeSerialNumbers = True ' Serial number checkbox checked by default
+
+                    ' Initialize serial numbers list with one empty entry
+                    If newVariation.IncludeSerialNumbers Then
+                        newVariation.SerialNumbers = New List(Of String)()
+                        newVariation.SerialNumbers.Add("")
+                    End If
+                End If
             Next
         End Sub
-
         ''' <summary>
         ''' Recursive method to generate all possible combinations of options
         ''' </summary>
@@ -551,36 +606,9 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 End If
             End If
         End Sub
+#End Region
 
-        ''' <summary>
-        ''' Loads the serial number data into controls
-        ''' </summary>
-        Private Sub LoadSerialNumberData()
-            ' Get the current variation data
-            Dim currentData = variationManager.GetCurrentVariationData()
-
-            ' Set the data to controls
-            If currentData IsNot Nothing Then
-                ' Set checkbox state
-                CheckBoxSerialNumber.IsChecked = currentData.IncludeSerialNumbers
-
-                ' Update visibility based on checkbox state
-                UpdateSerialNumberPanelVisibility()
-
-                ' Create textboxes based on stock units
-                If currentData.IncludeSerialNumbers Then
-                    CreateSerialNumberTextBoxes()
-
-                    ' Load serial numbers into textboxes
-                    If currentData.SerialNumbers IsNot Nothing AndAlso currentData.SerialNumbers.Count > 0 Then
-                        For i As Integer = 0 To Math.Min(currentData.SerialNumbers.Count - 1, serialNumberTextBoxes.Count - 1)
-                            serialNumberTextBoxes(i).Text = currentData.SerialNumbers(i)
-                        Next
-                    End If
-                End If
-            End If
-        End Sub
-
+#Region "Data Validation and Save"
         Private Function ValidateFormData() As Boolean
             ' Basic validation for required fields
             If String.IsNullOrWhiteSpace(TxtRetailPrice.Text) OrElse
@@ -681,10 +709,9 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 End If
             End If
         End Sub
-
 #End Region
 
-#Region "Redirections"
+#Region "Navigation and Redirection"
         Private Sub BtnBatchEdit(sender As Object, e As RoutedEventArgs)
             ' Create an instance of the BatchEdit form
             Dim OpenBatchEdit As New ProductBatchEdit()
@@ -700,6 +727,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         End Sub
 #End Region
 
+#Region "Input Validation and Events"
         ' Text input validation handlers for numeric fields
         Private Sub IntegerOnlyTextInputHandler(sender As Object, e As TextCompositionEventArgs)
             ' Allow only digits and decimal point
@@ -731,6 +759,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 End If
             End If
         End Sub
+#End Region
 
     End Class
 End Namespace

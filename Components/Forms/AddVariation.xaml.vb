@@ -410,7 +410,7 @@ Namespace DPC.Components.Forms
             }
 
             ' Add a default option
-            newVariation.Options.Add(New VariationOption With {.OptionName = "Option"})
+            newVariation.Options.Add(New VariationOption With {.OptionName = "Option 1"})
 
             ' Create the UI panel for this variation
             Dim variationPanel = CreateVariationPanel(newVariation)
@@ -452,8 +452,38 @@ Namespace DPC.Components.Forms
         End Sub
 
         ' Update the AddOptionToPanel method to handle image data
+        ' Update the AddOptionToPanel method to handle proper option numbering
         Private Sub AddOptionToPanel(targetPanel As StackPanel, Optional optionData As VariationOption = Nothing)
-            Dim optionName As String = "Option"
+            ' Find the highest option number in the current panel
+            Dim highestOptionNumber As Integer = 0
+
+            For Each child As UIElement In targetPanel.Children
+                If TypeOf child Is Grid Then
+                    Dim grid As Grid = DirectCast(child, Grid)
+                    For Each gridChild As UIElement In grid.Children
+                        If TypeOf gridChild Is TextBox Then
+                            Dim textBox As TextBox = DirectCast(gridChild, TextBox)
+                            Dim text As String = textBox.Text
+                            ' Extract number from "Option X" format
+                            If text.StartsWith("Option ") Then
+                                Dim numStr As String = text.Substring(7)
+                                Dim num As Integer
+                                If Integer.TryParse(numStr, num) Then
+                                    If num > highestOptionNumber Then
+                                        highestOptionNumber = num
+                                    End If
+                                End If
+                            End If
+                            Exit For
+                        End If
+                    Next
+                End If
+            Next
+
+            ' Next option number should be one higher than current highest
+            Dim optionCount As Integer = highestOptionNumber + 1
+
+            Dim optionName As String = $"Option {optionCount}"
             Dim imageData As New ImageData()
 
             ' Use provided option data if available
@@ -468,6 +498,7 @@ Namespace DPC.Components.Forms
                 End If
             End If
 
+            ' Rest of the method remains unchanged
             ' Create Grid for option row
             Dim optionGrid As New Grid With {.Margin = New Thickness(0, 0, 0, 10)}
 
@@ -612,7 +643,6 @@ Namespace DPC.Components.Forms
             ' Add the option grid to the target panel
             targetPanel.Children.Add(optionGrid)
         End Sub
-
         ' Helper method to set default image icon
         Private Sub SetDefaultImageIcon(imageBorder As Border)
             Dim imageStack As New StackPanel With {

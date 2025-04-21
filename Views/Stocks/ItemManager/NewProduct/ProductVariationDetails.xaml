@@ -278,7 +278,6 @@
                 </ContentControl>
 
                 <!-- Serial Number Data -->
-                <!-- Serial Number Data -->
                 <ContentControl x:Name="SerialNumberContainer" Grid.Row="2" Grid.RowSpan="2" Grid.Column="2" Margin="15,0,5,0">
                     <StackPanel>
                         <StackPanel>
