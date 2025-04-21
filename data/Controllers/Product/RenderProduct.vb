@@ -181,5 +181,7 @@ Namespace DPC.Data.Controllers
             ' Add back one row for Serial Number input
             ProductController.BtnAddRow_Click(Nothing, Nothing)
         End Sub
+
+
     End Class
 End Namespace

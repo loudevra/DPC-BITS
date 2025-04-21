@@ -368,6 +368,7 @@
     <Compile Include="Data\Helpers\Base64Utility.vb" />
     <Compile Include="Data\Helpers\EmailService.vb" />
     <Compile Include="Data\Helpers\EnvLoader.vb" />
+    <Compile Include="Data\Helpers\FindParentContainer.vb" />
     <Compile Include="Data\Helpers\FindParentGrid.vb" />
     <Compile Include="Data\Helpers\PBKDF2Hasher.vb" />
     <Compile Include="Data\Helpers\PopupHelper.vb" />

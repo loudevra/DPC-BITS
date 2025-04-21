@@ -49,6 +49,18 @@ Namespace DPC.Data.Controllers
         ''' Static list to store variations data globally
         ''' </summary>
         Public Shared _savedVariations As List(Of ProductVariation) = New List(Of ProductVariation)
+
+        ''' <summary>
+        ''' Product variation manager instance to handle all variations
+        ''' </summary>
+
+        Public Shared variationManager As New ProductVariationManager()
+
+        ''' <summary>
+        ''' Keep track of serial number textboxes
+        ''' </summary>
+
+        Public Shared serialNumberTextBoxes As New List(Of TextBox)
 #End Region
 
 #Region "Combobox Data Loading Methods"

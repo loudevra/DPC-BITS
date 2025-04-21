@@ -11,13 +11,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
     Public Class ProductVariationDetails
         Inherits Window
 
-#Region "Fields and Properties"
-        ' Product variation manager instance to handle all variations
-        Private variationManager As New ProductVariationManager()
-        ' Keep track of serial number textboxes
-        Private serialNumberTextBoxes As New List(Of TextBox)
-#End Region
-
 #Region "Initialization and Constructor"
         Public Sub New()
             InitializeComponent()
@@ -59,39 +52,39 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         ''' <summary>
         ''' Initializes the serial number controls in the existing StackPanelSerialRow
         ''' </summary>
-        Private Sub InitializeSerialNumberControls()
+        Public Sub InitializeSerialNumberControls()
             ' Clear existing items in the stack panel
             StackPanelSerialRow.Children.Clear()
-            serialNumberTextBoxes.Clear()
+            ProductController.serialNumberTextBoxes.Clear()
 
             ' Create header for serial numbers
             Dim headerBorder As New Border With {
-            .Style = CType(FindResource("RoundedBorderStyle"), Style),
-            .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#474747")),
-            .BorderThickness = New Thickness(0),
-            .CornerRadius = New CornerRadius(15, 15, 0, 0)
-        }
+                .Style = CType(FindResource("RoundedBorderStyle"), Style),
+                .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#474747")),
+                .BorderThickness = New Thickness(0),
+                .CornerRadius = New CornerRadius(15, 15, 0, 0)
+            }
 
             Dim headerPanel As New StackPanel With {
-            .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#474747")),
-            .Orientation = Orientation.Horizontal,
-            .Margin = New Thickness(20, 10, 20, 10)
-        }
+                .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#474747")),
+                .Orientation = Orientation.Horizontal,
+                .Margin = New Thickness(20, 10, 20, 10)
+            }
 
             Dim headerText As New TextBlock With {
-            .Text = "Serial Numbers:",
-            .Foreground = Brushes.White,
-            .FontSize = 14,
-            .FontWeight = FontWeights.SemiBold,
-            .Margin = New Thickness(0, 0, 5, 0)
-        }
+                .Text = "Serial Numbers:",
+                .Foreground = Brushes.White,
+                .FontSize = 14,
+                .FontWeight = FontWeights.SemiBold,
+                .Margin = New Thickness(0, 0, 5, 0)
+            }
 
             Dim requiredIndicator As New TextBlock With {
-            .Text = "*",
-            .FontSize = 14,
-            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636")),
-            .FontWeight = FontWeights.Bold
-        }
+                .Text = "*",
+                .FontSize = 14,
+                .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636")),
+                .FontWeight = FontWeights.Bold
+            }
 
             headerPanel.Children.Add(headerText)
             headerPanel.Children.Add(requiredIndicator)
@@ -100,25 +93,25 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             ' Create container for serial number textboxes
             Dim containerBorder As New Border With {
-            .Background = Brushes.White,
-            .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
-            .BorderThickness = New Thickness(1, 0, 1, 1),
-            .CornerRadius = New CornerRadius(0, 0, 15, 15)
-        }
+                .Background = Brushes.White,
+                .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
+                .BorderThickness = New Thickness(1, 0, 1, 1),
+                .CornerRadius = New CornerRadius(0, 0, 15, 15)
+            }
 
             ' Create ScrollViewer for serial number entries
             Dim scrollViewer As New ScrollViewer With {
-            .VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-            .HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
-            .MaxHeight = 400,  ' Set maximum height before scrolling begins
-            .Padding = New Thickness(0, 0, 5, 0)  ' Add padding for scrollbar
-        }
+                .VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                .HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                .MaxHeight = 400,  ' Set maximum height before scrolling begins
+                .Padding = New Thickness(0, 0, 5, 0)  ' Add padding for scrollbar
+            }
 
             ' Create container for serial number textboxes
             Dim serialNumbersContainer As New StackPanel With {
-            .Name = "SerialNumbersContainer",
-            .Margin = New Thickness(0, 0, 0, 10)
-        }
+                .Name = "SerialNumbersContainer",
+                .Margin = New Thickness(0, 0, 0, 10)
+            }
 
             ' Add the container to the ScrollViewer
             scrollViewer.Content = serialNumbersContainer
@@ -157,7 +150,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             ' Clear existing textboxes
             serialNumbersContainer.Children.Clear()
-            serialNumberTextBoxes.Clear()
+            ProductController.serialNumberTextBoxes.Clear()
 
             ' Get stock units value
             Dim stockUnits As Integer = 0
@@ -181,16 +174,16 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             ' Create the text box with style
             Dim textBox As New TextBox With {
-            .Name = $"TxtSerial_{rowIndex}",
-            .Style = CType(Application.Current.TryFindResource("RoundedTextboxStyle"), Style)
-        }
-            serialNumberTextBoxes.Add(textBox)
+                .Name = $"TxtSerial_{rowIndex}",
+                .Style = CType(Application.Current.TryFindResource("RoundedTextboxStyle"), Style)
+            }
+            ProductController.serialNumberTextBoxes.Add(textBox)
 
             ' Create border for the text box
             Dim textBoxBorder As New Border With {
-            .Style = CType(Application.Current.TryFindResource("RoundedBorderStyle"), Style),
-            .Child = textBox
-        }
+                .Style = CType(Application.Current.TryFindResource("RoundedBorderStyle"), Style),
+                .Child = textBox
+            }
 
             ' Add textbox border directly to grid
             Grid.SetColumn(textBoxBorder, 0)
@@ -198,64 +191,64 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             ' Create button panel
             Dim buttonPanel As New StackPanel With {
-            .Orientation = Orientation.Horizontal,
-            .Margin = New Thickness(10, 0, 0, 0)
-        }
+                .Orientation = Orientation.Horizontal,
+                .Margin = New Thickness(10, 0, 0, 0)
+            }
 
             ' Add Row Button
             Dim addRowButton As New Button With {
-            .Background = Brushes.White,
-            .BorderThickness = New Thickness(0),
-            .Name = "BtnAddRow",
-            .Tag = container  ' Pass the container as Tag for easy access
-        }
+                .Background = Brushes.White,
+                .BorderThickness = New Thickness(0),
+                .Name = "BtnAddRow",
+                .Tag = container  ' Pass the container as Tag for easy access
+            }
             Dim addIcon As New MaterialDesignThemes.Wpf.PackIcon With {
-            .Kind = MaterialDesignThemes.Wpf.PackIconKind.TableRowAddAfter,
-            .Width = 40,
-            .Height = 30,
-            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#456B2E"))
-        }
+                .Kind = MaterialDesignThemes.Wpf.PackIconKind.TableRowAddAfter,
+                .Width = 40,
+                .Height = 30,
+                .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#456B2E"))
+            }
             addRowButton.Content = addIcon
             AddHandler addRowButton.Click, AddressOf BtnAddSerialRow_Click
             buttonPanel.Children.Add(addRowButton)
 
             ' Remove Row Button
             Dim removeRowButton As New Button With {
-            .Background = Brushes.White,
-            .BorderThickness = New Thickness(0),
-            .Name = "BtnRemoveRow",
-            .Tag = outerStackPanel  ' Pass the row as Tag for easy access
-        }
+                .Background = Brushes.White,
+                .BorderThickness = New Thickness(0),
+                .Name = "BtnRemoveRow",
+                .Tag = outerStackPanel  ' Pass the row as Tag for easy access
+            }
             Dim removeIcon As New MaterialDesignThemes.Wpf.PackIcon With {
-            .Kind = MaterialDesignThemes.Wpf.PackIconKind.TableRowRemove,
-            .Width = 40,
-            .Height = 30,
-            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636"))
-        }
+                .Kind = MaterialDesignThemes.Wpf.PackIconKind.TableRowRemove,
+                .Width = 40,
+                .Height = 30,
+                .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636"))
+            }
             removeRowButton.Content = removeIcon
             AddHandler removeRowButton.Click, AddressOf BtnRemoveSerialRow_Click
             buttonPanel.Children.Add(removeRowButton)
 
             ' Separator Border
             Dim separatorBorder As New Border With {
-            .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
-            .BorderThickness = New Thickness(1),
-            .Height = 30
-        }
+                .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
+                .BorderThickness = New Thickness(1),
+                .Height = 30
+            }
             buttonPanel.Children.Add(separatorBorder)
 
             ' Row Controller Button (we'll keep it but not implement for now)
             Dim rowControllerButton As New Button With {
-            .Background = Brushes.White,
-            .BorderThickness = New Thickness(0),
-            .Name = "BtnRowController"
-        }
+                .Background = Brushes.White,
+                .BorderThickness = New Thickness(0),
+                .Name = "BtnRowController"
+            }
             Dim menuIcon As New MaterialDesignThemes.Wpf.PackIcon With {
-            .Kind = MaterialDesignThemes.Wpf.PackIconKind.MenuDown,
-            .Width = 30,
-            .Height = 30,
-            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
-        }
+                .Kind = MaterialDesignThemes.Wpf.PackIconKind.MenuDown,
+                .Width = 30,
+                .Height = 30,
+                .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
+            }
             rowControllerButton.Content = menuIcon
             ' We'll leave this handler as is for now
             AddHandler rowControllerButton.Click, AddressOf ProductController.BtnRowController_Click
@@ -280,6 +273,12 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Dim container = TryCast(button.Tag, StackPanel)
             If container Is Nothing Then Return
 
+            ' Store existing serial numbers before adding a new row
+            Dim serialValues As New List(Of String)()
+            For Each textBox In ProductController.serialNumberTextBoxes
+                serialValues.Add(textBox.Text)
+            Next
+
             ' Add a new row with index based on current count
             Dim newIndex = container.Children.Count + 1
             AddSerialNumberRow(container, newIndex)
@@ -288,17 +287,22 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             TxtStockUnits.Text = container.Children.Count.ToString()
 
             ' Update our current variation data with the new count
-            Dim currentData = variationManager.GetCurrentVariationData()
+            Dim currentData = ProductController.variationManager.GetCurrentVariationData()
             If currentData IsNot Nothing Then
                 currentData.StockUnits = container.Children.Count
             End If
 
-            ' Scroll to the new row
+            ' Restore the values of existing textboxes
+            For i As Integer = 0 To Math.Min(serialValues.Count - 1, ProductController.serialNumberTextBoxes.Count - 1)
+                ProductController.serialNumberTextBoxes(i).Text = serialValues(i)
+            Next
+
+            ' Scroll to the new row that was added at the bottom
             Dim containerBorder As Border = TryCast(StackPanelSerialRow.Children(1), Border)
             If containerBorder IsNot Nothing Then
                 Dim scrollViewer As ScrollViewer = TryCast(containerBorder.Child, ScrollViewer)
                 If scrollViewer IsNot Nothing Then
-                    ' Scroll to the bottom
+                    ' Scroll to the bottom to show the newly added row
                     scrollViewer.ScrollToEnd()
                 End If
             End If
@@ -311,60 +315,95 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Dim button = TryCast(sender, Button)
             If button Is Nothing Then Return
 
-            ' Get the row panel from the button's Tag property
+            ' Get the row panel directly from the button's Tag property
             Dim rowPanel = TryCast(button.Tag, StackPanel)
             If rowPanel Is Nothing Then Return
 
-            ' Find the parent container
-            Dim parent = FindParentContainer(rowPanel)
-            If parent Is Nothing Then Return
+            ' Find the container that holds all the serial number rows
+            Dim containerBorder As Border = TryCast(StackPanelSerialRow.Children(1), Border)
+            If containerBorder Is Nothing Then Return
 
-            ' Remove the row from its parent
-            Dim rowIndex = parent.Children.IndexOf(rowPanel)
-            If rowIndex >= 0 Then
-                ' Remove the textbox from our list
-                If rowIndex < serialNumberTextBoxes.Count Then
-                    serialNumberTextBoxes.RemoveAt(rowIndex)
+            Dim scrollViewer As ScrollViewer = TryCast(containerBorder.Child, ScrollViewer)
+            If scrollViewer Is Nothing Then Return
+
+            Dim container = TryCast(scrollViewer.Content, StackPanel)
+            If container Is Nothing Then Return
+
+            ' Don't allow removing the last row
+            If container.Children.Count <= 1 Then
+                MessageBox.Show("Cannot remove the last serial number row.", "Information", MessageBoxButton.OK, MessageBoxImage.Information)
+                Return
+            End If
+
+            ' Find the index of this row in the container
+            Dim rowIndex = container.Children.IndexOf(rowPanel)
+
+            ' Store all the current text values from textboxes
+            Dim serialValues As New Dictionary(Of Integer, String)()
+            For i As Integer = 0 To ProductController.serialNumberTextBoxes.Count - 1
+                ' Skip the row being removed
+                If i <> rowIndex Then
+                    serialValues.Add(i, ProductController.serialNumberTextBoxes(i).Text)
                 End If
+            Next
 
-                ' Remove the row from the container
-                parent.Children.Remove(rowPanel)
+            ' Remove the row from the UI
+            container.Children.Remove(rowPanel)
 
-                ' Update the remaining rows' indices and serialNumberTextBoxes list
-                UpdateSerialNumberIndices(parent)
+            ' Rebuild the serialNumberTextBoxes collection
+            ProductController.serialNumberTextBoxes.Clear()
 
-                ' Update the stock units textbox to match the number of rows
-                TxtStockUnits.Text = parent.Children.Count.ToString()
+            ' Find all text boxes in the remaining rows and add them to the collection
+            For i As Integer = 0 To container.Children.Count - 1
+                Dim currentRowPanel = TryCast(container.Children(i), StackPanel)
+                If currentRowPanel IsNot Nothing Then
+                    Dim grid = TryCast(currentRowPanel.Children(0), Grid)
+                    If grid IsNot Nothing Then
+                        Dim textBoxBorder = TryCast(grid.Children(0), Border)
+                        If textBoxBorder IsNot Nothing Then
+                            Dim textBox = TryCast(textBoxBorder.Child, TextBox)
+                            If textBox IsNot Nothing Then
+                                textBox.Name = $"TxtSerial_{i + 1}"
+                                ProductController.serialNumberTextBoxes.Add(textBox)
+                            End If
+                        End If
+                    End If
+                End If
+            Next
 
-                ' Update our current variation data with the new count
-                Dim currentData = variationManager.GetCurrentVariationData()
-                If currentData IsNot Nothing Then
-                    currentData.StockUnits = parent.Children.Count
+            ' Restore the values to the text boxes
+            For i As Integer = 0 To ProductController.serialNumberTextBoxes.Count - 1
+                ' Calculate the original index before removal
+                Dim originalIndex = If(i >= rowIndex, i + 1, i)
+                If serialValues.ContainsKey(originalIndex) Then
+                    ProductController.serialNumberTextBoxes(i).Text = serialValues(originalIndex)
+                End If
+            Next
+
+            ' Update the stock units textbox to match the number of rows
+            TxtStockUnits.Text = container.Children.Count.ToString()
+
+            ' Update our current variation data with the new count and serial numbers
+            Dim currentData = ProductController.variationManager.GetCurrentVariationData()
+            If currentData IsNot Nothing Then
+                currentData.StockUnits = container.Children.Count
+
+                ' Update the serial numbers in the data model
+                If currentData.SerialNumbers IsNot Nothing AndAlso currentData.IncludeSerialNumbers Then
+                    currentData.SerialNumbers.Clear()
+                    For Each textBox In ProductController.serialNumberTextBoxes
+                        currentData.SerialNumbers.Add(textBox.Text)
+                    Next
                 End If
             End If
         End Sub
 
         ''' <summary>
-        ''' Finds the parent container of a row panel
-        ''' </summary>
-        Private Function FindParentContainer(rowPanel As StackPanel) As StackPanel
-            ' Find the ScrollViewer and then the container
-            Dim containerBorder As Border = TryCast(StackPanelSerialRow.Children(1), Border)
-            If containerBorder Is Nothing Then Return Nothing
-
-            Dim scrollViewer As ScrollViewer = TryCast(containerBorder.Child, ScrollViewer)
-            If scrollViewer Is Nothing Then Return Nothing
-
-            Dim container As StackPanel = TryCast(scrollViewer.Content, StackPanel)
-            Return container
-        End Function
-
-        ''' <summary>
         ''' Updates the indices of all serial number rows after a removal
         ''' </summary>
         Private Sub UpdateSerialNumberIndices(container As StackPanel)
-            ' Clear and rebuild the serialNumberTextBoxes list
-            serialNumberTextBoxes.Clear()
+            ' Clear the serialNumberTextBoxes list
+            ProductController.serialNumberTextBoxes.Clear()
 
             ' Go through each row and update indices
             For i As Integer = 0 To container.Children.Count - 1
@@ -382,7 +421,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                                 ' Update the name
                                 textBox.Name = $"TxtSerial_{i + 1}"
                                 ' Add to our list
-                                serialNumberTextBoxes.Add(textBox)
+                                ProductController.serialNumberTextBoxes.Add(textBox)
                             End If
                         End If
                     End If
@@ -398,7 +437,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             UpdateSerialNumberPanelVisibility()
 
             ' Update the current variation data
-            Dim currentData = variationManager.GetCurrentVariationData()
+            Dim currentData = ProductController.variationManager.GetCurrentVariationData()
             If currentData IsNot Nothing Then
                 currentData.IncludeSerialNumbers = CheckBoxSerialNumber.IsChecked
 
@@ -425,7 +464,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         ''' </summary>
         Private Sub LoadSerialNumberData()
             ' Get the current variation data
-            Dim currentData = variationManager.GetCurrentVariationData()
+            Dim currentData = ProductController.variationManager.GetCurrentVariationData()
 
             ' Set the data to controls
             If currentData IsNot Nothing Then
@@ -441,8 +480,8 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
                     ' Load serial numbers into textboxes
                     If currentData.SerialNumbers IsNot Nothing AndAlso currentData.SerialNumbers.Count > 0 Then
-                        For i As Integer = 0 To Math.Min(currentData.SerialNumbers.Count - 1, serialNumberTextBoxes.Count - 1)
-                            serialNumberTextBoxes(i).Text = currentData.SerialNumbers(i)
+                        For i As Integer = 0 To Math.Min(currentData.SerialNumbers.Count - 1, ProductController.serialNumberTextBoxes.Count - 1)
+                            ProductController.serialNumberTextBoxes(i).Text = currentData.SerialNumbers(i)
                         Next
                     End If
                 End If
@@ -469,8 +508,8 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             CreateVariationTabs()
 
             ' Select the first variation by default
-            If variationManager.GetAllVariationData().Count > 0 Then
-                Dim firstKey = variationManager.GetAllVariationData().Keys.First()
+            If ProductController.variationManager.GetAllVariationData().Count > 0 Then
+                Dim firstKey = ProductController.variationManager.GetAllVariationData().Keys.First()
                 SelectVariation(firstKey)
             End If
         End Sub
@@ -507,10 +546,10 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 Dim combinationName = String.Join(", ", combo)
 
                 ' Add the combination with default name
-                variationManager.AddVariationCombination(combinationName)
+                ProductController.variationManager.AddVariationCombination(combinationName)
 
                 ' Get the newly added variation and set default values
-                Dim newVariation = variationManager.GetVariationData(combinationName)
+                Dim newVariation = ProductController.variationManager.GetVariationData(combinationName)
                 If newVariation IsNot Nothing Then
                     ' Set default values as specified
                     newVariation.RetailPrice = 0             ' Selling price set to 0
@@ -565,26 +604,26 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             ' Create a ScrollViewer for horizontal scrolling
             Dim scrollViewer As New ScrollViewer With {
-        .HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
-        .VerticalScrollBarVisibility = ScrollBarVisibility.Disabled,
-        .Padding = New Thickness(0, 0, 0, 5),
-        .Background = Brushes.Transparent
-    }
+            .HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+            .VerticalScrollBarVisibility = ScrollBarVisibility.Disabled,
+            .Padding = New Thickness(0, 0, 0, 5),
+            .Background = Brushes.Transparent
+        }
 
             ' Create a StackPanel for the buttons
             Dim buttonPanel As New StackPanel With {
-        .Orientation = Orientation.Horizontal,
-        .Background = Brushes.Transparent
-    }
+            .Orientation = Orientation.Horizontal,
+            .Background = Brushes.Transparent
+        }
 
             ' Add buttons for each variation combination
-            For Each kvp In variationManager.GetAllVariationData()
+            For Each kvp In ProductController.variationManager.GetAllVariationData()
                 Dim combinationName = kvp.Key
 
                 ' Create a Grid for the tab layout
                 Dim grid As New Grid() With {
-            .Background = Brushes.Transparent
-        }
+                .Background = Brushes.Transparent
+            }
 
                 ' Define columns: one narrow for the selection indicator, one for content
                 grid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(5)})
@@ -592,32 +631,32 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
                 ' Create selection indicator rectangle
                 Dim selectionIndicator As New Rectangle With {
-            .Fill = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
-            .Visibility = Visibility.Collapsed
-        }
+                .Fill = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
+                .Visibility = Visibility.Collapsed
+            }
                 Grid.SetColumn(selectionIndicator, 0)
                 grid.Children.Add(selectionIndicator)
 
                 ' Create text block for the tab text with larger font size
                 Dim textBlock As New TextBlock With {
-            .Text = combinationName,
-            .Margin = New Thickness(10, 0, 10, 0),
-            .VerticalAlignment = VerticalAlignment.Center,
-            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AAAAAA")),
-            .FontSize = 14, ' Increased font size from default
-            .FontFamily = CType(FindResource("Lexend"), FontFamily)
-        }
+                .Text = combinationName,
+                .Margin = New Thickness(10, 0, 10, 0),
+                .VerticalAlignment = VerticalAlignment.Center,
+                .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AAAAAA")),
+                .FontSize = 14, ' Increased font size from default
+                .FontFamily = CType(FindResource("Lexend"), FontFamily)
+            }
                 Grid.SetColumn(textBlock, 1)
                 grid.Children.Add(textBlock)
 
                 ' Create a button for this variation with transparent background
                 Dim btn As New Button With {
-            .Content = grid,
-            .BorderThickness = New Thickness(0),
-            .Style = CType(FindResource("RoundedButtonStyle"), Style),
-            .Tag = combinationName,
-            .Background = Brushes.Transparent
-        }
+                .Content = grid,
+                .BorderThickness = New Thickness(0),
+                .Style = CType(FindResource("RoundedButtonStyle"), Style),
+                .Tag = combinationName,
+                .Background = Brushes.Transparent
+            }
 
                 ' Store references to the visual elements for later updating
                 btn.Resources.Add("SelectionIndicator", selectionIndicator)
@@ -709,7 +748,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             SelectedVariationTitle.Text = "Selected Variation: " & combinationName
 
             ' Select this variation in the manager
-            variationManager.SelectVariationCombination(combinationName)
+            ProductController.variationManager.SelectVariationCombination(combinationName)
 
             ' Load the data into existing form fields
             LoadVariationFormData()
@@ -723,7 +762,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         ''' </summary>
         Private Sub LoadVariationFormData()
             ' Get the current variation data
-            Dim currentData = variationManager.GetCurrentVariationData()
+            Dim currentData = ProductController.variationManager.GetCurrentVariationData()
 
             ' Set the data to the existing form fields
             If currentData IsNot Nothing Then
@@ -746,10 +785,10 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         Private Function ValidateFormData() As Boolean
             ' Basic validation for required fields
             If String.IsNullOrWhiteSpace(TxtRetailPrice.Text) OrElse
-               String.IsNullOrWhiteSpace(TxtPurchaseOrder.Text) OrElse
-               String.IsNullOrWhiteSpace(TxtDefaultTax.Text) OrElse
-               String.IsNullOrWhiteSpace(TxtDiscountRate.Text) OrElse
-               String.IsNullOrWhiteSpace(TxtAlertQuantity.Text) Then
+                   String.IsNullOrWhiteSpace(TxtPurchaseOrder.Text) OrElse
+                   String.IsNullOrWhiteSpace(TxtDefaultTax.Text) OrElse
+                   String.IsNullOrWhiteSpace(TxtDiscountRate.Text) OrElse
+                   String.IsNullOrWhiteSpace(TxtAlertQuantity.Text) Then
 
                 MessageBox.Show("Please fill in all required fields.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Return False
@@ -760,10 +799,10 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Dim alertQuantity As Integer
 
             If Not Decimal.TryParse(TxtRetailPrice.Text, retailPrice) OrElse
-               Not Decimal.TryParse(TxtPurchaseOrder.Text, purchaseOrder) OrElse
-               Not Decimal.TryParse(TxtDefaultTax.Text, defaultTax) OrElse
-               Not Decimal.TryParse(TxtDiscountRate.Text, discountRate) OrElse
-               Not Integer.TryParse(TxtAlertQuantity.Text, alertQuantity) Then
+                   Not Decimal.TryParse(TxtPurchaseOrder.Text, purchaseOrder) OrElse
+                   Not Decimal.TryParse(TxtDefaultTax.Text, defaultTax) OrElse
+                   Not Decimal.TryParse(TxtDiscountRate.Text, discountRate) OrElse
+                   Not Integer.TryParse(TxtAlertQuantity.Text, alertQuantity) Then
 
                 MessageBox.Show("Please enter valid numeric values.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Return False
@@ -779,7 +818,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             If CheckBoxSerialNumber.IsChecked Then
                 Dim stockUnits As Integer = 0
                 If Integer.TryParse(TxtStockUnits.Text, stockUnits) AndAlso stockUnits > 0 Then
-                    For Each textBox In serialNumberTextBoxes
+                    For Each textBox In ProductController.serialNumberTextBoxes
                         If String.IsNullOrWhiteSpace(textBox.Text) Then
                             MessageBox.Show("Please enter all serial numbers.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                             Return False
@@ -809,7 +848,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
         Private Sub SaveCurrentVariationData()
             ' Get the current variation data
-            Dim currentData = variationManager.GetCurrentVariationData()
+            Dim currentData = ProductController.variationManager.GetCurrentVariationData()
             If currentData IsNot Nothing Then
                 ' Get updated values from existing form fields
                 Decimal.TryParse(TxtRetailPrice.Text, currentData.RetailPrice)
@@ -837,7 +876,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 ' Get serial numbers from textboxes if enabled
                 If CheckBoxSerialNumber.IsChecked Then
                     currentData.SerialNumbers = New List(Of String)()
-                    For Each textBox In serialNumberTextBoxes
+                    For Each textBox In ProductController.serialNumberTextBoxes
                         currentData.SerialNumbers.Add(textBox.Text)
                     Next
                 End If
