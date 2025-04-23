@@ -517,7 +517,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         ''' <summary>
         ''' Updates the visibility of serial number panel based on checkbox state
         ''' </summary>
-        Private Sub UpdateSerialNumberPanelVisibility()
+        Public Sub UpdateSerialNumberPanelVisibility()
             If CheckBoxSerialNumber.IsChecked Then
                 StackPanelSerialRow.Visibility = Visibility.Visible
             Else
@@ -960,7 +960,32 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         End Sub
 
         Private Sub BtnBack(sender As Object, e As RoutedEventArgs)
-            ' Navigate back to AddNewProducts
+            ' Save current serial number values first
+            SaveSerialNumberValues()
+
+            ' Save the currently displayed variation
+            SaveCurrentVariationData()
+
+            ' Ask user if they want to save all changes before navigating back
+            Dim result As MessageBoxResult = MessageBox.Show("Do you want to save all variation data before going back?",
+                                                     "Save Changes",
+                                                     MessageBoxButton.YesNoCancel,
+                                                     MessageBoxImage.Question)
+
+            If result = MessageBoxResult.Cancel Then
+                ' User canceled, don't navigate away
+                Return
+            ElseIf result = MessageBoxResult.Yes Then
+                ' Validate data before proceeding
+                If Not ValidateFormData() Then
+                    Return ' Don't navigate away if validation fails
+                End If
+
+                ' Show confirmation message
+                MessageBox.Show("Variation details saved successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+            End If
+
+            ' Now navigate back to AddNewProducts
             Dim addNewProducts As New Views.Stocks.ItemManager.NewProduct.AddNewProducts()
             addNewProducts.Show()
             Me.Close()

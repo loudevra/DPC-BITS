@@ -46,11 +46,21 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
         Private Sub InitializeUIElements()
             ' Initialize UI state
-            Toggle.IsChecked = False
-            ProductController.VariationChecker(Toggle, StackPanelVariation, StackPanelWarehouse,
-                StackPanelRetailPrice, StackPanelOrderPrice, StackPanelTaxRate,
-                StackPanelDiscountRate, BorderStocks, StackPanelAlertQuantity,
-                StackPanelStockUnits, OuterStackPanel)
+            If ProductController.IsVariation = Nothing Or ProductController.IsVariation = False Then
+                Toggle.IsChecked = False
+                ProductController.VariationChecker(Toggle, StackPanelVariation, StackPanelWarehouse,
+                    StackPanelRetailPrice, StackPanelOrderPrice, StackPanelTaxRate,
+                    StackPanelDiscountRate, BorderStocks, StackPanelAlertQuantity,
+                    StackPanelStockUnits, OuterStackPanel)
+
+            ElseIf ProductController.IsVariation = True Then
+                Toggle.IsChecked = True
+                ProductController.VariationChecker(Toggle, StackPanelVariation, StackPanelWarehouse,
+                    StackPanelRetailPrice, StackPanelOrderPrice, StackPanelTaxRate,
+                    StackPanelDiscountRate, BorderStocks, StackPanelAlertQuantity,
+                    StackPanelStockUnits, OuterStackPanel)
+            End If
+
 
             CheckBoxSerialNumber.IsChecked = True
             ProductController.SerialNumberChecker(CheckBoxSerialNumber, StackPanelSerialRow,
