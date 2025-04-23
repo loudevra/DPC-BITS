@@ -3,7 +3,6 @@ Imports System.Security.Cryptography
 
 Namespace DPC.Data.Model
     Public Class Product
-
         Public Property ProductImage As String
         Public Property ProductID As String
         Public Property ProductName As String
@@ -20,6 +19,13 @@ Namespace DPC.Data.Model
         Public Property MeasurementUnit As String
         Public Property CreatedAt As DateTime
         Public Property ModifiedAt As DateTime
+    End Class
+
+    ' Helper class to store image data
+    Public Class ImageData
+        Public Property Base64String As String
+        Public Property FileExtension As String
+        Public Property FileName As String
     End Class
 
     ' Represents a single variation (e.g., "Color", "Size")
@@ -47,6 +53,10 @@ Namespace DPC.Data.Model
         ' Array of individual variation options that make up this combination
         Public Property VariationOptions As String()
 
+
+        Public Property WarehouseId As Integer
+        Public Property SelectedWarehouseIndex As Integer
+
         ' Properties that can be different per variation
         Public Property RetailPrice As Decimal
         Public Property PurchaseOrder As Decimal
@@ -64,7 +74,7 @@ Namespace DPC.Data.Model
         ' Common constructor
         Public Sub New()
             SerialNumbers = New List(Of String)()
-            IncludeSerialNumbers = False
+            IncludeSerialNumbers = True
         End Sub
 
         ' Constructor with combination name
@@ -90,56 +100,4 @@ Namespace DPC.Data.Model
         End Function
     End Class
 
-    ' Manager class to handle all variation data for a product
-    Public Class ProductVariationManager
-        ' Dictionary to store variation data, keyed by combination name
-        Private Property VariationDataDict As Dictionary(Of String, ProductVariationData)
-
-        ' Currently selected variation combination
-        Public Property CurrentCombination As String
-
-        ' Constructor
-        Public Sub New()
-            VariationDataDict = New Dictionary(Of String, ProductVariationData)()
-            CurrentCombination = String.Empty
-        End Sub
-
-        ' Add a new variation combination
-        Public Sub AddVariationCombination(combinationName As String)
-            If Not VariationDataDict.ContainsKey(combinationName) Then
-                VariationDataDict.Add(combinationName, New ProductVariationData(combinationName))
-            End If
-        End Sub
-
-        ' Get variation data for a specific combination
-        Public Function GetVariationData(combinationName As String) As ProductVariationData
-            If VariationDataDict.ContainsKey(combinationName) Then
-                Return VariationDataDict(combinationName)
-            Else
-                ' Create and add if doesn't exist
-                Dim newData As New ProductVariationData(combinationName)
-                VariationDataDict.Add(combinationName, newData)
-                Return newData
-            End If
-        End Function
-
-        ' Select a variation combination
-        Public Sub SelectVariationCombination(combinationName As String)
-            CurrentCombination = combinationName
-        End Sub
-
-        ' Get currently selected variation data
-        Public Function GetCurrentVariationData() As ProductVariationData
-            If String.IsNullOrEmpty(CurrentCombination) Then
-                Return Nothing
-            End If
-
-            Return GetVariationData(CurrentCombination)
-        End Function
-
-        ' Get all variation data
-        Public Function GetAllVariationData() As Dictionary(Of String, ProductVariationData)
-            Return VariationDataDict
-        End Function
-    End Class
 End Namespace

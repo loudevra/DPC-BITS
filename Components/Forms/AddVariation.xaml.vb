@@ -9,11 +9,11 @@ Namespace DPC.Components.Forms
     Public Class AddVariation
         Inherits UserControl
 
+#Region "Fields and Properties"
         Public Event close(sender As Object, e As RoutedEventArgs)
         Private variationCount As Integer = 1
         Private Const MaxVariations As Integer = 2
         Private ChangeIcon As Boolean = False
-
 
         ' Add data model properties for saving state
         Private _variations As New List(Of ProductVariation)
@@ -26,7 +26,9 @@ Namespace DPC.Components.Forms
                 Return _savedVariations
             End Get
         End Property
+#End Region
 
+#Region "Initialization"
         Public Sub New()
             InitializeComponent()
 
@@ -39,7 +41,9 @@ Namespace DPC.Components.Forms
                 AddNewVariation()
             End If
         End Sub
+#End Region
 
+#Region "Variation Management"
         ' Method to load saved variations
         Private Sub LoadSavedVariations()
             ' Clear the UI container first
@@ -64,6 +68,68 @@ Namespace DPC.Components.Forms
             RecalculateVariationCount()
         End Sub
 
+        Private Sub AddNewVariation()
+            ' Create a new ProductVariation object
+            Dim newVariation As New ProductVariation With {
+                .VariationName = $"Variation {variationCount}",
+                .EnableImage = True,
+                .Options = New List(Of VariationOption)()
+            }
+
+            ' Add a default option
+            newVariation.Options.Add(New VariationOption With {.OptionName = "Option 1"})
+
+            ' Create the UI panel for this variation
+            Dim variationPanel = CreateVariationPanel(newVariation)
+
+            ' Add the new variation panel to the main container
+            MainVariationContainer.Children.Add(variationPanel)
+
+            ' Increment the variation counter for the next variation
+            variationCount += 1
+
+            ' Save variations after adding a new one
+            SaveVariations()
+        End Sub
+
+        ' Add this method to recalculate variationCount after deletion
+        Private Sub RecalculateVariationCount()
+            ' Find the highest variation number used
+            Dim highestVariationNumber As Integer = 0
+
+            For Each child As UIElement In MainVariationContainer.Children
+                If TypeOf child Is StackPanel Then
+                    Dim panel As StackPanel = DirectCast(child, StackPanel)
+                    If panel.Tag IsNot Nothing AndAlso TypeOf panel.Tag Is Integer Then
+                        Dim panelNumber As Integer = DirectCast(panel.Tag, Integer)
+                        If panelNumber > highestVariationNumber Then
+                            highestVariationNumber = panelNumber
+                        End If
+                    End If
+                End If
+            Next
+
+            ' Set variationCount to be one more than the highest current number
+            variationCount = highestVariationNumber + 1
+
+            ' Make sure variationCount doesn't exceed MaxVariations
+            If variationCount > MaxVariations Then
+                variationCount = MaxVariations
+            End If
+        End Sub
+
+        ' Add this method to handle the "Add Variation" button click
+        Private Sub BtnAddVariation_Click(sender As Object, e As RoutedEventArgs)
+            ' Check if the current number of variations is less than the maximum allowed
+            If MainVariationContainer.Children.Count < MaxVariations Then
+                AddNewVariation()
+            Else
+                MessageBox.Show("You can only add up to 2 variations.", "Limit Reached", MessageBoxButton.OK, MessageBoxImage.Information)
+            End If
+        End Sub
+#End Region
+
+#Region "UI Creation and Updates"
         ' Helper method to create a variation panel from data
         ' Update the CreateVariationPanel method to handle image data
         Private Function CreateVariationPanel(variation As ProductVariation) As StackPanel
@@ -278,182 +344,39 @@ Namespace DPC.Components.Forms
             Return variationPanel
         End Function
 
-
-
-
-        Private Sub BtnVariationDetails(sender As Object, e As RoutedEventArgs)
-            ' Save variations before navigating
-            SaveVariations()
-
-            ' Notify the parent window to update its variation text
-            Dim parentWindow = Window.GetWindow(Me)
-            If parentWindow IsNot Nothing AndAlso TypeOf parentWindow Is DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts Then
-                Dim addNewProductsWindow = DirectCast(parentWindow, DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts)
-                addNewProductsWindow.LoadProductVariations()
-            End If
-
-            Dim VariationDetails As New Views.Stocks.ItemManager.NewProduct.ProductVariationDetails()
-            VariationDetails.Show()
-
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
-        End Sub
-
-        ' Also update the ClosePopup method to ensure variations are saved and the display is updated
-        Public Sub ClosePopup(sender As Object, e As RoutedEventArgs)
-            ' Save variations before closing
-            SaveVariations()
-
-            ' Notify the parent window to update its variation text
-            Dim parentWindow = Window.GetWindow(Me)
-            If parentWindow IsNot Nothing AndAlso TypeOf parentWindow Is DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts Then
-                Dim addNewProductsWindow = DirectCast(parentWindow, DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts)
-                addNewProductsWindow.LoadProductVariations()
-            End If
-
-            ' Raise the close event
-            RaiseEvent close(Me, e)
-            PopupHelper.ClosePopup()
-        End Sub
-
-        ' Method to save all variations data
-        Private Sub SaveVariations()
-            ' Clear the current saved variations
-            _savedVariations.Clear()
-
-            ' Loop through each variation panel in the UI
-            For Each child As UIElement In MainVariationContainer.Children
-                If TypeOf child Is StackPanel Then
-                    Dim variationPanel As StackPanel = DirectCast(child, StackPanel)
-
-                    ' Create new variation object
-                    Dim variation As New ProductVariation With {
-                .Options = New List(Of VariationOption)()
-            }
-
-                    ' Extract variation name
-                    Dim nameBorder As Border = TryCast(variationPanel.Children(1), Border)
-                    If nameBorder IsNot Nothing Then
-                        Dim nameGrid As Grid = TryCast(nameBorder.Child, Grid)
-                        If nameGrid IsNot Nothing Then
-                            For Each gridChild As UIElement In nameGrid.Children
-                                If TypeOf gridChild Is TextBox Then
-                                    variation.VariationName = DirectCast(gridChild, TextBox).Text
-                                    Exit For
-                                End If
-                            Next
-                        End If
-                    End If
-
-                    ' Extract enabled image state
-                    Dim toggleGrid As Grid = TryCast(variationPanel.Children(2), Grid)
-                    If toggleGrid IsNot Nothing Then
-                        For Each gridChild As UIElement In toggleGrid.Children
-                            If TypeOf gridChild Is ToggleButton Then
-                                variation.EnableImage = DirectCast(gridChild, ToggleButton).IsChecked
-                                Exit For
-                            End If
-                        Next
-                    End If
-
-                    ' Extract options
-                    Dim scrollViewer As ScrollViewer = TryCast(variationPanel.Children(4), ScrollViewer)
-                    If scrollViewer IsNot Nothing Then
-                        Dim optionsContainer As StackPanel = TryCast(scrollViewer.Content, StackPanel)
-                        If optionsContainer IsNot Nothing Then
-                            For Each optionChild As UIElement In optionsContainer.Children
-                                If TypeOf optionChild Is Grid Then
-                                    Dim optionGrid As Grid = DirectCast(optionChild, Grid)
-                                    Dim optionName As String = String.Empty
-                                    Dim imageData As ImageData = TryCast(optionGrid.Tag, ImageData)
-
-                                    ' Find the text box for option name
-                                    For Each gridChild As UIElement In optionGrid.Children
-                                        If TypeOf gridChild Is TextBox Then
-                                            Dim optionTextBox As TextBox = DirectCast(gridChild, TextBox)
-                                            optionName = optionTextBox.Text
-                                            Exit For
-                                        End If
-                                    Next
-
-                                    ' Create new option with image data
-                                    Dim opt As New VariationOption With {
-                                .OptionName = optionName
-                            }
-
-                                    ' Add image data if available
-                                    If imageData IsNot Nothing Then
-                                        opt.ImageBase64 = imageData.Base64String
-                                        opt.ImageFileName = imageData.FileName
-                                        opt.ImageFileExtension = imageData.FileExtension
-                                    End If
-
-                                    ' Add to options list
-                                    variation.Options.Add(opt)
-                                End If
-                            Next
-                        End If
-                    End If
-
-                    ' Add the variation to the saved list
-                    _savedVariations.Add(variation)
-                End If
-            Next
-        End Sub
-
-        Private Sub AddNewVariation()
-            ' Create a new ProductVariation object
-            Dim newVariation As New ProductVariation With {
-                .VariationName = $"Variation {variationCount}",
-                .EnableImage = True,
-                .Options = New List(Of VariationOption)()
-            }
-
-            ' Add a default option
-            newVariation.Options.Add(New VariationOption With {.OptionName = "Option"})
-
-            ' Create the UI panel for this variation
-            Dim variationPanel = CreateVariationPanel(newVariation)
-
-            ' Add the new variation panel to the main container
-            MainVariationContainer.Children.Add(variationPanel)
-
-            ' Increment the variation counter for the next variation
-            variationCount += 1
-
-            ' Save variations after adding a new one
-            SaveVariations()
-        End Sub
-
-        ' Add this method to recalculate variationCount after deletion
-        Private Sub RecalculateVariationCount()
-            ' Find the highest variation number used
-            Dim highestVariationNumber As Integer = 0
-
-            For Each child As UIElement In MainVariationContainer.Children
-                If TypeOf child Is StackPanel Then
-                    Dim panel As StackPanel = DirectCast(child, StackPanel)
-                    If panel.Tag IsNot Nothing AndAlso TypeOf panel.Tag Is Integer Then
-                        Dim panelNumber As Integer = DirectCast(panel.Tag, Integer)
-                        If panelNumber > highestVariationNumber Then
-                            highestVariationNumber = panelNumber
-                        End If
-                    End If
-                End If
-            Next
-
-            ' Set variationCount to be one more than the highest current number
-            variationCount = highestVariationNumber + 1
-
-            ' Make sure variationCount doesn't exceed MaxVariations
-            If variationCount > MaxVariations Then
-                variationCount = MaxVariations
-            End If
-        End Sub
-
         ' Update the AddOptionToPanel method to handle image data
+        ' Update the AddOptionToPanel method to handle proper option numbering
         Private Sub AddOptionToPanel(targetPanel As StackPanel, Optional optionData As VariationOption = Nothing)
-            Dim optionName As String = "Option"
+            ' Find the highest option number in the current panel
+            Dim highestOptionNumber As Integer = 0
+
+            For Each child As UIElement In targetPanel.Children
+                If TypeOf child Is Grid Then
+                    Dim grid As Grid = DirectCast(child, Grid)
+                    For Each gridChild As UIElement In grid.Children
+                        If TypeOf gridChild Is TextBox Then
+                            Dim textBox As TextBox = DirectCast(gridChild, TextBox)
+                            Dim text As String = textBox.Text
+                            ' Extract number from "Option X" format
+                            If text.StartsWith("Option ") Then
+                                Dim numStr As String = text.Substring(7)
+                                Dim num As Integer
+                                If Integer.TryParse(numStr, num) Then
+                                    If num > highestOptionNumber Then
+                                        highestOptionNumber = num
+                                    End If
+                                End If
+                            End If
+                            Exit For
+                        End If
+                    Next
+                End If
+            Next
+
+            ' Next option number should be one higher than current highest
+            Dim optionCount As Integer = highestOptionNumber + 1
+
+            Dim optionName As String = $"Option {optionCount}"
             Dim imageData As New ImageData()
 
             ' Use provided option data if available
@@ -468,6 +391,7 @@ Namespace DPC.Components.Forms
                 End If
             End If
 
+            ' Rest of the method remains unchanged
             ' Create Grid for option row
             Dim optionGrid As New Grid With {.Margin = New Thickness(0, 0, 0, 10)}
 
@@ -632,64 +556,129 @@ Namespace DPC.Components.Forms
             imageStack.Children.Add(packIcon)
             imageBorder.Child = imageStack
         End Sub
+#End Region
 
+#Region "Data Persistence"
+        ' Method to save all variations data
+        Private Sub SaveVariations()
+            ' Clear the current saved variations
+            _savedVariations.Clear()
 
-        ' New method to handle image selection
-        Private Sub SelectImage(optionGrid As Grid, imageBorder As Border)
-            ' Create OpenFileDialog to select an image
-            Dim openFileDialog As New OpenFileDialog With {
-                .Filter = "Image files (*.jpg, *.jpeg, *.png)|*.jpg;*.jpeg;*.png",
-                .Title = "Select an Image"
+            ' Loop through each variation panel in the UI
+            For Each child As UIElement In MainVariationContainer.Children
+                If TypeOf child Is StackPanel Then
+                    Dim variationPanel As StackPanel = DirectCast(child, StackPanel)
+
+                    ' Create new variation object
+                    Dim variation As New ProductVariation With {
+                .Options = New List(Of VariationOption)()
             }
 
-            ' Show the dialog and get the result
-            If openFileDialog.ShowDialog() = True Then
-                Try
-                    ' Get selected file path
-                    Dim filePath As String = openFileDialog.FileName
+                    ' Extract variation name
+                    Dim nameBorder As Border = TryCast(variationPanel.Children(1), Border)
+                    If nameBorder IsNot Nothing Then
+                        Dim nameGrid As Grid = TryCast(nameBorder.Child, Grid)
+                        If nameGrid IsNot Nothing Then
+                            For Each gridChild As UIElement In nameGrid.Children
+                                If TypeOf gridChild Is TextBox Then
+                                    variation.VariationName = DirectCast(gridChild, TextBox).Text
+                                    Exit For
+                                End If
+                            Next
+                        End If
+                    End If
 
-                    ' Convert image to Base64 string
-                    Dim base64String As String = Base64Utility.EncodeFileToBase64(filePath)
-                    Dim fileExtension As String = Base64Utility.GetFileExtension(filePath)
+                    ' Extract enabled image state
+                    Dim toggleGrid As Grid = TryCast(variationPanel.Children(2), Grid)
+                    If toggleGrid IsNot Nothing Then
+                        For Each gridChild As UIElement In toggleGrid.Children
+                            If TypeOf gridChild Is ToggleButton Then
+                                variation.EnableImage = DirectCast(gridChild, ToggleButton).IsChecked
+                                Exit For
+                            End If
+                        Next
+                    End If
 
-                    ' Store image data in the grid's Tag property
-                    Dim imgData As ImageData = DirectCast(optionGrid.Tag, ImageData)
-                    imgData.Base64String = base64String
-                    imgData.FileExtension = fileExtension
-                    imgData.FileName = Path.GetFileName(filePath)
-                    optionGrid.Tag = imgData
+                    ' Extract options
+                    Dim scrollViewer As ScrollViewer = TryCast(variationPanel.Children(4), ScrollViewer)
+                    If scrollViewer IsNot Nothing Then
+                        Dim optionsContainer As StackPanel = TryCast(scrollViewer.Content, StackPanel)
+                        If optionsContainer IsNot Nothing Then
+                            For Each optionChild As UIElement In optionsContainer.Children
+                                If TypeOf optionChild Is Grid Then
+                                    Dim optionGrid As Grid = DirectCast(optionChild, Grid)
+                                    Dim optionName As String = String.Empty
+                                    Dim imageData As ImageData = TryCast(optionGrid.Tag, ImageData)
 
-                    ' Update the image display
-                    UpdateImageDisplay(imageBorder, filePath)
+                                    ' Find the text box for option name
+                                    For Each gridChild As UIElement In optionGrid.Children
+                                        If TypeOf gridChild Is TextBox Then
+                                            Dim optionTextBox As TextBox = DirectCast(gridChild, TextBox)
+                                            optionName = optionTextBox.Text
+                                            Exit For
+                                        End If
+                                    Next
 
-                    ' Save after image selection
-                    SaveVariations()
+                                    ' Create new option with image data
+                                    Dim opt As New VariationOption With {
+                                .OptionName = optionName
+                            }
 
-                Catch ex As Exception
-                    MessageBox.Show("Error loading image: " & ex.Message, "Image Error", MessageBoxButton.OK, MessageBoxImage.Error)
-                End Try
+                                    ' Add image data if available
+                                    If imageData IsNot Nothing Then
+                                        opt.ImageBase64 = imageData.Base64String
+                                        opt.ImageFileName = imageData.FileName
+                                        opt.ImageFileExtension = imageData.FileExtension
+                                    End If
+
+                                    ' Add to options list
+                                    variation.Options.Add(opt)
+                                End If
+                            Next
+                        End If
+                    End If
+
+                    ' Add the variation to the saved list
+                    _savedVariations.Add(variation)
+                End If
+            Next
+        End Sub
+#End Region
+
+#Region "Event Handlers"
+        Private Sub BtnVariationDetails(sender As Object, e As RoutedEventArgs)
+            ' Save variations before navigating
+            SaveVariations()
+
+            ' Notify the parent window to update its variation text
+            Dim parentWindow = Window.GetWindow(Me)
+            If parentWindow IsNot Nothing AndAlso TypeOf parentWindow Is DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts Then
+                Dim addNewProductsWindow = DirectCast(parentWindow, DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts)
+                addNewProductsWindow.LoadProductVariations()
             End If
+
+            Dim VariationDetails As New Views.Stocks.ItemManager.NewProduct.ProductVariationDetails()
+            VariationDetails.Show()
+
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
         End Sub
 
-        ' New method to update the image display
-        Private Sub UpdateImageDisplay(imageBorder As Border, imagePath As String)
-            ' Create a new Image control
-            Dim img As New System.Windows.Controls.Image With {
-                .Stretch = Stretch.Uniform
-            }
+        ' Also update the ClosePopup method to ensure variations are saved and the display is updated
+        Public Sub ClosePopup(sender As Object, e As RoutedEventArgs)
+            ' Save variations before closing
+            SaveVariations()
 
-            ' Create BitmapImage from file
-            Dim bitmap As New BitmapImage()
-            bitmap.BeginInit()
-            bitmap.UriSource = New Uri(imagePath)
-            bitmap.CacheOption = BitmapCacheOption.OnLoad ' Load image right away and close the file
-            bitmap.EndInit()
+            ' Notify the parent window to update its variation text
+            Dim parentWindow = Window.GetWindow(Me)
+            If parentWindow IsNot Nothing AndAlso TypeOf parentWindow Is DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts Then
+                Dim addNewProductsWindow = DirectCast(parentWindow, DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts)
+                addNewProductsWindow.LoadProductVariations()
+            End If
 
-            ' Set the image source
-            img.Source = bitmap
-
-            ' Replace the content of the border with the image
-            imageBorder.Child = img
+            ' Raise the close event
+            RaiseEvent close(Me, e)
+            PopupHelper.ClosePopup()
         End Sub
 
         Private Sub BtnEditOption(sender As Object, e As RoutedEventArgs)
@@ -749,22 +738,6 @@ Namespace DPC.Components.Forms
             End If
         End Sub
 
-        Private Function EditFunction(TxtBoxName As TextBox, shouldToggle As Boolean) As Boolean
-            If shouldToggle Then
-                TxtBoxName.IsReadOnly = Not TxtBoxName.IsReadOnly
-            End If
-
-            If TxtBoxName.IsReadOnly Then
-                ChangeIcon = True
-                Return ChangeIcon
-            Else
-                ChangeIcon = False
-                TxtBoxName.Focus()
-                TxtBoxName.SelectAll()
-                Return ChangeIcon
-            End If
-        End Function
-
         Private Sub Toggle_CheckedChanged(sender As Object, e As RoutedEventArgs)
             Dim toggle As ToggleButton = TryCast(sender, ToggleButton)
             If toggle Is Nothing Then Exit Sub
@@ -791,23 +764,66 @@ Namespace DPC.Components.Forms
             ' Save after toggling image visibility
             SaveVariations()
         End Sub
+#End Region
 
-        ' Add this method to handle the "Add Variation" button click
-        Private Sub BtnAddVariation_Click(sender As Object, e As RoutedEventArgs)
-            ' Check if the current number of variations is less than the maximum allowed
-            If MainVariationContainer.Children.Count < MaxVariations Then
-                AddNewVariation()
-            Else
-                MessageBox.Show("You can only add up to 2 variations.", "Limit Reached", MessageBoxButton.OK, MessageBoxImage.Information)
+#Region "Image Processing"
+        ' New method to handle image selection
+        Private Sub SelectImage(optionGrid As Grid, imageBorder As Border)
+            ' Create OpenFileDialog to select an image
+            Dim openFileDialog As New OpenFileDialog With {
+                .Filter = "Image files (*.jpg, *.jpeg, *.png)|*.jpg;*.jpeg;*.png",
+                .Title = "Select an Image"
+            }
+
+            ' Show the dialog and get the result
+            If openFileDialog.ShowDialog() = True Then
+                Try
+                    ' Get selected file path
+                    Dim filePath As String = openFileDialog.FileName
+
+                    ' Convert image to Base64 string
+                    Dim base64String As String = Base64Utility.EncodeFileToBase64(filePath)
+                    Dim fileExtension As String = Base64Utility.GetFileExtension(filePath)
+
+                    ' Store image data in the grid's Tag property
+                    Dim imgData As ImageData = DirectCast(optionGrid.Tag, ImageData)
+                    imgData.Base64String = base64String
+                    imgData.FileExtension = fileExtension
+                    imgData.FileName = Path.GetFileName(filePath)
+                    optionGrid.Tag = imgData
+
+                    ' Update the image display
+                    UpdateImageDisplay(imageBorder, filePath)
+
+                    ' Save after image selection
+                    SaveVariations()
+
+                Catch ex As Exception
+                    MessageBox.Show("Error loading image: " & ex.Message, "Image Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                End Try
             End If
         End Sub
 
-        ' Helper class to store image data
-        Private Class ImageData
-            Public Property Base64String As String
-            Public Property FileExtension As String
-            Public Property FileName As String
-        End Class
+        ' New method to update the image display
+        Private Sub UpdateImageDisplay(imageBorder As Border, imagePath As String)
+            ' Create a new Image control
+            Dim img As New System.Windows.Controls.Image With {
+                .Stretch = Stretch.Uniform
+            }
+
+            ' Create BitmapImage from file
+            Dim bitmap As New BitmapImage()
+            bitmap.BeginInit()
+            bitmap.UriSource = New Uri(imagePath)
+            bitmap.CacheOption = BitmapCacheOption.OnLoad ' Load image right away and close the file
+            bitmap.EndInit()
+
+            ' Set the image source
+            img.Source = bitmap
+
+            ' Replace the content of the border with the image
+            imageBorder.Child = img
+        End Sub
 
         Private Function Base64StringToBitmapImage(base64String As String) As BitmapImage
             Dim bytes As Byte() = Convert.FromBase64String(base64String)
@@ -822,6 +838,23 @@ Namespace DPC.Components.Forms
             End Using
 
             Return bitmap
+        End Function
+#End Region
+
+        Private Function EditFunction(TxtBoxName As TextBox, shouldToggle As Boolean) As Boolean
+            If shouldToggle Then
+                TxtBoxName.IsReadOnly = Not TxtBoxName.IsReadOnly
+            End If
+
+            If TxtBoxName.IsReadOnly Then
+                ChangeIcon = True
+                Return ChangeIcon
+            Else
+                ChangeIcon = False
+                TxtBoxName.Focus()
+                TxtBoxName.SelectAll()
+                Return ChangeIcon
+            End If
         End Function
     End Class
 End Namespace
