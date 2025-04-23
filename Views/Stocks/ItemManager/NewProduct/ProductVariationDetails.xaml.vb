@@ -191,7 +191,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         ''' <summary>
         ''' Adds a new serial number row to the specified container
         ''' </summary>
-        Private Sub AddSerialNumberRow(container As StackPanel, rowIndex As Integer)
+        Public Sub AddSerialNumberRow(container As StackPanel, rowIndex As Integer)
             Dim outerStackPanel As New StackPanel With {.Margin = New Thickness(25, 10, 10, 10)}
 
             Dim grid As New Grid()
@@ -295,7 +295,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         ''' <summary>
         ''' Handles the Add Serial Row button click
         ''' </summary>
-        Private Sub BtnAddSerialRow_Click(sender As Object, e As RoutedEventArgs)
+        Public Sub BtnAddSerialRow_Click(sender As Object, e As RoutedEventArgs)
             ' Save current serial number values first
             SaveSerialNumberValues()
 
@@ -430,7 +430,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         ''' <summary>
         ''' Helper method to save all serial number values from UI to data model
         ''' </summary>
-        Private Sub SaveSerialNumberValues()
+        Public Sub SaveSerialNumberValues()
             ' Get the current variation data
             Dim currentData = ProductController.variationManager.GetCurrentVariationData()
             If currentData Is Nothing OrElse Not currentData.IncludeSerialNumbers Then Return

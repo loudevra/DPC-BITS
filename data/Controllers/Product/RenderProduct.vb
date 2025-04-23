@@ -92,41 +92,35 @@ Namespace DPC.Data.Controllers
             End If
         End Sub
 
-        'Open Row Controller Popup (for novariations only)
+        'Open Row Controller Popup
         Public Shared Sub OpenRowController(sender As Object, e As RoutedEventArgs)
             Dim clickedButton As Button = TryCast(sender, Button)
             If clickedButton Is Nothing Then Return
-
             ' Prevent reopening if the popup was just closed
             If ProductController.RecentlyClosed Then
                 ProductController.RecentlyClosed = False
                 Return
             End If
-
             ' If the popup exists and is open, close it
             If ProductController.popup IsNot Nothing AndAlso ProductController.popup.IsOpen Then
                 ProductController.popup.IsOpen = False
                 ProductController.RecentlyClosed = True
                 Return
             End If
-
             ' Ensure the popup is only created once
             ProductController.popup = New Popup With {
-            .PlacementTarget = clickedButton,
-            .Placement = PlacementMode.Bottom,
-            .StaysOpen = False,
-            .AllowsTransparency = True
-        }
-
+    .PlacementTarget = clickedButton,
+    .Placement = PlacementMode.Bottom,
+    .StaysOpen = False,
+    .AllowsTransparency = True
+}
             Dim popOutContent As New DPC.Components.Forms.RowControllerPopout()
             ProductController.popup.Child = popOutContent
-
             ' Handle popup closure
             AddHandler ProductController.popup.Closed, Sub()
                                                            ProductController.RecentlyClosed = True
                                                            Task.Delay(100).ContinueWith(Sub() ProductController.RecentlyClosed = False, TaskScheduler.FromCurrentSynchronizationContext())
                                                        End Sub
-
             ' Open the popup
             ProductController.popup.IsOpen = True
         End Sub

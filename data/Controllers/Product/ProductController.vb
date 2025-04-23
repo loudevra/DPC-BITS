@@ -53,14 +53,18 @@ Namespace DPC.Data.Controllers
         ''' <summary>
         ''' Product variation manager instance to handle all variations
         ''' </summary>
-
         Public Shared variationManager As New ProductVariationManager()
 
         ''' <summary>
         ''' Keep track of serial number textboxes
         ''' </summary>
-
         Public Shared serialNumberTextBoxes As New List(Of TextBox)
+
+        ''' <summary>
+        ''' Keep if product has variation or not
+        ''' </summary>
+        Public Shared Property IsVariation As Boolean = False
+
 #End Region
 
 #Region "Combobox Data Loading Methods"
@@ -151,6 +155,9 @@ Namespace DPC.Data.Controllers
         Public Shared Sub ImportSerialNumbers_Click()
             UploadProduct.ImportSerialNumbers()
         End Sub
+
+
+
 #End Region
 
 #Region "Product Data Management"

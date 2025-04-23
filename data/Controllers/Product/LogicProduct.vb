@@ -31,6 +31,8 @@ Namespace DPC.Data.Controllers
 
                 ' Update UI based on IsChecked state
                 If toggle.IsChecked = True Then
+                    ProductController.IsVariation = True
+
                     stackPanelVariation.Visibility = Visibility.Visible
                     stackPanelWarehouse.Visibility = Visibility.Collapsed
                     stackPanelRetailPrice.Visibility = Visibility.Collapsed
@@ -42,6 +44,8 @@ Namespace DPC.Data.Controllers
                     stackPanelStockUnits.Visibility = Visibility.Collapsed
                     outerStackPanel.Visibility = Visibility.Collapsed
                 Else
+                    ProductController.IsVariation = False
+
                     stackPanelVariation.Visibility = Visibility.Collapsed
                     stackPanelWarehouse.Visibility = Visibility.Visible
                     stackPanelRetailPrice.Visibility = Visibility.Visible
