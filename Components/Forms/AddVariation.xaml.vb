@@ -10,7 +10,7 @@ Namespace DPC.Components.Forms
         Inherits UserControl
 
 #Region "Fields and Properties"
-        Public Event close(sender As Object, e As RoutedEventArgs)
+        Public Event Close(sender As Object, e As RoutedEventArgs)
         Private variationCount As Integer = 1
         Private Const MaxVariations As Integer = 2
         Private ChangeIcon As Boolean = False
@@ -19,7 +19,7 @@ Namespace DPC.Components.Forms
         Private _variations As New List(Of ProductVariation)
 
         ' Static property to store variations data globally
-        Private Shared _savedVariations As List(Of ProductVariation) = New List(Of ProductVariation)
+        Private Shared _savedVariations As New List(Of ProductVariation)
 
         Public Shared ReadOnly Property SavedVariations As List(Of ProductVariation)
             Get
@@ -53,14 +53,7 @@ Namespace DPC.Components.Forms
             variationCount = 1
 
             ' Loop through each saved variation and recreate the UI
-            For i As Integer = 0 To _savedVariations.Count - 1
-                Dim variation As ProductVariation = _savedVariations(i)
-
-                ' Force second variation to have images disabled
-                If i = 1 Then
-                    variation.EnableImage = False
-                End If
-
+            For Each variation As ProductVariation In _savedVariations
                 ' Create the variation UI elements
                 Dim variationPanel As StackPanel = CreateVariationPanel(variation)
 
@@ -75,14 +68,13 @@ Namespace DPC.Components.Forms
             RecalculateVariationCount()
         End Sub
 
-        ' In the AddNewVariation method, check if this is the second variation
         Private Sub AddNewVariation()
             ' Create a new ProductVariation object
             Dim newVariation As New ProductVariation With {
-        .VariationName = $"Variation {variationCount}",
-        .EnableImage = (variationCount = 1), ' Only enable images for the first variation
-        .Options = New List(Of VariationOption)()
-    }
+                .VariationName = $"Variation {variationCount}",
+                .EnableImage = True,
+                .Options = New List(Of VariationOption)()
+            }
 
             ' Add a default option
             newVariation.Options.Add(New VariationOption With {.OptionName = "Option 1"})
@@ -267,19 +259,6 @@ Namespace DPC.Components.Forms
         .Tag = optionsContainer
     }
 
-            ' Get current variation number from the Tag property
-            Dim currentVariationNumber As Integer = variationCount
-
-            ' Hide toggle for second variation (when variationCount = 2)
-            If currentVariationNumber = 2 Then
-                ' Force image disable for second variation
-                toggle.IsChecked = False
-                variation.EnableImage = False
-
-                ' Hide toggle controls
-                toggleGrid.Visibility = Visibility.Collapsed
-            End If
-
             ' Add event handler for toggle state changes
             AddHandler toggle.Checked, AddressOf Toggle_CheckedChanged
             AddHandler toggle.Unchecked, AddressOf Toggle_CheckedChanged
@@ -414,10 +393,11 @@ Namespace DPC.Components.Forms
 
             ' Rest of the method remains unchanged
             ' Create Grid for option row
-            Dim optionGrid As New Grid With {.Margin = New Thickness(0, 0, 0, 10)}
-
             ' Store image data
-            optionGrid.Tag = imageData
+            Dim optionGrid As New Grid With {
+                .Margin = New Thickness(0, 0, 0, 10),
+                .Tag = imageData
+            }
 
             ' Define grid columns
             optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
@@ -586,7 +566,6 @@ Namespace DPC.Components.Forms
             _savedVariations.Clear()
 
             ' Loop through each variation panel in the UI
-            Dim index As Integer = 0
             For Each child As UIElement In MainVariationContainer.Children
                 If TypeOf child Is StackPanel Then
                     Dim variationPanel As StackPanel = DirectCast(child, StackPanel)
@@ -615,12 +594,7 @@ Namespace DPC.Components.Forms
                     If toggleGrid IsNot Nothing Then
                         For Each gridChild As UIElement In toggleGrid.Children
                             If TypeOf gridChild Is ToggleButton Then
-                                ' For second variation, force images to be disabled
-                                If index = 1 Then
-                                    variation.EnableImage = False
-                                Else
-                                    variation.EnableImage = DirectCast(gridChild, ToggleButton).IsChecked
-                                End If
+                                variation.EnableImage = DirectCast(gridChild, ToggleButton).IsChecked
                                 Exit For
                             End If
                         Next
@@ -667,7 +641,6 @@ Namespace DPC.Components.Forms
 
                     ' Add the variation to the saved list
                     _savedVariations.Add(variation)
-                    index += 1
                 End If
             Next
         End Sub
@@ -678,18 +651,14 @@ Namespace DPC.Components.Forms
             ' Save variations before navigating
             SaveVariations()
 
-            ' Notify the parent window to update its variation text
-            Dim parentWindow = Window.GetWindow(Me)
-            If parentWindow IsNot Nothing AndAlso TypeOf parentWindow Is DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts Then
-                Dim addNewProductsWindow = DirectCast(parentWindow, DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts)
-                addNewProductsWindow.LoadProductVariations()
-            End If
+            ' Try to update the parent window if possible
+            TryUpdateParentWindow()
 
-            Dim VariationDetails As New Views.Stocks.ItemManager.NewProduct.ProductVariationDetails()
-            VariationDetails.Show()
+            ' Use the ViewLoader to navigate to the ProductVariationDetails view
+            ViewLoader.DynamicView.NavigateToView("productVariationDetails", Me)
 
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
+            ' Close the current popup if needed
+            PopupHelper.ClosePopup()
         End Sub
 
         ' Also update the ClosePopup method to ensure variations are saved and the display is updated
@@ -697,16 +666,39 @@ Namespace DPC.Components.Forms
             ' Save variations before closing
             SaveVariations()
 
-            ' Notify the parent window to update its variation text
-            Dim parentWindow = Window.GetWindow(Me)
-            If parentWindow IsNot Nothing AndAlso TypeOf parentWindow Is DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts Then
-                Dim addNewProductsWindow = DirectCast(parentWindow, DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts)
-                addNewProductsWindow.LoadProductVariations()
-            End If
+            ' Try to update the parent window if possible
+            TryUpdateParentWindow()
 
             ' Raise the close event
-            RaiseEvent close(Me, e)
+            RaiseEvent Close(Me, e)
+
+            ' Close popup
             PopupHelper.ClosePopup()
+        End Sub
+
+        ' Helper method to safely try to update the parent window
+        Private Sub TryUpdateParentWindow()
+            Try
+                ' Get the parent window
+                Dim parentWindow = Window.GetWindow(Me)
+
+                ' Only proceed if we have a parent window
+                If parentWindow IsNot Nothing Then
+                    ' Get the type of the parent window
+                    Dim parentType = parentWindow.GetType()
+
+                    ' Check if the parent is of type AddNewProducts by full name comparison
+                    If parentType.FullName = "DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts" Then
+                        ' Use reflection to safely call the LoadProductVariations method
+                        Dim loadMethod = parentType.GetMethod("LoadProductVariations")
+                        loadMethod?.Invoke(parentWindow, Nothing)
+                    End If
+                End If
+            Catch ex As Exception
+                ' Handle any exceptions that might occur during the process
+                ' Optionally log the error
+                Debug.WriteLine("Error updating parent window: " & ex.Message)
+            End Try
         End Sub
 
         Private Sub BtnEditOption(sender As Object, e As RoutedEventArgs)
@@ -770,14 +762,6 @@ Namespace DPC.Components.Forms
             Dim toggle As ToggleButton = TryCast(sender, ToggleButton)
             If toggle Is Nothing Then Exit Sub
 
-            ' Find the parent variation panel
-            Dim variationPanel As StackPanel = FindParentVariationPanel(toggle)
-
-            ' If this is the second variation, force images to be disabled
-            If IsSecondVariation(variationPanel) Then
-                toggle.IsChecked = False
-            End If
-
             ' Get the options container from the toggle's Tag
             Dim optionsContainer As StackPanel = TryCast(toggle.Tag, StackPanel)
             If optionsContainer Is Nothing Then Exit Sub
@@ -805,21 +789,11 @@ Namespace DPC.Components.Forms
 #Region "Image Processing"
         ' New method to handle image selection
         Private Sub SelectImage(optionGrid As Grid, imageBorder As Border)
-            ' Find the parent variation panel to determine which variation this is
-            Dim variationPanel As StackPanel = FindParentVariationPanel(optionGrid)
-
-            ' Check if this is the second variation
-            If IsSecondVariation(variationPanel) Then
-                MessageBox.Show("Images are not allowed for this variation.", "Images Disabled", MessageBoxButton.OK, MessageBoxImage.Information)
-                Return
-            End If
-
-            ' Existing image selection code remains the same
             ' Create OpenFileDialog to select an image
             Dim openFileDialog As New OpenFileDialog With {
-        .Filter = "Image files (*.jpg, *.jpeg, *.png)|*.jpg;*.jpeg;*.png",
-        .Title = "Select an Image"
-    }
+                .Filter = "Image files (*.jpg, *.jpeg, *.png)|*.jpg;*.jpeg;*.png",
+                .Title = "Select an Image"
+            }
 
             ' Show the dialog and get the result
             If openFileDialog.ShowDialog() = True Then
@@ -849,41 +823,6 @@ Namespace DPC.Components.Forms
                 End Try
             End If
         End Sub
-
-        ' Helper method to find the parent variation panel
-        Private Function FindParentVariationPanel(element As DependencyObject) As StackPanel
-            ' Navigate up the visual tree to find the variation panel
-            Dim parent As DependencyObject = element
-
-            ' Keep going up until we find a StackPanel that's directly under MainVariationContainer
-            While parent IsNot Nothing
-                parent = VisualTreeHelper.GetParent(parent)
-
-                If TypeOf parent Is StackPanel Then
-                    Dim panel As StackPanel = DirectCast(parent, StackPanel)
-
-                    ' Check if this panel is a direct child of MainVariationContainer
-                    If MainVariationContainer.Children.Contains(panel) Then
-                        Return panel
-                    End If
-                End If
-            End While
-
-            Return Nothing
-        End Function
-
-        ' Helper method to determine if a panel is the second variation
-        Private Function IsSecondVariation(variationPanel As StackPanel) As Boolean
-            If variationPanel Is Nothing Then Return False
-
-            ' Get the index of this panel in the MainVariationContainer
-            Dim index As Integer = MainVariationContainer.Children.IndexOf(variationPanel)
-
-            ' If it's the second panel (index 1), then it's the second variation
-            Return index = 1
-        End Function
-
-
 
         ' New method to update the image display
         Private Sub UpdateImageDisplay(imageBorder As Border, imagePath As String)
