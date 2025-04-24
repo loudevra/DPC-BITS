@@ -93,9 +93,9 @@ Namespace DPC.Data.Helpers.ViewLoader
             ElseIf typeName = "newproducts" Then
                 Return "newproducts" ' Added the ManageProducts view type
             ElseIf typeName = "batcheditproductvar" Then
-                Return "batcheditproductvar" ' Added the ManageProducts view type
+                Return "batcheditproductvar"
             ElseIf typeName = "productvariationdetails" Then
-                Return "productvariationdetails" ' Added the ManageProducts view type
+                Return "productvariationdetails"
             Else
                 Return typeName
             End If
