@@ -9,19 +9,11 @@ Imports MaterialDesignThemes.Wpf
 
 Namespace DPC.Views.Stocks.ItemManager.NewProduct
     Public Class ProductVariationDetails
-        Inherits Window
+        Inherits UserControl
 
 #Region "Initialization and Constructor"
         Public Sub New()
             InitializeComponent()
-
-            ' Load UI components
-            Dim sidebar As New Components.Navigation.Sidebar()
-            SidebarContainer.Content = sidebar
-
-            ' Load Top Navigation Bar
-            Dim topNav As New Components.Navigation.TopNavBar()
-            TopNavBarContainer.Content = topNav
 
             Dim calendarViewModel As New CalendarController.SingleCalendar()
             Me.DataContext = calendarViewModel
@@ -953,9 +945,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 #Region "Navigation and Redirection"
         Private Sub BtnBatchEdit(sender As Object, e As RoutedEventArgs)
             ' Create an instance of the BatchEdit form
-            Dim OpenBatchEdit As New ProductBatchEdit()
-            Me.Close()
-            OpenBatchEdit.Show()
+            ViewLoader.DynamicView.NavigateToView("batcheditproductvar", Me)
         End Sub
 
         Private Sub BtnBack(sender As Object, e As RoutedEventArgs)
