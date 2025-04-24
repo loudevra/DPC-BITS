@@ -36,6 +36,10 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Stocks.ItemManager.ProductManager.ManageProducts() ' Added the ManageProducts UserControl
                     Case "newproducts"
                         Return New Stocks.ItemManager.NewProduct.AddNewProducts() ' Added the NewProducts UserControl
+                    Case "batcheditproductvar"
+                        Return New Stocks.ItemManager.NewProduct.ProductBatchEdit()
+                    Case "productvariationdetails"
+                        Return New Stocks.ItemManager.NewProduct.ProductVariationDetails()
                     Case Else
                         ' Return a placeholder UserControl with error text
                         Dim errorContent As New TextBlock With {
@@ -88,6 +92,10 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "manageproducts" ' Added the ManageProducts view type
             ElseIf typeName = "newproducts" Then
                 Return "newproducts" ' Added the ManageProducts view type
+            ElseIf typeName = "batcheditproductvar" Then
+                Return "batcheditproductvar" ' Added the ManageProducts view type
+            ElseIf typeName = "productvariationdetails" Then
+                Return "productvariationdetails" ' Added the ManageProducts view type
             Else
                 Return typeName
             End If
