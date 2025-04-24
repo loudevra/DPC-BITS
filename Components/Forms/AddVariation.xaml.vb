@@ -10,7 +10,7 @@ Namespace DPC.Components.Forms
         Inherits UserControl
 
 #Region "Fields and Properties"
-        Public Event close(sender As Object, e As RoutedEventArgs)
+        Public Event Close(sender As Object, e As RoutedEventArgs)
         Private variationCount As Integer = 1
         Private Const MaxVariations As Integer = 2
         Private ChangeIcon As Boolean = False
@@ -19,7 +19,7 @@ Namespace DPC.Components.Forms
         Private _variations As New List(Of ProductVariation)
 
         ' Static property to store variations data globally
-        Private Shared _savedVariations As List(Of ProductVariation) = New List(Of ProductVariation)
+        Private Shared _savedVariations As New List(Of ProductVariation)
 
         Public Shared ReadOnly Property SavedVariations As List(Of ProductVariation)
             Get
@@ -393,10 +393,11 @@ Namespace DPC.Components.Forms
 
             ' Rest of the method remains unchanged
             ' Create Grid for option row
-            Dim optionGrid As New Grid With {.Margin = New Thickness(0, 0, 0, 10)}
-
             ' Store image data
-            optionGrid.Tag = imageData
+            Dim optionGrid As New Grid With {
+                .Margin = New Thickness(0, 0, 0, 10),
+                .Tag = imageData
+            }
 
             ' Define grid columns
             optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
@@ -650,18 +651,14 @@ Namespace DPC.Components.Forms
             ' Save variations before navigating
             SaveVariations()
 
-            ' Notify the parent window to update its variation text
-            Dim parentWindow = Window.GetWindow(Me)
-            If parentWindow IsNot Nothing AndAlso TypeOf parentWindow Is DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts Then
-                Dim addNewProductsWindow = DirectCast(parentWindow, DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts)
-                addNewProductsWindow.LoadProductVariations()
-            End If
+            ' Try to update the parent window if possible
+            TryUpdateParentWindow()
 
-            Dim VariationDetails As New Views.Stocks.ItemManager.NewProduct.ProductVariationDetails()
-            VariationDetails.Show()
+            ' Use the ViewLoader to navigate to the ProductVariationDetails view
+            ViewLoader.DynamicView.NavigateToView("productVariationDetails", Me)
 
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
+            ' Close the current popup if needed
+            PopupHelper.ClosePopup()
         End Sub
 
         ' Also update the ClosePopup method to ensure variations are saved and the display is updated
@@ -669,16 +666,39 @@ Namespace DPC.Components.Forms
             ' Save variations before closing
             SaveVariations()
 
-            ' Notify the parent window to update its variation text
-            Dim parentWindow = Window.GetWindow(Me)
-            If parentWindow IsNot Nothing AndAlso TypeOf parentWindow Is DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts Then
-                Dim addNewProductsWindow = DirectCast(parentWindow, DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts)
-                addNewProductsWindow.LoadProductVariations()
-            End If
+            ' Try to update the parent window if possible
+            TryUpdateParentWindow()
 
             ' Raise the close event
-            RaiseEvent close(Me, e)
+            RaiseEvent Close(Me, e)
+
+            ' Close popup
             PopupHelper.ClosePopup()
+        End Sub
+
+        ' Helper method to safely try to update the parent window
+        Private Sub TryUpdateParentWindow()
+            Try
+                ' Get the parent window
+                Dim parentWindow = Window.GetWindow(Me)
+
+                ' Only proceed if we have a parent window
+                If parentWindow IsNot Nothing Then
+                    ' Get the type of the parent window
+                    Dim parentType = parentWindow.GetType()
+
+                    ' Check if the parent is of type AddNewProducts by full name comparison
+                    If parentType.FullName = "DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts" Then
+                        ' Use reflection to safely call the LoadProductVariations method
+                        Dim loadMethod = parentType.GetMethod("LoadProductVariations")
+                        loadMethod?.Invoke(parentWindow, Nothing)
+                    End If
+                End If
+            Catch ex As Exception
+                ' Handle any exceptions that might occur during the process
+                ' Optionally log the error
+                Debug.WriteLine("Error updating parent window: " & ex.Message)
+            End Try
         End Sub
 
         Private Sub BtnEditOption(sender As Object, e As RoutedEventArgs)

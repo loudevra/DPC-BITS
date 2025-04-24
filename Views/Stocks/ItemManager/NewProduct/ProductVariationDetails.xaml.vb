@@ -329,10 +329,8 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Dim containerBorder As Border = TryCast(StackPanelSerialRow.Children(1), Border)
             If containerBorder IsNot Nothing Then
                 Dim scrollViewer As ScrollViewer = TryCast(containerBorder.Child, ScrollViewer)
-                If scrollViewer IsNot Nothing Then
-                    ' Scroll to the bottom to show the newly added row
-                    scrollViewer.ScrollToEnd()
-                End If
+                ' Scroll to the bottom to show the newly added row
+                scrollViewer?.ScrollToEnd()
             End If
         End Sub
 
@@ -629,8 +627,9 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
                     ' Initialize serial numbers list with one empty entry
                     If newVariation.IncludeSerialNumbers Then
-                        newVariation.SerialNumbers = New List(Of String)()
-                        newVariation.SerialNumbers.Add("")
+                        newVariation.SerialNumbers = New List(Of String) From {
+                            ""
+                        }
                     End If
                 End If
             Next
@@ -986,9 +985,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             End If
 
             ' Now navigate back to AddNewProducts
-            Dim addNewProducts As New Views.Stocks.ItemManager.NewProduct.AddNewProducts()
-            addNewProducts.Show()
-            Me.Close()
+            ViewLoader.DynamicView.NavigateToView("manageproducts", Me)
         End Sub
 #End Region
 

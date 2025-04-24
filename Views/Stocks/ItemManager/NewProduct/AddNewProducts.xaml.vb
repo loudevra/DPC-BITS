@@ -10,7 +10,7 @@ Imports Microsoft.Win32
 
 Namespace DPC.Views.Stocks.ItemManager.NewProduct
     Public Class AddNewProducts
-        Inherits Window
+        Inherits UserControl
 
         Private ProductController As New ProductController()
         Private WithEvents AddRowPopoutControl As AddRowPopout
@@ -23,7 +23,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         Public Sub New()
             InitializeComponent()
             SetupTimers()
-            LoadNavigationComponents()
             InitializeUIElements()
             SetupControllerReferences()
             LoadInitialData()
@@ -31,17 +30,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
         Private Sub SetupTimers()
             uploadTimer.Interval = TimeSpan.FromMilliseconds(100)
-            AddHandler uploadTimer.Tick, AddressOf uploadTimer_Tick
-        End Sub
-
-        Private Sub LoadNavigationComponents()
-            ' Load sidebar
-            Dim sidebar As New Components.Navigation.Sidebar()
-            SidebarContainer.Content = sidebar
-
-            ' Load Top Navigation Bar
-            Dim topNav As New Components.Navigation.TopNavBar()
-            TopNavBarContainer.Content = topNav
+            AddHandler uploadTimer.Tick, AddressOf UploadTimer_Tick
         End Sub
 
         Private Sub InitializeUIElements()
@@ -90,7 +79,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ProductController.BtnAddRow_Click(Nothing, Nothing)
 
             ' Load variations if any
-            Dim existingVariations As List(Of ProductVariation) = productController.GetProductVariations()
+            Dim existingVariations As List(Of ProductVariation) = ProductController.GetProductVariations()
             If existingVariations IsNot Nothing Then
                 ProductController.UpdateProductVariationText(existingVariations, TxtProductVariation)
             End If
@@ -178,15 +167,18 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Dim openAddVariation As New DPC.Components.Forms.AddVariation()
 
             ' Subscribe to the ClosePopup method directly
-            AddHandler openAddVariation.close, AddressOf AddVariation_Closed
+            AddHandler openAddVariation.Close, AddressOf AddVariation_Closed
 
-            ' Open the popup
-            PopupHelper.OpenPopupWithControl(sender, openAddVariation, "windowcenter", -100, 0, False, Me)
+            ' Get the parent Window of this UserControl
+            Dim parentWindow As Window = Window.GetWindow(Me)
+
+            ' Open the popup with the parent window instead of 'Me'
+            PopupHelper.OpenPopupWithControl(sender, openAddVariation, "windowcenter", -100, 0, False, parentWindow)
         End Sub
 
         Private Sub AddVariation_Closed(sender As Object, e As RoutedEventArgs)
             ' Reload variations after the popup is closed
-            Dim variations As List(Of ProductVariation) = productController.GetProductVariations()
+            Dim variations As List(Of ProductVariation) = ProductController.GetProductVariations()
             If variations IsNot Nothing Then
                 ProductController.UpdateProductVariationText(variations, TxtProductVariation)
             End If
@@ -268,7 +260,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             uploadTimer.Start()
         End Sub
 
-        Private Sub uploadTimer_Tick(sender As Object, e As EventArgs)
+        Private Sub UploadTimer_Tick(sender As Object, e As EventArgs)
             If UploadProgressBar.Value < 100 Then
                 UploadProgressBar.Value += 2 ' Increase by 2% every tick
             Else
@@ -362,7 +354,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 #End Region
 
         Public Sub LoadProductVariations()
-            Dim variations As List(Of ProductVariation) = productController.GetProductVariations()
+            Dim variations As List(Of ProductVariation) = ProductController.GetProductVariations()
             ProductController.UpdateProductVariationText(variations, TxtProductVariation)
         End Sub
     End Class

@@ -48,7 +48,7 @@ Namespace DPC.Data.Controllers
         ''' <summary>
         ''' Static list to store variations data globally
         ''' </summary>
-        Public Shared _savedVariations As List(Of ProductVariation) = New List(Of ProductVariation)
+        Public Shared _savedVariations As New List(Of ProductVariation)
 
         ''' <summary>
         ''' Product variation manager instance to handle all variations
