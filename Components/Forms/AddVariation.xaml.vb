@@ -77,10 +77,13 @@ Namespace DPC.Components.Forms
 
         ' In the AddNewVariation method, check if this is the second variation
         Private Sub AddNewVariation()
+            ' Check if this is going to be the second variation
+            Dim isSecondVariation As Boolean = (variationCount = 2)
+
             ' Create a new ProductVariation object
             Dim newVariation As New ProductVariation With {
         .VariationName = $"Variation {variationCount}",
-        .EnableImage = (variationCount = 1), ' Only enable images for the first variation
+        .EnableImage = Not isSecondVariation, ' Only enable images for the first variation
         .Options = New List(Of VariationOption)()
     }
 
@@ -139,7 +142,6 @@ Namespace DPC.Components.Forms
 
 #Region "UI Creation and Updates"
         ' Helper method to create a variation panel from data
-        ' Update the CreateVariationPanel method to handle image data
         Private Function CreateVariationPanel(variation As ProductVariation) As StackPanel
             ' Create the main StackPanel for this variation
             Dim variationPanel As New StackPanel With {
@@ -267,16 +269,16 @@ Namespace DPC.Components.Forms
         .Tag = optionsContainer
     }
 
-            ' Get current variation number from the Tag property
+            ' Get current variation number
             Dim currentVariationNumber As Integer = variationCount
 
-            ' Hide toggle for second variation (when variationCount = 2)
+            ' Completely hide toggle grid for second variation
             If currentVariationNumber = 2 Then
                 ' Force image disable for second variation
                 toggle.IsChecked = False
                 variation.EnableImage = False
 
-                ' Hide toggle controls
+                ' Completely hide toggle controls
                 toggleGrid.Visibility = Visibility.Collapsed
             End If
 
@@ -342,7 +344,12 @@ Namespace DPC.Components.Forms
 
             ' Add click handler for the Add Option button
             AddHandler btnAddOption.Click, Sub()
-                                               AddOptionToPanel(optionsContainer)
+                                               ' Determine if this is the second variation
+                                               Dim isSecondVar As Boolean = IsSecondVariation(variationPanel)
+
+                                               ' Pass the isSecondVariation parameter explicitly
+                                               AddOptionToPanel(optionsContainer, Nothing, isSecondVar)
+
                                                ' Save after adding a new option
                                                SaveVariations()
                                            End Sub
@@ -358,16 +365,19 @@ Namespace DPC.Components.Forms
             ' Add options from the variation data
             If variation.Options IsNot Nothing Then
                 For Each opt As VariationOption In variation.Options
-                    AddOptionToPanel(optionsContainer, opt)
+                    ' Pass isSecondVariation flag explicitly based on the current variation number
+                    AddOptionToPanel(optionsContainer, opt, isSecondVariation:=(variationCount = 2))
                 Next
             End If
 
             Return variationPanel
         End Function
 
-        ' Update the AddOptionToPanel method to handle image data
-        ' Update the AddOptionToPanel method to handle proper option numbering
-        Private Sub AddOptionToPanel(targetPanel As StackPanel, Optional optionData As VariationOption = Nothing)
+        ' Update the AddOptionToPanel method to respect toggle state for new options
+        Private Sub AddOptionToPanel(targetPanel As StackPanel, Optional optionData As VariationOption = Nothing, Optional isSecondVariation As Boolean = False)
+            ' Find the parent variation panel to determine toggle state
+            Dim imagesEnabled As Boolean = False
+
             ' Find the highest option number in the current panel
             Dim highestOptionNumber As Integer = 0
 
@@ -394,6 +404,24 @@ Namespace DPC.Components.Forms
                 End If
             Next
 
+            ' Get the parent variation panel to check toggle state
+            Dim parentScrollViewer As ScrollViewer = TryCast(targetPanel.Parent, ScrollViewer)
+            If parentScrollViewer IsNot Nothing Then
+                Dim variationPanel As StackPanel = TryCast(parentScrollViewer.Parent, StackPanel)
+                If variationPanel IsNot Nothing Then
+                    ' Find the toggle in this variation panel
+                    Dim toggleGrid As Grid = TryCast(variationPanel.Children(2), Grid)
+                    If toggleGrid IsNot Nothing Then
+                        For Each gridChild As UIElement In toggleGrid.Children
+                            If TypeOf gridChild Is ToggleButton Then
+                                imagesEnabled = DirectCast(gridChild, ToggleButton).IsChecked
+                                Exit For
+                            End If
+                        Next
+                    End If
+                End If
+            End If
+
             ' Next option number should be one higher than current highest
             Dim optionCount As Integer = highestOptionNumber + 1
 
@@ -412,147 +440,179 @@ Namespace DPC.Components.Forms
                 End If
             End If
 
-            ' Rest of the method remains unchanged
             ' Create Grid for option row
             Dim optionGrid As New Grid With {.Margin = New Thickness(0, 0, 0, 10)}
 
             ' Store image data
             optionGrid.Tag = imageData
 
-            ' Define grid columns
-            optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
-            optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
-            optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
-            optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
+            ' Use the explicitly passed isSecondVariation parameter
+            ' Define grid columns based on whether this is the second variation
+            If isSecondVariation Then
+                ' Second variation: no image column - only 3 columns
+                optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
+                optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
+                optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
 
-            ' Find the parent container and check for the toggle state
-            Dim isImagesVisible As Boolean = True ' Default to visible
+                ' Add option text field - Column 0 for second variation
+                Dim txtOption As New TextBox With {
+            .Text = optionName,
+            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
+            .FontSize = 14,
+            .FontWeight = FontWeights.SemiBold,
+            .VerticalAlignment = VerticalAlignment.Center,
+            .Margin = New Thickness(0),
+            .IsReadOnly = True,
+            .Style = CType(FindResource("RoundedTextboxStyle"), Style)
+        }
+                Grid.SetColumn(txtOption, 0)
+                optionGrid.Children.Add(txtOption)
 
-            ' Check if the targetPanel is within a ScrollViewer
-            Dim parentElement As DependencyObject = VisualTreeHelper.GetParent(targetPanel)
-            If TypeOf parentElement Is ScrollViewer Then
-                ' The parent of the ScrollViewer should be the variation panel
-                Dim variationPanel As StackPanel = TryCast(VisualTreeHelper.GetParent(parentElement), StackPanel)
+                ' Add edit button - Column 1 for second variation
+                Dim btnEdit As New Button With {
+            .Margin = New Thickness(0, 0, 5, 0),
+            .BorderThickness = New Thickness(0),
+            .Style = CType(FindResource("RoundedButtonStyle"), Style)
+        }
 
-                If variationPanel IsNot Nothing Then
-                    ' Look for toggle grid among the children
-                    For i As Integer = 0 To variationPanel.Children.Count - 1
-                        If TypeOf variationPanel.Children(i) Is Grid Then
-                            Dim grid As Grid = TryCast(variationPanel.Children(i), Grid)
+                Dim editIcon As New PackIcon With {
+            .Kind = PackIconKind.PencilOffOutline,
+            .Width = 25,
+            .Height = 25,
+            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
+        }
+                btnEdit.Content = editIcon
+                AddHandler btnEdit.Click, Sub(sender, e)
+                                              BtnEditOption(sender, e)
+                                              ' Save after editing an option
+                                              SaveVariations()
+                                          End Sub
+                Grid.SetColumn(btnEdit, 1)
+                optionGrid.Children.Add(btnEdit)
 
-                            ' Check if this grid contains a toggle button
-                            For Each gridChild As UIElement In grid.Children
-                                If TypeOf gridChild Is ToggleButton Then
-                                    Dim toggle As ToggleButton = TryCast(gridChild, ToggleButton)
-                                    isImagesVisible = toggle.IsChecked
-                                    Exit For
-                                End If
-                            Next
-                        End If
-                    Next
-                End If
-            End If
+                ' Add delete button - Column 2 for second variation
+                Dim btnDelete As New Button With {
+            .Background = Brushes.Transparent,
+            .BorderThickness = New Thickness(0),
+            .Padding = New Thickness(5)
+        }
 
-            ' Image placeholder with visibility set based on toggle state
-            Dim imageBorder As New Border With {
-        .Width = 40,
-        .Height = 40,
-        .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
-        .BorderThickness = New Thickness(1),
-        .CornerRadius = New CornerRadius(5),
-        .VerticalAlignment = VerticalAlignment.Center,
-        .HorizontalAlignment = HorizontalAlignment.Center,
-        .Margin = New Thickness(0, 0, 10, 0),
-        .Visibility = If(isImagesVisible, Visibility.Visible, Visibility.Collapsed),
-        .Cursor = Cursors.Hand  ' Change cursor to indicate it's clickable
-    }
-
-            ' If we have image data, display it
-            If Not String.IsNullOrEmpty(imageData.Base64String) Then
-                Try
-                    ' Create image from Base64 data
-                    Dim img As New System.Windows.Controls.Image With {
-                .Stretch = Stretch.Uniform
-            }
-
-                    ' Convert Base64 string to BitmapImage
-                    Dim bitmap As BitmapImage = Base64StringToBitmapImage(imageData.Base64String)
-                    img.Source = bitmap
-
-                    ' Set the image as the border's content
-                    imageBorder.Child = img
-                Catch ex As Exception
-                    ' If there's an error loading the image, fall back to the default icon
-                    SetDefaultImageIcon(imageBorder)
-                End Try
+                Dim deleteIcon As New PackIcon With {
+            .Kind = PackIconKind.TrashCanOutline,
+            .Width = 25,
+            .Height = 25,
+            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636"))
+        }
+                btnDelete.Content = deleteIcon
+                AddHandler btnDelete.Click, AddressOf DeleteOptionRow
+                Grid.SetColumn(btnDelete, 2)
+                optionGrid.Children.Add(btnDelete)
             Else
-                ' No image data, use default icon
-                SetDefaultImageIcon(imageBorder)
+                ' First variation: include image column - 4 columns
+                optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
+                optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
+                optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
+                optionGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
+
+                ' Add image border - Column 0 (first variation only)
+                Dim imageBorder As New Border With {
+            .Width = 40,
+            .Height = 40,
+            .BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
+            .BorderThickness = New Thickness(1),
+            .CornerRadius = New CornerRadius(5),
+            .VerticalAlignment = VerticalAlignment.Center,
+            .HorizontalAlignment = HorizontalAlignment.Center,
+            .Margin = New Thickness(0, 0, 10, 0),
+            .Cursor = Cursors.Hand,
+            .Visibility = If(imagesEnabled, Visibility.Visible, Visibility.Collapsed) ' Set initial visibility based on toggle state
+        }
+
+                ' If we have image data, display it
+                If Not String.IsNullOrEmpty(imageData.Base64String) Then
+                    Try
+                        ' Create image from Base64 data
+                        Dim img As New System.Windows.Controls.Image With {
+                    .Stretch = Stretch.Uniform
+                }
+
+                        ' Convert Base64 string to BitmapImage
+                        Dim bitmap As BitmapImage = Base64StringToBitmapImage(imageData.Base64String)
+                        img.Source = bitmap
+
+                        ' Set the image as the border's content
+                        imageBorder.Child = img
+                    Catch ex As Exception
+                        ' If there's an error loading the image, fall back to the default icon
+                        SetDefaultImageIcon(imageBorder)
+                    End Try
+                Else
+                    ' No image data, use default icon
+                    SetDefaultImageIcon(imageBorder)
+                End If
+
+                ' Add click handler for image selection
+                AddHandler imageBorder.MouseDown, Sub(sender, e)
+                                                      SelectImage(optionGrid, imageBorder)
+                                                  End Sub
+
+                Grid.SetColumn(imageBorder, 0)
+                optionGrid.Children.Add(imageBorder)
+
+                ' Add option text field - Column 1 for first variation
+                Dim txtOption As New TextBox With {
+            .Text = optionName,
+            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
+            .FontSize = 14,
+            .FontWeight = FontWeights.SemiBold,
+            .VerticalAlignment = VerticalAlignment.Center,
+            .Margin = New Thickness(0),
+            .IsReadOnly = True,
+            .Style = CType(FindResource("RoundedTextboxStyle"), Style)
+        }
+                Grid.SetColumn(txtOption, 1)
+                optionGrid.Children.Add(txtOption)
+
+                ' Add edit button - Column 2 for first variation
+                Dim btnEdit As New Button With {
+            .Margin = New Thickness(0, 0, 5, 0),
+            .BorderThickness = New Thickness(0),
+            .Style = CType(FindResource("RoundedButtonStyle"), Style)
+        }
+
+                Dim editIcon As New PackIcon With {
+            .Kind = PackIconKind.PencilOffOutline,
+            .Width = 25,
+            .Height = 25,
+            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
+        }
+                btnEdit.Content = editIcon
+                AddHandler btnEdit.Click, Sub(sender, e)
+                                              BtnEditOption(sender, e)
+                                              ' Save after editing an option
+                                              SaveVariations()
+                                          End Sub
+                Grid.SetColumn(btnEdit, 2)
+                optionGrid.Children.Add(btnEdit)
+
+                ' Add delete button - Column 3 for first variation
+                Dim btnDelete As New Button With {
+            .Background = Brushes.Transparent,
+            .BorderThickness = New Thickness(0),
+            .Padding = New Thickness(5)
+        }
+
+                Dim deleteIcon As New PackIcon With {
+            .Kind = PackIconKind.TrashCanOutline,
+            .Width = 25,
+            .Height = 25,
+            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636"))
+        }
+                btnDelete.Content = deleteIcon
+                AddHandler btnDelete.Click, AddressOf DeleteOptionRow
+                Grid.SetColumn(btnDelete, 3)
+                optionGrid.Children.Add(btnDelete)
             End If
-
-            ' Add click handler for image selection
-            AddHandler imageBorder.MouseDown, Sub(sender, e)
-                                                  SelectImage(optionGrid, imageBorder)
-                                                  ' Save after selecting an image
-                                                  SaveVariations()
-                                              End Sub
-
-            Grid.SetColumn(imageBorder, 0)
-            optionGrid.Children.Add(imageBorder)
-
-            ' Option text field
-            Dim txtOption As New TextBox With {
-        .Text = optionName,
-        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
-        .FontSize = 14,
-        .FontWeight = FontWeights.SemiBold,
-        .VerticalAlignment = VerticalAlignment.Center,
-        .Margin = New Thickness(0),
-        .IsReadOnly = True,
-        .Style = CType(FindResource("RoundedTextboxStyle"), Style)
-    }
-            Grid.SetColumn(txtOption, 1)
-            optionGrid.Children.Add(txtOption)
-
-            ' Edit button
-            Dim btnEdit As New Button With {
-        .Margin = New Thickness(0, 0, 5, 0),
-        .BorderThickness = New Thickness(0),
-        .Style = CType(FindResource("RoundedButtonStyle"), Style)
-    }
-
-            Dim editIcon As New PackIcon With {
-        .Kind = PackIconKind.PencilOffOutline,
-        .Width = 25,
-        .Height = 25,
-        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
-    }
-            btnEdit.Content = editIcon
-            AddHandler btnEdit.Click, Sub(sender, e)
-                                          BtnEditOption(sender, e)
-                                          ' Save after editing an option
-                                          SaveVariations()
-                                      End Sub
-            Grid.SetColumn(btnEdit, 2)
-            optionGrid.Children.Add(btnEdit)
-
-            ' Delete button
-            Dim btnDelete As New Button With {
-        .Background = Brushes.Transparent,
-        .BorderThickness = New Thickness(0),
-        .Padding = New Thickness(5)
-    }
-
-            Dim deleteIcon As New PackIcon With {
-        .Kind = PackIconKind.TrashCanOutline,
-        .Width = 25,
-        .Height = 25,
-        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636"))
-    }
-            btnDelete.Content = deleteIcon
-            AddHandler btnDelete.Click, AddressOf DeleteOptionRow
-            Grid.SetColumn(btnDelete, 3)
-            optionGrid.Children.Add(btnDelete)
 
             ' Add the option grid to the target panel
             targetPanel.Children.Add(optionGrid)
@@ -679,17 +739,14 @@ Namespace DPC.Components.Forms
             SaveVariations()
 
             ' Notify the parent window to update its variation text
-            Dim parentWindow = Window.GetWindow(Me)
-            If parentWindow IsNot Nothing AndAlso TypeOf parentWindow Is DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts Then
-                Dim addNewProductsWindow = DirectCast(parentWindow, DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts)
-                addNewProductsWindow.LoadProductVariations()
-            End If
+            'Dim parentWindow = Window.GetWindow(Me)
+            'If parentWindow IsNot Nothing AndAlso TypeOf parentWindow Is DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts Then
+            'Dim addNewProductsWindow = DirectCast(parentWindow, DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts)
+            'addNewProductsWindow.LoadProductVariations()
+            'End If
 
-            Dim VariationDetails As New Views.Stocks.ItemManager.NewProduct.ProductVariationDetails()
-            VariationDetails.Show()
 
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
+            ViewLoader.DynamicView.NavigateToView("productvariationdetails", Me)
         End Sub
 
         ' Also update the ClosePopup method to ensure variations are saved and the display is updated
@@ -698,11 +755,11 @@ Namespace DPC.Components.Forms
             SaveVariations()
 
             ' Notify the parent window to update its variation text
-            Dim parentWindow = Window.GetWindow(Me)
-            If parentWindow IsNot Nothing AndAlso TypeOf parentWindow Is DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts Then
-                Dim addNewProductsWindow = DirectCast(parentWindow, DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts)
-                addNewProductsWindow.LoadProductVariations()
-            End If
+            'Dim parentWindow = Window.GetWindow(Me)
+            'If parentWindow IsNot Nothing AndAlso TypeOf parentWindow Is DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts Then
+            'Dim addNewProductsWindow = DirectCast(parentWindow, DPC.Views.Stocks.ItemManager.NewProduct.AddNewProducts)
+            'addNewProductsWindow.LoadProductVariations()
+            'End If
 
             ' Raise the close event
             RaiseEvent close(Me, e)
@@ -803,18 +860,16 @@ Namespace DPC.Components.Forms
 #End Region
 
 #Region "Image Processing"
-        ' New method to handle image selection
+        ' method to handle image selection
         Private Sub SelectImage(optionGrid As Grid, imageBorder As Border)
             ' Find the parent variation panel to determine which variation this is
             Dim variationPanel As StackPanel = FindParentVariationPanel(optionGrid)
 
-            ' Check if this is the second variation
+            ' Check if this is the second variation - silently return without doing anything
             If IsSecondVariation(variationPanel) Then
-                MessageBox.Show("Images are not allowed for this variation.", "Images Disabled", MessageBoxButton.OK, MessageBoxImage.Information)
                 Return
             End If
 
-            ' Existing image selection code remains the same
             ' Create OpenFileDialog to select an image
             Dim openFileDialog As New OpenFileDialog With {
         .Filter = "Image files (*.jpg, *.jpeg, *.png)|*.jpg;*.jpeg;*.png",
@@ -843,13 +898,11 @@ Namespace DPC.Components.Forms
 
                     ' Save after image selection
                     SaveVariations()
-
                 Catch ex As Exception
                     MessageBox.Show("Error loading image: " & ex.Message, "Image Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 End Try
             End If
         End Sub
-
         ' Helper method to find the parent variation panel
         Private Function FindParentVariationPanel(element As DependencyObject) As StackPanel
             ' Navigate up the visual tree to find the variation panel

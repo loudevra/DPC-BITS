@@ -148,8 +148,28 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ' Get stock units value
             Dim stockUnits As Integer = 0
             If Not String.IsNullOrEmpty(TxtStockUnits.Text) AndAlso Integer.TryParse(TxtStockUnits.Text, stockUnits) Then
+                ' Make sure stock units is at least 1
+                If stockUnits < 1 Then stockUnits = 1
+
+                Debug.WriteLine($"Creating {stockUnits} serial number textboxes")
+
                 ' Get current variation data to access saved serial numbers
                 Dim currentData = ProductController.variationManager.GetCurrentVariationData()
+
+                ' Make sure the SerialNumbers list exists and has enough entries
+                If currentData IsNot Nothing Then
+                    If currentData.SerialNumbers Is Nothing Then
+                        currentData.SerialNumbers = New List(Of String)()
+                    End If
+
+                    ' Resize the list to match stock units if needed
+                    While currentData.SerialNumbers.Count < stockUnits
+                        currentData.SerialNumbers.Add("")
+                    End While
+                    While currentData.SerialNumbers.Count > stockUnits
+                        currentData.SerialNumbers.RemoveAt(currentData.SerialNumbers.Count - 1)
+                    End While
+                End If
 
                 ' Create textboxes based on stock units
                 For i As Integer = 1 To stockUnits
@@ -157,8 +177,8 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
                     ' After adding the row, find the textbox and set its value if available
                     If currentData IsNot Nothing AndAlso
-                   currentData.SerialNumbers IsNot Nothing AndAlso
-                   i - 1 < currentData.SerialNumbers.Count Then
+               currentData.SerialNumbers IsNot Nothing AndAlso
+               i - 1 < currentData.SerialNumbers.Count Then
 
                         ' Get the last added row
                         Dim rowPanel = TryCast(serialNumbersContainer.Children(serialNumbersContainer.Children.Count - 1), StackPanel)
@@ -171,6 +191,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                                     If textBox IsNot Nothing Then
                                         ' Set the saved value
                                         textBox.Text = currentData.SerialNumbers(i - 1)
+                                        Debug.WriteLine($"Set serial number textbox {i} to: {currentData.SerialNumbers(i - 1)}")
                                     End If
                                 End If
                             End If
@@ -179,7 +200,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 Next
             End If
         End Sub
-
         ''' <summary>
         ''' Adds a new serial number row to the specified container
         ''' </summary>
@@ -321,8 +341,10 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Dim containerBorder As Border = TryCast(StackPanelSerialRow.Children(1), Border)
             If containerBorder IsNot Nothing Then
                 Dim scrollViewer As ScrollViewer = TryCast(containerBorder.Child, ScrollViewer)
-                ' Scroll to the bottom to show the newly added row
-                scrollViewer?.ScrollToEnd()
+                If scrollViewer IsNot Nothing Then
+                    ' Scroll to the bottom to show the newly added row
+                    scrollViewer.ScrollToEnd()
+                End If
             End If
         End Sub
 
@@ -489,6 +511,8 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         ''' Handles changes to the serial number checkbox
         ''' </summary>
         Private Sub SerialNumberCheckboxChanged(sender As Object, e As RoutedEventArgs)
+            Debug.WriteLine($"Serial number checkbox changed to: {CheckBoxSerialNumber.IsChecked}")
+
             ' Update visibility based on checkbox state
             UpdateSerialNumberPanelVisibility()
 
@@ -496,9 +520,26 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Dim currentData = ProductController.variationManager.GetCurrentVariationData()
             If currentData IsNot Nothing Then
                 currentData.IncludeSerialNumbers = CheckBoxSerialNumber.IsChecked
+                Debug.WriteLine($"Updated variation data with IncludeSerialNumbers: {currentData.IncludeSerialNumbers}")
 
                 ' If checked, create the serial number textboxes
                 If CheckBoxSerialNumber.IsChecked Then
+                    ' Initialize serial numbers list if needed
+                    If currentData.SerialNumbers Is Nothing OrElse currentData.SerialNumbers.Count = 0 Then
+                        currentData.SerialNumbers = New List(Of String)()
+                        Dim stockUnits As Integer = 1 ' Default to 1
+                        If Not String.IsNullOrEmpty(TxtStockUnits.Text) AndAlso Integer.TryParse(TxtStockUnits.Text, stockUnits) Then
+                            ' Use existing stock units
+                        End If
+
+                        ' Add empty entries based on stock units
+                        For i As Integer = 0 To stockUnits - 1
+                            currentData.SerialNumbers.Add("")
+                        Next
+
+                        Debug.WriteLine($"Initialized {currentData.SerialNumbers.Count} empty serial number entries")
+                    End If
+
                     CreateSerialNumberTextBoxes()
                 End If
             End If
@@ -521,24 +562,54 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         Private Sub LoadSerialNumberData()
             ' Get the current variation data
             Dim currentData = ProductController.variationManager.GetCurrentVariationData()
+            Debug.WriteLine("Loading serial number data")
 
             ' Set the data to controls
             If currentData IsNot Nothing Then
                 ' Set checkbox state
                 CheckBoxSerialNumber.IsChecked = currentData.IncludeSerialNumbers
+                Debug.WriteLine($"Serial Number Checkbox set to: {currentData.IncludeSerialNumbers}")
 
                 ' Update visibility based on checkbox state
                 UpdateSerialNumberPanelVisibility()
 
                 ' Create textboxes based on stock units
                 If currentData.IncludeSerialNumbers Then
+                    Debug.WriteLine("Creating serial number textboxes")
                     CreateSerialNumberTextBoxes()
 
-                    ' Load serial numbers into textboxes
+                    ' Force a new reading of serial numbers from the data model
                     If currentData.SerialNumbers IsNot Nothing AndAlso currentData.SerialNumbers.Count > 0 Then
-                        For i As Integer = 0 To Math.Min(currentData.SerialNumbers.Count - 1, ProductController.serialNumberTextBoxes.Count - 1)
-                            ProductController.serialNumberTextBoxes(i).Text = currentData.SerialNumbers(i)
-                        Next
+                        Debug.WriteLine($"Populating {currentData.SerialNumbers.Count} serial numbers")
+
+                        ' Find the container that holds all serial number rows
+                        Dim containerBorder As Border = TryCast(StackPanelSerialRow.Children(1), Border)
+                        If containerBorder IsNot Nothing Then
+                            Dim scrollViewer As ScrollViewer = TryCast(containerBorder.Child, ScrollViewer)
+                            If scrollViewer IsNot Nothing Then
+                                Dim container = TryCast(scrollViewer.Content, StackPanel)
+                                If container IsNot Nothing Then
+                                    ' Populate serial numbers into textboxes
+                                    For i As Integer = 0 To Math.Min(currentData.SerialNumbers.Count - 1, container.Children.Count - 1)
+                                        ' Find the textbox in this row
+                                        Dim rowPanel = TryCast(container.Children(i), StackPanel)
+                                        If rowPanel IsNot Nothing Then
+                                            Dim grid = TryCast(rowPanel.Children(0), Grid)
+                                            If grid IsNot Nothing Then
+                                                Dim border = TryCast(grid.Children(0), Border)
+                                                If border IsNot Nothing Then
+                                                    Dim textBox = TryCast(border.Child, TextBox)
+                                                    If textBox IsNot Nothing Then
+                                                        textBox.Text = currentData.SerialNumbers(i)
+                                                        Debug.WriteLine($"Set serial number [{i}] to: {currentData.SerialNumbers(i)}")
+                                                    End If
+                                                End If
+                                            End If
+                                        End If
+                                    Next
+                                End If
+                            End If
+                        End If
                     End If
                 End If
             End If
@@ -557,23 +628,46 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 Return
             End If
 
-            ' Generate all possible combinations
+            ' Generate all possible combinations (now preserves existing data)
             GenerateVariationCombinations()
 
             ' Create variation tabs
             CreateVariationTabs()
 
-            ' Select the first variation by default
-            If ProductController.variationManager.GetAllVariationData().Count > 0 Then
-                Dim firstKey = ProductController.variationManager.GetAllVariationData().Keys.First()
-                SelectVariation(firstKey)
+            ' Check if we have a previously selected variation to restore
+            Dim lastSelectedVariation As String = TryCast(Application.Current.Properties("LastSelectedVariation"), String)
+
+            Debug.WriteLine($"Attempting to restore last selected variation: {lastSelectedVariation}")
+
+            If Not String.IsNullOrEmpty(lastSelectedVariation) Then
+                ' Find and click the corresponding tab button
+                Dim scrollViewer = TryCast(VariationsPanel.Children(0), ScrollViewer)
+                If scrollViewer IsNot Nothing Then
+                    Dim buttonPanel = TryCast(scrollViewer.Content, StackPanel)
+                    If buttonPanel IsNot Nothing Then
+                        For Each child In buttonPanel.Children
+                            Dim tabBtn = TryCast(child, Button)
+                            If tabBtn IsNot Nothing AndAlso tabBtn.Tag.ToString() = lastSelectedVariation Then
+                                ' Simulate click on this tab
+                                Debug.WriteLine($"Found matching tab for: {lastSelectedVariation}")
+                                VariationTab_Click(tabBtn, New RoutedEventArgs())
+                                Return
+                            End If
+                        Next
+                        Debug.WriteLine($"Warning: Could not find matching tab for: {lastSelectedVariation}")
+                    End If
+                End If
             End If
+
+            Debug.WriteLine("No last selected variation found or couldn't restore it, selecting first tab")
+            ' If no previously selected variation or it wasn't found, select the first tab
+            ' The automatic tab selection in CreateVariationTabs will handle this
         End Sub
+
 
         ''' <summary>
         ''' Generates all possible combinations of variation options
         ''' </summary>
-
         Private Sub GenerateVariationCombinations()
             ' Check if we have saved variations
             If AddVariation.SavedVariations.Count = 0 Then
@@ -597,35 +691,54 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ' Generate all combinations
             Dim combinations = GenerateCombinations(variationOptions)
 
+            ' Store existing variations to preserve their values
+            Dim existingVariations = ProductController.variationManager.GetAllVariationData()
+            Debug.WriteLine($"Found {existingVariations.Count} existing variations")
+
             ' Create variation data entries for each combination
             For Each combo In combinations
                 Dim combinationName = String.Join(", ", combo)
 
-                ' Add the combination with default name
-                ProductController.variationManager.AddVariationCombination(combinationName)
+                ' Check if this combination already exists
+                Dim variationExists As Boolean = existingVariations.ContainsKey(combinationName)
 
-                ' Get the newly added variation and set default values
-                Dim newVariation = ProductController.variationManager.GetVariationData(combinationName)
-                If newVariation IsNot Nothing Then
-                    ' Set default values as specified
-                    newVariation.RetailPrice = 0             ' Selling price set to 0
-                    newVariation.PurchaseOrder = 0           ' Buying price set to 0
-                    newVariation.DefaultTax = 12             ' Default tax rate set to 12
-                    newVariation.DiscountRate = 0            ' Discount rate set to 0
-                    newVariation.StockUnits = 1              ' Stock units set to 1
-                    newVariation.AlertQuantity = 0           ' Alert quantity set to 0
-                    newVariation.SelectedWarehouseIndex = 0  ' Warehouse set to index 1
-                    newVariation.IncludeSerialNumbers = True ' Serial number checkbox checked by default
+                If Not variationExists Then
+                    Debug.WriteLine($"Adding new variation: {combinationName}")
+                    ' Only add the combination if it doesn't already exist
+                    ProductController.variationManager.AddVariationCombination(combinationName)
 
-                    ' Initialize serial numbers list with one empty entry
-                    If newVariation.IncludeSerialNumbers Then
-                        newVariation.SerialNumbers = New List(Of String) From {
-                            ""
-                        }
+                    ' Get the newly added variation and set default values
+                    Dim newVariation = ProductController.variationManager.GetVariationData(combinationName)
+                    If newVariation IsNot Nothing Then
+                        ' Set default values as specified
+                        newVariation.RetailPrice = 0             ' Selling price set to 0
+                        newVariation.PurchaseOrder = 0           ' Buying price set to 0
+                        newVariation.DefaultTax = 12             ' Default tax rate set to 12
+                        newVariation.DiscountRate = 0            ' Discount rate set to 0
+                        newVariation.StockUnits = 1              ' Stock units set to 1
+                        newVariation.AlertQuantity = 0           ' Alert quantity set to 0
+                        newVariation.SelectedWarehouseIndex = 0  ' Warehouse set to index 1
+                        newVariation.IncludeSerialNumbers = True ' Serial number checkbox checked by default
+
+                        ' Initialize serial numbers list with one empty entry
+                        If newVariation.IncludeSerialNumbers Then
+                            newVariation.SerialNumbers = New List(Of String)()
+                            newVariation.SerialNumbers.Add("")
+                        End If
+                    End If
+                Else
+                    Debug.WriteLine($"Variation already exists: {combinationName}")
+                    ' Log what it currently has
+                    Dim existingVariation = existingVariations(combinationName)
+                    If existingVariation IsNot Nothing Then
+                        Debug.WriteLine($"  StockUnits: {existingVariation.StockUnits}")
+                        Debug.WriteLine($"  SerialNumberChecked: {existingVariation.IncludeSerialNumbers}")
+                        Debug.WriteLine($"  SerialNumbers count: {If(existingVariation.SerialNumbers Is Nothing, "NULL", existingVariation.SerialNumbers.Count.ToString())}")
                     End If
                 End If
             Next
         End Sub
+
         ''' <summary>
         ''' Recursive method to generate all possible combinations of options
         ''' </summary>
@@ -661,26 +774,29 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             ' Create a ScrollViewer for horizontal scrolling
             Dim scrollViewer As New ScrollViewer With {
-            .HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
-            .VerticalScrollBarVisibility = ScrollBarVisibility.Disabled,
-            .Padding = New Thickness(0, 0, 0, 5),
-            .Background = Brushes.Transparent
-        }
+        .HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+        .VerticalScrollBarVisibility = ScrollBarVisibility.Disabled,
+        .Padding = New Thickness(0, 0, 0, 5),
+        .Background = Brushes.Transparent
+    }
 
             ' Create a StackPanel for the buttons
             Dim buttonPanel As New StackPanel With {
-            .Orientation = Orientation.Horizontal,
-            .Background = Brushes.Transparent
-        }
+        .Orientation = Orientation.Horizontal,
+        .Background = Brushes.Transparent
+    }
 
             ' Add buttons for each variation combination
+            Dim lastSelectedVariation As String = TryCast(Application.Current.Properties("LastSelectedVariation"), String)
+            Dim buttonToSelect As Button = Nothing
+
             For Each kvp In ProductController.variationManager.GetAllVariationData()
                 Dim combinationName = kvp.Key
 
                 ' Create a Grid for the tab layout
                 Dim grid As New Grid() With {
-                .Background = Brushes.Transparent
-            }
+            .Background = Brushes.Transparent
+        }
 
                 ' Define columns: one narrow for the selection indicator, one for content
                 grid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(5)})
@@ -688,32 +804,32 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
                 ' Create selection indicator rectangle
                 Dim selectionIndicator As New Rectangle With {
-                .Fill = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
-                .Visibility = Visibility.Collapsed
-            }
+            .Fill = New SolidColorBrush(ColorConverter.ConvertFromString("#555555")),
+            .Visibility = Visibility.Collapsed
+        }
                 Grid.SetColumn(selectionIndicator, 0)
                 grid.Children.Add(selectionIndicator)
 
                 ' Create text block for the tab text with larger font size
                 Dim textBlock As New TextBlock With {
-                .Text = combinationName,
-                .Margin = New Thickness(10, 0, 10, 0),
-                .VerticalAlignment = VerticalAlignment.Center,
-                .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AAAAAA")),
-                .FontSize = 14, ' Increased font size from default
-                .FontFamily = CType(FindResource("Lexend"), FontFamily)
-            }
+            .Text = combinationName,
+            .Margin = New Thickness(10, 0, 10, 0),
+            .VerticalAlignment = VerticalAlignment.Center,
+            .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AAAAAA")),
+            .FontSize = 14,
+            .FontFamily = CType(FindResource("Lexend"), FontFamily)
+        }
                 Grid.SetColumn(textBlock, 1)
                 grid.Children.Add(textBlock)
 
                 ' Create a button for this variation with transparent background
                 Dim btn As New Button With {
-                .Content = grid,
-                .BorderThickness = New Thickness(0),
-                .Style = CType(FindResource("RoundedButtonStyle"), Style),
-                .Tag = combinationName,
-                .Background = Brushes.Transparent
-            }
+            .Content = grid,
+            .BorderThickness = New Thickness(0),
+            .Style = CType(FindResource("RoundedButtonStyle"), Style),
+            .Tag = combinationName,
+            .Background = Brushes.Transparent
+        }
 
                 ' Store references to the visual elements for later updating
                 btn.Resources.Add("SelectionIndicator", selectionIndicator)
@@ -724,6 +840,11 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
                 ' Add to the panel
                 buttonPanel.Children.Add(btn)
+
+                ' Check if this is the last selected variation
+                If combinationName = lastSelectedVariation Then
+                    buttonToSelect = btn
+                End If
             Next
 
             ' Set the ButtonPanel as the content of the ScrollViewer
@@ -735,12 +856,22 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ' Ensure VariationsPanel has transparent background
             VariationsPanel.Background = Brushes.Transparent
 
-            ' Select the first tab by default if there are any tabs
-            If buttonPanel.Children.Count > 0 Then
+            ' Select the appropriate tab
+            If buttonToSelect IsNot Nothing Then
+                Debug.WriteLine($"Found button for last selected variation: {lastSelectedVariation}")
+                ' Use dispatcher to ensure UI is fully loaded before clicking
+                Dispatcher.BeginInvoke(New Action(Sub()
+                                                      VariationTab_Click(buttonToSelect, New RoutedEventArgs())
+                                                  End Sub), DispatcherPriority.Render)
+            ElseIf buttonPanel.Children.Count > 0 Then
+                ' If no previously selected tab or not found, select the first tab
                 Dim firstButton = TryCast(buttonPanel.Children(0), Button)
                 If firstButton IsNot Nothing Then
-                    ' Simulate a click on the first button to select it
-                    VariationTab_Click(firstButton, New RoutedEventArgs())
+                    Debug.WriteLine("Selecting first tab as default")
+                    ' Use dispatcher to ensure UI is fully loaded before clicking
+                    Dispatcher.BeginInvoke(New Action(Sub()
+                                                          VariationTab_Click(firstButton, New RoutedEventArgs())
+                                                      End Sub), DispatcherPriority.Render)
                 End If
             End If
         End Sub
@@ -753,49 +884,61 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             If btn IsNot Nothing Then
                 Dim combinationName = TryCast(btn.Tag, String)
                 If Not String.IsNullOrEmpty(combinationName) Then
-                    ' Save current serial number values first
-                    SaveSerialNumberValues()
+                    Debug.WriteLine($"Tab clicked: {combinationName}")
 
-                    ' Save current variation data before switching
-                    SaveCurrentVariationData()
-
-                    ' Now select the new variation
-                    SelectVariation(combinationName)
-
-                    ' Reset all tabs to unselected state
-                    Dim scrollViewer = TryCast(VariationsPanel.Children(0), ScrollViewer)
-                    If scrollViewer IsNot Nothing Then
-                        Dim buttonPanel = TryCast(scrollViewer.Content, StackPanel)
-                        If buttonPanel IsNot Nothing Then
-                            For Each child In buttonPanel.Children
-                                Dim tabBtn = TryCast(child, Button)
-                                If tabBtn IsNot Nothing Then
-                                    ' Get references to the visual elements
-                                    Dim indicator = TryCast(tabBtn.Resources("SelectionIndicator"), Rectangle)
-                                    Dim text = TryCast(tabBtn.Resources("TextBlock"), TextBlock)
-
-                                    ' Reset to default unselected style
-                                    If indicator IsNot Nothing Then
-                                        indicator.Visibility = Visibility.Collapsed
-                                    End If
-                                    If text IsNot Nothing Then
-                                        text.Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AAAAAA"))
-                                    End If
-                                End If
-                            Next
+                    Try
+                        ' Always save the current serial number values and variation data first
+                        If ProductController.variationManager.GetCurrentVariationData() IsNot Nothing Then
+                            Debug.WriteLine("Saving current variation data before tab change")
+                            SaveSerialNumberValues()
+                            SaveCurrentVariationData()
                         End If
-                    End If
 
-                    ' Apply selected style to the clicked tab
-                    Dim selectedIndicator = TryCast(btn.Resources("SelectionIndicator"), Rectangle)
-                    Dim selectedText = TryCast(btn.Resources("TextBlock"), TextBlock)
+                        ' Now select the new variation
+                        SelectVariation(combinationName)
 
-                    If selectedIndicator IsNot Nothing Then
-                        selectedIndicator.Visibility = Visibility.Visible
-                    End If
-                    If selectedText IsNot Nothing Then
-                        selectedText.Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555"))
-                    End If
+                        ' Also store this as the last selected variation
+                        Application.Current.Properties("LastSelectedVariation") = combinationName
+                        Debug.WriteLine($"Set last selected variation to: {combinationName}")
+
+                        ' Reset all tabs to unselected state
+                        Dim scrollViewer = TryCast(VariationsPanel.Children(0), ScrollViewer)
+                        If scrollViewer IsNot Nothing Then
+                            Dim buttonPanel = TryCast(scrollViewer.Content, StackPanel)
+                            If buttonPanel IsNot Nothing Then
+                                For Each child In buttonPanel.Children
+                                    Dim tabBtn = TryCast(child, Button)
+                                    If tabBtn IsNot Nothing Then
+                                        ' Get references to the visual elements
+                                        Dim indicator = TryCast(tabBtn.Resources("SelectionIndicator"), Rectangle)
+                                        Dim text = TryCast(tabBtn.Resources("TextBlock"), TextBlock)
+
+                                        ' Reset to default unselected style
+                                        If indicator IsNot Nothing Then
+                                            indicator.Visibility = Visibility.Collapsed
+                                        End If
+                                        If text IsNot Nothing Then
+                                            text.Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AAAAAA"))
+                                        End If
+                                    End If
+                                Next
+                            End If
+                        End If
+
+                        ' Apply selected style to the clicked tab
+                        Dim selectedIndicator = TryCast(btn.Resources("SelectionIndicator"), Rectangle)
+                        Dim selectedText = TryCast(btn.Resources("TextBlock"), TextBlock)
+
+                        If selectedIndicator IsNot Nothing Then
+                            selectedIndicator.Visibility = Visibility.Visible
+                        End If
+                        If selectedText IsNot Nothing Then
+                            selectedText.Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555"))
+                        End If
+                    Catch ex As Exception
+                        Debug.WriteLine($"Error in tab click: {ex.Message}")
+                        MessageBox.Show($"Error changing tabs: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    End Try
                 End If
             End If
         End Sub
@@ -804,17 +947,39 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         ''' Selects a variation and displays its details
         ''' </summary>
         Private Sub SelectVariation(combinationName As String)
-            ' Update the selected variation title
+            ' Update the selected variation title  
             SelectedVariationTitle.Text = "Selected Variation: " & combinationName
+            Debug.WriteLine($"Selecting variation: {combinationName}")
 
             ' Select this variation in the manager
             ProductController.variationManager.SelectVariationCombination(combinationName)
 
-            ' Load the data into existing form fields
+            ' Load the data into form fields
             LoadVariationFormData()
 
-            ' Load serial numbers data
+            ' Explicitly reset and then load serial numbers data
+            If CheckBoxSerialNumber IsNot Nothing Then
+                ' Update serial number checkbox state first
+                Dim currentData = ProductController.variationManager.GetCurrentVariationData()
+                If currentData IsNot Nothing Then
+                    CheckBoxSerialNumber.IsChecked = currentData.IncludeSerialNumbers
+                    Debug.WriteLine($"Serial Number Checkbox set to: {currentData.IncludeSerialNumbers}")
+                End If
+            End If
+
+            ' Now load serial number data
             LoadSerialNumberData()
+
+            ' Additional debugging output
+            Dim data = ProductController.variationManager.GetCurrentVariationData()
+            If data IsNot Nothing Then
+                Debug.WriteLine($"Loaded variation data: {combinationName}")
+                Debug.WriteLine($"  StockUnits: {data.StockUnits}")
+                Debug.WriteLine($"  SerialNumberChecked: {data.IncludeSerialNumbers}")
+                Debug.WriteLine($"  SerialNumbers count: {If(data.SerialNumbers Is Nothing, "NULL", data.SerialNumbers.Count.ToString())}")
+            Else
+                Debug.WriteLine($"WARNING: Could not get data for variation: {combinationName}")
+            End If
         End Sub
 
         ''' <summary>
@@ -935,9 +1100,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
                 ' Save serial numbers checkbox state
                 currentData.IncludeSerialNumbers = CheckBoxSerialNumber.IsChecked
-
-                ' Note: We no longer need to collect serial numbers here since it's done 
-                ' by the SaveSerialNumberValues() method which is called before this method
             End If
         End Sub
 #End Region
@@ -949,33 +1111,40 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         End Sub
 
         Private Sub BtnBack(sender As Object, e As RoutedEventArgs)
-            ' Save current serial number values first
-            SaveSerialNumberValues()
+            ' Get the current variation name before making any changes
+            Dim currentVariationName = ProductController.variationManager.CurrentCombination
 
-            ' Save the currently displayed variation
-            SaveCurrentVariationData()
+            ' Always save the current variation data first
+            If Not String.IsNullOrEmpty(currentVariationName) Then
+                SaveSerialNumberValues()
+                SaveCurrentVariationData()
 
-            ' Ask user if they want to save all changes before navigating back
-            Dim result As MessageBoxResult = MessageBox.Show("Do you want to save all variation data before going back?",
-                                                     "Save Changes",
-                                                     MessageBoxButton.YesNoCancel,
-                                                     MessageBoxImage.Question)
+                ' Store the currently selected variation name
+                Application.Current.Properties("LastSelectedVariation") = currentVariationName
 
-            If result = MessageBoxResult.Cancel Then
+                ' Verification logging
+                Dim currentData = ProductController.variationManager.GetVariationData(currentVariationName)
+                If currentData IsNot Nothing Then
+                    Debug.WriteLine($"Verification - After saving:")
+                    Debug.WriteLine($"  StockUnits: {currentData.StockUnits}")
+                    Debug.WriteLine($"  SerialNumberChecked: {currentData.IncludeSerialNumbers}")
+                    Debug.WriteLine($"  SerialNumbers count: {If(currentData.SerialNumbers Is Nothing, "NULL", currentData.SerialNumbers.Count.ToString())}")
+                End If
+            End If
+
+            ' Ask user if they want to acknowledge saving
+            Dim result As MessageBoxResult = MessageBox.Show("Your changes have been saved. Return to previous screen?",
+                               "Save Changes",
+                               MessageBoxButton.YesNo,
+                               MessageBoxImage.Question)
+
+            If result = MessageBoxResult.No Then
                 ' User canceled, don't navigate away
                 Return
-            ElseIf result = MessageBoxResult.Yes Then
-                ' Validate data before proceeding
-                If Not ValidateFormData() Then
-                    Return ' Don't navigate away if validation fails
-                End If
-
-                ' Show confirmation message
-                MessageBox.Show("Variation details saved successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
             End If
 
             ' Now navigate back to AddNewProducts
-            ViewLoader.DynamicView.NavigateToView("manageproducts", Me)
+            ViewLoader.DynamicView.NavigateToView("newproducts", Me)
         End Sub
 #End Region
 
