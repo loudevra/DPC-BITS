@@ -48,7 +48,7 @@ Namespace DPC.Data.Controllers
         ''' <summary>
         ''' Static list to store variations data globally
         ''' </summary>
-        Public Shared _savedVariations As New List(Of ProductVariation)
+        Public Shared _savedVariations As List(Of ProductVariation) = New List(Of ProductVariation)
 
         ''' <summary>
         ''' Product variation manager instance to handle all variations
@@ -335,7 +335,7 @@ Namespace DPC.Data.Controllers
                                      ValidDate As DatePicker, SerialNumbers As List(Of TextBox),
                                      Checkbox As Controls.CheckBox)
 
-            InsertNonVariationProduct(conn, transaction, productID,
+            CreateProduct.InsertNonVariationProduct(conn, transaction, productID,
                                     Warehouse, SellingPrice, BuyingPrice,
                                     DefaultTax, DiscountRate,
                                     StockUnits, AlertQuantity,
@@ -347,15 +347,7 @@ Namespace DPC.Data.Controllers
         ''' Inserts a product with variations into the database
         ''' </summary>
         Public Shared Sub InsertVariationProduct(conn As MySqlConnection, transaction As MySqlTransaction, productID As String)
-
-            ' Insert into productvariation table
-            Dim query As String = "INSERT INTO productvariation (productID, dateCreated) 
-                           VALUES (@productID, @DateCreated);"
-            Using cmd As New MySqlCommand(query, conn, transaction)
-                cmd.Parameters.AddWithValue("@productID", productID)
-                cmd.Parameters.AddWithValue("@DateCreated", DateTime.Now)
-                cmd.ExecuteNonQuery()
-            End Using
+            CreateProduct.InsertVariationProduct(conn, transaction, productID)
         End Sub
 
         ''' <summary>
@@ -465,6 +457,8 @@ Namespace DPC.Data.Controllers
         Public Function GetAllVariationData() As Dictionary(Of String, ProductVariationData)
             Return VariationDataDict
         End Function
+
+
 #End Region
     End Class
 End Namespace
