@@ -23,6 +23,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <StackPanel Grid.Row="0" Margin="0,0,0,10">
@@ -410,7 +411,8 @@
                             </StackPanel>
 
                         </StackPanel>
-
+                    </StackPanel>
+                    <StackPanel Grid.Row="5" HorizontalAlignment="Right">
                         <Button Background="Transparent" HorizontalAlignment="Right" BorderThickness="0" Margin="0,15,0,0" x:Name="btnAddProduct"  Click="BtnAddProduct_Click">
                             <Border Style="{StaticResource RoundedBorderStyle}" Padding="1" Background="#52C69D" BorderBrush="#52C69D">
                                 <StackPanel Orientation="Horizontal" Background="#52C69D" Margin="10,0,10,0">
