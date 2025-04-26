@@ -364,5 +364,57 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Dim variations As List(Of ProductVariation) = ProductController.GetProductVariations()
             ProductController.UpdateProductVariationText(variations, TxtProductVariation)
         End Sub
+
+        ' Remove image button handler
+        Private Sub BtnRemoveImage_Click(sender As Object, e As RoutedEventArgs)
+            ' Clear the image from the ViewModel
+            ProductViewModel.Instance.ProductImage = Nothing
+            ProductViewModel.Instance.ImagePath = Nothing
+        End Sub
+
+        ' Common method to load image from file
+        Private Sub LoadImageFromFile(filePath As String)
+            Try
+                ' Check file size (2MB limit)
+                Dim fileInfo As New FileInfo(filePath)
+                Dim sizeInMB As Double = fileInfo.Length / (1024 * 1024)
+
+                If sizeInMB > 2 Then
+                    MessageBox.Show("Image size exceeds 2MB limit. Please select a smaller image.", "File Too Large", MessageBoxButton.OK, MessageBoxImage.Warning)
+                    Return
+                End If
+
+                ' Create BitmapImage
+                Dim bitmap As New BitmapImage()
+                bitmap.BeginInit()
+                bitmap.CacheOption = BitmapCacheOption.OnLoad ' Load the image in memory
+                bitmap.UriSource = New Uri(filePath)
+                bitmap.EndInit()
+                bitmap.Freeze() ' Make it thread safe
+
+                ' Store in ViewModel
+                ProductViewModel.Instance.ProductImage = bitmap
+                ProductViewModel.Instance.ImagePath = filePath
+
+            Catch ex As Exception
+                MessageBox.Show("Error loading image: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+        End Sub
+    End Class
+
+    ' You'll need to add this converter class to your project
+    Public Class InverseBooleanToVisibilityConverter
+        Implements IValueConverter
+
+        Public Function Convert(value As Object, targetType As Type, parameter As Object, culture As Globalization.CultureInfo) As Object Implements IValueConverter.Convert
+            Dim boolValue As Boolean = CBool(value)
+            Return If(boolValue, Visibility.Collapsed, Visibility.Visible)
+        End Function
+
+        Public Function ConvertBack(value As Object, targetType As Type, parameter As Object, culture As Globalization.CultureInfo) As Object Implements IValueConverter.ConvertBack
+            Dim visibility As Visibility = DirectCast(value, Visibility)
+            Return visibility <> Visibility.Visible
+        End Function
+
     End Class
 End Namespace

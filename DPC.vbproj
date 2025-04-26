@@ -368,6 +368,8 @@
     <Compile Include="Data\Controllers\StocksTransferController.vb" />
     <Compile Include="Data\Controllers\SupplierController.vb" />
     <Compile Include="Data\Controllers\WarehouseController.vb" />
+    <Compile Include="Data\Converters\BooleanToVisibilityConverter.vb" />
+    <Compile Include="Data\Converters\InverseBooleanToVisibilityConverter.vb" />
     <Compile Include="Data\Converters\PasswordMaskingBehavior.vb" />
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />

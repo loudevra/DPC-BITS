@@ -51,7 +51,40 @@ Namespace DPC.Data.Controllers
             End Set
         End Property
 
-        ' Add other product properties as needed
+        ' Image properties
+        Private _productImage As BitmapImage
+        Public Property ProductImage As BitmapImage
+            Get
+                Return _productImage
+            End Get
+            Set(value As BitmapImage)
+                If _productImage IsNot value Then
+                    _productImage = value
+                    OnPropertyChanged()
+                    OnPropertyChanged("HasProductImage") ' Update the visibility property
+                End If
+            End Set
+        End Property
+
+        ' This property helps with visibility binding
+        Public ReadOnly Property HasProductImage As Boolean
+            Get
+                Return ProductImage IsNot Nothing
+            End Get
+        End Property
+
+        Private _imagePath As String
+        Public Property ImagePath As String
+            Get
+                Return _imagePath
+            End Get
+            Set(value As String)
+                If _imagePath <> value Then
+                    _imagePath = value
+                    OnPropertyChanged()
+                End If
+            End Set
+        End Property
 
         ' INotifyPropertyChanged implementation
         Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
