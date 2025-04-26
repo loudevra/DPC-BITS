@@ -14,6 +14,8 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBox.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+            
+            
 
             <!-- Font Definitions -->
             <FontFamily x:Key="Lexend">pack://application:,,,/Assets/fonts/Lexend/Lexend-Regular.ttf</FontFamily>

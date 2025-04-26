@@ -38,6 +38,19 @@ Namespace DPC.Data.Controllers
             End Set
         End Property
 
+        Private _description As String
+        Public Property Description As String
+            Get
+                Return _description
+            End Get
+            Set(value As String)
+                If _description <> value Then
+                    _description = value
+                    OnPropertyChanged()
+                End If
+            End Set
+        End Property
+
         ' Add other product properties as needed
 
         ' INotifyPropertyChanged implementation
