@@ -30,6 +30,16 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Stocks.Warehouses.Warehouses() ' Added the Warehouses UserControl
                     Case "productcategories"
                         Return New Stocks.ProductCategories.ProductCategories() ' Added the ProductCategories UserControl
+                    Case "promocodes"
+                        Return New PromoCodes.ManagePromoCodes() ' Added the ManagePromoCodes UserControl
+                    Case "manageproducts"
+                        Return New Stocks.ItemManager.ProductManager.ManageProducts() ' Added the ManageProducts UserControl
+                    Case "newproducts"
+                        Return New Stocks.ItemManager.NewProduct.AddNewProducts() ' Added the NewProducts UserControl
+                    Case "batcheditproductvar"
+                        Return New Stocks.ItemManager.NewProduct.ProductBatchEdit()
+                    Case "productvariationdetails"
+                        Return New Stocks.ItemManager.NewProduct.ProductVariationDetails()
                     Case Else
                         ' Return a placeholder UserControl with error text
                         Dim errorContent As New TextBlock With {
@@ -76,6 +86,16 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "warehouses"
             ElseIf typeName = "productcategories" Then
                 Return "productcategories" ' Added the ProductCategories view type
+            ElseIf typeName = "promocodes" Then
+                Return "promocodes" ' Added the ManagePromoCodes view type
+            ElseIf typeName = "manageproducts" Then
+                Return "manageproducts" ' Added the ManageProducts view type
+            ElseIf typeName = "newproducts" Then
+                Return "newproducts" ' Added the ManageProducts view type
+            ElseIf typeName = "batcheditproductvar" Then
+                Return "batcheditproductvar"
+            ElseIf typeName = "productvariationdetails" Then
+                Return "productvariationdetails"
             Else
                 Return typeName
             End If

@@ -104,20 +104,10 @@ Namespace DPC.Components.UI
 
 
         Private Sub NavigateToNewProduct(sender As Object, e As RoutedEventArgs)
-            Dim NewProductWindow As New Views.Stocks.ItemManager.NewProduct.AddNewProducts
-            NewProductWindow.Show()
-
-            ' Close the current window where this UserControl is being used
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
+            ViewLoader.DynamicView.NavigateToView("newproducts", Me)
         End Sub
         Private Sub NavigateToProductManager(sender As Object, e As RoutedEventArgs)
-            Dim NewProductWindow As New Views.Stocks.ItemManager.ProductManager.ManageProducts()
-            NewProductWindow.Show()
-
-            ' Close the current window where this UserControl is being used
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
+            ViewLoader.DynamicView.NavigateToView("manageproducts", Me)
         End Sub
         ''' <summary>
         ''' Navigate to Product Categories Page

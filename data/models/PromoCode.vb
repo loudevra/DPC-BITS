@@ -8,6 +8,7 @@
         Public Property IsLinked As Boolean
         Public Property Account As String
         Public Property Note As String
+        Public Property Status As String
         Public Property CreatedAt As Date
     End Class
 End Namespace

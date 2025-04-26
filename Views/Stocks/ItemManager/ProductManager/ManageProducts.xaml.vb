@@ -1,8 +1,4 @@
 ﻿Imports System.Windows.Controls.Primitives
-Imports DPC.DPC.Components.Forms
-Imports DPC.DPC.Data.Controllers
-Imports DPC.DPC.Data.Model
-Imports MaterialDesignThemes.Wpf.Theme
 Imports System.Windows.Controls
 Imports ClosedXML.Excel
 Imports Microsoft.Win32
@@ -10,22 +6,17 @@ Imports System.Data
 Imports System.IO
 Imports System.Reflection
 Imports System.ComponentModel
+Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Views.Stocks.ItemManager.ProductManager
     Public Class ManageProducts
-        Inherits Window
-
+        Inherits UserControl
 
         Private view As ICollectionView
+
         Public Sub New()
             InitializeComponent()
-
-            Dim sidebar As New Components.Navigation.Sidebar()
-            SidebarContainer.Child = sidebar
-
-            ' Load Top Navigation Bar
-            Dim topNav As New Components.Navigation.TopNavBar()
-            TopNavBarContainer.Child = topNav
 
             ' Load DataGrid with items and create a CollectionViewSource for filtering
             view = CollectionViewSource.GetDefaultView(dataGrid.ItemsSource)
@@ -106,20 +97,13 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
             End If
         End Sub
 
-        ' Load Data Using SupplierController
+        ' Load Data Using ProductController
         Public Sub LoadData()
             ProductController.LoadProductData(dataGrid)
         End Sub
 
         Private Sub BtnAddNew_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddNew.Click
-            Dim NewProductWindow As New Views.Stocks.ItemManager.NewProduct.AddNewProducts
-            NewProductWindow.Show()
-
-            ' Close the current window where this UserControl is being used
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
+            ViewLoader.DynamicView.NavigateToView("manageproducts", Me)
         End Sub
     End Class
 End Namespace
-
-

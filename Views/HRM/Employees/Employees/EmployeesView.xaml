@@ -189,7 +189,7 @@
 
                             <Button x:Name="BtnEmployee"
                                 Style="{StaticResource AddNewButtonStyle}"
-                                Margin="20,0,0,0" Click="AddEmployee" >
+                                Margin="20,0,0,0" Click="AddEmployee" Height="35" >
                                 <StackPanel Orientation="Horizontal">
                                     <materialDesign:PackIcon Kind="AccountPlus" Width="25" Height="25" Foreground="#474747"/>
                                     <TextBlock Text="Employee" FontSize="17" Foreground="#474747"  />
@@ -198,7 +198,7 @@
                         </StackPanel>
 
                         <!-- Filters and Controls -->
-                        <Border Grid.Row="1" Padding="2" Background="White" CornerRadius="10" BorderBrush="White" Margin="0,0,0,15" >
+                        <Border Grid.Row="1" Padding="5" Background="White" CornerRadius="10" BorderBrush="White" Margin="0,0,0,15" >
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
@@ -208,12 +208,14 @@
                                 <!-- Left Controls -->
                                 <StackPanel Grid.Column="0" Orientation="Horizontal">
                                     <!-- Excel Button -->
-                                    <Button Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" Foreground="White" Width="75"   >
+
+                                    <!-- Excel Button -->
+                                    <Button  Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" Foreground="White" Width="75" Height="29"  Margin="10,0,0,0"   >
                                         <materialDesign:PackIcon Kind="MicrosoftExcel" Width="25" Height="25"/>
                                     </Button>
 
                                     <TextBlock Text="Show" FontSize="14" Margin="10,0,5,0" Height="19" FontFamily="Lexend" Foreground="#474747"/>
-                                    <ComboBox Width="75" Style="{StaticResource RoundedComboBoxStyle}">
+                                    <ComboBox Width="75" Style="{StaticResource RoundedComboBoxStyle}" Height="28">
                                         <ComboBoxItem Content="10" IsSelected="True"/>
                                         <ComboBoxItem Content="25"/>
                                         <ComboBoxItem Content="50"/>
@@ -223,10 +225,10 @@
 
                                 <!-- Right Controls -->
                                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200">
+                                    <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Width="211" Height="34">
                                         <Grid>
-                                            <TextBox BorderThickness="0" Background="Transparent" FontFamily="Lexend"  />
-                                            <materialDesign:PackIcon Kind="Magnify" Width="20" Height="25" Foreground="Black" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                            <TextBox BorderThickness="0" Background="Transparent" FontFamily="Lexend"  Name="txtSearch" Style="{StaticResource RoundedTextboxStyle}" Height="23" Margin="20,0,20,0" VerticalAlignment="Center"  TextChanged="txtSearch_TextChanged" />
+                                            <materialDesign:PackIcon Kind="Magnify" Width="25" Height="25" Foreground="Black" Margin="159,0,0,0" VerticalAlignment="Center"/>
                                         </Grid>
                                     </Border>
                                 </StackPanel>

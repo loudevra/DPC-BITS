@@ -1,4 +1,4 @@
-<Window x:Class="DPC.Views.Stocks.ItemManager.NewProduct.ProductVariationDetails"
+<UserControl x:Class="DPC.Views.Stocks.ItemManager.NewProduct.ProductVariationDetails"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -8,316 +8,281 @@
         xmlns:local1="namespace:DPC.Components.Forms"
         mc:Ignorable="d"
         Background="#D9D9D9"
-        Title="Add New Products"
-        Height="800" Width="1200"
-        WindowStartupLocation="CenterScreen"
         FontFamily="{StaticResource Lexend}"
         Foreground="#474747">
 
     <Grid>
-        <!-- Define Column Structure -->
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250"/>
-            <!-- Sidebar Width -->
-            <ColumnDefinition Width="*"/>
-            <!-- Main Content -->
-        </Grid.ColumnDefinitions>
-
-        <!-- Sidebar -->
-        <Border Grid.Column="0"
-        Background="White"
-        BorderBrush="#E0E0E0"
-        BorderThickness="0,0,1,0">
-            <ContentControl x:Name="SidebarContainer"/>
-        </Border>
-
-        <!-- Main Content -->
-        <Grid Grid.Column="1">
+        <!-- Main Form Content -->
+        <Grid Margin="25,10,25,10">
             <Grid.RowDefinitions>
-                <RowDefinition Height="60"/>
-                <!-- Top Navigation Bar -->
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
-                <!-- Form Content -->
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- Top Navigation Bar -->
-            <Border Grid.Row="0"
-            Background="White"
-            BorderBrush="#E0E0E0"
-            BorderThickness="0,0,0,1">
-                <ContentControl x:Name="TopNavBarContainer"/>
-            </Border>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=".75*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-            <!-- Main Form Content -->
-            <Grid Grid.Row="1" Margin="25,10,25,10">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width=".75*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,10">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10" Grid.Column="0">
-                            <materialDesign:PackIcon Kind="FormatListBulleted" Width="40" Height="40" Margin="0,0,15,0"/>
-                            <TextBlock Text="Variation Details" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="#555555"/>
-                        </StackPanel>
-
-                        <StackPanel Grid.Column="1" >
-                            <Button Style="{StaticResource RoundedButtonStyle}" Margin="0" HorizontalAlignment="Right" BorderThickness="0" Background="Transparent" Padding="0" Click="BtnBack">
-                                <materialDesign:PackIcon Kind="ArrowLeftTop" Width="20" Height="20" Margin="0,0,0,20"/>
-                            </Button>
-                        </StackPanel>
-                    </Grid>
-
-                    <Border BorderBrush="#AEAEAE" BorderThickness="0,1,0,0" Height="1" Margin="-10,0,-10,0"/>
-
-                    <Grid Margin="0,10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Grid.Column="0" Text="Set same details for all variations" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0" VerticalAlignment="Center"/>
-
-                        <Button Grid.Column="1" Style="{StaticResource RoundedButtonStyle}" Width="Auto" Height="Auto" Background="Transparent" HorizontalAlignment="Left" BorderThickness="0" VerticalAlignment="Center" Margin="20,0,0,0" Click="BtnBatchEdit">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <materialDesign:PackIcon Kind="PencilAddOutline" Foreground="#AEAEAE" Width="20" Height="20" Margin="0,0,0,0" VerticalAlignment="Center"/>
-                                <TextBlock Grid.Column="1" Text="Batch Edit" Foreground="#AEAEAE" FontSize="14" FontWeight="SemiBold" Margin="5,0,0,0" VerticalAlignment="Center"/>
-                            </Grid>
-                        </Button>
-                    </Grid>
-
-                    <Border BorderBrush="#AEAEAE" BorderThickness="0,1,0,0" Height="1" Margin="-10,0,-10,0"/>
-                </StackPanel>
-
-                <!-- Variation Tabs Section -->
-                <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,10">
-                    <StackPanel x:Name="VariationsPanel" Orientation="Horizontal">
-                        <!-- Dynamic variation buttons will be added here -->
+            <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10" Grid.Column="0">
+                        <materialDesign:PackIcon Kind="FormatListBulleted" Width="40" Height="40" Margin="0,0,15,0"/>
+                        <TextBlock Text="Variation Details" FontSize="20" FontWeight="SemiBold" VerticalAlignment="Center" Foreground="#555555"/>
                     </StackPanel>
 
-                    <!-- Selected variation title -->
-                    <TextBlock x:Name="SelectedVariationTitle" 
-                               Margin="0,10,0,0" 
-                               FontSize="14"
-                               FontWeight="Medium"
-                               Foreground="#555555"/>
-                </StackPanel>
+                    <StackPanel Grid.Column="1" >
+                        <Button Style="{StaticResource RoundedButtonStyle}" Margin="0" HorizontalAlignment="Right" BorderThickness="0" Background="Transparent" Padding="0" Click="BtnBack">
+                            <materialDesign:PackIcon Kind="ArrowLeftTop" Width="20" Height="20" Margin="0,0,0,20"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
 
-                <Border Grid.Row="2" 
-                        Grid.RowSpan="2" 
-                        Grid.Column="1" 
-                        BorderBrush="#AEAEAE" 
-                        BorderThickness="1,0,0,0"  
-                        Width="1" 
-                        Height="Auto" 
-                        VerticalAlignment="Stretch"
-                        Margin="10,0,0,0"/>
+                <Border BorderBrush="#AEAEAE" BorderThickness="0,1,0,0" Height="1" Margin="-10,0,-10,0"/>
 
-                <!-- Dynamic Form Content -->
-                <ContentControl x:Name="DynamicFormContainer" Grid.Row="3" Grid.Column="0" Margin="0,10,10,0">
-                    <ScrollViewer VerticalScrollBarVisibility="Auto"
-                                  HorizontalScrollBarVisibility="Disabled"
-                                  VerticalAlignment="Stretch"
-                                  Style="{StaticResource ModernScrollViewerStyle}">
-                        <StackPanel>
-                            <!-- Warehouse -->
-                            <StackPanel Margin="0,0,0,10" x:Name="StackPanelWarehouse">
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                    <TextBlock Text="Warehouse:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                                    <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
-                                </StackPanel>
-                                <ComboBox x:Name="ComboBoxWarehouse" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0"/>
-                            </StackPanel>
+                <Grid Margin="0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                            <!-- Retail Price -->
-                            <StackPanel Margin="0,10" x:Name="StackPanelRetailPrice">
-                                <StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                        <TextBlock Text="Selling Price:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                                        <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
-                                    </StackPanel>
-                                    <Border Style="{StaticResource RoundedBorderStyle}">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <materialDesign:PackIcon Kind="CurrencyPhp" Width="25" Height="20" Margin="10,0,0,0" VerticalAlignment="Center" Grid.Column="0"/>
-                                            <TextBox x:Name="TxtRetailPrice" Style="{StaticResource RoundedTextboxStyle}" Margin="0,0,25,0" Grid.Column="1" 
-                                                     PreviewTextInput="IntegerOnlyTextInputHandler"
-                                                     DataObject.Pasting="IntegerOnlyPasteHandler"/>
-                                        </Grid>
-                                    </Border>
-                                </StackPanel>
-                            </StackPanel>
+                    <TextBlock Grid.Column="0" Text="Set same details for all variations" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0" VerticalAlignment="Center"/>
 
-                            <!-- Purchase Order -->
-                            <StackPanel Margin="0,10,0,20" x:Name="StackPanelOrderPrice">
-                                <StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                        <TextBlock Text="Buying Price:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                                        <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
-                                    </StackPanel>
-                                    <Border Style="{StaticResource RoundedBorderStyle}">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <materialDesign:PackIcon Kind="CurrencyPhp" Width="25" Height="20" Margin="10,0,0,0" VerticalAlignment="Center" Grid.Column="0"/>
-                                            <TextBox x:Name="TxtPurchaseOrder" Style="{StaticResource RoundedTextboxStyle}" Margin="0,0,25,0" Grid.Column="1"
-                                                    PreviewTextInput="IntegerOnlyTextInputHandler"
-                                                    DataObject.Pasting="IntegerOnlyPasteHandler"/>
-                                        </Grid>
-                                    </Border>
-                                </StackPanel>
-                            </StackPanel>
-
-                            <!-- Tax Rate -->
-                            <StackPanel Margin="0,0,0,10" x:Name="StackPanelTaxRate">
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                    <TextBlock Text="Default Tax Rate:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                                    <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
-                                </StackPanel>
-                                <Border Style="{StaticResource RoundedBorderStyle}">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBox x:Name="TxtDefaultTax" Style="{StaticResource RoundedTextboxStyle}" Margin="25,0,0,0" Grid.Column="0"
-                                                PreviewTextInput="IntegerOnlyTextInputHandler"
-                                                DataObject.Pasting="IntegerOnlyPasteHandler"/>
-                                        <materialDesign:PackIcon Kind="PercentOutline" Width="25" Height="20" Margin="0,0,10,0" VerticalAlignment="Center" Grid.Column="1"/>
-                                    </Grid>
-                                </Border>
-                            </StackPanel>
-
-                            <!-- Discount Rate -->
-                            <StackPanel Margin="0,10" x:Name="StackPanelDiscountRate">
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                    <TextBlock Text="Default Discount Rate:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                                    <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
-                                </StackPanel>
-                                <Border Style="{StaticResource RoundedBorderStyle}">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBox x:Name="TxtDiscountRate" Style="{StaticResource RoundedTextboxStyle}" Margin="25,0,0,0" Grid.Column="0"
-                                                PreviewTextInput="IntegerOnlyTextInputHandler"
-                                                DataObject.Pasting="IntegerOnlyPasteHandler"/>
-                                        <materialDesign:PackIcon Kind="PercentOutline" Width="25" Height="20" Margin="0,0,10,0" VerticalAlignment="Center" Grid.Column="1"/>
-                                    </Grid>
-                                </Border>
-                            </StackPanel>
-
-                            <!-- Stock Units -->
-                            <StackPanel Margin="0,10" x:Name="StackPanelStockUnits">
-                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                    <TextBlock Text="Stock Units:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                                </StackPanel>
-                                <Border Style="{StaticResource RoundedBorderStyle}" x:Name="BorderStockUnits">
-                                    <TextBox x:Name="TxtStockUnits" Style="{StaticResource RoundedTextboxStyle}"
-                                            PreviewTextInput="IntegerOnlyTextInputHandler"
-                                            DataObject.Pasting="IntegerOnlyPasteHandler"
-                                            KeyDown="TxtStockUnits_KeyDown"/>
-                                </Border>
-                            </StackPanel>
-
-                            <!-- Alert Quantity -->
-                            <StackPanel Margin="0,10,0,0" x:Name="StackPanelAlertQuantity">
-                                <StackPanel Orientation="Horizontal" Margin="0">
-                                    <TextBlock Text="Alert Quantity:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                                    <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
-                                </StackPanel>
-                                <Border Style="{StaticResource RoundedBorderStyle}">
-                                    <TextBox x:Name="TxtAlertQuantity" Style="{StaticResource RoundedTextboxStyle}"      
-                                            PreviewTextInput="IntegerOnlyTextInputHandler"
-                                            DataObject.Pasting="IntegerOnlyPasteHandler"/>
-                                </Border>
-                            </StackPanel>
-                        </StackPanel>
-                    </ScrollViewer>
-                </ContentControl>
-
-                <!-- Serial Number Data -->
-                <ContentControl x:Name="SerialNumberContainer" Grid.Row="2" Grid.RowSpan="2" Grid.Column="2" Margin="15,0,5,0">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-
-                        <!-- Serial Checkbox -->
-                        <StackPanel Grid.Row="0" Margin="0,10,0,10" x:Name="StackPanelSerialNumber">
-                            <StackPanel Orientation="Horizontal">
-                                <CheckBox x:Name="CheckBoxSerialNumber" Click="IncludeSerial_Click" IsChecked="True"/>
-                                <TextBlock Text="Include Serial Number:" FontSize="14" FontWeight="SemiBold" Margin="10,0,0,0"/>
-                            </StackPanel>
-                        </StackPanel>
-
-                        <!-- Serial Number Section with Scroll -->
-                        <Grid Grid.Row="1" x:Name="StackPanelSerialRow" VerticalAlignment="Stretch">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-
-                            <!-- Serial Label Header -->
-                            <Border Grid.Row="0" Style="{StaticResource RoundedBorderStyle}" Background="#474747" BorderThickness="0" CornerRadius="15,15,0,0">
-                                <StackPanel Background="#474747" Orientation="Horizontal" Margin="20,10">
-                                    <TextBlock Text="Serial Number:" Foreground="White" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                                    <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
-                                </StackPanel>
-                            </Border>
-
-                            <!-- Scrollable Serial Input Container -->
-                            <Border Grid.Row="1" Background="White" BorderThickness="1" BorderBrush="#E0E0E0">
-                                <ScrollViewer VerticalScrollBarVisibility="Auto"
-                                          HorizontalScrollBarVisibility="Disabled"
-                                          Style="{StaticResource ModernScrollViewerStyle}"
-                                          Height="400"
-                                          MinHeight="300">
-                                    <StackPanel x:Name="MainContainer" Margin="10">
-                                        <!-- Serial inputs will be added dynamically -->
-                                    </StackPanel>
-                                </ScrollViewer>
-                            </Border>
+                    <Button Grid.Column="1" Style="{StaticResource RoundedButtonStyle}" Width="Auto" Height="Auto" Background="Transparent" HorizontalAlignment="Left" BorderThickness="0" VerticalAlignment="Center" Margin="20,0,0,0" Click="BtnBatchEdit">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <materialDesign:PackIcon Kind="PencilAddOutline" Foreground="#AEAEAE" Width="20" Height="20" Margin="0,0,0,0" VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="1" Text="Batch Edit" Foreground="#AEAEAE" FontSize="14" FontWeight="SemiBold" Margin="5,0,0,0" VerticalAlignment="Center"/>
                         </Grid>
-                    </Grid>
-                </ContentControl>
-
-                <!-- Save Button -->
-                <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,10,0,0">
-                    <Button x:Name="BtnSave" Style="{StaticResource RoundedButtonStyle}" Background="#52C69D" BorderThickness="0">
-                        <TextBlock Text="Save"
-                               Foreground="White"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Center"
-                               Margin="0,0,0,0"/>
                     </Button>
+                </Grid>
+
+                <Border BorderBrush="#AEAEAE" BorderThickness="0,1,0,0" Height="1" Margin="-10,0,-10,0"/>
+            </StackPanel>
+
+            <!-- Variation Tabs Section -->
+            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,10">
+                <StackPanel x:Name="VariationsPanel" Orientation="Horizontal">
+                    <!-- Dynamic variation buttons will be added here -->
                 </StackPanel>
-            </Grid>
+
+                <!-- Selected variation title -->
+                <TextBlock x:Name="SelectedVariationTitle" 
+                           Margin="0,10,0,0" 
+                           FontSize="14"
+                           FontWeight="Medium"
+                           Foreground="#555555"/>
+            </StackPanel>
+
+            <Border Grid.Row="2" 
+                    Grid.RowSpan="2" 
+                    Grid.Column="1" 
+                    BorderBrush="#AEAEAE" 
+                    BorderThickness="1,0,0,0"  
+                    Width="1" 
+                    Height="Auto" 
+                    VerticalAlignment="Stretch"
+                    Margin="10,0,0,0"/>
+
+            <ContentControl x:Name="DynamicFormContainer" Grid.Row="3" Grid.Column="0" Margin="0,10,10,0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel>
+                        <StackPanel Margin="0,0,0,10" x:Name="StackPanelWarehouse">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Warehouse:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                            </StackPanel>
+                            <!--Warehouse Value-->
+                            <ComboBox x:Name="ComboBoxWarehouse" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,10" x:Name="StackPanelRetailPrice">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <TextBlock Text="Product Selling Price:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                    <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                                </StackPanel>
+                                <Border Style="{StaticResource RoundedBorderStyle}">
+                                    <Grid>
+                                        <!-- Define two columns: one for the icon, one for the TextBox -->
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Icon with Vertical Centering -->
+                                        <materialDesign:PackIcon Kind="CurrencyPhp" Width="25" Height="20" Margin="10,0,0,0" VerticalAlignment="Center" Grid.Column="0"/>
+
+                                        <!-- TextBox with Rounded Style -->
+                                        <!-- Product Retail Price Value-->
+                                        <TextBox x:Name="TxtRetailPrice" Style="{StaticResource RoundedTextboxStyle}" Margin="0,0,25,0" Grid.Column="1" 
+                                    PreviewTextInput="IntegerOnlyTextInputHandler"
+                                    DataObject.Pasting="IntegerOnlyPasteHandler"/>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,10" x:Name="StackPanelOrderPrice">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <TextBlock Text="Purchase Buying Price:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                    <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                                </StackPanel>
+                                <Border Style="{StaticResource RoundedBorderStyle}">
+                                    <Grid>
+                                        <!-- Define two columns: one for the icon, one for the TextBox -->
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Icon with Vertical Centering -->
+                                        <materialDesign:PackIcon Kind="CurrencyPhp" Width="25" Height="20" Margin="10,0,0,0" VerticalAlignment="Center" Grid.Column="0"/>
+
+                                        <!-- TextBox with Rounded Style -->
+                                        <!-- Product Purchase Order Value-->
+                                        <TextBox x:Name="TxtPurchaseOrder" Style="{StaticResource RoundedTextboxStyle}" Margin="0,0,25,0" Grid.Column="1"
+                                    PreviewTextInput="IntegerOnlyTextInputHandler"
+                                    DataObject.Pasting="IntegerOnlyPasteHandler"/>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,10" x:Name="StackPanelTaxRate">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Default Tax Rate:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                            </StackPanel>
+                            <Border Style="{StaticResource RoundedBorderStyle}">
+                                <Grid>
+                                    <!-- Define two columns: one for the icon, one for the TextBox -->
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- TextBox with Rounded Style -->
+                                    <!-- Default Tax Rate-->
+                                    <TextBox x:Name="TxtDefaultTax" Style="{StaticResource RoundedTextboxStyle}" Margin="25,0,0,0" Grid.Column="0"
+                                PreviewTextInput="IntegerOnlyTextInputHandler"
+                                DataObject.Pasting="IntegerOnlyPasteHandler"/>
+
+                                    <!-- Icon with Vertical Centering -->
+                                    <materialDesign:PackIcon Kind="PercentOutline" Width="25" Height="20" Margin="0,0,10,0" VerticalAlignment="Center" Grid.Column="1"/>
+                                </Grid>
+                            </Border>
+                            <TextBlock Text="You can also change the Tax Rate during invoice creation" Margin="10,5,0,0"/>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,10" x:Name="StackPanelDiscountRate">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Default Discount Rate:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                            </StackPanel>
+                            <Border Style="{StaticResource RoundedBorderStyle}">
+                                <Grid>
+                                    <!-- Define two columns: one for the icon, one for the TextBox -->
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- TextBox with Rounded Style -->
+                                    <!-- Default Discount Rate-->
+                                    <TextBox x:Name="TxtDiscountRate" Style="{StaticResource RoundedTextboxStyle}" Margin="25,0,0,0" Grid.Column="0"
+                                PreviewTextInput="IntegerOnlyTextInputHandler"
+                                DataObject.Pasting="IntegerOnlyPasteHandler"/>
+
+                                    <!-- Icon with Vertical Centering -->
+                                    <materialDesign:PackIcon Kind="PercentOutline" Width="25" Height="20" Margin="0,0,10,0" VerticalAlignment="Center" Grid.Column="1"/>
+                                </Grid>
+                            </Border>
+                            <TextBlock Text="You can also change the Discount Rate during invoice creation" Margin="10,5,0,0"/>
+                        </StackPanel>
+                        <StackPanel Margin="0,0,0,10" x:Name="StackPanelStockUnits">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <TextBlock Text="Stock Units:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                            </StackPanel>
+                            <Border Style="{StaticResource RoundedBorderStyle}" x:Name="BorderStockUnits">
+                                <!-- Stock Units Value-->
+                                <TextBox x:Name="TxtStockUnits" Style="{StaticResource RoundedTextboxStyle}"
+                                PreviewTextInput="IntegerOnlyTextInputHandler"
+                                DataObject.Pasting="IntegerOnlyPasteHandler"
+                                KeyDown="TxtStockUnits_KeyDown"/>
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,0,0,10" x:Name="StackPanelAlertQuantity">
+                            <StackPanel Orientation="Horizontal" Margin="0">
+                                <TextBlock Text="Alert Quantity:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                            </StackPanel>
+                            <Border Style="{StaticResource RoundedBorderStyle}">
+                                <!-- Alert Quantity Value-->
+                                <TextBox x:Name="TxtAlertQuantity" Style="{StaticResource RoundedTextboxStyle}"      
+    PreviewTextInput="IntegerOnlyTextInputHandler"
+    DataObject.Pasting="IntegerOnlyPasteHandler"/>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </ContentControl>
+
+            <!-- Serial Number Data -->
+            <ContentControl x:Name="SerialNumberContainer" Grid.Row="2" Grid.RowSpan="2" Grid.Column="2" Margin="15,0,5,0">
+                <StackPanel>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox x:Name="CheckBoxSerialNumber"/>
+                            <TextBlock Text="Include Serial Number:" FontSize="14" FontWeight="SemiBold" Margin="10,0,0,0"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Main Serial Number Container -->
+                    <StackPanel Margin="0,10" x:Name="StackPanelSerialRow">
+                        <Border Style="{StaticResource RoundedBorderStyle}" Background="#474747" BorderThickness="0" CornerRadius="15,15,0,0">
+                            <StackPanel Background="#474747" Orientation="Horizontal" Margin="20,10">
+                                <TextBlock Text="Serial Number:" Foreground="white" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Container for serial numbers with fixed height and scrolling -->
+                        <ScrollViewer x:Name="SerialNumbersScrollViewer" 
+                      VerticalScrollBarVisibility="Auto" 
+                      HorizontalScrollBarVisibility="Disabled"
+                      MaxHeight="400">
+                            <StackPanel x:Name="MainContainer" Background="white">
+                                <!-- Serial number entries will be added here dynamically -->
+                            </StackPanel>
+                        </ScrollViewer>
+                    </StackPanel>
+                </StackPanel>
+            </ContentControl>
+
+            <!-- Save Button -->
+            <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,10,0,0">
+                <Button x:Name="BtnSave" Style="{StaticResource RoundedButtonStyle}" Background="#52C69D" BorderThickness="0">
+                    <TextBlock Text="Save"
+                           Foreground="White"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,0"/>
+                </Button>
+            </StackPanel>
         </Grid>
     </Grid>
-</Window>
+</UserControl>

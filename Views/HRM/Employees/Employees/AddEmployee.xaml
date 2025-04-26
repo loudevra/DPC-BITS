@@ -60,6 +60,7 @@
                             <TextBox x:Name="txtUsername" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="744" TextChanged="txtUsername_TextChanged" />
                         </Border>
                         <TextBlock x:Name="txtInvalidChars" Text="Username must be 6–20 chars, include upper/lowercase, number, and special character." Foreground="Red" Visibility="Collapsed" FontWeight="SemiBold" FontFamily="Lexend" Margin="5,0,0,5"/>
+                        <TextBlock x:Name="txtValidUsername" Text="Username is valid and correct." Foreground="Green" FontWeight="SemiBold" FontFamily="Lexend" Margin="5,0,0,5" Visibility="Collapsed"/>
 
                         <!-- Business Location -->
                         <TextBlock Text="Business Location:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>

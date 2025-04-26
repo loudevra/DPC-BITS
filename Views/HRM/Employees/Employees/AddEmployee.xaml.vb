@@ -88,14 +88,32 @@ Namespace DPC.Views.HRM.Employees
         Private Sub txtPassword_TextChanged(sender As Object, e As TextChangedEventArgs)
             Dim pwd As String = txtPassword.Text
 
-            ' Show each rule only when satisfied
-            ShowIfSatisfied(chkLength, pwd.Length >= 6)
-            ShowIfSatisfied(chkMaxLength, pwd.Length < 20)
-            ShowIfSatisfied(chkUpper, pwd.Any(Function(c) Char.IsUpper(c)))
-            ShowIfSatisfied(chkLower, pwd.Any(Function(c) Char.IsLower(c)))
-            ShowIfSatisfied(chkSpecial, pwd.Any(Function(c) Not Char.IsLetterOrDigit(c)))
-            ShowIfSatisfied(chkNumber, pwd.Any(Function(c) Char.IsDigit(c)))
+            ' Check each condition
+            Dim lengthValid As Boolean = pwd.Length >= 6
+            Dim maxLengthValid As Boolean = pwd.Length < 20
+            Dim hasUpper As Boolean = pwd.Any(Function(c) Char.IsUpper(c))
+            Dim hasLower As Boolean = pwd.Any(Function(c) Char.IsLower(c))
+            Dim hasSpecial As Boolean = pwd.Any(Function(c) Not Char.IsLetterOrDigit(c))
+            Dim hasNumber As Boolean = pwd.Any(Function(c) Char.IsDigit(c))
+
+            ' Show indicators next to each rule
+            ShowIfSatisfied(chkLength, lengthValid)
+            ShowIfSatisfied(chkMaxLength, maxLengthValid)
+            ShowIfSatisfied(chkUpper, hasUpper)
+            ShowIfSatisfied(chkLower, hasLower)
+            ShowIfSatisfied(chkSpecial, hasSpecial)
+            ShowIfSatisfied(chkNumber, hasNumber)
+
+            ' Final validation: if all are met
+            Dim allValid As Boolean = lengthValid AndAlso maxLengthValid AndAlso hasUpper AndAlso hasLower AndAlso hasSpecial AndAlso hasNumber
+
+            ' Show/hide red warning
+            txtInvalidChars.Visibility = If(allValid, Visibility.Collapsed, Visibility.Visible)
+
+            ' Show/hide green success message
+            txtValidUsername.Visibility = If(allValid, Visibility.Visible, Visibility.Collapsed)
         End Sub
+
         Private Sub txtUsername_TextChanged(sender As Object, e As TextChangedEventArgs)
             Dim input As String = txtUsername.Text
 
@@ -112,9 +130,11 @@ Namespace DPC.Views.HRM.Employees
                              hasUppercase AndAlso hasLowercase AndAlso
                              hasSpecialChar AndAlso hasDigit
 
-            ' Show red error if NOT valid
+            ' Toggle both TextBlocks
             txtInvalidChars.Visibility = If(isValid, Visibility.Collapsed, Visibility.Visible)
+            txtValidUsername.Visibility = If(isValid, Visibility.Visible, Visibility.Collapsed)
         End Sub
+
 
 
 

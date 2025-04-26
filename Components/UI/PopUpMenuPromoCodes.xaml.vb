@@ -1,5 +1,6 @@
 ﻿Imports System.Windows.Controls.Primitives
 Imports System.Windows
+Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Components.UI
     Public Class PopUpMenuPromoCodes
@@ -112,12 +113,7 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToManagePromoCodes(sender As Object, e As RoutedEventArgs)
-            Dim PromoCodeManageWindow As New Views.PromoCodes.ManagePromoCodes()
-            PromoCodeManageWindow.Show()
-
-            ' Close the current window where this UserControl is being used
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
+            ViewLoader.DynamicView.NavigateToView("promocodes", Me)
         End Sub
     End Class
 End Namespace

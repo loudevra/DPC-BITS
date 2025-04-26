@@ -39,7 +39,7 @@ Public Class PopupHelper
         closeOnBackgroundClick = closeOnBackground  ' Store the parameter value
 
         ' Get the proper parent window
-        Dim parentWindow As Window = If(window IsNot Nothing, window, Application.Current.MainWindow)
+        Dim parentWindow As Window = If(window, Application.Current.MainWindow)
         originalOwner = parentWindow  ' Store the original owner
 
         ' Create a new popup with improved settings
@@ -99,6 +99,9 @@ Public Class PopupHelper
 
     ' New method to monitor dialog creation
     Private Shared Sub AttachDialogMonitoring(parentWindow As Window)
+        If parentWindow Is Nothing Then
+            Throw New ArgumentNullException(NameOf(parentWindow))
+        End If
         ' Hook into application dispatcher to monitor for new windows
         AddHandler Application.Current.Dispatcher.Hooks.DispatcherInactive, AddressOf CheckForDialogs
     End Sub
@@ -140,7 +143,7 @@ Public Class PopupHelper
 
     Private Shared Sub OnWindowSizeChanged(sender As Object, e As SizeChangedEventArgs)
         ' Get the proper parent window
-        Dim parentWindow As Window = If(currentWindow IsNot Nothing, currentWindow, Application.Current.MainWindow)
+        Dim parentWindow As Window = If(currentWindow, Application.Current.MainWindow)
         Dim clickedElement = activePopup.PlacementTarget
 
         If currentControl IsNot Nothing AndAlso activePopup IsNot Nothing Then
@@ -209,7 +212,7 @@ Public Class PopupHelper
 
         ' Remove mouse handler if attached
         If mouseHandlerAttached AndAlso mousePreviewHandler IsNot Nothing Then
-            Dim parentWindow As Window = If(currentWindow IsNot Nothing, currentWindow, Application.Current.MainWindow)
+            Dim parentWindow As Window = If(currentWindow, Application.Current.MainWindow)
             If parentWindow IsNot Nothing Then
                 RemoveHandler parentWindow.PreviewMouseDown, mousePreviewHandler
 
@@ -241,7 +244,7 @@ Public Class PopupHelper
         If popupHeight = 0 Then popupHeight = control.ActualHeight
 
         ' Get the proper parent window
-        Dim parentWindow As Window = If(currentWindow IsNot Nothing, currentWindow, Application.Current.MainWindow)
+        Dim parentWindow As Window = If(currentWindow, Application.Current.MainWindow)
 
         ' Adjust position based on requested placement
         If position.ToLower() = "windowcenter" Then
@@ -250,9 +253,7 @@ Public Class PopupHelper
             activePopup.VerticalOffset = verticalOffset
 
             ' Force update if needed
-            If parentWindow IsNot Nothing Then
-                parentWindow.UpdateLayout()
-            End If
+            parentWindow?.UpdateLayout()
         Else
             ' For element-based positioning
             activePopup.PlacementTarget = clickedElement

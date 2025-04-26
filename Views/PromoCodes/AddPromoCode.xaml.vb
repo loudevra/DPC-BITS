@@ -36,7 +36,7 @@ Namespace DPC.Views.PromoCodes
             If PromoCodeController.AddPromoCode(promoCode) Then
                 MessageBox.Show("Promo code added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
                 Dim ManagePromoCode As New ManagePromoCodes()
-                ManagePromoCode.Show()
+
                 Me.Close()
             Else
                 MessageBox.Show("Failed to add promo code.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
