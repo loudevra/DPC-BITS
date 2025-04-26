@@ -359,6 +359,7 @@
     <Compile Include="Data\Controllers\Product\GetProduct.vb" />
     <Compile Include="Data\Controllers\Product\LogicProduct.vb" />
     <Compile Include="Data\Controllers\Product\ProductController.vb" />
+    <Compile Include="Data\Controllers\Product\ProductViewModel.vb" />
     <Compile Include="Data\Controllers\Product\RenderProduct.vb" />
     <Compile Include="Data\Controllers\Product\UploadProduct.vb" />
     <Compile Include="Data\Controllers\PromoCodeController.vb" />
@@ -375,11 +376,9 @@
     <Compile Include="Data\Helpers\ViewLoader\DynamicView.vb" />
     <Compile Include="Data\Helpers\EmailService.vb" />
     <Compile Include="Data\Helpers\EnvLoader.vb" />
-
     <Compile Include="Data\Helpers\PaginationHelper.vb" />
     <Compile Include="Data\Helpers\FindParentContainer.vb" />
     <Compile Include="Data\Helpers\FindParentGrid.vb" />
-
     <Compile Include="Data\Helpers\PBKDF2Hasher.vb" />
     <Compile Include="Data\Helpers\PopupHelper.vb" />
     <Compile Include="Data\Helpers\RelayCommand.vb" />

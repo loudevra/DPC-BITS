@@ -26,11 +26,18 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             InitializeUIElements()
             SetupControllerReferences()
             LoadInitialData()
+            ' Set the DataContext to our shared ViewModel
+            Me.DataContext = ProductViewModel.Instance
         End Sub
 
         Private Sub SetupTimers()
             uploadTimer.Interval = TimeSpan.FromMilliseconds(100)
             AddHandler uploadTimer.Tick, AddressOf UploadTimer_Tick
+        End Sub
+
+        Private Sub OpenProductVariationDetails()
+            ' Create and show the ProductvariationDetails UserControl
+            Dim productVariationDetails = New ProductVariationDetails()
         End Sub
 
         Private Sub InitializeUIElements()

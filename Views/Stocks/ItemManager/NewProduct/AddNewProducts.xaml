@@ -121,8 +121,10 @@
                                 <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
                             </StackPanel>
                             <Border Style="{StaticResource RoundedBorderStyle}">
-                                <!--Product Name Value is here!-->
-                                <TextBox x:Name="TxtProductName" Style="{StaticResource RoundedTextboxStyle}"/>
+                                <!-- Modified TextBox with binding -->
+                                <TextBox x:Name="TxtProductName" 
+                     Style="{StaticResource RoundedTextboxStyle}"
+                     Text="{Binding ProductName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                             </Border>
                         </StackPanel>
 

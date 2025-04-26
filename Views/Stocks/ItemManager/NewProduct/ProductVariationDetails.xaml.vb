@@ -35,6 +35,9 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             ' Add TextChanged event handler for stock units textbox to update serial number fields
             AddHandler TxtStockUnits.TextChanged, AddressOf StockUnits_TextChanged
+
+            ' Use the same shared ViewModel instance
+            Me.DataContext = ProductViewModel.Instance
         End Sub
 #End Region
 
@@ -1113,6 +1116,9 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         Private Sub BtnBack(sender As Object, e As RoutedEventArgs)
             ' Get the current variation name before making any changes
             Dim currentVariationName = ProductController.variationManager.CurrentCombination
+
+            ' Create and show the AddNewProduct UserControl again
+            Dim addNewProduct = New AddNewProducts()
 
             ' Always save the current variation data first
             If Not String.IsNullOrEmpty(currentVariationName) Then
