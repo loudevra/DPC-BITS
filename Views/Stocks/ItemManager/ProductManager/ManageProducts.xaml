@@ -207,35 +207,47 @@
 
                 <!-- In Stock Card -->
                 <Border Grid.Column="0" CornerRadius="10" BorderThickness="2" BorderBrush="#456B2E" Background="White" Margin="5">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
-                        <StackPanel Margin="0,0,20,0">
-                            <TextBlock Text="61" FontSize="32" FontWeight="Bold" Foreground="#456B2E" Width="166" FontFamily="Lexend" Height="40"  />
-                            <TextBlock Text="In Stock" FontSize="12" Foreground="Gray" FontFamily="Lexend" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="30,15">
+                            <TextBlock Text="61" FontSize="32" FontWeight="Bold" Foreground="#456B2E" FontFamily="Lexend" Height="40"/>
+                            <TextBlock Text="In Stock" FontSize="12" Foreground="Gray" FontFamily="Lexend"/>
                         </StackPanel>
-                        <materialDesign:PackIcon Kind="CubeOutline" Width="70" Height="60" Foreground="#456B2E"/>
-                    </StackPanel>
+                        <materialDesign:PackIcon Grid.Column="1" Kind="CubeOutline" Width="70" Height="60" Foreground="#456B2E" VerticalAlignment="Center" Margin="20,0" HorizontalAlignment="Right"/>
+                    </Grid>
                 </Border>
 
                 <!-- Stock Out Card -->
                 <Border Grid.Column="1" CornerRadius="10" BorderThickness="2" BorderBrush="#C64141" Background="White" Margin="5">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
-                        <StackPanel Margin="0,0,20,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="30,15">
                             <TextBlock Text="0" FontSize="32" FontWeight="Bold" Foreground="#C64141" Width="170" FontFamily="Lexend" />
                             <TextBlock Text="Stock Out" FontSize="12" Foreground="Gray" FontFamily="Lexend" />
                         </StackPanel>
-                        <materialDesign:PackIcon Kind="PackageVariantRemove" Width="70" Height="60" Foreground="#C64141"/>
-                    </StackPanel>
+                        <materialDesign:PackIcon Grid.Column="1" Kind="PackageVariantRemove" Width="70" Height="60" Foreground="#C64141" VerticalAlignment="Center" Margin="20,0" HorizontalAlignment="Right"/>
+                    </Grid>
                 </Border>
 
                 <!-- Total Card -->
                 <Border Grid.Column="2" CornerRadius="10" BorderThickness="2" BorderBrush="#6B4FA1" Background="White" Margin="5">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
-                        <StackPanel Margin="0,0,20,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="30,15">
                             <TextBlock Text="61" FontSize="32" FontWeight="Bold" Foreground="#6B4FA1" Width="170"  FontFamily="Lexend" />
                             <TextBlock Text="Total" FontSize="12" Foreground="Gray"  FontFamily="Lexend" />
                         </StackPanel>
-                        <materialDesign:PackIcon Kind="ChartPieOutline" Width="70" Height="60" Foreground="#6B4FA1"/>
-                    </StackPanel>
+                        <materialDesign:PackIcon Grid.Column="1" Kind="ChartPieOutline" Width="70" Height="60" Foreground="#6B4FA1" VerticalAlignment="Center" Margin="20,0" HorizontalAlignment="Right"/>
+                    </Grid>
                 </Border>
             </Grid>
 
