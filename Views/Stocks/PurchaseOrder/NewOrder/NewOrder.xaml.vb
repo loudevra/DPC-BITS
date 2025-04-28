@@ -1,9 +1,9 @@
-﻿
-Imports DPC.DPC.Data.Controllers
+﻿Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Controllers.CalendarController
 Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
 Imports System.Collections.ObjectModel
+Imports System.Windows.Controls.Primitives
 Imports System.Windows.Threading
 
 Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
@@ -13,6 +13,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
         Private _suppliers As New ObservableCollection(Of SupplierDataModel)
         Private _selectedSupplier As SupplierDataModel
         Private _typingTimer As DispatcherTimer
+
+        ' New properties for product autocomplete
+        Private _products As New ObservableCollection(Of ProductDataModel)
+        Private _selectedProduct As ProductDataModel
+        Private _productTypingTimers As New Dictionary(Of String, DispatcherTimer)
+        Private _productPopups As New Dictionary(Of String, Popup)
+        Private _productListBoxes As New Dictionary(Of String, ListBox)
 
         Public Property OrderDate As New CalendarController.SingleCalendar()
         Public Property OrderDueDate As New CalendarController.SingleCalendar()
@@ -105,6 +112,200 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             End If
         End Sub
 
+        ' ========== Product Autocomplete Methods ==========
+        ' Create product popup for a specific row
+        Private Function CreateProductAutoCompletePopup(row As Integer) As Popup
+            ' Create a ListBox for product items
+            Dim lstProducts As New ListBox()
+            lstProducts.Name = $"LstProducts_{row}"
+
+            ' Create a ItemTemplate for the ListBox
+            Dim template As DataTemplate = CreateProductItemTemplate()
+            lstProducts.ItemTemplate = template
+
+            ' Create Border to contain the ListBox
+            Dim border As New Border With {
+                .Background = Brushes.White,
+                .BorderBrush = Brushes.LightGray,
+                .BorderThickness = New Thickness(1),
+                .MaxHeight = 150
+            }
+            border.Child = lstProducts
+
+            ' Create Popup
+            Dim popup As New Popup With {
+                .StaysOpen = False,
+                .IsOpen = False,
+                .AllowsTransparency = True,
+                .PopupAnimation = PopupAnimation.Fade,
+                .Child = border
+            }
+
+            ' Store references for later use
+            _productPopups.Add($"ProductPopup_{row}", popup)
+            _productListBoxes.Add($"LstProducts_{row}", lstProducts)
+
+            ' Add handlers
+            AddHandler lstProducts.SelectionChanged, AddressOf ProductList_SelectionChanged
+
+            Return popup
+        End Function
+
+        ' Create DataTemplate for product ListBox
+        Private Function CreateProductItemTemplate() As DataTemplate
+            ' Create a DataTemplate in code
+            Dim template As New DataTemplate()
+
+            ' Create the root FrameworkElementFactory
+            Dim stackPanelFactory As New FrameworkElementFactory(GetType(StackPanel))
+
+            ' Add product name TextBlock
+            Dim productNameFactory As New FrameworkElementFactory(GetType(TextBlock))
+            productNameFactory.SetBinding(TextBlock.TextProperty, New Binding("ProductName"))
+            productNameFactory.SetValue(TextBlock.FontWeightProperty, FontWeights.SemiBold)
+            productNameFactory.SetValue(TextBlock.PaddingProperty, New Thickness(0, 0, 5, 0))
+            stackPanelFactory.AppendChild(productNameFactory)
+
+            ' Set the root of the DataTemplate
+            template.VisualTree = stackPanelFactory
+
+            Return template
+        End Function
+
+        ' TextChanged event handler for product TextBox
+        Private Sub ProductTextBox_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim textBox As TextBox = CType(sender, TextBox)
+            Dim parts As String() = textBox.Name.Split("_"c)
+
+            If parts.Length < 3 Then Return
+
+            Dim row As Integer
+            If Not Integer.TryParse(parts(1), row) Then Return
+
+            Dim timerKey As String = $"ProductTimer_{row}"
+
+            ' If timer doesn't exist for this row, create one
+            If Not _productTypingTimers.ContainsKey(timerKey) Then
+                Dim timer As New DispatcherTimer With {
+                    .Interval = TimeSpan.FromMilliseconds(300)
+                }
+
+                ' Add a closure to capture the row
+                Dim rowCaptured As Integer = row
+                AddHandler timer.Tick, Sub(s, args)
+                                           OnProductTypingTimerTick(s, args, rowCaptured)
+                                       End Sub
+
+                _productTypingTimers.Add(timerKey, timer)
+            End If
+
+            ' Reset and start timer
+            _productTypingTimers(timerKey).Stop()
+
+            ' Close popup if textbox is empty
+            If String.IsNullOrWhiteSpace(textBox.Text) Then
+                Dim popupKey As String = $"ProductPopup_{row}"
+                If _productPopups.ContainsKey(popupKey) Then
+                    _productPopups(popupKey).IsOpen = False
+                End If
+                Return
+            End If
+
+            ' Start timer
+            _productTypingTimers(timerKey).Start()
+        End Sub
+
+        ' Typing timer tick handler for product search
+        Private Sub OnProductTypingTimerTick(sender As Object, e As EventArgs, row As Integer)
+            ' Stop the timer
+            Dim timerKey As String = $"ProductTimer_{row}"
+            If _productTypingTimers.ContainsKey(timerKey) Then
+                _productTypingTimers(timerKey).Stop()
+            End If
+
+            ' Get the textbox
+            Dim textBoxName As String = $"txt_{row}_0"
+            Dim textBox As TextBox = GetTextBoxFromBorder(textBoxName)
+            If textBox Is Nothing Then Return
+
+            ' Get the popup and listbox
+            Dim popupKey As String = $"ProductPopup_{row}"
+            Dim listBoxKey As String = $"LstProducts_{row}"
+
+            If Not _productPopups.ContainsKey(popupKey) Or Not _productListBoxes.ContainsKey(listBoxKey) Then Return
+
+            Dim popup As Popup = _productPopups(popupKey)
+            Dim listBox As ListBox = _productListBoxes(listBoxKey)
+
+            ' Search for products from the supplier
+            If _selectedSupplier IsNot Nothing Then
+                ' Call your product controller to search products by supplier ID and search text
+                _products = ProductController.SearchProductsBySupplier(_selectedSupplier.SupplierID, textBox.Text)
+
+                ' Update the ListBox
+                listBox.ItemsSource = _products
+
+                ' Show popup if we have results
+                popup.IsOpen = _products.Count > 0
+
+                ' Update popup placement
+                popup.PlacementTarget = textBox
+                CType(popup.Child, Border).Width = textBox.ActualWidth
+            End If
+        End Sub
+
+        ' Selection changed handler for product ListBox
+        Private Sub ProductList_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+            Dim listBox As ListBox = CType(sender, ListBox)
+
+            If listBox Is Nothing Or listBox.SelectedItem Is Nothing Then Return
+
+            ' Extract the row from the ListBox name
+            Dim parts As String() = listBox.Name.Split("_"c)
+            If parts.Length < 2 Then Return
+
+            Dim row As Integer
+            If Not Integer.TryParse(parts(1), row) Then Return
+
+            ' Get selected product
+            _selectedProduct = CType(listBox.SelectedItem, ProductDataModel)
+
+            ' Update product details
+            UpdateProductRow(row, _selectedProduct)
+
+            ' Close popup
+            Dim popupKey As String = $"ProductPopup_{row}"
+            If _productPopups.ContainsKey(popupKey) Then
+                _productPopups(popupKey).IsOpen = False
+            End If
+        End Sub
+
+        ' Update product row with selected product details
+        Private Sub UpdateProductRow(row As Integer, product As ProductDataModel)
+            ' Update product name
+            Dim nameTextBox As TextBox = GetTextBoxFromBorder($"txt_{row}_0")
+            If nameTextBox IsNot Nothing Then
+                nameTextBox.Text = product.ProductName
+            End If
+
+            ' Update price/rate (assuming the product model has price information)
+            Dim rateTextBox As TextBox = GetTextBoxFromBorder($"txt_{row}_2")
+            If rateTextBox IsNot Nothing AndAlso product.BuyingPrice > 0 Then
+                rateTextBox.Text = product.BuyingPrice.ToString("0.00")
+            End If
+
+            ' Update tax percentage if available
+            Dim taxTextBox As TextBox = GetTextBoxFromBorder($"txt_{row}_3")
+            If taxTextBox IsNot Nothing AndAlso product.DefaultTax > 0 Then
+                taxTextBox.Text = product.DefaultTax.ToString("0.00")
+            End If
+
+            ' You can update other fields as needed based on your product model
+
+            ' Trigger calculations
+            UpdateTaxAndAmount(row)
+        End Sub
+
         ' ========== Dynamic Grid Methods ==========
         ' ➜ Add a New Row
         Private Sub AddNewRow()
@@ -118,7 +319,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             Dim newRowStart As Integer = MyDynamicGrid.RowDefinitions.Count - 2
 
             ' Create UI Elements (Matches XAML Layout)
-            CreateTextBox(newRowStart, 0) ' Item Name
+            CreateTextBox(newRowStart, 0, True) ' Item Name with autocomplete
             CreateTextBox(newRowStart, 1) ' Quantity
             CreateTextBox(newRowStart, 2) ' Rate
             CreateTextBox(newRowStart, 3) ' Tax %
@@ -129,8 +330,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             CreateFullWidthTextBox(newRowStart)
         End Sub
 
-        ' ➜ Create TextBox
-        Private Sub CreateTextBox(row As Integer, column As Integer)
+        ' ➜ Create TextBox - Updated to support product autocomplete
+        Private Sub CreateTextBox(row As Integer, column As Integer, Optional isProductSearch As Boolean = False)
             Dim txtName As String = $"txt_{row}_{column}"
 
             ' Check if the name already exists and unregister it
@@ -146,12 +347,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                 .Style = CType(Me.FindResource("RoundedTextboxStyle"), Style)
             }
 
-            ' Attach numeric validation and event handlers
-            If column = 1 Or column = 2 Or column = 3 Or column = 4 Or column = 5 Or column = 6 Then
-                AddHandler txt.PreviewTextInput, AddressOf ValidateNumericInput
-                AddHandler txt.TextChanged, AddressOf TextBoxValueChanged
-            End If
-
             ' Create a Border and apply the style
             ' Wrap TextBox inside the Border
             Dim border As New Border With {
@@ -159,6 +354,26 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                 .Style = CType(Me.FindResource("RoundedBorderStyle"), Style),
                 .Child = txt
             }
+
+            ' Attach numeric validation and event handlers
+            If column = 1 Or column = 2 Or column = 3 Or column = 4 Or column = 5 Or column = 6 Then
+                AddHandler txt.PreviewTextInput, AddressOf ValidateNumericInput
+                AddHandler txt.TextChanged, AddressOf TextBoxValueChanged
+            End If
+
+            ' If this is the product search field, add autocomplete functionality
+            If isProductSearch Then
+                ' Create autocomplete popup for this row
+                Dim productPopup As Popup = CreateProductAutoCompletePopup(row)
+
+                ' Add it to the grid at same position
+                Grid.SetRow(productPopup, row)
+                Grid.SetColumn(productPopup, column)
+                MyDynamicGrid.Children.Add(productPopup)
+
+                ' Add TextChanged event for autocomplete
+                AddHandler txt.TextChanged, AddressOf ProductTextBox_TextChanged
+            End If
 
             ' Set Grid position
             Grid.SetRow(border, row)
@@ -269,7 +484,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             End If
         End Sub
 
-        ' Remove Row Functionality
+        ' Remove Row Functionality - Updated to clean up product autocomplete resources
         Private Sub RemoveRow(row As Integer)
             ' Find all elements in the specified row and the corresponding note row
             Dim elementsToRemove As New List(Of UIElement)
@@ -279,6 +494,26 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                     elementsToRemove.Add(element)
                 End If
             Next
+
+            ' Clean up product autocomplete resources
+            Dim timerKey As String = $"ProductTimer_{row}"
+            Dim popupKey As String = $"ProductPopup_{row}"
+            Dim listBoxKey As String = $"LstProducts_{row}"
+
+            ' Remove timer
+            If _productTypingTimers.ContainsKey(timerKey) Then
+                _productTypingTimers(timerKey).Stop()
+                _productTypingTimers.Remove(timerKey)
+            End If
+
+            ' Remove popup and listbox references
+            If _productPopups.ContainsKey(popupKey) Then
+                _productPopups.Remove(popupKey)
+            End If
+
+            If _productListBoxes.ContainsKey(listBoxKey) Then
+                _productListBoxes.Remove(listBoxKey)
+            End If
 
             ' Unregister names and remove elements from the grid
             For Each element As UIElement In elementsToRemove

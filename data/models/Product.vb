@@ -100,4 +100,14 @@ Namespace DPC.Data.Model
         End Function
     End Class
 
+    'for products in the purchase order and stock return
+    Public Class ProductDataModel
+        Public Property ProductID As String
+        Public Property ProductName As String
+        Public Property BuyingPrice As Decimal
+        Public Property DefaultTax As Decimal
+        Public Property StockUnits As Integer
+        Public Property MeasurementUnit As String
+        Public Property SupplierID As String
+    End Class
 End Namespace
