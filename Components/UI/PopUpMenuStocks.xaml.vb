@@ -1,4 +1,5 @@
-﻿Imports System.Windows.Controls.Primitives
+﻿
+Imports System.Windows.Controls.Primitives
 Imports System.Windows
 Imports DPC.DPC.Data.Helpers
 
@@ -129,12 +130,7 @@ Namespace DPC.Components.UI
         ''' </summary>
         ''' 
         Private Sub NavigateToNewOrder(sender As Object, e As RoutedEventArgs)
-            Dim NewOrderWindow As New Views.Stocks.PurchaseOrder.NewOrder.NewOrder()
-            NewOrderWindow.Show()
-
-            ' Close the current window where this UserControl is being used
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
+            ViewLoader.DynamicView.NavigateToView("neworder", Me)
         End Sub
         Private Sub NavigateToManageOrder(sender As Object, e As RoutedEventArgs)
             Dim ManageOrderWindow As New Views.Stocks.PurchaseOrder.ManageOrders.ManageOrders()

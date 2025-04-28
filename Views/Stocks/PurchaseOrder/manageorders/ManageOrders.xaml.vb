@@ -1,5 +1,6 @@
 ﻿Imports System.ComponentModel
 Imports System.Windows
+Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Views.Stocks.PurchaseOrder.ManageOrders
 
@@ -32,13 +33,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.ManageOrders
             EndDatePicker.IsDropDownOpen = True
         End Sub
 
-        Private Sub BtnAddNew_Click(sender As Object, e As RoutedEventArgs) Handles btnAddNew.Click
-            Dim NewOrderWindow As New Views.Stocks.PurchaseOrder.NewOrder.NewOrder()
-            NewOrderWindow.Show()
-
-            ' Close the current window where this UserControl is being used
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
+        Private Sub BtnAddNew_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddNew.Click
+            ViewLoader.DynamicView.NavigateToView("neworder", Me)
         End Sub
     End Class
 

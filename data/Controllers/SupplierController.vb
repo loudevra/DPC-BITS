@@ -1,12 +1,15 @@
-﻿Imports MySql.Data.MySqlClient
+﻿
+
+Imports MySql.Data.MySqlClient
 Imports System.Collections.ObjectModel
 Imports DPC.DPC.Data.Model
+
 
 Namespace DPC.Data.Controllers
     Public Class SupplierController
         ' Fetch Supplier Data Using Connection Pooling
-        Public Shared Function GetSuppliers() As ObservableCollection(Of Supplier)
-            Dim supplierList As New ObservableCollection(Of Supplier)()
+        Public Shared Function GetSuppliers() As ObservableCollection(Of SupplierDataModel)
+            Dim supplierList As New ObservableCollection(Of SupplierDataModel)()
             Dim query As String = "
                     SELECT s.supplierID,
                            s.supplierName,
@@ -30,7 +33,7 @@ Namespace DPC.Data.Controllers
                                 ' Combine all brands into a single string
                                 Dim brandString As String = If(reader.IsDBNull(reader.GetOrdinal("Brands")), "No Brands", reader.GetString("Brands"))
 
-                                supplierList.Add(New Supplier With {
+                                supplierList.Add(New SupplierDataModel With {
                             .SupplierID = reader.GetString("supplierID"),
                             .SupplierName = reader.GetString("supplierName"),
                             .SupplierCompany = reader.GetString("supplierCompany"),
@@ -135,6 +138,89 @@ Namespace DPC.Data.Controllers
                 End Try
             End Using
         End Sub
+        ' Search suppliers based on input text
+        ' Search suppliers based on input text and specific fields
+        Public Shared Function SearchSuppliers(searchText As String) As ObservableCollection(Of SupplierDataModel)
+            Dim suppliers As New ObservableCollection(Of SupplierDataModel)
+            Dim query As String = "
+        SELECT supplierID, supplierName, supplierCompany, supplierPhone, 
+               supplierEmail, officeAddress, city, region, country, 
+               postalCode, tinID
+        FROM supplier
+        WHERE supplierName LIKE @searchText 
+           OR supplierID LIKE @searchText 
+           OR supplierEmail LIKE @searchText
+        ORDER BY supplierName ASC
+        LIMIT 10;
+        "
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@searchText", "%" & searchText & "%")
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            While reader.Read()
+                                Dim supplier As New SupplierDataModel With {
+                            .SupplierID = reader("supplierID").ToString(),
+                            .SupplierName = reader("supplierName").ToString(),
+                            .SupplierCompany = reader("supplierCompany").ToString(),
+                            .SupplierPhone = reader("supplierPhone").ToString(),
+                            .SupplierEmail = reader("supplierEmail").ToString(),
+                            .OfficeAddress = reader("officeAddress").ToString(),
+                            .City = reader("city").ToString(),
+                            .Region = reader("region").ToString(),
+                            .Country = reader("country").ToString(),
+                            .PostalCode = reader("postalCode").ToString(),
+                            .TinID = reader("tinID").ToString()
+                        }
+                                suppliers.Add(supplier)
+                            End While
+                        End Using
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show($"Error searching suppliers: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                End Try
+            End Using
+            Return suppliers
+        End Function
 
+        ' Get supplier by ID
+        Public Shared Function GetSupplierById(supplierId As String) As SupplierDataModel
+            Dim supplier As New SupplierDataModel()
+            Dim query As String = "
+                SELECT supplierID, supplierName, supplierCompany, supplierPhone, 
+                       supplierEmail, officeAddress, city, region, country, 
+                       postalCode, tinID
+                FROM supplier
+                WHERE supplierID = @supplierId
+                "
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@supplierId", supplierId)
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            If reader.Read() Then
+                                supplier.SupplierID = reader("supplierID").ToString()
+                                supplier.SupplierName = reader("supplierName").ToString()
+                                supplier.SupplierCompany = reader("supplierCompany").ToString()
+                                supplier.SupplierPhone = reader("supplierPhone").ToString()
+                                supplier.SupplierEmail = reader("supplierEmail").ToString()
+                                supplier.OfficeAddress = reader("officeAddress").ToString()
+                                supplier.City = reader("city").ToString()
+                                supplier.Region = reader("region").ToString()
+                                supplier.Country = reader("country").ToString()
+                                supplier.PostalCode = reader("postalCode").ToString()
+                                supplier.TinID = reader("tinID").ToString()
+                            End If
+                        End Using
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show($"Error retrieving supplier: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                End Try
+            End Using
+            Return supplier
+        End Function
     End Class
 End Namespace
+

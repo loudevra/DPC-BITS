@@ -1,27 +1,41 @@
-﻿Imports DPC.DPC.Data.Controllers
+﻿
+Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Controllers.CalendarController
 Imports DPC.DPC.Data.Helpers
+Imports DPC.DPC.Data.Model
+Imports System.Collections.ObjectModel
+Imports System.Windows.Threading
 
 Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
     Public Class NewOrder
         Private rowCount As Integer = 0
         Private MyDynamicGrid As Grid
+        Private _suppliers As New ObservableCollection(Of SupplierDataModel)
+        Private _selectedSupplier As SupplierDataModel
+        Private _typingTimer As DispatcherTimer
 
         Public Property OrderDate As New CalendarController.SingleCalendar()
         Public Property OrderDueDate As New CalendarController.SingleCalendar()
 
         Public Sub New()
             InitializeComponent()
-
-            SidebarContainer.Content = New Components.Navigation.Sidebar()
-            TopNavBarContainer.Content = New Components.Navigation.TopNavBar()
             OrderDate.SelectedDate = Date.Today
             OrderDueDate.SelectedDate = Date.Today.AddDays(1)
 
             DataContext = Me
 
+            ' Initialize typing timer for search delay
+            _typingTimer = New DispatcherTimer With {
+                .Interval = TimeSpan.FromMilliseconds(300)
+            }
+            AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
+            AddHandler TxtSupplier.TextChanged, AddressOf TxtSupplier_TextChanged
+            AddHandler LstItems.SelectionChanged, AddressOf LstItems_SelectionChanged
+
             MyDynamicGrid = CType(TableGridPanel.Children(0), Grid)
             AddNewRow()
+
+            ProductController.GetWarehouse(ComboBoxWarehouse)
         End Sub
 
         Private Sub OrderDate_Click(sender As Object, e As RoutedEventArgs)
@@ -32,6 +46,66 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             OrderDueDatePicker.IsDropDownOpen = True
         End Sub
 
+        ' ========== Supplier Autocomplete Methods ==========
+        Private Sub TxtSupplier_TextChanged(sender As Object, e As TextChangedEventArgs)
+            ' Reset the timer
+            _typingTimer.Stop()
+
+            ' If text is empty, close popup
+            If String.IsNullOrWhiteSpace(TxtSupplier.Text) Then
+                AutoCompletePopup.IsOpen = False
+                Return
+            End If
+
+            ' Start the timer
+            _typingTimer.Start()
+        End Sub
+
+        Private Sub OnTypingTimerTick(sender As Object, e As EventArgs)
+            ' Stop the timer
+            _typingTimer.Stop()
+
+            ' Search for suppliers
+            _suppliers = SupplierController.SearchSuppliers(TxtSupplier.Text)
+
+            ' Update the list
+            LstItems.ItemsSource = _suppliers
+
+            ' Show popup if we have results
+            AutoCompletePopup.IsOpen = _suppliers.Count > 0
+
+            ' Adjust popup width to match the textbox
+            AutoCompletePopup.Width = TxtSupplier.ActualWidth
+        End Sub
+
+        Private Sub LstItems_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+            If LstItems.SelectedItem IsNot Nothing Then
+                _selectedSupplier = CType(LstItems.SelectedItem, SupplierDataModel)
+                TxtSupplier.Text = _selectedSupplier.SupplierName
+                UpdateSupplierDetails(_selectedSupplier)
+                AutoCompletePopup.IsOpen = False
+            End If
+        End Sub
+
+        ' Update supplier details section
+        Private Sub UpdateSupplierDetails(supplier As SupplierDataModel)
+            ' Find the readonly TextBox for supplier details
+            Dim txtSupplierDetails As TextBox = TryCast(FindName("TxtSupplierDetails"), TextBox)
+            If txtSupplierDetails IsNot Nothing AndAlso supplier IsNot Nothing Then
+                ' Format supplier details
+                Dim details As String = $"Name: {supplier.SupplierName}{Environment.NewLine}" &
+                                     $"Company: {supplier.SupplierCompany}{Environment.NewLine}" &
+                                     $"Contact: {supplier.SupplierPhone}{Environment.NewLine}" &
+                                     $"Email: {supplier.SupplierEmail}{Environment.NewLine}" &
+                                     $"Address: {supplier.OfficeAddress}, {supplier.City}, {supplier.Region}, " &
+                                     $"{supplier.Country} {supplier.PostalCode}{Environment.NewLine}" &
+                                     $"TIN: {supplier.TinID}"
+
+                txtSupplierDetails.Text = details
+            End If
+        End Sub
+
+        ' ========== Dynamic Grid Methods ==========
         ' ➜ Add a New Row
         Private Sub AddNewRow()
             rowCount += 1
@@ -111,9 +185,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             ' Apply the existing TextBox style
             Dim fullWidthTextBox As New TextBox With {
                 .Name = txtName,
-.Height = 60, ' Adjust height for full-width text box
-.VerticalContentAlignment = VerticalAlignment.Top,
-.Padding = New Thickness(0, 5, 0, 0),
+                .Height = 60, ' Adjust height for full-width text box
+                .VerticalContentAlignment = VerticalAlignment.Top,
+                .Padding = New Thickness(0, 5, 0, 0),
                 .Style = CType(Me.FindResource("RoundedTextboxStyle"), Style)
             }
 
@@ -153,25 +227,25 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
         ' ➜ Create Delete Button
         Private Sub CreateDeleteButton(row As Integer, column As Integer)
             Dim btn As New Button() With {
-        .Width = Double.NaN,
-        .Height = 30,
-        .HorizontalAlignment = HorizontalAlignment.Center,
-        .VerticalAlignment = VerticalAlignment.Center,
-        .BorderThickness = New Thickness(0)
-    }
+                .Width = Double.NaN,
+                .Height = 30,
+                .HorizontalAlignment = HorizontalAlignment.Center,
+                .VerticalAlignment = VerticalAlignment.Center,
+                .BorderThickness = New Thickness(0)
+            }
 
             Dim stack As New StackPanel() With {
-        .Orientation = Orientation.Horizontal,
-        .HorizontalAlignment = HorizontalAlignment.Center
-    }
+                .Orientation = Orientation.Horizontal,
+                .HorizontalAlignment = HorizontalAlignment.Center
+            }
 
             Dim icon As New MaterialDesignThemes.Wpf.PackIcon() With {
-        .Kind = MaterialDesignThemes.Wpf.PackIconKind.PlaylistRemove,
-        .Foreground = Brushes.Red,
-        .Width = 30,
-        .Height = 30,
-        .Margin = New Thickness(0, 0, 5, 0)
-    }
+                .Kind = MaterialDesignThemes.Wpf.PackIconKind.PlaylistRemove,
+                .Foreground = Brushes.Red,
+                .Width = 30,
+                .Height = 30,
+                .Margin = New Thickness(0, 0, 5, 0)
+            }
 
             stack.Children.Add(icon)
             btn.Content = stack
@@ -187,17 +261,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             MyDynamicGrid.Children.Add(btn)
         End Sub
 
-        'Check if entered text is a number
+        ' Check if entered text is a number
         Private Sub ValidateNumericInput(sender As Object, e As TextCompositionEventArgs)
             Dim allowedPattern As String = "^[0-9.]+$" ' Allow only digits and decimal point
             If Not System.Text.RegularExpressions.Regex.IsMatch(e.Text, allowedPattern) Then
                 e.Handled = True ' Reject input if it doesn't match
             End If
         End Sub
-
-
-
-
 
         ' Remove Row Functionality
         Private Sub RemoveRow(row As Integer)
@@ -212,14 +282,17 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
             ' Unregister names and remove elements from the grid
             For Each element As UIElement In elementsToRemove
-                If TypeOf element Is TextBox Then
-                    Dim txtBox As TextBox = CType(element, TextBox)
-                    If Not String.IsNullOrEmpty(txtBox.Name) AndAlso Me.FindName(txtBox.Name) IsNot Nothing Then
-                        Try
-                            Me.UnregisterName(txtBox.Name)
-                        Catch ex As ArgumentException
-                            ' Ignore error if the name is already unregistered
-                        End Try
+                If TypeOf element Is Border Then
+                    Dim border As Border = CType(element, Border)
+                    If border.Child IsNot Nothing AndAlso TypeOf border.Child Is TextBox Then
+                        Dim txtBox As TextBox = CType(border.Child, TextBox)
+                        If Not String.IsNullOrEmpty(txtBox.Name) AndAlso Me.FindName(txtBox.Name) IsNot Nothing Then
+                            Try
+                                Me.UnregisterName(txtBox.Name)
+                            Catch ex As ArgumentException
+                                ' Ignore error if the name is already unregistered
+                            End Try
+                        End If
                     End If
                 End If
                 MyDynamicGrid.Children.Remove(element)
@@ -249,7 +322,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             ' Reduce row count
             rowCount -= 1
         End Sub
-
 
         Private Sub BtnAddRow_Click(sender As Object, e As RoutedEventArgs) Handles btnAddRow.Click
             AddNewRow()
@@ -315,8 +387,32 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             End If
         End Sub
 
-        Private Sub BtnAddSupplier_Click(sender As Object, e As RoutedEventArgs) Handles btnAddSupplier.Click
+        Private Sub BtnAddSupplier_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddSupplier.Click
             ViewLoader.DynamicView.NavigateToView("newsuppliers", Me)
+        End Sub
+
+        Private Sub BtnGenerateOrder_Click(sender As Object, e As RoutedEventArgs) Handles btnGenerateOrder.Click
+            ' Validate required fields
+            If _selectedSupplier Is Nothing Then
+                MessageBox.Show("Please select a supplier for this order.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Return
+            End If
+
+            ' Add your order generation code here
+            ' This would include collecting all the data and saving to database
+
+            ' Example implementation:
+            Try
+                ' Create order header
+                ' Add order items
+                ' Update inventory if needed
+
+                MessageBox.Show("Purchase order created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+
+                ' Optional: Clear form or navigate to orders list
+            Catch ex As Exception
+                MessageBox.Show($"Error creating purchase order: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
         End Sub
     End Class
 End Namespace
