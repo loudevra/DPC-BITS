@@ -5,6 +5,7 @@ Imports System.Web
 Imports System.Windows.Controls.Primitives
 Imports System.Data
 Imports DPC.DPC.Data.Models
+Imports System.IO
 
 Namespace DPC.Data.Controllers
     Public Class GetProduct
@@ -196,49 +197,44 @@ Namespace DPC.Data.Controllers
         End Sub
 
         Public Shared Sub LoadProductData(dataGrid As DataGrid)
-            ' Query to load data from the appropriate product table based on productVariation flag
+            ' Query to load data with products grouped by productID, excluding warehouses with zero stock
             Dim query As String = "
-                            -- For products without variations
-                            SELECT 
-                                p.productID AS ID,
-                                p.productName AS Name,
-                                c.categoryName AS Category,
-                                sc.subcategoryName AS SubCategory,
-                                b.brandName AS Brand,
-                                s.supplierName AS Supplier,
-                                pnv.warehouseID AS Warehouse,
-                                pnv.stockUnit AS StockQuantity,
-                                p.productImage AS ProductImage -- Fetching the productImage
-                            FROM product p
-                            LEFT JOIN category c ON p.categoryID = c.categoryID
-                            LEFT JOIN subcategory sc ON p.subcategoryID = sc.subcategoryID
-                            LEFT JOIN brand b ON p.brandID = b.brandID
-                            LEFT JOIN supplier s ON p.supplierID = s.supplierID
-                            LEFT JOIN productnovariation pnv ON p.productID = pnv.productID
-                            WHERE p.productVariation = 0
-
-                            UNION
-
-                            -- For products with variations
-                            SELECT 
-                                p.productID AS ID,
-                                p.productName AS Name,
-                                c.categoryName AS Category,
-                                sc.subcategoryName AS SubCategory,
-                                b.brandName AS Brand,
-                                s.supplierName AS Supplier,
-                                pvs.optionCombination AS Warehouse,  -- This can represent the specific variation's option combination
-                                pvs.stockUnit AS StockQuantity,
-                                p.productImage AS ProductImage -- Fetching the productImage
-                            FROM product p
-                            LEFT JOIN category c ON p.categoryID = c.categoryID
-                            LEFT JOIN subcategory sc ON p.subcategoryID = sc.subcategoryID
-                            LEFT JOIN brand b ON p.brandID = b.brandID
-                            LEFT JOIN supplier s ON p.supplierID = s.supplierID
-                            LEFT JOIN productvariation pv ON p.productID = pv.productID
-                            LEFT JOIN productvariationstock pvs ON pv.productID = pvs.productID
-                            WHERE p.productVariation = 1;
-                        "
+        SELECT 
+            p.productID AS ID,
+            p.productName AS Name,
+            c.categoryName AS Category,
+            sc.subcategoryName AS SubCategory,
+            b.brandName AS Brand,
+            s.supplierName AS Supplier,
+            GROUP_CONCAT(
+                DISTINCT CASE 
+                    WHEN pnv.stockUnit > 0 THEN w.warehouseName
+                    WHEN pvs.stockUnit > 0 THEN wv.warehouseName
+                    ELSE NULL
+                END
+                SEPARATOR ', '
+            ) AS Warehouse,
+            SUM(COALESCE(pnv.stockUnit, 0) + COALESCE(pvs.stockUnit, 0)) AS StockQuantity,
+            MAX(COALESCE(pnv.alertQuantity, pvs.alertQuantity, 0)) AS AlertQuantity,
+            p.productImage AS ProductImage,
+            p.productVariation AS HasVariations
+        FROM product p
+        LEFT JOIN category c ON p.categoryID = c.categoryID
+        LEFT JOIN subcategory sc ON p.subcategoryID = sc.subcategoryID
+        LEFT JOIN brand b ON p.brandID = b.brandID
+        LEFT JOIN supplier s ON p.supplierID = s.supplierID
+        
+        -- For products without variations
+        LEFT JOIN productnovariation pnv ON p.productID = pnv.productID AND p.productVariation = 0
+        LEFT JOIN warehouse w ON pnv.warehouseID = w.warehouseID
+        
+        -- For products with variations
+        LEFT JOIN productvariationstock pvs ON p.productID = pvs.productID AND p.productVariation = 1
+        LEFT JOIN warehouse wv ON pvs.warehouseID = wv.warehouseID
+        
+        GROUP BY p.productID, p.productName, c.categoryName, sc.subcategoryName, b.brandName, s.supplierName, p.productImage, p.productVariation
+        ORDER BY p.productName;
+    "
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
@@ -247,40 +243,75 @@ Namespace DPC.Data.Controllers
                     Dim table As New DataTable()
                     adapter.Fill(table)
 
-                    ' Add a column for Total Products manually if not exists
-                    If Not table.Columns.Contains("TotalProducts") Then
-                        table.Columns.Add("TotalProducts", GetType(Integer))
-                    End If
-
-                    ' Add a column to hold the image (if necessary)
+                    ' Add column for Image display
                     If Not table.Columns.Contains("ImageSource") Then
-                        table.Columns.Add("ImageSource", GetType(Byte()))
+                        table.Columns.Add("ImageSource", GetType(BitmapImage))
                     End If
 
-                    ' Assuming we are marking the products with variation flag as 1
-                    For Each row As DataRow In table.Rows
-                        row("TotalProducts") = 1 ' Flag for variation
+                    ' Calculate total counts for status cards
+                    Dim totalProducts As Integer = table.Rows.Count
+                    Dim inStockProducts As Integer = 0
+                    Dim stockOutProducts As Integer = 0
 
-                        ' Fetch and process the image from the productImage column
+                    ' Process each row to create the proper image source and count products by stock status
+                    For Each row As DataRow In table.Rows
+                        ' Process the image
                         If row("ProductImage") IsNot DBNull.Value Then
-                            ' Convert the base64 string to byte array and store it in the ImageSource column
                             Dim base64String As String = row("ProductImage").ToString()
                             Try
-                                ' Decode the base64 string to bytes and store them
+                                ' Convert Base64 to BitmapImage
                                 Dim imageBytes As Byte() = Convert.FromBase64String(base64String)
-                                row("ImageSource") = imageBytes ' You can store the image as a byte array or convert to base64 string
+                                Dim imageSource As New BitmapImage()
+                                Using stream As New MemoryStream(imageBytes)
+                                    imageSource.BeginInit()
+                                    imageSource.StreamSource = stream
+                                    imageSource.CacheOption = BitmapCacheOption.OnLoad
+                                    imageSource.EndInit()
+                                    imageSource.Freeze() ' Important for cross-thread usage
+                                End Using
+                                row("ImageSource") = imageSource
                             Catch ex As Exception
-                                ' Handle any base64 decoding errors here
-                                MessageBox.Show($"Error decoding image: {ex.Message}")
+                                ' Set a default image or handle error
+                                Console.WriteLine($"Error processing image: {ex.Message}")
                             End Try
+                        End If
+
+                        ' Count products by stock status
+                        Dim stockQuantity As Integer = Convert.ToInt32(row("StockQuantity"))
+                        If stockQuantity > 0 Then
+                            inStockProducts += 1
+                        Else
+                            stockOutProducts += 1
+
+                            ' For products with no stock, ensure warehouse is empty
+                            row("Warehouse") = DBNull.Value
                         End If
                     Next
 
+                    ' Set the data source for the DataGrid
                     dataGrid.ItemsSource = table.DefaultView
+
+                    ' Update status cards with counts
+                    UpdateStatusCards(inStockProducts, stockOutProducts, totalProducts)
+
                 Catch ex As Exception
                     MessageBox.Show($"Error loading data: {ex.Message}")
                 End Try
             End Using
+        End Sub
+
+        ' Helper method to update the status cards with product counts
+        Private Shared Sub UpdateStatusCards(inStock As Integer, stockOut As Integer, total As Integer)
+            ' Since we need to update UI elements from a different class, we should define
+            ' and raise an event for the UI to listen to, or implement a callback mechanism
+
+            ' Example of event-based approach:
+            'RaiseEvent ProductStatsUpdated(inStock, stockOut, total)
+
+            ' Note: You'll need to define this event at the class level:
+            ' Public Shared Event ProductStatsUpdated(inStock As Integer, stockOut As Integer, total As Integer)
+
+            ' And then handle it in the ManageProducts class to update the TextBlocks
         End Sub
 
 
