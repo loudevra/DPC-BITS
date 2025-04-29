@@ -1,6 +1,7 @@
 ﻿Imports System.Windows.Controls.Primitives
 Imports System.Windows
 Imports System.Windows.Media
+Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Components.UI
     Public Class PopUpMenuHRM
@@ -115,7 +116,7 @@ Namespace DPC.Components.UI
 
         Private Sub NavigateToPermissions(sender As Object, e As RoutedEventArgs)
             ' Open Permissions view
-            MessageBox.Show("Navigating to Permissions")
+            ViewLoader.DynamicView.NavigateToView("permissions", Me)
         End Sub
 
         Private Sub NavigateToSalaries(sender As Object, e As RoutedEventArgs)
