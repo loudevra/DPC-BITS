@@ -1,5 +1,5 @@
 ﻿Namespace DPC.Data.Model
-    Public Class Supplier
+    Public Class SupplierDataModel
         Public Property SupplierID As String
         Public Property SupplierName As String
         Public Property SupplierCompany As String

@@ -40,6 +40,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Stocks.ItemManager.NewProduct.ProductBatchEdit()
                     Case "productvariationdetails"
                         Return New Stocks.ItemManager.NewProduct.ProductVariationDetails()
+                    Case "neworder"
+                        Return New Stocks.PurchaseOrder.NewOrder.NewOrder()
+
                     Case Else
                         ' Return a placeholder UserControl with error text
                         Dim errorContent As New TextBlock With {

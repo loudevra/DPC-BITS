@@ -149,177 +149,201 @@
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
+
+        <!-- Custom DataGrid Style -->
+        <Style x:Key="CustomDataGridStyle" TargetType="DataGrid">
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="GridLinesVisibility" Value="None"/>
+            <Setter Property="RowBackground" Value="White"/>
+            <Setter Property="AlternatingRowBackground" Value="WhiteSmoke"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="CanUserResizeColumns" Value="True"/>
+            <Setter Property="CanUserReorderColumns" Value="True"/>
+            <Setter Property="ColumnWidth" Value="SizeToHeader"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        </Style>
     </UserControl.Resources>
 
     <Grid>
-        <!-- Main Content (ScrollViewer) -->
-        <ScrollViewer Style="{StaticResource ModernScrollViewerStyle}"
-                      VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Disabled">
-            <Grid Margin="20">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-                <!-- Title and Add Button -->
-                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,10,0,130">
-                    <materialDesign:PackIcon Kind="PackageVariantClosedPlus" Width="60" Height="60" Foreground="#474747"/>
-                    <TextBlock Text="Manage Products"
-                               FontWeight="SemiBold"
-                               FontFamily="Lexend"
-                               FontSize="25"
-                               Foreground="#474747"
-                               VerticalAlignment="Center"/>
-                    <Button x:Name="BtnAddNew"
-                            Style="{StaticResource AddNewButtonStyle}"
-                            Margin="20,0,0,0">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="PackageVariantClosedPlus" Width="25" Height="25" Foreground="#474747"/>
-                            <TextBlock Text="Product" FontSize="17" Foreground="#474747"/>
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
+            <!-- Title and Add Button -->
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,10,0,20">
+                <materialDesign:PackIcon Kind="PackageVariantClosedPlus" Width="60" Height="60" Foreground="#474747"/>
+                <TextBlock Text="Manage Products"
+                           FontWeight="SemiBold"
+                           FontFamily="Lexend"
+                           FontSize="25"
+                           Foreground="#474747"
+                           VerticalAlignment="Center"/>
+                <Button x:Name="BtnAddNew"
+                        Style="{StaticResource AddNewButtonStyle}"
+                        Margin="20,0,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="PackageVariantClosedPlus" Width="25" Height="25" Foreground="#474747"/>
+                        <TextBlock Text="Product" FontSize="17" Foreground="#474747"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
 
-                <Grid Margin="0,20,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+            <!-- Status Cards -->
+            <Grid Grid.Row="1" Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-                    <!-- In Stock Card -->
-                    <Border Grid.Column="0" CornerRadius="10" BorderThickness="2" BorderBrush="#456B2E" Background="White" Margin="5,54,5,14">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
-                            <StackPanel Margin="0,0,20,0">
-                                <TextBlock Text="61" FontSize="32" FontWeight="Bold" Foreground="#456B2E" Width="166" FontFamily="Lexend" Height="40"  />
-                                <TextBlock Text="In Stock" FontSize="12" Foreground="Gray" FontFamily="Lexend" />
-                            </StackPanel>
-                            <materialDesign:PackIcon Kind="CubeOutline" Width="70" Height="60" Foreground="#456B2E"/>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- Stock Out Card -->
-                    <Border Grid.Column="1" CornerRadius="10" BorderThickness="2" BorderBrush="#C64141" Background="White" Margin="5,54,5,14">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
-                            <StackPanel Margin="0,0,20,0">
-                                <TextBlock Text="0" FontSize="32" FontWeight="Bold" Foreground="#C64141" Width="170" FontFamily="Lexend" />
-                                <TextBlock Text="Stock Out" FontSize="12" Foreground="Gray" FontFamily="Lexend" />
-                            </StackPanel>
-                            <materialDesign:PackIcon Kind="PackageVariantRemove" Width="70" Height="60" Foreground="#C64141"/>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- Total Card -->
-                    <Border Grid.Column="2" CornerRadius="10" BorderThickness="2" BorderBrush="#6B4FA1" Background="White" Margin="5,54,5,14">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
-                            <StackPanel Margin="0,0,20,0">
-                                <TextBlock Text="61" FontSize="32" FontWeight="Bold" Foreground="#6B4FA1" Width="170"  FontFamily="Lexend" />
-                                <TextBlock Text="Total" FontSize="12" Foreground="Gray"  FontFamily="Lexend" />
-                            </StackPanel>
-                            <materialDesign:PackIcon Kind="ChartPieOutline" Width="70" Height="60" Foreground="#6B4FA1"/>
-                        </StackPanel>
-                    </Border>
-                </Grid>
-
-
-                <!-- Filters and Controls -->
-                <Border Grid.Row="1" Padding="5" Background="White" CornerRadius="10" BorderBrush="White"   >
+                <!-- In Stock Card -->
+                <Border Grid.Column="0" CornerRadius="10" BorderThickness="2" BorderBrush="#456B2E" Background="White" Margin="5">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-
-                        <!-- Left Controls -->
-                        <StackPanel Grid.Column="0" Orientation="Horizontal">
-                            <!-- Excel Button -->
-                            <Button Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" Foreground="White" Width="75" Click="ExportToExcel" Height="29"  Margin="10,0,0,0"  >
-                                <materialDesign:PackIcon Kind="MicrosoftExcel" Width="25" Height="25"/>
-                            </Button>
-
-                            <TextBlock Text="Show" FontSize="14" Margin="10,0,5,0" Height="18" FontWeight="Regular" FontFamily="Lexend" Foreground="#474747" />
-                            <ComboBox Width="75" Style="{StaticResource RoundedComboBoxStyle}" Height="28">
-                                <ComboBoxItem Content="10" IsSelected="True"/>
-                                <ComboBoxItem Content="25"/>
-                                <ComboBoxItem Content="50"/>
-                                <ComboBoxItem Content="100"/>
-                            </ComboBox>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="30,15">
+                            <TextBlock Text="61" FontSize="32" FontWeight="Bold" Foreground="#456B2E" FontFamily="Lexend" Height="40"/>
+                            <TextBlock Text="In Stock" FontSize="12" Foreground="Gray" FontFamily="Lexend"/>
                         </StackPanel>
-
-                        <!-- Right Controls -->
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Width="211" Height="34">
-                                <Grid>
-                                    <TextBox BorderThickness="0" Background="Transparent" FontFamily="Lexend"  Name="txtSearch" Style="{StaticResource RoundedTextboxStyle}" Height="23" Margin="20,0,20,0" VerticalAlignment="Center" />
-                                    <materialDesign:PackIcon Kind="Magnify" Width="25" Height="25" Foreground="Black" Margin="159,0,0,0" VerticalAlignment="Center"/>
-                                </Grid>
-                            </Border>
-                        </StackPanel>
+                        <materialDesign:PackIcon Grid.Column="1" Kind="CubeOutline" Width="70" Height="60" Foreground="#456B2E" VerticalAlignment="Center" Margin="20,0" HorizontalAlignment="Right"/>
                     </Grid>
                 </Border>
 
+                <!-- Stock Out Card -->
+                <Border Grid.Column="1" CornerRadius="10" BorderThickness="2" BorderBrush="#C64141" Background="White" Margin="5">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="30,15">
+                            <TextBlock Text="0" FontSize="32" FontWeight="Bold" Foreground="#C64141" Width="170" FontFamily="Lexend" />
+                            <TextBlock Text="Stock Out" FontSize="12" Foreground="Gray" FontFamily="Lexend" />
+                        </StackPanel>
+                        <materialDesign:PackIcon Grid.Column="1" Kind="PackageVariantRemove" Width="70" Height="60" Foreground="#C64141" VerticalAlignment="Center" Margin="20,0" HorizontalAlignment="Right"/>
+                    </Grid>
+                </Border>
 
-
-                <!-- DataGrid Section -->
-                <StackPanel Grid.Row="2" Margin="0,10">
-                    <DataGrid Name="dataGrid"
-                      AutoGenerateColumns="False"
-                      CanUserAddRows="False"
-                      HeadersVisibility="Column"
-                      GridLinesVisibility="None"
-                      RowBackground="White"
-                      AlternatingRowBackground="WhiteSmoke"
-                      BorderThickness="0">
-                        <DataGrid.RowStyle>
-                            <Style TargetType="DataGridRow">
-                                <Setter Property="Margin" Value="0,5,0,5"/>
-                                <Setter Property="Padding" Value="5"/>
-                            </Style>
-                        </DataGrid.RowStyle>
-
-                        <DataGrid.ColumnHeaderStyle>
-                            <Style TargetType="DataGridColumnHeader">
-                                <Setter Property="FontFamily" Value="Lexend"/>
-                                <Setter Property="FontSize" Value="13"/>
-                                <Setter Property="FontWeight" Value="SemiBold"/>
-                                <Setter Property="Foreground" Value="#474747"/>
-                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                                <Setter Property="VerticalContentAlignment" Value="Center"/>
-                                <Setter Property="Padding" Value="10,5"/>
-                            </Style>
-                        </DataGrid.ColumnHeaderStyle>
-
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="#" Binding="{Binding ID}" Width="Auto" FontFamily="Lexend" Foreground="#474747"  />
-                            <DataGridTemplateColumn Header="Product Image">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Image Source="{Binding ImageSource}" Width="100" Height="100" />
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto" FontFamily="Lexend" Foreground="#474747"  />
-                            <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="Auto" FontFamily="Lexend" Foreground="#474747"  />
-                            <DataGridTextColumn Header="Sub Category" Binding="{Binding SubCategory}" Width="Auto" FontFamily="Lexend" Foreground="#474747"  />
-                            <DataGridTextColumn Header="Brand" Binding="{Binding Brand}" Width="Auto" FontFamily="Lexend" Foreground="#474747"  />
-                            <DataGridTextColumn Header="Supplier" Binding="{Binding Supplier}" Width="Auto" FontFamily="Lexend" Foreground="#474747"  />
-                            <DataGridTextColumn Header="Warehouse" Binding="{Binding Warehouse}" Width="Auto" FontFamily="Lexend" Foreground="#474747"  />
-                            <DataGridTextColumn Header="Stock Quantity" Binding="{Binding StockQuantity}" Width="Auto" FontFamily="Lexend" Foreground="#474747"  />
-                            <DataGridTextColumn Header="Alert" Binding="{Binding AlertQuantity}" Width="Auto" FontFamily="Lexend" Foreground="#474747"  />
-                            <DataGridTemplateColumn Header="Settings" Width="*">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Content="⚙" Width="30" Height="30" Background="Transparent"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </StackPanel>
-
+                <!-- Total Card -->
+                <Border Grid.Column="2" CornerRadius="10" BorderThickness="2" BorderBrush="#6B4FA1" Background="White" Margin="5">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="30,15">
+                            <TextBlock Text="61" FontSize="32" FontWeight="Bold" Foreground="#6B4FA1" Width="170"  FontFamily="Lexend" />
+                            <TextBlock Text="Total" FontSize="12" Foreground="Gray"  FontFamily="Lexend" />
+                        </StackPanel>
+                        <materialDesign:PackIcon Grid.Column="1" Kind="ChartPieOutline" Width="70" Height="60" Foreground="#6B4FA1" VerticalAlignment="Center" Margin="20,0" HorizontalAlignment="Right"/>
+                    </Grid>
+                </Border>
             </Grid>
-        </ScrollViewer>
+
+            <!-- Filters and Controls -->
+            <Border Grid.Row="2" Padding="5" Background="White" CornerRadius="10" BorderBrush="White" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left Controls -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <!-- Excel Button -->
+                        <Button Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" Foreground="White" Width="75" Click="ExportToExcel" Height="29" Margin="10,0,0,0">
+                            <materialDesign:PackIcon Kind="MicrosoftExcel" Width="25" Height="25"/>
+                        </Button>
+
+                        <TextBlock Text="Show" FontSize="14" Margin="10,0,5,0" Height="18" FontWeight="Regular" FontFamily="Lexend" Foreground="#474747" VerticalAlignment="Center" />
+                        <ComboBox Width="75" Style="{StaticResource RoundedComboBoxStyle}" Height="28">
+                            <ComboBoxItem Content="10" IsSelected="True"/>
+                            <ComboBoxItem Content="25"/>
+                            <ComboBoxItem Content="50"/>
+                            <ComboBoxItem Content="100"/>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <!-- Right Controls -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Width="211" Height="34">
+                            <Grid>
+                                <TextBox BorderThickness="0" Background="Transparent" FontFamily="Lexend" Name="txtSearch" Style="{StaticResource RoundedTextboxStyle}" Height="23" Margin="20,0,20,0" VerticalAlignment="Center" />
+                                <materialDesign:PackIcon Kind="Magnify" Width="25" Height="25" Foreground="Black" Margin="159,0,0,0" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- DataGrid Container -->
+            <Border Grid.Row="3" Background="White" CornerRadius="10" BorderBrush="White" BorderThickness="1">
+                <DataGrid Name="dataGrid"
+                      Style="{StaticResource CustomDataGridStyle}"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      Margin="5"
+                      HorizontalScrollBarVisibility="Visible"
+                      VerticalScrollBarVisibility="Visible">
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Margin" Value="0,5,0,5"/>
+                            <Setter Property="Padding" Value="5"/>
+                        </Style>
+                    </DataGrid.RowStyle>
+
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="FontFamily" Value="Lexend"/>
+                            <Setter Property="FontSize" Value="13"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                            <Setter Property="Foreground" Value="#474747"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="10,5"/>
+                            <Setter Property="SeparatorBrush" Value="#DDDDDD"/>
+                            <Setter Property="SeparatorVisibility" Value="Visible"/>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="#" Binding="{Binding ID}" Width="Auto" FontFamily="Lexend" Foreground="#474747"/>
+                        <DataGridTemplateColumn Header="Product Image" Width="110">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Image Source="{Binding ImageSource}" Width="100" Height="100" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#474747"/>
+                        <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#474747"/>
+                        <DataGridTextColumn Header="Sub Category" Binding="{Binding SubCategory}" Width="Auto" MinWidth="120" FontFamily="Lexend" Foreground="#474747"/>
+                        <DataGridTextColumn Header="Brand" Binding="{Binding Brand}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#474747"/>
+                        <DataGridTextColumn Header="Supplier" Binding="{Binding Supplier}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#474747"/>
+                        <DataGridTextColumn Header="Warehouse" Binding="{Binding Warehouse}" Width="Auto" MinWidth="110" FontFamily="Lexend" Foreground="#474747"/>
+                        <DataGridTextColumn Header="Stock Quantity" Binding="{Binding StockQuantity}" Width="Auto" MinWidth="120" FontFamily="Lexend" Foreground="#474747"/>
+                        <DataGridTextColumn Header="Alert" Binding="{Binding AlertQuantity}" Width="Auto" MinWidth="80" FontFamily="Lexend" Foreground="#474747"/>
+                        <DataGridTemplateColumn Header="Settings" Width="80">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="⚙" Width="30" Height="30" Background="Transparent"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

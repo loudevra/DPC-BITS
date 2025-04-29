@@ -47,9 +47,24 @@
                         <ComboBox x:Name="ComboBoxProduct" Style="{StaticResource RoundedComboBoxStyle}"/>
                     </StackPanel>
 
+                    <!-- Variation Controls - Will be shown only for variation products -->
+                    <StackPanel x:Name="StackPanelVariations" Visibility="Collapsed" Margin="0,10,0,10">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                            <TextBlock Text="Variation:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                            <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                        </StackPanel>
+                        <ComboBox x:Name="ComboBoxVariation" Style="{StaticResource RoundedComboBoxStyle}" SelectionChanged="ComboBoxVariation_SelectionChanged"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,5">
+                            <TextBlock Text="Option:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                            <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+                        </StackPanel>
+                        <ComboBox x:Name="ComboBoxOption" Style="{StaticResource RoundedComboBoxStyle}" SelectionChanged="ComboBoxOption_SelectionChanged"/>
+                    </StackPanel>
+
                     <StackPanel Margin="0,10">
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                            <TextBlock Text="Products Quanty:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                            <TextBlock Text="Products Quantity:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                             <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
                         </StackPanel>
                         <Border Style="{StaticResource RoundedBorderStyle}">
