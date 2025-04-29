@@ -44,6 +44,10 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Stocks.PurchaseOrder.NewOrder.NewOrder()
                     Case "permissions"
                         Return New HRM.Employees.Permissions.PermissionsEmployee()
+                    Case "addnewemployee"
+                        Return New HRM.Employees.Employees.AddEmployee()
+
+
 
                     Case Else
                         ' Return a placeholder UserControl with error text
@@ -103,6 +107,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "productvariationdetails"
             ElseIf typeName = "permissions" Then
                 Return "permissions"
+            ElseIf typeName = "addnewemployee" Then
+                Return "addnewemployee"
             Else
                 Return typeName
             End If

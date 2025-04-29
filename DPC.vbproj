@@ -352,6 +352,7 @@
     <Compile Include="Data\Controllers\EmployeeController.vb" />
     <Compile Include="Data\Controllers\CalendarController.vb" />
     <Compile Include="Data\Controllers\ManageProductsController.vb" />
+    <Compile Include="Data\Controllers\Permissions\PermissionItem.vb" />
     <Compile Include="Data\Controllers\ProductCategoryController.vb" />
     <Compile Include="Data\Controllers\Product\CreateProduct.vb" />
     <Compile Include="Data\Controllers\Product\DeleteProduct.vb" />

@@ -30,13 +30,14 @@
                        FontSize="25"
                        Foreground="#474747"
                        VerticalAlignment="Center"/>
-            <Button x:Name="btnAddNew" Style="{StaticResource RoundedButtonStyle}" Margin="20,0,0,0" Background="Transparent" Height="38" Width="136">
+            <Button x:Name="btnAddNew" Style="{StaticResource RoundedButtonStyle}" Margin="20,0,0,0" Background="Transparent" Height="38" Width="136" Click="BtnAddNew_Click"  >
                 <Grid Margin="15,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <materialDesign:PackIcon Kind="AccountPlus" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    
                     <TextBlock Text="Employee" FontSize="14" FontWeight="SemiBold" Foreground="#474747" Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center"/>
                 </Grid>
             </Button>
@@ -45,19 +46,25 @@
 
 
         <!-- DataGrid Section - Scrollable Content -->
-        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="20,0">
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" Margin="20,0">
             <DataGrid Name="dataGrid"
-           AutoGenerateColumns="False"
-           CanUserAddRows="False"
-           HeadersVisibility="Column"
-           GridLinesVisibility="None"
-           RowBackground="White"
-           AlternatingRowBackground="WhiteSmoke"
-           BorderThickness="0">
+              AutoGenerateColumns="False"
+              CanUserAddRows="False"
+              HeadersVisibility="Column"
+              GridLinesVisibility="All"
+              RowBackground="White"
+              AlternatingRowBackground="WhiteSmoke"
+              BorderThickness="1"
+              BorderBrush="#E0E0E0"
+              VerticalGridLinesBrush="#E0E0E0"
+              HorizontalGridLinesBrush="#E0E0E0"
+              HorizontalScrollBarVisibility="Disabled"
+              ScrollViewer.CanContentScroll="True">
 
+                <!-- DataGrid styles remain the same -->
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow">
-                        <Setter Property="Margin" Value="0,5,0,5"/>
+                        <Setter Property="Margin" Value="0"/>
                         <Setter Property="Padding" Value="5"/>
                         <Setter Property="Height" Value="Auto"/>
                         <Setter Property="MinHeight" Value="40"/>
@@ -66,28 +73,32 @@
 
                 <DataGrid.ColumnHeaderStyle>
                     <Style TargetType="DataGridColumnHeader">
-                        <Setter Property="FontFamily" Value="Lexend"/>
-                        <Setter Property="FontSize" Value="10"/>
+                        <Setter Property="FontFamily" Value="Segoe UI"/>
+                        <Setter Property="FontSize" Value="12"/>
                         <Setter Property="FontWeight" Value="SemiBold"/>
                         <Setter Property="Foreground" Value="#474747"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                        <Setter Property="Background" Value="#F8F8F8"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
                         <Setter Property="VerticalContentAlignment" Value="Center"/>
-                        <Setter Property="Padding" Value="10,5"/>
-                        <Setter Property="Background" Value="White"/>
+                        <Setter Property="Padding" Value="10,8"/>
+                        <Setter Property="BorderBrush" Value="#E0E0E0"/>
+                        <Setter Property="BorderThickness" Value="0,0,1,1"/>
                     </Style>
                 </DataGrid.ColumnHeaderStyle>
 
                 <DataGrid.CellStyle>
                     <Style TargetType="DataGridCell">
-                        <Setter Property="Padding" Value="10,5"/>
+                        <Setter Property="Padding" Value="5"/>
+                        <Setter Property="BorderBrush" Value="#E0E0E0"/>
+                        <Setter Property="BorderThickness" Value="0,0,1,0"/>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="DataGridCell">
                                     <Border Padding="{TemplateBinding Padding}" 
-                                BorderBrush="{TemplateBinding BorderBrush}" 
-                                BorderThickness="{TemplateBinding BorderThickness}" 
-                                Background="{TemplateBinding Background}">
-                                        <ContentPresenter VerticalAlignment="Center"/>
+                                    BorderBrush="{TemplateBinding BorderBrush}" 
+                                    BorderThickness="{TemplateBinding BorderThickness}" 
+                                    Background="{TemplateBinding Background}">
+                                        <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                     </Border>
                                 </ControlTemplate>
                             </Setter.Value>
@@ -97,60 +108,76 @@
                     </Style>
                 </DataGrid.CellStyle>
 
+                <!-- Columns remain the same -->
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="#" Binding="{Binding Id}" Width="50" FontSize="10" />
-                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="60" FontSize="10" >
+                    <DataGridTextColumn Header="#" Binding="{Binding Id}" Width="30">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
-                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                <Setter Property="ToolTip" Value="{Binding Name}"   />
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <!-- Replace text columns with checkbox columns -->
-                    <DataGridTemplateColumn Header="Inventory Manager" Width="130">
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="100">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="TextWrapping" Value="NoWrap"/>
+                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                <Setter Property="ToolTip" Value="{Binding Name}"/>
+                                <Setter Property="Padding" Value="5,0,0,0"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <!-- Checkbox columns - aligned center -->
+                    <DataGridTemplateColumn Header="Inventory Manager" Width="125" >
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox IsChecked="{Binding HasInventoryManager, UpdateSourceTrigger=PropertyChanged}"
-                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                  HorizontalAlignment="Center" 
+                                  VerticalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="Sales Person" Width="100">
+                    <DataGridTemplateColumn Header="Sales Person" Width="100"  >
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox IsChecked="{Binding HasSalesPerson, UpdateSourceTrigger=PropertyChanged}"
-                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                  HorizontalAlignment="Center" 
+                                  VerticalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="Sales Manager" Width="100">
+                    <DataGridTemplateColumn Header="Sales Manager" Width="110">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox IsChecked="{Binding HasSalesManager, UpdateSourceTrigger=PropertyChanged}"
-                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                  HorizontalAlignment="Center" 
+                                  VerticalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="Business Manager" Width="100">
+                    <DataGridTemplateColumn Header="Business Manager" Width="130">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox IsChecked="{Binding HasBusinessManager, UpdateSourceTrigger=PropertyChanged}"
-                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                  HorizontalAlignment="Center" 
+                                  VerticalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="Business Owner" Width="100">
+                    <DataGridTemplateColumn Header="Business Owner" Width="120">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox IsChecked="{Binding HasBusinessOwner, UpdateSourceTrigger=PropertyChanged}"
-                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                  HorizontalAlignment="Center" 
+                                  VerticalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -159,7 +186,8 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox IsChecked="{Binding HasProjectManager, UpdateSourceTrigger=PropertyChanged}"
-                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                  HorizontalAlignment="Center" 
+                                  VerticalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
