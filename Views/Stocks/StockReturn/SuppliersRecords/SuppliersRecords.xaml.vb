@@ -1,14 +1,12 @@
 ﻿Imports System.ComponentModel
-Imports System.Windows
+Imports System.Windows.Controls
 Imports DPC.DPC.Data.Controllers
 Imports System.Windows.Input
 Imports DPC.DPC.Data.Helpers
 
-
 Namespace DPC.Views.Stocks.StockReturn.SupplierRecords
-
     Public Class SuppliersRecords
-        Inherits Window
+        Inherits UserControl
 
         ' ViewModel for Date Range
         Public Property DateRangeVM As New CalendarController.MultiCalendar()
@@ -16,13 +14,6 @@ Namespace DPC.Views.Stocks.StockReturn.SupplierRecords
         ' Constructor
         Public Sub New()
             InitializeComponent()
-            Dim sidebar As New Components.Navigation.Sidebar()
-            SidebarContainer.Content = sidebar
-
-            ' Load Top Navigation Bar
-            Dim topNav As New Components.Navigation.TopNavBar()
-            TopNavBarContainer.Content = topNav
-
             DataContext = DateRangeVM ' Bind DataContext to ViewModel
         End Sub
 
@@ -36,11 +27,8 @@ Namespace DPC.Views.Stocks.StockReturn.SupplierRecords
             EndDatePicker.IsDropDownOpen = True
         End Sub
 
-        Private Sub BtnAddNew_Click(sender As Object, e As RoutedEventArgs) Handles btnAddNew.Click
-            ViewLoader.DynamicView.NavigateToView("newsuppliers", Me)
+        Private Sub BtnAddNew_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddNew.Click
+            ViewLoader.DynamicView.NavigateToView("newsuppliers", Nothing)
         End Sub
     End Class
-
-    ' ViewModel for Date Range Picker
-
 End Namespace

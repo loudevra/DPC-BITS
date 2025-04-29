@@ -43,12 +43,18 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Stocks.ItemManager.NewProduct.ProductBatchEdit()
                     Case "productvariationdetails"
                         Return New Stocks.ItemManager.NewProduct.ProductVariationDetails()
-                    Case "neworder"
-                        Return New Stocks.PurchaseOrder.NewOrder.NewOrder()
                     Case "customlabel"
                         Return New Stocks.ProductsLabel.CustomLabel.CustomLabel()
                     Case "standardlabel"
                         Return New Stocks.ProductsLabel.StandardLabel.StandardLabel()
+                    Case "manageorder"
+                        Return New Stocks.PurchaseOrder.ManageOrders.ManageOrders()
+                    Case "neworder"
+                        Return New Stocks.PurchaseOrder.NewOrder.NewOrder()
+                    Case "customersrecord"
+                        Return New Stocks.StockReturn.CustomersRecords.CustomersRecords()
+                    Case "suppliersrecord"
+                        Return New Stocks.StockReturn.SupplierRecords.SuppliersRecords()
 
                         ' Promo Codes Navigation
                     Case "promocodes"
@@ -129,6 +135,15 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "customlabel"
             ElseIf typeName = "standardlabel" Then
                 Return "standardlabel"
+            ElseIf typeName = "manageorder" Then
+                Return "manageorder"
+            ElseIf typeName = "standardlabel" Then
+                Return "standardlabel"
+            ElseIf typeName = "customersrecord" Then
+                Return "customersrecord"
+            ElseIf typeName = "suppliersrecord" Then
+                Return "suppliersrecord"
+
 
                 ' Promo Codes Navigation
             ElseIf typeName = "promocodes" Then

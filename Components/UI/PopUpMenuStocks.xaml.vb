@@ -140,10 +140,10 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToSupplierRecords(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("supplierrecords", Me)
+            ViewLoader.DynamicView.NavigateToView("suppliersrecords", Me)
         End Sub
         Private Sub NavigateToCustomerRecords(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("customerrecords", Me)
+            ViewLoader.DynamicView.NavigateToView("customersrecords", Me)
         End Sub
 
 
