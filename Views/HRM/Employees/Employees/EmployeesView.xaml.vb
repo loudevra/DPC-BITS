@@ -1,9 +1,9 @@
 ﻿Imports System.Collections.ObjectModel
-Imports DPC.DPC.Components.Navigation
 Imports DPC.DPC.Data.Model
 Imports DPC.DPC.Data.Controllers
 Imports MySql.Data.MySqlClient
 Imports System.Data
+Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Views.HRM.Employees.Employees
     Partial Public Class EmployeesView
@@ -19,13 +19,6 @@ Namespace DPC.Views.HRM.Employees.Employees
         Public Sub New()
             InitializeComponent()
             LoadEmployees()
-
-            Dim topNavBar As New Components.Navigation.TopNavBar()
-            TopNavBarContainer.Child = topNavBar
-
-            ' Add Sidebar to SidebarContainer
-            Dim sidebar As New Sidebar()
-            SidebarContainer.Child = sidebar
 
             ' Initialize Pagination
             UpdatePagination()
@@ -121,10 +114,11 @@ Namespace DPC.Views.HRM.Employees.Employees
         End Sub
 
         ''' <summary>
-        ''' Open Add Employee Window
+        ''' Open Add Employee View
         ''' </summary>
         Private Sub AddEmployee(sender As Object, e As RoutedEventArgs)
-
+            ' Navigate to AddEmployee view using ViewLoader
+            ViewLoader.DynamicView.NavigateToView("addnewemployee", Me)
         End Sub
 
         Private Sub TxtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
