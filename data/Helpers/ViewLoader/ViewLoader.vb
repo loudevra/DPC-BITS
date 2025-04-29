@@ -42,6 +42,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Stocks.ItemManager.NewProduct.ProductVariationDetails()
                     Case "neworder"
                         Return New Stocks.PurchaseOrder.NewOrder.NewOrder()
+                    Case "permissions"
+                        Return New HRM.Employees.Permissions.PermissionsEmployee()
 
                     Case Else
                         ' Return a placeholder UserControl with error text
@@ -99,6 +101,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "batcheditproductvar"
             ElseIf typeName = "productvariationdetails" Then
                 Return "productvariationdetails"
+            ElseIf typeName = "permissions" Then
+                Return "permissions"
             Else
                 Return typeName
             End If
