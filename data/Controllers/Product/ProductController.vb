@@ -102,10 +102,6 @@ Namespace DPC.Data.Controllers
         Public Shared Sub GetWarehouse(comboBox As ComboBox)
             GetProduct.GetWarehouse(comboBox)
         End Sub
-
-        Public Shared Function SearchProductsBySupplier(supplierID As String, searchText As String) As ObservableCollection(Of ProductDataModel)
-            Return GetProduct.SearchProductsBySupplier(supplierID, searchText)
-        End Function
 #End Region
 
 #Region "Product Code Generation"

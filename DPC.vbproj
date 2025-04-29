@@ -363,6 +363,7 @@
     <Compile Include="Data\Controllers\Product\RenderProduct.vb" />
     <Compile Include="Data\Controllers\Product\UploadProduct.vb" />
     <Compile Include="Data\Controllers\PromoCodeController.vb" />
+    <Compile Include="Data\Controllers\PurchaseOrder\PurchaseOrderController.vb" />
     <Compile Include="Data\Controllers\ResetPassController.vb" />
     <Compile Include="Data\Controllers\SessionManager.vb" />
     <Compile Include="Data\Controllers\StocksTransferController.vb" />

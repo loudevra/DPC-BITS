@@ -53,6 +53,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             OrderDueDatePicker.IsDropDownOpen = True
         End Sub
 
+
+
         ' ========== Supplier Autocomplete Methods ==========
         Private Sub TxtSupplier_TextChanged(sender As Object, e As TextChangedEventArgs)
             ' Reset the timer
@@ -87,11 +89,41 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
         Private Sub LstItems_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
             If LstItems.SelectedItem IsNot Nothing Then
+                Dim previousSupplier As SupplierDataModel = _selectedSupplier
                 _selectedSupplier = CType(LstItems.SelectedItem, SupplierDataModel)
                 TxtSupplier.Text = _selectedSupplier.SupplierName
                 UpdateSupplierDetails(_selectedSupplier)
                 AutoCompletePopup.IsOpen = False
+
+                ' Clear existing rows and create a fresh one when supplier changes
+                If previousSupplier Is Nothing OrElse previousSupplier.SupplierID <> _selectedSupplier.SupplierID Then
+                    ClearAllRows()
+                    AddNewRow()
+                End If
             End If
+        End Sub
+
+        ' Add a new method to clear all rows
+        Private Sub ClearAllRows()
+            ' Create a list of row indices to remove
+            Dim rowsToRemove As New List(Of Integer)
+
+            ' Collect all row indices
+            For i As Integer = 0 To rowCount - 1
+                rowsToRemove.Add(i * 2) ' Each item occupies 2 rows (main row + notes row)
+            Next
+
+            ' Sort in descending order to avoid index shifting issues when removing
+            rowsToRemove.Sort()
+            rowsToRemove.Reverse()
+
+            ' Remove each row (starting from the last one)
+            For Each rowIndex As Integer In rowsToRemove
+                RemoveRow(rowIndex)
+            Next
+
+            ' Reset row count
+            rowCount = 0
         End Sub
 
         ' Update supplier details section
@@ -125,25 +157,38 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
             ' Create Border to contain the ListBox
             Dim border As New Border With {
-                .Background = Brushes.White,
-                .BorderBrush = Brushes.LightGray,
-                .BorderThickness = New Thickness(1),
-                .MaxHeight = 150
-            }
+        .Background = Brushes.White,
+        .BorderBrush = Brushes.LightGray,
+        .BorderThickness = New Thickness(1),
+        .MaxHeight = 150
+    }
             border.Child = lstProducts
 
             ' Create Popup
             Dim popup As New Popup With {
-                .StaysOpen = False,
-                .IsOpen = False,
-                .AllowsTransparency = True,
-                .PopupAnimation = PopupAnimation.Fade,
-                .Child = border
-            }
+        .StaysOpen = False,
+        .IsOpen = False,
+        .AllowsTransparency = True,
+        .PopupAnimation = PopupAnimation.Fade,
+        .Child = border
+    }
 
-            ' Store references for later use
-            _productPopups.Add($"ProductPopup_{row}", popup)
-            _productListBoxes.Add($"LstProducts_{row}", lstProducts)
+            ' Store references for later use - check if keys already exist first
+            Dim popupKey As String = $"ProductPopup_{row}"
+            Dim listBoxKey As String = $"LstProducts_{row}"
+
+            ' Remove existing entries if they exist
+            If _productPopups.ContainsKey(popupKey) Then
+                _productPopups.Remove(popupKey)
+            End If
+
+            If _productListBoxes.ContainsKey(listBoxKey) Then
+                _productListBoxes.Remove(listBoxKey)
+            End If
+
+            ' Now safely add the new entries
+            _productPopups.Add(popupKey, popup)
+            _productListBoxes.Add(listBoxKey, lstProducts)
 
             ' Add handlers
             AddHandler lstProducts.SelectionChanged, AddressOf ProductList_SelectionChanged
@@ -158,13 +203,28 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
             ' Create the root FrameworkElementFactory
             Dim stackPanelFactory As New FrameworkElementFactory(GetType(StackPanel))
+            stackPanelFactory.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal)
+            stackPanelFactory.SetValue(StackPanel.MarginProperty, New Thickness(5))
 
-            ' Add product name TextBlock
-            Dim productNameFactory As New FrameworkElementFactory(GetType(TextBlock))
-            productNameFactory.SetBinding(TextBlock.TextProperty, New Binding("ProductName"))
-            productNameFactory.SetValue(TextBlock.FontWeightProperty, FontWeights.SemiBold)
-            productNameFactory.SetValue(TextBlock.PaddingProperty, New Thickness(0, 0, 5, 0))
-            stackPanelFactory.AppendChild(productNameFactory)
+            ' Add product ID and name TextBlock
+            Dim productTextFactory As New FrameworkElementFactory(GetType(TextBlock))
+            ' Use a multi-binding to combine ProductID and ProductName
+            Dim multiBinding As New MultiBinding()
+            multiBinding.StringFormat = "{0} - {1}" ' Format as "ProductID - ProductName"
+
+            ' Add the ProductID binding
+            Dim idBinding As New Binding("ProductID")
+            multiBinding.Bindings.Add(idBinding)
+
+            ' Add the ProductName binding
+            Dim nameBinding As New Binding("ProductName")
+            multiBinding.Bindings.Add(nameBinding)
+
+            ' Set the combined binding to the Text property
+            productTextFactory.SetBinding(TextBlock.TextProperty, multiBinding)
+            productTextFactory.SetValue(TextBlock.FontWeightProperty, FontWeights.Normal)
+
+            stackPanelFactory.AppendChild(productTextFactory)
 
             ' Set the root of the DataTemplate
             template.VisualTree = stackPanelFactory
@@ -239,8 +299,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
             ' Search for products from the supplier
             If _selectedSupplier IsNot Nothing Then
-                ' Call your product controller to search products by supplier ID and search text
-                _products = ProductController.SearchProductsBySupplier(_selectedSupplier.SupplierID, textBox.Text)
+                ' Call product controller to search products by supplier ID and search text
+                _products = PurchaseOrderController.SearchProductsBySupplier(_selectedSupplier.SupplierID, textBox.Text)
 
                 ' Update the ListBox
                 listBox.ItemsSource = _products
@@ -255,6 +315,32 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
         End Sub
 
         ' Selection changed handler for product ListBox
+        ' Add this function to the NewOrder class to check for duplicate products
+        ' Add this function to the NewOrder class to check for duplicate products
+        Private Function IsProductAlreadyAdded(productID As String, currentRow As Integer) As Boolean
+            Dim isDuplicate As Boolean = False
+
+            ' Loop through all product rows to check if this product exists elsewhere
+            For row As Integer = 0 To rowCount - 1
+                ' Skip checking the current row
+                If row = currentRow Then Continue For
+
+                ' Get the product textbox from this row
+                Dim productTextBox As TextBox = GetTextBoxFromBorder($"txt_{row}_0")
+                If productTextBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(productTextBox.Text) Then
+                    ' Check if this textbox contains the same product ID
+                    ' The format is usually "ProductID - ProductName"
+                    If productTextBox.Text.StartsWith(productID & " - ") Then
+                        isDuplicate = True
+                        Exit For
+                    End If
+                End If
+            Next
+
+            Return isDuplicate
+        End Function
+
+        ' Update the ProductList_SelectionChanged method to include duplicate checking
         Private Sub ProductList_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
             Dim listBox As ListBox = CType(sender, ListBox)
 
@@ -270,25 +356,42 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             ' Get selected product
             _selectedProduct = CType(listBox.SelectedItem, ProductDataModel)
 
+            ' Define popupKey once for reuse
+            Dim popupKey As String = $"ProductPopup_{row}"
+
+            ' Check if this product is already added in another row
+            If IsProductAlreadyAdded(_selectedProduct.ProductID, row) Then
+                ' Show error message
+                MessageBox.Show($"The product '{_selectedProduct.ProductName}' is already added to this purchase order.",
+                        "Duplicate Product",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning)
+
+                ' Close popup without adding the product
+                If _productPopups.ContainsKey(popupKey) Then
+                    _productPopups(popupKey).IsOpen = False
+                End If
+
+                Return ' Exit the method without updating the row
+            End If
+
             ' Update product details
             UpdateProductRow(row, _selectedProduct)
 
             ' Close popup
-            Dim popupKey As String = $"ProductPopup_{row}"
             If _productPopups.ContainsKey(popupKey) Then
                 _productPopups(popupKey).IsOpen = False
             End If
         End Sub
-
         ' Update product row with selected product details
         Private Sub UpdateProductRow(row As Integer, product As ProductDataModel)
-            ' Update product name
+            ' Update product name to include the ID
             Dim nameTextBox As TextBox = GetTextBoxFromBorder($"txt_{row}_0")
             If nameTextBox IsNot Nothing Then
-                nameTextBox.Text = product.ProductName
+                nameTextBox.Text = $"{product.ProductID} - {product.ProductName}"
             End If
 
-            ' Update price/rate (assuming the product model has price information)
+            ' Update price/rate
             Dim rateTextBox As TextBox = GetTextBoxFromBorder($"txt_{row}_2")
             If rateTextBox IsNot Nothing AndAlso product.BuyingPrice > 0 Then
                 rateTextBox.Text = product.BuyingPrice.ToString("0.00")
@@ -300,7 +403,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                 taxTextBox.Text = product.DefaultTax.ToString("0.00")
             End If
 
-            ' You can update other fields as needed based on your product model
+            ' Set default quantity to 1 if it's empty
+            Dim quantityTextBox As TextBox = GetTextBoxFromBorder($"txt_{row}_1")
+            If quantityTextBox IsNot Nothing AndAlso String.IsNullOrWhiteSpace(quantityTextBox.Text) Then
+                quantityTextBox.Text = "1"
+            End If
 
             ' Trigger calculations
             UpdateTaxAndAmount(row)
@@ -340,20 +447,32 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                 Me.UnregisterName(txtName)
             End If
 
-            ' Create TextBox
-            ' Apply TextBox style dynamically
+            ' Create TextBox with adjustments for product name
             Dim txt As New TextBox With {
-                .Name = txtName,
-                .Style = CType(Me.FindResource("RoundedTextboxStyle"), Style)
-            }
+        .Name = txtName,
+        .Style = CType(Me.FindResource("RoundedTextboxStyle"), Style),
+        .VerticalAlignment = VerticalAlignment.Center
+    }
+
+            ' For product name field, adjust to allow more text
+            If column = 0 Then
+                txt.TextWrapping = TextWrapping.NoWrap
+                txt.MaxWidth = 500 ' Increase maximum width for product names
+                txt.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto ' Enable horizontal scrolling if needed
+            End If
 
             ' Create a Border and apply the style
             ' Wrap TextBox inside the Border
             Dim border As New Border With {
-                .Margin = New Thickness(5, 5, 5, 5), ' Custom margin to maintain spacing
-                .Style = CType(Me.FindResource("RoundedBorderStyle"), Style),
-                .Child = txt
-            }
+        .Margin = New Thickness(5, 5, 5, 5), ' Custom margin to maintain spacing
+        .Style = CType(Me.FindResource("RoundedBorderStyle"), Style),
+        .Child = txt
+    }
+
+            ' Adjust border width for product name column
+            If column = 0 Then
+                border.MaxWidth = 500 ' Increase max width for the border too
+            End If
 
             ' Attach numeric validation and event handlers
             If column = 1 Or column = 2 Or column = 3 Or column = 4 Or column = 5 Or column = 6 Then
@@ -385,6 +504,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             ' Add to Grid
             MyDynamicGrid.Children.Add(border)
         End Sub
+
+
 
         ' Function to create a full-width TextBox inside a Border
         Private Sub CreateFullWidthTextBox(row As Integer)
@@ -541,23 +662,62 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                 End If
             End If
 
-            ' Adjust remaining rows (shift everything above the deleted row)
-            Dim elementsToShift As New List(Of UIElement)
-            For Each element As UIElement In MyDynamicGrid.Children
-                Dim currentRow As Integer = Grid.GetRow(element)
-                If currentRow > row Then
-                    elementsToShift.Add(element)
-                End If
-            Next
+            ' Only adjust remaining rows if this isn't a complete clear operation
+            If rowCount > 1 Then
+                ' Adjust remaining rows (shift everything above the deleted row)
+                Dim elementsToShift As New List(Of UIElement)
+                For Each element As UIElement In MyDynamicGrid.Children
+                    Dim currentRow As Integer = Grid.GetRow(element)
+                    If currentRow > row Then
+                        elementsToShift.Add(element)
+                    End If
+                Next
 
-            For Each element As UIElement In elementsToShift
-                Grid.SetRow(element, Grid.GetRow(element) - 2)
-            Next
+                For Each element As UIElement In elementsToShift
+                    Grid.SetRow(element, Grid.GetRow(element) - 2)
+                Next
+            End If
 
             ' Reduce row count
-            rowCount -= 1
+            If rowCount > 0 Then
+                rowCount -= 1
+            End If
+
+            ' Update totals if any rows remain
+            If rowCount > 0 Then
+                UpdateOrderTotals()
+            End If
         End Sub
 
+        Private Sub UpdateOrderTotals()
+            ' Calculate and update subtotal, tax, discount, and grand total
+            Dim subtotal As Decimal = 0
+            Dim taxTotal As Decimal = 0
+            Dim discountTotal As Decimal = 0
+
+            ' Loop through all rows and sum up amounts
+            For row As Integer = 0 To rowCount - 1
+                Dim amountTxt As TextBox = GetTextBoxFromBorder($"txt_{row}_6")
+                Dim taxTxt As TextBox = GetTextBoxFromBorder($"txt_{row}_4")
+                Dim discountTxt As TextBox = GetTextBoxFromBorder($"txt_{row}_5")
+
+                Dim amount As Decimal = 0
+                Dim tax As Decimal = 0
+                Dim discount As Decimal = 0
+
+                If amountTxt IsNot Nothing AndAlso Decimal.TryParse(amountTxt.Text, amount) Then
+                    subtotal += amount
+                End If
+
+                If taxTxt IsNot Nothing AndAlso Decimal.TryParse(taxTxt.Text, tax) Then
+                    taxTotal += tax
+                End If
+
+                If discountTxt IsNot Nothing AndAlso Decimal.TryParse(discountTxt.Text, discount) Then
+                    discountTotal += discount
+                End If
+            Next
+        End Sub
         Private Sub BtnAddRow_Click(sender As Object, e As RoutedEventArgs) Handles btnAddRow.Click
             AddNewRow()
         End Sub
