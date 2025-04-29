@@ -105,7 +105,7 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToEmployees(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("", Me)
+            ViewLoader.DynamicView.NavigateToView("viewemployee", Me)
         End Sub
 
         Private Sub NavigateToPermissions(sender As Object, e As RoutedEventArgs)

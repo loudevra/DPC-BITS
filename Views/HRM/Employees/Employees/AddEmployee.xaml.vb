@@ -2,6 +2,7 @@
 Imports System.Windows
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Model
+Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Views.HRM.Employees.Employees
 
@@ -77,6 +78,7 @@ Namespace DPC.Views.HRM.Employees.Employees
                 ' Clear the form for next entry
                 ClearForm()
 
+                ViewLoader.DynamicView.NavigateToView("viewemployee", Me)
                 ' Raise event to notify parent
                 RaiseEvent EmployeeAdded(newEmployee)
             Else
