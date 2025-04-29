@@ -1,22 +1,15 @@
 ﻿Imports System.Windows.Controls.Primitives
-Imports DPC.DPC.Components.Navigation
 Imports DPC.DPC.Data.Controllers
 
 Namespace DPC.Views.Accounts.Accounts.ManageAccounts
     Partial Public Class ManageAccounts
-        Inherits Window
+        Inherits UserControl
+
+        ' Event to notify parent container when an account is added
+        Public Event AccountAdded As EventHandler
 
         Public Sub New()
             InitializeComponent()
-
-            ' Add Sidebar to SidebarContainer
-            Dim sidebar As New Sidebar()
-            SidebarContainer.Child = sidebar
-
-            ' Add TopNavBar to TopNavBarContainer
-            Dim topNavBar As New TopNavBar()
-            TopNavBarContainer.Child = topNavBar
-
             ' Load Accounts data into DataGrid
             LoadAccounts()
         End Sub
@@ -30,19 +23,20 @@ Namespace DPC.Views.Accounts.Accounts.ManageAccounts
             End Try
         End Sub
 
-
         Private Sub AddAccount_Click(sender As Object, e As RoutedEventArgs)
             Dim addAccountWindow As New DPC.Views.Accounts.Accounts.ManageAccounts.AddAccount()
 
+            Dim parentWindow As Window = Window.GetWindow(Me)
             ' Subscribe to the event to reload data after adding a category
             AddHandler addAccountWindow.AccountAdded, AddressOf OnAccountAdd
-
             ' Open the popup
-            PopupHelper.OpenPopupWithControl(sender, addAccountWindow, "windowcenter", -50, 0, True, Me)
+            PopupHelper.OpenPopupWithControl(sender, addAccountWindow, "windowcenter", -50, 0, True, parentWindow)
+
         End Sub
 
         Private Sub OnAccountAdd(sender As Object, e As EventArgs)
-            LoadAccounts() ' Reloads the subcategories in the main view
+            LoadAccounts() ' Reloads the accounts in the main view
+            RaiseEvent AccountAdded(Me, New EventArgs()) ' Notify parent that account was added
         End Sub
     End Class
 End Namespace
