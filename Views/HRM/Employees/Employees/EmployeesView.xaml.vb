@@ -7,7 +7,7 @@ Imports System.Data
 
 Namespace DPC.Views.HRM.Employees.Employees
     Partial Public Class EmployeesView
-        Inherits Window
+        Inherits UserControl
 
         Private Employees As New ObservableCollection(Of Employee)()
 
@@ -124,12 +124,10 @@ Namespace DPC.Views.HRM.Employees.Employees
         ''' Open Add Employee Window
         ''' </summary>
         Private Sub AddEmployee(sender As Object, e As RoutedEventArgs)
-            Dim addEmployeeWindow As New AddEmployee()
-            addEmployeeWindow.Show()
-            Me.Close()
+
         End Sub
 
-        Private Sub txtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
+        Private Sub TxtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
             Dim searchText As String = txtSearch.Text.Trim()
             SearchEmployee(searchText)
         End Sub

@@ -1,25 +1,21 @@
 ﻿Imports System.Text.RegularExpressions
 Imports System.Windows
-Imports DPC.DPC.Components.Navigation
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Model
-Imports DPC.DPC.Components.Forms
 
-Namespace DPC.Views.HRM.Employees
+Namespace DPC.Views.HRM.Employees.Employees
+
     Public Class AddEmployee
+        Inherits UserControl
+        ' Event to notify parent when employee is added
+        Public Event EmployeeAdded(employee As Employee)
+
         Public Sub New()
             InitializeComponent()
-
-            Dim sidebar As New Components.Navigation.Sidebar()
-            SidebarContainer.Content = sidebar
-
-            ' Load Top Navigation Bar
-            Dim topNav As New Components.Navigation.TopNavBar()
-            TopNavBarContainer.Content = topNav
-
             LoadUserRoles()
             LoadBusinessLocations()
         End Sub
+
         Private Sub BtnAddEmployee_Click(sender As Object, e As RoutedEventArgs)
             ' Validate required fields
             If String.IsNullOrWhiteSpace(txtUsername.Text) OrElse
@@ -77,15 +73,49 @@ Namespace DPC.Views.HRM.Employees
             ' Insert into Database
             If EmployeeController.CreateEmployee(newEmployee) Then
                 MessageBox.Show("Employee added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
-                Dim employeesWindow As New Views.HRM.Employees.Employees.EmployeesView()
-                employeesWindow.Show()
-                Me.Close() ' Close the form
+
+                ' Clear the form for next entry
+                ClearForm()
+
+                ' Raise event to notify parent
+                RaiseEvent EmployeeAdded(newEmployee)
             Else
                 MessageBox.Show("Failed to add employee.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End If
         End Sub
 
-        Private Sub txtPassword_TextChanged(sender As Object, e As TextChangedEventArgs)
+        Private Sub ClearForm()
+            ' Clear all form fields
+            txtUsername.Clear()
+            txtEmail.Clear()
+            txtPassword.Clear()
+            txtName.Clear()
+            txtStreetAddress.Clear()
+            txtCity.Clear()
+            txtRegion.Clear()
+            txtCountry.Clear()
+            txtPostalCode.Clear()
+            txtPhone.Clear()
+            txtSalary.Clear()
+            txtSalesCommission.Clear()
+            txtDepartment.Clear()
+
+            ' Reset comboboxes to first item
+            If cmbUserRole.Items.Count > 0 Then cmbUserRole.SelectedIndex = 0
+            If cmbBusinessLocation.Items.Count > 0 Then cmbBusinessLocation.SelectedIndex = 0
+
+            ' Hide validation messages
+            txtInvalidChars.Visibility = Visibility.Collapsed
+            txtValidUsername.Visibility = Visibility.Collapsed
+            chkLength.Visibility = Visibility.Collapsed
+            chkMaxLength.Visibility = Visibility.Collapsed
+            chkUpper.Visibility = Visibility.Collapsed
+            chkLower.Visibility = Visibility.Collapsed
+            chkSpecial.Visibility = Visibility.Collapsed
+            chkNumber.Visibility = Visibility.Collapsed
+        End Sub
+
+        Private Sub TxtPassword_TextChanged(sender As Object, e As TextChangedEventArgs)
             Dim pwd As String = txtPassword.Text
 
             ' Check each condition
@@ -103,18 +133,9 @@ Namespace DPC.Views.HRM.Employees
             ShowIfSatisfied(chkLower, hasLower)
             ShowIfSatisfied(chkSpecial, hasSpecial)
             ShowIfSatisfied(chkNumber, hasNumber)
-
-            ' Final validation: if all are met
-            Dim allValid As Boolean = lengthValid AndAlso maxLengthValid AndAlso hasUpper AndAlso hasLower AndAlso hasSpecial AndAlso hasNumber
-
-            ' Show/hide red warning
-            txtInvalidChars.Visibility = If(allValid, Visibility.Collapsed, Visibility.Visible)
-
-            ' Show/hide green success message
-            txtValidUsername.Visibility = If(allValid, Visibility.Visible, Visibility.Collapsed)
         End Sub
 
-        Private Sub txtUsername_TextChanged(sender As Object, e As TextChangedEventArgs)
+        Private Sub TxtUsername_TextChanged(sender As Object, e As TextChangedEventArgs)
             Dim input As String = txtUsername.Text
 
             ' Check each condition
@@ -135,17 +156,10 @@ Namespace DPC.Views.HRM.Employees
             txtValidUsername.Visibility = If(isValid, Visibility.Visible, Visibility.Collapsed)
         End Sub
 
-
-
-
-
         Private Sub ShowIfSatisfied(textBlock As TextBlock, isMet As Boolean)
             textBlock.Visibility = If(isMet, Visibility.Visible, Visibility.Collapsed)
         End Sub
 
-        Private Sub ToggleCriteria(textBlock As TextBlock, isMet As Boolean)
-            textBlock.Visibility = If(isMet, Visibility.Collapsed, Visibility.Visible)
-        End Sub
         ' Load User Roles into ComboBox
         Private Sub LoadUserRoles()
             Dim roles = EmployeeController.GetUserRoles()
@@ -162,5 +176,9 @@ Namespace DPC.Views.HRM.Employees
             cmbBusinessLocation.SelectedValuePath = "Key"
         End Sub
 
+        ' Public method to reset the form
+        Public Sub ResetForm()
+            ClearForm()
+        End Sub
     End Class
 End Namespace
