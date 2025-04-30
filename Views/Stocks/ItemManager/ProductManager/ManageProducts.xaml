@@ -213,7 +213,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="30,15">
-                            <TextBlock Text="61" FontSize="32" FontWeight="Bold" Foreground="#456B2E" FontFamily="Lexend" Height="40"/>
+                            <TextBlock x:Name="txtInStock" Text="0" FontSize="32" FontWeight="Bold" Foreground="#456B2E" FontFamily="Lexend" Height="40"/>
                             <TextBlock Text="In Stock" FontSize="12" Foreground="Gray" FontFamily="Lexend"/>
                         </StackPanel>
                         <materialDesign:PackIcon Grid.Column="1" Kind="CubeOutline" Width="70" Height="60" Foreground="#456B2E" VerticalAlignment="Center" Margin="20,0" HorizontalAlignment="Right"/>
@@ -228,7 +228,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="30,15">
-                            <TextBlock Text="0" FontSize="32" FontWeight="Bold" Foreground="#C64141" Width="170" FontFamily="Lexend" />
+                            <TextBlock x:Name="txtStockOut" Text="0" FontSize="32" FontWeight="Bold" Foreground="#C64141" Width="170" FontFamily="Lexend" />
                             <TextBlock Text="Stock Out" FontSize="12" Foreground="Gray" FontFamily="Lexend" />
                         </StackPanel>
                         <materialDesign:PackIcon Grid.Column="1" Kind="PackageVariantRemove" Width="70" Height="60" Foreground="#C64141" VerticalAlignment="Center" Margin="20,0" HorizontalAlignment="Right"/>
@@ -243,7 +243,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="30,15">
-                            <TextBlock Text="61" FontSize="32" FontWeight="Bold" Foreground="#6B4FA1" Width="170"  FontFamily="Lexend" />
+                            <TextBlock x:Name="txtTotal" Text="0" FontSize="32" FontWeight="Bold" Foreground="#6B4FA1" Width="170"  FontFamily="Lexend" />
                             <TextBlock Text="Total" FontSize="12" Foreground="Gray"  FontFamily="Lexend" />
                         </StackPanel>
                         <materialDesign:PackIcon Grid.Column="1" Kind="ChartPieOutline" Width="70" Height="60" Foreground="#6B4FA1" VerticalAlignment="Center" Margin="20,0" HorizontalAlignment="Right"/>
@@ -267,7 +267,7 @@
                         </Button>
 
                         <TextBlock Text="Show" FontSize="14" Margin="10,0,5,0" Height="18" FontWeight="Regular" FontFamily="Lexend" Foreground="#474747" VerticalAlignment="Center" />
-                        <ComboBox Width="75" Style="{StaticResource RoundedComboBoxStyle}" Height="28">
+                        <ComboBox x:Name="cmbPageSize" Width="75" Style="{StaticResource RoundedComboBoxStyle}" Height="28">
                             <ComboBoxItem Content="10" IsSelected="True"/>
                             <ComboBoxItem Content="25"/>
                             <ComboBoxItem Content="50"/>
@@ -332,7 +332,7 @@
                         <DataGridTextColumn Header="Brand" Binding="{Binding Brand}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#474747"/>
                         <DataGridTextColumn Header="Supplier" Binding="{Binding Supplier}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#474747"/>
                         <DataGridTextColumn Header="Warehouse" Binding="{Binding Warehouse}" Width="Auto" MinWidth="110" FontFamily="Lexend" Foreground="#474747"/>
-                        <DataGridTextColumn Header="Stock Quantity" Binding="{Binding StockQuantity}" Width="Auto" MinWidth="120" FontFamily="Lexend" Foreground="#474747"/>
+                        <DataGridTextColumn Header="Stock Quantity" Binding="{Binding StockUnits}" Width="Auto" MinWidth="120" FontFamily="Lexend" Foreground="#474747"/>
                         <DataGridTextColumn Header="Alert" Binding="{Binding AlertQuantity}" Width="Auto" MinWidth="80" FontFamily="Lexend" Foreground="#474747"/>
                         <DataGridTemplateColumn Header="Settings" Width="80">
                             <DataGridTemplateColumn.CellTemplate>
