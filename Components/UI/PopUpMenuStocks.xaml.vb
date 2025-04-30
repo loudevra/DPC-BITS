@@ -133,32 +133,17 @@ Namespace DPC.Components.UI
             ViewLoader.DynamicView.NavigateToView("neworder", Me)
         End Sub
         Private Sub NavigateToManageOrder(sender As Object, e As RoutedEventArgs)
-            Dim ManageOrderWindow As New Views.Stocks.PurchaseOrder.ManageOrders.ManageOrders()
-            ManageOrderWindow.Show()
-
-            ' Close the current window where this UserControl is being used
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
+            ViewLoader.DynamicView.NavigateToView("manageorder", Me)
         End Sub
         Private Sub NavigateToStocksTransfer(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("stockstransfer", Me)
         End Sub
 
         Private Sub NavigateToSupplierRecords(sender As Object, e As RoutedEventArgs)
-            Dim SupplierRecordWindow As New Views.Stocks.StockReturn.SupplierRecords.SuppliersRecords()
-            SupplierRecordWindow.Show()
-
-            ' Close the current window where this UserControl is being used
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
+            ViewLoader.DynamicView.NavigateToView("suppliersrecords", Me)
         End Sub
         Private Sub NavigateToCustomerRecords(sender As Object, e As RoutedEventArgs)
-            Dim CustomerRecordWindow As New Views.Stocks.StockReturn.CustomersRecords.CustomersRecords()
-            CustomerRecordWindow.Show()
-
-            ' Close the current window where this UserControl is being used
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
+            ViewLoader.DynamicView.NavigateToView("customersrecords", Me)
         End Sub
 
 
@@ -177,20 +162,10 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToCustomLabel(sender As Object, e As RoutedEventArgs)
-            Dim CustomLabelWindow As New Views.Stocks.ProductsLabel.CustomLabel.CustomLabel()
-            CustomLabelWindow.Show()
-
-            ' Close the current window where this UserControl is being used
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
+            ViewLoader.DynamicView.NavigateToView("customlabel", Me)
         End Sub
         Private Sub NavigateToStandardLabel(sender As Object, e As RoutedEventArgs)
-            Dim StandardLabelWindow As New Views.Stocks.ProductsLabel.StandardLabel.StandardLabel()
-            StandardLabelWindow.Show()
-
-            ' Close the current window where this UserControl is being used
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
+            ViewLoader.DynamicView.NavigateToView("standardlabel", Me)
         End Sub
 
     End Class
