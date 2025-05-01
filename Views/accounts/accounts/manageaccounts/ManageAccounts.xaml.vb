@@ -24,7 +24,7 @@ Namespace DPC.Views.Accounts.Accounts.ManageAccounts
         End Sub
 
         Private Sub AddAccount_Click(sender As Object, e As RoutedEventArgs)
-            Dim addAccountWindow As New DPC.Views.Accounts.Accounts.ManageAccounts.AddAccount()
+            Dim addAccountWindow As New AddAccount()
 
             Dim parentWindow As Window = Window.GetWindow(Me)
             ' Subscribe to the event to reload data after adding a category
