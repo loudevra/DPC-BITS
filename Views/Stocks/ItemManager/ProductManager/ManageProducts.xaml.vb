@@ -24,6 +24,16 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
                 view.Filter = AddressOf FilterDataGrid
             End If
 
+            ' Initialize the StockStatsController with the TextBlocks from our UI
+            StockStatsController.Initialize(
+                txtInStock,    ' TextBlock for in-stock count
+                txtStockOut,   ' TextBlock for stock-out count
+                txtTotal       ' TextBlock for total count
+            )
+
+            ' Setup search text changed event
+            AddHandler txtSearch.TextChanged, AddressOf TxtSearch_TextChanged
+
             LoadData()
         End Sub
 
@@ -35,8 +45,31 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
 
             Dim searchText As String = txtSearch.Text.ToLower()
 
+            ' Get property values from the item for filtering
+            ' This depends on your data model structure
+            Dim productItem = TryCast(item, Object) ' Change to your actual type if needed
+
+            If productItem IsNot Nothing Then
+                ' Check if any properties match the search text
+                Try
+                    For Each prop In productItem.GetType().GetProperties()
+                        Dim value = prop.GetValue(productItem)
+                        If value IsNot Nothing AndAlso value.ToString().ToLower().Contains(searchText) Then
+                            Return True
+                        End If
+                    Next
+                Catch ex As Exception
+                    ' Log exception if needed
+                End Try
+            End If
+
             Return False
         End Function
+
+        ' Event handler for search text changed
+        Private Sub TxtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
+            view?.Refresh()
+        End Sub
 
         ' Event Handler for Export Button Click
         Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
@@ -48,9 +81,9 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
 
             ' Open SaveFileDialog
             Dim saveFileDialog As New SaveFileDialog() With {
-     .Filter = "Excel Files (*.xlsx)|*.xlsx",
-     .FileName = "DataGridExport.xlsx"
- }
+                .Filter = "Excel Files (*.xlsx)|*.xlsx",
+                .FileName = "ProductData.xlsx"
+            }
 
             If saveFileDialog.ShowDialog() = True Then
                 Try
@@ -84,7 +117,7 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
                         Next
 
                         ' Add table to Excel sheet
-                        Dim worksheet = workbook.Worksheets.Add(dt, "DataGridData")
+                        Dim worksheet = workbook.Worksheets.Add(dt, "ProductData")
                         worksheet.Columns().AdjustToContents()
 
                         ' Save Excel file
@@ -97,13 +130,21 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
             End If
         End Sub
 
-        ' Load Data Using ProductController
+        ' Load Data Using ProductController and update stock stats
         Public Sub LoadData()
             ProductController.LoadProductData(dataGrid)
+
+            ' Update the stock statistics
+            StockStatsController.UpdateStockStats()
         End Sub
 
         Private Sub BtnAddNew_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddNew.Click
             ViewLoader.DynamicView.NavigateToView("manageproducts", Me)
+        End Sub
+
+        ' Refresh data and stats when returning to this view
+        Public Sub RefreshData()
+            StockStatsController.RefreshProductData(dataGrid)
         End Sub
     End Class
 End Namespace
