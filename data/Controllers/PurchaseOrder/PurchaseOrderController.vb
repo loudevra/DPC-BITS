@@ -62,6 +62,44 @@ Namespace DPC.Data.Controllers
 
             Return products
         End Function
+
+        Public Shared Function GenerateInvoice() As String
+            Dim prefix As String = "30"
+            Dim datePart As String = DateTime.Now.ToString("MMddyyyy") ' MMDDYYYY format
+            Dim counter As Integer = GetNextINvoiceCounter(datePart)
+
+            ' Format counter to be 4 digits (e.g., 0001, 0025, 0150)
+            Dim counterPart As String = counter.ToString("D4")
+
+            ' Concatenate to get full ProductCode
+            Return prefix & datePart & counterPart
+        End Function
+
+        Public Shared Function GetNextINvoiceCounter(datePart As String) As Integer
+
+            'will be creating a new table soon
+            Dim query As String = "SELECT MAX(CAST(SUBSTRING(productID, 11, 4) AS UNSIGNED)) FROM product " &
+                  "WHERE productID LIKE '20" & datePart & "%'"
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        Dim result As Object = cmd.ExecuteScalar()
+
+                        ' If no previous records exist for today, start with 0001
+                        If result IsNot DBNull.Value AndAlso result IsNot Nothing Then
+                            Return Convert.ToInt32(result) + 1
+                        Else
+                            Return 1
+                        End If
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show("Error generating Product Code: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return 1
+                End Try
+            End Using
+        End Function
     End Class
 End Namespace
 

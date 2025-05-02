@@ -8,22 +8,20 @@ Imports System.Windows.Threading
 
 Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
     Public Class NewOrder
+
+#Region "Initialization and Properties"
         Private rowCount As Integer = 0
         Private MyDynamicGrid As Grid
         Private _suppliers As New ObservableCollection(Of SupplierDataModel)
         Private _selectedSupplier As SupplierDataModel
         Private _typingTimer As DispatcherTimer
-
-        ' New properties for product autocomplete
         Private _products As New ObservableCollection(Of ProductDataModel)
         Private _selectedProduct As ProductDataModel
         Private _productTypingTimers As New Dictionary(Of String, DispatcherTimer)
         Private _productPopups As New Dictionary(Of String, Popup)
         Private _productListBoxes As New Dictionary(Of String, ListBox)
-
         Public Property OrderDate As New CalendarController.SingleCalendar()
         Public Property OrderDueDate As New CalendarController.SingleCalendar()
-
         Public Sub New()
             InitializeComponent()
             OrderDate.SelectedDate = Date.Today
@@ -44,7 +42,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
             ProductController.GetWarehouse(ComboBoxWarehouse)
         End Sub
+#End Region
 
+#Region "Calendar Controls"
         Private Sub OrderDate_Click(sender As Object, e As RoutedEventArgs)
             OrderDatePicker.IsDropDownOpen = True
         End Sub
@@ -53,8 +53,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             OrderDueDatePicker.IsDropDownOpen = True
         End Sub
 
+#End Region
 
-
+#Region "Supplier Autocomplete"
         ' ========== Supplier Autocomplete Methods ==========
         Private Sub TxtSupplier_TextChanged(sender As Object, e As TextChangedEventArgs)
             ' Reset the timer
@@ -69,7 +70,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             ' Start the timer
             _typingTimer.Start()
         End Sub
-
         Private Sub OnTypingTimerTick(sender As Object, e As EventArgs)
             ' Stop the timer
             _typingTimer.Stop()
@@ -143,8 +143,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                 txtSupplierDetails.Text = details
             End If
         End Sub
+#End Region
 
-        ' ========== Product Autocomplete Methods ==========
+#Region "Product Autocomplete"
         ' Create product popup for a specific row
         Private Function CreateProductAutoCompletePopup(row As Integer) As Popup
             ' Create a ListBox for product items
@@ -196,7 +197,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             Return popup
         End Function
 
-        ' Create DataTemplate for product ListBox
         Private Function CreateProductItemTemplate() As DataTemplate
             ' Create a DataTemplate in code
             Dim template As New DataTemplate()
@@ -314,9 +314,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             End If
         End Sub
 
-        ' Selection changed handler for product ListBox
-        ' Add this function to the NewOrder class to check for duplicate products
-        ' Add this function to the NewOrder class to check for duplicate products
         Private Function IsProductAlreadyAdded(productID As String, currentRow As Integer) As Boolean
             Dim isDuplicate As Boolean = False
 
@@ -412,8 +409,10 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             ' Trigger calculations
             UpdateTaxAndAmount(row)
         End Sub
+#End Region
 
-        ' ========== Dynamic Grid Methods ==========
+
+#Region "Dynamic Grid Manipulation"
         ' ➜ Add a New Row
         Private Sub AddNewRow()
             rowCount += 1
@@ -426,19 +425,19 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             Dim newRowStart As Integer = MyDynamicGrid.RowDefinitions.Count - 2
 
             ' Create UI Elements (Matches XAML Layout)
-            CreateTextBox(newRowStart, 0, True) ' Item Name with autocomplete
-            CreateTextBox(newRowStart, 1) ' Quantity
-            CreateTextBox(newRowStart, 2) ' Rate
-            CreateTextBox(newRowStart, 3) ' Tax %
-            CreateTextBox(newRowStart, 4) ' Tax (Editable)
-            CreateTextBox(newRowStart, 5) ' Discount
-            CreateTextBox(newRowStart, 6) ' Amount (Editable)
-            CreateDeleteButton(newRowStart, 7)
-            CreateFullWidthTextBox(newRowStart)
+            CreateStackPanelWithTextBox(newRowStart, 0, True) ' Item Name with autocomplete
+            CreateStackPanelWithTextBox(newRowStart, 1) ' Quantity
+            CreateStackPanelWithTextBox(newRowStart, 2) ' Rate
+            CreateStackPanelWithTextBox(newRowStart, 3) ' Tax %
+            CreateStackPanelWithTextBox(newRowStart, 4) ' Tax (Editable)
+            CreateStackPanelWithTextBox(newRowStart, 5) ' Discount
+            CreateStackPanelWithTextBox(newRowStart, 6) ' Amount (Editable)
+            CreateDeleteButtonStack(newRowStart, 7)
+            CreateFullWidthStackPanel(newRowStart)
         End Sub
 
-        ' ➜ Create TextBox - Updated to support product autocomplete
-        Private Sub CreateTextBox(row As Integer, column As Integer, Optional isProductSearch As Boolean = False)
+        ' ➜ Create TextBox wrapped in StackPanel - Updated to support product autocomplete
+        Private Sub CreateStackPanelWithTextBox(row As Integer, column As Integer, Optional isProductSearch As Boolean = False)
             Dim txtName As String = $"txt_{row}_{column}"
 
             ' Check if the name already exists and unregister it
@@ -449,10 +448,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
             ' Create TextBox with adjustments for product name
             Dim txt As New TextBox With {
-        .Name = txtName,
-        .Style = CType(Me.FindResource("RoundedTextboxStyle"), Style),
-        .VerticalAlignment = VerticalAlignment.Center
-    }
+                .Name = txtName,
+                .Style = CType(Me.FindResource("RoundedTextboxStyle"), Style),
+                .Margin = New Thickness(2, 0, 0, 0),
+                .Background = Brushes.Transparent
+            }
 
             ' For product name field, adjust to allow more text
             If column = 0 Then
@@ -464,10 +464,16 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             ' Create a Border and apply the style
             ' Wrap TextBox inside the Border
             Dim border As New Border With {
-        .Margin = New Thickness(5, 5, 5, 5), ' Custom margin to maintain spacing
-        .Style = CType(Me.FindResource("RoundedBorderStyle"), Style),
-        .Child = txt
-    }
+                .Style = CType(Me.FindResource("RoundedBorderStyle"), Style),
+                .Child = txt
+            }
+
+            ' Create StackPanel to contain the Border
+            Dim stackPanel As New StackPanel With {
+                .Margin = New Thickness(2.5, 0, 2.5, 0)
+            }
+
+            stackPanel.Children.Add(border)
 
             ' Adjust border width for product name column
             If column = 0 Then
@@ -495,20 +501,17 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             End If
 
             ' Set Grid position
-            Grid.SetRow(border, row)
-            Grid.SetColumn(border, column)
+            Grid.SetRow(stackPanel, row)
+            Grid.SetColumn(stackPanel, column)
 
-            ' Register the Border
-            Me.RegisterName(txtName, border)
+            ' Register the StackPanel with the TextBox name for reference
+            Me.RegisterName(txtName, stackPanel)
 
             ' Add to Grid
-            MyDynamicGrid.Children.Add(border)
+            MyDynamicGrid.Children.Add(stackPanel)
         End Sub
 
-
-
-        ' Function to create a full-width TextBox inside a Border
-        Private Sub CreateFullWidthTextBox(row As Integer)
+        Private Sub CreateFullWidthStackPanel(row As Integer)
             Dim txtName As String = $"txt_full_{row}"
 
             ' Check if the name already exists and unregister it
@@ -521,80 +524,77 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             ' Apply the existing TextBox style
             Dim fullWidthTextBox As New TextBox With {
                 .Name = txtName,
-                .Height = 60, ' Adjust height for full-width text box
-                .VerticalContentAlignment = VerticalAlignment.Top,
-                .Padding = New Thickness(0, 5, 0, 0),
-                .Style = CType(Me.FindResource("RoundedTextboxStyle"), Style)
+                .Style = CType(Me.FindResource("RoundedTextboxStyle"), Style),
+                .Margin = New Thickness(2, 0, 0, 0),
+                .Background = Brushes.Transparent,
+                .Height = 75
             }
 
             ' Create a Border and apply the existing style
             ' Wrap TextBox inside the Border
             Dim border As New Border With {
-                .Margin = New Thickness(5, 5, 5, 5), ' Consistent margin for spacing
                 .Style = CType(Me.FindResource("RoundedBorderStyle"), Style),
+                .Height = 75,
                 .Child = fullWidthTextBox
             }
 
-            ' Set Grid position
-            Grid.SetRow(border, row + 1) ' Place it in the next row
-            Grid.SetColumn(border, 0)
-            Grid.SetColumnSpan(border, 8) ' Span across all columns
+            ' Create StackPanel to contain the Border
+            Dim stackPanel As New StackPanel With {
+                .Margin = New Thickness(2.5, 0, 2.5, 0)
+            }
 
-            ' Register the Border
-            Me.RegisterName(txtName, border)
+            stackPanel.Children.Add(border)
+
+            ' Set Grid position
+            Grid.SetRow(stackPanel, row + 1) ' Place it in the next row
+            Grid.SetColumn(stackPanel, 0)
+            Grid.SetColumnSpan(stackPanel, 8) ' Span across all columns
+
+            ' Register the StackPanel
+            Me.RegisterName(txtName, stackPanel)
 
             ' Add to Grid
-            MyDynamicGrid.Children.Add(border)
+            MyDynamicGrid.Children.Add(stackPanel)
         End Sub
 
-        ' ➜ Create TextBlock
-        Private Sub CreateTextBlock(row As Integer, column As Integer, text As String)
-            Dim txtBlock As New TextBlock() With {
-                .Text = text,
-                .FontFamily = New FontFamily("Lexend"),
-                .HorizontalAlignment = HorizontalAlignment.Center,
-                .VerticalAlignment = VerticalAlignment.Center
-            }
-            Grid.SetRow(txtBlock, row)
-            Grid.SetColumn(txtBlock, column)
-            MyDynamicGrid.Children.Add(txtBlock)
-        End Sub
+        ' ➜ Create Delete Button in a StackPanel
+        Private Sub CreateDeleteButtonStack(row As Integer, column As Integer)
+            ' Create StackPanel container
+            Dim stackPanel As New StackPanel()
 
-        ' ➜ Create Delete Button
-        Private Sub CreateDeleteButton(row As Integer, column As Integer)
+            ' Create Button
             Dim btn As New Button() With {
-                .Width = Double.NaN,
-                .Height = 30,
-                .HorizontalAlignment = HorizontalAlignment.Center,
-                .VerticalAlignment = VerticalAlignment.Center,
-                .BorderThickness = New Thickness(0)
-            }
-
-            Dim stack As New StackPanel() With {
-                .Orientation = Orientation.Horizontal,
-                .HorizontalAlignment = HorizontalAlignment.Center
+                .Style = CType(Me.FindResource("RoundedButtonStyle"), Style),
+                .Background = Brushes.Transparent,
+                .BorderBrush = Brushes.Transparent
             }
 
             Dim icon As New MaterialDesignThemes.Wpf.PackIcon() With {
                 .Kind = MaterialDesignThemes.Wpf.PackIconKind.PlaylistRemove,
                 .Foreground = Brushes.Red,
-                .Width = 30,
-                .Height = 30,
-                .Margin = New Thickness(0, 0, 5, 0)
+                .Width = 35,
+                .Height = 35,
+                .VerticalAlignment = VerticalAlignment.Center,
+                .HorizontalAlignment = HorizontalAlignment.Center
             }
 
-            stack.Children.Add(icon)
-            btn.Content = stack
+            btn.Content = icon
 
             ' Attach delete functionality
             AddHandler btn.Click, Sub(sender As Object, e As RoutedEventArgs)
-                                      Dim parentRow As Integer = Grid.GetRow(CType(sender, Button))
+                                      Dim parentRow As Integer = Grid.GetRow(CType(sender, Button).Parent)
                                       RemoveRow(parentRow)
                                   End Sub
 
-            Grid.SetRow(btn, row)
-            Grid.SetColumn(btn, column)
-            MyDynamicGrid.Children.Add(btn)
+            ' Add button to stack panel
+            stackPanel.Children.Add(btn)
+
+            ' Set Grid position
+            Grid.SetRow(stackPanel, row)
+            Grid.SetColumn(stackPanel, column)
+
+            ' Add to Grid
+            MyDynamicGrid.Children.Add(stackPanel)
         End Sub
 
         ' Check if entered text is a number
@@ -638,17 +638,41 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
             ' Unregister names and remove elements from the grid
             For Each element As UIElement In elementsToRemove
-                If TypeOf element Is Border Then
-                    Dim border As Border = CType(element, Border)
-                    If border.Child IsNot Nothing AndAlso TypeOf border.Child Is TextBox Then
-                        Dim txtBox As TextBox = CType(border.Child, TextBox)
-                        If Not String.IsNullOrEmpty(txtBox.Name) AndAlso Me.FindName(txtBox.Name) IsNot Nothing Then
+                If TypeOf element Is StackPanel Then
+                    Dim stackPanel As StackPanel = CType(element, StackPanel)
+                    If stackPanel.Children.Count > 0 AndAlso TypeOf stackPanel.Children(0) Is Border Then
+                        Dim border As Border = CType(stackPanel.Children(0), Border)
+                        If border.Child IsNot Nothing AndAlso TypeOf border.Child Is TextBox Then
+                            Dim txtBox As TextBox = CType(border.Child, TextBox)
+                            If Not String.IsNullOrEmpty(txtBox.Name) AndAlso Me.FindName(txtBox.Name) IsNot Nothing Then
+                                Try
+                                    Me.UnregisterName(txtBox.Name)
+                                Catch ex As ArgumentException
+                                    ' Ignore error if the name is already unregistered
+                                End Try
+                            End If
+                        End If
+                    End If
+
+                    ' Also try to unregister the stack panel itself if it has a name in our format
+                    For i As Integer = 0 To 7 ' Column index
+                        Dim txtName As String = $"txt_{row}_{i}"
+                        If Me.FindName(txtName) IsNot Nothing Then
                             Try
-                                Me.UnregisterName(txtBox.Name)
+                                Me.UnregisterName(txtName)
                             Catch ex As ArgumentException
                                 ' Ignore error if the name is already unregistered
                             End Try
                         End If
+                    Next
+
+                    Dim fullRowTxtName As String = $"txt_full_{row}"
+                    If Me.FindName(fullRowTxtName) IsNot Nothing Then
+                        Try
+                            Me.UnregisterName(fullRowTxtName)
+                        Catch ex As ArgumentException
+                            ' Ignore error if the name is already unregistered
+                        End Try
                     End If
                 End If
                 MyDynamicGrid.Children.Remove(element)
@@ -689,6 +713,21 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             End If
         End Sub
 
+        ' Function to retrieve the TextBox from a StackPanel > Border structure
+        Private Function GetTextBoxFromStackPanel(stackPanelName As String) As TextBox
+            Dim stackPanel As StackPanel = TryCast(Me.FindName(stackPanelName), StackPanel)
+            If stackPanel IsNot Nothing AndAlso stackPanel.Children.Count > 0 AndAlso TypeOf stackPanel.Children(0) Is Border Then
+                Dim border As Border = CType(stackPanel.Children(0), Border)
+                If border.Child IsNot Nothing AndAlso TypeOf border.Child Is TextBox Then
+                    Return CType(border.Child, TextBox)
+                End If
+            End If
+            Return Nothing
+        End Function
+
+#End Region
+
+#Region "Calculations and Updates"
         Private Sub UpdateOrderTotals()
             ' Calculate and update subtotal, tax, discount, and grand total
             Dim subtotal As Decimal = 0
@@ -718,10 +757,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                 End If
             Next
         End Sub
-        Private Sub BtnAddRow_Click(sender As Object, e As RoutedEventArgs) Handles btnAddRow.Click
-            AddNewRow()
-        End Sub
-
         ' Function to retrieve the TextBox from a Border element
         Private Function GetTextBoxFromBorder(borderName As String) As TextBox
             Dim border As Border = TryCast(Me.FindName(borderName), Border)
@@ -731,14 +766,16 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             Return Nothing
         End Function
 
+
+        ' Update helper method references to use GetTextBoxFromStackPanel instead of GetTextBoxFromBorder
         Private Sub UpdateTaxAndAmount(row As Integer)
-            ' Get references to the required textboxes inside their borders
-            Dim quantityTxt As TextBox = GetTextBoxFromBorder($"txt_{row}_1")
-            Dim rateTxt As TextBox = GetTextBoxFromBorder($"txt_{row}_2")
-            Dim taxPercentTxt As TextBox = GetTextBoxFromBorder($"txt_{row}_3")
-            Dim taxTxt As TextBox = GetTextBoxFromBorder($"txt_{row}_4") ' Now a TextBox
-            Dim discountTxt As TextBox = GetTextBoxFromBorder($"txt_{row}_5")
-            Dim amountTxt As TextBox = GetTextBoxFromBorder($"txt_{row}_6") ' Now a TextBox
+            ' Get references to the required textboxes inside their StackPanel > Border structure
+            Dim quantityTxt As TextBox = GetTextBoxFromStackPanel($"txt_{row}_1")
+            Dim rateTxt As TextBox = GetTextBoxFromStackPanel($"txt_{row}_2")
+            Dim taxPercentTxt As TextBox = GetTextBoxFromStackPanel($"txt_{row}_3")
+            Dim taxTxt As TextBox = GetTextBoxFromStackPanel($"txt_{row}_4")
+            Dim discountTxt As TextBox = GetTextBoxFromStackPanel($"txt_{row}_5")
+            Dim amountTxt As TextBox = GetTextBoxFromStackPanel($"txt_{row}_6")
 
             ' Ensure all fields have valid numeric input
             Dim quantity As Integer = If(quantityTxt IsNot Nothing AndAlso Integer.TryParse(quantityTxt.Text, quantity), quantity, 0)
@@ -781,6 +818,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                 UpdateTaxAndAmount(row) ' Call function to update tax and amount
             End If
         End Sub
+#End Region
+
+#Region "Event Handlers"
+        Private Sub BtnAddRow_Click(sender As Object, e As RoutedEventArgs) Handles btnAddRow.Click
+            AddNewRow()
+        End Sub
 
         Private Sub BtnAddSupplier_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddSupplier.Click
             ViewLoader.DynamicView.NavigateToView("newsuppliers", Me)
@@ -809,5 +852,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                 MessageBox.Show($"Error creating purchase order: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Sub
+#End Region
     End Class
 End Namespace
