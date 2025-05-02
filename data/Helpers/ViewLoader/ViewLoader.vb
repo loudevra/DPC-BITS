@@ -51,9 +51,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Stocks.PurchaseOrder.ManageOrders.ManageOrders()
                     Case "neworder"
                         Return New Stocks.PurchaseOrder.NewOrder.NewOrder()
-                    Case "customersrecord"
+                    Case "customersrecords"
                         Return New Stocks.StockReturn.CustomersRecords.CustomersRecords()
-                    Case "suppliersrecord"
+                    Case "suppliersrecords"
                         Return New Stocks.StockReturn.SupplierRecords.SuppliersRecords()
 
                         ' Promo Codes Navigation
