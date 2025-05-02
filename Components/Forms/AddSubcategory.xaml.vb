@@ -1,6 +1,8 @@
 ﻿Imports DPC.DPC.Data.Controllers
 Imports MySql.Data.MySqlClient
 Imports DPC.DPC.Data.Models
+Imports System.Windows.Controls.Primitives
+
 
 Namespace DPC.Components.Forms
     Public Class AddSubcategory
@@ -8,14 +10,33 @@ Namespace DPC.Components.Forms
         Private subcategoryDescriptionTextBoxes As New List(Of TextBox)()
         Private subcategoryPanels As New List(Of StackPanel)()
         Public Event SubCategoryAdded As EventHandler
+
         Public Sub New()
             InitializeComponent()
 
             ProductCategoryController.GetProductCategory(ComboBoxCategory)
 
             CreateSubCategoryPanel()
+
+            ' Add event handler for the close button
+            AddHandler BtnClose.Click, AddressOf BtnClose_Click
         End Sub
 
+        ' Event handler for the close button
+        Private Sub BtnClose_Click(sender As Object, e As RoutedEventArgs)
+            ' Get the parent Popup if it exists
+            Dim parent = TryCast(Me.Parent, Popup)
+            If parent IsNot Nothing Then
+                ' Close the popup
+                parent.IsOpen = False
+            Else
+                ' Try to find another parent container to close
+                Dim parentWindow = Window.GetWindow(Me)
+                If parentWindow IsNot Nothing Then
+                    parentWindow.Close()
+                End If
+            End If
+        End Sub
 
         Private Sub CreateSubCategoryPanel()
             ' Create subcategory panel
@@ -74,6 +95,7 @@ Namespace DPC.Components.Forms
             If subcategoryNameTextBoxes.Count > 0 Then subcategoryNameTextBoxes.RemoveAt(subcategoryNameTextBoxes.Count - 1)
             If subcategoryDescriptionTextBoxes.Count > 0 Then subcategoryDescriptionTextBoxes.RemoveAt(subcategoryDescriptionTextBoxes.Count - 1)
         End Sub
+
         Private Sub IncreaseBtn(sender As Object, e As RoutedEventArgs)
             AdjustCategoryNumber(1)
             CreateSubCategoryPanel()
@@ -101,7 +123,7 @@ Namespace DPC.Components.Forms
             Dim selectedItem As ComboBoxItem = TryCast(ComboBoxCategory.SelectedItem, ComboBoxItem)
 
             If selectedItem Is Nothing Then
-                MessageBox.Show("Please select a category.")
+                'MessageBox.Show("Please select a category.")
                 Exit Sub
             End If
 
@@ -123,12 +145,15 @@ Namespace DPC.Components.Forms
 
             ' Insert into database
             If ProductCategoryController.InsertSubcategories(selectedCategoryID, subcategories) Then
-                MessageBox.Show("All subcategories added successfully!")
+                'MessageBox.Show("All subcategories added successfully!")
 
                 ' Notify that a new category has been added
                 RaiseEvent SubCategoryAdded(Me, EventArgs.Empty)
+
+                ' Close the popup after successful addition
+                BtnClose_Click(Me, New RoutedEventArgs())
             Else
-                MessageBox.Show("Failed to add subcategories.")
+                'MessageBox.Show("Failed to add subcategories.")
             End If
         End Sub
 

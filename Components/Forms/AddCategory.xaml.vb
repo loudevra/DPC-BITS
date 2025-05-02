@@ -1,6 +1,7 @@
 ﻿Imports DPC.DPC.Data.Controllers
 Imports MySql.Data.MySqlClient
 Imports DPC.DPC.Data.Models
+Imports System.Windows.Controls.Primitives
 
 Namespace DPC.Components.Forms
     Public Class AddCategory
@@ -13,9 +14,28 @@ Namespace DPC.Components.Forms
         Public Sub New()
             InitializeComponent()
             CreateCategoryPanel()
+
+            ' Add event handler for the close button
+            AddHandler BtnClose.Click, AddressOf BtnClose_Click
         End Sub
 
-        Private Sub InsertBtn()
+        ' Event handler for the close button
+        Private Sub BtnClose_Click(sender As Object, e As RoutedEventArgs)
+            ' Get the parent Popup if it exists
+            Dim parent = TryCast(Me.Parent, Popup)
+            If parent IsNot Nothing Then
+                ' Close the popup
+                parent.IsOpen = False
+            Else
+                ' Try to find another parent container to close
+                Dim parentWindow = Window.GetWindow(Me)
+                If parentWindow IsNot Nothing Then
+                    parentWindow.Close()
+                End If
+            End If
+        End Sub
+
+        Private Sub InsertBtn(sender As Object, e As RoutedEventArgs)
             For i As Integer = 0 To categoryNameTextBoxes.Count - 1
                 Dim categoryName As String = categoryNameTextBoxes(i).Text
                 Dim categoryDescription As String = categoryDescriptionTextBoxes(i).Text
@@ -26,17 +46,20 @@ Namespace DPC.Components.Forms
         }
 
                 If String.IsNullOrWhiteSpace(newCategory.categoryName) OrElse String.IsNullOrWhiteSpace(categoryDescription) Then
-                    MessageBox.Show("Please fill out both category name and description.")
+                    'MessageBox.Show("Please fill out both category name and description.")
                     Return
                 End If
 
                 If ProductCategoryController.InsertCategory(newCategory) Then
-                    MessageBox.Show("Category added successfully!")
+                    'MessageBox.Show("Category added successfully!")
 
                     ' Notify that a new category has been added
                     RaiseEvent CategoryAdded(Me, EventArgs.Empty)
+
+                    ' Close the popup after successful addition
+                    BtnClose_Click(Me, New RoutedEventArgs())
                 Else
-                    MessageBox.Show("Failed to add category.")
+                    'MessageBox.Show("Failed to add category.")
                 End If
             Next
         End Sub
@@ -82,6 +105,7 @@ Namespace DPC.Components.Forms
             If categoryNameTextBoxes.Count > 0 Then categoryNameTextBoxes.RemoveAt(categoryNameTextBoxes.Count - 1)
             If categoryDescriptionTextBoxes.Count > 0 Then categoryDescriptionTextBoxes.RemoveAt(categoryDescriptionTextBoxes.Count - 1)
         End Sub
+
         Private Sub IncreaseBtn(sender As Object, e As RoutedEventArgs)
             AdjustCategoryNumber(1)
             CreateCategoryPanel()
