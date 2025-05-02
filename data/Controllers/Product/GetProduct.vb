@@ -40,6 +40,37 @@ Namespace DPC.Data.Controllers
                 End Try
             End Using
         End Sub
+
+        Public Shared Sub GetBrandsWithSupplier(comboBox As ComboBox)
+            Dim query As String = "
+        SELECT DISTINCT b.brandID, b.brandName
+        FROM brand b
+        INNER JOIN supplierbrand sb ON b.brandID = sb.brandID
+        ORDER BY b.brandName ASC;
+        "
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            comboBox.Items.Clear()
+                            While reader.Read()
+                                Dim brandName As String = reader("brandName").ToString()
+                                Dim brandId As Integer = Convert.ToInt32(reader("brandID"))
+                                Dim item As New ComboBoxItem With {
+                            .Content = brandName,
+                            .Tag = brandId
+                        }
+                                comboBox.Items.Add(item)
+                            End While
+                        End Using
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show($"Error: {ex.Message}")
+                End Try
+            End Using
+        End Sub
+
         'Call this on comboboxes to get Suppliers based on the selected brand
         Public Shared Sub GetSuppliersByBrand(brandID As Integer, comboBox As ComboBox)
             Dim query As String = "

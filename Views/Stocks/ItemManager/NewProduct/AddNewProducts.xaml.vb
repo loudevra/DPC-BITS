@@ -78,7 +78,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
         Private Sub LoadInitialData()
             ' Load dropdown data
-            ProductController.GetBrands(ComboBoxBrand)
+            ProductController.GetBrandsWithSupplier(ComboBoxBrand)
             ProductController.GetProductCategory(ComboBoxCategory)
             ProductController.GetWarehouse(ComboBoxWarehouse)
 
