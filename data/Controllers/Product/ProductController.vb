@@ -75,6 +75,10 @@ Namespace DPC.Data.Controllers
             GetProduct.GetBrands(comboBox)
         End Sub
 
+        Public Shared Sub GetBrandsWithSupplier(comboBox As ComboBox)
+            GetProduct.GetBrandsWithSupplier(comboBox)
+        End Sub
+
         ''' <summary>
         ''' Populates a combobox with suppliers filtered by brand
         ''' </summary>
