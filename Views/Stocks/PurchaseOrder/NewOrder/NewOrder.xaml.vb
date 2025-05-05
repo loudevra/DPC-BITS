@@ -411,7 +411,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
         End Sub
 #End Region
 
-
 #Region "Dynamic Grid Manipulation"
         ' ➜ Add a New Row
         Private Sub AddNewRow()
