@@ -43,22 +43,50 @@ Namespace DPC.Data.Controllers
 
         Public Class SingleCalendar
             Implements INotifyPropertyChanged
+            ' Change default to null
+            Private _selectedDate As DateTime? = Nothing
+            Private _minimumDate As DateTime = DateTime.Today
 
-            Private _selectedDate As Date? = Date.Now
-
-            Public Property SelectedDate As Date?
+            Public Property SelectedDate As DateTime?
                 Get
                     Return _selectedDate
                 End Get
-                Set(value As Date?)
-                    _selectedDate = value
-                    OnPropertyChanged(NameOf(SelectedDate))
+                Set(value As DateTime?)
+                    If Not Equals(_selectedDate, value) Then
+                        _selectedDate = value
+                        OnPropertyChanged("SelectedDate")
+                        ' Also raise property changed for FormattedDate when SelectedDate changes
+                        OnPropertyChanged("FormattedDate")
+                    End If
+                End Set
+            End Property
+
+            ' Add a new property for formatted date display
+            Public ReadOnly Property FormattedDate As String
+                Get
+                    If _selectedDate.HasValue Then
+                        Return _selectedDate.Value.ToString("MMM dd, yyyy")
+                    Else
+                        Return "Select a date"  ' Default text when no date is selected
+                    End If
+                End Get
+            End Property
+
+            Public Property MinimumDate As DateTime
+                Get
+                    Return _minimumDate
+                End Get
+                Set(value As DateTime)
+                    If _minimumDate <> value Then
+                        _minimumDate = value
+                        OnPropertyChanged("MinimumDate")
+                    End If
                 End Set
             End Property
 
             Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
 
-            Protected Overridable Sub OnPropertyChanged(propertyName As String)
+            Protected Sub OnPropertyChanged(propertyName As String)
                 RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
             End Sub
         End Class

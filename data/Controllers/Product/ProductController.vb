@@ -294,17 +294,21 @@ Namespace DPC.Data.Controllers
         ''' <summary>
         ''' Validates all product fields before saving
         ''' </summary>
-        Public Shared Function ValidateProductFields(Checkbox As Controls.CheckBox, ProductName As TextBox, Category As ComboBox,
+        Public Shared Function ValidateProductFields(Checkbox As Controls.CheckBox, ProductName As TextBox, ProductCode As TextBox, Category As ComboBox,
                                               SubCategory As ComboBox, Warehouse As ComboBox, Brand As ComboBox,
                                               Supplier As ComboBox, RetailPrice As TextBox, PurchaseOrder As TextBox,
                                               DefaultTax As TextBox, DiscountRate As TextBox, StockUnits As TextBox,
                                               AlertQuantity As TextBox, MeasurementUnit As ComboBox, Description As TextBox,
                                               ValidDate As DatePicker, SerialNumbers As List(Of TextBox)) As Boolean
 
-            Return LogicProduct.ValidateProductFields(Checkbox, ProductName, Category,
+            Return LogicProduct.ValidateProductFields(Checkbox, ProductName, ProductCode, Category,
                                               SubCategory, Warehouse, Brand, Supplier, RetailPrice, PurchaseOrder,
                                               DefaultTax, DiscountRate, StockUnits, AlertQuantity, MeasurementUnit,
                                               Description, ValidDate, SerialNumbers)
+        End Function
+
+        Public Shared Function IsProductCodeExists(productCode As String) As Boolean
+            Return LogicProduct.IsProductCodeExists(productCode)
         End Function
 #End Region
 
@@ -313,7 +317,7 @@ Namespace DPC.Data.Controllers
         ''' Inserts a new product into the database
         ''' </summary>
         Public Shared Sub InsertNewProduct(Toggle As System.Windows.Controls.Primitives.ToggleButton, Checkbox As Controls.CheckBox,
-            ProductName As TextBox, Category As ComboBox, SubCategory As ComboBox, Warehouse As ComboBox,
+            ProductName As TextBox, ProductCode As TextBox, Category As ComboBox, SubCategory As ComboBox, Warehouse As ComboBox,
             Brand As ComboBox, Supplier As ComboBox,
             RetailPrice As TextBox, PurchaseOrder As TextBox, DefaultTax As TextBox,
             DiscountRate As TextBox, StockUnits As TextBox, AlertQuantity As TextBox,
@@ -321,7 +325,7 @@ Namespace DPC.Data.Controllers
             SerialNumbers As List(Of TextBox), ProductImage As String)
 
             CreateProduct.InsertNewProduct(Toggle, Checkbox,
-                ProductName, Category, SubCategory, Warehouse,
+                ProductName, ProductCode, Category, SubCategory, Warehouse,
                 Brand, Supplier,
                 RetailPrice, PurchaseOrder, DefaultTax,
                 DiscountRate, StockUnits, AlertQuantity,
