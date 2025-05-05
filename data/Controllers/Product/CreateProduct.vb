@@ -27,7 +27,6 @@ Namespace DPC.Data.Controllers
                 Exit Sub
             End If
 
-
             ' ✅ Handle SubCategory when it's Nothing
             Dim subCategoryId As Integer = If(SubCategory.SelectedItem IsNot Nothing, CType(SubCategory.SelectedItem, ComboBoxItem).Tag, 0)
 
@@ -47,6 +46,9 @@ Namespace DPC.Data.Controllers
                         ' Generate product ID
                         Dim productID As String = ProductController.GenerateProductCode()
 
+                        ' Check if ValidDate has a selected date, use DBNull.Value if not
+                        Dim dateValue As Object = If(ValidDate.SelectedDate.HasValue, DirectCast(ValidDate.SelectedDate, Object), DBNull.Value)
+
                         ' Insert into product table first
                         Dim productQuery As String = "INSERT INTO product (productID, productName, productCode,categoryID, subcategoryID, supplierID, brandID, dateCreated, productVariation, productImage, measurementUnit, productDescription) 
                                           VALUES (@productID, @ProductName, @ProductCode ,@Category, @SubCategory, @SupplierID, @BrandID, @DateCreated, @variation, @ProductImage, @Description, @MeasurementUnit);"
@@ -58,7 +60,7 @@ Namespace DPC.Data.Controllers
                             productCmd.Parameters.AddWithValue("@SubCategory", subCategoryId) ' ✅ Now using 0 if Nothing
                             productCmd.Parameters.AddWithValue("@SupplierID", CType(Supplier.SelectedItem, ComboBoxItem).Tag)
                             productCmd.Parameters.AddWithValue("@BrandID", CType(Brand.SelectedItem, ComboBoxItem).Tag)
-                            productCmd.Parameters.AddWithValue("@DateCreated", ValidDate.SelectedDate)
+                            productCmd.Parameters.AddWithValue("@DateCreated", dateValue) ' Now using NULL if no date selected
                             productCmd.Parameters.AddWithValue("@variation", variation)
                             productCmd.Parameters.AddWithValue("@ProductImage", ProductImage)
                             productCmd.Parameters.AddWithValue("@Description", Description.Text)
@@ -76,6 +78,9 @@ Namespace DPC.Data.Controllers
                         ' Generate product ID
                         Dim productID As String = ProductController.GenerateProductCode()
 
+                        ' Check if ValidDate has a selected date, use DBNull.Value if not
+                        Dim dateValue As Object = If(ValidDate.SelectedDate.HasValue, DirectCast(ValidDate.SelectedDate, Object), DBNull.Value)
+
                         ' Insert into product table first
                         Dim productQuery As String = "INSERT INTO product (productID, productName, categoryID, subcategoryID, supplierID, brandID, dateCreated, productVariation, productImage, measurementUnit, productDescription) 
                                           VALUES (@productID, @ProductName, @Category, @SubCategory, @SupplierID, @BrandID, @DateCreated, @variation, @ProductImage, @Description, @MeasurementUnit);"
@@ -86,7 +91,7 @@ Namespace DPC.Data.Controllers
                             productCmd.Parameters.AddWithValue("@SubCategory", subCategoryId) ' ✅ Now using 0 if Nothing
                             productCmd.Parameters.AddWithValue("@SupplierID", CType(Supplier.SelectedItem, ComboBoxItem).Tag)
                             productCmd.Parameters.AddWithValue("@BrandID", CType(Brand.SelectedItem, ComboBoxItem).Tag)
-                            productCmd.Parameters.AddWithValue("@DateCreated", ValidDate.SelectedDate)
+                            productCmd.Parameters.AddWithValue("@DateCreated", dateValue) ' Now using NULL if no date selected
                             productCmd.Parameters.AddWithValue("@variation", variation)
                             productCmd.Parameters.AddWithValue("@ProductImage", ProductImage)
                             productCmd.Parameters.AddWithValue("@Description", Description.Text)
