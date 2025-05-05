@@ -196,7 +196,7 @@ Namespace DPC.Data.Controllers
             End Try
         End Sub
 
-        Public Shared Function ValidateProductFields(Checkbox As Controls.CheckBox, ProductName As TextBox, Category As ComboBox,
+        Public Shared Function ValidateProductFields(Checkbox As Controls.CheckBox, ProductName As TextBox, ProductCode As TextBox, Category As ComboBox,
                                        SubCategory As ComboBox, Warehouse As ComboBox, Brand As ComboBox,
                                        Supplier As ComboBox, RetailPrice As TextBox, PurchaseOrder As TextBox,
                                        DefaultTax As TextBox, DiscountRate As TextBox, StockUnits As TextBox,
@@ -205,6 +205,7 @@ Namespace DPC.Data.Controllers
 
             ' Check if any of the required fields are empty (except SubCategory, which can be Nothing)
             If String.IsNullOrWhiteSpace(ProductName.Text) OrElse
+               String.IsNullOrWhiteSpace(ProductCode.Text) OrElse
                Category.SelectedItem Is Nothing OrElse
                Warehouse.SelectedItem Is Nothing OrElse
                Brand.SelectedItem Is Nothing OrElse
@@ -224,6 +225,18 @@ Namespace DPC.Data.Controllers
 
             ' ✅ If SubCategory is Nothing, set it to 0 when saving later
             Return True
+        End Function
+
+        Public Shared Function IsProductCodeExists(productCode As String) As Boolean
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                conn.Open()
+                Dim query As String = "SELECT COUNT(*) FROM product WHERE productCode = @productCode"
+                Using cmd As New MySqlCommand(query, conn)
+                    cmd.Parameters.AddWithValue("@productCode", productCode.Trim())
+                    Dim count As Integer = Convert.ToInt32(cmd.ExecuteScalar())
+                    Return count > 0
+                End Using
+            End Using
         End Function
     End Class
 End Namespace

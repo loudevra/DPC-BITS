@@ -114,7 +114,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
         Private Sub BtnAddProduct_Click(sender As Object, e As RoutedEventArgs)
             ProductController.InsertNewProduct(Toggle, CheckBoxSerialNumber,
-                TxtProductName, ComboBoxCategory, ComboBoxSubCategory,
+                TxtProductName, TxtProductCode, ComboBoxCategory, ComboBoxSubCategory,
                 ComboBoxWarehouse, ComboBoxBrand, ComboBoxSupplier, TxtRetailPrice,
                 TxtPurchaseOrder, TxtDefaultTax, TxtDiscountRate, TxtStockUnits,
                 TxtAlertQuantity, ComboBoxMeasurementUnit, TxtDescription,

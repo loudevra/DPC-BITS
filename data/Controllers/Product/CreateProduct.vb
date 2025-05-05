@@ -10,7 +10,7 @@ Imports DPC.DPC.Data.Helpers
 Namespace DPC.Data.Controllers
     Public Class CreateProduct
         Public Shared Sub InsertNewProduct(Toggle As System.Windows.Controls.Primitives.ToggleButton, Checkbox As Controls.CheckBox,
-            ProductName As TextBox, Category As ComboBox, SubCategory As ComboBox, Warehouse As ComboBox,
+            ProductName As TextBox, ProductCode As TextBox, Category As ComboBox, SubCategory As ComboBox, Warehouse As ComboBox,
             Brand As ComboBox, Supplier As ComboBox,
             RetailPrice As TextBox, PurchaseOrder As TextBox, DefaultTax As TextBox,
             DiscountRate As TextBox, StockUnits As TextBox, AlertQuantity As TextBox,
@@ -20,7 +20,12 @@ Namespace DPC.Data.Controllers
             ' Determine if the product is a variation
             Dim variation As Integer = If(Toggle.IsChecked = True, 1, 0)
 
-
+            ' Add this check at the beginning of the InsertNewProduct function, after the variation check
+            If Not String.IsNullOrEmpty(ProductCode.Text) AndAlso ProductController.IsProductCodeExists(ProductCode.Text.Trim()) Then
+                MessageBox.Show("This product code already exists. Please use a different code.", "Duplicate Product Code", MessageBoxButton.OK, MessageBoxImage.Warning)
+                ProductCode.Focus()
+                Exit Sub
+            End If
 
 
             ' ✅ Handle SubCategory when it's Nothing
@@ -32,7 +37,7 @@ Namespace DPC.Data.Controllers
                     ' Call the appropriate insertion function based on variation flag
                     If variation = 0 Then
                         ' Validate required fields for no variation
-                        If Not ProductController.ValidateProductFields(Checkbox, ProductName, Category, SubCategory, Warehouse, Brand, Supplier,
+                        If Not ProductController.ValidateProductFields(Checkbox, ProductName, ProductCode, Category, SubCategory, Warehouse, Brand, Supplier,
                               RetailPrice, PurchaseOrder, DefaultTax, DiscountRate, StockUnits,
                               AlertQuantity, MeasurementUnit, Description, ValidDate, SerialNumbers) Then
                             MessageBox.Show("Please fill in all required fields!", "Input Error", MessageBoxButton.OK)
@@ -43,11 +48,12 @@ Namespace DPC.Data.Controllers
                         Dim productID As String = ProductController.GenerateProductCode()
 
                         ' Insert into product table first
-                        Dim productQuery As String = "INSERT INTO product (productID, productName, categoryID, subcategoryID, supplierID, brandID, dateCreated, productVariation, productImage, measurementUnit, productDescription) 
-                                          VALUES (@productID, @ProductName, @Category, @SubCategory, @SupplierID, @BrandID, @DateCreated, @variation, @ProductImage, @Description, @MeasurementUnit);"
+                        Dim productQuery As String = "INSERT INTO product (productID, productName, productCode,categoryID, subcategoryID, supplierID, brandID, dateCreated, productVariation, productImage, measurementUnit, productDescription) 
+                                          VALUES (@productID, @ProductName, @ProductCode ,@Category, @SubCategory, @SupplierID, @BrandID, @DateCreated, @variation, @ProductImage, @Description, @MeasurementUnit);"
                         Using productCmd As New MySqlCommand(productQuery, conn, transaction)
                             productCmd.Parameters.AddWithValue("@productID", productID)
                             productCmd.Parameters.AddWithValue("@ProductName", ProductName.Text)
+                            productCmd.Parameters.AddWithValue("@ProductCode", ProductCode.Text)
                             productCmd.Parameters.AddWithValue("@Category", CType(Category.SelectedItem, ComboBoxItem).Tag)
                             productCmd.Parameters.AddWithValue("@SubCategory", subCategoryId) ' ✅ Now using 0 if Nothing
                             productCmd.Parameters.AddWithValue("@SupplierID", CType(Supplier.SelectedItem, ComboBoxItem).Tag)
