@@ -13,11 +13,19 @@ Namespace DPC.Views.Auth
 
         Public Sub New()
             InitializeComponent()
+            ' Add key event handler to both username and password fields
+            AddHandler txtUsername.KeyDown, AddressOf TextBox_KeyDown
+            AddHandler txtPassword.KeyDown, AddressOf TextBox_KeyDown
         End Sub
 
 
         ' Handle Sign-In Process
         Private Sub BtnSignIn_Click(sender As Object, e As RoutedEventArgs)
+            PerformSignIn()
+        End Sub
+
+        ' Common method for sign-in functionality
+        Private Sub PerformSignIn()
             Dim username As String = txtUsername.Text.Trim()
             Dim password As String = realPassword
 
@@ -51,6 +59,10 @@ Namespace DPC.Views.Auth
                 currentWindow?.Close()
             Else
                 MessageBox.Show("Invalid username or password. Please try again.", "Authentication Failed", MessageBoxButton.OK, MessageBoxImage.Warning)
+
+                ' Clear password field after failed login
+                realPassword = ""
+                txtPassword.Text = ""
             End If
         End Sub
 
@@ -63,13 +75,21 @@ Namespace DPC.Views.Auth
             e.Handled = True ' Prevent actual text from appearing
         End Sub
 
-        ' Handle backspace key
+        ' Handle backspace key and Enter key
         Private Sub TxtPassword_KeyDown(sender As Object, e As KeyEventArgs)
             If e.Key = Key.Back AndAlso realPassword.Length > 0 Then
                 realPassword = realPassword.Substring(0, realPassword.Length - 1)
                 txtPassword.Text = New String("●"c, realPassword.Length)
                 txtPassword.CaretIndex = txtPassword.Text.Length
                 e.Handled = True
+            End If
+        End Sub
+
+        ' New method to handle Enter key in both text fields
+        Private Sub TextBox_KeyDown(sender As Object, e As KeyEventArgs)
+            If e.Key = Key.Enter Then
+                e.Handled = True
+                PerformSignIn()
             End If
         End Sub
 
