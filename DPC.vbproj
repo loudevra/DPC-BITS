@@ -489,6 +489,9 @@
     <Compile Include="Views\HRM\Employees\Permissions\PermissionsEmployee.xaml.vb">
       <DependentUpon>PermissionsEmployee.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\HRM\Employees\Salaries\EmployeeSalaries.xaml.vb">
+      <DependentUpon>EmployeeSalaries.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Misc\Documents\AddDocument.xaml.vb">
       <DependentUpon>AddDocument.xaml</DependentUpon>
     </Compile>
@@ -738,6 +741,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\HRM\Employees\Salaries\EmployeeSalaries.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Misc\Documents\AddDocument.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -887,7 +894,6 @@
     <Folder Include="Themes\" />
     <Folder Include="Views\HRM\Departments\" />
     <Folder Include="Views\HRM\Employees\Holidays\" />
-    <Folder Include="Views\HRM\Employees\Salaries\" />
     <Folder Include="Views\HRM\Payroll\" />
   </ItemGroup>
   <ItemGroup>
