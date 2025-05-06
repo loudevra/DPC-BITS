@@ -63,6 +63,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                         ' Employees Navigation
                     Case "permissions"
                         Return New HRM.Employees.Permissions.PermissionsEmployee()
+                        'Salaries Navigation
+                    Case "salaries"
+                        Return New HRM.Employees.Salaries.EmployeeSalaries()
                     Case "addnewemployee"
                         Return New HRM.Employees.Employees.AddEmployee()
                     Case "viewemployee"
@@ -152,6 +155,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                 ' Employees Navigation
             ElseIf typeName = "permissions" Then
                 Return "permissions"
+                ' Salaries Navigation
+            ElseIf typeName = "salaries" Then
+                Return "salaries"
             ElseIf typeName = "addnewemployee" Then
                 Return "addnewemployee"
             ElseIf typeName = "viewemployee" Then
