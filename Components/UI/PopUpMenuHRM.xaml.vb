@@ -122,7 +122,8 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToHolidays(sender As Object, e As RoutedEventArgs)
-            MessageBox.Show("Navigating to Holidays")
+            ' Open Salaries view
+            ViewLoader.DynamicView.NavigateToView("holidays", Me)
         End Sub
 
         Private Sub NavigateToDepartments(sender As Object, e As RoutedEventArgs)
