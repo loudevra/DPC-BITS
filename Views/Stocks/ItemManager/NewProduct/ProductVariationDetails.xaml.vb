@@ -709,7 +709,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         End Sub
 #End Region
 
-
         ' For the serial number management region, replacing the problematic code
 
 #Region "Serial Number Management"
