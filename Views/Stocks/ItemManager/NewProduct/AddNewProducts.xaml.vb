@@ -6,6 +6,7 @@ Imports DPC.DPC.Components.Forms
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
+Imports MaterialDesignThemes.Wpf
 Imports Microsoft.Win32
 
 Namespace DPC.Views.Stocks.ItemManager.NewProduct
@@ -28,6 +29,11 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             LoadInitialData()
         End Sub
 
+        Private Sub AddNewProducts_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
+            ' Now initialize the markup UI after the control has been loaded
+            InitializeMarkupUI()
+        End Sub
+
         Private Sub SetupTimers()
             uploadTimer.Interval = TimeSpan.FromMilliseconds(100)
             AddHandler uploadTimer.Tick, AddressOf UploadTimer_Tick
@@ -43,25 +49,29 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             If ProductController.IsVariation = Nothing Or ProductController.IsVariation = False Then
                 Toggle.IsChecked = False
                 ProductController.VariationChecker(Toggle, StackPanelVariation, StackPanelWarehouse,
-                    StackPanelRetailPrice, StackPanelOrderPrice, StackPanelTaxRate,
-                    StackPanelDiscountRate, BorderStocks, StackPanelAlertQuantity,
-                    StackPanelStockUnits, OuterStackPanel)
+        StackPanelRetailPrice, StackPanelOrderPrice, StackPanelTaxRate,
+        StackPanelDiscountRate, BorderStocks, StackPanelAlertQuantity,
+        StackPanelStockUnits, OuterStackPanel)
 
             ElseIf ProductController.IsVariation = True Then
                 Toggle.IsChecked = True
                 ProductController.VariationChecker(Toggle, StackPanelVariation, StackPanelWarehouse,
-                    StackPanelRetailPrice, StackPanelOrderPrice, StackPanelTaxRate,
-                    StackPanelDiscountRate, BorderStocks, StackPanelAlertQuantity,
-                    StackPanelStockUnits, OuterStackPanel)
+        StackPanelRetailPrice, StackPanelOrderPrice, StackPanelTaxRate,
+        StackPanelDiscountRate, BorderStocks, StackPanelAlertQuantity,
+        StackPanelStockUnits, OuterStackPanel)
             End If
-
 
             CheckBoxSerialNumber.IsChecked = True
             ProductController.SerialNumberChecker(CheckBoxSerialNumber, StackPanelSerialRow,
-                TxtStockUnits, BorderStockUnits)
+    TxtStockUnits, BorderStockUnits)
 
             ' Set default values
             TxtDefaultTax.Text = "12"
+
+            ' Move this AFTER the controls are initialized
+            ' Initialize markup UI - But ONLY after the form has loaded
+            ' We'll handle this in the Loaded event instead
+            ' InitializeMarkupUI()
 
             SingleDatePicker.DisplayDateStart = DateTime.Today
         End Sub
@@ -196,7 +206,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Dim openAddVariation As New DPC.Components.Forms.AddVariation()
 
             ' Subscribe to the ClosePopup method directly
-            AddHandler openAddVariation.Close, AddressOf AddVariation_Closed
+            AddHandler openAddVariation.close, AddressOf AddVariation_Closed
 
             ' Get the parent Window of this UserControl
             Dim parentWindow As Window = Window.GetWindow(Me)
@@ -422,6 +432,113 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 MessageBox.Show("Error loading image: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Sub
+
+#Region "Markup and Price Calculation"
+        Private Sub CalculateSellingPrice()
+            Try
+                ' Check if controls exist
+                If TxtPurchaseOrder Is Nothing OrElse TxtMarkup Is Nothing OrElse TxtRetailPrice Is Nothing OrElse
+               RadBtnPercentage Is Nothing Then
+                    Return
+                End If
+
+                ' Get the buying price
+                Dim buyingPrice As Decimal
+                If String.IsNullOrWhiteSpace(TxtPurchaseOrder.Text) OrElse
+               Not Decimal.TryParse(TxtPurchaseOrder.Text, buyingPrice) OrElse
+               buyingPrice <= 0 Then
+                    ' Invalid or zero/negative buying price
+                    TxtRetailPrice.Text = "0.00"
+                    Return
+                End If
+
+                ' Get the markup value
+                Dim markupValue As Decimal
+                If String.IsNullOrWhiteSpace(TxtMarkup.Text) OrElse
+               Not Decimal.TryParse(TxtMarkup.Text, markupValue) OrElse
+               markupValue < 0 Then
+                    ' Invalid markup value, just set selling price equal to buying price
+                    TxtRetailPrice.Text = buyingPrice.ToString("N2")
+                    Return
+                End If
+
+                ' Calculate selling price based on markup type
+                Dim sellingPrice As Decimal
+
+                If RadBtnPercentage.IsChecked = True Then
+                    ' Percentage markup
+                    sellingPrice = buyingPrice + (buyingPrice * markupValue / 100)
+                Else
+                    ' Flat markup
+                    sellingPrice = buyingPrice + markupValue
+                End If
+
+                ' Update the retail price text box
+                TxtRetailPrice.Text = sellingPrice.ToString("N2")
+            Catch ex As Exception
+                MessageBox.Show("Error calculating selling price: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+        End Sub
+        ' Event handler for the markup text box
+        Private Sub TxtMarkup_TextChanged(sender As Object, e As TextChangedEventArgs) Handles TxtMarkup.TextChanged
+            CalculateSellingPrice()
+        End Sub
+
+        ' Event handler for the buying price text box
+        Private Sub TxtPurchaseOrder_TextChanged(sender As Object, e As TextChangedEventArgs) Handles TxtPurchaseOrder.TextChanged
+            CalculateSellingPrice()
+        End Sub
+
+        ' Event handler for the radio buttons
+        Private Sub RadioButton_Checked(sender As Object, e As RoutedEventArgs) Handles RadBtnPercentage.Checked, RadBtnFlat.Checked
+            UpdateMarkupLabelsIfReady()
+            CalculateSellingPrice()
+        End Sub
+
+        ' Update the markup label and symbol based on selected markup type
+        Private Sub UpdateMarkupLabels()
+            UpdateMarkupLabelsIfReady()
+        End Sub
+
+        Private Sub UpdateMarkupLabelsIfReady()
+            ' Check if all required elements are available before proceeding
+            If TxtMarkupLabel Is Nothing OrElse RadBtnPercentage Is Nothing OrElse
+           MarkupPrefix Is Nothing Then
+                ' Exit if any required element is not yet available
+                Return
+            End If
+
+            If RadBtnPercentage.IsChecked = True Then
+                TxtMarkupLabel.Text = "Enter Percentage:"
+                MarkupPrefix.Kind = PackIconKind.PercentOutline
+            Else ' Flat markup
+                TxtMarkupLabel.Text = "Enter Amount:"
+                MarkupPrefix.Kind = PackIconKind.CurrencyPhp
+            End If
+        End Sub
+
+
+
+        ' Initialize markup UI when the form loads
+        Private Sub InitializeMarkupUI()
+            ' Make sure the controls exist before trying to access them
+            If TxtMarkupLabel Is Nothing OrElse RadBtnPercentage Is Nothing OrElse
+           MarkupPrefix Is Nothing Then
+                ' Log this or handle it accordingly - controls not ready yet
+                Return
+            End If
+
+            ' Set default to percentage
+            RadBtnPercentage.IsChecked = True
+            ' Update the labels safely
+            UpdateMarkupLabelsIfReady()
+
+            ' Ensure initial calculation is performed if values exist
+            If Not String.IsNullOrWhiteSpace(TxtPurchaseOrder?.Text) Then
+                CalculateSellingPrice()
+            End If
+        End Sub
+#End Region
     End Class
 
     ' You'll need to add this converter class to your project
@@ -437,6 +554,5 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Dim visibility As Visibility = DirectCast(value, Visibility)
             Return visibility <> Visibility.Visible
         End Function
-
     End Class
 End Namespace
