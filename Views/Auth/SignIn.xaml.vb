@@ -1,6 +1,8 @@
 Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Controllers
 Imports System.Windows
+Imports DPC.DPC.Components
+Imports DPC.DPC.Components.ConfirmationModals
 
 Namespace DPC.Views.Auth
     Public Class SignIn
@@ -11,11 +13,25 @@ Namespace DPC.Views.Auth
         Private passwordHidden As Boolean = True
         Private realPassword As String = ""
 
+        ' Add modal instance
+        Private confirmationModal As LoginConfirmationModals
+
         Public Sub New()
             InitializeComponent()
+
             ' Add key event handler to both username and password fields
             AddHandler txtUsername.KeyDown, AddressOf TextBox_KeyDown
             AddHandler txtPassword.KeyDown, AddressOf TextBox_KeyDown
+
+            ' Initialize the confirmation modal
+            confirmationModal = New LoginConfirmationModals()
+
+            ' Add the modal to the MainGrid
+            MainGrid.Children.Add(confirmationModal)
+
+            ' Add event handlers for the modal
+            AddHandler confirmationModal.SuccessConfirmed, AddressOf OnLoginSuccess
+            AddHandler confirmationModal.ErrorRetry, AddressOf OnLoginError
         End Sub
 
 
@@ -31,7 +47,7 @@ Namespace DPC.Views.Auth
 
             ' Check if fields are empty
             If String.IsNullOrWhiteSpace(username) OrElse String.IsNullOrWhiteSpace(password) Then
-                MessageBox.Show("Please enter both username and password.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                confirmationModal.ShowError("Please enter both username and password.")
                 Return
             End If
 
@@ -41,29 +57,42 @@ Namespace DPC.Views.Auth
             Dim refreshToken As String = authResult.Item2
 
             If Not String.IsNullOrEmpty(accessToken) AndAlso Not String.IsNullOrEmpty(refreshToken) Then
-                MessageBox.Show("Login Successful!", "Welcome", MessageBoxButton.OK, MessageBoxImage.Information)
-
                 ' Store tokens for session
                 SessionManager.SetSessionTokens(accessToken, refreshToken)
 
-                ' Redirect to Base.xaml and load Dashboard view
-                Dim baseWindow As New Base With {
-                    .CurrentView = ViewLoader.DynamicView.Load("dashboard") ' Set CurrentView to Dashboard
-                    } ' Create instance of Base.xaml
+                ' Show success modal
+                confirmationModal.ShowSuccess("Login Successful!")
 
-                ' Show the Base window
-                baseWindow.Show()
-
-                ' Close the current window (SignIn window)
-                Dim currentWindow As Window = Window.GetWindow(Me)
-                currentWindow?.Close()
+                ' Note: Navigation will be handled in the OnLoginSuccess method
             Else
-                MessageBox.Show("Invalid username or password. Please try again.", "Authentication Failed", MessageBoxButton.OK, MessageBoxImage.Warning)
+                ' Show error modal
+                confirmationModal.ShowError("Invalid username or password. Please try again.")
 
                 ' Clear password field after failed login
                 realPassword = ""
                 txtPassword.Text = ""
             End If
+        End Sub
+
+        ' Handle successful login
+        Private Sub OnLoginSuccess()
+            ' Redirect to Base.xaml and load Dashboard view
+            Dim baseWindow As New Base With {
+                .CurrentView = ViewLoader.DynamicView.Load("dashboard") ' Set CurrentView to Dashboard
+            } ' Create instance of Base.xaml
+
+            ' Show the Base window
+            baseWindow.Show()
+
+            ' Close the current window (SignIn window)
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            currentWindow?.Close()
+        End Sub
+
+        ' Handle retry after login error
+        Private Sub OnLoginError()
+            ' Focus on username field to retry
+            txtUsername.Focus()
         End Sub
 
 
