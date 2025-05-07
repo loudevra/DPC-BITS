@@ -365,6 +365,9 @@
     <Compile Include="Components\Forms\AddVariation.xaml.vb">
       <DependentUpon>AddVariation.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\PayrollTrasactionControl.xaml.vb">
+      <DependentUpon>PayrollTrasactionControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\RemoveRowPopout.xaml.vb">
       <DependentUpon>RemoveRowPopout.xaml</DependentUpon>
     </Compile>
@@ -489,6 +492,9 @@
     <Compile Include="Views\HRM\Employees\Holidays\EmployeeHolidays.xaml.vb">
       <DependentUpon>EmployeeHolidays.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\HRM\Employees\Payroll\PayrollTransaction.xaml.vb">
+      <DependentUpon>PayrollTransaction.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\HRM\Employees\Permissions\PermissionsEmployee.xaml.vb">
       <DependentUpon>PermissionsEmployee.xaml</DependentUpon>
     </Compile>
@@ -551,6 +557,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\AddVariation.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\PayrollTrasactionControl.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\RemoveRowPopout.xaml">
@@ -744,6 +754,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\HRM\Employees\Payroll\PayrollTransaction.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\HRM\Employees\Permissions\PermissionsEmployee.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -900,9 +914,6 @@
     <Folder Include="Installer\" />
     <Folder Include="Themes\" />
     <Folder Include="Views\HRM\Departments\" />
-    <Folder Include="Views\HRM\Employees\Salaries\" />
-    <Folder Include="Views\HRM\Employees\Holidays\" />
-    <Folder Include="Views\HRM\Payroll\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ILLink\ILLink.Descriptors.LibraryBuild.xml" />
