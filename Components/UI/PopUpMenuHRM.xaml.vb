@@ -114,7 +114,8 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToSalaries(sender As Object, e As RoutedEventArgs)
-            MessageBox.Show("Navigating to Salaries")
+            ' Open Salaries view
+            ViewLoader.DynamicView.NavigateToView("salaries", Me)
         End Sub
 
         Private Sub NavigateToAttendance(sender As Object, e As RoutedEventArgs)

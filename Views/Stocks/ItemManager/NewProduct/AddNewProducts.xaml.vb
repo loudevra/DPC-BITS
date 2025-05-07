@@ -26,8 +26,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             InitializeUIElements()
             SetupControllerReferences()
             LoadInitialData()
-            ' Set the DataContext to our shared ViewModel
-            Me.DataContext = ProductViewModel.Instance
         End Sub
 
         Private Sub SetupTimers()
@@ -64,6 +62,8 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             ' Set default values
             TxtDefaultTax.Text = "12"
+
+            SingleDatePicker.DisplayDateStart = DateTime.Today
         End Sub
 
         Private Sub SetupControllerReferences()
@@ -71,14 +71,24 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ProductController.MainContainer = MainContainer
             ProductController.TxtStockUnits = TxtStockUnits
 
-            ' Initialize data context
+            ' Create calendar view model with null date
             Dim calendarViewModel As New CalendarController.SingleCalendar()
-            Me.DataContext = calendarViewModel
+            calendarViewModel.SelectedDate = Nothing  ' Set to null as default
+            calendarViewModel.MinimumDate = DateTime.Today
+
+            ' Set the DataContext to our calendar view model
+            SingleDatePicker.DataContext = calendarViewModel  ' Set DataContext only for DatePicker
+
+            ' Make sure the date button also uses the same DataContext
+            Dim dateButton As Button = CType(FindName("DateButton"), Button)
+            If dateButton IsNot Nothing Then
+                dateButton.DataContext = calendarViewModel
+            End If
         End Sub
 
         Private Sub LoadInitialData()
             ' Load dropdown data
-            ProductController.GetBrands(ComboBoxBrand)
+            ProductController.GetBrandsWithSupplier(ComboBoxBrand)
             ProductController.GetProductCategory(ComboBoxCategory)
             ProductController.GetWarehouse(ComboBoxWarehouse)
 
@@ -114,7 +124,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
         Private Sub BtnAddProduct_Click(sender As Object, e As RoutedEventArgs)
             ProductController.InsertNewProduct(Toggle, CheckBoxSerialNumber,
-                TxtProductName, ComboBoxCategory, ComboBoxSubCategory,
+                TxtProductName, TxtProductCode, ComboBoxCategory, ComboBoxSubCategory,
                 ComboBoxWarehouse, ComboBoxBrand, ComboBoxSupplier, TxtRetailPrice,
                 TxtPurchaseOrder, TxtDefaultTax, TxtDiscountRate, TxtStockUnits,
                 TxtAlertQuantity, ComboBoxMeasurementUnit, TxtDescription,
@@ -148,8 +158,20 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             End If
         End Sub
 
-        Public Sub StartDate_Click(sender As Object, e As RoutedEventArgs)
+        Private Sub StartDate_Click(sender As Object, e As RoutedEventArgs)
             SingleDatePicker.IsDropDownOpen = True
+        End Sub
+
+        ' Add a new handler for date changes
+        Private Sub SingleDatePicker_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs) Handles SingleDatePicker.SelectedDateChanged
+            ' This will ensure that when a date is selected, the UI updates
+            Dim datePicker As DatePicker = TryCast(sender, DatePicker)
+            If datePicker IsNot Nothing AndAlso datePicker.DataContext IsNot Nothing Then
+                Dim calendarViewModel As CalendarController.SingleCalendar = TryCast(datePicker.DataContext, CalendarController.SingleCalendar)
+                If calendarViewModel IsNot Nothing Then
+                    calendarViewModel.SelectedDate = datePicker.SelectedDate
+                End If
+            End If
         End Sub
 
         Private Sub BtnAddRow_Click(sender As Object, e As RoutedEventArgs)

@@ -1,10 +1,9 @@
 ﻿Imports System.ComponentModel
-Imports System.Windows
+Imports System.Windows.Controls
 
 Namespace DPC.Views.Stocks.StockReturn.CustomersRecords
-
     Public Class CustomersRecords
-        Inherits Window
+        Inherits UserControl
 
         ' ViewModel for Date Range
         Public Property DateRangeVM As New DateRangeViewModel()
@@ -12,13 +11,6 @@ Namespace DPC.Views.Stocks.StockReturn.CustomersRecords
         ' Constructor
         Public Sub New()
             InitializeComponent()
-            Dim sidebar As New Components.Navigation.Sidebar()
-            SidebarContainer.Content = sidebar
-
-            ' Load Top Navigation Bar
-            Dim topNav As New Components.Navigation.TopNavBar()
-            TopNavBarContainer.Content = topNav
-
             DataContext = DateRangeVM ' Bind DataContext to ViewModel
         End Sub
 
@@ -68,7 +60,5 @@ Namespace DPC.Views.Stocks.StockReturn.CustomersRecords
         Protected Overridable Sub OnPropertyChanged(propertyName As String)
             RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
         End Sub
-
     End Class
-
 End Namespace

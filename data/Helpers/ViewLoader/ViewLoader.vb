@@ -16,41 +16,69 @@ Namespace DPC.Data.Helpers.ViewLoader
         Public Shared Function Load(viewName As String) As UserControl
             Try
                 Select Case viewName.ToLower()
+                    ' Add new cases here for each view you want to load
+
+                    ' Dashboard Navigation
                     Case "dashboard"
-                        Return New Dashboard.Dashboard() ' This is a UserControl
+                        Return New Dashboard.Dashboard()
+
+                    ' Stocks Navigation
                     Case "stockstransfer"
-                        Return New Stocks.StocksTransfer.StocksTransfer() ' This is a UserControl
+                        Return New Stocks.StocksTransfer.StocksTransfer()
                     Case "newsuppliers"
-                        Return New Stocks.Supplier.NewSuppliers.NewSuppliers() ' This is now a UserControl
+                        Return New Stocks.Supplier.NewSuppliers.NewSuppliers()
                     Case "managesuppliers"
-                        Return New Stocks.Suppliers.ManageSuppliers.ManageSuppliers() ' This is now a UserControl
+                        Return New Stocks.Suppliers.ManageSuppliers.ManageSuppliers()
                     Case "managebrands"
-                        Return New Stocks.Suppliers.ManageBrands.ManageBrands() ' This is now a UserControl
+                        Return New Stocks.Suppliers.ManageBrands.ManageBrands()
                     Case "warehouses"
-                        Return New Stocks.Warehouses.Warehouses() ' Added the Warehouses UserControl
+                        Return New Stocks.Warehouses.Warehouses()
                     Case "productcategories"
-                        Return New Stocks.ProductCategories.ProductCategories() ' Added the ProductCategories UserControl
-                    Case "promocodes"
-                        Return New PromoCodes.ManagePromoCodes() ' Added the ManagePromoCodes UserControl
+                        Return New Stocks.ProductCategories.ProductCategories()
                     Case "manageproducts"
-                        Return New Stocks.ItemManager.ProductManager.ManageProducts() ' Added the ManageProducts UserControl
+                        Return New Stocks.ItemManager.ProductManager.ManageProducts()
                     Case "newproducts"
-                        Return New Stocks.ItemManager.NewProduct.AddNewProducts() ' Added the NewProducts UserControl
+                        Return New Stocks.ItemManager.NewProduct.AddNewProducts()
                     Case "batcheditproductvar"
                         Return New Stocks.ItemManager.NewProduct.ProductBatchEdit()
                     Case "productvariationdetails"
                         Return New Stocks.ItemManager.NewProduct.ProductVariationDetails()
+                    Case "customlabel"
+                        Return New Stocks.ProductsLabel.CustomLabel.CustomLabel()
+                    Case "standardlabel"
+                        Return New Stocks.ProductsLabel.StandardLabel.StandardLabel()
+                    Case "manageorder"
+                        Return New Stocks.PurchaseOrder.ManageOrders.ManageOrders()
                     Case "neworder"
                         Return New Stocks.PurchaseOrder.NewOrder.NewOrder()
+                    Case "customersrecords"
+                        Return New Stocks.StockReturn.CustomersRecords.CustomersRecords()
+                    Case "suppliersrecords"
+                        Return New Stocks.StockReturn.SupplierRecords.SuppliersRecords()
+
+                        ' Promo Codes Navigation
+                    Case "promocodes"
+                        Return New PromoCodes.ManagePromoCodes()
+
+                        ' Employees Navigation
                     Case "permissions"
                         Return New HRM.Employees.Permissions.PermissionsEmployee()
+
                     Case "holidays"
                         Return New HRM.Employees.Holidays.EmployeeHolidays()
+
+                        'Salaries Navigation
+                    Case "salaries"
+                        Return New HRM.Employees.Salaries.EmployeeSalaries()
+
                     Case "addnewemployee"
                         Return New HRM.Employees.Employees.AddEmployee()
                     Case "viewemployee"
                         Return New HRM.Employees.Employees.EmployeesView()
 
+                        ' Accounts Navigation
+                    Case "manageaccounts"
+                        Return New Accounts.Accounts.ManageAccounts.ManageAccounts()
 
 
                     Case Else
@@ -84,9 +112,13 @@ Namespace DPC.Data.Helpers.ViewLoader
             If view Is Nothing Then Return String.Empty
 
             Dim typeName As String = view.GetType().Name.ToLower()
+            ' Check if the type name is a known view type
 
+            ' Dashboard Navigation
             If typeName = "dashboard" Then
                 Return "dashboard"
+
+                ' Stocks Navigation
             ElseIf typeName = "stockstransfer" Then
                 Return "stocks.stocktransfer"
             ElseIf typeName = "newsuppliers" Then
@@ -98,25 +130,52 @@ Namespace DPC.Data.Helpers.ViewLoader
             ElseIf typeName = "warehouses" Then
                 Return "warehouses"
             ElseIf typeName = "productcategories" Then
-                Return "productcategories" ' Added the ProductCategories view type
-            ElseIf typeName = "promocodes" Then
-                Return "promocodes" ' Added the ManagePromoCodes view type
+                Return "productcategories"
             ElseIf typeName = "manageproducts" Then
-                Return "manageproducts" ' Added the ManageProducts view type
+                Return "manageproducts"
             ElseIf typeName = "newproducts" Then
-                Return "newproducts" ' Added the ManageProducts view type
+                Return "newproducts"
             ElseIf typeName = "batcheditproductvar" Then
                 Return "batcheditproductvar"
             ElseIf typeName = "productvariationdetails" Then
                 Return "productvariationdetails"
+            ElseIf typeName = "customlabel" Then
+                Return "customlabel"
+            ElseIf typeName = "standardlabel" Then
+                Return "standardlabel"
+            ElseIf typeName = "manageorder" Then
+                Return "manageorder"
+            ElseIf typeName = "standardlabel" Then
+                Return "standardlabel"
+            ElseIf typeName = "customersrecord" Then
+                Return "customersrecord"
+            ElseIf typeName = "suppliersrecord" Then
+                Return "suppliersrecord"
+
+
+                ' Promo Codes Navigation
+            ElseIf typeName = "promocodes" Then
+                Return "promocodes"
+
+                ' Employees Navigation
             ElseIf typeName = "permissions" Then
                 Return "permissions"
+
             ElseIf typeName = "holidays" Then
                 Return "holidays"
+
+                ' Salaries Navigation
+            ElseIf typeName = "salaries" Then
+                Return "salaries"
+
             ElseIf typeName = "addnewemployee" Then
                 Return "addnewemployee"
             ElseIf typeName = "viewemployee" Then
                 Return "viewemployee"
+
+                ' Accounts Navigation
+            ElseIf typeName = "manageaccounts" Then
+                Return "manageaccounts"
             Else
                 Return typeName
             End If
