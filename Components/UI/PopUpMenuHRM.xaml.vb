@@ -132,7 +132,8 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToPayroll(sender As Object, e As RoutedEventArgs)
-            MessageBox.Show("Navigating to Payroll")
+            ' Open Payroll view
+            ViewLoader.DynamicView.NavigateToView("payrolltransaction", Me)
         End Sub
     End Class
 End Namespace
