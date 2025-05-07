@@ -65,13 +65,18 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New HRM.Employees.Permissions.PermissionsEmployee()
                         'Holidays Navigation
                     Case "holidays"
+
+                        'Return New HRM.Employees.Holidays.EmployeeHolidays()
+
+
                         Return New HRM.Employees.Holidays.EmployeeHolidays()
                            'Payroll Navigation
                     Case "payrolltransaction"
                         Return New HRM.Employees.Payroll.PayrollTransaction()
+
                         'Salaries Navigation
                     Case "salaries"
-                        Return New HRM.Employees.Salaries.EmployeeSalaries()
+                        'Return New HRM.Employees.Salaries.EmployeeSalaries()
 
                     Case "addnewemployee"
                         Return New HRM.Employees.Employees.AddEmployee()
