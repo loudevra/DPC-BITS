@@ -498,7 +498,7 @@
     </Compile>
     <Compile Include="Views\HRM\Employees\Payroll\PayrollTransaction.xaml.vb">
       <DependentUpon>PayrollTransaction.xaml</DependentUpon>
- 
+	</Compile>
     <Compile Include="Views\HRM\Employees\Permissions\PermissionsEmployee.xaml.vb">
       <DependentUpon>PermissionsEmployee.xaml</DependentUpon>
     </Compile>
