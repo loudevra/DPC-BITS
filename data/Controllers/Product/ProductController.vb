@@ -184,6 +184,7 @@ Namespace DPC.Data.Controllers
                           stackPanelOrderPrice As StackPanel,
                           stackPanelTaxRate As StackPanel,
                           stackPanelDiscountRate As StackPanel,
+                          stackPanelMarkupRate As StackPanel,
                           borderStocks As Border,
                           stackPanelAlertQuantity As StackPanel,
                           stackPanelStockUnits As StackPanel,
@@ -196,6 +197,7 @@ Namespace DPC.Data.Controllers
                           stackPanelOrderPrice,
                           stackPanelTaxRate,
                           stackPanelDiscountRate,
+                          stackPanelMarkupRate,
                           borderStocks,
                           stackPanelAlertQuantity,
                           stackPanelStockUnits,
@@ -220,6 +222,7 @@ Namespace DPC.Data.Controllers
         ''' Clears all input fields in the product form
         ''' </summary>
         Public Shared Sub ClearInputFields(txtProductName As TextBox,
+                                           txtProductCode As TextBox,
                           txtRetailPrice As TextBox,
                           txtPurchaseOrder As TextBox,
                           txtDefaultTax As TextBox,
@@ -237,6 +240,7 @@ Namespace DPC.Data.Controllers
                           mainContainer As Panel)
 
             RenderProduct.ClearInputFieldsNoVariation(txtProductName,
+                                                      txtProductCode,
                           txtRetailPrice,
                           txtPurchaseOrder,
                           txtDefaultTax,
@@ -307,9 +311,6 @@ Namespace DPC.Data.Controllers
                                               Description, ValidDate, SerialNumbers)
         End Function
 
-        Public Shared Function IsProductCodeExists(productCode As String) As Boolean
-            Return LogicProduct.IsProductCodeExists(productCode)
-        End Function
 #End Region
 
 #Region "Product Creation Methods"

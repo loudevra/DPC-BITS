@@ -27,6 +27,8 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             InitializeUIElements()
             SetupControllerReferences()
             LoadInitialData()
+
+            Me.DataContext = ProductViewModel.Instance
         End Sub
 
         Private Sub AddNewProducts_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
@@ -50,14 +52,14 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 Toggle.IsChecked = False
                 ProductController.VariationChecker(Toggle, StackPanelVariation, StackPanelWarehouse,
         StackPanelRetailPrice, StackPanelOrderPrice, StackPanelTaxRate,
-        StackPanelDiscountRate, BorderStocks, StackPanelAlertQuantity,
+        StackPanelDiscountRate, StackPanelMarkup, BorderStocks, StackPanelAlertQuantity,
         StackPanelStockUnits, OuterStackPanel)
 
             ElseIf ProductController.IsVariation = True Then
                 Toggle.IsChecked = True
                 ProductController.VariationChecker(Toggle, StackPanelVariation, StackPanelWarehouse,
         StackPanelRetailPrice, StackPanelOrderPrice, StackPanelTaxRate,
-        StackPanelDiscountRate, BorderStocks, StackPanelAlertQuantity,
+        StackPanelDiscountRate, StackPanelMarkup, BorderStocks, StackPanelAlertQuantity,
         StackPanelStockUnits, OuterStackPanel)
             End If
 
@@ -67,7 +69,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             ' Set default values
             TxtDefaultTax.Text = "12"
-
+            TxtDiscountRate.Text = "0"
             ' Move this AFTER the controls are initialized
             ' Initialize markup UI - But ONLY after the form has loaded
             ' We'll handle this in the Loaded event instead
@@ -123,7 +125,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         Private Sub Toggle_Click(sender As Object, e As RoutedEventArgs)
             ProductController.VariationChecker(Toggle, StackPanelVariation, StackPanelWarehouse,
                 StackPanelRetailPrice, StackPanelOrderPrice, StackPanelTaxRate,
-                StackPanelDiscountRate, BorderStocks, StackPanelAlertQuantity,
+                StackPanelDiscountRate, StackPanelMarkup, BorderStocks, StackPanelAlertQuantity,
                 StackPanelStockUnits, OuterStackPanel)
         End Sub
 
@@ -140,7 +142,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 TxtAlertQuantity, ComboBoxMeasurementUnit, TxtDescription,
                 SingleDatePicker, ProductController.SerialNumbers, base64Image)
 
-            ProductController.ClearInputFields(TxtProductName, TxtRetailPrice, TxtPurchaseOrder,
+            ProductController.ClearInputFields(TxtProductName, TxtProductCode, TxtRetailPrice, TxtPurchaseOrder,
                 TxtDefaultTax, TxtDiscountRate, TxtStockUnits, TxtAlertQuantity, TxtDescription,
                 ComboBoxCategory, ComboBoxSubCategory, ComboBoxWarehouse, ComboBoxMeasurementUnit,
                 ComboBoxBrand, ComboBoxSupplier, SingleDatePicker, MainContainer)
