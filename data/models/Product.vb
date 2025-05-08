@@ -71,6 +71,9 @@ Namespace DPC.Data.Model
         ' Whether this variation uses serial numbers
         Public Property IncludeSerialNumbers As Boolean
 
+        Public Property MarkupValue As Decimal
+        Public Property IsPercentageMarkup As Boolean
+
         ' Common constructor
         Public Sub New()
             SerialNumbers = New List(Of String)()
@@ -98,6 +101,10 @@ Namespace DPC.Data.Model
             Dim sanitizedName As String = combinationName.Replace(" ", "").Replace(",", "_").ToLower()
             Return "var_" & sanitizedName
         End Function
+
+
+
+        ' Constructor
     End Class
 
     'for products in the purchase order and stock return

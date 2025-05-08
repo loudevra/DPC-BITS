@@ -492,15 +492,17 @@
     <Compile Include="Views\HRM\Employees\Employees\EmployeesView.xaml.vb">
       <DependentUpon>EmployeesView.xaml</DependentUpon>
     </Compile>
-
     <Compile Include="Views\HRM\Employees\Holidays\EmployeeHolidays.xaml.vb">
       <DependentUpon>EmployeeHolidays.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\HRM\Employees\Payroll\PayrollTransaction.xaml.vb">
       <DependentUpon>PayrollTransaction.xaml</DependentUpon>
- 
+    </Compile>
     <Compile Include="Views\HRM\Employees\Permissions\PermissionsEmployee.xaml.vb">
       <DependentUpon>PermissionsEmployee.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HRM\Employees\Salaries\EmployeeSalaries.xaml.vb">
+      <DependentUpon>EmployeeSalaries.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Misc\Documents\AddDocument.xaml.vb">
       <DependentUpon>AddDocument.xaml</DependentUpon>
@@ -766,6 +768,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\HRM\Employees\Salaries\EmployeeSalaries.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Misc\Documents\AddDocument.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -914,11 +920,7 @@
     <Folder Include="Installer\" />
     <Folder Include="Themes\" />
     <Folder Include="Views\HRM\Departments\" />
-
-    <Folder Include="Views\HRM\Employees\Holidays\" />
-    <Folder Include="Views\HRM\Employees\Salaries\" />
     <Folder Include="Views\HRM\Payroll\" />
-
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ILLink\ILLink.Descriptors.LibraryBuild.xml" />
