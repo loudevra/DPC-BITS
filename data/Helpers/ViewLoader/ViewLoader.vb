@@ -76,7 +76,7 @@ Namespace DPC.Data.Helpers.ViewLoader
 
                         'Salaries Navigation
                     Case "salaries"
-                        'Return New HRM.Employees.Salaries.EmployeeSalaries()
+                        Return New HRM.Employees.Salaries.EmployeeSalaries()
 
                     Case "addnewemployee"
                         Return New HRM.Employees.Employees.AddEmployee()
