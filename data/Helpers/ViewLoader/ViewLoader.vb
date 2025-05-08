@@ -55,25 +55,18 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Stocks.StockReturn.CustomersRecords.CustomersRecords()
                     Case "suppliersrecords"
                         Return New Stocks.StockReturn.SupplierRecords.SuppliersRecords()
-
                         ' Promo Codes Navigation
                     Case "promocodes"
                         Return New PromoCodes.ManagePromoCodes()
-
                         ' Employees Navigation
                     Case "permissions"
                         Return New HRM.Employees.Permissions.PermissionsEmployee()
                         'Holidays Navigation
                     Case "holidays"
-
-                        'Return New HRM.Employees.Holidays.EmployeeHolidays()
-
-
                         Return New HRM.Employees.Holidays.EmployeeHolidays()
                            'Payroll Navigation
                     Case "payrolltransaction"
                         Return New HRM.Employees.Payroll.PayrollTransaction()
-
                         'Salaries Navigation
                     Case "salaries"
                         Return New HRM.Employees.Salaries.EmployeeSalaries()
@@ -82,7 +75,6 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New HRM.Employees.Employees.AddEmployee()
                     Case "viewemployee"
                         Return New HRM.Employees.Employees.EmployeesView()
-
                         ' Accounts Navigation
                     Case "manageaccounts"
                         Return New Accounts.Accounts.ManageAccounts.ManageAccounts()
