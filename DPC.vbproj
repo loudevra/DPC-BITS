@@ -359,6 +359,9 @@
     <Compile Include="Components\Forms\AddCategory.xaml.vb">
       <DependentUpon>AddCategory.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\AddDepartment.xaml.vb">
+      <DependentUpon>AddDepartment.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\AddRowPopout.xaml.vb">
       <DependentUpon>AddRowPopout.xaml</DependentUpon>
     </Compile>
@@ -483,6 +486,9 @@
     <Compile Include="Views\Dashboard\Dashboard.xaml.vb">
       <DependentUpon>Dashboard.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\HRM\Departments\DepartmentsView.xaml.vb">
+      <DependentUpon>DepartmentsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\HRM\Employees\Attendance\AttendanceEmployee.xaml.vb">
       <DependentUpon>AttendanceEmployee.xaml</DependentUpon>
     </Compile>
@@ -550,6 +556,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\AddCategory.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\AddDepartment.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\AddNewSupplierForm.xaml">
@@ -746,6 +756,10 @@
     <Page Include="Views\Dashboard\Dashboard.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\HRM\Departments\DepartmentsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\HRM\Employees\Attendance\AttendanceEmployee.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -919,7 +933,6 @@
     <Folder Include="Data\Animations\" />
     <Folder Include="Installer\" />
     <Folder Include="Themes\" />
-    <Folder Include="Views\HRM\Departments\" />
     <Folder Include="Views\HRM\Payroll\" />
   </ItemGroup>
   <ItemGroup>
