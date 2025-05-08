@@ -245,7 +245,7 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
         End Sub
 
         Private Sub BtnAddNew_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddNew.Click
-            ViewLoader.DynamicView.NavigateToView("manageproducts", Me)
+            ViewLoader.DynamicView.NavigateToView("newproducts", Me)
         End Sub
 
         ' Refresh data and stats when returning to this view
