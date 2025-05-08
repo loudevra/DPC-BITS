@@ -38,6 +38,19 @@ Namespace DPC.Data.Controllers
             End Set
         End Property
 
+        Private _productCode As String
+        Public Property ProductCode As String
+            Get
+                Return _productCode
+            End Get
+            Set(value As String)
+                If _productCode <> value Then
+                    _productCode = value
+                    OnPropertyChanged()
+                End If
+            End Set
+        End Property
+
         Private _description As String
         Public Property Description As String
             Get

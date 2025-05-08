@@ -56,7 +56,7 @@
 
                     <TextBlock Grid.Column="0" Text="Set same details for all variations" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0" VerticalAlignment="Center"/>
 
-                    <Button Grid.Column="1" Style="{StaticResource RoundedButtonStyle}" Width="Auto" Height="Auto" Background="Transparent" HorizontalAlignment="Left" BorderThickness="0" VerticalAlignment="Center" Margin="20,0,0,0" Click="BtnBatchEdit">
+                    <Button Grid.Column="1" Style="{StaticResource RoundedButtonStyle}" Width="Auto" Height="Auto" Background="Transparent" HorizontalAlignment="Left" BorderThickness="0" VerticalAlignment="Center" Margin="20,0,0,0" Click="BtnBatchEdit" Visibility="Collapsed">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
@@ -190,7 +190,7 @@
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                     <TextBlock Text="Product Selling Price:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                                    <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
+
                                 </StackPanel>
                                 <Border Style="{StaticResource RoundedBorderStyle}">
                                     <Grid>
@@ -214,7 +214,7 @@
                             </StackPanel>
                         </StackPanel>
                         
-                        <StackPanel Margin="0,0,0,10" x:Name="StackPanelTaxRate">
+                        <StackPanel Margin="0,0,0,10" x:Name="StackPanelTaxRate" Visibility="Collapsed">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Text="Default Tax Rate:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                                 <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
@@ -243,7 +243,6 @@
                         <StackPanel Margin="0,0,0,10" x:Name="StackPanelDiscountRate">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Text="Default Discount Rate:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                                <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
                             </StackPanel>
                             <Border Style="{StaticResource RoundedBorderStyle}">
                                 <Grid>
@@ -268,6 +267,7 @@
                         <StackPanel Margin="0,0,0,10" x:Name="StackPanelStockUnits">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Text="Stock Units:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
                             </StackPanel>
                             <Border Style="{StaticResource RoundedBorderStyle}" x:Name="BorderStockUnits">
                                 <!-- Stock Units Value-->

@@ -127,6 +127,7 @@ Namespace DPC.Data.Controllers
 
         'Clear fields in firstpage of add product (for novariations only)
         Public Shared Sub ClearInputFieldsNoVariation(txtProductName As TextBox,
+                                                      txtProductCode As TextBox,
                          txtRetailPrice As TextBox,
                          txtPurchaseOrder As TextBox,
                          txtDefaultTax As TextBox,
@@ -144,6 +145,7 @@ Namespace DPC.Data.Controllers
                          mainContainer As Panel)
             ' Clear TextBoxes
             txtProductName.Clear()
+            txtProductCode.Clear()
             txtRetailPrice.Clear()
             txtPurchaseOrder.Clear()
             txtDefaultTax.Text = "12"

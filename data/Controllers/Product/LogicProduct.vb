@@ -20,6 +20,7 @@ Namespace DPC.Data.Controllers
                           stackPanelOrderPrice As StackPanel,
                           stackPanelTaxRate As StackPanel,
                           stackPanelDiscountRate As StackPanel,
+                          stackPanelMarkupRate As StackPanel,
                           borderStocks As Border,
                           stackPanelAlertQuantity As StackPanel,
                           stackPanelStockUnits As StackPanel,
@@ -39,6 +40,7 @@ Namespace DPC.Data.Controllers
                     stackPanelOrderPrice.Visibility = Visibility.Collapsed
                     stackPanelTaxRate.Visibility = Visibility.Collapsed
                     stackPanelDiscountRate.Visibility = Visibility.Collapsed
+                    stackPanelMarkupRate.Visibility = Visibility.Collapsed
                     borderStocks.Visibility = Visibility.Collapsed
                     stackPanelAlertQuantity.Visibility = Visibility.Collapsed
                     stackPanelStockUnits.Visibility = Visibility.Collapsed
@@ -50,8 +52,9 @@ Namespace DPC.Data.Controllers
                     stackPanelWarehouse.Visibility = Visibility.Visible
                     stackPanelRetailPrice.Visibility = Visibility.Visible
                     stackPanelOrderPrice.Visibility = Visibility.Visible
-                    stackPanelTaxRate.Visibility = Visibility.Visible
+                    stackPanelTaxRate.Visibility = Visibility.Collapsed
                     stackPanelDiscountRate.Visibility = Visibility.Visible
+                    stackPanelMarkupRate.Visibility = Visibility.Visible
                     borderStocks.Visibility = Visibility.Visible
                     stackPanelAlertQuantity.Visibility = Visibility.Visible
                     stackPanelStockUnits.Visibility = Visibility.Visible
@@ -225,18 +228,6 @@ Namespace DPC.Data.Controllers
 
             ' ✅ If SubCategory is Nothing, set it to 0 when saving later
             Return True
-        End Function
-
-        Public Shared Function IsProductCodeExists(productCode As String) As Boolean
-            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                conn.Open()
-                Dim query As String = "SELECT COUNT(*) FROM product WHERE productCode = @productCode"
-                Using cmd As New MySqlCommand(query, conn)
-                    cmd.Parameters.AddWithValue("@productCode", productCode.Trim())
-                    Dim count As Integer = Convert.ToInt32(cmd.ExecuteScalar())
-                    Return count > 0
-                End Using
-            End Using
         End Function
     End Class
 End Namespace
