@@ -20,13 +20,6 @@ Namespace DPC.Data.Controllers
             ' Determine if the product is a variation
             Dim variation As Integer = If(Toggle.IsChecked = True, 1, 0)
 
-            ' Add this check at the beginning of the InsertNewProduct function, after the variation check
-            If Not String.IsNullOrEmpty(ProductCode.Text) AndAlso ProductController.IsProductCodeExists(ProductCode.Text.Trim()) Then
-                MessageBox.Show("This product code already exists. Please use a different code.", "Duplicate Product Code", MessageBoxButton.OK, MessageBoxImage.Warning)
-                ProductCode.Focus()
-                Exit Sub
-            End If
-
             ' ✅ Handle SubCategory when it's Nothing
             Dim subCategoryId As Integer = If(SubCategory.SelectedItem IsNot Nothing, CType(SubCategory.SelectedItem, ComboBoxItem).Tag, 0)
 
@@ -50,7 +43,7 @@ Namespace DPC.Data.Controllers
                         Dim dateValue As Object = If(ValidDate.SelectedDate.HasValue, DirectCast(ValidDate.SelectedDate, Object), DBNull.Value)
 
                         ' Insert into product table first
-                        Dim productQuery As String = "INSERT INTO product (productID, productName, productCode,categoryID, subcategoryID, supplierID, brandID, dateCreated, productVariation, productImage, measurementUnit, productDescription) 
+                        Dim productQuery As String = "INSERT INTO product (productID, productName, productCode, categoryID, subcategoryID, supplierID, brandID, dateCreated, productVariation, productImage, measurementUnit, productDescription) 
                                           VALUES (@productID, @ProductName, @ProductCode ,@Category, @SubCategory, @SupplierID, @BrandID, @DateCreated, @variation, @ProductImage, @Description, @MeasurementUnit);"
                         Using productCmd As New MySqlCommand(productQuery, conn, transaction)
                             productCmd.Parameters.AddWithValue("@productID", productID)
@@ -82,11 +75,12 @@ Namespace DPC.Data.Controllers
                         Dim dateValue As Object = If(ValidDate.SelectedDate.HasValue, DirectCast(ValidDate.SelectedDate, Object), DBNull.Value)
 
                         ' Insert into product table first
-                        Dim productQuery As String = "INSERT INTO product (productID, productName, categoryID, subcategoryID, supplierID, brandID, dateCreated, productVariation, productImage, measurementUnit, productDescription) 
-                                          VALUES (@productID, @ProductName, @Category, @SubCategory, @SupplierID, @BrandID, @DateCreated, @variation, @ProductImage, @Description, @MeasurementUnit);"
+                        Dim productQuery As String = "INSERT INTO product (productID, productName, productCode,categoryID, subcategoryID, supplierID, brandID, dateCreated, productVariation, productImage, measurementUnit, productDescription) 
+                                          VALUES (@productID, @ProductName, @ProductCode, @Category, @SubCategory, @SupplierID, @BrandID, @DateCreated, @variation, @ProductImage, @Description, @MeasurementUnit);"
                         Using productCmd As New MySqlCommand(productQuery, conn, transaction)
                             productCmd.Parameters.AddWithValue("@productID", productID)
                             productCmd.Parameters.AddWithValue("@ProductName", ProductName.Text)
+                            productCmd.Parameters.AddWithValue("@ProductCode", ProductCode.Text)
                             productCmd.Parameters.AddWithValue("@Category", CType(Category.SelectedItem, ComboBoxItem).Tag)
                             productCmd.Parameters.AddWithValue("@SubCategory", subCategoryId) ' ✅ Now using 0 if Nothing
                             productCmd.Parameters.AddWithValue("@SupplierID", CType(Supplier.SelectedItem, ComboBoxItem).Tag)
