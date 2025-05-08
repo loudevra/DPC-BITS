@@ -70,7 +70,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                         'Salaries Navigation
                     Case "salaries"
                         Return New HRM.Employees.Salaries.EmployeeSalaries()
-
+                        'Departments Navigation
+                    Case "departments"
+                        Return New HRM.Departments.DepartmentsView()
                     Case "addnewemployee"
                         Return New HRM.Employees.Employees.AddEmployee()
                     Case "viewemployee"
@@ -166,6 +168,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                 ' Salaries Navigation
             ElseIf typeName = "salaries" Then
                 Return "salaries"
+                ' departments Navigation
+            ElseIf typeName = "departments" Then
+                Return "departments"
                 ' Payroll Navigation
             ElseIf typeName = "payrolltransaction" Then
                 Return "payrolltransaction"

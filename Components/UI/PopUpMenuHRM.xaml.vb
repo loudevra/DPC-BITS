@@ -128,7 +128,8 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToDepartments(sender As Object, e As RoutedEventArgs)
-            MessageBox.Show("Navigating to Departments")
+            ' Open Department view
+            ViewLoader.DynamicView.NavigateToView("departments", Me)
         End Sub
 
         Private Sub NavigateToPayroll(sender As Object, e As RoutedEventArgs)
