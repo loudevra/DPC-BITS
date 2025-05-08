@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:DPC.DPC.Data.Converters"
     xmlns:local2="clr-namespace:DPC.DPC.Data.Converters.ValueConverter"
-    StartupUri="SplashScreen.xaml">
+    StartupUri="Views\POS\POSForm.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -322,6 +322,84 @@
                                     <Setter TargetName="NoLabel" Property="Foreground" Value="White"/>
                                     <Setter TargetName="NoLabel" Property="FontWeight" Value="SemiBold"/>
                                     <Setter TargetName="YesLabel" Property="Foreground" Value="#FDFDFD"/>
+                                    <Setter TargetName="YesLabel" Property="FontWeight" Value="Normal"/>
+
+                                    <!-- Slide Thumb to the Left -->
+                                    <Setter TargetName="SwitchThumb" Property="HorizontalAlignment" Value="Left"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="ToggleSwitchCreateInvoiceCostEstimate" TargetType="ToggleButton">
+                <Setter Property="Height" Value="40"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="BorderThickness" Value="0"/>
+
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Grid Height="40">
+                                <!-- Background Border -->
+                                <Border x:Name="BackgroundBorder" Background="#AEAEAE" CornerRadius="10"/>
+
+                                <!-- Layout Grid with Equal Columns -->
+                                <Grid Margin="0" x:Name="ToggleGrid">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Labels for No and Yes -->
+                                    <TextBlock x:Name="NoLabel" Text="Create Invoice" FontSize="14"
+                                   Foreground="#555555" FontWeight="SemiBold"
+                                   VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+                                    <TextBlock x:Name="YesLabel" Text="Cost Estimate" FontSize="14"
+                                   Foreground="#555555" FontWeight="Normal"
+                                   VerticalAlignment="Center" HorizontalAlignment="Center"
+                                   Grid.Column="1"/>
+
+                                    <!-- Thumb for Switch (Same Width as Column) -->
+                                    <Border x:Name="SwitchThumb" Height="Auto" Background="#555555"
+                                CornerRadius="10" Grid.ColumnSpan="2"
+                                HorizontalAlignment="Left">
+                                        <Border.Width>
+                                            <Binding ElementName="ToggleGrid" Path="ActualWidth">
+                                                <Binding.Converter>
+                                                    <local2:HalfWidthConverter/>
+                                                </Binding.Converter>
+                                            </Binding>
+                                        </Border.Width>
+                                        <TextBlock x:Name="ThumbText" Text="Create Invoice" FontSize="14"
+                                       FontWeight="Bold" Foreground="#FDFDFD"
+                                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    </Border>
+                                </Grid>
+                            </Grid>
+
+                            <!-- Animation and State Management -->
+                            <ControlTemplate.Triggers>
+                                <!-- When Checked -->
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="ThumbText" Property="Text" Value="Cost Etsimate"/>
+                                    <Setter TargetName="YesLabel" Property="Foreground" Value="White"/>
+                                    <Setter TargetName="YesLabel" Property="FontWeight" Value="SemiBold"/>
+                                    <Setter TargetName="NoLabel" Property="Foreground" Value="#555555"/>
+                                    <Setter TargetName="NoLabel" Property="FontWeight" Value="Normal"/>
+
+                                    <!-- Slide Thumb to the Right -->
+                                    <Setter TargetName="SwitchThumb" Property="HorizontalAlignment" Value="Right"/>
+                                </Trigger>
+
+                                <!-- When Unchecked -->
+                                <Trigger Property="IsChecked" Value="False">
+                                    <Setter TargetName="ThumbText" Property="Text" Value="Create Invoice"/>
+                                    <Setter TargetName="NoLabel" Property="Foreground" Value="White"/>
+                                    <Setter TargetName="NoLabel" Property="FontWeight" Value="SemiBold"/>
+                                    <Setter TargetName="YesLabel" Property="Foreground" Value="#555555"/>
                                     <Setter TargetName="YesLabel" Property="FontWeight" Value="Normal"/>
 
                                     <!-- Slide Thumb to the Left -->

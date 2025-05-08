@@ -43,18 +43,18 @@
             </Grid.RowDefinitions>
             
             <!--Top navbar-->
-            <Grid Grid.Row="0">
+            <Grid Grid.Row="0" Margin="0,0,0,10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" HorizontalAlignment="Left">
                     <!--Button to go back to dashboard-->
-                    <Button Style="{StaticResource ButtonStyle}" BorderBrush="Transparent" Background="Transparent">
-                        <Image Source="/Assets/images/logo-black.png" Width="30" Height="40" Stretch="Uniform"/>
-                    </Button>
+                    <StackPanel>
+                        <Image Source="/Assets/images/logo-black.png" Width="25" Height="35" Stretch="Fill"/>
+                    </StackPanel>
                 </StackPanel>
 
                 <Grid Grid.Column="1" HorizontalAlignment="Center">
@@ -65,26 +65,82 @@
                     </Grid.ColumnDefinitions>
 
                     <!--Button to go back to dashboard-->
-                    <Border Grid.Column="0" Style="{StaticResource RoundedBorderStyle}" VerticalAlignment="Center" BorderBrush="Transparent" Background="#090909">
-                        <Button Style="{StaticResource ButtonStyle}" BorderBrush="Transparent" Background="Transparent" Margin="0"> 
+                        <Button Grid.Column="0" Style="{StaticResource RoundedButtonStyle}" BorderBrush="Transparent" Background="#090909" Margin="0" Height="30" Width="30" VerticalAlignment="Center"> 
                             <materialDesign:PackIcon Kind="Speedometer" Width="20" Height="20" Foreground="#FDFDFD" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </Button>
-                    </Border>
 
                     <!--Button to open register-->
-                    <Border Grid.Column="1" Style="{StaticResource RoundedBorderStyle}" VerticalAlignment="Center" BorderBrush="Transparent" Background="#090909">
-                        <Button Style="{StaticResource ButtonStyle}" BorderBrush="Transparent" Background="Transparent" Margin="0">
-                            <materialDesign:PackIcon Kind="CashRegister" Width="20" Height="20" Foreground="#FDFDFD" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        </Button>
-                    </Border>
+                    <Button Grid.Column="1" Style="{StaticResource RoundedButtonStyle}" BorderBrush="Transparent" Background="#090909" Margin="0" Height="30" Width="30" VerticalAlignment="Center">
+                        <materialDesign:PackIcon Kind="CashRegister" Width="20" Height="20" Foreground="#FDFDFD" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Button>
 
                     <!--Button to close register-->
-                    <Border Grid.Column="2" Style="{StaticResource RoundedBorderStyle}" VerticalAlignment="Center" BorderBrush="Transparent" Background="#090909">
-                        <Button Style="{StaticResource ButtonStyle}" BorderBrush="Transparent" Background="Transparent" Margin="0">
-                            <materialDesign:PackIcon Kind="Lock" Width="20" Height="20" Foreground="#FDFDFD" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                        </Button>
-                    </Border>
+                    <Button Grid.Column="2" Style="{StaticResource RoundedButtonStyle}" BorderBrush="Transparent" Background="#090909" Margin="0" Height="30" Width="30" VerticalAlignment="Center">
+                        <materialDesign:PackIcon Kind="Lock" Width="20" Height="20" Foreground="#FDFDFD" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Button>
                 </Grid>
+            </Grid>
+            
+            <!--Invoice and Cost Estimate-->
+            <Grid Grid.Row="1" Margin="0,0,0,10">
+                <ToggleButton Style="{StaticResource ToggleSwitchCreateInvoiceCostEstimate}"/>
+            </Grid>
+
+            <Grid Grid.Row="2" Margin="0,0,0,10">
+                <!--Search Button-->
+                <StackPanel>
+                    <!-- TextBox + Popup -->
+                    <Grid>
+                        <!-- Text Input -->
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width=".3*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="TxtSupplier" Grid.Column="0"
+                                             Style="{StaticResource RoundedTextboxStyle}" Margin="20,0,0,0"
+                                             VerticalAlignment="Top" />
+                                <materialDesign:PackIcon Grid.Column="1" Kind="Search" Foreground="Black" Width="24" Height="24" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                <Button Grid.Column="2" Style="{StaticResource RoundedButtonStyle}" Margin="0">
+                                    
+                                </Button>
+                            </Grid>
+                        </Border>
+
+                        <!-- Popup with ListBox -->
+                        <Popup x:Name="AutoCompletePopup"
+                               PlacementTarget="{Binding ElementName=TxtSupplier}"
+                               Placement="Bottom"
+                               StaysOpen="False"
+                               IsOpen="False"
+                               AllowsTransparency="True"
+                               PopupAnimation="Fade">
+                            <Border Background="White"
+                                        BorderBrush="LightGray"
+                                        BorderThickness="1"
+                                        MaxHeight="150"
+                                        Width="{Binding ElementName=TxtItem, Path=ActualWidth}">
+                                <ListBox x:Name="LstItems">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding SupplierName}" FontWeight="SemiBold" Padding="0,0,5,0"/>
+                                                    <TextBlock Text="-" Padding="0,0,5,0"/>
+                                                    <TextBlock Text="{Binding SupplierEmail}" Foreground="#0066CC" FontStyle="Italic"/>
+                                                </StackPanel>
+                                                <TextBlock Text="{Binding SupplierCompany}" Foreground="Gray" FontSize="12" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                </StackPanel>
+
             </Grid>
         </Grid>
     </materialDesign:Card>
