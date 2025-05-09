@@ -171,7 +171,7 @@
             </StackPanel>
             
             <!-- POS Settings, Invoice Properties and Coupon-->
-            <Grid Grid.Row="3" Margin="0,0,0,20">
+            <Grid Grid.Row="3" Margin="0,0,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
@@ -179,35 +179,41 @@
                 </Grid.ColumnDefinitions>
                 
                 <!-- POS Settings -->
-                <StackPanel Grid.Column="0" HorizontalAlignment="Left" Orientation="Horizontal">
-                    <materialDesign:PackIcon Grid.Column="1" Kind="CogOutline" Foreground="#555555" Width="20" Height="20" Margin="0,0,5,0" VerticalAlignment="Center"/>
-                    <TextBlock Text="POS Settings" FontSize="12" Foreground="#555555" FontWeight="regular" VerticalAlignment="Center"/>
-                </StackPanel>
+                <Button Click="OpenSettings" Grid.Column="0" Style="{StaticResource RoundedButtonStyle}" Margin="0,0,10,0" BorderThickness="0" HorizontalAlignment="Right">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon x:Name="SettingsIcon" Grid.Column="1" Kind="CogOutline" Foreground="#555555" Width="20" Height="20" Margin="0,0,0,0" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="SettingsText" Text="POS Settings" FontSize="12" Foreground="#555555" FontWeight="regular" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
 
                 <!-- Invoice Properties -->
-                <StackPanel Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal">
-                    <materialDesign:PackIcon Grid.Column="1" Kind="FileCogOutline" Foreground="#AEAEAE" Width="20" Height="20" Margin="0,0,5,0" VerticalAlignment="Center"/>
-                    <TextBlock Text="Invoice Properties" FontSize="12" Foreground="#AEAEAE" FontWeight="regular" VerticalAlignment="Center"/>
-                </StackPanel>
-
+                <Button Click="OpenProperties" Grid.Column="1" Style="{StaticResource RoundedButtonStyle}" Margin="0" BorderThickness="0" HorizontalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon x:Name="InvoiceIcon" Grid.Column="1" Kind="FileCogOutline" Foreground="#AEAEAE" Width="20" Height="20" Margin="0,0,0,0" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="InvoiceText" Text="Invoice Properties" FontSize="12" Foreground="#AEAEAE" FontWeight="regular" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                
                 <!-- Coupon -->
-                <StackPanel Grid.Column="3" HorizontalAlignment="Right" Orientation="Horizontal">
-                    <materialDesign:PackIcon Grid.Column="1" Kind="TicketOutline" Foreground="#AEAEAE" Width="20" Height="20" Margin="0,0,5,0" VerticalAlignment="Center"/>
-                    <TextBlock Text="Coupon" FontSize="12" Foreground="#AEAEAE" FontWeight="regular" VerticalAlignment="Center"/>
-                </StackPanel>
+                <Button Click="OpenCoupon" Grid.Column="2" Style="{StaticResource RoundedButtonStyle}" Margin="10,0,0,0" BorderThickness="0" HorizontalAlignment="Left">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon x:Name="CouponIcon" Grid.Column="1" Kind="TicketOutline" Foreground="#AEAEAE" Width="20" Height="20" Margin="0,0,0,0" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="CouponText" Text="Coupon" FontSize="12" Foreground="#AEAEAE" FontWeight="regular" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
             </Grid>
 
-            <!---->
+            <!--Content-->
             <StackPanel Grid.Row="4">
                 <!--POS Settings-->
-                <StackPanel Visibility="Collapsed">
+                <StackPanel x:Name="StackPanelSettings" Visibility="Collapsed">
                     <!--Warehouse-->
                     <StackPanel Margin="0,0,0,10">
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                             <TextBlock Text="Warehouse:" FontSize="12" FontWeight="Regular" Margin="0,0,5,0"/>
                         </StackPanel>
                         <!--Warehouse Value-->
-                        <ComboBox x:Name="ComboBoxWarehouse" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0"/>
+                        <ComboBox x:Name="ComboBoxWarehouse" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="35" SelectedIndex="0" Margin="0"/>
                     </StackPanel>
 
                     <!--Tax Rate-->
@@ -224,7 +230,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <!-- TextBox with Rounded Style -->
-                                <TextBox x:Name="TxtTax" Style="{StaticResource RoundedTextboxStyle}" Margin="25,0,0,0" Grid.Column="0"/>
+                                <TextBox x:Name="TxtTax" Style="{StaticResource RoundedTextboxStyle}" Height="30" Margin="25,0,0,0" Grid.Column="0"/>
 
                                 <!-- Icon with Vertical Centering -->
                                 <materialDesign:PackIcon Kind="PercentOutline" Width="25" Height="20" Margin="0,0,10,0" VerticalAlignment="Center" Grid.Column="1"/>
@@ -233,7 +239,7 @@
                     </StackPanel>
 
                     <!--Discount Rate-->
-                    <StackPanel Margin="0,0,0,10">
+                    <StackPanel Margin="0,0,0,0">
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                             <TextBlock Text="Discount:" FontSize="12" FontWeight="regular" Margin="0,0,5,0"/>
                         </StackPanel>
@@ -246,18 +252,17 @@
                                 </Grid.ColumnDefinitions>
 
                                 <!-- TextBox with Rounded Style -->
-                                <TextBox x:Name="TxtDiscount" Style="{StaticResource RoundedTextboxStyle}" Margin="25,0,0,0" Grid.Column="0"/>
+                                <TextBox x:Name="TxtDiscount" Style="{StaticResource RoundedTextboxStyle}" Height="30" Margin="25,0,0,0" Grid.Column="0"/>
 
                                 <!-- Icon with Vertical Centering -->
                                 <materialDesign:PackIcon Kind="PercentOutline" Width="25" Height="20" Margin="0,0,10,0" VerticalAlignment="Center" Grid.Column="1"/>
                             </Grid>
                         </Border>
                     </StackPanel>
-
                 </StackPanel>
 
                 <!--Invoice Properties-->
-                <Grid Visibility="Collapsed">
+                <Grid x:Name="GridSettings" Visibility="Visible">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
@@ -284,11 +289,11 @@
                         </StackPanel>
 
                         <!--Payment Terms-->
-                        <StackPanel Margin="0,0,0,10">
+                        <StackPanel Margin="0,0,0,0">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Text="Payment Terms:" FontSize="12" FontWeight="regular" Margin="0,0,5,0"/>
                             </StackPanel>
-                            <ComboBox Style="{StaticResource RoundedComboBoxStyle}" SelectedIndex="0" FontSize="12">
+                            <ComboBox Style="{StaticResource RoundedComboBoxStyle}" SelectedIndex="0" FontSize="12" Margin="0">
                                 <ComboBoxItem Content="Payment On Receipt"/>
                             </ComboBox>
                         </StackPanel>
@@ -315,7 +320,7 @@
                         </StackPanel>
 
                         <!--Note-->
-                        <StackPanel Margin="0,0,0,10">
+                        <StackPanel Margin="0,0,0,0">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Text="Note:" FontSize="12" FontWeight="regular" Margin="0,0,5,0"/>
                             </StackPanel>
@@ -326,19 +331,36 @@
                     </StackPanel>
                 </Grid>
 
-                <StackPanel Visibility="Collapsed">
+                <StackPanel x:Name="StackPanelCoupon" Visibility="Collapsed">
                     <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10">
                         <TextBox Style="{StaticResource RoundedTextboxStyle}" Height="30"/>
                     </Border>
 
-                    <Button Style="{StaticResource RoundedButtonStyle}" Height="30" Background="#57B5E2" BorderThickness="0">
+                    <Button Style="{StaticResource RoundedButtonStyle}" Height="30" Background="#57B5E2" BorderThickness="0" Margin="0">
                         <TextBlock Text="Apply" HorizontalAlignment="Center" Foreground="#FDFDFD" FontFamily="{StaticResource Lexend}"/>
                     </Button>
                 </StackPanel>
-                <Separator/>
+                <Separator Margin="0,10,0,0"/>
             </StackPanel>
             
-            
+            <!--Items Display-->
+            <StackPanel Grid.Row="5" Margin="0,10,0,0">
+                <StackPanel>
+
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+                        <TextBlock Text="Items" FontSize="14" FontWeight="SemiBold" Foreground="#555555" Margin="0,0,0,5"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <Separator/>
+            </StackPanel>
         </Grid>
     </materialDesign:Card>
 </UserControl>
