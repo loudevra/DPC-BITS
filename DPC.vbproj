@@ -519,6 +519,9 @@
     <Compile Include="Views\Misc\Documents\Documents.xaml.vb">
       <DependentUpon>Documents.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\POS\POSForm.xaml.vb">
+      <DependentUpon>POSForm.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PromoCodes\AddPromoCode.xaml.vb">
       <DependentUpon>AddPromoCode.xaml</DependentUpon>
     </Compile>
@@ -797,6 +800,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Misc\Documents\Documents.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\POS\POSForm.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PromoCodes\AddPromoCode.xaml">
