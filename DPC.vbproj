@@ -353,6 +353,9 @@
     <Compile Include="Components\ConfirmationModals\LoginConfirmationModals.xaml.vb">
       <DependentUpon>LoginConfirmationModals.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\AddAttendance.xaml.vb">
+      <DependentUpon>AddAttendance.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\AddBrand.xaml.vb">
       <DependentUpon>AddBrand.xaml</DependentUpon>
     </Compile>
@@ -550,6 +553,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\ConfirmationModals\LoginConfirmationModals.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\AddAttendance.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\AddBrand.xaml">

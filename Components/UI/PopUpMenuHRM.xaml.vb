@@ -119,7 +119,7 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToAttendance(sender As Object, e As RoutedEventArgs)
-            MessageBox.Show("Navigating to Attendance")
+            ViewLoader.DynamicView.NavigateToView("attendance", Me)
         End Sub
 
         Private Sub NavigateToHolidays(sender As Object, e As RoutedEventArgs)

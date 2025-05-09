@@ -73,6 +73,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                         'Departments Navigation
                     Case "departments"
                         Return New HRM.Departments.DepartmentsView()
+                         'Attendance Navigation
+                    Case "attendance"
+                        Return New HRM.Employees.Attendance.AttendanceEmployee()
                     Case "addnewemployee"
                         Return New HRM.Employees.Employees.AddEmployee()
                     Case "viewemployee"
@@ -171,6 +174,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                 ' departments Navigation
             ElseIf typeName = "departments" Then
                 Return "departments"
+                ' attendance Navigation
+            ElseIf typeName = "attendance" Then
+                Return "attendance"
                 ' Payroll Navigation
             ElseIf typeName = "payrolltransaction" Then
                 Return "payrolltransaction"
