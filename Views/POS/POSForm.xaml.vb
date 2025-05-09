@@ -21,6 +21,7 @@ Namespace DPC.Views.POS
             OpenSettings(Nothing, Nothing)
         End Sub
 
+        'This function is used to open and close the content properties of the POS form
         Private Sub OpenContent(sender As Object, e As RoutedEventArgs,
                                 OpenStackPanel As StackPanel, OpenIcon As PackIcon, OpenText As TextBlock,
                                 CloseStackPanel As StackPanel, CloseIcon As PackIcon, CloseText As TextBlock,
@@ -48,7 +49,6 @@ Namespace DPC.Views.POS
             End If
 
         End Sub
-
         Private Sub OpenSettings(sender As Object, e As RoutedEventArgs)
             OpenContent(sender, e,
                         StackPanelSettings, SettingsIcon, SettingsText,
@@ -61,7 +61,6 @@ Namespace DPC.Views.POS
             StackPanelSettings, SettingsIcon, SettingsText,
             StackPanelCoupon, CouponIcon, CouponText)
         End Sub
-
         Private Sub OpenCoupon(sender As Object, e As RoutedEventArgs)
             OpenContent(sender, e,
             StackPanelCoupon, CouponIcon, CouponText,
