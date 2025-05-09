@@ -2,9 +2,14 @@
 Imports System.Windows.Controls
 Imports System.Windows.Data
 Imports DPC.DPC.Data.Converters.ValueConverter
+Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Components.Navigation
     Partial Public Class TopNavBar
+        ' Events for navigation
+        Public Event NavigateToPOS()
+        Public Event RestoreDefaultSidebar()
+
         Public Sub New()
             InitializeComponent()
             ApplyHalfWidthConverter()
@@ -19,34 +24,45 @@ Namespace DPC.Components.Navigation
             SearchBar.SetBinding(Grid.MaxWidthProperty, binding)
         End Sub
 
-        ' Open POS
+        ' Open POS - Modified to load POS form in sidebar
         Private Sub OpenPOS(sender As Object, e As RoutedEventArgs)
-            MessageBox.Show("Navigating to POS...")
+            ' Raise event to notify Base class to change the sidebar
+            RaiseEvent NavigateToPOS()
         End Sub
 
         ' Change Business Location
         Private Sub ChangeLocation(sender As Object, e As RoutedEventArgs)
+            ' Restore default sidebar if POS is open
+            RaiseEvent RestoreDefaultSidebar()
             MessageBox.Show("Changing business location...")
         End Sub
 
         ' Search Customer
         Private Sub SearchCustomer(sender As Object, e As RoutedEventArgs)
+            ' Restore default sidebar if POS is open
+            RaiseEvent RestoreDefaultSidebar()
             Dim searchQuery As String = SearchBar.Text
             MessageBox.Show($"Searching for: {searchQuery}")
         End Sub
 
         ' Show Notifications
         Private Sub ShowNotifications(sender As Object, e As RoutedEventArgs)
+            ' Restore default sidebar if POS is open
+            RaiseEvent RestoreDefaultSidebar()
             MessageBox.Show("Showing notifications...")
         End Sub
 
         ' Show Messages
         Private Sub ShowMessages(sender As Object, e As RoutedEventArgs)
+            ' Restore default sidebar if POS is open
+            RaiseEvent RestoreDefaultSidebar()
             MessageBox.Show("Showing messages...")
         End Sub
 
         ' Toggle Clock In/Out
         Private Sub ToggleClockInOut(sender As Object, e As RoutedEventArgs)
+            ' Restore default sidebar if POS is open
+            RaiseEvent RestoreDefaultSidebar()
             If ClockIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.ClockOutline Then
                 ClockIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Clock
                 MessageBox.Show("Clocked In!")
@@ -55,7 +71,5 @@ Namespace DPC.Components.Navigation
                 MessageBox.Show("Clocked Out!")
             End If
         End Sub
-
-
     End Class
 End Namespace
