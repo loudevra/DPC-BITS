@@ -84,7 +84,7 @@
                         </Button>
 
                         <!--Button to close register-->
-                        <Button Grid.Column="2" Style="{StaticResource RoundedButtonStyle}" BorderBrush="Transparent" Background="#090909" Margin="0" Height="30" Width="30" VerticalAlignment="Center">
+                        <Button Click="CloseSideBarPOS" Grid.Column="2" Style="{StaticResource RoundedButtonStyle}" BorderBrush="Transparent" Background="#090909" Margin="0" Height="30" Width="30" VerticalAlignment="Center">
                             <materialDesign:PackIcon Kind="Lock" Width="20" Height="20" Foreground="#FDFDFD" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         </Button>
                     </Grid>

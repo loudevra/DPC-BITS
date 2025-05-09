@@ -20,6 +20,17 @@ Namespace DPC.Views.POS
 
         End Sub
 
+        Private Sub CloseSideBarPOS()
+            ' Get reference to the parent Base window
+            Dim baseWindow As Base = TryCast(Window.GetWindow(Me), Base)
+
+            ' Call the ClosePOS method if the parent is a Base window
+            If baseWindow IsNot Nothing Then
+                baseWindow.ClosePOS()
+            End If
+        End Sub
+
+
         'This function is used to open and close the content properties of the POS form
         Private Sub OpenContent(sender As Object, e As RoutedEventArgs,
                                 OpenStackPanel As StackPanel, OpenIcon As PackIcon, OpenText As TextBlock,
