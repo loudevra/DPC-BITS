@@ -392,12 +392,10 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <Separator/>
+                    <Separator Margin="0,10,0,0"/>
                 </StackPanel>
             </Grid>
             
-
-
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>

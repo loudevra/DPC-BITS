@@ -14,11 +14,10 @@ Namespace DPC.Views.POS
     Public Class POSForm
         Inherits UserControl
 
+
         Public Sub New()
             InitializeComponent()
 
-            'Opens POS Settings on startup
-            OpenSettings(Nothing, Nothing)
         End Sub
 
         'This function is used to open and close the content properties of the POS form
