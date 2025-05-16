@@ -6,6 +6,7 @@ Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
 Imports System.Data
 Imports DPC.DPC.Views.Warehouse
+Imports DPC.DPC.Components.Dynamic ' Added for DynamicDialogs
 
 Namespace DPC.Views.Stocks.Warehouses
     Public Class Warehouses
@@ -33,12 +34,14 @@ Namespace DPC.Views.Stocks.Warehouses
 
             ' Verify that required controls are found
             If dataGrid Is Nothing Then
-                MessageBox.Show("DataGrid not found in the XAML.", "Initialization Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                ' Replaced MessageBox with DynamicDialogs
+                DynamicDialogs.ShowError(Me, "DataGrid not found in the XAML.", "Initialization Error")
                 Return
             End If
 
             If paginationPanel Is Nothing Then
-                MessageBox.Show("Pagination panel not found in the XAML.", "Initialization Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                ' Replaced MessageBox with DynamicDialogs
+                DynamicDialogs.ShowError(Me, "Pagination panel not found in the XAML.", "Initialization Error")
                 Return
             End If
 
@@ -72,7 +75,8 @@ Namespace DPC.Views.Stocks.Warehouses
             Try
                 ' Check if DataGrid exists
                 If dataGrid Is Nothing Then
-                    MessageBox.Show("DataGrid control not found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    ' Replaced MessageBox with DynamicDialogs
+                    DynamicDialogs.ShowError(Me, "DataGrid control not found.", "Error")
                     Return
                 End If
 
@@ -81,13 +85,15 @@ Namespace DPC.Views.Stocks.Warehouses
                 Try
                     Dim warehouseList = WarehouseController.GetWarehouses()
                     If warehouseList Is Nothing Then
-                        MessageBox.Show("Warehouse data returned null.", "Data Error", MessageBoxButton.OK, MessageBoxImage.Warning)
+                        ' Replaced MessageBox with DynamicDialogs
+                        DynamicDialogs.ShowWarning(Me, "Warehouse data returned null.", "Data Error")
                         allWarehouses = New ObservableCollection(Of Object)()
                     Else
                         allWarehouses = New ObservableCollection(Of Object)(warehouseList)
                     End If
                 Catch ex As Exception
-                    MessageBox.Show("Error retrieving warehouse data: " & ex.Message, "Data Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    ' Replaced MessageBox with DynamicDialogs
+                    DynamicDialogs.ShowError(Me, "Error retrieving warehouse data: " & ex.Message, "Data Error")
                     allWarehouses = New ObservableCollection(Of Object)()
                 End Try
 
@@ -117,8 +123,23 @@ Namespace DPC.Views.Stocks.Warehouses
                     "ID", "Name", "TotalProducts", "StockQuantity", "Worth")
 
             Catch ex As Exception
-                MessageBox.Show("Error in LoadData: " & ex.Message & vbCrLf & "Stack Trace: " & ex.StackTrace,
-                                "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                ' Replaced MessageBox with DynamicDialogs and added error details
+                Dim errorDialog = DynamicDialogs.ShowError(Me,
+                    "Error in LoadData: " & ex.Message,
+                    "Error",
+                    "View Details")
+
+                ' Add custom data
+                errorDialog.DialogData = ex
+
+                ' Handle error details button click
+                AddHandler errorDialog.PrimaryAction, Sub(s, args)
+                                                          Dim exception = DirectCast(args.Data, Exception)
+                                                          Dim detailsDialog = DynamicDialogs.ShowError(Me,
+                                                              "Stack Trace: " & exception.StackTrace,
+                                                              "Error Details",
+                                                              "Close")
+                                                      End Sub
             End Try
         End Sub
 
@@ -142,10 +163,18 @@ Namespace DPC.Views.Stocks.Warehouses
         Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
             If dataGrid Is Nothing Then Return
 
-            ' Create a list of column headers to exclude
-            Dim columnsToExclude As New List(Of String) From {"Settings"}
-            ' Use the ExcelExporter helper with column exclusions
-            ExcelExporter.ExportDataGridToExcel(dataGrid, columnsToExclude, "Warehouses", "Warehouses List")
+            Try
+                ' Create a list of column headers to exclude
+                Dim columnsToExclude As New List(Of String) From {"Settings"}
+                ' Use the ExcelExporter helper with column exclusions
+                ExcelExporter.ExportDataGridToExcel(dataGrid, columnsToExclude, "Warehouses", "Warehouses List")
+
+                ' Added success message with DynamicDialogs
+                DynamicDialogs.ShowSuccess(Me, "Data successfully exported to Excel.", "Export Complete")
+            Catch ex As Exception
+                ' Added error handling with DynamicDialogs
+                DynamicDialogs.ShowError(Me, "Failed to export data: " & ex.Message, "Export Error")
+            End Try
         End Sub
 
         Private Sub BtnAddNew_Click(sender As Object, e As RoutedEventArgs)
@@ -165,6 +194,9 @@ Namespace DPC.Views.Stocks.Warehouses
             If WarehouseController.Reload Then
                 LoadData()
                 WarehouseController.Reload = False ' Reset the flag after reloading
+
+                ' Added success message with DynamicDialogs
+                DynamicDialogs.ShowSuccess(Me, "Warehouse data has been successfully updated.", "Update Complete")
             End If
         End Sub
     End Class
