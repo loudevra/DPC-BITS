@@ -1,8 +1,10 @@
 ﻿Imports System.Windows
 Imports System.Windows.Controls
+Imports System.Windows.Controls.Primitives
 Imports System.Windows.Input
 Imports System.Windows.Media
 Imports System.Windows.Media.Animation
+Imports System.ComponentModel
 Imports MaterialDesignThemes.Wpf
 
 Namespace DPC.Components.Dynamic
@@ -62,10 +64,55 @@ Namespace DPC.Components.Dynamic
         Private ReadOnly InfoIcon As PackIconKind = PackIconKind.Information
         Private ReadOnly QuestionIcon As PackIconKind = PackIconKind.HelpCircleOutline
 
+        ' Static property to access the active instance
+        Private Shared _activeInstance As DynamicDialogs = Nothing
+        Public Shared Property ActiveInstance As DynamicDialogs
+            Get
+                Return _activeInstance
+            End Get
+            Private Set(value As DynamicDialogs)
+                _activeInstance = value
+            End Set
+        End Property
+
         Public Sub New()
             InitializeComponent()
-            ' Set the Panel to be invisible by default
+            ' Set the control to be invisible by default
             Me.Visibility = Visibility.Collapsed
+
+            ' Add handler for keyboard input
+            AddHandler Loaded, AddressOf Dialog_Loaded
+        End Sub
+
+        Private Sub Dialog_Loaded(sender As Object, e As RoutedEventArgs)
+            ' Ensure we can receive keyboard focus
+            Me.Focusable = True
+
+            ' Add event handler for all key presses at application level
+            Dim parentWindow = Window.GetWindow(Me)
+            If parentWindow IsNot Nothing Then
+                AddHandler parentWindow.KeyDown, AddressOf Window_KeyDown
+            End If
+        End Sub
+
+        Private Sub Window_KeyDown(sender As Object, e As KeyEventArgs)
+            ' Only process Escape key if dialog is visible
+            If Me.Visibility = Visibility.Visible AndAlso e.Key = Key.Escape Then
+                HideDialog()
+                e.Handled = True
+            End If
+        End Sub
+
+        Protected Overrides Sub OnVisualParentChanged(oldParent As DependencyObject)
+            MyBase.OnVisualParentChanged(oldParent)
+
+            ' If we're removing from the visual tree, unsubscribe from events
+            If oldParent IsNot Nothing Then
+                Dim parentWindow = Window.GetWindow(oldParent)
+                If parentWindow IsNot Nothing Then
+                    RemoveHandler parentWindow.KeyDown, AddressOf Window_KeyDown
+                End If
+            End If
         End Sub
 
         ' Show a dialog with specified type and message
@@ -132,6 +179,9 @@ Namespace DPC.Components.Dynamic
             ' Add focus to primary button for keyboard navigation
             PrimaryButton.Focus()
 
+            ' Set as active instance
+            ActiveInstance = Me
+
             Return Me
         End Function
 
@@ -150,6 +200,11 @@ Namespace DPC.Components.Dynamic
 
         ' Hide dialog with animation
         Public Sub HideDialog()
+            ' Clear active instance if this is the active one
+            If ActiveInstance Is Me Then
+                ActiveInstance = Nothing
+            End If
+
             ' Create fade out animation
             Dim fadeOut As New DoubleAnimation With {
                 .From = 1,
@@ -183,35 +238,136 @@ Namespace DPC.Components.Dynamic
             HideDialog()
         End Sub
 
-        ' Add keyboard support - close on Escape key
-        Protected Overrides Sub OnKeyDown(e As KeyEventArgs)
-            MyBase.OnKeyDown(e)
-            If e.Key = Key.Escape Then
-                HideDialog()
-                e.Handled = True
-            End If
-        End Sub
+        ' Helper methods for showing dialogs using different parent container types
 
-        ' Helper methods for common dialog scenarios
+        ' Type-checking helper for parent containers
+        Private Shared Function GetAppropriateContainer(parent As Object) As DependencyObject
+            If parent Is Nothing Then
+                ' If no parent specified, try to find the application's main window
+                If Application.Current IsNot Nothing AndAlso Application.Current.MainWindow IsNot Nothing Then
+                    Return Application.Current.MainWindow
+                Else
+                    Throw New ArgumentException("No valid parent container provided and no main window found.")
+                End If
+            End If
+
+            ' Validate parent type
+            Dim container As DependencyObject
+
+            If TypeOf parent Is Window Then
+                ' For windows, get the content
+                container = DirectCast(parent, Window)
+            ElseIf TypeOf parent Is UserControl Then
+                ' For UserControls
+                container = DirectCast(parent, UserControl)
+            ElseIf TypeOf parent Is Panel Then
+                ' For Panels
+                container = DirectCast(parent, Panel)
+            ElseIf TypeOf parent Is ContentControl Then
+                ' For ContentControls
+                container = DirectCast(parent, ContentControl)
+            ElseIf TypeOf parent Is FrameworkElement Then
+                ' For any other FrameworkElement
+                container = DirectCast(parent, FrameworkElement)
+            Else
+                Throw New ArgumentException("Unsupported parent container type: " & parent.GetType().Name)
+            End If
+
+            Return container
+        End Function
+
+        ' Find a suitable parent container for the dialog
+        Private Shared Function FindPanelContainer(parent As DependencyObject) As Panel
+            ' Get the visual tree helper
+            Dim targetPanel As Panel = Nothing
+
+            ' First try to find a Grid or Panel in the parent
+            If TypeOf parent Is Panel Then
+                targetPanel = DirectCast(parent, Panel)
+            ElseIf TypeOf parent Is ContentControl Then
+                Dim contentControl = DirectCast(parent, ContentControl)
+                If TypeOf contentControl.Content Is Panel Then
+                    targetPanel = DirectCast(contentControl.Content, Panel)
+                End If
+            ElseIf TypeOf parent Is Window Then
+                Dim window = DirectCast(parent, Window)
+                If TypeOf window.Content Is Panel Then
+                    targetPanel = DirectCast(window.Content, Panel)
+                End If
+            End If
+
+            ' If no suitable panel was found, look for a Grid
+            If targetPanel Is Nothing Then
+                targetPanel = FindVisualChild(Of Grid)(parent)
+            End If
+
+            ' If still no suitable panel, create an AdornerLayer
+            If targetPanel Is Nothing Then
+                ' Look for any panel
+                targetPanel = FindVisualChild(Of Panel)(parent)
+            End If
+
+            ' If still no panel found, throw error
+            If targetPanel Is Nothing Then
+                Throw New InvalidOperationException("Could not find or create a suitable container for the dialog.")
+            End If
+
+            Return targetPanel
+        End Function
+
+        ' Helper to find a child element of a specific type
+        Private Shared Function FindVisualChild(Of T As DependencyObject)(parent As DependencyObject) As T
+            Dim childCount As Integer = VisualTreeHelper.GetChildrenCount(parent)
+            For i As Integer = 0 To childCount - 1
+                Dim child As DependencyObject = VisualTreeHelper.GetChild(parent, i)
+                If TypeOf child Is T Then
+                    Return DirectCast(child, T)
+                Else
+                    Dim result As T = FindVisualChild(Of T)(child)
+                    If result IsNot Nothing Then
+                        Return result
+                    End If
+                End If
+            Next
+            Return Nothing
+        End Function
+
+        ' Create a dialog instance and add it to the specified parent
+        Private Shared Function CreateDialogInstance(parent As Object) As DynamicDialogs
+            ' Get the appropriate container
+            Dim container = GetAppropriateContainer(parent)
+
+            ' Find a suitable panel to host the dialog
+            Dim targetPanel = FindPanelContainer(container)
+
+            ' Create the dialog instance
+            Dim dialog As New DynamicDialogs()
+
+            ' Add to the target panel
+            targetPanel.Children.Add(dialog)
+
+            ' Ensure the dialog is on top
+            Panel.SetZIndex(dialog, 1000)
+
+            Return dialog
+        End Function
 
         ' Show standard success dialog
-        Public Shared Function ShowSuccess(parent As Panel, message As String, Optional buttonText As String = "Got It!", Optional data As Object = Nothing) As DynamicDialogs
-            Dim dialog As New DynamicDialogs()
-            parent.Children.Add(dialog)
+        Public Shared Function ShowSuccess(parent As Object, message As String, Optional buttonText As String = "Got It!", Optional data As Object = Nothing) As DynamicDialogs
+            Dim dialog As DynamicDialogs = CreateDialogInstance(parent)
             dialog.ShowDialog(DialogType.Success, message, primaryButtonText:=buttonText, data:=data)
             Return dialog
         End Function
 
         ' Show standard error dialog
-        Public Shared Function ShowError(parent As Panel, message As String, Optional buttonText As String = "Try Again", Optional data As Object = Nothing) As DynamicDialogs
-            Dim dialog As New DynamicDialogs()
-            parent.Children.Add(dialog)
+        Public Shared Function ShowError(parent As Object, message As String, Optional buttonText As String = "Try Again", Optional data As Object = Nothing) As DynamicDialogs
+            Dim dialog As DynamicDialogs = CreateDialogInstance(parent)
             dialog.ShowDialog(DialogType.[Error], message, primaryButtonText:=buttonText, data:=data)
             Return dialog
         End Function
 
         ' Show conditional dialog based on a condition
-        Public Shared Function ShowConditional(parent As Panel, condition As Boolean,
+        Public Shared Function ShowConditional(parent As Object, condition As Boolean,
                                               successMessage As String, errorMessage As String,
                                               Optional successButtonText As String = "Got It!",
                                               Optional errorButtonText As String = "Try Again",
@@ -224,35 +380,32 @@ Namespace DPC.Components.Dynamic
         End Function
 
         ' Show confirmation dialog (Yes/No)
-        Public Shared Function ShowConfirmation(parent As Panel, message As String,
+        Public Shared Function ShowConfirmation(parent As Object, message As String,
                                                Optional title As String = "Confirm",
                                                Optional yesButtonText As String = "Yes",
                                                Optional noButtonText As String = "No",
                                                Optional data As Object = Nothing) As DynamicDialogs
-            Dim dialog As New DynamicDialogs()
-            parent.Children.Add(dialog)
+            Dim dialog As DynamicDialogs = CreateDialogInstance(parent)
             dialog.ShowDialog(DialogType.Question, message, title, yesButtonText, noButtonText, data)
             Return dialog
         End Function
 
         ' Show information dialog
-        Public Shared Function ShowInformation(parent As Panel, message As String,
+        Public Shared Function ShowInformation(parent As Object, message As String,
                                              Optional title As String = "Information",
                                              Optional buttonText As String = "OK",
                                              Optional data As Object = Nothing) As DynamicDialogs
-            Dim dialog As New DynamicDialogs()
-            parent.Children.Add(dialog)
+            Dim dialog As DynamicDialogs = CreateDialogInstance(parent)
             dialog.ShowDialog(DialogType.Information, message, title, buttonText, data:=data)
             Return dialog
         End Function
 
         ' Show warning dialog
-        Public Shared Function ShowWarning(parent As Panel, message As String,
+        Public Shared Function ShowWarning(parent As Object, message As String,
                                          Optional title As String = "Warning",
                                          Optional buttonText As String = "OK",
                                          Optional data As Object = Nothing) As DynamicDialogs
-            Dim dialog As New DynamicDialogs()
-            parent.Children.Add(dialog)
+            Dim dialog As DynamicDialogs = CreateDialogInstance(parent)
             dialog.ShowDialog(DialogType.Warning, message, title, buttonText, data:=data)
             Return dialog
         End Function

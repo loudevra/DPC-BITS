@@ -79,9 +79,9 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid>
+    <Grid x:Name="RootContainer">
         <!-- Dynamic Dialog Modal -->
-        <Grid x:Name="DialogModalOverlay" Style="{StaticResource ModalOverlay}" Visibility="Collapsed">
+        <Grid x:Name="DialogModalOverlay" Style="{StaticResource ModalOverlay}" Visibility="Collapsed" Panel.ZIndex="1000">
             <materialDesign:Card x:Name="DialogCard" Style="{StaticResource DialogCard}"
                                VerticalAlignment="Center" HorizontalAlignment="Center"
                                Width="320" UniformCornerRadius="8"
