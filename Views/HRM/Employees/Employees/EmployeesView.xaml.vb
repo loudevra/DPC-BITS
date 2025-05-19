@@ -4,6 +4,7 @@ Imports DPC.DPC.Data.Controllers
 Imports MySql.Data.MySqlClient
 Imports System.Data
 Imports DPC.DPC.Data.Helpers
+Imports DPC.DPC.Components.Dynamic ' Added import for DynamicDialogs
 
 Namespace DPC.Views.HRM.Employees.Employees
     Partial Public Class EmployeesView
@@ -59,7 +60,11 @@ Namespace DPC.Views.HRM.Employees.Employees
                 EmployeesDataGrid.ItemsSource = Employees
 
             Catch ex As Exception
-                MessageBox.Show($"Error loading employees: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                ' Replace MessageBox with DynamicDialogs
+                Dim errorDialog = DynamicDialogs.ShowError(Me, $"Error loading employees: {ex.Message}", "Database Error")
+
+                ' Add custom data if needed
+                errorDialog.DialogData = ex
             End Try
         End Sub
 
@@ -69,9 +74,12 @@ Namespace DPC.Views.HRM.Employees.Employees
         Private Sub ViewEmployee(sender As Object, e As RoutedEventArgs)
             Dim selectedEmployee As Employee = CType(EmployeesDataGrid.SelectedItem, Employee)
             If selectedEmployee IsNot Nothing Then
-                MessageBox.Show($"Employee: {selectedEmployee.Name}" & vbCrLf &
-                                $"Role: {selectedEmployee.RoleName}" & vbCrLf &
-                                $"Location: {selectedEmployee.LocationName}", "Employee Info", MessageBoxButton.OK, MessageBoxImage.Information)
+                ' Replace MessageBox with DynamicDialogs
+                DynamicDialogs.ShowInformation(Me,
+                    $"Employee: {selectedEmployee.Name}" & vbCrLf &
+                    $"Role: {selectedEmployee.RoleName}" & vbCrLf &
+                    $"Location: {selectedEmployee.LocationName}",
+                    "Employee Info")
             End If
         End Sub
 
@@ -142,7 +150,8 @@ Namespace DPC.Views.HRM.Employees.Employees
                 EmployeesDataGrid.ItemsSource = dt.DefaultView
 
             Catch ex As Exception
-                MessageBox.Show("Search error: " & ex.Message)
+                ' Replace MessageBox with DynamicDialogs
+                DynamicDialogs.ShowError(Me, "Search error: " & ex.Message, "Search Error")
             Finally
                 conn.Close()
             End Try

@@ -365,8 +365,20 @@
     <Compile Include="Components\ConfirmationModals\CancelSupplierAdding.xaml.vb">
       <DependentUpon>CancelSupplierAdding.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\ConfirmationModals\ConfirmationModalHRM.xaml.vb">
+      <DependentUpon>ConfirmationModalHRM.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ConfirmationModals\CurrencyInputPanel.xaml.vb">
+      <DependentUpon>CurrencyInputPanel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\ConfirmationModals\LoginConfirmationModals.xaml.vb">
       <DependentUpon>LoginConfirmationModals.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ConfirmationModals\ModalOption.xaml.vb">
+      <DependentUpon>ModalOption.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Dynamic\DynamicDialogs.xaml.vb">
+      <DependentUpon>DynamicDialogs.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\AddAttendance.xaml.vb">
       <DependentUpon>AddAttendance.xaml</DependentUpon>
@@ -570,7 +582,22 @@
     <Page Include="Components\ConfirmationModals\CancelSupplierAdding.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\ConfirmationModals\ConfirmationModalHRM.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ConfirmationModals\CurrencyInputPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\ConfirmationModals\LoginConfirmationModals.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ConfirmationModals\ModalOption.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Dynamic\DynamicDialogs.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\AddAttendance.xaml">

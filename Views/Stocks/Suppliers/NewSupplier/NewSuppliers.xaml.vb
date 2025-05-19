@@ -5,8 +5,6 @@ Imports MySql.Data.MySqlClient
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Components.Forms
 Imports DPC.DPC.Data.Helpers
-Imports System.Windows
-Imports System.ComponentModel
 
 
 Namespace DPC.Views.Stocks.Supplier.NewSuppliers
@@ -172,7 +170,8 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
                         End Using
                     End Using
                 Catch ex As Exception
-                    MessageBox.Show("Error loading brands: " & ex.Message)
+                    ' Changed from MessageBox to DynamicDialogs
+                    DynamicDialogs.ShowError(Me, "Error loading brands: " & ex.Message)
                 End Try
             End Using
         End Sub
@@ -195,7 +194,8 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
                 ' Validate fields
                 If String.IsNullOrWhiteSpace(supplierName) OrElse String.IsNullOrWhiteSpace(companyName) OrElse
                    String.IsNullOrWhiteSpace(email) OrElse String.IsNullOrWhiteSpace(phone) Then
-                    MessageBox.Show("Please fill in all required fields.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
+                    ' Changed from MessageBox to DynamicDialogs
+                    DynamicDialogs.ShowWarning(Me, "Please fill in all required fields.", "Validation Error")
                     Return
                 End If
 
@@ -208,12 +208,10 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
                 ' Clear form and reset fields after successful insertion
                 ClearForm()
 
-                ' Clear the saved form data since form was submitted successfully
-                _formData = New SupplierFormData()
 
-                ViewLoader.DynamicView.NavigateToView("managesuppliers", Me)
             Catch ex As Exception
-                MessageBox.Show("An error occurred while adding the supplier: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                ' Changed from MessageBox to DynamicDialogs
+                DynamicDialogs.ShowError(Me, "An error occurred while adding the supplier: " & ex.Message, "Error")
             End Try
         End Sub
 
@@ -237,10 +235,7 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
             ' Clear selected brands using the helper
             autocompleteHelper.ClearSelection(ChipPanel)
 
-            ' Re-attach event handlers after clearing
-            AddTextChangedHandlers()
 
-            MessageBox.Show("Form cleared!", "Info", MessageBoxButton.OK, MessageBoxImage.Information)
         End Sub
 
         ' Optional: Public method to check if there is saved form data

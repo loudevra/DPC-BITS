@@ -1,6 +1,5 @@
-﻿
-
-Imports DPC.DPC.Data.Controllers
+﻿Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Components.Dynamic ' Added for DynamicDialogs
 
 Namespace DPC.Views.Stocks.StocksTransfer
 
@@ -148,27 +147,90 @@ Namespace DPC.Views.Stocks.StocksTransfer
             If Integer.TryParse(newText, New Integer()) Then
                 If Convert.ToInt32(newText) > maxStock Then
                     e.Handled = True ' Prevent entering more than maxStock
+
+                    ' Add visual feedback using DynamicDialogs when trying to exceed max quantity
+                    If Not IsDialogActive() Then
+                        DynamicDialogs.ShowWarning(Me, "Cannot exceed maximum available quantity of " & maxStock & ".", "Quantity Limit")
+                    End If
                 End If
             End If
         End Sub
 
+        ' Helper method to check if a dialog is currently showing to prevent multiple dialogs
+        Private Function IsDialogActive() As Boolean
+            Return DynamicDialogs.ActiveInstance IsNot Nothing
+        End Function
+
         'Transfer btn
         Private Sub BtnTransfer(sender As Object, e As RoutedEventArgs)
-            ' Retrieve selected product and warehouse data
-            Dim selectedProduct As ComboBoxItem = CType(ComboBoxProduct.SelectedItem, ComboBoxItem)
-            Dim productID As String = CType(selectedProduct.Tag, String)
+            Try
+                ' Retrieve selected product and warehouse data
+                Dim selectedProduct As ComboBoxItem = CType(ComboBoxProduct.SelectedItem, ComboBoxItem)
+                Dim productID As String = CType(selectedProduct.Tag, String)
 
-            Dim selectedTransferFromWarehouse As ComboBoxItem = CType(ComboBoxTransferFrom.SelectedItem, ComboBoxItem)
-            Dim warehouseIDFrom As String = CType(selectedTransferFromWarehouse.Tag, String)
+                Dim selectedTransferFromWarehouse As ComboBoxItem = CType(ComboBoxTransferFrom.SelectedItem, ComboBoxItem)
+                Dim warehouseIDFrom As String = CType(selectedTransferFromWarehouse.Tag, String)
 
-            Dim selectedTransferToWarehouse As ComboBoxItem = CType(ComboBoxTransferTo.SelectedItem, ComboBoxItem)
-            Dim warehouseIDTo As String = CType(selectedTransferToWarehouse.Tag, String)
+                Dim selectedTransferToWarehouse As ComboBoxItem = CType(ComboBoxTransferTo.SelectedItem, ComboBoxItem)
+                Dim warehouseIDTo As String = CType(selectedTransferToWarehouse.Tag, String)
 
-            ' Get the transfer quantity from the TxtProductQty TextBox
-            Dim transferQty As Integer
-            If Integer.TryParse(TxtProductQty.Text, transferQty) AndAlso transferQty > 0 Then
+                ' Get the transfer quantity from the TxtProductQty TextBox
+                Dim transferQty As Integer
+                If Integer.TryParse(TxtProductQty.Text, transferQty) AndAlso transferQty > 0 Then
+                    ' Create transfer data to pass to the dialog
+                    Dim transferData = New With {
+                        productID,
+                        .SourceWarehouse = selectedTransferFromWarehouse.Content.ToString(),
+                        .DestinationWarehouse = selectedTransferToWarehouse.Content.ToString(),
+                        .Quantity = transferQty
+                    }
+
+                    ' Show confirmation dialog before transferring
+                    Dim confirmDialog = DynamicDialogs.ShowConfirmation(
+                        Me,
+                        String.Format("Transfer {0} units from {1} to {2}?",
+                            transferQty,
+                            selectedTransferFromWarehouse.Content.ToString(),
+                            selectedTransferToWarehouse.Content.ToString()),
+                        "Confirm Transfer",
+                        "Transfer",
+                        "Cancel",
+                        data:=transferData)
+
+                    ' Add handler for confirmation
+                    AddHandler confirmDialog.PrimaryAction, AddressOf OnTransferConfirmed
+                Else
+                    ' Replaced MessageBox with DynamicDialogs for invalid quantity
+                    DynamicDialogs.ShowWarning(Me, "Please enter a valid quantity to transfer.", "Invalid Quantity")
+                End If
+            Catch ex As Exception
+                ' Show error dialog for any exception during transfer setup
+                DynamicDialogs.ShowError(Me, "Error preparing transfer: " & ex.Message, "Transfer Error")
+            End Try
+        End Sub
+
+        ' Event handler for transfer confirmation
+        Private Sub OnTransferConfirmed(sender As Object, e As DynamicDialogs.DialogEventArgs)
+            Try
+                ' Get the data passed from the confirmation dialog
+                Dim data = DirectCast(e.Data, Object)
+
+                ' Extract transfer details from the dialog data
+                Dim productID = data.ProductID
+                Dim transferQty = data.Quantity
+
+                ' Get the warehouse IDs from the currently selected items
+                Dim selectedTransferFromWarehouse As ComboBoxItem = CType(ComboBoxTransferFrom.SelectedItem, ComboBoxItem)
+                Dim warehouseIDFrom As String = CType(selectedTransferFromWarehouse.Tag, String)
+
+                Dim selectedTransferToWarehouse As ComboBoxItem = CType(ComboBoxTransferTo.SelectedItem, ComboBoxItem)
+                Dim warehouseIDTo As String = CType(selectedTransferToWarehouse.Tag, String)
+
                 ' Call the controller to handle the transfer
-                StocksTransferController.TransferStock(productID, warehouseIDFrom, warehouseIDTo, transferQty, _currentProductVariation, _currentOptionCombination)
+                ' Instead of assigning the result, simply call the method
+                StocksTransferController.TransferStock(
+            productID, warehouseIDFrom, warehouseIDTo,
+            transferQty, _currentProductVariation, _currentOptionCombination)
 
                 ' Reload the ComboBoxes after the successful transfer
                 ReloadComboBoxes()
@@ -176,11 +238,12 @@ Namespace DPC.Views.Stocks.StocksTransfer
                 ' Optionally, clear TxtProductQty to reset the input field
                 TxtProductQty.Clear()
 
-                ' Show success message
-                MessageBox.Show("Stock transferred successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
-            Else
-                MessageBox.Show("Please enter a valid quantity to transfer.", "Invalid Quantity", MessageBoxButton.OK, MessageBoxImage.Warning)
-            End If
+                ' Show success message using DynamicDialogs
+                DynamicDialogs.ShowSuccess(Me, "Stock transferred successfully.", "Transfer Complete")
+            Catch ex As Exception
+                ' Show error dialog if exception occurs during transfer
+                DynamicDialogs.ShowError(Me, "Error during transfer: " & ex.Message, "Transfer Error")
+            End Try
         End Sub
 
         Private Sub ReloadComboBoxes()
