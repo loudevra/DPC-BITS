@@ -6,7 +6,6 @@ Imports System.Windows.Controls
 Imports System.Data
 Imports System.ComponentModel
 Imports DPC.DPC.Data.Helpers
-Imports DPC.DPC.Components.Dynamic ' Added import for DynamicDialogs
 
 Namespace DPC.Views.Stocks.Suppliers.ManageBrands
     Public Class ManageBrands
@@ -18,6 +17,7 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
         Private view As ICollectionView
 
         ' UI elements for direct access
+
 
         ' Properties for pagination
         Private _paginationHelper As PaginationHelper
@@ -43,14 +43,12 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
 
             ' Verify that required controls are found
             If dataGrid Is Nothing Then
-                ' Changed from MessageBox to DynamicDialogs
-                DynamicDialogs.ShowError(Me, "DataGrid not found in the XAML.", "Initialization Error")
+                MessageBox.Show("DataGrid not found in the XAML.", "Initialization Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 Return
             End If
 
             If paginationPanel Is Nothing Then
-                ' Changed from MessageBox to DynamicDialogs
-                DynamicDialogs.ShowError(Me, "Pagination panel not found in the XAML.", "Initialization Error")
+                MessageBox.Show("Pagination panel not found in the XAML.", "Initialization Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 Return
             End If
 
@@ -78,16 +76,8 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
         Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
             If dataGrid Is Nothing Then Return
 
-            Try
-                Dim columnsToExclude As New List(Of String) From {"Settings"}
-                ExcelExporter.ExportDataGridToExcel(dataGrid, columnsToExclude, "BrandsExport", "Brands")
-
-                ' Added success message
-                DynamicDialogs.ShowSuccess(Me, "Data exported successfully to Excel.", "Export Complete")
-            Catch ex As Exception
-                ' Added error handling
-                DynamicDialogs.ShowError(Me, "Failed to export data: " & ex.Message, "Export Error")
-            End Try
+            Dim columnsToExclude As New List(Of String) From {"Settings"}
+            ExcelExporter.ExportDataGridToExcel(dataGrid, columnsToExclude, "BrandsExport", "Brands")
         End Sub
 
         Private Sub OpenAddBrand(sender As Object, e As RoutedEventArgs)
@@ -129,8 +119,6 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
 
         ' Callback to reload the brand data
         Private Sub OnBrandAdded()
-            ' Show success message
-            DynamicDialogs.ShowSuccess(Me, "Brand added successfully!")
             LoadBrands()
         End Sub
 
@@ -138,8 +126,7 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
             Try
                 ' Check if DataGrid exists
                 If dataGrid Is Nothing Then
-                    ' Changed from MessageBox to DynamicDialogs
-                    DynamicDialogs.ShowError(Me, "DataGrid control not found.", "Error")
+                    MessageBox.Show("DataGrid control not found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
                     Return
                 End If
 
@@ -148,15 +135,13 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
                 Try
                     Dim brandList = BrandController.GetBrands()
                     If brandList Is Nothing Then
-                        ' Changed from MessageBox to DynamicDialogs
-                        DynamicDialogs.ShowWarning(Me, "Brand data returned null.", "Data Error")
+                        MessageBox.Show("Brand data returned null.", "Data Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                         allBrands = New ObservableCollection(Of Object)()
                     Else
                         allBrands = New ObservableCollection(Of Object)(brandList)
                     End If
                 Catch ex As Exception
-                    ' Changed from MessageBox to DynamicDialogs
-                    DynamicDialogs.ShowError(Me, "Error retrieving brand data: " & ex.Message, "Data Error")
+                    MessageBox.Show("Error retrieving brand data: " & ex.Message, "Data Error", MessageBoxButton.OK, MessageBoxImage.Error)
                     allBrands = New ObservableCollection(Of Object)()
                 End Try
 
@@ -185,23 +170,8 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
                 _searchFilterHelper = New SearchFilterHelper(_paginationHelper, "ID", "Name", "TotalSupplier")
 
             Catch ex As Exception
-                ' Changed from MessageBox to DynamicDialogs with more details option
-                Dim errorDialog = DynamicDialogs.ShowError(Me,
-                    "Error in LoadBrands: " & ex.Message,
-                    "Error",
-                    "View Details")
-
-                ' Add exception data for details
-                errorDialog.DialogData = ex
-
-                ' Handle "View Details" button click
-                AddHandler errorDialog.PrimaryAction, Sub(s, args)
-                                                          Dim exception = DirectCast(args.Data, Exception)
-                                                          ' Show stack trace in another dialog
-                                                          DynamicDialogs.ShowInformation(Me,
-                                                              "Stack Trace: " & exception.StackTrace,
-                                                              "Error Details")
-                                                      End Sub
+                MessageBox.Show("Error in LoadBrands: " & ex.Message & vbCrLf & "Stack Trace: " & ex.StackTrace,
+                                "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Sub
 

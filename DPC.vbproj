@@ -368,9 +368,6 @@
     <Compile Include="Components\ConfirmationModals\LoginConfirmationModals.xaml.vb">
       <DependentUpon>LoginConfirmationModals.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\Dynamic\DynamicDialogs.xaml.vb">
-      <DependentUpon>DynamicDialogs.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Components\Forms\AddAttendance.xaml.vb">
       <DependentUpon>AddAttendance.xaml</DependentUpon>
     </Compile>
@@ -574,9 +571,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\ConfirmationModals\LoginConfirmationModals.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Dynamic\DynamicDialogs.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\AddAttendance.xaml">

@@ -1,5 +1,3 @@
-Imports DPC.DPC.Components.Dynamic ' Import for DynamicDialogs
-
 Namespace DPC.Components.Forms
     Public Class AddNewSupplierForm
         Public Event CloseRequested As EventHandler
@@ -13,15 +11,7 @@ Namespace DPC.Components.Forms
         End Sub
 
         Private Sub AddSupplier(sender As Object, e As RoutedEventArgs)
-            ' Replace MessageBox with DynamicDialogs
-            Dim successDialog = DynamicDialogs.ShowSuccess(Me, "Supplier Added Successfully!")
-
-            ' Handle the dialog closed event to raise CloseRequested when dialog is closed
-            AddHandler successDialog.DialogClosed, AddressOf OnDialogClosed
-        End Sub
-
-        Private Sub OnDialogClosed(sender As Object, e As DynamicDialogs.DialogEventArgs)
-            ' Close the form after the dialog is closed
+            MessageBox.Show("Supplier Added Successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
             RaiseEvent CloseRequested(Me, EventArgs.Empty)
         End Sub
     End Class
