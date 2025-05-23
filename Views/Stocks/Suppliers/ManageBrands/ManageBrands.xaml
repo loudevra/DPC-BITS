@@ -82,7 +82,7 @@
 
         <!-- DataGrid Section - Scrollable Content -->
         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="20,0">
-            <DataGrid Name="dataGrid"
+           <DataGrid Name="dataGrid"
                     AutoGenerateColumns="False"
                     CanUserAddRows="False"
                     HeadersVisibility="Column"
@@ -145,10 +145,17 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
                     <DataGridTextColumn Header="Total Suppliers" Binding="{Binding TotalSupplier}" Width="150"/>
-                    <DataGridTemplateColumn Header="Settings" Width="80">
+                    <DataGridTemplateColumn Header="Actions" Width="100">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="⚙" Width="30" Height="30" Background="Transparent" Margin="0"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Width="30" Height="30" Background="Transparent" Margin="0,0,5,0" ToolTip="Edit"  Click="OpenEditBrand" >
+                                        <materialDesign:PackIcon Kind="CircleEditOutline" Width="16" Height="16" Foreground="#52C69D"/>
+                                    </Button>
+                                    <Button Width="30" Height="30" Background="Transparent" Margin="0" ToolTip="Delete">
+                                        <materialDesign:PackIcon Kind="DeleteOutline" Width="16" Height="16" Foreground="#E65E5E"/>
+                                    </Button>
+                                </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

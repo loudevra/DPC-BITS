@@ -136,5 +136,11 @@ Namespace DPC.Components.UI
             ' Open Payroll view
             ViewLoader.DynamicView.NavigateToView("payrolltransaction", Me)
         End Sub
+
+        Private Sub EditBrandPopUp(sender As Object, e As RoutedEventArgs)
+            ' Open brand view
+            ViewLoader.DynamicView.NavigateToView("editbrand", Me)
+        End Sub
+
     End Class
 End Namespace

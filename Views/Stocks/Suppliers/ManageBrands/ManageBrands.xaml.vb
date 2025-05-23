@@ -6,6 +6,8 @@ Imports System.Windows.Controls
 Imports System.Data
 Imports System.ComponentModel
 Imports DPC.DPC.Data.Helpers
+Imports MySql.Data.MySqlClient
+
 
 Namespace DPC.Views.Stocks.Suppliers.ManageBrands
     Public Class ManageBrands
@@ -175,6 +177,28 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
             End Try
         End Sub
 
+        Public Sub LoadBrandData()
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "SELECT BrandID, BrandName, (SELECT COUNT(*) FROM supplier WHERE BrandID = brand.BrandID) AS TotalSuppliers FROM brand ORDER BY BrandName"
+
+                    Using cmd As New MySqlCommand(query, conn)
+                        Using adapter As New MySqlDataAdapter(cmd)
+                            Dim dataTable As New DataTable()
+                            adapter.Fill(dataTable)
+
+                            ' Assuming your DataGrid is named "dgBrands"
+                            dataGrid.ItemsSource = dataTable.DefaultView
+                        End Using
+                    End Using
+                End Using
+            Catch ex As Exception
+                MessageBox.Show($"An error occurred while loading brand data: {ex.Message}")
+            End Try
+        End Sub
+
+
         Private Sub CboItemsPerPage_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
             If _paginationHelper Is Nothing Then Return
 
@@ -190,5 +214,46 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
                 End If
             End If
         End Sub
+
+
+        Private Sub OpenEditBrand(sender As Object, e As RoutedEventArgs)
+            Dim clickedButton As Button = TryCast(sender, Button)
+            If clickedButton Is Nothing Then Return
+
+            If recentlyClosed Then
+                recentlyClosed = False
+                Return
+            End If
+
+            If popup IsNot Nothing AndAlso popup.IsOpen Then
+                popup.IsOpen = False
+                recentlyClosed = True
+                Return
+            End If
+
+            popup = New Popup With {
+                .PlacementTarget = clickedButton,
+                .Placement = PlacementMode.Bottom,
+                .StaysOpen = False,
+                .AllowsTransparency = True
+            }
+
+            Dim addBrandWindow As New DPC.Components.Forms.EditBrand()
+
+            ' Handle the BrandAdded event
+            AddHandler addBrandWindow.BrandAdded, AddressOf OnBrandAdded
+
+            popup.Child = addBrandWindow
+
+            AddHandler popup.Closed, Sub()
+                                         recentlyClosed = True
+                                         Task.Delay(100).ContinueWith(Sub() recentlyClosed = False, TaskScheduler.FromCurrentSynchronizationContext())
+                                     End Sub
+
+            popup.IsOpen = True
+        End Sub
+
+
+
     End Class
 End Namespace
