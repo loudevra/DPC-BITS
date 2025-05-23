@@ -1,76 +1,26 @@
-﻿Imports System.Collections.ObjectModel
-Imports DPC.DPC.Data.Model
+﻿Imports DPC.DPC.Data.Controllers
 Imports MySql.Data.MySqlClient
+Imports DPC.DPC.Data.Helpers
 
 
-Namespace DPC.Data.Controllers
-    Public Class BrandController
-        Public Shared Function GetBrands() As ObservableCollection(Of Brand)
-            Dim brandList As New ObservableCollection(Of Brand)()
-            Dim query As String = "SELECT brandID, brandname FROM brand;"
+Namespace DPC.Components.Forms
+    Public Class EditBrand
+        Public Event BrandAdded()
 
-            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                Try
-                    conn.Open()
-                    Using cmd As New MySqlCommand(query, conn)
-                        Using reader As MySqlDataReader = cmd.ExecuteReader()
-                            While reader.Read()
-                                brandList.Add(New Brand With {
-                                    .ID = reader.GetInt32("brandid"), ' Changed to GetInt32 for auto-increment
-                                    .Name = reader.GetString("brandname")
-                                })
-                            End While
-                        End Using
-                    End Using
-                Catch ex As Exception
-                    MessageBox.Show("Error fetching brands: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
-                End Try
-            End Using
 
-            Return brandList
-        End Function
-
-        Public Shared Sub InsertBrand(brandName As String)
-            If String.IsNullOrWhiteSpace(brandName) Then
-                MessageBox.Show("Brand name cannot be empty.")
-                Return
-            End If
-
-            Try
-                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                    conn.Open()
-
-                    ' Check for duplicate brand
-                    Dim checkQuery As String = "SELECT COUNT(*) FROM brand WHERE brandName = @BrandName"
-                    Using checkCmd As New MySqlCommand(checkQuery, conn)
-                        checkCmd.Parameters.AddWithValue("@BrandName", brandName)
-
-                        ' Safely check for NULL and convert to Int32
-                        Dim result As Object = checkCmd.ExecuteScalar()
-                        Dim count As Integer = If(result IsNot DBNull.Value, Convert.ToInt32(result), 0)
-
-                        If count > 0 Then
-                            MessageBox.Show("Brand already exists.")
-                            Return
-                        End If
-                    End Using
-
-                    ' Insert brand without BrandID
-                    Dim query As String = "INSERT INTO brand (BrandName) VALUES (@BrandName)"
-                    Using cmd As New MySqlCommand(query, conn)
-                        cmd.Parameters.AddWithValue("@BrandName", brandName)
-                        cmd.ExecuteNonQuery()
-                    End Using
-
-                    MessageBox.Show("Brand added successfully!")
-                End Using
-            Catch ex As Exception
-                MessageBox.Show($"An error occurred: {ex.Message}")
-            End Try
+        Public Sub New()
+            InitializeComponent()
         End Sub
 
         ' Method to save brand (insert or update)
-        Public Shared Sub SaveBrand(brandName As String, Optional brandId As Integer? = Nothing)
+        Public Sub SaveBrand(brandName As String)
+            SaveBrand(brandName, Nothing)
+        End Sub
+
+        ' Add this at the top of your EditBrand class (outside any methods)
+        Public Shared Event BrandDataChanged()
+
+        Public Sub SaveBrand(brandName As String, brandId As Integer?)
             If String.IsNullOrWhiteSpace(brandName) Then
                 MessageBox.Show("Brand name cannot be empty.")
                 Return
@@ -116,6 +66,10 @@ Namespace DPC.Data.Controllers
 
                             If rowsAffected > 0 Then
                                 MessageBox.Show("Brand updated successfully!")
+                                ' Raise the event to refresh DataGrid
+                                RaiseEvent BrandDataChanged()
+                                ' Close the dialog/usercontrol
+                                CloseEditDialog()
                             Else
                                 MessageBox.Show("No changes were made.")
                             End If
@@ -141,12 +95,45 @@ Namespace DPC.Data.Controllers
                             insertCmd.ExecuteNonQuery()
                         End Using
                         MessageBox.Show("Brand added successfully!")
+                        ' Raise the event to refresh DataGrid
+                        RaiseEvent BrandDataChanged()
+                        ' Close the dialog/usercontrol
+                        CloseEditDialog()
                     End If
                 End Using
             Catch ex As Exception
                 MessageBox.Show($"An error occurred: {ex.Message}")
             End Try
+        End Sub
 
+        ' Helper method to close the edit dialog
+        Private Sub CloseEditDialog()
+            Try
+                ' If this is in a Window
+                Dim parentWindow As Window = Window.GetWindow(Me)
+                If parentWindow IsNot Nothing Then
+                    parentWindow.Close()
+                End If
+
+                ' If this is a UserControl that needs to be hidden
+                Me.Visibility = Visibility.Collapsed
+            Catch ex As Exception
+                ' Handle any closing errors
+            End Try
+        End Sub
+
+        Private Sub SaveBrand_Click(sender As Object, e As RoutedEventArgs)
+            ' Get the brand name from your UI (adjust the control name as needed)
+            Dim brandName As String = TxtBrand.Text ' Replace with your actual textbox name
+
+            ' Get brandId if you're editing (adjust logic as needed)
+            Dim brandId As Integer? = Nothing
+            If Me.Tag IsNot Nothing AndAlso TypeOf Me.Tag Is Integer Then
+                brandId = DirectCast(Me.Tag, Integer)
+            End If
+
+            ' Call your SaveBrand method
+            SaveBrand(brandName, brandId)
         End Sub
 
 
