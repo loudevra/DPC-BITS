@@ -9,12 +9,12 @@ Namespace DPC.Views.PromoCodes
             InitializeComponent()
 
             ' Add Sidebar to SidebarContainer
-            Dim sidebar As New Sidebar()
-            SidebarContainer.Child = sidebar
+            'Dim sidebar As New Sidebar()
+            ' SidebarContainer.Child = sidebar
 
             ' Add TopNavBar to TopNavBarContainer
-            Dim topNavBar As New TopNavBar()
-            TopNavBarContainer.Child = topNavBar
+            '  Dim topNavBar As New TopNavBar()
+            ' TopNavBarContainer.Child = topNavBar
         End Sub
 
         Private Sub BtnAddPromoCode_Click(sender As Object, e As RoutedEventArgs)
@@ -37,7 +37,7 @@ Namespace DPC.Views.PromoCodes
                 MessageBox.Show("Promo code added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
                 Dim ManagePromoCode As New ManagePromoCodes()
 
-                Me.Close()
+                ' Me.Close()
             Else
                 MessageBox.Show("Failed to add promo code.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End If
