@@ -2,7 +2,6 @@
 Imports MySql.Data.MySqlClient
 Imports DPC.DPC.Data.Models
 Imports System.Windows.Controls.Primitives
-Imports DPC.DPC.Components.Dynamic ' Import for DynamicDialogs
 
 
 Namespace DPC.Components.Forms
@@ -124,7 +123,7 @@ Namespace DPC.Components.Forms
             Dim selectedItem As ComboBoxItem = TryCast(ComboBoxCategory.SelectedItem, ComboBoxItem)
 
             If selectedItem Is Nothing Then
-                DynamicDialogs.ShowWarning(Me, "Please select a category.")
+                'MessageBox.Show("Please select a category.")
                 Exit Sub
             End If
 
@@ -146,21 +145,16 @@ Namespace DPC.Components.Forms
 
             ' Insert into database
             If ProductCategoryController.InsertSubcategories(selectedCategoryID, subcategories) Then
-                Dim successDialog = DynamicDialogs.ShowSuccess(Me, "All subcategories added successfully!")
+                'MessageBox.Show("All subcategories added successfully!")
 
-                ' Add handler to close the form after dialog is dismissed
-                AddHandler successDialog.DialogClosed, AddressOf OnSuccessDialogClosed
+                ' Notify that a new category has been added
+                RaiseEvent SubCategoryAdded(Me, EventArgs.Empty)
+
+                ' Close the popup after successful addition
+                BtnClose_Click(Me, New RoutedEventArgs())
             Else
-                DynamicDialogs.ShowError(Me, "Failed to add subcategories.")
+                'MessageBox.Show("Failed to add subcategories.")
             End If
-        End Sub
-
-        Private Sub OnSuccessDialogClosed(sender As Object, e As DynamicDialogs.DialogEventArgs)
-            ' Notify that a new category has been added
-            RaiseEvent SubCategoryAdded(Me, EventArgs.Empty)
-
-            ' Close the popup after successful addition
-            BtnClose_Click(Me, New RoutedEventArgs())
         End Sub
 
     End Class

@@ -3,7 +3,6 @@ Imports System.Windows
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Model
 Imports DPC.DPC.Data.Helpers
-Imports DPC.DPC.Components.Dynamic ' Added import for DynamicDialogs
 
 Namespace DPC.Views.HRM.Employees.Employees
 
@@ -26,14 +25,14 @@ Namespace DPC.Views.HRM.Employees.Employees
                String.IsNullOrWhiteSpace(txtName.Text) OrElse
                String.IsNullOrWhiteSpace(txtPhone.Text) Then
 
-                DynamicDialogs.ShowWarning(Me, "Please fill in all required fields.", "Validation Error")
+                MessageBox.Show("Please fill in all required fields.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Exit Sub
             End If
 
             ' Email validation
             Dim emailPattern As String = "^[^@\s]+@[^@\s]+\.[^@\s]+$"
             If Not Regex.IsMatch(txtEmail.Text, emailPattern) Then
-                DynamicDialogs.ShowWarning(Me, "Invalid email format.", "Validation Error")
+                MessageBox.Show("Invalid email format.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Exit Sub
             End If
 
@@ -42,12 +41,12 @@ Namespace DPC.Views.HRM.Employees.Employees
             Dim salesCommission As Decimal
 
             If Not Decimal.TryParse(txtSalary.Text, salary) Then
-                DynamicDialogs.ShowWarning(Me, "Invalid salary amount.", "Validation Error")
+                MessageBox.Show("Invalid salary amount.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Exit Sub
             End If
 
             If Not Decimal.TryParse(txtSalesCommission.Text, salesCommission) Then
-                DynamicDialogs.ShowWarning(Me, "Invalid sales commission amount.", "Validation Error")
+                MessageBox.Show("Invalid sales commission amount.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Exit Sub
             End If
 
@@ -74,17 +73,16 @@ Namespace DPC.Views.HRM.Employees.Employees
 
             ' Insert into Database
             If EmployeeController.CreateEmployee(newEmployee) Then
-                ' Success dialog with event handling
-                Dim successDialog = DynamicDialogs.ShowSuccess(Me, "Employee added successfully!", "Success")
-                AddHandler successDialog.DialogClosed, Sub(dialogSender As Object, dialogArgs As DynamicDialogs.DialogEventArgs)
-                                                           ' Clear the form for next entry
-                                                           ClearForm()
-                                                           ViewLoader.DynamicView.NavigateToView("viewemployee", Me)
-                                                           ' Raise event to notify parent
-                                                           RaiseEvent EmployeeAdded(newEmployee)
-                                                       End Sub
+                MessageBox.Show("Employee added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+
+                ' Clear the form for next entry
+                ClearForm()
+
+                ViewLoader.DynamicView.NavigateToView("viewemployee", Me)
+                ' Raise event to notify parent
+                RaiseEvent EmployeeAdded(newEmployee)
             Else
-                DynamicDialogs.ShowError(Me, "Failed to add employee.", "Error")
+                MessageBox.Show("Failed to add employee.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End If
         End Sub
 

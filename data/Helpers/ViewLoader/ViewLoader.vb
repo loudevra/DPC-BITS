@@ -70,6 +70,10 @@ Namespace DPC.Data.Helpers.ViewLoader
                         'Salaries Navigation
                     Case "salaries"
                         Return New HRM.Employees.Salaries.EmployeeSalaries()
+                    Case "addpromocode"
+                        Return New DPC.Views.PromoCodes.AddPromoCode()
+                    Case "editbrand"
+                        Return New DPC.Components.Forms.EditBrand()
                         'Departments Navigation
                     Case "departments"
                         Return New HRM.Departments.DepartmentsView()
@@ -171,6 +175,14 @@ Namespace DPC.Data.Helpers.ViewLoader
                 ' Salaries Navigation
             ElseIf typeName = "salaries" Then
                 Return "salaries"
+
+                ' addpromocode Navigation
+            ElseIf typeName = "addpromocode" Then
+                Return "addpromocode"
+
+                ' EditBrand Navigation
+            ElseIf typeName = "editbrand" Then
+                Return "editbrand"
                 ' departments Navigation
             ElseIf typeName = "departments" Then
                 Return "departments"

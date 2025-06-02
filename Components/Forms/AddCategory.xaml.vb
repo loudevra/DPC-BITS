@@ -2,7 +2,6 @@
 Imports MySql.Data.MySqlClient
 Imports DPC.DPC.Data.Models
 Imports System.Windows.Controls.Primitives
-Imports DPC.DPC.Components.Dynamic  ' Added import for DynamicDialogs
 
 Namespace DPC.Components.Forms
     Public Class AddCategory
@@ -42,19 +41,17 @@ Namespace DPC.Components.Forms
                 Dim categoryDescription As String = categoryDescriptionTextBoxes(i).Text
 
                 Dim newCategory As New ProductCategory With {
-                    .categoryName = categoryName,
-                    .categoryDescription = categoryDescription
-                }
+            .categoryName = categoryName,
+            .categoryDescription = categoryDescription
+        }
 
                 If String.IsNullOrWhiteSpace(newCategory.categoryName) OrElse String.IsNullOrWhiteSpace(categoryDescription) Then
-                    ' Show validation error dialog
-                    DynamicDialogs.ShowWarning(Me, "Please fill out both category name and description.")
+                    'MessageBox.Show("Please fill out both category name and description.")
                     Return
                 End If
 
                 If ProductCategoryController.InsertCategory(newCategory) Then
-                    ' Show success dialog
-                    DynamicDialogs.ShowSuccess(Me, "Category added successfully!")
+                    'MessageBox.Show("Category added successfully!")
 
                     ' Notify that a new category has been added
                     RaiseEvent CategoryAdded(Me, EventArgs.Empty)
@@ -62,8 +59,7 @@ Namespace DPC.Components.Forms
                     ' Close the popup after successful addition
                     BtnClose_Click(Me, New RoutedEventArgs())
                 Else
-                    ' Show error dialog
-                    DynamicDialogs.ShowError(Me, "Failed to add category.")
+                    'MessageBox.Show("Failed to add category.")
                 End If
             Next
         End Sub

@@ -365,20 +365,8 @@
     <Compile Include="Components\ConfirmationModals\CancelSupplierAdding.xaml.vb">
       <DependentUpon>CancelSupplierAdding.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\ConfirmationModals\ConfirmationModalHRM.xaml.vb">
-      <DependentUpon>ConfirmationModalHRM.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\ConfirmationModals\CurrencyInputPanel.xaml.vb">
-      <DependentUpon>CurrencyInputPanel.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Components\ConfirmationModals\LoginConfirmationModals.xaml.vb">
       <DependentUpon>LoginConfirmationModals.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\ConfirmationModals\ModalOption.xaml.vb">
-      <DependentUpon>ModalOption.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\Dynamic\DynamicDialogs.xaml.vb">
-      <DependentUpon>DynamicDialogs.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\AddAttendance.xaml.vb">
       <DependentUpon>AddAttendance.xaml</DependentUpon>
@@ -400,6 +388,9 @@
     </Compile>
     <Compile Include="Components\Forms\AddVariation.xaml.vb">
       <DependentUpon>AddVariation.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\EditBrand.xaml.vb">
+      <DependentUpon>EditBrand.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\PayrollTrasactionControl.xaml.vb">
       <DependentUpon>PayrollTrasactionControl.xaml</DependentUpon>
@@ -487,6 +478,7 @@
     <Compile Include="Data\Models\Employee.vb" />
     <Compile Include="Data\Helpers\ExcelExporter.vb" />
     <Compile Include="Data\Models\ManageProducts.vb" />
+    <Compile Include="Data\Models\PermissionItem.vb" />
     <Compile Include="Data\Models\Product.vb" />
     <Compile Include="Data\Models\ProductCategory.vb" />
     <Compile Include="Data\Models\PromoCode.vb" />
@@ -582,22 +574,7 @@
     <Page Include="Components\ConfirmationModals\CancelSupplierAdding.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Components\ConfirmationModals\ConfirmationModalHRM.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\ConfirmationModals\CurrencyInputPanel.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Components\ConfirmationModals\LoginConfirmationModals.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\ConfirmationModals\ModalOption.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Dynamic\DynamicDialogs.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\AddAttendance.xaml">
@@ -625,6 +602,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\AddVariation.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\EditBrand.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\PayrollTrasactionControl.xaml">

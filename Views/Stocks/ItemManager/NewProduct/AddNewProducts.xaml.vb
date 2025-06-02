@@ -84,10 +84,9 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ProductController.TxtStockUnits = TxtStockUnits
 
             ' Create calendar view model with null date
-            Dim calendarViewModel As New CalendarController.SingleCalendar With {
-                .SelectedDate = Nothing,  ' Set to null as default
-                .MinimumDate = DateTime.Today
-            }
+            Dim calendarViewModel As New CalendarController.SingleCalendar()
+            calendarViewModel.SelectedDate = Nothing  ' Set to null as default
+            calendarViewModel.MinimumDate = DateTime.Today
 
             ' Set the DataContext to our calendar view model
             SingleDatePicker.DataContext = calendarViewModel  ' Set DataContext only for DatePicker

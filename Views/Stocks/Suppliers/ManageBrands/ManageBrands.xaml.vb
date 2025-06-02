@@ -6,7 +6,8 @@ Imports System.Windows.Controls
 Imports System.Data
 Imports System.ComponentModel
 Imports DPC.DPC.Data.Helpers
-Imports DPC.DPC.Components.Dynamic ' Added import for DynamicDialogs
+Imports MySql.Data.MySqlClient
+
 
 Namespace DPC.Views.Stocks.Suppliers.ManageBrands
     Public Class ManageBrands
@@ -18,6 +19,7 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
         Private view As ICollectionView
 
         ' UI elements for direct access
+
 
         ' Properties for pagination
         Private _paginationHelper As PaginationHelper
@@ -43,14 +45,12 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
 
             ' Verify that required controls are found
             If dataGrid Is Nothing Then
-                ' Changed from MessageBox to DynamicDialogs
-                DynamicDialogs.ShowError(Me, "DataGrid not found in the XAML.", "Initialization Error")
+                MessageBox.Show("DataGrid not found in the XAML.", "Initialization Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 Return
             End If
 
             If paginationPanel Is Nothing Then
-                ' Changed from MessageBox to DynamicDialogs
-                DynamicDialogs.ShowError(Me, "Pagination panel not found in the XAML.", "Initialization Error")
+                MessageBox.Show("Pagination panel not found in the XAML.", "Initialization Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 Return
             End If
 
@@ -78,16 +78,8 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
         Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
             If dataGrid Is Nothing Then Return
 
-            Try
-                Dim columnsToExclude As New List(Of String) From {"Settings"}
-                ExcelExporter.ExportDataGridToExcel(dataGrid, columnsToExclude, "BrandsExport", "Brands")
-
-                ' Added success message
-                DynamicDialogs.ShowSuccess(Me, "Data exported successfully to Excel.", "Export Complete")
-            Catch ex As Exception
-                ' Added error handling
-                DynamicDialogs.ShowError(Me, "Failed to export data: " & ex.Message, "Export Error")
-            End Try
+            Dim columnsToExclude As New List(Of String) From {"Settings"}
+            ExcelExporter.ExportDataGridToExcel(dataGrid, columnsToExclude, "BrandsExport", "Brands")
         End Sub
 
         Private Sub OpenAddBrand(sender As Object, e As RoutedEventArgs)
@@ -129,8 +121,6 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
 
         ' Callback to reload the brand data
         Private Sub OnBrandAdded()
-            ' Show success message
-            DynamicDialogs.ShowSuccess(Me, "Brand added successfully!")
             LoadBrands()
         End Sub
 
@@ -138,8 +128,7 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
             Try
                 ' Check if DataGrid exists
                 If dataGrid Is Nothing Then
-                    ' Changed from MessageBox to DynamicDialogs
-                    DynamicDialogs.ShowError(Me, "DataGrid control not found.", "Error")
+                    MessageBox.Show("DataGrid control not found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
                     Return
                 End If
 
@@ -148,15 +137,13 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
                 Try
                     Dim brandList = BrandController.GetBrands()
                     If brandList Is Nothing Then
-                        ' Changed from MessageBox to DynamicDialogs
-                        DynamicDialogs.ShowWarning(Me, "Brand data returned null.", "Data Error")
+                        MessageBox.Show("Brand data returned null.", "Data Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                         allBrands = New ObservableCollection(Of Object)()
                     Else
                         allBrands = New ObservableCollection(Of Object)(brandList)
                     End If
                 Catch ex As Exception
-                    ' Changed from MessageBox to DynamicDialogs
-                    DynamicDialogs.ShowError(Me, "Error retrieving brand data: " & ex.Message, "Data Error")
+                    MessageBox.Show("Error retrieving brand data: " & ex.Message, "Data Error", MessageBoxButton.OK, MessageBoxImage.Error)
                     allBrands = New ObservableCollection(Of Object)()
                 End Try
 
@@ -185,25 +172,32 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
                 _searchFilterHelper = New SearchFilterHelper(_paginationHelper, "ID", "Name", "TotalSupplier")
 
             Catch ex As Exception
-                ' Changed from MessageBox to DynamicDialogs with more details option
-                Dim errorDialog = DynamicDialogs.ShowError(Me,
-                    "Error in LoadBrands: " & ex.Message,
-                    "Error",
-                    "View Details")
-
-                ' Add exception data for details
-                errorDialog.DialogData = ex
-
-                ' Handle "View Details" button click
-                AddHandler errorDialog.PrimaryAction, Sub(s, args)
-                                                          Dim exception = DirectCast(args.Data, Exception)
-                                                          ' Show stack trace in another dialog
-                                                          DynamicDialogs.ShowInformation(Me,
-                                                              "Stack Trace: " & exception.StackTrace,
-                                                              "Error Details")
-                                                      End Sub
+                MessageBox.Show("Error in LoadBrands: " & ex.Message & vbCrLf & "Stack Trace: " & ex.StackTrace,
+                                "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Sub
+
+        Public Sub LoadBrandData()
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "SELECT BrandID, BrandName, (SELECT COUNT(*) FROM supplier WHERE BrandID = brand.BrandID) AS TotalSuppliers FROM brand ORDER BY BrandName"
+
+                    Using cmd As New MySqlCommand(query, conn)
+                        Using adapter As New MySqlDataAdapter(cmd)
+                            Dim dataTable As New DataTable()
+                            adapter.Fill(dataTable)
+
+                            ' Assuming your DataGrid is named "dgBrands"
+                            dataGrid.ItemsSource = dataTable.DefaultView
+                        End Using
+                    End Using
+                End Using
+            Catch ex As Exception
+                MessageBox.Show($"An error occurred while loading brand data: {ex.Message}")
+            End Try
+        End Sub
+
 
         Private Sub CboItemsPerPage_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
             If _paginationHelper Is Nothing Then Return
@@ -220,5 +214,46 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
                 End If
             End If
         End Sub
+
+
+        Private Sub OpenEditBrand(sender As Object, e As RoutedEventArgs)
+            Dim clickedButton As Button = TryCast(sender, Button)
+            If clickedButton Is Nothing Then Return
+
+            If recentlyClosed Then
+                recentlyClosed = False
+                Return
+            End If
+
+            If popup IsNot Nothing AndAlso popup.IsOpen Then
+                popup.IsOpen = False
+                recentlyClosed = True
+                Return
+            End If
+
+            popup = New Popup With {
+                .PlacementTarget = clickedButton,
+                .Placement = PlacementMode.Bottom,
+                .StaysOpen = False,
+                .AllowsTransparency = True
+            }
+
+            Dim addBrandWindow As New DPC.Components.Forms.EditBrand()
+
+            ' Handle the BrandAdded event
+            AddHandler addBrandWindow.BrandAdded, AddressOf OnBrandAdded
+
+            popup.Child = addBrandWindow
+
+            AddHandler popup.Closed, Sub()
+                                         recentlyClosed = True
+                                         Task.Delay(100).ContinueWith(Sub() recentlyClosed = False, TaskScheduler.FromCurrentSynchronizationContext())
+                                     End Sub
+
+            popup.IsOpen = True
+        End Sub
+
+
+
     End Class
 End Namespace
