@@ -478,6 +478,7 @@
     <Compile Include="Data\Models\Employee.vb" />
     <Compile Include="Data\Helpers\ExcelExporter.vb" />
     <Compile Include="Data\Models\ManageProducts.vb" />
+    <Compile Include="Data\Models\PermissionItem.vb" />
     <Compile Include="Data\Models\Product.vb" />
     <Compile Include="Data\Models\ProductCategory.vb" />
     <Compile Include="Data\Models\PromoCode.vb" />
