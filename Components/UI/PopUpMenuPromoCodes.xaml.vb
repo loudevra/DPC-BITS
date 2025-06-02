@@ -104,12 +104,8 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToAddPromoCode(sender As Object, e As RoutedEventArgs)
-            Dim PromoCodeAddWindow As New Views.PromoCodes.AddPromoCode()
-            PromoCodeAddWindow.Show()
-
-            ' Close the current window where this UserControl is being used
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
+            ' Use ViewLoader to navigate to the AddPromoCode view instead of trying to show it as a window
+            ViewLoader.DynamicView.NavigateToView("addpromocode", Me)
         End Sub
 
         Private Sub NavigateToManagePromoCodes(sender As Object, e As RoutedEventArgs)
