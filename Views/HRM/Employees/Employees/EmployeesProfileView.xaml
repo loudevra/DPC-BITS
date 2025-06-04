@@ -217,11 +217,12 @@
                                 </StackPanel>
                                 <Rectangle Fill="#D9D9D9" Height="1"></Rectangle>
 
-                                <StackPanel Margin="15, 20, 0, 20">
+                                <StackPanel Margin="0, 20">
                                     <StackPanel.Resources>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Margin" Value="0, 10"/>
                                             <Setter Property="FontWeight" Value="SemiBold"/>
+                                            <Setter Property="Padding" Value="15,0"/>
                                         </Style>
                                     </StackPanel.Resources>
 
@@ -233,11 +234,12 @@
                                 </StackPanel>
 
                                 <Rectangle Fill="#D9D9D9" Height="1"></Rectangle>
-                                <StackPanel Margin="15, 20, 0, 20">
+                                <StackPanel Margin="0, 20">
                                     <StackPanel.Resources>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Margin" Value="0, 10"/>
                                             <Setter Property="FontWeight" Value="SemiBold"/>
+                                            <Setter Property="Padding" Value="15,0"/>
                                         </Style>
                                     </StackPanel.Resources>
 
@@ -248,8 +250,8 @@
                             </StackPanel>
                         </Border>
 
-                        <Border x:Name="ProfileTab" Margin="10,0,0,0" Padding="30, 25" Grid.Column="1" Width="600" Style="{StaticResource RoundedBorderStyle}" Background="#FDFDFD">
-
+                        <Border Margin="10,0,0,0" Padding="30, 25" Grid.Column="1" Width="600" Style="{StaticResource RoundedBorderStyle}" Background="#FDFDFD">
+                            <ContentControl x:Name="ProfileTab"/>
                         </Border>
                     </Grid>
 
