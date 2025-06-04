@@ -1,0 +1,72 @@
+﻿<UserControl x:Class="DPC.Components.ConfirmationModals.HRMConfirmationEmployeeSalaryUpdate"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="namespace:DPC.Components.ConfirmationModals"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    Background="#80000000"
+    Width="671" Height="261">
+
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+        <!-- Modal Background -->
+        <Border Background="White" CornerRadius="20" BorderBrush="#2E466B" BorderThickness="3"
+                Width="671" Height="261">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center" Width="600" Height="225">
+
+                <!-- Title -->
+                <TextBlock Text="Confirmation"
+                           FontSize="32"
+                           FontWeight="Bold"
+                           Foreground="#2E466B"
+                           HorizontalAlignment="Left"
+                           Margin="0,10,0,0"/>
+
+                <!-- Message -->
+                <TextBlock Text="You are about to update the salary for employee (Employee Name) from (Prev. Amount) to (Set Amount)."
+                           FontSize="20"
+                           Foreground="Gray"
+                           FontWeight="Medium"
+                           TextAlignment="Left"
+                           TextWrapping="Wrap"
+                           Width="Auto"
+                           HorizontalAlignment="Left"
+                           Margin="0,30,0,40"/>
+
+                <!-- Buttons Grid -->
+                <Grid Width="Auto">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"  Grid.Column="1">
+
+                        <!-- Cancel Button (Outlined) -->
+                        <Button Content="Cancel"
+                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                materialDesign:ButtonAssist.CornerRadius="20"
+                                Foreground="#AEAEAE"
+                                BorderBrush="#AEAEAE"
+                                FontWeight="SemiBold"   
+                                FontSize="16px"
+                                Width="109"
+                                Height="39"
+                                Click="KeepEditing_Click"
+                                Margin="0,0,10,0"/>
+
+                        <!-- Confirm Button (Raised) -->
+                        <Button Content="Confirm"
+                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                materialDesign:ButtonAssist.CornerRadius="20"
+                                Foreground="White"
+                                FontWeight="SemiBold"   
+                                FontSize="16px"
+                                Width="128"
+                                Height="39"
+                                Background="#2E466B"/>
+                    </StackPanel>
+                </Grid>
+
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>
