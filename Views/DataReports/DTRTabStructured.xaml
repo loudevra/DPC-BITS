@@ -81,7 +81,7 @@
                         Width="194"
                         Margin="2,0,2,0">
                         <Button Width="175" Background="Transparent" BorderThickness="0" FontSize="14" Padding="5" FontFamily="Lexend">
-                            <TextBlock Text="Supplier Account" Foreground="#FF555555" />
+                            <TextBlock Text="TAX Statement" Foreground="#FF555555" />
                         </Button>
                     </Border>
 
