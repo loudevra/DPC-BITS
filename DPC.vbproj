@@ -511,6 +511,15 @@
     <Compile Include="Views\Dashboard\Dashboard.xaml.vb">
       <DependentUpon>Dashboard.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\DataReports\DTRAccounts.xaml.vb">
+      <DependentUpon>DTRAccounts.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DataReports\DTRCustomer.xaml.vb">
+      <DependentUpon>DTRCustomer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DataReports\DTRTabStructured.xaml.vb">
+      <DependentUpon>DTRTabStructured.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\DataReports\test2.xaml.vb">
       <DependentUpon>test2.xaml</DependentUpon>
     </Compile>
@@ -797,6 +806,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Dashboard\Dashboard.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DataReports\DTRAccounts.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DataReports\DTRCustomer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DataReports\DTRTabStructured.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DataReports\test2.xaml">
