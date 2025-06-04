@@ -523,6 +523,9 @@
     <Compile Include="Views\HRM\Employees\Employees\AddEmployee.xaml.vb">
       <DependentUpon>AddEmployee.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\HRM\Employees\Employees\EmployeesProfile.xaml.vb">
+      <DependentUpon>EmployeesProfile.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\HRM\Employees\Employees\EmployeesView.xaml.vb">
       <DependentUpon>EmployeesView.xaml</DependentUpon>
     </Compile>
@@ -813,6 +816,10 @@
     </Page>
     <Page Include="Views\HRM\Employees\Employees\AddEmployee.xaml">
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HRM\Employees\Employees\EmployeesProfile.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\HRM\Employees\Employees\EmployeesView.xaml">
       <Generator>MSBuild:Compile</Generator>
