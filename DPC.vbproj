@@ -505,6 +505,12 @@
     <Compile Include="Views\Auth\VerifyCode.xaml.vb">
       <DependentUpon>VerifyCode.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CRM\CRMClients.xaml.vb">
+      <DependentUpon>CRMClients.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CRM\SelectClients.xaml.vb">
+      <DependentUpon>SelectClients.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CRM\test.xaml.vb">
       <DependentUpon>test.xaml</DependentUpon>
     </Compile>
@@ -790,6 +796,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Auth\VerifyCode.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\CRMClients.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\SelectClients.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\CRM\test.xaml">
