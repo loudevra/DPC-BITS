@@ -490,6 +490,9 @@
     <Compile Include="Views\Accounts\Accounts\ManageAccounts\AddAccount.xaml.vb">
       <DependentUpon>AddAccount.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Accounts\Accounts\ManageAccounts\AddNewTransaction.xaml.vb">
+      <DependentUpon>AddNewTransaction.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Accounts\Accounts\ManageAccounts\ManageAccounts.xaml.vb">
       <DependentUpon>ManageAccounts.xaml</DependentUpon>
     </Compile>
@@ -781,6 +784,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Accounts\Accounts\ManageAccounts\AddAccount.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\ManageAccounts\AddNewTransaction.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Accounts\Accounts\ManageAccounts\ManageAccounts.xaml">

@@ -1,0 +1,284 @@
+﻿<UserControl x:Class="DPC.Views.Accounts.Accounts.ManageAccounts.AddAccount"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    Background="#E0E0E0" Width="Auto" Height="Auto"
+    FontFamily="{StaticResource Lexend}">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!--FIRST ROW-->
+        <StackPanel Grid.Row="0">
+            <TextBlock Text="Add New Transaction" FontSize="32px" FontWeight="SemiBold" Foreground="#555555"/>
+
+            <StackPanel Orientation="Horizontal" Width="Auto" Height="Auto" Margin="10,30,10,20">
+                <Grid HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Border Grid.Row="0" Style="{StaticResource RoundedBorderStyle}" 
+                                Width="150" Height="52" 
+                                HorizontalAlignment="Center" 
+                                VerticalAlignment="Center"
+                                CornerRadius="25,0,0,25"
+                                BorderThickness="0"
+                                BorderBrush="#555555"
+                                Background="#555555"
+                                Margin="0,0,-1,0">
+                            <TextBlock Text="Customer" FontSize="16px" TextAlignment="Center" VerticalAlignment="Center" Foreground="#F2F2F2"/>
+                        </Border>
+                        <Border Grid.Row="1" Style="{StaticResource RoundedBorderStyle}" 
+                                Width="150" Height="52" 
+                                HorizontalAlignment="Center" 
+                                VerticalAlignment="Center"
+                                BorderBrush="#555555"
+                                CornerRadius="0,25,25,0">
+                            <TextBlock Text="Supplier" FontSize="16px" TextAlignment="Center" VerticalAlignment="Center" Foreground="#555555"/>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+
+                <Border Style="{StaticResource RoundedBorderStyle}"
+                        Width="630"
+                        Margin="15,0,0,0"
+                        Padding="0,5,0,5"
+                        Height="52"
+                        VerticalAlignment="Center"
+                        CornerRadius="25"
+                        BorderBrush="#555555"
+                        >
+                    <TextBox Style="{StaticResource RoundedTextboxStyle}" 
+                             Text="Enter person name or mobile number (optional)" 
+                             FontSize="14px"
+                             Foreground="#55555580"/>
+                </Border>
+            </StackPanel>
+        <Rectangle Fill="#AEAEAE" Height="1"/>
+        </StackPanel>
+
+        <!--SECOND ROW-->
+        <StackPanel Grid.Row="1">
+        <StackPanel 
+                    Margin="0, 30,0,30" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Center">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Vertical">
+                        <TextBlock Text="C/O:" 
+                                   FontSize="16px" 
+                                   FontWeight="Medium" 
+                                   Foreground="#555555"
+                                   Margin="0,0,0,5"
+                                   />
+                        <Border Style="{StaticResource RoundedBorderStyle}"
+                                Width="301"
+                                Padding="0,5,0,5"
+                                Height="52"
+                                VerticalAlignment="Center"
+                                CornerRadius="25"
+                                BorderBrush="#555555"
+                                >
+                            <TextBox Style="{StaticResource RoundedTextboxStyle}" 
+                                     Text="Enter product code..." 
+                                     FontSize="14px"
+                                     Foreground="#55555580"/>
+                        </Border>
+
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Orientation="Vertical" Margin="15,0,15,0">
+                        <TextBlock Text="To Account:" 
+                                   FontSize="16px" 
+                                   FontWeight="Medium" 
+                                   Foreground="#555555"
+                                   Margin="0,0,0,5"
+                                   />
+
+
+                        <ComboBox Style="{StaticResource RoundedComboBoxStyle}"
+                                      Width="301"
+                                      Height="52"
+                                      Foreground="#55555580" SelectedIndex="0">
+                            <ComboBoxItem Content="01 - DREAM PC"/>
+                        </ComboBox>
+
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Orientation="Vertical">
+                        <TextBlock Text="Amount:" 
+                                   FontSize="16px" 
+                                   FontWeight="Medium" 
+                                   Foreground="#555555"
+                                   />
+                        <Border Style="{StaticResource RoundedBorderStyle}"
+                                Width="301"
+                                Margin="0,5,0,0"
+                                Padding="0,5,0,5"
+                                Height="52"
+                                VerticalAlignment="Center"
+                                CornerRadius="25"
+                                BorderBrush="#555555"
+                                >
+                            <TextBox Style="{StaticResource RoundedTextboxStyle}" 
+                                     FontSize="14px"
+                                     Foreground="#555555"/>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+            <Rectangle Fill="#AEAEAE" Height="1"/>
+        </StackPanel>
+
+        <!--THIRD ROW-->
+
+        <StackPanel Grid.Row="2">
+        <StackPanel 
+            Margin="0,30,0,30" 
+            Orientation="Horizontal" 
+            HorizontalAlignment="Center">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Vertical">
+                    <TextBlock Text="Date:" 
+                       FontSize="16px" 
+                       FontWeight="Medium" 
+                       Foreground="#555555"
+                       Margin="0,0,0,5"
+                       />
+                    <Border Style="{StaticResource RoundedBorderStyle}"
+                    Width="301"
+                    Padding="0,5,0,5"
+                    Height="52"
+                    VerticalAlignment="Center"
+                    CornerRadius="25"
+                    BorderBrush="#555555"
+                    >
+                        <TextBox Style="{StaticResource RoundedTextboxStyle}" 
+                         Text="Enter Date..." 
+                         FontSize="14px"
+                         Foreground="#55555580"/>
+                    </Border>
+
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Vertical" Margin="15,0,15,0">
+                    <TextBlock Text="Type:" 
+                       FontSize="16px" 
+                       FontWeight="Medium" 
+                       Foreground="#555555"
+                       Margin="0,0,0,5"
+                       />
+
+
+                    <ComboBox Style="{StaticResource RoundedComboBoxStyle}"
+                          Width="301"
+                          Height="52"
+                          Foreground="#55555580" SelectedIndex="0">
+                        <ComboBoxItem Content="Income/Credit"/>
+                    </ComboBox>
+
+                </StackPanel>
+                <StackPanel Grid.Column="2" Orientation="Vertical">
+                    <TextBlock Text="Category:" 
+                       FontSize="16px" 
+                       FontWeight="Medium" 
+                       Foreground="#555555"
+                       Margin="0,0,0,5"/>
+                    <ComboBox Style="{StaticResource RoundedComboBoxStyle}"
+                              Width="301"
+                              Height="52"
+                              Text="01-Dream PC"
+                              Foreground="#55555580" SelectedIndex="0">
+                        <ComboBoxItem Content="Income"/>
+                    </ComboBox>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+            <Rectangle Fill="#AEAEAE" Height="1"/>
+        </StackPanel>
+
+        <!--FOURTH ROW-->
+        <StackPanel Grid.Row="3" 
+                    HorizontalAlignment="Center" 
+                    Orientation="Horizontal"
+                    Margin="0,30,0,40"
+                    >
+            <Grid >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,15,0">
+                    <TextBlock Text="Method:" 
+                       FontSize="16px" 
+                       FontWeight="Medium" 
+                       Foreground="#555555"
+                       Margin="0,0,0,5"/>
+                    <ComboBox Style="{StaticResource RoundedComboBoxStyle}"
+                                Width="301"
+                                Height="52"
+                                Text="01-Dream PC"
+                                Foreground="#55555580" SelectedIndex="0">
+                        <ComboBoxItem Content="Cash"/>
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel Grid.Column="2" Grid.ColumnSpan="2" >
+                    <TextBlock Text="Note:" 
+                               FontSize="16px" 
+                               FontWeight="Medium" 
+                               Foreground="#555555"
+                               Margin="0,0,0,5"/>
+                    
+                    <Border Style="{StaticResource RoundedBorderStyle}"
+                            Width="619"
+                            Padding="0,5,0,5"
+                            Height="52"
+                            VerticalAlignment="Center"
+                            CornerRadius="25"
+                            BorderBrush="#555555">
+                            <TextBox Style="{StaticResource RoundedTextboxStyle}" 
+                                    FontSize="14px"
+                                    Foreground="#555555"/>
+                    </Border>
+                </StackPanel>
+                
+            </Grid>
+        </StackPanel>
+        
+        <!--BUTTON-->
+        <Button Grid.Row="4"  
+                Style="{StaticResource RoundedButtonStyle}"
+                Width="939"
+                Height="61"
+                Background="#326553"
+                Foreground="#FFFFFF"
+                Margin="0,0,0,20"
+                >
+            <TextBlock Text="Add Transaction"
+                       HorizontalAlignment="Center"
+                       FontSize="20px"
+                       FontWeight="Medium"
+                       />
+        </Button>
+
+    </Grid>
+</UserControl>
