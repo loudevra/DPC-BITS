@@ -1,3 +1,12 @@
-﻿Public Class DTRCustomer
+﻿
+Namespace DPC.Views.DataReports
+    Public Class DTRCustomer
+        Private Sub New()
+            InitializeComponent()
+        End Sub
 
-End Class
+        ' This is where you code for the function
+    End Class
+End Namespace
+
+
