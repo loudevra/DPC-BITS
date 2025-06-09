@@ -1,12 +1,15 @@
-﻿Imports DPC.DPC.Data.Controllers
-Imports DPC.DPC.Components
-Imports System.Windows.Controls.Primitives
-Imports System.Collections.ObjectModel
-Imports System.Windows.Controls
-Imports System.Data
+﻿Imports System.Collections.ObjectModel
 Imports System.ComponentModel
+Imports System.Data
+Imports System.Windows.Controls
+Imports System.Windows.Controls.Primitives
+Imports DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing
+Imports DPC.DPC.Components
+Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
+Imports DPC.DPC.Data.Model
 Imports MySql.Data.MySqlClient
+Imports OfficeOpenXml.FormulaParsing.Ranges
 
 
 Namespace DPC.Views.Stocks.Suppliers.ManageBrands
@@ -36,7 +39,7 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
             InitializeControls()
         End Sub
 
-        Private Sub InitializeControls()
+        Public Sub InitializeControls()
             ' Find UI elements using their name
             dataGrid = TryCast(FindName("dataGrid"), DataGrid)
             txtSearch = TryCast(FindName("txtSearch"), TextBox)
@@ -239,6 +242,14 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
             }
 
             Dim addBrandWindow As New DPC.Components.Forms.EditBrand()
+
+            ' Converts selected row items into brand model
+            Dim brand As Brand = TryCast(dataGrid.SelectedItem, Brand)
+
+            ' Passes data to pop up
+            addBrandWindow.TxtBrand.Text = brand.Name
+            addBrandWindow.brandID = Convert.ToInt32(brand.ID)
+            addBrandWindow.manageBrands = Me
 
             ' Handle the BrandAdded event
             AddHandler addBrandWindow.BrandAdded, AddressOf OnBrandAdded

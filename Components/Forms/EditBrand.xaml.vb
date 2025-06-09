@@ -1,12 +1,14 @@
 ﻿Imports DPC.DPC.Data.Controllers
 Imports MySql.Data.MySqlClient
 Imports DPC.DPC.Data.Helpers
+Imports DPC.DPC.Views.Stocks.Suppliers.ManageBrands
 
 
 Namespace DPC.Components.Forms
     Public Class EditBrand
         Public Event BrandAdded()
-
+        Public brandID As Integer?
+        Public manageBrands As ManageBrands
 
         Public Sub New()
             InitializeComponent()
@@ -26,11 +28,13 @@ Namespace DPC.Components.Forms
                 Return
             End If
 
+
+
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
 
-                    If brandId.HasValue AndAlso brandId.Value > 0 Then
+                    If brandId.HasValue And brandId.Value > 0 Then
                         ' UPDATE MODE
                         ' Check if brand exists
                         Dim existsQuery As String = "SELECT COUNT(*) FROM brand WHERE BrandID = @BrandID"
@@ -126,14 +130,14 @@ Namespace DPC.Components.Forms
             ' Get the brand name from your UI (adjust the control name as needed)
             Dim brandName As String = TxtBrand.Text ' Replace with your actual textbox name
 
-            ' Get brandId if you're editing (adjust logic as needed)
-            Dim brandId As Integer? = Nothing
-            If Me.Tag IsNot Nothing AndAlso TypeOf Me.Tag Is Integer Then
-                brandId = DirectCast(Me.Tag, Integer)
-            End If
 
             ' Call your SaveBrand method
-            SaveBrand(brandName, brandId)
+            SaveBrand(brandName, brandID)
+
+            ' Refreshes datagrid after update or add
+            manageBrands.dataGrid.ItemsSource = Nothing
+            manageBrands.InitializeControls()
+
         End Sub
 
 

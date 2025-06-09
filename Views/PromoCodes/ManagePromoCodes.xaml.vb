@@ -30,7 +30,7 @@ Namespace DPC.Views.PromoCodes
                 Dim dt As DataTable = PromoCodeController.FetchPromoCodes()
 
                 If dt IsNot Nothing Then
-                    dgPromoCodes.ItemsSource = dt.DefaultView
+                    'dgPromoCodes.ItemsSource = dt.DefaultView
                 End If
             Catch ex As Exception
                 MessageBox.Show($"Error loading promo codes: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
@@ -50,10 +50,10 @@ Namespace DPC.Views.PromoCodes
                     totalCount = stats("Total")
 
                     ' Update the TextBlocks in the UI
-                    txtActiveCount.Text = activeCount.ToString()
-                    txtUsedCount.Text = usedCount.ToString()
-                    txtExpiredCount.Text = expiredCount.ToString()
-                    txtTotalCount.Text = totalCount.ToString()
+                    'txtActiveCount.Text = activeCount.ToString()
+                    'txtUsedCount.Text = usedCount.ToString()
+                    'txtExpiredCount.Text = expiredCount.ToString()
+                    'txtTotalCount.Text = totalCount.ToString()
                 End If
             Catch ex As Exception
                 MessageBox.Show($"Error loading promo code statistics: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
@@ -115,18 +115,18 @@ Namespace DPC.Views.PromoCodes
             ' Filter the DataGrid based on search text
             Dim searchText As String = txtSearch.Text.ToLower()
 
-            If dgPromoCodes.ItemsSource IsNot Nothing Then
-                Dim view As DataView = TryCast(dgPromoCodes.ItemsSource, DataView)
+            'If dgPromoCodes.ItemsSource IsNot Nothing Then
+            '    Dim view As DataView = TryCast(dgPromoCodes.ItemsSource, DataView)
 
-                If view IsNot Nothing Then
-                    If String.IsNullOrWhiteSpace(searchText) Then
-                        view.RowFilter = ""
-                    Else
-                        ' Filter by Code (add more columns as needed)
-                        view.RowFilter = $"Code LIKE '%{searchText}%' OR Account LIKE '%{searchText}%' OR Note LIKE '%{searchText}%'"
-                    End If
-                End If
-            End If
+            '    If view IsNot Nothing Then
+            '        If String.IsNullOrWhiteSpace(searchText) Then
+            '            view.RowFilter = ""
+            '        Else
+            '            ' Filter by Code (add more columns as needed)
+            '            view.RowFilter = $"Code LIKE '%{searchText}%' OR Account LIKE '%{searchText}%' OR Note LIKE '%{searchText}%'"
+            '        End If
+            '    End If
+            'End If
         End Sub
 
         Private Sub BtnExport_Click(sender As Object, e As RoutedEventArgs)
