@@ -252,7 +252,7 @@
                     <!-- Left Controls -->
                     <StackPanel Grid.Column="0" Orientation="Horizontal">
                         <!-- Excel Button -->
-                        <Button Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" Foreground="White" Width="75" Click="ExportToExcel" Height="29" Margin="10,0,0,0">
+                        <Button Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" Foreground="White" Width="75" Height="29" Margin="10,0,0,0">
                             <materialDesign:PackIcon Kind="MicrosoftExcel" Width="25" Height="25"/>
                         </Button>
 
@@ -263,13 +263,13 @@
                             <ComboBoxItem Content="50"/>
                             <ComboBoxItem Content="100"/>
                         </ComboBox>
-                        <Button Style="{StaticResource RoundedButtonStyle}" Background="Transparent" Foreground="#474747" Width="29" Click="" Height="29" Margin="10,0,0,0">
+                        <Button Style="{StaticResource RoundedButtonStyle}" Background="Transparent" Foreground="#474747" Width="29" Height="29" Margin="10,0,0,0">
                             <materialDesign:PackIcon Kind="ViewGridOutline" Width="25" Height="25"/>
                         </Button>
-                        <Button Style="{StaticResource RoundedButtonStyle}" Background="Transparent" Foreground="#474747" Width="29" Click="" Height="29" Margin="0,0,0,0">
+                        <Button Style="{StaticResource RoundedButtonStyle}" Background="Transparent" Foreground="#474747" Width="29" Height="29" Margin="0,0,0,0">
                             <materialDesign:PackIcon Kind="FormatListBulleted" Width="30" Height="30"/>
                         </Button>
-                        <Button Style="{StaticResource RoundedButtonStyle}" Background="Transparent" Foreground="#474747" Width="29" Click="" Height="29" Margin="0,0,0,0">
+                        <Button Style="{StaticResource RoundedButtonStyle}" Background="Transparent" Foreground="#474747" Width="29" Height="29" Margin="0,0,0,0">
                             <materialDesign:PackIcon Kind="FilterMenuOutline" Width="25" Height="25"/>
                         </Button>
 
@@ -289,7 +289,7 @@
 
             <!-- DataGrid Container -->
             <Border Grid.Row="3" Background="White" CornerRadius="10" BorderBrush="White" BorderThickness="1">
-                <DataGrid Name="dataGrid"
+                <DataGrid Name="AccountsDataGrid"
                       Style="{StaticResource CustomDataGridStyle}"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
