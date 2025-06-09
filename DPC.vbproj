@@ -389,6 +389,9 @@
     <Compile Include="Components\Forms\AddVariation.xaml.vb">
       <DependentUpon>AddVariation.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\DeleteBrandPopup.xaml.vb">
+      <DependentUpon>DeleteBrandPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\EditBrand.xaml.vb">
       <DependentUpon>EditBrand.xaml</DependentUpon>
     </Compile>
@@ -656,6 +659,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\AddVariation.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\DeleteBrandPopup.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\EditBrand.xaml">

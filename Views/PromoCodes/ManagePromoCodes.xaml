@@ -317,10 +317,6 @@
                                         <DataGridTextColumn Header="Amount" Width="200"/>
                                         <DataGridTextColumn Header="Valid"  Width="200"/>
                                         <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
-                                        <DataGridTemplateColumn Header="Available" Width="150" />
-                                    </DataGrid.Columns>
-                                </DataGrid>
-
 
                             </StackPanel>
                         </Border>
