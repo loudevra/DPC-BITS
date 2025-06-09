@@ -119,5 +119,9 @@ Namespace DPC.Views.Accounts.Accounts.ManageAccounts
                         "Input Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Sub
+
+        Private Sub Button_Click(sender As Object, e As RoutedEventArgs)
+
+        End Sub
     End Class
 End Namespace
