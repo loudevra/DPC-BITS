@@ -126,6 +126,11 @@ Namespace DPC.Components.Forms
             End Try
         End Sub
 
+        Private Sub RefreshDataGrid()
+            manageBrands.dataGrid.ItemsSource = Nothing
+            manageBrands.InitializeControls()
+        End Sub
+
         Private Sub SaveBrand_Click(sender As Object, e As RoutedEventArgs)
             ' Get the brand name from your UI (adjust the control name as needed)
             Dim brandName As String = TxtBrand.Text ' Replace with your actual textbox name
@@ -135,8 +140,7 @@ Namespace DPC.Components.Forms
             SaveBrand(brandName, brandID)
 
             ' Refreshes datagrid after update or add
-            manageBrands.dataGrid.ItemsSource = Nothing
-            manageBrands.InitializeControls()
+            RefreshDataGrid()
 
         End Sub
 

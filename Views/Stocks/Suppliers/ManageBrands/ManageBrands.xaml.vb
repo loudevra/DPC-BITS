@@ -264,6 +264,47 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
             popup.IsOpen = True
         End Sub
 
+        Private Sub DeleteBrand(sender As Object, e As RoutedEventArgs)
+            Dim clickedButton As Button = TryCast(sender, Button)
+            If clickedButton Is Nothing Then Return
+
+            If recentlyClosed Then
+                recentlyClosed = False
+                Return
+            End If
+
+            If popup IsNot Nothing AndAlso popup.IsOpen Then
+                popup.IsOpen = False
+                recentlyClosed = True
+                Return
+            End If
+
+            popup = New Popup With {
+                .PlacementTarget = clickedButton,
+                .Placement = PlacementMode.Center,
+                .StaysOpen = False,
+                .AllowsTransparency = True
+            }
+
+            Dim deleteBrandWindow As New DPC.Components.Forms.DeleteBrandPopup()
+
+            ' Converts selected row items into brand model
+            Dim brand As Brand = TryCast(dataGrid.SelectedItem, Brand)
+
+            deleteBrandWindow.brandName.Text = brand.Name
+            deleteBrandWindow.brandID = brand.ID.ToString()
+            deleteBrandWindow.manageBrands = Me
+
+            popup.Child = deleteBrandWindow
+
+            AddHandler popup.Closed, Sub()
+                                         recentlyClosed = True
+                                         Task.Delay(100).ContinueWith(Sub() recentlyClosed = False, TaskScheduler.FromCurrentSynchronizationContext())
+                                     End Sub
+
+            popup.IsOpen = True
+        End Sub
+
 
 
     End Class
