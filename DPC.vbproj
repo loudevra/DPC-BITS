@@ -490,6 +490,9 @@
     <Compile Include="Views\Accounts\Accounts\ManageAccounts\AddAccount.xaml.vb">
       <DependentUpon>AddAccount.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Accounts\Accounts\ManageAccounts\AddNewTransaction.xaml.vb">
+      <DependentUpon>AddNewTransaction.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Accounts\Accounts\ManageAccounts\ManageAccounts.xaml.vb">
       <DependentUpon>ManageAccounts.xaml</DependentUpon>
     </Compile>
@@ -505,8 +508,29 @@
     <Compile Include="Views\Auth\VerifyCode.xaml.vb">
       <DependentUpon>VerifyCode.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CRM\CRMClients.xaml.vb">
+      <DependentUpon>CRMClients.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CRM\SelectClients.xaml.vb">
+      <DependentUpon>SelectClients.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CRM\test.xaml.vb">
+      <DependentUpon>test.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Dashboard\Dashboard.xaml.vb">
       <DependentUpon>Dashboard.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DataReports\DTRAccounts.xaml.vb">
+      <DependentUpon>DTRAccounts.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DataReports\DTRCustomer.xaml.vb">
+      <DependentUpon>DTRCustomer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DataReports\DTRTabStructured.xaml.vb">
+      <DependentUpon>DTRTabStructured.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DataReports\test2.xaml.vb">
+      <DependentUpon>test2.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\HRM\Departments\DepartmentsView.xaml.vb">
       <DependentUpon>DepartmentsView.xaml</DependentUpon>
@@ -516,6 +540,24 @@
     </Compile>
     <Compile Include="Views\HRM\Employees\Employees\AddEmployee.xaml.vb">
       <DependentUpon>AddEmployee.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HRM\Employees\Employees\EmployeesProfileControls\Invoices.xaml.vb">
+      <DependentUpon>Invoices.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HRM\Employees\Employees\EmployeesProfileControls\PersonalInformation.xaml.vb">
+      <DependentUpon>PersonalInformation.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HRM\Employees\Employees\EmployeesProfileControls\Quotes.xaml.vb">
+      <DependentUpon>Quotes.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HRM\Employees\Employees\EmployeesProfileControls\Salaries.xaml.vb">
+      <DependentUpon>Salaries.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HRM\Employees\Employees\EmployeesProfileControls\Transactions.xaml.vb">
+      <DependentUpon>Transactions.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HRM\Employees\Employees\EmployeesProfileView.xaml.vb">
+      <DependentUpon>EmployeesProfileView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\HRM\Employees\Employees\EmployeesView.xaml.vb">
       <DependentUpon>EmployeesView.xaml</DependentUpon>
@@ -771,6 +813,10 @@
     <Page Include="Views\Accounts\Accounts\ManageAccounts\AddAccount.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Accounts\Accounts\ManageAccounts\AddNewTransaction.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Accounts\Accounts\ManageAccounts\ManageAccounts.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -786,7 +832,35 @@
     <Page Include="Views\Auth\VerifyCode.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\CRM\CRMClients.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\SelectClients.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\test.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Dashboard\Dashboard.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DataReports\DTRAccounts.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DataReports\DTRCustomer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DataReports\DTRTabStructured.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DataReports\test2.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HRM\Departments\DepartmentsView.xaml">
@@ -798,6 +872,30 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HRM\Employees\Employees\AddEmployee.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HRM\Employees\Employees\EmployeesProfileControls\Invoices.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HRM\Employees\Employees\EmployeesProfileControls\PersonalInformation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HRM\Employees\Employees\EmployeesProfileControls\Quotes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HRM\Employees\Employees\EmployeesProfileControls\Salaries.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HRM\Employees\Employees\EmployeesProfileControls\Transactions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HRM\Employees\Employees\EmployeesProfileView.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HRM\Employees\Employees\EmployeesView.xaml">
