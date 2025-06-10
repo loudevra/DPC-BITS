@@ -628,6 +628,9 @@
     <Compile Include="Views\Misc\Documents\Documents.xaml.vb">
       <DependentUpon>Documents.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\POS\PaymentGateway.xaml.vb">
+      <DependentUpon>PaymentGateway.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\POS\POSForm.xaml.vb">
       <DependentUpon>POSForm.xaml</DependentUpon>
     </Compile>
@@ -1033,6 +1036,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Misc\Documents\Documents.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\POS\PaymentGateway.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\POS\POSForm.xaml">
