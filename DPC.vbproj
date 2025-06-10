@@ -365,6 +365,15 @@
     <Compile Include="Components\ConfirmationModals\CancelSupplierAdding.xaml.vb">
       <DependentUpon>CancelSupplierAdding.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\ConfirmationModals\HRMConfirmationEmployeeSalaryUpdate.xaml.vb">
+      <DependentUpon>HRMConfirmationEmployeeSalaryUpdate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ConfirmationModals\HRMEmployerSalariesModal.xaml.vb">
+      <DependentUpon>HRMEmployerSalariesModal.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ConfirmationModals\HRMUpdateSalary.xaml.vb">
+      <DependentUpon>HRMUpdateSalary.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\ConfirmationModals\LoginConfirmationModals.xaml.vb">
       <DependentUpon>LoginConfirmationModals.xaml</DependentUpon>
     </Compile>
@@ -388,6 +397,15 @@
     </Compile>
     <Compile Include="Components\Forms\AddVariation.xaml.vb">
       <DependentUpon>AddVariation.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\CRMAddNewClientGroup.xaml.vb">
+      <DependentUpon>CRMAddNewClientGroup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\CRMApplyDiscountPopout.xaml.vb">
+      <DependentUpon>CRMApplyDiscountPopout.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\DeleteBrandPopup.xaml.vb">
+      <DependentUpon>DeleteBrandPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\EditBrand.xaml.vb">
       <DependentUpon>EditBrand.xaml</DependentUpon>
@@ -493,6 +511,12 @@
     <Compile Include="Views\Accounts\Accounts\ManageAccounts\AddNewTransaction.xaml.vb">
       <DependentUpon>AddNewTransaction.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Accounts\Accounts\ManageAccounts\AddNewTransfer.xaml.vb">
+      <DependentUpon>AddNewTransfer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\ManageAccounts\ExpenseTransaction.xaml.vb">
+      <DependentUpon>ExpenseTransaction.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Accounts\Accounts\ManageAccounts\ManageAccounts.xaml.vb">
       <DependentUpon>ManageAccounts.xaml</DependentUpon>
     </Compile>
@@ -508,11 +532,35 @@
     <Compile Include="Views\Auth\VerifyCode.xaml.vb">
       <DependentUpon>VerifyCode.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CRM\ClientGroups.xaml.vb">
+      <DependentUpon>ClientGroups.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CRM\CRMBillingAddress.xaml.vb">
+      <DependentUpon>CRMBillingAddress.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CRM\CRMClients.xaml.vb">
       <DependentUpon>CRMClients.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CRM\CRMClientTabs.xaml.vb">
+      <DependentUpon>CRMClientTabs.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CRM\CRMOtherSettings.xaml.vb">
+      <DependentUpon>CRMOtherSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CRM\CRMPersonalInfo.xaml.vb">
+      <DependentUpon>CRMPersonalInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CRM\CRMShippingAddress.xaml.vb">
+      <DependentUpon>CRMShippingAddress.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CRM\CRMTabStructured.xaml.vb">
+      <DependentUpon>CRMTabStructured.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CRM\SelectClients.xaml.vb">
       <DependentUpon>SelectClients.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CRM\SupportTicket.xaml.vb">
+      <DependentUpon>SupportTicket.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\CRM\test.xaml.vb">
       <DependentUpon>test.xaml</DependentUpon>
@@ -616,6 +664,14 @@
     <Page Include="Components\ConfirmationModals\CancelSupplierAdding.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\ConfirmationModals\HRMEmployerSalariesModal.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ConfirmationModals\HRMUpdateSalary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\ConfirmationModals\LoginConfirmationModals.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -646,7 +702,23 @@
     <Page Include="Components\Forms\AddVariation.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\Forms\CRMAddNewClientGroup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\CRMApplyDiscountPopout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\DeleteBrandPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\Forms\EditBrand.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ConfirmationModals\HRMConfirmationEmployeeSalaryUpdate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -817,6 +889,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Accounts\Accounts\ManageAccounts\AddNewTransfer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\ManageAccounts\ExpenseTransaction.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Accounts\Accounts\ManageAccounts\ManageAccounts.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -832,11 +912,43 @@
     <Page Include="Views\Auth\VerifyCode.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\CRM\ClientGroups.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\CRMBillingAddress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\CRM\CRMClients.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\CRM\CRMClientTabs.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\CRMOtherSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\CRMPersonalInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\CRMShippingAddress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\CRMTabStructured.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\CRM\SelectClients.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\SupportTicket.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

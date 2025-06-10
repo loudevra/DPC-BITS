@@ -1,7 +1,10 @@
 ﻿Namespace DPC.Views.CRM
-    Public Class SelectClients
-        Private Sub New()
+
+    Partial Public Class CRMClientTabs
+        Inherits UserControl
+        Public Sub New()
             InitializeComponent()
         End Sub
     End Class
 End Namespace
+

@@ -1,7 +1,9 @@
-﻿Namespace DPC.Views.CRM
-    Public Class SelectClients
+﻿Namespace DPC.Components.ConfirmationModals
+    Public Class HRMEmployerSalariesModal
         Private Sub New()
+
             InitializeComponent()
+
         End Sub
     End Class
 End Namespace
