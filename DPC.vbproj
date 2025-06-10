@@ -535,8 +535,26 @@
     <Compile Include="Views\CRM\ClientGroups.xaml.vb">
       <DependentUpon>ClientGroups.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CRM\CRMBillingAddress.xaml.vb">
+      <DependentUpon>CRMBillingAddress.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CRM\CRMClients.xaml.vb">
       <DependentUpon>CRMClients.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CRM\CRMClientTabs.xaml.vb">
+      <DependentUpon>CRMClientTabs.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CRM\CRMOtherSettings.xaml.vb">
+      <DependentUpon>CRMOtherSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CRM\CRMPersonalInfo.xaml.vb">
+      <DependentUpon>CRMPersonalInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CRM\CRMShippingAddress.xaml.vb">
+      <DependentUpon>CRMShippingAddress.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CRM\CRMTabStructured.xaml.vb">
+      <DependentUpon>CRMTabStructured.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\CRM\SelectClients.xaml.vb">
       <DependentUpon>SelectClients.xaml</DependentUpon>
@@ -898,7 +916,31 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\CRM\CRMBillingAddress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\CRM\CRMClients.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\CRMClientTabs.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\CRMOtherSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\CRMPersonalInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\CRMShippingAddress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\CRMTabStructured.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
