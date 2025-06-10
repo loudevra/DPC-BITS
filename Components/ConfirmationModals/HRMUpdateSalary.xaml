@@ -1,0 +1,103 @@
+﻿<UserControl x:Class="DPC.Components.ConfirmationModals.HRMUpdateSalary"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             Height="Auto"
+             Width="Auto"
+             FontFamily="{StaticResource Lexend}"
+             Background="Transparent">
+
+    <materialDesign:Card Width="Auto" Padding="10" Background="White"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            UniformCornerRadius="20">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                <Border  Style="{StaticResource RoundedBorderStyle}" 
+                         Padding="3" 
+                         HorizontalAlignment="Center" 
+                         VerticalAlignment="Center" 
+                         CornerRadius="15" 
+                         Width="59.9765625" 
+                         Height="32"
+                         BorderThickness="2" 
+                         BorderBrush="#AEAEAE">
+
+                    <StackPanel Orientation="Horizontal">
+
+                        <Border Style="{StaticResource RoundedBorderStyle}" Padding="1" Margin="0,0,1,0" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0" Background="#E9E9E9">
+                            <materialDesign:PackIcon Kind="CashPlus" Width="22" Height="22" VerticalAlignment="Center" Foreground="#456b2e"/>
+                        </Border>
+                        <Border Style="{StaticResource RoundedBorderStyle}" Padding="1" Margin="1,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center" BorderThickness="0">
+                            <materialDesign:PackIcon Kind="CashMinus" Width="22" Height="22" VerticalAlignment="Center" Foreground="#d23636"/>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource RoundedBorderStyle}" 
+                        Margin="10,0,10,0" HorizontalAlignment="Center" 
+                        VerticalAlignment="Center"
+                        BorderThickness="2" 
+                        BorderBrush="#AEAEAE"
+                        >
+                    <!--Product Name Value is here!-->
+                    <TextBox Style="{StaticResource RoundedTextboxStyle}"
+                             FontSize="11"
+                             Height="32" 
+                             Width="137.595703125" 
+                             Text="Amount..."
+                             Foreground="#AEAEAE"
+                             />
+
+                </Border>
+
+                <Border Style="{StaticResource RoundedBorderStyle}" 
+                        Margin="0,0,10,0" 
+                        HorizontalAlignment="Center" 
+                        VerticalAlignment="Center"
+                        BorderThickness="2" 
+                        BorderBrush="#AEAEAE"
+                        >
+                    <!--Product Name Value is here!-->
+                    <TextBox Style="{StaticResource RoundedTextboxStyle}"
+                         FontSize="11"
+                         Height="32" 
+                         Width="137.595703125" 
+                         Text="Sales Commission %"
+                         Foreground="#AEAEAE"    
+                         />
+                </Border>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                <TextBlock Text="= ₱ 0.00" Foreground="#555555" FontSize="13px" 
+                           TextAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,0"
+                           Width="100"
+                           />
+
+                <Button Style="{StaticResource RoundedButtonStyle}"
+                        Margin="180,0,0,0"
+                        BorderThickness="0" 
+                        Background="#2E466B" 
+                        Width="80"
+                        Height="31.103515625">
+
+                    <TextBlock Text="Update" 
+                               VerticalAlignment="Center" 
+                               HorizontalAlignment="Center" 
+                               Foreground="#FDFDFD" 
+                               FontSize="11px" />
+                </Button>
+            </StackPanel>
+
+
+        </Grid>
+    </materialDesign:Card>
+</UserControl>

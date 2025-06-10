@@ -365,6 +365,15 @@
     <Compile Include="Components\ConfirmationModals\CancelSupplierAdding.xaml.vb">
       <DependentUpon>CancelSupplierAdding.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\ConfirmationModals\HRMConfirmationEmployeeSalaryUpdate.xaml.vb">
+      <DependentUpon>HRMConfirmationEmployeeSalaryUpdate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ConfirmationModals\HRMEmployerSalariesModal.xaml.vb">
+      <DependentUpon>HRMEmployerSalariesModal.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ConfirmationModals\HRMUpdateSalary.xaml.vb">
+      <DependentUpon>HRMUpdateSalary.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\ConfirmationModals\LoginConfirmationModals.xaml.vb">
       <DependentUpon>LoginConfirmationModals.xaml</DependentUpon>
     </Compile>
@@ -637,6 +646,14 @@
     <Page Include="Components\ConfirmationModals\CancelSupplierAdding.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\ConfirmationModals\HRMEmployerSalariesModal.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ConfirmationModals\HRMUpdateSalary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\ConfirmationModals\LoginConfirmationModals.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -680,6 +697,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\EditBrand.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ConfirmationModals\HRMConfirmationEmployeeSalaryUpdate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
