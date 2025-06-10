@@ -176,7 +176,7 @@
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                         <Button Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" BorderThickness="0" Margin="0" Click="ExportToExcel">
-                            <materialDesign:PackIcon Kind="FileExcel" Width="25" Height="25" Foreground="White" Margin="25,0"/>
+                            <materialDesign:PackIcon Kind="MicrosoftExcel" Width="25" Height="25" Foreground="White" Margin="25,0"/>
                         </Button>
                     </StackPanel>
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10,0">
