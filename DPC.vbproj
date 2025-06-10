@@ -1,4 +1,4 @@
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -413,6 +413,18 @@
     <Compile Include="Components\Forms\PayrollTrasactionControl.xaml.vb">
       <DependentUpon>PayrollTrasactionControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\POSPayment.xaml.vb">
+      <DependentUpon>POSPayment.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\POSRegister.xaml.vb">
+      <DependentUpon>POSRegister.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\POSRegister2.xaml.vb">
+      <DependentUpon>POSRegister2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\POSWalkInClient.xaml.vb">
+      <DependentUpon>POSWalkInClient.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\RemoveRowPopout.xaml.vb">
       <DependentUpon>RemoveRowPopout.xaml</DependentUpon>
     </Compile>
@@ -544,11 +556,26 @@
     <Compile Include="Views\CRM\CRMClientTabs.xaml.vb">
       <DependentUpon>CRMClientTabs.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CRM\CRMNewResidentialClient.xaml.vb">
+      <DependentUpon>CRMNewResidentialClient.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CRM\CRMOtherSettings.xaml.vb">
       <DependentUpon>CRMOtherSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\CRM\CRMPersonalInfo.xaml.vb">
       <DependentUpon>CRMPersonalInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CRM\CRMResidentialClientBillingAddress.xaml.vb">
+      <DependentUpon>CRMResidentialClientBillingAddress.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CRM\CRMResidentialClientOtherSettings.xaml.vb">
+      <DependentUpon>CRMResidentialClientOtherSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CRM\CRMResidentialClientPersonalInfo.xaml.vb">
+      <DependentUpon>CRMResidentialClientPersonalInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CRM\CRMResidentialClientShippingAddress.xaml.vb">
+      <DependentUpon>CRMResidentialClientShippingAddress.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\CRM\CRMShippingAddress.xaml.vb">
       <DependentUpon>CRMShippingAddress.xaml</DependentUpon>
@@ -627,6 +654,9 @@
     </Compile>
     <Compile Include="Views\Misc\Documents\Documents.xaml.vb">
       <DependentUpon>Documents.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\POS\PaymentGateway.xaml.vb">
+      <DependentUpon>PaymentGateway.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\POS\POSForm.xaml.vb">
       <DependentUpon>POSForm.xaml</DependentUpon>
@@ -723,6 +753,22 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\PayrollTrasactionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\POSPayment.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\POSRegister.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\POSRegister2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\POSWalkInClient.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -928,11 +974,31 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\CRM\CRMNewResidentialClient.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\CRM\CRMOtherSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\CRM\CRMPersonalInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\CRMResidentialClientBillingAddress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\CRMResidentialClientOtherSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\CRMResidentialClientPersonalInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\CRMResidentialClientShippingAddress.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1033,6 +1099,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Misc\Documents\Documents.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\POS\PaymentGateway.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\POS\POSForm.xaml">
