@@ -14,9 +14,9 @@ Namespace DPC.Components.ConfirmationModals
         ' Event for "Cancel" Button
         Private Sub Cancel_Click(sender As Object, e As RoutedEventArgs)
             ' Close or perform an action for canceling client editing
-            Dim parentWindow As Window = Window.GetWindow(Me)
-            parentWindow.DialogResult = True
-            parentWindow.Close()
+            'Dim parentWindow As Window = Window.GetWindow(Me)
+            'parentWindow.DialogResult = True
+            'parentWindow.Close()
         End Sub
     End Class
 End Namespace

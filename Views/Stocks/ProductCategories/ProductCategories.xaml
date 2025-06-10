@@ -298,7 +298,14 @@
                     <DataGridTemplateColumn Header="Settings" Width="80">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="⚙" Width="30" Height="30" Background="Transparent" Margin="0"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Width="30" Height="30" Background="Transparent" Margin="0,0,5,0" ToolTip="Edit"  Click="btnEditPopup_Click" >
+                                        <materialDesign:PackIcon Kind="CircleEditOutline" Width="16" Height="16" Foreground="#52C69D"/>
+                                    </Button>
+                                    <Button Width="30" Height="30" Background="Transparent" Margin="0" ToolTip="Delete" Click="btnDeletePopup_Click">
+                                        <materialDesign:PackIcon Kind="DeleteOutline" Width="16" Height="16" Foreground="#E65E5E"/>
+                                    </Button>
+                                </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
