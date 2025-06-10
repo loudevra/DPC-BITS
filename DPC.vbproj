@@ -389,6 +389,12 @@
     <Compile Include="Components\Forms\AddVariation.xaml.vb">
       <DependentUpon>AddVariation.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\CRMAddNewClientGroup.xaml.vb">
+      <DependentUpon>CRMAddNewClientGroup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\CRMApplyDiscountPopout.xaml.vb">
+      <DependentUpon>CRMApplyDiscountPopout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\DeleteBrandPopup.xaml.vb">
       <DependentUpon>DeleteBrandPopup.xaml</DependentUpon>
     </Compile>
@@ -659,6 +665,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\AddVariation.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\CRMAddNewClientGroup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\CRMApplyDiscountPopout.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\DeleteBrandPopup.xaml">
