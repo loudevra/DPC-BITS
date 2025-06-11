@@ -365,6 +365,7 @@
     <Compile Include="Components\ConfirmationModals\CancelSupplierAdding.xaml.vb">
       <DependentUpon>CancelSupplierAdding.xaml</DependentUpon>
     </Compile>
+
     <Compile Include="Components\ConfirmationModals\ConfirmWarehouseDeletion.xaml.vb">
       <DependentUpon>ConfirmWarehouseDeletion.xaml</DependentUpon>
     </Compile>
@@ -376,6 +377,7 @@
     </Compile>
     <Compile Include="Components\ConfirmationModals\HRMUpdateSalary.xaml.vb">
       <DependentUpon>HRMUpdateSalary.xaml</DependentUpon>
+
     </Compile>
     <Compile Include="Components\ConfirmationModals\LoginConfirmationModals.xaml.vb">
       <DependentUpon>LoginConfirmationModals.xaml</DependentUpon>
@@ -413,8 +415,10 @@
     <Compile Include="Components\Forms\EditBrand.xaml.vb">
       <DependentUpon>EditBrand.xaml</DependentUpon>
     </Compile>
+
     <Compile Include="Components\Forms\EditWarehouse.xaml.vb">
       <DependentUpon>EditWarehouse.xaml</DependentUpon>
+
     </Compile>
     <Compile Include="Components\Forms\PayrollTrasactionControl.xaml.vb">
       <DependentUpon>PayrollTrasactionControl.xaml</DependentUpon>
@@ -703,6 +707,7 @@
     <Page Include="Components\ConfirmationModals\CancelSupplierAdding.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+
     <Page Include="Components\ConfirmationModals\ConfirmWarehouseDeletion.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -712,6 +717,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\ConfirmationModals\HRMUpdateSalary.xaml">
+
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -761,11 +767,13 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+
     <Page Include="Components\ConfirmationModals\HRMConfirmationEmployeeSalaryUpdate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\EditWarehouse.xaml">
+
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
