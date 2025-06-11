@@ -560,8 +560,8 @@
     <Compile Include="Views\CRM\ClientGroup\ClientGroups.xaml.vb">
       <DependentUpon>ClientGroups.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\CRM\CRMBillingAddress.xaml.vb">
-      <DependentUpon>CRMBillingAddress.xaml</DependentUpon>
+    <Compile Include="Views\CRM\CRMCorporationalBillingAddress.xaml.vb">
+      <DependentUpon>CRMCorporationalBillingAddress.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\CRM\CRMClients.xaml.vb">
       <DependentUpon>CRMClients.xaml</DependentUpon>
@@ -572,11 +572,11 @@
     <Compile Include="Views\CRM\CRMNewResidentialClient.xaml.vb">
       <DependentUpon>CRMNewResidentialClient.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\CRM\CRMOtherSettings.xaml.vb">
-      <DependentUpon>CRMOtherSettings.xaml</DependentUpon>
+    <Compile Include="Views\CRM\CRMCorporationalOtherSettings.xaml.vb">
+      <DependentUpon>CRMCorporationalOtherSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\CRM\CRMPersonalInfo.xaml.vb">
-      <DependentUpon>CRMPersonalInfo.xaml</DependentUpon>
+    <Compile Include="Views\CRM\CRMCorporationalPersonalInfo.xaml.vb">
+      <DependentUpon>CRMCorporationalPersonalInfo.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\CRM\CRMResidentialClientBillingAddress.xaml.vb">
       <DependentUpon>CRMResidentialClientBillingAddress.xaml</DependentUpon>
@@ -590,11 +590,11 @@
     <Compile Include="Views\CRM\CRMResidentialClientShippingAddress.xaml.vb">
       <DependentUpon>CRMResidentialClientShippingAddress.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\CRM\CRMShippingAddress.xaml.vb">
-      <DependentUpon>CRMShippingAddress.xaml</DependentUpon>
+    <Compile Include="Views\CRM\CRMCorporationalShippingAddress.xaml.vb">
+      <DependentUpon>CRMCorporationalShippingAddress.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\CRM\CRMTabStructured.xaml.vb">
-      <DependentUpon>CRMTabStructured.xaml</DependentUpon>
+    <Compile Include="Views\CRM\CRMCorporationalTabStructured.xaml.vb">
+      <DependentUpon>CRMCorporationalTabStructured.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\CRM\SelectClients.xaml.vb">
       <DependentUpon>SelectClients.xaml</DependentUpon>
@@ -997,7 +997,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\CRM\CRMBillingAddress.xaml">
+    <Page Include="Views\CRM\CRMCorporationalBillingAddress.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1013,11 +1013,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\CRM\CRMOtherSettings.xaml">
+    <Page Include="Views\CRM\CRMCorporationalOtherSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\CRM\CRMPersonalInfo.xaml">
+    <Page Include="Views\CRM\CRMCorporationalPersonalInfo.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1037,11 +1037,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\CRM\CRMShippingAddress.xaml">
+    <Page Include="Views\CRM\CRMCorporationalShippingAddress.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\CRM\CRMTabStructured.xaml">
+    <Page Include="Views\CRM\CRMCorporationalTabStructured.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

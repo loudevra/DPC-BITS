@@ -176,7 +176,7 @@
                                 </StackPanel>
                                 <Border Style="{StaticResource RoundedBorderStyle}">
                                     <!--Country Value is here!-->
-                                    <TextBox x:Name="TxtCountry" Style="{StaticResource RoundedTextboxStyle}"/>
+                                    <TextBox x:Name="TxtCountry" PreviewTextInput="TxtCountry_PreviewTextInput" Style="{StaticResource RoundedTextboxStyle}"/>
                                 </Border>
                             </StackPanel>
                         </Grid>
@@ -188,7 +188,7 @@
                         </StackPanel>
                         <Border Style="{StaticResource RoundedBorderStyle}">
                             <!--Postal Code Value is here!-->
-                            <TextBox x:Name="TxtPostalCode" Style="{StaticResource RoundedTextboxStyle}"/>
+                            <TextBox x:Name="TxtPostalCode" PreviewTextInput="TxtPostalCode_PreviewTextInput" Style="{StaticResource RoundedTextboxStyle}"/>
                         </Border>
                     </StackPanel>
 
@@ -198,7 +198,7 @@
                         </StackPanel>
                         <Border Style="{StaticResource RoundedBorderStyle}">
                             <!--TINID Value is here!-->
-                            <TextBox x:Name="TxtTINID" Style="{StaticResource RoundedTextboxStyle}"/>
+                            <TextBox x:Name="TxtTINID" PreviewTextInput="TxtTINID_PreviewTextInput" Style="{StaticResource RoundedTextboxStyle}"/>
                         </Border>
                     </StackPanel>
 

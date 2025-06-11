@@ -68,7 +68,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "managetickets"
                         Return New CRM.SupportTicket()
                     Case "newresidentialclient"
-                        Return New CRM.CRMNewResidentialClient
+                        Return New CRM.CRMNewResidentialClient()
+                    Case "newcorporationalclient"
+                        Return New CRM.CRMCorporationalTabStructured()
 
                         ' Employees Navigation
                     Case "permissions"
@@ -196,6 +198,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "managetickets"
             ElseIf typeName = "newresidentialclient" Then
                 Return "newresidentialclient"
+
+            ElseIf typeName = "newcorporationalclient" Then
+                Return "newcorporationalclient"
 
                 ' Salaries Navigation
             ElseIf typeName = "salaries" Then
