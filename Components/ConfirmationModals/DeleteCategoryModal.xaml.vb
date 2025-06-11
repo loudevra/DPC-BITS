@@ -1,5 +1,4 @@
-﻿
-Imports MySql.Data.MySqlClient
+﻿Imports MySql.Data.MySqlClient
 
 Namespace DPC.Components.ConfirmationModals
     Public Class DeleteCategoryModal
@@ -74,4 +73,3 @@ Namespace DPC.Components.ConfirmationModals
         End Sub
     End Class
 End Namespace
-
