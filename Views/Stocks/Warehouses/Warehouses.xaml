@@ -148,7 +148,7 @@
                 </Border>
             </Button>
             <Border BorderBrush="#474747">
-                
+
             </Border>
         </StackPanel>
 
@@ -161,11 +161,10 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width=".20*"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width=".5*"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                         <Button Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" BorderThickness="0" Margin="0" Click="ExportToExcel">
-                            <materialDesign:PackIcon Kind="FileExcel" Width="25" Height="25" Foreground="White" Margin="25,0"/>
+                            <materialDesign:PackIcon Kind="MicrosoftExcel" Width="25" Height="25" Foreground="White" Margin="25,0"/>
                         </Button>
                     </StackPanel>
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10,0">
@@ -177,15 +176,46 @@
                         <ComboBoxItem Content="50"/>
                         <ComboBoxItem Content="100"/>
                     </ComboBox>
-                    <StackPanel Grid.Column="4">
-                        <Border Style="{StaticResource RoundedBorderStyle}">
+                    <!-- SEARCH BAR FIXED: now in column 3, takes all available space -->
+                    <StackPanel Grid.Column="3" HorizontalAlignment="Right">
+                        <Border Style="{StaticResource RoundedBorderStyle}"
+                                BorderThickness="1"
+                                BorderBrush="#474747"
+                                MinWidth="250"
+                                Height="34"
+                                Margin="0,0,10,0"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Right">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width=".25*"/>
+                                    <ColumnDefinition Width="35"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox Grid.Column="0" Style="{StaticResource RoundedTextboxStyle}" Margin="20,0,0,0" Name="txtSearch" />
-                                <materialDesign:PackIcon Kind="Magnify" Width="20" Height="20" Foreground="Black" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <Grid Grid.Column="0" Margin="10,0,0,0">
+                                    <TextBox
+                                        Name="txtSearch"
+                                        Style="{StaticResource RoundedTextboxStyle}"
+                                        VerticalAlignment="Center"
+                                        FontFamily="Lexend"
+                                        FontSize="12"
+                                        FontWeight="Normal"
+                                        Foreground="#474747"
+                                        TextChanged="TxtSearch_TextChanged"
+                                    />
+                                    <TextBlock
+                                        Text="Search"
+                                        IsHitTestVisible="False"
+                                        Foreground="#AEAEAE"
+                                        FontFamily="Lexend"
+                                        FontSize="12"
+                                        FontWeight="Normal"
+                                        VerticalAlignment="Center"
+                                        Margin="4,0,17,0"
+                                        Padding="2,0,0,0"
+                                        Visibility="{Binding Text.IsEmpty, ElementName=txtSearch, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                    />
+                                </Grid>
+                                <materialDesign:PackIcon Kind="Magnify" Width="25" Height="20" Foreground="#AEAEAE" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Column="1"/>
                             </Grid>
                         </Border>
                     </StackPanel>
@@ -268,10 +298,17 @@
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTemplateColumn Header="Settings" Width="80">
+                    <DataGridTemplateColumn Header="Settings" Width="95">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="⚙" Width="30" Height="30" Background="Transparent" Margin="0"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Width="30" Height="30" Background="Transparent" Margin="0,0,5,0" ToolTip="Edit" Click="OpenEditWarehouse" >
+                                        <materialDesign:PackIcon Kind="CircleEditOutline" Width="16" Height="16" Foreground="#52C69D"/>
+                                    </Button>
+                                    <Button Width="30" Height="30" Background="Transparent" Margin="0" ToolTip="Delete" Click="DeleteWarehouse">
+                                        <materialDesign:PackIcon Kind="DeleteOutline" Width="16" Height="16" Foreground="#E65E5E"/>
+                                    </Button>
+                                </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

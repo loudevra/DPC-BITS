@@ -291,40 +291,45 @@
                             </Grid>
                         </Border>
 
-                        <!-- Table and Controls test-->
+                        <!-- Table and Controls test -->
                         <Border Background="White" CornerRadius="8" Padding="15">
                             <StackPanel>
                                 <!-- Data Grid -->
                                 <DataGrid x:Name="dgPromoCodes"
-                                  AutoGenerateColumns="False"
-                                  CanUserAddRows="False"
-                                  CanUserResizeRows="False"
-                                  CanUserResizeColumns="False"
-                                  IsReadOnly="True"
-                                  RowHeight="40" FontFamily="Lexend" Foreground="#474747">
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserResizeRows="False"
+                  CanUserResizeColumns="False"
+                  IsReadOnly="True"
+                  RowHeight="40"
+                  FontFamily="Lexend"
+                  Foreground="#474747">
+
                                     <DataGrid.Columns>
-                                        <DataGridTextColumn Header="#" Width="50"/>
+                                        <DataGridTextColumn Header="#" Binding="{Binding Index}" Width="50"/>
+
                                         <DataGridTemplateColumn Header="Code" Width="200">
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <StackPanel Orientation="Horizontal">
+                                                        <!-- Ellipse for visual representation -->
                                                         <Ellipse Width="30" Height="30" Fill="Gray" Margin="0,0,10,0"/>
                                                         <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
                                                     </StackPanel>
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>
-                                        <DataGridTextColumn Header="Amount" Width="200"/>
-                                        <DataGridTextColumn Header="Valid"  Width="200"/>
+
+                                        <DataGridTextColumn Header="Amount" Binding="{Binding Amount}" Width="200"/>
+                                        <DataGridTextColumn Header="Valid" Binding="{Binding ValidDate}" Width="200"/>
                                         <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
-                                        <DataGridTemplateColumn Header="Available" Width="150" />
                                     </DataGrid.Columns>
+
                                 </DataGrid>
-
-
                             </StackPanel>
                         </Border>
-                        
+
+
                         <!-- Pagination Controls -->
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <Border Background="White" CornerRadius="30" Padding="10,5" BorderThickness="2" BorderBrush="#adadad">

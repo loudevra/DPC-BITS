@@ -1,12 +1,15 @@
-﻿Imports DPC.DPC.Data.Controllers
-Imports DPC.DPC.Components
-Imports System.Windows.Controls.Primitives
-Imports System.Collections.ObjectModel
-Imports System.Windows.Controls
-Imports System.Data
+﻿Imports System.Collections.ObjectModel
 Imports System.ComponentModel
+Imports System.Data
+Imports System.Windows.Controls
+Imports System.Windows.Controls.Primitives
+Imports DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing
+Imports DPC.DPC.Components
+Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
+Imports DPC.DPC.Data.Model
 Imports MySql.Data.MySqlClient
+Imports OfficeOpenXml.FormulaParsing.Ranges
 
 
 Namespace DPC.Views.Stocks.Suppliers.ManageBrands
@@ -36,7 +39,7 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
             InitializeControls()
         End Sub
 
-        Private Sub InitializeControls()
+        Public Sub InitializeControls()
             ' Find UI elements using their name
             dataGrid = TryCast(FindName("dataGrid"), DataGrid)
             txtSearch = TryCast(FindName("txtSearch"), TextBox)
@@ -240,10 +243,59 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
 
             Dim addBrandWindow As New DPC.Components.Forms.EditBrand()
 
+            ' Converts selected row items into brand model
+            Dim brand As Brand = TryCast(dataGrid.SelectedItem, Brand)
+
+            ' Passes data to pop up
+            addBrandWindow.TxtBrand.Text = brand.Name
+            addBrandWindow.brandID = Convert.ToInt32(brand.ID)
+            addBrandWindow.manageBrands = Me
+
             ' Handle the BrandAdded event
             AddHandler addBrandWindow.BrandAdded, AddressOf OnBrandAdded
 
             popup.Child = addBrandWindow
+
+            AddHandler popup.Closed, Sub()
+                                         recentlyClosed = True
+                                         Task.Delay(100).ContinueWith(Sub() recentlyClosed = False, TaskScheduler.FromCurrentSynchronizationContext())
+                                     End Sub
+
+            popup.IsOpen = True
+        End Sub
+
+        Private Sub DeleteBrand(sender As Object, e As RoutedEventArgs)
+            Dim clickedButton As Button = TryCast(sender, Button)
+            If clickedButton Is Nothing Then Return
+
+            If recentlyClosed Then
+                recentlyClosed = False
+                Return
+            End If
+
+            If popup IsNot Nothing AndAlso popup.IsOpen Then
+                popup.IsOpen = False
+                recentlyClosed = True
+                Return
+            End If
+
+            popup = New Popup With {
+                .PlacementTarget = clickedButton,
+                .Placement = PlacementMode.Center,
+                .StaysOpen = False,
+                .AllowsTransparency = True
+            }
+
+            Dim deleteBrandWindow As New DPC.Components.Forms.DeleteBrandPopup()
+
+            ' Converts selected row items into brand model
+            Dim brand As Brand = TryCast(dataGrid.SelectedItem, Brand)
+
+            deleteBrandWindow.brandName.Text = brand.Name
+            deleteBrandWindow.brandID = brand.ID.ToString()
+            deleteBrandWindow.manageBrands = Me
+
+            popup.Child = deleteBrandWindow
 
             AddHandler popup.Closed, Sub()
                                          recentlyClosed = True

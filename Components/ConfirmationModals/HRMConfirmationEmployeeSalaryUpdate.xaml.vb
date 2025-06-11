@@ -1,3 +1,9 @@
-﻿Public Class HRMConfirmationEmloyeeSalaryUpdate
+﻿Namespace DPC.Components.ConfirmationModals
 
-End Class
+    Partial Public Class HRMConfirmationEmployeeSalaryUpdate
+        Inherits UserControl
+        Public Sub New()
+            InitializeComponent()
+        End Sub
+    End Class
+End Namespace

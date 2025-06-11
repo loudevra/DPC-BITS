@@ -1,0 +1,80 @@
+﻿<UserControl x:Class="DPC.Components.Forms.POSRegister2"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             Height="Auto"
+             FontFamily="{StaticResource Lexend}"
+             Background="Transparent">
+
+    <materialDesign:Card Width="450" Padding="20" Background="White"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            UniformCornerRadius="20">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Button Grid.Column="1" Width="20" Height="20" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" BorderBrush="Transparent" x:Name="BtnClose">
+                <materialDesign:PackIcon Kind="Close" Foreground="#555555" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Button>
+
+            <StackPanel Grid.Row="1">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,0" HorizontalAlignment="Center">
+                    <materialDesign:PackIcon Kind="CashRegister" Width="120" Height="120" Foreground="Black"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,0" HorizontalAlignment="Center">
+                    <TextBlock Text="Your Cash Register" Foreground="#555555" FontSize="23" FontWeight="Bold" Margin="0,0,0,10"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,0" HorizontalAlignment="Center">
+                    <TextBlock Text="Active:" Foreground="#52c79d" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,25"/>
+                    <TextBlock Text=" 04-09-2025 19:30:00" Foreground="#555555" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,25"/>
+
+                </StackPanel>
+
+                <!-- CASH -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <TextBlock Text="Cash:" Foreground="#555555" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                </StackPanel>
+                <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10">
+                    <!-- Cash Input -->
+                    <TextBox x:Name="TxtCash" Style="{StaticResource RoundedTextboxStyle}"/>
+                </Border>
+
+                <!-- CARD -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <TextBlock Text="Card:" Foreground="#555555" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                </StackPanel>
+                <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10">
+                    <!-- Card Input -->
+                    <TextBox x:Name="TxtCard" Style="{StaticResource RoundedTextboxStyle}"/>
+                </Border>
+
+                <!-- BANK -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <TextBlock Text="Bank:" Foreground="#555555" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                </StackPanel>
+                <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10">
+                    <!-- Bank Input -->
+                    <TextBox x:Name="TxtBank" Style="{StaticResource RoundedTextboxStyle}"/>
+                </Border>
+
+                <!-- CHANGE -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <TextBlock Text="Change:" Foreground="#555555" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                </StackPanel>
+                <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,20">
+                    <!-- Cheque Input -->
+                    <TextBox x:Name="TxtCheque" Style="{StaticResource RoundedTextboxStyle}"/>
+                </Border>
+
+                <Button Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#d23637">
+                    <TextBlock Text="Close Register" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="15" FontFamily="Lexend"/>
+                </Button>
+
+
+            </StackPanel>
+        </Grid>
+    </materialDesign:Card>
+</UserControl>
