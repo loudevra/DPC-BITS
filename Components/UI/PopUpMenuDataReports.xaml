@@ -68,7 +68,7 @@
                     </Grid.ColumnDefinitions>
                     <materialDesign:PackIcon Kind="Glasses" Foreground="White" Width="20" Height="20" Margin="10,0,0,0"/>
                     <TextBlock Grid.Column="1">
-                        <Hyperlink>
+                        <Hyperlink Click="NavigateToBusinessregister" >
                             <TextBlock Text="Business Registers" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
                     </TextBlock>
@@ -83,7 +83,7 @@
                         </Grid.ColumnDefinitions>
                         <materialDesign:PackIcon Kind="ListBoxOutline" Foreground="White" Width="20" Height="20" Margin="10,0,0,0"/>
                         <TextBlock Grid.Column="1">
-                            <Hyperlink>
+                            <Hyperlink Click="NavigateToGenerateStatement" >
                                 <TextBlock Text="Statements" Style="{StaticResource MainMenuItemStyle}"/>
                             </Hyperlink>
                         </TextBlock>

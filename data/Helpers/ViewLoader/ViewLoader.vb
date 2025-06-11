@@ -69,7 +69,10 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New CRM.SupportTicket()
                     Case "newresidentialclient"
                         Return New CRM.CRMNewResidentialClient
-
+                    Case "businnessregisters"
+                        Return New DPC.Views.DataReports.DTRBusinessRegisters()
+                    Case "generatestatement"
+                        Return New DPC.Views.DataReports.DTRTabStructured()
                         ' Employees Navigation
                     Case "permissions"
                         Return New HRM.Employees.Permissions.PermissionsEmployee()
@@ -196,6 +199,12 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "managetickets"
             ElseIf typeName = "newresidentialclient" Then
                 Return "newresidentialclient"
+
+            ElseIf typeName = "businnessregisters" Then
+                Return "businnessregisters"
+            ElseIf typeName = "generatestatement" Then
+                Return "generatestatement"
+
 
                 ' Salaries Navigation
             ElseIf typeName = "salaries" Then
