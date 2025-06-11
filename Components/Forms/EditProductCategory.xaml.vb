@@ -67,20 +67,6 @@ Namespace DPC.Components.Forms
             MainContent.Children.Add(descriptionPanel)
         End Sub
 
-        Private Sub RemoveCategoryPanel()
-            If productcategoryPanels.Count >= 2 Then
-                ' Remove last added panels from UI and list
-                Dim lastDescriptionPanel As StackPanel = productcategoryPanels(productcategoryPanels.Count - 1)
-                Dim lastSubcategoryPanel As StackPanel = productcategoryPanels(productcategoryPanels.Count - 2)
-
-                MainContent.Children.Remove(lastDescriptionPanel)
-                MainContent.Children.Remove(lastSubcategoryPanel)
-
-                productcategoryPanels.RemoveAt(productcategoryPanels.Count - 1)
-                productcategoryPanels.RemoveAt(productcategoryPanels.Count - 1)
-            End If
-        End Sub
-
         ' UPDATE IN THE DATABASE FUNCTION PART
         Public Sub UpdateCategory(categoryID As Integer?, categoryName As String, categoryDescription As String)
             Try
@@ -248,8 +234,6 @@ Namespace DPC.Components.Forms
             ' Call the update methods
             UpdateCategory(categoryID, categoryName, categoryDescription)
             UpdateSubCategories(categoryID, subcategories)
-            ' productCategoriesLoad.LoadData()
-            'removeTheLastSubcategory()
         End Sub
 
         Public Sub UpdateCategoryWithSubCategoryInfo(categoryID As Integer, subcategoriesMain As List(Of Subcategory))
