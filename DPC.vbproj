@@ -661,6 +661,9 @@
     <Compile Include="Views\Misc\Documents\Documents.xaml.vb">
       <DependentUpon>Documents.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\POS\PaymentCardsConfirmation.xaml.vb">
+      <DependentUpon>PaymentCardsConfirmation.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\POS\PaymentGateway.xaml.vb">
       <DependentUpon>PaymentGateway.xaml</DependentUpon>
     </Compile>
@@ -1115,6 +1118,10 @@
     <Page Include="Views\Misc\Documents\Documents.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\POS\PaymentCardsConfirmation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\POS\PaymentGateway.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1202,6 +1209,20 @@
     <Content Include=".env">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Assets\payments\Amex.png" />
+    <Resource Include="Assets\payments\Authorize.net.png" />
+    <Resource Include="Assets\payments\Discover.png" />
+    <Resource Include="Assets\payments\GCASH LOGO.png" />
+    <Resource Include="Assets\payments\Mastercard.png" />
+    <Resource Include="Assets\payments\Maya_logo 1.png" />
+    <Resource Include="Assets\payments\PayPal.png" />
+    <Resource Include="Assets\payments\PayU.png" />
+    <Resource Include="Assets\payments\Razor.png" />
+    <Resource Include="Assets\payments\ShopeePay 1.png" />
+    <Resource Include="Assets\payments\Stripe.png" />
+    <Resource Include="Assets\payments\Vector.png" />
+    <Resource Include="Assets\payments\Verifone.png" />
+    <Resource Include="Assets\payments\Visa.png" />
   </ItemGroup>
   <ItemGroup>
     <Import Include="System.Threading.Tasks" />
