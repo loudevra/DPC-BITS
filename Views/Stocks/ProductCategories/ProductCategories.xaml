@@ -163,7 +163,7 @@
             </Button>
         </StackPanel>
 
-        <!-- Options Bar - Static with controls -->
+        <!-- Option Bar - Static with controls -->
         <StackPanel VerticalAlignment="Center" Grid.Row="1" Margin="20,10">
             <Border Style="{StaticResource RoundedBorderStyle}" BorderThickness="0" Background="white" Padding="10" CornerRadius="10">
                 <Grid>

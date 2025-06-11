@@ -111,7 +111,7 @@
             </Setter>
         </Style>
 
-        <!-- TextBox Style -->
+        <!-- TextBox Style  -->
         <Style x:Key="RoundedTextboxStyle" TargetType="TextBox">
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Background" Value="Transparent"/>
