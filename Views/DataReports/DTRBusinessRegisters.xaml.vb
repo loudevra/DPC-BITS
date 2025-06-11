@@ -1,3 +1,9 @@
-﻿Public Class DTRBusinessRegisters
+﻿Namespace DPC.Views.DataReports
+    Public Class DTRBusinessRegisters
 
-End Class
+        Public Sub New()
+            InitializeComponent()
+
+        End Sub
+    End Class
+End Namespace
