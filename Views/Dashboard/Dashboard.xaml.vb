@@ -6,5 +6,17 @@ Namespace DPC.Views.Dashboard
         Public Sub New()
             InitializeComponent()
         End Sub
+
+        Private Sub RecentInvoicesDataGrid_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+
+        End Sub
+
+        Private Sub RecentInvoicesDataGrid_SelectionChanged_1(sender As Object, e As SelectionChangedEventArgs)
+
+        End Sub
+
+        Private Sub cmbCashflowType_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles cmbCashflowType.SelectionChanged
+
+        End Sub
     End Class
 End Namespace
