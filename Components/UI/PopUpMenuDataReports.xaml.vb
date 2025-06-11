@@ -228,6 +228,15 @@ Namespace DPC.Components.UI
         Private Sub NavigateToEmployeeCommissionReport(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("employeecommission", Me)
         End Sub
+        Private Sub NavigateToBusinessregister(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("businnessregisters", Me)
+        End Sub
+
+        Private Sub NavigateToGenerateStatement(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("generatestatement", Me)
+        End Sub
+
+
 
         ''' <summary>
         ''' This method is used in the XAML to handle navigation for all buttons
