@@ -29,14 +29,6 @@ Namespace DPC.Components.Forms
 
         End Sub
 
-
-        ' This is where you code a function
-
-        Private Sub RemoveCategoryTextBoxes()
-            If productcategoryNameTextBoxes.Count > 0 Then productcategoryNameTextBoxes.RemoveAt(productcategoryNameTextBoxes.Count - 1)
-            If productcategoryDescriptionTextBoxes.Count > 0 Then productcategoryDescriptionTextBoxes.RemoveAt(productcategoryDescriptionTextBoxes.Count - 1)
-        End Sub
-
         Public Sub CreateSubCategoryPanel(Optional subcategoryName As String = "", Optional subcategoryDescription As String = "")
             ' Create subcategory panel
             Dim subcategoryPanel As New StackPanel() With {.Name = "SubCategoryPanel"}
@@ -86,41 +78,6 @@ Namespace DPC.Components.Forms
 
                 productcategoryPanels.RemoveAt(productcategoryPanels.Count - 1)
                 productcategoryPanels.RemoveAt(productcategoryPanels.Count - 1)
-            End If
-        End Sub
-
-        Public Sub LoadSubCategoryPanel(subcategories As List(Of Subcategory))
-            ' Clear previous UI elements to prevent duplication
-            MainContent.Children.Clear()
-
-            ' Loop through each subcategory in the list
-            For Each subcategory As Subcategory In subcategories
-                Dim subcategoryPanel As New StackPanel()
-
-                Dim lblSubCategory As New TextBlock With {
-            .Text = $"Subcategory {subcategory.subcategoryID}:",
-            .FontSize = 14,
-            .FontWeight = FontWeights.SemiBold
-        }
-
-                Dim txtSubCategoryName As New TextBox With {
-            .Text = subcategory.subcategoryName,
-            .Style = CType(Application.Current.TryFindResource("RoundedTextboxStyle"), Style)
-        }
-
-                subcategoryPanel.Children.Add(lblSubCategory)
-                subcategoryPanel.Children.Add(txtSubCategoryName)
-
-                MainContent.Children.Add(subcategoryPanel)
-            Next
-        End Sub
-
-        Public Sub PrintProductSubCategory(productCategory As ProductCategory)
-            ' Loop through subcategories
-            If productCategory.subcategories IsNot Nothing Then
-                For Each subcategory In productCategory.subcategories
-                    Console.WriteLine($"Subcategory ID: {subcategory.subcategoryID}, Name: {subcategory.subcategoryName}")
-                Next
             End If
         End Sub
 
