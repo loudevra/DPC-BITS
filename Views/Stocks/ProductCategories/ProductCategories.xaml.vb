@@ -1,14 +1,15 @@
-﻿Imports ClosedXML.Excel
-Imports DPC.DPC.Data.Controllers
-Imports DPC.DPC.Data.Model
-Imports DPC.DPC.Data.Models
-Imports DPC.DPC.Data.Helpers
-Imports Microsoft.Win32
-Imports System.Collections.ObjectModel
+﻿Imports System.Collections.ObjectModel
 Imports System.ComponentModel
 Imports System.Data
 Imports System.Reflection
 Imports System.Windows.Controls.Primitives
+Imports ClosedXML.Excel
+Imports DPC.DPC.Components.Forms
+Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Helpers
+Imports DPC.DPC.Data.Model
+Imports DPC.DPC.Data.Models
+Imports Microsoft.Win32
 
 Namespace DPC.Views.Stocks.ProductCategories
     ''' <summary>
@@ -147,10 +148,14 @@ Namespace DPC.Views.Stocks.ProductCategories
                 Exit Sub
             End If
 
+            ' New model Instance
+            Dim subCategory As New Subcategory
+
             ' Create a list of column headers to exclude
             Dim columnsToExclude As New List(Of String) From {"Settings"}
             ' Use the ExcelExporter helper with column exclusions
-            ExcelExporter.ExportDataGridToExcel(dataGrid, columnsToExclude, "ProductCategories", "Product Categories List")
+            ExcelExporter.ExportDataGridToExcel(dataGrid, columnsToExclude, "CategoriesExport", "Product Categories List", subCategory, "subcategoryName")
+
         End Sub
 
         Private Sub AddCategory(sender As Object, e As RoutedEventArgs)
@@ -185,8 +190,184 @@ Namespace DPC.Views.Stocks.ProductCategories
             PopupHelper.OpenPopupWithControl(sender, addSubcategoryWindow, "windowcenter", True, -50, 0, parentWindow)
         End Sub
 
-        Private Sub OnSubCategoryAdded(sender As Object, e As EventArgs)
+        Public Sub OnSubCategoryAdded(sender As Object, e As EventArgs)
             LoadData() ' Reloads the subcategories in the main view
         End Sub
+
+        ' Loads the data after editing
+        Public Sub OnEditedCategoryAndSubCategory(sender As Object, e As EventArgs)
+            LoadData()
+        End Sub
+
+        Private Sub btnEditPopup_Click(sender As Object, e As RoutedEventArgs)
+            Dim clickedButton As Button = TryCast(sender, Button)
+            If clickedButton Is Nothing Then Return
+
+            If recentlyClosed Then
+                recentlyClosed = False
+                Return
+            End If
+
+            If popup IsNot Nothing AndAlso popup.IsOpen Then
+                popup.IsOpen = False
+                recentlyClosed = True
+                Return
+            End If
+
+            ' Placing the popup in the center instead of near to the button of edit
+            popup = New Popup With {
+                .StaysOpen = False,
+                .AllowsTransparency = True,
+                .HorizontalOffset = (SystemParameters.PrimaryScreenWidth - 450) / 2,
+                .VerticalOffset = (SystemParameters.PrimaryScreenHeight - 600) / 2
+            }
+
+            Dim editProductCategoryWindow As New DPC.Components.Forms.EditProductCategory()
+
+            ' Handle the BrandAdded event
+            AddHandler editProductCategoryWindow.EditProductCategoryAndSubcategory, AddressOf OnEditedCategoryAndSubCategory
+
+            ' Passing the Value of the DataGrid Item Selected to the Edit Product Category before opening the popup
+            Dim selectedProductCategory As ProductCategory = TryCast(dataGrid.SelectedItem, ProductCategory)
+
+            editProductCategoryWindow.TxtCategoryName.Text = selectedProductCategory.categoryName
+            editProductCategoryWindow.TxtCategoryDescription.Text = selectedProductCategory.categoryDescription
+            editProductCategoryWindow.UpdateCategoryWithSubCategoryInfo(selectedProductCategory.categoryID, selectedProductCategory.subcategories)
+
+            If selectedProductCategory.subcategories IsNot Nothing AndAlso selectedProductCategory.subcategories.Count > 0 Then
+                For Each subcategory As Subcategory In selectedProductCategory.subcategories
+                    ' Debug PURPOSES - Just Incase it gives errors
+                    'Console.WriteLine($"Subcategory ID: {subcategory.subcategoryID}, Name: {subcategory.subcategoryName}")
+                    editProductCategoryWindow.CreateSubCategoryPanel(subcategory.subcategoryName)
+                Next
+            Else
+                Console.WriteLine("No subcategories found for this product category.")
+            End If
+
+            ' Continuation of the popup
+            popup.Child = editProductCategoryWindow
+
+            AddHandler popup.Closed, Sub()
+                                         recentlyClosed = True
+                                         Task.Delay(100).ContinueWith(Sub() recentlyClosed = False, TaskScheduler.FromCurrentSynchronizationContext())
+                                     End Sub
+
+            popup.IsOpen = True
+        End Sub
+
+        Private Sub btnDeleteCategory_Click(sender As Object, e As RoutedEventArgs)
+            Dim selectedProductCategory As ProductCategory = TryCast(dataGrid.SelectedItem, ProductCategory)
+
+            Dim brandId As Integer = selectedProductCategory.categoryID
+        End Sub
+
+        ' Callback to reload the brand data
+        Private Sub OnProductEdited()
+            LoadProductCategory()
+        End Sub
+
+        Private Sub LoadProductCategory()
+            Try
+                ' Check if DataGrid exists
+                If dataGrid Is Nothing Then
+                    MessageBox.Show("DataGrid control not found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return
+                End If
+
+                ' Get all brands with error handling
+                Dim allBrands As ObservableCollection(Of Object)
+                Try
+                    Dim brandList = BrandController.GetBrands()
+                    If brandList Is Nothing Then
+                        MessageBox.Show("Brand data returned null.", "Data Error", MessageBoxButton.OK, MessageBoxImage.Warning)
+                        allBrands = New ObservableCollection(Of Object)()
+                    Else
+                        allBrands = New ObservableCollection(Of Object)(brandList)
+                    End If
+                Catch ex As Exception
+                    MessageBox.Show("Error retrieving brand data: " & ex.Message, "Data Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    allBrands = New ObservableCollection(Of Object)()
+                End Try
+
+                ' Clear the pagination panel to avoid duplicate controls
+                paginationPanel.Children.Clear()
+
+                ' Initialize pagination helper with our DataGrid and pagination panel
+                _paginationHelper = New PaginationHelper(dataGrid, paginationPanel)
+
+                ' Set the items per page from the combo box if available
+                'If cboItemsPerPage IsNot Nothing Then
+                'Dim selectedItem = TryCast(cboItemsPerPage.SelectedItem, ComboBoxItem)
+                'If selectedItem IsNot Nothing Then
+                'Dim itemsPerPageText As String = TryCast(selectedItem.Content, String)
+                'Dim itemsPerPage As Integer
+                'If Integer.TryParse(itemsPerPageText, itemsPerPage) Then
+                '_paginationHelper.ItemsPerPage = itemsPerPage
+                'End If
+                'End If
+                'End If
+
+                ' Set the all items to the helper
+                _paginationHelper.AllItems = allBrands
+
+                ' Initialize search filter helper with our pagination helper
+                _searchFilterHelper = New SearchFilterHelper(_paginationHelper, "ID", "Name", "TotalSupplier")
+
+            Catch ex As Exception
+                MessageBox.Show("Error in LoadBrands: " & ex.Message & vbCrLf & "Stack Trace: " & ex.StackTrace,
+                                "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+        End Sub
+
+
+        Private Sub btnDeletePopup_Click(sender As Object, e As RoutedEventArgs)
+            Dim clickedButton As Button = TryCast(sender, Button)
+            If clickedButton Is Nothing Then Return
+
+            If recentlyClosed Then
+                recentlyClosed = False
+                Return
+            End If
+
+            If popup IsNot Nothing AndAlso popup.IsOpen Then
+                popup.IsOpen = False
+                recentlyClosed = True
+                Return
+            End If
+
+            ' Create the user control
+            Dim deleteModal As New DPC.Components.ConfirmationModals.DeleteCategoryModal()
+
+            ' Handle event
+            AddHandler deleteModal.DeletedCategory, AddressOf OnEditedCategoryAndSubCategory
+
+            Dim selectedProductCategory As ProductCategory = TryCast(dataGrid.SelectedItem, ProductCategory)
+
+            deleteModal.getCategoryID(selectedProductCategory.categoryID)
+
+            ' Set popup manually in the center
+            popup = New Popup With {
+                .Child = deleteModal,
+                .StaysOpen = False,
+                .AllowsTransparency = True,
+                .Placement = PlacementMode.Absolute
+            }
+
+            ' Size of the modal
+            Dim modalWidth As Double = 400 ' or actual width of your UserControl
+            Dim modalHeight As Double = 300 ' or actual height of your UserControl
+
+            popup.HorizontalOffset = (SystemParameters.PrimaryScreenWidth - modalWidth) / 2
+            popup.VerticalOffset = (SystemParameters.PrimaryScreenHeight - modalHeight) / 2
+
+            ' Close logic
+            AddHandler popup.Closed, Sub()
+                                         recentlyClosed = True
+                                         Task.Delay(100).ContinueWith(Sub() recentlyClosed = False, TaskScheduler.FromCurrentSynchronizationContext())
+                                     End Sub
+
+            popup.IsOpen = True
+        End Sub
+
     End Class
 End Namespace

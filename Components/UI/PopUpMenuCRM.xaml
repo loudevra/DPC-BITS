@@ -87,10 +87,15 @@
                         <!-- Submenu items -->
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
-                                <Hyperlink Click="NavigateToNewClient">
-                                    <TextBlock Text="New Client" Foreground="#d4d4d4" FontSize="13"/>
+                                <Hyperlink Click="NavigateToResidentialClient">
+                                    <TextBlock Text="New Residential Client" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
                             </TextBlock>
+                            <TextBlock Margin="10,3,0,3">
+    <Hyperlink Click="NavigateToCorporationalClient">
+        <TextBlock Text="New Corporational Client" Foreground="#d4d4d4" FontSize="13"/>
+    </Hyperlink>
+</TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageClients">
                                     <TextBlock Text="Manage Clients" Foreground="#d4d4d4" FontSize="13"/>

@@ -58,6 +58,18 @@ Namespace DPC.Data.Helpers.ViewLoader
                         ' Promo Codes Navigation
                     Case "promocodes"
                         Return New PromoCodes.ManagePromoCodes()
+
+                         ' CRM Navigation
+                    Case "clientgroups"
+                        Return New CRM.ClientGroup.ClientGroups()
+
+                    Case "manageclients"
+                        Return New CRM.CRMClients()
+                    Case "managetickets"
+                        Return New CRM.SupportTicket()
+                    Case "newresidentialclient"
+                        Return New CRM.CRMNewResidentialClient
+
                         ' Employees Navigation
                     Case "permissions"
                         Return New HRM.Employees.Permissions.PermissionsEmployee()
@@ -171,6 +183,19 @@ Namespace DPC.Data.Helpers.ViewLoader
 
             ElseIf typeName = "holidays" Then
                 Return "holidays"
+
+                ' ClientGroup Navigation
+            ElseIf typeName = "clientgroups" Then
+                Return "clientgroups"
+
+                ' Client Navigation
+            ElseIf typeName = "manageclients" Then
+                Return "manageclients"
+                ' Tickets Navigation
+            ElseIf typeName = "managetickets" Then
+                Return "managetickets"
+            ElseIf typeName = "newresidentialclient" Then
+                Return "newresidentialclient"
 
                 ' Salaries Navigation
             ElseIf typeName = "salaries" Then

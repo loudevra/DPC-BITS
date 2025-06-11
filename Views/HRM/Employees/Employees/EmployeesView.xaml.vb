@@ -148,5 +148,18 @@ Namespace DPC.Views.HRM.Employees.Employees
             End Try
         End Sub
 
+        Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
+            ' Check if DataGrid has data
+            If EmployeesDataGrid.Items.Count = 0 Then
+                MessageBox.Show("No data to export!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Exit Sub
+            End If
+
+            ' Create a list of column headers to exclude
+            Dim columnsToExclude As New List(Of String) From {"Actions", "Status"}
+            ' Use the ExcelExporter helper with column exclusions
+            ExcelExporter.ExportDataGridToExcel(EmployeesDataGrid, columnsToExclude, "EmployeesExport", "Employees List")
+
+        End Sub
     End Class
 End Namespace

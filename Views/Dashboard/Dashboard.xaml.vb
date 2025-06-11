@@ -1,5 +1,4 @@
-﻿
-Namespace DPC.Views.Dashboard
+﻿Namespace DPC.Views.Dashboard
     Partial Public Class Dashboard
         Inherits UserControl
 

@@ -368,6 +368,9 @@
     <Compile Include="Components\ConfirmationModals\ConfirmWarehouseDeletion.xaml.vb">
       <DependentUpon>ConfirmWarehouseDeletion.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\ConfirmationModals\DeleteCategoryModal.xaml.vb">
+      <DependentUpon>DeleteCategoryModal.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\ConfirmationModals\HRMConfirmationEmployeeSalaryUpdate.xaml.vb">
       <DependentUpon>HRMConfirmationEmployeeSalaryUpdate.xaml</DependentUpon>
     </Compile>
@@ -412,6 +415,9 @@
     </Compile>
     <Compile Include="Components\Forms\EditBrand.xaml.vb">
       <DependentUpon>EditBrand.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\EditProductCategory.xaml.vb">
+      <DependentUpon>EditProductCategory.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\EditWarehouse.xaml.vb">
       <DependentUpon>EditWarehouse.xaml</DependentUpon>
@@ -491,6 +497,7 @@
     <Compile Include="Data\Converters\BooleanToVisibilityConverter.vb" />
     <Compile Include="Data\Converters\InverseBooleanToVisibilityConverter.vb" />
     <Compile Include="Data\Converters\PasswordMaskingBehavior.vb" />
+    <Compile Include="Data\Converters\RetainCacheSupplier\CacheNewSupplier.vb" />
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
     <Compile Include="Data\Helpers\AutocompleteHelper.vb" />
@@ -550,7 +557,7 @@
     <Compile Include="Views\Auth\VerifyCode.xaml.vb">
       <DependentUpon>VerifyCode.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\CRM\ClientGroups.xaml.vb">
+    <Compile Include="Views\CRM\ClientGroup\ClientGroups.xaml.vb">
       <DependentUpon>ClientGroups.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\CRM\CRMBillingAddress.xaml.vb">
@@ -603,6 +610,9 @@
     </Compile>
     <Compile Include="Views\DataReports\DTRAccounts.xaml.vb">
       <DependentUpon>DTRAccounts.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DataReports\DTRBusinessRegisters.xaml.vb">
+      <DependentUpon>DTRBusinessRegisters.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DataReports\DTRCustomer.xaml.vb">
       <DependentUpon>DTRCustomer.xaml</DependentUpon>
@@ -707,6 +717,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\ConfirmationModals\DeleteCategoryModal.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\ConfirmationModals\HRMEmployerSalariesModal.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -762,6 +776,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\ConfirmationModals\HRMConfirmationEmployeeSalaryUpdate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\EditProductCategory.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -975,7 +993,7 @@
     <Page Include="Views\Auth\VerifyCode.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\CRM\ClientGroups.xaml">
+    <Page Include="Views\CRM\ClientGroup\ClientGroups.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1043,6 +1061,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DataReports\DTRAccounts.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DataReports\DTRBusinessRegisters.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
