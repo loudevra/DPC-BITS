@@ -148,10 +148,14 @@ Namespace DPC.Views.Stocks.ProductCategories
                 Exit Sub
             End If
 
+            ' New model Instance
+            Dim subCategory As New Subcategory
+
             ' Create a list of column headers to exclude
             Dim columnsToExclude As New List(Of String) From {"Settings"}
             ' Use the ExcelExporter helper with column exclusions
-            ExcelExporter.ExportDataGridToExcel(dataGrid, columnsToExclude, "ProductCategories", "Product Categories List")
+            ExcelExporter.ExportDataGridToExcel(dataGrid, columnsToExclude, "CategoriesExport", "Product Categories List", subCategory, "subcategoryName")
+
         End Sub
 
         Private Sub AddCategory(sender As Object, e As RoutedEventArgs)
