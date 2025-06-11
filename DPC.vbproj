@@ -556,7 +556,7 @@
     <Compile Include="Views\Auth\VerifyCode.xaml.vb">
       <DependentUpon>VerifyCode.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\CRM\ClientGroups.xaml.vb">
+    <Compile Include="Views\CRM\ClientGroup\ClientGroups.xaml.vb">
       <DependentUpon>ClientGroups.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\CRM\CRMBillingAddress.xaml.vb">
@@ -989,7 +989,7 @@
     <Page Include="Views\Auth\VerifyCode.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\CRM\ClientGroups.xaml">
+    <Page Include="Views\CRM\ClientGroup\ClientGroups.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

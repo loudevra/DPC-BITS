@@ -103,8 +103,12 @@ Namespace DPC.Components.UI
         End Sub
 
         ' Client navigation methods
-        Private Sub NavigateToNewClient(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("newclient", Me)
+        Private Sub NavigateToResidentialClient(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("newresidentialclient", Me)
+        End Sub
+
+        Private Sub NavigateToCorporationalClient(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("newcorporationalclient", Me)
         End Sub
 
         Private Sub NavigateToManageClients(sender As Object, e As RoutedEventArgs)
@@ -117,11 +121,11 @@ Namespace DPC.Components.UI
 
         ' Support Tickets navigation methods
         Private Sub NavigateToUnsolvedTickets(sender As Object, e As RoutedEventArgs)
-
+            ViewLoader.DynamicView.NavigateToView("clientgroups", Me)
         End Sub
 
         Private Sub NavigateToManageTickets(sender As Object, e As RoutedEventArgs)
-
+            ViewLoader.DynamicView.NavigateToView("managetickets", Me)
         End Sub
     End Class
 End Namespace

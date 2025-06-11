@@ -1,6 +1,6 @@
 ﻿Namespace DPC.Views.CRM
     Public Class SupportTicket
-        Private Sub New()
+        Public Sub New()
 
             ' This call is required by the designer.
             InitializeComponent()

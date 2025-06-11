@@ -1,6 +1,8 @@
-﻿Namespace DPC.Views.CRM
+﻿
+Namespace DPC.Views.CRM.ClientGroup
     Public Class ClientGroups
-        Private Sub New()
+        Inherits UserControl
+        Public Sub New()
 
             ' This call is required by the designer.
             InitializeComponent()

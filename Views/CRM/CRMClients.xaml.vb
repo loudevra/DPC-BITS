@@ -1,6 +1,6 @@
 ﻿Namespace DPC.Views.CRM
     Public Class CRMClients
-        Private Sub New()
+        Public Sub New()
             InitializeComponent()
         End Sub
     End Class
