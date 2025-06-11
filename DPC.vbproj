@@ -610,6 +610,9 @@
     <Compile Include="Views\DataReports\DTRAccounts.xaml.vb">
       <DependentUpon>DTRAccounts.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\DataReports\DTRBusinessRegisters.xaml.vb">
+      <DependentUpon>DTRBusinessRegisters.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\DataReports\DTRCustomer.xaml.vb">
       <DependentUpon>DTRCustomer.xaml</DependentUpon>
     </Compile>
@@ -1057,6 +1060,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DataReports\DTRAccounts.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DataReports\DTRBusinessRegisters.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
