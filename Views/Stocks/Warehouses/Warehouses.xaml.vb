@@ -258,5 +258,9 @@ Namespace DPC.Views.Stocks.Warehouses
 
             popup.IsOpen = True
         End Sub
+
+        Private Sub dataGrid_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+
+        End Sub
     End Class
 End Namespace
