@@ -81,7 +81,7 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
         Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
             If dataGrid Is Nothing Then Return
 
-            Dim columnsToExclude As New List(Of String) From {"Settings"}
+            Dim columnsToExclude As New List(Of String) From {"Actions"}
             ExcelExporter.ExportDataGridToExcel(dataGrid, columnsToExclude, "BrandsExport", "Brands")
         End Sub
 
