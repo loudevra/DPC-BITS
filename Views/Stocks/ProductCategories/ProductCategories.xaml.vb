@@ -234,7 +234,6 @@ Namespace DPC.Views.Stocks.ProductCategories
                 For Each subcategory As Subcategory In selectedProductCategory.subcategories
                     ' Debug PURPOSES - Just Incase it gives errors
                     'Console.WriteLine($"Subcategory ID: {subcategory.subcategoryID}, Name: {subcategory.subcategoryName}")
-                    editProductCategoryWindow.AdjustCategoryNumber(1)
                     editProductCategoryWindow.CreateSubCategoryPanel(subcategory.subcategoryName)
                 Next
             Else

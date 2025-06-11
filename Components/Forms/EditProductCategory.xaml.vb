@@ -32,29 +32,6 @@ Namespace DPC.Components.Forms
 
         ' This is where you code a function
 
-        Private Sub btnIncrease(sender As Object, e As RoutedEventArgs)
-            AdjustCategoryNumber(1)
-            CreateSubCategoryPanel()
-        End Sub
-
-        Public Sub AdjustCategoryNumber(change As Integer)
-            Dim currentValue As Integer
-            If Integer.TryParse(SubCategoryNumber.Text, currentValue) Then
-                currentValue += change
-                SubCategoryNumber.Text = currentValue.ToString()
-            End If
-        End Sub
-
-        Private Sub btnDecrease(sender As Object, e As RoutedEventArgs)
-            If Integer.TryParse(SubCategoryNumber.Text, Nothing) AndAlso CInt(SubCategoryNumber.Text) > 1 Then
-                AdjustCategoryNumber(-1)
-                RemoveCategoryPanel()
-                RemoveCategoryTextBoxes()
-                ' Enlist
-                enlistTheLastSubcategory()
-            End If
-        End Sub
-
         Private Sub RemoveCategoryTextBoxes()
             If productcategoryNameTextBoxes.Count > 0 Then productcategoryNameTextBoxes.RemoveAt(productcategoryNameTextBoxes.Count - 1)
             If productcategoryDescriptionTextBoxes.Count > 0 Then productcategoryDescriptionTextBoxes.RemoveAt(productcategoryDescriptionTextBoxes.Count - 1)
@@ -167,6 +144,7 @@ Namespace DPC.Components.Forms
                             End If
                         End Using
 
+                        ' copy sub
                         ' Check for duplicate brand name (excluding current brand)
                         Dim checkQuery As String = "SELECT COUNT(*) FROM category WHERE categoryName = @categoryName AND categoryID <> @categoryID"
                         Using checkCmd As New MySqlCommand(checkQuery, conn)
@@ -237,27 +215,7 @@ Namespace DPC.Components.Forms
 
                             Console.WriteLine($"Exists Result = {exists}")
                         End Using
-
-                        ' If it does NOT exist, collect it in our list for later insertion.
-                        If Not exists Then
-                            missingSubcategories.Add(subcategory)
-                        End If
                     Next
-
-                    ' Step 2: Check if all missing subcategories are valid before inserting.
-                    ' (In this case, it ensures all have a non-empty name.)
-                    If missingSubcategories.All(Function(s) Not String.IsNullOrWhiteSpace(s.subcategoryName)) Then
-                        For Each subcategory As Subcategory In missingSubcategories
-                            Try
-                                addSubcategory(categoryID, subcategory.subcategoryName)
-                                Console.WriteLine($"Inserted: {subcategory.subcategoryName}")
-                            Catch ex As Exception
-                                Console.WriteLine("Insert failed: " & ex.Message)
-                            End Try
-                        Next
-                    Else
-                        MessageBox.Show("One or more subcategories are invalid. Insert canceled.")
-                    End If
 
                     ' Step 3: Continue to update existing subcategories
                     For Each subcategory As Subcategory In subcategories
@@ -334,87 +292,12 @@ Namespace DPC.Components.Forms
             UpdateCategory(categoryID, categoryName, categoryDescription)
             UpdateSubCategories(categoryID, subcategories)
             ' productCategoriesLoad.LoadData()
-            removeTheLastSubcategory()
+            'removeTheLastSubcategory()
         End Sub
 
         Public Sub UpdateCategoryWithSubCategoryInfo(categoryID As Integer, subcategoriesMain As List(Of Subcategory))
             _categoryID = categoryID
             _subcategories = subcategoriesMain
-        End Sub
-
-        Private enlistDeletion As New List(Of Subcategory)
-
-        ' Method to add the last subcategory to the list
-        Private Sub enlistTheLastSubcategory()
-            If _subcategories.Count > 0 Then
-                For i As Integer = _subcategories.Count - 1 To 0 Step -1
-                    Dim current As Subcategory = _subcategories(i)
-
-                    ' Check if it's not already enlisted
-                    Dim alreadyEnlisted = enlistDeletion.Any(Function(s) s.subcategoryID = current.subcategoryID)
-
-                    If Not alreadyEnlisted Then
-                        enlistDeletion.Add(New Subcategory With {
-                            .subcategoryID = current.subcategoryID,
-                            .subcategoryName = current.subcategoryName
-                        })
-                        Exit For ' Enlist only one per call
-                    End If
-                Next
-
-                Console.WriteLine("Current items in enlistDeletion:")
-                For Each item As Subcategory In enlistDeletion
-                    Console.WriteLine($"ID: {item.subcategoryID}, Name: {item.subcategoryName}")
-                Next
-            End If
-        End Sub
-
-        ' This will automatically delete the subcategory
-        Private Sub removeTheLastSubcategory()
-            If _subcategories.Count > 0 Then
-                Dim lastSubCategoryID As Integer = _subcategories(_subcategories.Count - 1).subcategoryID
-                Dim lastSubCategoryName As String = _subcategories(_subcategories.Count - 1).subcategoryName
-                Console.WriteLine("Removing SubcategoryID: " & lastSubCategoryID)
-                Try
-                    Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                        conn.Open()
-
-                        Dim deleteSubCategoryQuery As String = "DELETE FROM subcategory WHERE subcategoryID = @subcategoryID"
-                        For Each item As Subcategory In enlistDeletion
-                            Using deleteCmd As New MySqlCommand(deleteSubCategoryQuery, conn)
-                                deleteCmd.Parameters.AddWithValue("@subcategoryID", item.subcategoryID)
-                                deleteCmd.ExecuteNonQuery()
-
-                                Console.WriteLine($"Successfully Deleted the Subcategory '{item.subcategoryName}' (ID: {item.subcategoryID})")
-                            End Using
-                        Next
-                        enlistDeletion.Clear()
-                        Console.WriteLine("Finished deleting all enlisted subcategories.")
-                        RaiseEvent EditProductCategoryAndSubcategory(Me, EventArgs.Empty)
-                    End Using
-                Catch ex As Exception
-                    Console.WriteLine("Error deleting subcategory: " & ex.Message)
-                End Try
-            End If
-        End Sub
-
-        Private Sub addSubcategory(categoryID As Integer, subcategoryName As String)
-            Try
-                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                    conn.Open()
-
-                    Dim insertSubCategoryQuery As String = "INSERT INTO subcategory (categoryID, subcategoryName, dateCreated, dateModified) VALUES (@categoryID, @subcategoryName, NOW(), NOW())"
-                    Using insertCmd As New MySqlCommand(insertSubCategoryQuery, conn)
-                        insertCmd.Parameters.AddWithValue("@categoryID", categoryID)
-                        insertCmd.Parameters.AddWithValue("@subcategoryName", subcategoryName)
-                        insertCmd.ExecuteNonQuery()
-
-                        Console.WriteLine($"Successfully Added the Subcategory '{subcategoryName}'")
-                    End Using
-                End Using
-            Catch ex As Exception
-                Console.WriteLine("Inserting subcategory failed : " & ex.Message)
-            End Try
         End Sub
     End Class
 End Namespace
