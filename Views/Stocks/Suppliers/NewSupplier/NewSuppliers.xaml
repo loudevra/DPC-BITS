@@ -9,7 +9,9 @@
         mc:Ignorable="d"
         Background="Transparent"
         FontFamily="{StaticResource Lexend}"
-        Foreground="#474747">
+        Foreground="#474747"
+        Unloaded="NewSupplierUserControl_Unloaded"
+        Loaded="NewSupplierUserControl_Loaded">
 
     <Grid>
         <!-- Title Header - Now outside of ScrollViewer and static -->
@@ -74,7 +76,7 @@
                         </StackPanel>
                         <Border Style="{StaticResource RoundedBorderStyle}">
                             <!--Phone Number Value is here!-->
-                            <TextBox x:Name="TxtPhone" Style="{StaticResource RoundedTextboxStyle}"/>
+                            <TextBox x:Name="TxtPhone" PreviewTextInput="TxtPhone_PreviewTextInput" Style="{StaticResource RoundedTextboxStyle}"/>
                         </Border>
                     </StackPanel>
 

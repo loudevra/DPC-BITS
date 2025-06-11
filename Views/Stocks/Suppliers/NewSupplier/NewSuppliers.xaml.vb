@@ -14,6 +14,9 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
         Private brandList As ObservableCollection(Of Brand)
         Private autocompleteHelper As AutocompleteHelper(Of Brand)
 
+        ' Cache the value of the textbox whenever it is empty
+        Private Shared viewCache As New Dictionary(Of String, UserControl)
+
         Public Sub New()
             InitializeComponent()
 
@@ -90,6 +93,7 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
 
                 ' Clear form and reset fields after successful insertion
                 ClearForm()
+                UnloadCache()
 
                 ViewLoader.DynamicView.NavigateToView("managesuppliers", Me)
             Catch ex As Exception
@@ -115,6 +119,55 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
             autocompleteHelper.ClearSelection(ChipPanel)
 
             MessageBox.Show("Form cleared!", "Info", MessageBoxButton.OK, MessageBoxImage.Information)
+        End Sub
+
+        Private Sub TxtPhone_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
+            If Not e.Text.All(AddressOf Char.IsDigit) Then
+                e.Handled = True
+                Return
+            End If
+
+            ' Limit to 11 digits
+            Dim textBox = CType(sender, TextBox)
+            If textBox.Text.Length >= 11 Then
+                e.Handled = True
+            End If
+        End Sub
+
+        Private Sub NewSupplierUserControl_Unloaded(sender As Object, e As RoutedEventArgs)
+            StoreCache()
+        End Sub
+
+        Private Sub NewSupplierUserControl_Loaded(sender As Object, e As RoutedEventArgs)
+            UnloadCache()
+        End Sub
+
+        ' Stores in a Module serve as cache
+        Private Sub StoreCache()
+            CacheCompanyRepresentative = TxtRepresentative.Text
+            CacheCompanyName = TxtCompany.Text
+            CachePhone = TxtPhone.Text
+            CacheEmail = TxtEmail.Text
+            CacheCompanyAddress = TxtAddress.Text
+            CacheCompanyCity = TxtCity.Text
+            CacheCompanyRegion = TxtRegion.Text
+            CacheCompanyCountry = TxtCountry.Text
+            CacheCompanyPostalCode = TxtPostalCode.Text
+            CacheCompanyTINID = TxtTINID.Text
+        End Sub
+
+        ' Reload all of the unsave data again
+        Private Sub UnloadCache()
+            TxtRepresentative.Text = CacheCompanyRepresentative
+            TxtCompany.Text = CacheCompanyName
+            TxtPhone.Text = CachePhone
+            TxtEmail.Text = CacheEmail
+            TxtAddress.Text = CacheCompanyAddress
+            TxtCity.Text = CacheCompanyCity
+            TxtRegion.Text = CacheCompanyRegion
+            TxtCountry.Text = CacheCompanyCountry
+            TxtPostalCode.Text = CacheCompanyPostalCode
+            TxtTINID.Text = CacheCompanyTINID
         End Sub
     End Class
 End Namespace
