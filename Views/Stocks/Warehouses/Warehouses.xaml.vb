@@ -6,6 +6,7 @@ Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
 Imports System.Data
 Imports DPC.DPC.Views.Warehouse
+Imports DPC.DPC.Data.Model
 
 Namespace DPC.Views.Stocks.Warehouses
     Public Class Warehouses
@@ -24,7 +25,7 @@ Namespace DPC.Views.Stocks.Warehouses
             InitializeControls()
         End Sub
 
-        Private Sub InitializeControls()
+        Public Sub InitializeControls()
             ' Find UI elements using their name
             dataGrid = TryCast(FindName("dataGrid"), DataGrid)
             txtSearch = TryCast(FindName("txtSearch"), TextBox)
@@ -166,6 +167,96 @@ Namespace DPC.Views.Stocks.Warehouses
                 LoadData()
                 WarehouseController.Reload = False ' Reset the flag after reloading
             End If
+        End Sub
+
+        Private Sub OpenEditWarehouse(sender As Object, e As RoutedEventArgs)
+            Dim clickedButton As Button = TryCast(sender, Button)
+            If clickedButton Is Nothing Then Return
+
+            If recentlyClosed Then
+                recentlyClosed = False
+                Return
+            End If
+
+            If popup IsNot Nothing AndAlso popup.IsOpen Then
+                popup.IsOpen = False
+                recentlyClosed = True
+                Return
+            End If
+
+            popup = New Popup With {
+                .PlacementTarget = clickedButton,
+                .Placement = PlacementMode.Bottom,
+                .StaysOpen = False,
+                .AllowsTransparency = True
+            }
+
+            Dim editWarehouseWindow As New DPC.Components.Forms.EditWarehouse()
+
+            ' Converts selected row items into brand model
+            Dim warehouse As DPC.Data.Model.Warehouses = TryCast(dataGrid.SelectedItem, DPC.Data.Model.Warehouses)
+
+            ' Passes data to pop up
+            editWarehouseWindow.TxtWarehouseName.Text = warehouse.Name
+            editWarehouseWindow.WarehouseID = Convert.ToInt32(warehouse.ID)
+            editWarehouseWindow.WarehouseNameOld = warehouse.Name
+            editWarehouseWindow.Warehouses = Me
+
+            ' Handle the BrandAdded event
+            AddHandler editWarehouseWindow.WarehouseUpdated, AddressOf OnWarehouseUpdated
+
+            popup.Child = editWarehouseWindow
+
+            AddHandler popup.Closed, Sub()
+                                         recentlyClosed = True
+                                         Task.Delay(100).ContinueWith(Sub() recentlyClosed = False, TaskScheduler.FromCurrentSynchronizationContext())
+                                     End Sub
+
+            popup.IsOpen = True
+        End Sub
+
+        Private Sub OnWarehouseUpdated()
+            LoadData()
+        End Sub
+
+        Private Sub DeleteWarehouse(sender As Object, e As RoutedEventArgs)
+            Dim clickedButton As Button = TryCast(sender, Button)
+            If clickedButton Is Nothing Then Return
+
+            If recentlyClosed Then
+                recentlyClosed = False
+                Return
+            End If
+
+            If popup IsNot Nothing AndAlso popup.IsOpen Then
+                popup.IsOpen = False
+                recentlyClosed = True
+                Return
+            End If
+
+            popup = New Popup With {
+                .PlacementTarget = clickedButton,
+                .Placement = PlacementMode.Bottom,
+                .StaysOpen = False,
+                .AllowsTransparency = True
+            }
+
+            Dim deleteWarehouseWindow As New DPC.Components.ConfirmationModals.ConfirmWarehouseDeletion()
+
+            ' Converts selected row items into brand model
+            Dim warehouse As DPC.Data.Model.Warehouses = TryCast(dataGrid.SelectedItem, DPC.Data.Model.Warehouses)
+
+            deleteWarehouseWindow.warehouseID = warehouse.ID
+            deleteWarehouseWindow.Warehouse = Me
+
+            popup.Child = deleteWarehouseWindow
+
+            AddHandler popup.Closed, Sub()
+                                         recentlyClosed = True
+                                         Task.Delay(100).ContinueWith(Sub() recentlyClosed = False, TaskScheduler.FromCurrentSynchronizationContext())
+                                     End Sub
+
+            popup.IsOpen = True
         End Sub
     End Class
 End Namespace
