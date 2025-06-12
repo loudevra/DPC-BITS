@@ -98,7 +98,7 @@
 
         <Style x:Key="RoundedGridStyle" TargetType="Border">
             <Setter Property="CornerRadius" Value="20"/>
-            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderBrush" Value="#AEAEAE"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Background" Value="White"/>
             <Setter Property="Padding" Value="5"/>
