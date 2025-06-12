@@ -404,6 +404,15 @@
     <Compile Include="Components\Forms\AddVariation.xaml.vb">
       <DependentUpon>AddVariation.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\BillingStatmentPrintPopUp.xaml.vb">
+      <DependentUpon>BillingStatmentPrintPopUp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\ConvertToPopUp.xaml.vb">
+      <DependentUpon>ConvertToPopUp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\CostEstimatePrintPopUp.xaml.vb">
+      <DependentUpon>CostEstimatePrintPopUp.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\CRMAddNewClientGroup.xaml.vb">
       <DependentUpon>CRMAddNewClientGroup.xaml</DependentUpon>
     </Compile>
@@ -671,6 +680,12 @@
     <Compile Include="Views\Misc\Documents\Documents.xaml.vb">
       <DependentUpon>Documents.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\POS\BillingStatement.xaml.vb">
+      <DependentUpon>BillingStatement.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\POS\CostEstimate.xaml.vb">
+      <DependentUpon>CostEstimate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\POS\PaymentCardsConfirmation.xaml.vb">
       <DependentUpon>PaymentCardsConfirmation.xaml</DependentUpon>
     </Compile>
@@ -757,6 +772,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\AddVariation.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\BillingStatmentPrintPopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\ConvertToPopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\CostEstimatePrintPopUp.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\CRMAddNewClientGroup.xaml">
@@ -1140,6 +1167,14 @@
     <Page Include="Views\Misc\Documents\Documents.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\POS\BillingStatement.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\POS\CostEstimate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\POS\PaymentCardsConfirmation.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1319,6 +1354,7 @@
   <ItemGroup>
     <Resource Include="Assets\images\logosidebar.png" />
     <Resource Include="Assets\logo\BLACK WHOL.ico" />
+    <Resource Include="Assets\images\logosidebarBlack.png" />
     <Content Include="Assets\mails\password_reset_code.html" />
     <Content Include="Assets\mails\password_reset_success.html" />
   </ItemGroup>
