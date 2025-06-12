@@ -680,6 +680,15 @@
     <Compile Include="Views\POS\POSForm.xaml.vb">
       <DependentUpon>POSForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Project\AddProject1.xaml.vb">
+      <DependentUpon>AddProject1.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Project\AddProject2.xaml.vb">
+      <DependentUpon>AddProject2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Project\AddProject3.xaml.vb">
+      <DependentUpon>AddProject3.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Project\ManageProject.xaml.vb">
       <DependentUpon>ManageProject.xaml</DependentUpon>
     </Compile>
@@ -1155,6 +1164,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\POS\POSForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Project\AddProject1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Project\AddProject2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Project\AddProject3.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Project\ManageProject.xaml">
