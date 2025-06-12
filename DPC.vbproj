@@ -1308,6 +1308,7 @@
     <Folder Include="Installer\" />
     <Folder Include="Themes\" />
     <Folder Include="Views\HRM\Payroll\" />
+    <Folder Include="Views\Project\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ILLink\ILLink.Descriptors.LibraryBuild.xml" />
