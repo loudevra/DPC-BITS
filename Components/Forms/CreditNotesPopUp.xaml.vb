@@ -1,5 +1,5 @@
-﻿Namespace DPC.Views.Sales.CreditNotes
-    Public Class CreditNotes
+﻿Namespace DPC.Views.Components.Forms
+    Public Class CreditNotesPopUp
         Private Sub New()
 
             ' This call is required by the designer.
