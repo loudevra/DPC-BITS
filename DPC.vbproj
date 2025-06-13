@@ -716,6 +716,9 @@
     <Compile Include="Views\PromoCodes\ManagePromoCodes.xaml.vb">
       <DependentUpon>ManagePromoCodes.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Sales\SalesNewInvoice.xaml.vb">
+      <DependentUpon>SalesNewInvoice.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stocks\ItemManager\NewProduct\ProductBatchEdit.xaml.vb">
       <DependentUpon>ProductBatchEdit.xaml</DependentUpon>
     </Compile>
@@ -1228,6 +1231,10 @@
     <Page Include="Views\PromoCodes\ManagePromoCodes.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Sales\SalesNewInvoice.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Stocks\ItemManager\NewProduct\ProductBatchEdit.xaml">
       <Generator>MSBuild:Compile</Generator>
