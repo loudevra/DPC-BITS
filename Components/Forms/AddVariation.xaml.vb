@@ -19,7 +19,7 @@ Namespace DPC.Components.Forms
         Private _variations As New List(Of ProductVariation)
 
         ' Static property to store variations data globally
-        Private Shared _savedVariations As List(Of ProductVariation) = New List(Of ProductVariation)
+        Public Shared _savedVariations As List(Of ProductVariation) = New List(Of ProductVariation)
 
         Public Shared ReadOnly Property SavedVariations As List(Of ProductVariation)
             Get

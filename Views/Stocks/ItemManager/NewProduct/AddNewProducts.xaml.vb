@@ -147,6 +147,8 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 ComboBoxCategory, ComboBoxSubCategory, ComboBoxWarehouse, ComboBoxMeasurementUnit,
                 ComboBoxBrand, ComboBoxSupplier, SingleDatePicker, MainContainer)
 
+            ProductController.SerialNumbers.Clear()
+
             ResetImageComponents()
         End Sub
 
