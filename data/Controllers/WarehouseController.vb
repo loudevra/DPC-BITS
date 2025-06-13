@@ -51,24 +51,57 @@ Namespace DPC.Data.Controllers
         End Function
 
         ' Function to Fetch Warehouses Data
+        ' Changing the Query to fetch the total quanity and the stock quantity
+        ' ORIGINAL CODE : Dim query As String = "SELECT warehouseID, warehouseName, description FROM warehouse;"
+        ' Adding the TotalProduct to the 
         Public Shared Function GetWarehouses() As ObservableCollection(Of Warehouses)
             Dim warehouseList As New ObservableCollection(Of Warehouses)()
             Try
                 ' Use connection from SplashScreen
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "SELECT warehouseID, warehouseName, description FROM warehouse;"
+                    Dim query As String = "SELECT 
+                                            w.warehouseID, 
+                                            w.warehouseName, 
+                                            w.description,
+
+                                            (
+                                                SELECT COUNT(*) 
+                                                FROM productnovariation pnv 
+                                                WHERE pnv.warehouseID = w.warehouseID
+                                            ) +
+                                            (
+                                                SELECT COUNT(*) 
+                                                FROM productvariationstock pvs 
+                                                WHERE pvs.warehouseID = w.warehouseID
+                                            ) AS TotalProducts,
+
+                                            IFNULL((
+                                                SELECT SUM(stockUnit) 
+                                                FROM productvariationstock 
+                                                WHERE warehouseID = w.warehouseID
+                                            ), 0)
+                                            +
+                                            IFNULL((
+                                                SELECT SUM(stockUnit) 
+                                                FROM productnovariation 
+                                                WHERE warehouseID = w.warehouseID
+                                            ), 0) AS StockQuantity
+
+                                        FROM warehouse w;"
                     Using cmd As New MySqlCommand(query, conn)
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
                                 warehouseList.Add(New Warehouses With {
                                     .ID = reader.GetInt32("warehouseID"),
                                     .Name = reader.GetString("warehouseName"),
-                                    .Description = reader.GetString("description")})
+                                    .Description = reader.GetString("description"),
+                                    .TotalProducts = reader.GetInt32("totalproducts"),
+                                    .StockQuantity = reader.GetInt32("stockquantity")})
                             End While
                         End Using
                     End Using
-                End Using ' ✅ Connection automatically returned to the pool
+                End Using ' Connection automatically returned to the pool
             Catch ex As Exception
                 MessageBox.Show("Error fetching Warehouses: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try

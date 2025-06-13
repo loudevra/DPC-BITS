@@ -44,8 +44,9 @@
         </Style>
 
         <Style x:Key="RoundedComboBoxStyle" TargetType="ComboBox">
-            <Setter Property="BorderBrush" Value="Black"/>
             <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#AEAEAE"/>
+            <Setter Property="Foreground" Value="#AEAEAE"/>
             <Setter Property="Padding" Value="0"/>
             <Setter Property="FontFamily" Value="Lexend"/>
             <Setter Property="Template">
@@ -129,7 +130,7 @@
 
         <Style x:Key="RoundedGridStyle" TargetType="Border">
             <Setter Property="CornerRadius" Value="20"/>
-            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderBrush" Value="#AEAEAE"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Background" Value="White"/>
             <Setter Property="Padding" Value="5"/>
@@ -166,6 +167,7 @@
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         </Style>
+
     </UserControl.Resources>
 
     <Grid>
@@ -205,38 +207,30 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Balance Card -->
-                <Border Grid.Column="0"  CornerRadius="10" BorderThickness="2" BorderBrush="#298bba" Background="White" Margin="5">
+                <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="15,5,15,5" Margin="10" Height="80">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="30,0,25,12">
-                            <TextBlock x:Name="txtBalance" Text=" ₱ 0.00" FontSize="25" FontWeight="Bold" Foreground="#a5cb81" FontFamily="Lexend" Height="40" TextAlignment="Right"/>
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Left">
+                            <TextBlock Text="Balance" FontSize="24" FontWeight="Bold" Foreground="#68B8DF"/>
+                            <TextBlock Text="₱ 0.00" FontSize="22" FontWeight="Bold" Foreground="#92B77C"/>
                         </StackPanel>
-                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                            <TextBlock Text="Balance" FontSize="25" Foreground="#298bba" FontFamily="Lexend" Margin="125,0,0,0" FontWeight="Bold"/>
-                            <TextBlock Text="Total" FontSize="12" Foreground="Gray" FontFamily="Lexend" Margin="125,10,0,0"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <Ellipse Width="55" Height="55" Fill="#BEE4F7" VerticalAlignment="Center"/>
+                            <materialDesign:PackIcon Kind="WalletOutline" Width="40" Height="40" Foreground="#68B8DF" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="-53,0,0,0"/>
                         </StackPanel>
-                        <materialDesign:PackIcon Grid.Column="0" Kind="CubeOutline" Width="70" Height="60" Foreground="#298bba" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0"/>
                     </Grid>
                 </Border>
 
                 <!-- Stock Out Card -->
-                <Border Grid.Column="1" CornerRadius="10" BorderThickness="2" BorderBrush="#C64141" Background="White" Margin="5">
+                <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="15,5,15,5" Margin="10" Height="80">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="30,0,25,12">
-                            <TextBlock x:Name="txtAccounts" Text=" ₱ 0.00" FontSize="25" FontWeight="Bold" Foreground="#a5cb81" FontFamily="Lexend" Height="40" TextAlignment="Right"/>
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Left">
+                            <TextBlock Text="Account" FontSize="24" FontWeight="Bold" Foreground="#F58A77"/>
+                            <TextBlock Text="1" FontSize="22" FontWeight="Bold" Foreground="#92B77C"/>
                         </StackPanel>
-                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                            <TextBlock Text="Accounts" FontSize="25" Foreground="#C64141" FontFamily="Lexend" Margin="125,0,0,0" FontWeight="Bold"/>
-                            <TextBlock Text="Total" FontSize="12" Foreground="Gray" FontFamily="Lexend" Margin="125,10,0,0"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <Ellipse Width="55" Height="55" Fill="#FFCBC2" VerticalAlignment="Center"/>
+                            <materialDesign:PackIcon Kind="TextAccount" Width="40" Height="40" Foreground="#F58A77" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="-53,0,0,0"/>
                         </StackPanel>
-                        <materialDesign:PackIcon Grid.Column="0" Kind="ListBoxOutline" Width="70" Height="60" Foreground="#C64141" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0"/>
                     </Grid>
                 </Border>
             </Grid>
@@ -250,28 +244,38 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- Left Controls -->
-                    <StackPanel Grid.Column="0" Orientation="Horizontal">
-                        <!-- Excel Button -->
-                        <Button Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" Foreground="White" Width="75" Height="29" Margin="10,0,0,0">
-                            <materialDesign:PackIcon Kind="MicrosoftExcel" Width="25" Height="25"/>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="10,0,5,5">
+                        <Button Style="{StaticResource IconButton}">
+                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                                <materialDesign:PackIcon Kind="MicrosoftExcel" Width="24" Height="24" Margin="5,5,5,0" Foreground="#227346"/>
+                                <TextBlock Text="Export" FontSize="12" HorizontalAlignment="Center" Foreground="#227346"/>
+                            </StackPanel>
+
+                        </Button>
+                        <Button Style="{StaticResource IconButton}">
+                            <StackPanel>
+                                <materialDesign:PackIcon Kind="CalendarMonth" Width="24" Height="24" Margin="5,5,5,0" Foreground="#D96A6C"/>
+                                <TextBlock Text="Due" FontSize="12" HorizontalAlignment="Center" Foreground="#D96A6C"/>
+                            </StackPanel>
                         </Button>
 
-                        <TextBlock Text="Show" FontSize="14" Margin="10,0,5,0" Height="18" FontWeight="Regular" FontFamily="Lexend" Foreground="#474747" VerticalAlignment="Center" />
-                        <ComboBox x:Name="cmbPageSize" Width="75" Style="{StaticResource RoundedComboBoxStyle}" Height="28">
+                        <Border Width="1.5" Height="Auto" Background="#D9D9D9" Margin="10,5,10,5"/>
+
+                        <ComboBox Width="75" Style="{StaticResource RoundedComboBoxStyle}" Height="30">
                             <ComboBoxItem Content="10" IsSelected="True"/>
                             <ComboBoxItem Content="25"/>
                             <ComboBoxItem Content="50"/>
                             <ComboBoxItem Content="100"/>
                         </ComboBox>
-                        <Button Style="{StaticResource RoundedButtonStyle}" Background="Transparent" Foreground="#474747" Width="29" Height="29" Margin="10,0,0,0">
-                            <materialDesign:PackIcon Kind="ViewGridOutline" Width="25" Height="25"/>
+
+                        <Button Style="{StaticResource IconButton}">
+                            <materialDesign:PackIcon Kind="ViewGridOutline" Width="24" Height="24" Margin="5" Foreground="#555555"/>
                         </Button>
-                        <Button Style="{StaticResource RoundedButtonStyle}" Background="Transparent" Foreground="#474747" Width="29" Height="29" Margin="0,0,0,0">
-                            <materialDesign:PackIcon Kind="FormatListBulleted" Width="30" Height="30"/>
+                        <Button Style="{StaticResource IconButton}">
+                            <materialDesign:PackIcon Kind="FormatListBulleted" Width="24" Height="24" Margin="5" Foreground="#555555"/>
                         </Button>
-                        <Button Style="{StaticResource RoundedButtonStyle}" Background="Transparent" Foreground="#474747" Width="29" Height="29" Margin="0,0,0,0">
-                            <materialDesign:PackIcon Kind="FilterMenuOutline" Width="25" Height="25"/>
-                        </Button>
+
+
 
                     </StackPanel>
 
@@ -279,8 +283,8 @@
                     <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
                         <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Width="211" Height="34">
                             <Grid>
-                                <TextBox BorderThickness="0" Background="Transparent" FontFamily="Lexend" Name="txtSearch" Style="{StaticResource RoundedTextboxStyle}" Height="23" Margin="20,0,20,0" VerticalAlignment="Center" />
-                                <materialDesign:PackIcon Kind="Magnify" Width="25" Height="25" Foreground="Black" Margin="159,0,0,0" VerticalAlignment="Center"/>
+                                <TextBox Text="Search" BorderThickness="0" Background="Transparent" Foreground="#AEAEAE" FontFamily="Lexend" Name="txtSearch" Style="{StaticResource RoundedTextboxStyle}" Height="23" Margin="20,0,20,0" VerticalAlignment="Center" />
+                                <materialDesign:PackIcon Kind="Magnify" Width="25" Height="25" Foreground="#AEAEAE" Margin="159,0,0,0" VerticalAlignment="Center"/>
                             </Grid>
                         </Border>
                     </StackPanel>
@@ -298,8 +302,11 @@
                       VerticalScrollBarVisibility="Visible">
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
+                            <Setter Property="FontFamily" Value="Lexend"/>
                             <Setter Property="Margin" Value="0,5,0,5"/>
                             <Setter Property="Padding" Value="5"/>
+                            <Setter Property="Height" Value="Auto"/>
+                            <Setter Property="MinHeight" Value="40"/>
                         </Style>
                     </DataGrid.RowStyle>
 
@@ -312,8 +319,7 @@
                             <Setter Property="HorizontalContentAlignment" Value="Center"/>
                             <Setter Property="VerticalContentAlignment" Value="Center"/>
                             <Setter Property="Padding" Value="10,5"/>
-                            <Setter Property="SeparatorBrush" Value="#DDDDDD"/>
-                            <Setter Property="SeparatorVisibility" Value="Visible"/>
+                            <Setter Property="Background" Value="White"/>
                         </Style>
                     </DataGrid.ColumnHeaderStyle>
 
@@ -336,6 +342,7 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
+
                 </DataGrid>
             </Border>
         </Grid>

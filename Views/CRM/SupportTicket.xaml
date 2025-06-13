@@ -4,44 +4,16 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         Background="#D9D9D9">
 
-    <UserControl.Resources>
-        <Style x:Key="AddNewButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="120"/>
-            <Setter Property="Height" Value="30"/>
-            <Setter Property="Background" Value="#D9D9D9"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="BorderBrush" Value="#474747"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="15" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
 
+    <UserControl.Resources>
         <!-- Border Style -->
         <Style x:Key="RoundedBorderStyle" TargetType="Border">
             <Setter Property="CornerRadius" Value="15"/>
         </Style>
 
-        <!-- Button Style -->
-        <Style x:Key="RoundedButtonStyle" TargetType="Button">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Style="{StaticResource RoundedBorderStyle}" Background="{TemplateBinding Background}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
         <Style x:Key="RoundedComboBoxStyle" TargetType="ComboBox">
-            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="Foreground" Value="#AEAEAE"/>
+            <Setter Property="BorderBrush" Value="#AEAEAE"/>
             <Setter Property="Background" Value="White"/>
             <Setter Property="Padding" Value="0"/>
             <Setter Property="FontFamily" Value="Lexend"/>
@@ -88,7 +60,7 @@
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="ToggleButton">
                                                         <Border Background="Transparent" BorderThickness="0">
-                                                            <materialDesign:PackIcon Kind="ChevronDown" Width="20" Height="20" Foreground="Black"/>
+                                                            <materialDesign:PackIcon Kind="ChevronDown" Width="20" Height="20" Foreground="#AEAEAE"/>
                                                         </Border>
                                                     </ControlTemplate>
                                                 </Setter.Value>
@@ -99,16 +71,16 @@
 
                                 <!-- Dropdown Items -->
                                 <Popup Name="Popup"
-                           Placement="Bottom"
-                           IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
-                           AllowsTransparency="True"
-                           Focusable="False"
-                           MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                   Placement="Bottom"
+                                   IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">   
                                     <!-- MATCH WIDTH -->
                                     <Border Style="{StaticResource RoundedBorderStyle}" 
-                                Background="White" 
-                                BorderBrush="Black"
-                                Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                        Background="White" 
+                                        BorderBrush="Black"
+                                        Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
                                         <!-- MATCH WIDTH -->
                                         <ScrollViewer>
                                             <StackPanel>
@@ -126,7 +98,7 @@
 
         <Style x:Key="RoundedGridStyle" TargetType="Border">
             <Setter Property="CornerRadius" Value="20"/>
-            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderBrush" Value="#AEAEAE"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Background" Value="White"/>
             <Setter Property="Padding" Value="5"/>
@@ -149,7 +121,6 @@
             <!-- Main Content (ScrollViewer) -->
             <ScrollViewer VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Disabled">
-
                 <Grid Margin="20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="51*"/>
@@ -179,40 +150,53 @@
                             </Grid.ColumnDefinitions>
 
                             <!-- Cards -->
-                            <Border Grid.Column="0" Background="White" BorderBrush="#D98CAB" BorderThickness="2" CornerRadius="8" Padding="15,5,15,5" Margin="10" Height="80">
+
+                            <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="15,5,15,5" Margin="10" Height="80">
                                 <Grid>
                                     <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
                                         <TextBlock Text="0" FontSize="32" FontWeight="Bold" Foreground="#D98CAB"/>
-                                        <TextBlock Text="Waiting" FontSize="14" FontWeight="Bold" Foreground="#AEAEAE"/>
+                                        <TextBlock Text="Waiting" FontSize="14" FontWeight="Bold" Foreground="#D98CAB"/>
                                     </StackPanel>
-                                    <materialDesign:PackIcon Kind="ClockOutline" Width="46" Height="46" Foreground="#D98CAB" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="108,0,0,0"/>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                        <Ellipse Width="55" Height="55" Fill="#FFD7E7" VerticalAlignment="Center"/>
+                                        <materialDesign:PackIcon Kind="ClockOutline" Width="40" Height="40" Foreground="#D98CAB" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="-53,0,0,0"/>
+                                    </StackPanel>
                                 </Grid>
                             </Border>
-
-                            <Border Grid.Column="1" Background="White" BorderBrush="#68B8DF" BorderThickness="2" CornerRadius="8" Padding="15,5,15,5" Margin="10" Height="80">
+                            <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="15,5,15,5" Margin="10" Height="80">
                                 <Grid>
                                     <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
                                         <TextBlock Text="0" FontSize="32" FontWeight="Bold" Foreground="#68B8DF"/>
-                                        <TextBlock Text="Processing" FontSize="14" FontWeight="Bold" Foreground="#AEAEAE"/>
+                                        <TextBlock Text="Processing" FontSize="14" FontWeight="Bold" Foreground="#68B8DF"/>
                                     </StackPanel>
-                                    <materialDesign:PackIcon Kind="Cached" Width="46" Height="46" Foreground="#68B8DF" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,0,0"/>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                        <Ellipse Width="55" Height="55" Fill="#BEE4F7" VerticalAlignment="Center"/>
+                                        <materialDesign:PackIcon Kind="Cached" Width="40" Height="40" Foreground="#68B8DF" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="-53,0,0,0"/>
+                                    </StackPanel>
                                 </Grid>
                             </Border>
-
-                            <Border Grid.Column="2" Background="White" BorderBrush="#709559" BorderThickness="2" CornerRadius="8" Padding="15,5,15,5" Margin="10" Height="80">
-                                <StackPanel>
-                                    <TextBlock Text="61" FontSize="32" FontWeight="Bold" Foreground="#709559"/>
-                                    <TextBlock Text="Solved" FontSize="14" FontWeight="Bold" Foreground="#AEAEAE"/>
-                                </StackPanel>
-                            </Border>
-
-                            <Border Grid.Column="3" Background="White" BorderBrush="#846BAE" BorderThickness="2" CornerRadius="8" Padding="15,5,15,5" Margin="10" Height="80">
+                            <Border Grid.Column="2" Background="White" CornerRadius="8" Padding="15,5,15,5" Margin="10" Height="80">
                                 <Grid>
                                     <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
-                                        <TextBlock Text="61" FontSize="32" FontWeight="Bold" Foreground="#846BAE"/>
-                                        <TextBlock Text="Total" FontSize="14" FontWeight="Bold" Foreground="#AEAEAE"/>
+                                        <TextBlock Text="0" FontSize="32" FontWeight="Bold" Foreground="#89AC74"/>
+                                        <TextBlock Text="Solved" FontSize="14" FontWeight="Bold" Foreground="#89AC74"/>
                                     </StackPanel>
-                                    <materialDesign:PackIcon Kind="ChartPie" Width="46" Height="46" Foreground="#846BAE" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,10,0,0"/>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                        <Ellipse Width="55" Height="55" Fill="#DEF9CE" VerticalAlignment="Center"/>
+                                        <materialDesign:PackIcon Kind="CheckboxMarkedOutline" Width="40" Height="40" Foreground="#89AC74" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="-53,0,0,0"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                            <Border Grid.Column="3" Background="White" CornerRadius="8" Padding="15,5,15,5" Margin="10" Height="80">
+                                <Grid>
+                                    <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
+                                        <TextBlock Text="0" FontSize="32" FontWeight="Bold" Foreground="#D6AEED"/>
+                                        <TextBlock Text="Total" FontSize="14" FontWeight="Bold" Foreground="#D6AEED"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                        <Ellipse Width="55" Height="55" Fill="#EDD7FA" VerticalAlignment="Center"/>
+                                        <materialDesign:PackIcon Kind="ChartPieOutline" Width="40" Height="40" Foreground="#D6AEED" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="-53,0,0,0"/>
+                                    </StackPanel>
                                 </Grid>
                             </Border>
                         </Grid>
@@ -225,8 +209,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Left Controls -->
-                                <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                    <TextBlock Text="Show" FontSize="14" Margin="10,0,5,0" Height="19" FontFamily="Lexend" Foreground="#474747"/>
+                                <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="10,0,0,0">
                                     <ComboBox Width="75" Style="{StaticResource RoundedComboBoxStyle}" Height="28">
                                         <ComboBoxItem Content="10" IsSelected="True"/>
                                         <ComboBoxItem Content="25"/>
@@ -235,13 +218,10 @@
                                     </ComboBox>
 
                                     <Button Style="{StaticResource IconButton}">
-                                        <materialDesign:PackIcon Kind="ViewGridOutline" Width="24" Height="24" Margin="10,0,0,0" Foreground="#474747"/>
+                                        <materialDesign:PackIcon Kind="ViewGridOutline" Width="24" Height="24" Margin="10" Foreground="#555555"/>
                                     </Button>
                                     <Button Style="{StaticResource IconButton}">
-                                        <materialDesign:PackIcon Kind="FormatListBulleted" Width="24" Height="24" Margin="10,0,0,0" Foreground="#474747"/>
-                                    </Button>
-                                    <Button Style="{StaticResource IconButton}">
-                                        <materialDesign:PackIcon Kind="Filter" Width="24" Height="24" Margin="10,0,0,0" Foreground="#474747"/>
+                                        <materialDesign:PackIcon Kind="FormatListBulleted" Width="24" Height="24" Margin="10" Foreground="#555555"/>
                                     </Button>
                                 </StackPanel>
 
@@ -262,16 +242,17 @@
                         </Border>
 
                         <!-- Table and Controls test-->
-                        <Border Background="White" CornerRadius="8" Padding="15">
+                        <Border Background="White" CornerRadius="8" Padding="5">
                             <StackPanel>
                                 <!-- Data Grid -->
                                 <DataGrid x:Name="SupportTicketsDataGrid"
                                   AutoGenerateColumns="False"
                                   CanUserAddRows="False"
-                                  CanUserResizeRows="False"
-                                  CanUserResizeColumns="False"
-                                  IsReadOnly="True"
-                                  RowHeight="40" FontFamily="Lexend" Foreground="#474747">
+                                  HeadersVisibility="Column"
+                                  GridLinesVisibility="None"
+                                  RowBackground="White"
+                                  AlternatingRowBackground="WhiteSmoke"
+                                  BorderThickness="0">
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="#" Binding="{Binding TicketID}" Width="50"/>
                                         <DataGridTemplateColumn Header="Subject" Width="200">
@@ -298,20 +279,49 @@
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>
                                     </DataGrid.Columns>
-                                </DataGrid>
+                                    <DataGrid.RowStyle>
+                                        <Style TargetType="DataGridRow">
+                                            <Setter Property="FontFamily" Value="Lexend"/>
+                                            <Setter Property="Margin" Value="0,5,0,5"/>
+                                            <Setter Property="Padding" Value="5"/>
+                                            <Setter Property="Height" Value="Auto"/>
+                                            <Setter Property="MinHeight" Value="40"/>
+                                        </Style>
+                                    </DataGrid.RowStyle>
 
-                                <!-- Actions Controls -->
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-                                    <Button Style="{StaticResource IconButton}">
-                                        <materialDesign:PackIcon Kind="Eye" Width="24" Height="24" Margin="5,0,0,0" Foreground="#52D7AD"/>
-                                    </Button>
-                                    <Button Style="{StaticResource IconButton}">
-                                        <materialDesign:PackIcon Kind="SquareEditOutline" Width="24" Height="24" Margin="5,0,0,0" Foreground="#E5AD52"/>
-                                    </Button>
-                                    <Button Style="{StaticResource IconButton}">
-                                        <materialDesign:PackIcon Kind="TrashCan" Width="24" Height="24" Margin="5,0,0,0" Foreground="#C72727"/>
-                                    </Button>
-                                </StackPanel>
+                                    <DataGrid.ColumnHeaderStyle>
+                                        <Style TargetType="DataGridColumnHeader">
+                                            <Setter Property="FontFamily" Value="Lexend"/>
+                                            <Setter Property="FontSize" Value="13"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                            <Setter Property="Foreground" Value="#474747"/>
+                                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                            <Setter Property="Padding" Value="10,5"/>
+                                            <Setter Property="Background" Value="White"/>
+                                        </Style>
+                                    </DataGrid.ColumnHeaderStyle>
+
+                                    <DataGrid.CellStyle>
+                                        <Style TargetType="DataGridCell">
+                                            <Setter Property="Padding" Value="10,5"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="DataGridCell">
+                                                        <Border Padding="{TemplateBinding Padding}" 
+                                                            BorderBrush="{TemplateBinding BorderBrush}" 
+                                                            BorderThickness="{TemplateBinding BorderThickness}" 
+                                                            Background="{TemplateBinding Background}">
+                                                            <ContentPresenter VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="TextBlock.TextWrapping" Value="NoWrap"/>
+                                            <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis"/>
+                                        </Style>
+                                    </DataGrid.CellStyle>
+                                </DataGrid>
                             </StackPanel>
                         </Border>
                     </StackPanel>
