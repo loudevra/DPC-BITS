@@ -1,8 +1,5 @@
 ﻿Namespace DPC.Views.CRM
-    ''' <summary>
-    ''' Interaction logic for CRMOtherSettings.xaml
-    ''' </summary>
-    Partial Public Class CRMOtherSettings
+    Public Class CRMCorporationalOtherSettings
         Inherits UserControl
         Public Sub New()
             InitializeComponent()

@@ -1,5 +1,5 @@
 ﻿Namespace DPC.Views.CRM
-    Public Class CRMResidentialClientOtherSettings
+    Public Class CRMCorporationalPersonalInfo
         Public Sub New()
 
             ' This call is required by the designer.
@@ -9,4 +9,6 @@
 
         End Sub
     End Class
+
 End Namespace
+

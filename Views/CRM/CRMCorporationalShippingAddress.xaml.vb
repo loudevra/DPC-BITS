@@ -1,9 +1,7 @@
 ﻿Namespace DPC.Views.CRM
-    Partial Public Class CRMBillingAddress
-        Inherits UserControl
+    Public Class CRMCorporationalShippingAddress
         Public Sub New()
             InitializeComponent()
         End Sub
     End Class
 End Namespace
-
