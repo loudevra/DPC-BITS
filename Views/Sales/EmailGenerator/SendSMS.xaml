@@ -1,0 +1,83 @@
+﻿<UserControl x:Class="DPC.Views.Sales.EmailGenerator.SendSMS"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             FontFamily="{StaticResource Lexend}"
+             xmlns:local="clr-namespace:DPC"
+             Width="Auto"
+             Height="Auto"
+             >
+
+    <Border Style="{StaticResource RoundedBorderStyle}" BorderBrush="#555555" BorderThickness="2" Width="Auto" Height="Auto" Background="Transparent">
+        <StackPanel Orientation="Vertical">
+            <!--<LOGO>"Send SMS" <X>-->
+            <Border Padding="15,10,15,10" Background="#555555" CornerRadius="15,15,0,0" Margin="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
+                        <materialDesign:PackIcon Kind="MessageProcessing" Width="25" Height="25" Margin="0,0,15,0" Foreground="#FDFDFD" RenderTransformOrigin="0.5,1.325"/>
+                        <TextBlock Text="Send SMS" Foreground="#FDFDFD" VerticalAlignment="Center" FontSize="20px"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Margin="10">
+                        <materialDesign:PackIcon Kind="WindowClose" Width="28" Height="28" Foreground="#FDFDFD" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+
+            <!--CONTENT-->
+            <Border Height="Auto" Background="#FDFDFD" CornerRadius="0,0,19,19">
+                <Grid Margin="25">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Margin="0,0,0,20">
+                        <TextBlock Text="Contact No." Foreground="#555555" FontSize="20" Margin="0,0,0,10"/>
+                        <Border Style="{StaticResource RoundedBorderStyle}" BorderBrush="#555555">
+                            <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1" Margin="0,0,0,20">
+                        <TextBlock Text="Client Name:" Foreground="#555555" FontSize="20" Margin="0,0,0,10"/>
+                        <Border Style="{StaticResource RoundedBorderStyle}" BorderBrush="#555555">
+                            <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Margin="0,0,0,20">
+                        <TextBlock Text="Message:" Foreground="#555555" FontSize="20" Margin="0,0,0,10"/>
+                        <Border Style="{StaticResource RoundedBorderStyle}" BorderBrush="#555555" Height="286" Width="1227">
+                            <TextBox Style="{StaticResource RoundedTextboxStyle}" Width="1175" Margin="0,10,0,10" Height="260"/>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Height="Auto" Grid.Row="4" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5">
+                        <Button Style="{StaticResource RoundedButtonStyle}" Width="250" Height="52" Margin="0" Background="#AEAEAE" Foreground="#555555" BorderThickness="0" Cursor="Hand">
+                            <TextBlock Text="Cancel" TextAlignment="Center" FontSize="20px" FontWeight="SemiBold"/>
+                        </Button>
+                        <Button Style="{StaticResource RoundedButtonStyle}" Width="250" Height="52" Margin="20,0,0,0" Background="#86BCD5" Foreground="#FDFDFD" BorderThickness="0" Cursor="Hand">
+                            <TextBlock Text="Send" TextAlignment="Center" FontSize="20px" FontWeight="SemiBold"/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+
+        </StackPanel>
+    </Border>
+
+</UserControl>
+
