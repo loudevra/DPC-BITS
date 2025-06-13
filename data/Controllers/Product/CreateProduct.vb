@@ -114,6 +114,7 @@ Namespace DPC.Data.Controllers
                     End If
 
                     DPC.Components.Forms.AddVariation._savedVariations.Clear()
+                    DPC.Data.Controllers.ProductController.variationManager.GetAllVariationData().Clear()
                 End Using
             End Using
         End Sub
