@@ -1,5 +1,5 @@
-﻿Namespace DPC.Views.Sales.Saless
-    Public Class SalesNewInvoice
+﻿Namespace DPC.Views.Components.Forms
+    Public Class CreditNotesPopUp
         Private Sub New()
 
             ' This call is required by the designer.
@@ -10,4 +10,3 @@
         End Sub
     End Class
 End Namespace
-

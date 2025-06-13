@@ -158,11 +158,11 @@
                     <StackPanel Grid.Row="1" Margin="20">
                         <!-- Header Section -->
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
-                            <TextBlock Text="Projects" FontSize="32" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#555555"/>
+                            <TextBlock Text="Projects" FontSize="32" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#555555" Width="287" Height="44"/>
                         </StackPanel>
 
                         <!-- Stats Section -->
-                        <Grid Margin="0,0,0,20">
+                        <Grid Margin="0,0,0,20" >
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
@@ -171,9 +171,8 @@
                             </Grid.ColumnDefinitions>
 
                             <!-- Active Card -->
-                            <Border Grid.Column="0" CornerRadius="10" BorderThickness="0" Background="White" Margin="5">
+                            <Border Grid.Column="0" CornerRadius="10" BorderThickness="0" Background="White" Width="237" Height="75" Margin="5">
                                 <Grid>
-                                    <!-- Inner Shadow Effect -->
                                     <Border CornerRadius="10" Background="Transparent">
                                         <Border.Effect>
                                             <DropShadowEffect BlurRadius="10" ShadowDepth="0" Color="#40E5D18E" Direction="270" Opacity="0.7"/>
@@ -185,12 +184,12 @@
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left">
-                                            <TextBlock x:Name="txtActiveCount" Text="0" FontSize="30" Foreground="#E5D18E" FontFamily="Lexend" Margin="0,0,0,0" FontWeight="Bold" HorizontalAlignment="Center" Height="30"/>
-                                            <TextBlock Text="Waiting" FontSize="12" Foreground="#E5D18E" FontFamily="Lexend" Margin="10,0,0,0"/>
+                                            <TextBlock x:Name="txtActiveCount" Text="0" FontSize="32" Foreground="#E5D18E" FontFamily="Lexend" Margin="10,0,0,0" FontWeight="Bold" HorizontalAlignment="Center" Height="40" Width="42"/>
+                                            <TextBlock Text="Waiting" FontSize="14" Foreground="#E5D18E" FontFamily="Lexend" Margin="10,0,0,0"/>
                                         </StackPanel>
-                                        <Grid Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="149,0,0,0" Width="70" Height="60">
-                                            <Ellipse Fill="#FFF6D8" Width="70" Height="60"/>
-                                            <materialDesign:PackIcon Kind="ClockOutline" Width="40" Height="40" Foreground="#E5D18E" 
+                                        <Grid Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,0,0" Width="70" Height="60">
+                                            <Ellipse Fill="#FFF6D8" Width="57" Height="57"/>
+                                            <materialDesign:PackIcon Kind="ClockOutline" Width="27.5" Height="27.5" Foreground="#E5D18E" 
                                                                     VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                         </Grid>
                                     </Grid>
@@ -211,12 +210,12 @@
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left">
-                                            <TextBlock x:Name="txtUsedCount" Text="0" FontSize="30" Foreground="#86BCD5" FontFamily="Lexend" Margin="0,0,0,0" FontWeight="Bold" HorizontalAlignment="Center" Height="30"/>
-                                            <TextBlock Text="Processing" FontSize="12" Foreground="#86BCD5" FontFamily="Lexend" Margin="10,0,0,0"/>
+                                            <TextBlock x:Name="txtUsedCount" Text="0" FontSize="32" Foreground="#86BCD5" FontFamily="Lexend" Margin="-10,0,0,0" FontWeight="Bold" HorizontalAlignment="Center" Height="40" Width="42"/>
+                                            <TextBlock Text="Processing" FontSize="14" Foreground="#86BCD5" FontFamily="Lexend" Margin="10,0,0,0"/>
                                         </StackPanel>
                                         <Grid Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="149,0,0,0" Width="70" Height="60">
-                                            <Ellipse Fill="#BEE4F7" Width="70" Height="60"/>
-                                            <materialDesign:PackIcon Kind="Cached" Width="40" Height="40" Foreground="#68B8DF"
+                                            <Ellipse Fill="#BEE4F7" Width="57" Height="57"/>
+                                            <materialDesign:PackIcon Kind="Cached" Width="27.5" Height="27.5" Foreground="#68B8DF"
                                                                     VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                         </Grid>
                                     </Grid>
@@ -224,7 +223,7 @@
                             </Border>
 
                             <!-- Expired Card -->
-                            <Border Grid.Column="2" CornerRadius="10" BorderThickness="0" Background="White" Margin="5">
+                            <Border Grid.Column="2" CornerRadius="10" BorderThickness="0" Background="White" Width="237" Height="75" Margin="5">
                                 <Grid>
                                     <Border CornerRadius="10" Background="Transparent">
                                         <Border.Effect>
@@ -234,15 +233,15 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left">
-                                            <TextBlock x:Name="txtExpiredCount" Text="0" FontSize="30" Foreground="#89AC74" FontFamily="Lexend" Margin="0,0,0,0" FontWeight="Bold" HorizontalAlignment="Center" Height="30"/>
-                                            <TextBlock Text="Solved" FontSize="12" Foreground="#89AC74" FontFamily="Lexend" Margin="10,0,0,0"/>
+                                            <TextBlock x:Name="txtExpiredCount" Text="0" FontSize="32" Foreground="#89AC74" FontFamily="Lexend" Margin="10,0,0,0" FontWeight="Bold" HorizontalAlignment="Center" Height="40" Width="42"/>
+                                            <TextBlock Text="Solved" FontSize="14" Foreground="#89AC74" FontFamily="Lexend" Margin="10,0,0,0"/>
                                         </StackPanel>
-                                        <Grid Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="149,0,0,0" Width="70" Height="60">
-                                            <Ellipse Fill="#DEF9CE" Width="70" Height="60"/>
-                                            <materialDesign:PackIcon Kind="CheckboxMarkedOutline" Width="40" Height="40" Foreground="#89AC74"
+                                        <Grid Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,0,0" Width="70" Height="60">
+                                            <Ellipse Fill="#DEF9CE" Width="57" Height="57"/>
+                                            <materialDesign:PackIcon Kind="CheckboxMarkedOutline" Width="27.5" Height="27.5" Foreground="#89AC74"
                                                                     VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                         </Grid>
                                     </Grid>
@@ -250,7 +249,7 @@
                             </Border>
 
                             <!-- Total Card -->
-                            <Border Grid.Column="3" CornerRadius="10" BorderThickness="0" Background="White" Margin="5">
+                            <Border Grid.Column="3" CornerRadius="10" BorderThickness="0" Background="White" Width="237" Height="75" Margin="5">
                                 <Grid>
                                     <Border CornerRadius="10" Background="Transparent">
                                         <Border.Effect>
@@ -260,15 +259,15 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left">
-                                            <TextBlock x:Name="txtTotalCount" Text="0" FontSize="30" Foreground="#D6AEED" FontFamily="Lexend" Margin="0,0,0,0" FontWeight="Bold" HorizontalAlignment="Center" Height="30"/>
-                                            <TextBlock Text="Total" FontSize="12" Foreground="#D6AEED" FontFamily="Lexend" Margin="10,0,0,0"/>
+                                            <TextBlock x:Name="txtTotalCount" Text="0" FontSize="32" Foreground="#D6AEED" FontFamily="Lexend" Margin="10,0,0,0" FontWeight="Bold" HorizontalAlignment="Center" Height="40" Width="42"/>
+                                            <TextBlock Text="Total" FontSize="14" Foreground="#D6AEED" FontFamily="Lexend" Margin="10,1,0,0"/>
                                         </StackPanel>
-                                        <Grid Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="149,0,0,0" Width="70" Height="60">
-                                            <Ellipse Fill="#EDD7FA" Width="70" Height="60"/>
-                                            <materialDesign:PackIcon Kind="ChartPieOutline" Width="40" Height="40" Foreground="#D6AEED"
+                                        <Grid Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,0,0" Width="70" Height="60">
+                                            <Ellipse Fill="#EDD7FA" Width="57" Height="57"/>
+                                            <materialDesign:PackIcon Kind="ChartPieOutline" Width="27.5" Height="27.5" Foreground="#D6AEED"
                                                                     VerticalAlignment="Center" HorizontalAlignment="Center"/>
                                         </Grid>
                                     </Grid>
@@ -317,11 +316,11 @@
 
                                 <!-- Right Controls -->
                                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Width="211" Height="34">
+                                    <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Width="250" Height="36">
                                         <Grid>
                                             <TextBox BorderThickness="0" Background="Transparent" FontFamily="Lexend"  Name="txtSearch" Style="{StaticResource RoundedTextboxStyle}" Height="23" Margin="20,0,20,0" VerticalAlignment="Center"/>
-                                            <TextBlock Text="Search" Foreground="#AEAEAE" FontSize="13" VerticalAlignment="Center" Margin="7,0,0,0" FontWeight="SemiBold"/>
-                                            <materialDesign:PackIcon Kind="Magnify" Width="25" Height="26" Foreground="#AEAEAE" Margin="159,0,0,-2" VerticalAlignment="Bottom"/>
+                                            <TextBlock Text="Search" Foreground="#AEAEAE" FontSize="16" VerticalAlignment="Center" Margin="7,0,0,0" FontWeight="SemiBold"/>
+                                            <materialDesign:PackIcon Kind="Magnify" Width="25" Height="26" Foreground="#AEAEAE" Margin="210,0,0,0"/>
                                         </Grid>
                                     </Border>
                                 </StackPanel>
@@ -344,8 +343,10 @@
                                                VerticalAlignment="Center"
                                                HorizontalAlignment="Center"
                                                FontWeight="SemiBold"
-                                               Foreground="#444"
-                                               FontSize="14"/>
+                                               Foreground="#555555"
+                                               FontSize="13"
+                                               FontFamily="lexend"/>
+                                    
                                     <!-- Subject with sort icon -->
                                     <StackPanel Grid.Column="1"
                                                 Orientation="Horizontal"
@@ -354,8 +355,9 @@
                                                 Margin="95,0,0,0">
                                         <TextBlock Text="Subject" 
                                                    FontWeight="Normal"
-                                                   Foreground="#444"
-                                                   FontSize="14"/>
+                                                   Foreground="#555555"
+                                                   FontSize="13"
+                                                   FontFamily="lexend"/>
                                         <materialDesign:PackIcon Kind="UnfoldMoreHorizontal" Width="20" Height="20" Foreground="#888" Margin="6,0,0,0" VerticalAlignment="Center"/>
                                     </StackPanel>
                                     <!-- Added with sort icon -->
@@ -366,8 +368,9 @@
                                                 Margin="12,0,0,0">
                                         <TextBlock Text="Added" 
                                                    FontWeight="Normal"
-                                                   Foreground="#444"
-                                                   FontSize="14"/>
+                                                   Foreground="#555555"
+                                                   FontSize="13"
+                                                   FontFamily="lexend"/>
                                         <materialDesign:PackIcon Kind="UnfoldMoreHorizontal" Width="20" Height="20" Foreground="#888" Margin="6,0,0,0" VerticalAlignment="Center"/>
                                     </StackPanel>
                                     <!-- Status with sort icon -->
@@ -378,8 +381,9 @@
                                                 Margin="12,0,0,0">
                                         <TextBlock Text="Status" 
                                                    FontWeight="Normal"
-                                                   Foreground="#444"
-                                                   FontSize="14"/>
+                                                   Foreground="#555555"
+                                                   FontSize="13"
+                                                   FontFamily="lexend"/>
                                         <materialDesign:PackIcon Kind="UnfoldMoreHorizontal" Width="20" Height="20" Foreground="#888" Margin="6,0,0,0" VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </Grid>

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="DPC.Components.Forms.StatusPopUp"
+﻿<UserControl x:Class="DPC.Components.Forms.ViewPrintDeletePopUp"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -22,15 +22,15 @@
                 <!-- Export Button -->
                 <Button Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="0,0,0,15" HorizontalContentAlignment="Left">
                     <DockPanel LastChildFill="True">
-                        <materialDesign:PackIcon Kind="Export" Width="24" Height="24" Foreground="#D6A9F5" Margin="0,0,8,0"/>
-                        <TextBlock Text="Export" VerticalAlignment="Center" FontSize="14" Foreground="#D6A9F5" FontWeight="SemiBold"/>
+                        <materialDesign:PackIcon Kind="PrinterOutline" Width="24" Height="24" Foreground="#D6A9F5" Margin="0,0,8,0"/>
+                        <TextBlock Text="Print" VerticalAlignment="Center" FontSize="14" Foreground="#D6A9F5" FontWeight="SemiBold"/>
                     </DockPanel>
                 </Button>
 
                 <!-- Delete Button -->
                 <Button Background="Transparent" BorderThickness="0" Cursor="Hand" HorizontalContentAlignment="Left">
                     <DockPanel LastChildFill="True">
-                        <materialDesign:PackIcon Kind="Delete" Width="24" Height="24" Foreground="#C94A4A" Margin="0,0,8,0"/>
+                        <materialDesign:PackIcon Kind="DeleteOutline" Width="24" Height="24" Foreground="#C94A4A" Margin="0,0,8,0"/>
                         <TextBlock Text="Delete" VerticalAlignment="Center" FontSize="14" Foreground="#C94A4A" FontWeight="SemiBold"/>
                     </DockPanel>
                 </Button>

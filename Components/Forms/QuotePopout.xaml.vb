@@ -1,7 +1,5 @@
-﻿Namespace DPC.Components.Forms
-    Partial Public Class StatusPopUp
-        Inherits UserControl
-
+﻿Namespace DPC.Views.Components.Forms
+    Public Class QuotePopout
         Public Sub New()
             InitializeComponent()
         End Sub

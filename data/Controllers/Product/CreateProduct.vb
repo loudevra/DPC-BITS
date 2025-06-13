@@ -1,11 +1,13 @@
-﻿Imports MySql.Data.MySqlClient
-Imports System.Collections.ObjectModel
-Imports DPC.DPC.Data.Model
+﻿Imports System.Collections.ObjectModel
+Imports System.Data
+Imports System.Transactions
 Imports System.Web
 Imports System.Windows.Controls.Primitives
-Imports System.Data
-Imports DPC.DPC.Data.Models
 Imports DPC.DPC.Data.Helpers
+Imports DPC.DPC.Data.Model
+Imports DPC.DPC.Data.Models
+Imports MySql.Data.MySqlClient
+Imports Mysqlx.XDevAPI.Common
 
 Namespace DPC.Data.Controllers
     Public Class CreateProduct
@@ -67,40 +69,52 @@ Namespace DPC.Data.Controllers
                         transaction.Commit()
                         MessageBox.Show($"Product {ProductName.Text} with Product Code {productID} has been inserted successfully.")
                     Else
+                        ' Get all variation combinations from the variation manager
+                        Dim allVariationData = ProductController.variationManager.GetAllVariationData()
 
-                        ' Generate product ID
-                        Dim productID As String = ProductController.GenerateProductCode()
+                        'Gets the list of all duplicates
+                        Dim duplicates As String = VariationChecker(conn, transaction, allVariationData)
 
-                        ' Check if ValidDate has a selected date, use DBNull.Value if not
-                        Dim dateValue As Object = If(ValidDate.SelectedDate.HasValue, DirectCast(ValidDate.SelectedDate, Object), DBNull.Value)
 
-                        ' Insert into product table first
-                        Dim productQuery As String = "INSERT INTO product (productID, productName, productCode,categoryID, subcategoryID, supplierID, brandID, dateCreated, productVariation, productImage, measurementUnit, productDescription) 
+                        If duplicates Is Nothing Then
+                            ' Generate product ID
+                            Dim productID As String = ProductController.GenerateProductCode()
+
+                            ' Check if ValidDate has a selected date, use DBNull.Value if not
+                            Dim dateValue As Object = If(ValidDate.SelectedDate.HasValue, DirectCast(ValidDate.SelectedDate, Object), DBNull.Value)
+
+                            ' Insert into product table first
+                            Dim productQuery As String = "INSERT INTO product (productID, productName, productCode,categoryID, subcategoryID, supplierID, brandID, dateCreated, productVariation, productImage, measurementUnit, productDescription) 
                                           VALUES (@productID, @ProductName, @ProductCode, @Category, @SubCategory, @SupplierID, @BrandID, @DateCreated, @variation, @ProductImage, @Description, @MeasurementUnit);"
-                        Using productCmd As New MySqlCommand(productQuery, conn, transaction)
-                            productCmd.Parameters.AddWithValue("@productID", productID)
-                            productCmd.Parameters.AddWithValue("@ProductName", ProductName.Text)
-                            productCmd.Parameters.AddWithValue("@ProductCode", ProductCode.Text)
-                            productCmd.Parameters.AddWithValue("@Category", CType(Category.SelectedItem, ComboBoxItem).Tag)
-                            productCmd.Parameters.AddWithValue("@SubCategory", subCategoryId) ' ✅ Now using 0 if Nothing
-                            productCmd.Parameters.AddWithValue("@SupplierID", CType(Supplier.SelectedItem, ComboBoxItem).Tag)
-                            productCmd.Parameters.AddWithValue("@BrandID", CType(Brand.SelectedItem, ComboBoxItem).Tag)
-                            productCmd.Parameters.AddWithValue("@DateCreated", dateValue) ' Now using NULL if no date selected
-                            productCmd.Parameters.AddWithValue("@variation", variation)
-                            productCmd.Parameters.AddWithValue("@ProductImage", ProductImage)
-                            productCmd.Parameters.AddWithValue("@Description", Description.Text)
-                            productCmd.Parameters.AddWithValue("@MeasurementUnit", CType(MeasurementUnit.SelectedItem, ComboBoxItem).Tag)
-                            productCmd.ExecuteNonQuery()
-                        End Using
+                            Using productCmd As New MySqlCommand(productQuery, conn, transaction)
+                                productCmd.Parameters.AddWithValue("@productID", productID)
+                                productCmd.Parameters.AddWithValue("@ProductName", ProductName.Text)
+                                productCmd.Parameters.AddWithValue("@ProductCode", ProductCode.Text)
+                                productCmd.Parameters.AddWithValue("@Category", CType(Category.SelectedItem, ComboBoxItem).Tag)
+                                productCmd.Parameters.AddWithValue("@SubCategory", subCategoryId) ' ✅ Now using 0 if Nothing
+                                productCmd.Parameters.AddWithValue("@SupplierID", CType(Supplier.SelectedItem, ComboBoxItem).Tag)
+                                productCmd.Parameters.AddWithValue("@BrandID", CType(Brand.SelectedItem, ComboBoxItem).Tag)
+                                productCmd.Parameters.AddWithValue("@DateCreated", dateValue) ' Now using NULL if no date selected
+                                productCmd.Parameters.AddWithValue("@variation", variation)
+                                productCmd.Parameters.AddWithValue("@ProductImage", ProductImage)
+                                productCmd.Parameters.AddWithValue("@Description", Description.Text)
+                                productCmd.Parameters.AddWithValue("@MeasurementUnit", CType(MeasurementUnit.SelectedItem, ComboBoxItem).Tag)
+                                productCmd.ExecuteNonQuery()
+                            End Using
 
-                        'Insert variation data
-                        ProductController.InsertVariationProduct(conn, transaction, productID)
+                            'Insert variation data
+                            ProductController.InsertVariationProduct(conn, transaction, productID)
 
-                        transaction.Commit()
-                        MessageBox.Show($"Product {ProductName.Text} with Product Code {productID} has been inserted successfully.")
+
+                            transaction.Commit()
+                            MessageBox.Show($"Product {ProductName.Text} with Product Code {productID} has been inserted successfully.")
+                        Else
+                            MessageBox.Show($"Serial number/s {duplicates} exist. Product not added.")
+                        End If
                     End If
 
-
+                    DPC.Components.Forms.AddVariation._savedVariations.Clear()
+                    DPC.Data.Controllers.ProductController.variationManager.GetAllVariationData().Clear()
                 End Using
             End Using
         End Sub
@@ -136,9 +150,59 @@ Namespace DPC.Data.Controllers
             End If
         End Sub
 
+
+        Public Shared Function VariationChecker(conn As MySqlConnection, transaction As MySqlTransaction, allVariation As Dictionary(Of String, ProductVariationData)) As String
+            Dim duplicates As String = Nothing
+
+            For Each kvp In allVariation
+                Dim combinationName As String = kvp.Key
+                Dim variationData = kvp.Value
+
+                If variationData.IncludeSerialNumbers AndAlso
+                      variationData.SerialNumbers IsNot Nothing AndAlso
+                      variationData.SerialNumbers.Count > 0 Then
+
+                    ' Check each serial number for this product
+                    For Each serialNumber In variationData.SerialNumbers
+                        If Not String.IsNullOrWhiteSpace(serialNumber) Then
+                            Dim serialQuery As String = "SELECT SerialNumber FROM serialnumberproduct WHERE SerialNumber = @serialNumber"
+
+                            Using serialCmd As New MySqlCommand(serialQuery, conn, transaction)
+                                serialCmd.Parameters.AddWithValue("@serialNumber", serialNumber)
+
+                                Dim reader As MySqlDataReader = serialCmd.ExecuteReader()
+
+                                While reader.Read()
+                                    duplicates += reader.GetString("SerialNumber") & ", "
+
+                                End While
+
+                                If duplicates IsNot Nothing Then
+                                    If duplicates.EndsWith(", ") Then
+                                        duplicates = duplicates.Substring(0, duplicates.Length - 2)
+                                    End If
+                                End If
+
+                                reader.Close()
+                            End Using
+                        End If
+                    Next
+                End If
+
+            Next
+
+
+
+            Return duplicates
+        End Function
+
         Public Shared Sub InsertVariationProduct(conn As MySqlConnection, transaction As MySqlTransaction, productID As String)
             ' Get saved variations from the AddVariation class
             Dim variations As List(Of ProductVariation) = DPC.Components.Forms.AddVariation.SavedVariations
+
+            ' Get all variation combinations from the variation manager
+            Dim allVariationData = ProductController.variationManager.GetAllVariationData()
+
 
             ' Loop through each variation and insert it
             For Each variation As ProductVariation In variations
@@ -178,8 +242,7 @@ Namespace DPC.Data.Controllers
                 Next
             Next
 
-            ' Get all variation combinations from the variation manager
-            Dim allVariationData = ProductController.variationManager.GetAllVariationData()
+            '
 
             ' Loop through each variation combination and insert its stock data
             For Each kvp In allVariationData
