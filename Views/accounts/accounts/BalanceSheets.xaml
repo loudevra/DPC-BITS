@@ -1,12 +1,314 @@
-﻿<UserControl x:Class="BalanceSheets"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:DPC"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+﻿<UserControl x:Class="DPC.Views.Accounts.Accounts.BalanceSheets"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Background="#F5F5F5">
+
+    <UserControl.Resources>
+        <Style x:Key="AddNewButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="120"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Background" Value="#D9D9D9"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush" Value="#474747"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="15" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Border Style -->
+        <Style x:Key="RoundedBorderStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="15"/>
+        </Style>
+
+        <!-- Button Style -->
+        <Style x:Key="RoundedButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Style="{StaticResource RoundedBorderStyle}" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="RoundedComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="FontFamily" Value="Lexend"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Border Style="{StaticResource RoundedBorderStyle}" 
+                    Background="{TemplateBinding Background}" 
+                    BorderBrush="{TemplateBinding BorderBrush}" 
+                    BorderThickness="1">
+                            <Grid>
+                                <!-- Define two columns, Content on left, Arrow on right -->
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="35" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Selected Item Content -->
+                                <ContentPresenter Name="ContentSite"
+                                      IsHitTestVisible="False"
+                                      Content="{TemplateBinding SelectionBoxItem}"
+                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                      VerticalAlignment="Center"
+                                      Margin="10,0,5,0"/>
+
+                                <!-- Arrow Button (Right) -->
+                                <ToggleButton Name="ToggleButton" 
+                                  Grid.Column="1"
+                                  Focusable="False"
+                                  IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                  Background="Transparent"
+                                  BorderBrush="Transparent"
+                                  BorderThickness="0"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Center"
+                                  Margin="0,0,5,0">
+                                    <ToggleButton.Style>
+                                        <Style TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="BorderBrush" Value="Transparent"/>
+                                            <Setter Property="Padding" Value="0"/>
+                                            <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ToggleButton">
+                                                        <Border Background="Transparent" BorderThickness="0">
+                                                            <materialDesign:PackIcon Kind="ChevronDown" Width="20" Height="20" Foreground="Black"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ToggleButton.Style>
+                                </ToggleButton>
+
+                                <!-- Dropdown Items -->
+                                <Popup Name="Popup"
+                           Placement="Bottom"
+                           IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                           AllowsTransparency="True"
+                           Focusable="False"
+                           MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                    <!-- MATCH WIDTH -->
+                                    <Border Style="{StaticResource RoundedBorderStyle}" 
+                                Background="White" 
+                                BorderBrush="Black"
+                                Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                        <!-- MATCH WIDTH -->
+                                        <ScrollViewer>
+                                            <StackPanel>
+                                                <ItemsPresenter/>
+                                            </StackPanel>
+                                        </ScrollViewer>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="RoundedGridStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+
+        <!-- Add the RoundedTextboxStyle that was missing in the original code -->
+        <Style x:Key="RoundedTextboxStyle" TargetType="TextBox">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="FontFamily" Value="Lexend"/>
+        </Style>
+
+    </UserControl.Resources>
+
     <Grid>
-            
+        <!-- Main Content Area -->
+        <Grid>
+            <!-- Main Content (ScrollViewer) -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <Grid Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <!-- Main Content -->
+                    <StackPanel Grid.Row="1" Margin="20">
+                        <!-- Header Section -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <TextBlock Text="Balance Sheet" FontSize="35" FontWeight="Bold" FontFamily="Lexend" Foreground="#474747" HorizontalAlignment="Left" />
+                        </StackPanel>
+                        <Border Background="White" CornerRadius="6" BorderBrush="#555555" BorderThickness="1" Margin="10">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <!-- Tabs -->
+                                    <RowDefinition Height="*"/>
+                                    <!-- Table -->
+                                </Grid.RowDefinitions>
+
+                                <!-- Tab Buttons Row -->
+                                <UniformGrid Grid.Row="0" Columns="6">
+                                    <Border BorderBrush="#555555" BorderThickness="0,0,1,1" Background="Transparent" Padding="6,4">
+                                        <TextBlock Text="BasicAccounts" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#555555"/>
+                                    </Border>
+                                    <Border BorderBrush="#555555" BorderThickness="0,0,1,1" Background="Transparent" Padding="6,4">
+                                        <TextBlock Text="AssetsAccounts" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#555555"/>
+                                    </Border>
+                                    <Border BorderBrush="#555555" BorderThickness="0,0,1,1" Background="Transparent" Padding="6,4">
+                                        <TextBlock Text="ExpensesAccounts" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#555555"/>
+                                    </Border>
+                                    <Border BorderBrush="#555555" BorderThickness="0,0,1,1" Background="Transparent" Padding="6,4">
+                                        <TextBlock Text="IncomeAccounts" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#555555"/>
+                                    </Border>
+                                    <Border BorderBrush="#555555" BorderThickness="0,0,1,1" Background="Transparent" Padding="6,4">
+                                        <TextBlock Text="LiabilitiesAccounts" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#555555"/>
+                                    </Border>
+                                    <Border BorderBrush="#555555" BorderThickness="0,0,0,1" Background="Transparent" Padding="6,4">
+                                        <TextBlock Text="EquityAccounts" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#555555"/>
+                                    </Border>
+                                </UniformGrid>
+
+                                <!-- Table Layout -->
+                                <Grid Grid.Row="1" Margin="1">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="30"/>
+                                        <!-- Header -->
+                                        <RowDefinition Height="30"/>
+                                        <RowDefinition Height="30"/>
+                                        <RowDefinition Height="30"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="40"/>
+                                        <!-- # -->
+                                        <ColumnDefinition Width="*"/>
+                                        <!-- Name -->
+                                        <ColumnDefinition Width="*"/>
+                                        <!-- Account -->
+                                        <ColumnDefinition Width="*"/>
+                                        <!-- Balance -->
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Table Headers -->
+                                    <Border Grid.Row="0" Grid.Column="0" BorderBrush="Gray" BorderThickness="0" Background="White">
+                                        <TextBlock Text="#" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="12" FontFamily="Lexend" Foreground="#555555"/>
+                                    </Border>
+                                    <Border Grid.Row="0" Grid.Column="1" BorderBrush="Gray" BorderThickness="0" Background="White">
+                                        <TextBlock Text="Name" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="12" FontFamily="Lexend" Foreground="#555555"/>
+                                    </Border>
+                                    <Border Grid.Row="0" Grid.Column="2" BorderBrush="Gray" BorderThickness="0" Background="White">
+                                        <TextBlock Text="Account" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="12" FontFamily="Lexend" Foreground="#555555"/>
+                                    </Border>
+                                    <Border Grid.Row="0" Grid.Column="3" BorderBrush="Gray" BorderThickness="0" Background="White">
+                                        <TextBlock Text="Balance" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="12" FontFamily="Lexend" Foreground="#555555"/>
+                                    </Border>
+
+                                    <!-- Table Rows (Empty Visuals) -->
+                                    <Border Grid.Row="1" Grid.ColumnSpan="4" Background="#F5F5F5"/>
+                                    <Border Grid.Row="2" Grid.ColumnSpan="4" Background="White"/>
+                                    <Border Grid.Row="3" Grid.ColumnSpan="4" Background="#F5F5F5"/>
+                                </Grid>
+                            </Grid>
+                        </Border>
+
+                        <Border Background="#F2F2F2" CornerRadius="10" Padding="6" Margin="10">
+                            <Border Background="White" CornerRadius="6" SnapsToDevicePixels="True" UseLayoutRounding="True">
+                                <Grid SnapsToDevicePixels="True">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="34"/>
+                                        <RowDefinition Height="34"/>
+                                        <RowDefinition Height="34"/>
+                                        <RowDefinition Height="34"/>
+                                        <RowDefinition Height="34"/>
+                                        <RowDefinition Height="34"/>
+                                        <RowDefinition Height="34"/>
+                                        <RowDefinition Height="34"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Header -->
+                                    <Border Grid.Row="0" Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" SnapsToDevicePixels="True">
+                                        <TextBlock Text="Type" FontWeight="SemiBold" FontSize="13" FontFamily="Lexend" VerticalAlignment="Center" Margin="10,0"/>
+                                    </Border>
+                                    <Border Grid.Row="0" Grid.Column="1" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" SnapsToDevicePixels="True">
+                                        <TextBlock Text="Balance" FontWeight="SemiBold" FontSize="13" FontFamily="Lexend" VerticalAlignment="Center" Margin="10,0"/>
+                                    </Border>
+
+                                    <!-- Rows -->
+                                    <Border Grid.Row="1" Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" SnapsToDevicePixels="True">
+                                        <TextBlock Text="Basic" FontSize="13" FontFamily="Lexend" VerticalAlignment="Center" Margin="10,0"/>
+                                    </Border>
+                                    <Border Grid.Row="1" Grid.Column="1" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" SnapsToDevicePixels="True"/>
+
+                                    <Border Grid.Row="2" Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" SnapsToDevicePixels="True">
+                                        <TextBlock Text="Assets" FontSize="13" FontFamily="Lexend" VerticalAlignment="Center" Margin="10,0"/>
+                                    </Border>
+                                    <Border Grid.Row="2" Grid.Column="1" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" SnapsToDevicePixels="True"/>
+
+                                    <Border Grid.Row="3" Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" SnapsToDevicePixels="True">
+                                        <TextBlock Text="Expenses" FontSize="13" FontFamily="Lexend" VerticalAlignment="Center" Margin="10,0"/>
+                                    </Border>
+                                    <Border Grid.Row="3" Grid.Column="1" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" SnapsToDevicePixels="True"/>
+
+                                    <Border Grid.Row="4" Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" SnapsToDevicePixels="True">
+                                        <TextBlock Text="Income" FontSize="13" FontFamily="Lexend" VerticalAlignment="Center" Margin="10,0"/>
+                                    </Border>
+                                    <Border Grid.Row="4" Grid.Column="1" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" SnapsToDevicePixels="True"/>
+
+                                    <Border Grid.Row="5" Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" SnapsToDevicePixels="True">
+                                        <TextBlock Text="Income" FontSize="13" FontFamily="Lexend" VerticalAlignment="Center" Margin="10,0"/>
+                                    </Border>
+                                    <Border Grid.Row="5" Grid.Column="1" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" SnapsToDevicePixels="True"/>
+
+                                    <Border Grid.Row="6" Grid.Column="0" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" SnapsToDevicePixels="True">
+                                        <TextBlock Text="Liabilities" FontSize="13" FontFamily="Lexend" VerticalAlignment="Center" Margin="10,0"/>
+                                    </Border>
+                                    <Border Grid.Row="6" Grid.Column="1" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1" SnapsToDevicePixels="True"/>
+
+                                    <!-- Last row (no bottom border) -->
+                                    <Border Grid.Row="7" Grid.Column="0">
+                                        <TextBlock Text="Equity" FontSize="13" FontFamily="Lexend" VerticalAlignment="Center" Margin="10,0"/>
+                                    </Border>
+                                    <Border Grid.Row="7" Grid.Column="1"/>
+                                </Grid>
+                            </Border>
+                        </Border>
+
+
+
+
+
+
+
+
+                    </StackPanel>
+                </Grid>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </UserControl>
