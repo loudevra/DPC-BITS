@@ -551,6 +551,9 @@
     <Compile Include="Views\Accounts\Accounts\BalanceSheets.xaml.vb">
       <DependentUpon>BalanceSheets.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Accounts\Accounts\ManageAccounts\AccountStatement.xaml.vb">
+      <DependentUpon>AccountStatement.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Accounts\Accounts\ManageAccounts\AddAccount.xaml.vb">
       <DependentUpon>AddAccount.xaml</DependentUpon>
     </Compile>
@@ -559,6 +562,9 @@
     </Compile>
     <Compile Include="Views\Accounts\Accounts\ManageAccounts\AddNewTransfer.xaml.vb">
       <DependentUpon>AddNewTransfer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\ManageAccounts\StocksTransfer.xaml.vb">
+      <DependentUpon>StocksTransfer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Accounts\Expense\ExpenseTransaction.xaml.vb">
       <DependentUpon>ExpenseTransaction.xaml</DependentUpon>
@@ -1057,6 +1063,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Accounts\Accounts\ManageAccounts\AccountStatement.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Accounts\Accounts\ManageAccounts\AddAccount.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1065,6 +1075,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Accounts\Accounts\ManageAccounts\AddNewTransfer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\ManageAccounts\StocksTransfer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
