@@ -1,7 +1,7 @@
 ﻿
 Namespace DPC.Views.DataReports
     Public Class DTRCustomer
-        Private Sub New()
+        Public Sub New()
             InitializeComponent()
         End Sub
 

@@ -1,6 +1,6 @@
-﻿Namespace DPC.Views.CRM
-    Public Class CRMClients
-        Public Sub New()
+﻿Namespace DPC.Views.Sales.Quotes
+    Public Class BillingStatement
+        Private Sub New()
 
             ' This call is required by the designer.
             InitializeComponent()
@@ -10,4 +10,3 @@
         End Sub
     End Class
 End Namespace
-

@@ -90,7 +90,8 @@
                       GridLinesVisibility="None"
                       RowBackground="White"
                       AlternatingRowBackground="WhiteSmoke"
-                      BorderThickness="0">
+                      BorderThickness="0"
+                      FontFamily="Lexend">
 
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow">
@@ -117,6 +118,7 @@
                 <DataGrid.CellStyle>
                     <Style TargetType="DataGridCell">
                         <Setter Property="Padding" Value="10,5"/>
+                        <Setter Property="FontFamily" Value="Lexend"/>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="DataGridCell">
@@ -135,20 +137,38 @@
                 </DataGrid.CellStyle>
 
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="#" Binding="{Binding SupplierID}" Width="120"/>
+                    <DataGridTextColumn Header="#" Binding="{Binding SupplierID}" Width="120">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="Lexend"/>
+                                <Setter Property="TextWrapping" Value="NoWrap"/>
+                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
                     <DataGridTextColumn Header="Name" Binding="{Binding SupplierName}" Width="120">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="Lexend"/>
                                 <Setter Property="TextWrapping" Value="NoWrap"/>
                                 <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
                                 <Setter Property="ToolTip" Value="{Binding SupplierName}"/>
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Company" Binding="{Binding SupplierCompany}" Width="120"/>
+                    <DataGridTextColumn Header="Company" Binding="{Binding SupplierCompany}" Width="120">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="Lexend"/>
+                                <Setter Property="TextWrapping" Value="NoWrap"/>
+                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
                     <DataGridTextColumn Header="Address" Binding="{Binding OfficeAddress}" Width="200">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="Lexend"/>
                                 <Setter Property="TextWrapping" Value="NoWrap"/>
                                 <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
                                 <Setter Property="ToolTip" Value="{Binding OfficeAddress}"/>
@@ -158,16 +178,26 @@
                     <DataGridTextColumn Header="Email" Binding="{Binding SupplierEmail}" Width="150">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="Lexend"/>
                                 <Setter Property="TextWrapping" Value="NoWrap"/>
                                 <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
                                 <Setter Property="ToolTip" Value="{Binding SupplierEmail}"/>
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Phone" Binding="{Binding SupplierPhone}" Width="120"/>
+                    <DataGridTextColumn Header="Phone" Binding="{Binding SupplierPhone}" Width="120">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="Lexend"/>
+                                <Setter Property="TextWrapping" Value="NoWrap"/>
+                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
                     <DataGridTextColumn Header="Brands" Binding="{Binding BrandNames}" Width="120">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="Lexend"/>
                                 <Setter Property="TextWrapping" Value="NoWrap"/>
                                 <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
                                 <Setter Property="ToolTip" Value="{Binding BrandNames}"/>
@@ -177,7 +207,8 @@
                     <DataGridTemplateColumn Header="Settings" Width="80">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="⚙" Width="30" Height="30" Background="Transparent" Margin="0"/>
+                                <Button Content="⚙" Width="30" Height="30" Background="Transparent" Margin="0"
+                                        FontFamily="Lexend"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

@@ -1,6 +1,6 @@
-﻿Namespace DPC.Views.CRM
-    Public Class CRMClients
-        Public Sub New()
+﻿Namespace DPC.Components.Forms
+    Public Class CostEstimatePrintPopUp
+        Private Sub New()
 
             ' This call is required by the designer.
             InitializeComponent()

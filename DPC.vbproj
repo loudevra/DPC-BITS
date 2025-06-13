@@ -404,6 +404,15 @@
     <Compile Include="Components\Forms\AddVariation.xaml.vb">
       <DependentUpon>AddVariation.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\BillingStatmentPrintPopUp.xaml.vb">
+      <DependentUpon>BillingStatmentPrintPopUp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\ConvertToPopUp.xaml.vb">
+      <DependentUpon>ConvertToPopUp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\CostEstimatePrintPopUp.xaml.vb">
+      <DependentUpon>CostEstimatePrintPopUp.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\CRMAddNewClientGroup.xaml.vb">
       <DependentUpon>CRMAddNewClientGroup.xaml</DependentUpon>
     </Compile>
@@ -680,11 +689,35 @@
     <Compile Include="Views\POS\POSForm.xaml.vb">
       <DependentUpon>POSForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Project\AddProject1.xaml.vb">
+      <DependentUpon>AddProject1.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Project\AddProject2.xaml.vb">
+      <DependentUpon>AddProject2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Project\AddProject3.xaml.vb">
+      <DependentUpon>AddProject3.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Project\ManageProject.xaml.vb">
+      <DependentUpon>ManageProject.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Project\SupportTickets.xaml.vb">
+      <DependentUpon>SupportTickets.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PromoCodes\AddPromoCode.xaml.vb">
       <DependentUpon>AddPromoCode.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PromoCodes\ManagePromoCodes.xaml.vb">
       <DependentUpon>ManagePromoCodes.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\Quotes\BillingStatement.xaml.vb">
+      <DependentUpon>BillingStatement.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\Quotes\CostEstimate.xaml.vb">
+      <DependentUpon>CostEstimate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\Saless\SalesNewInvoice.xaml.vb">
+      <DependentUpon>SalesNewInvoice.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Stocks\ItemManager\NewProduct\ProductBatchEdit.xaml.vb">
       <DependentUpon>ProductBatchEdit.xaml</DependentUpon>
@@ -757,6 +790,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\AddVariation.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\BillingStatmentPrintPopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\ConvertToPopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\CostEstimatePrintPopUp.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\CRMAddNewClientGroup.xaml">
@@ -1151,6 +1196,26 @@
     <Page Include="Views\POS\POSForm.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Project\AddProject1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Project\AddProject2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Project\AddProject3.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Project\ManageProject.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Project\SupportTickets.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\PromoCodes\AddPromoCode.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1158,6 +1223,18 @@
     <Page Include="Views\PromoCodes\ManagePromoCodes.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Sales\Quotes\BillingStatement.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Quotes\CostEstimate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Saless\SalesNewInvoice.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Stocks\ItemManager\NewProduct\ProductBatchEdit.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -1308,6 +1385,7 @@
     <Folder Include="Installer\" />
     <Folder Include="Themes\" />
     <Folder Include="Views\HRM\Payroll\" />
+    <Folder Include="Views\Sales\POSSales\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ILLink\ILLink.Descriptors.LibraryBuild.xml" />
@@ -1318,6 +1396,7 @@
   <ItemGroup>
     <Resource Include="Assets\images\logosidebar.png" />
     <Resource Include="Assets\logo\BLACK WHOL.ico" />
+    <Resource Include="Assets\images\logosidebarBlack.png" />
     <Content Include="Assets\mails\password_reset_code.html" />
     <Content Include="Assets\mails\password_reset_success.html" />
   </ItemGroup>
