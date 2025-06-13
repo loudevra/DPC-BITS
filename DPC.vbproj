@@ -446,6 +446,9 @@
     <Compile Include="Components\Forms\POSWalkInClient.xaml.vb">
       <DependentUpon>POSWalkInClient.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\QuotePopout.xaml.vb">
+      <DependentUpon>QuotePopout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\RemoveRowPopout.xaml.vb">
       <DependentUpon>RemoveRowPopout.xaml</DependentUpon>
     </Compile>
@@ -734,6 +737,9 @@
     <Compile Include="Views\Sales\Quotes\CostEstimate.xaml.vb">
       <DependentUpon>CostEstimate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Sales\Quotes\Quote.xaml.vb">
+      <DependentUpon>Quote.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Sales\Saless\SalesInvoices.xaml.vb">
       <DependentUpon>SalesInvoices.xaml</DependentUpon>
     </Compile>
@@ -870,6 +876,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\POSWalkInClient.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\QuotePopout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1274,6 +1284,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Sales\Quotes\CostEstimate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Quotes\Quote.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
