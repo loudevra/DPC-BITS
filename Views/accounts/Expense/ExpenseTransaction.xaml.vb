@@ -1,4 +1,4 @@
-﻿Namespace DPC.Views.Accounts.Accounts.ManageAccounts
+﻿Namespace DPC.Views.Accounts.Expense
     Public Class ExpenseTransaction
         Private Sub New()
             ' This call is required by the designer.

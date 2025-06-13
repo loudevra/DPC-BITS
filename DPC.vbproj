@@ -551,7 +551,7 @@
     <Compile Include="Views\Accounts\Accounts\ManageAccounts\AddNewTransfer.xaml.vb">
       <DependentUpon>AddNewTransfer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Accounts\Accounts\ManageAccounts\ExpenseTransaction.xaml.vb">
+    <Compile Include="Views\Accounts\Expense\ExpenseTransaction.xaml.vb">
       <DependentUpon>ExpenseTransaction.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Accounts\Accounts\ManageAccounts\ManageAccounts.xaml.vb">
@@ -1029,7 +1029,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Accounts\Accounts\ManageAccounts\ExpenseTransaction.xaml">
+    <Page Include="Views\Accounts\Expense\ExpenseTransaction.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1398,7 +1398,6 @@
     <Folder Include="Data\Animations\" />
     <Folder Include="Installer\" />
     <Folder Include="Themes\" />
-    <Folder Include="Views\Accounts\Expense\" />
     <Folder Include="Views\Accounts\Income\" />
     <Folder Include="Views\Accounts\Transactions\" />
     <Folder Include="Views\DataReports\GraphicalReports\" />
