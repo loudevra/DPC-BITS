@@ -1,4 +1,4 @@
-﻿Namespace DPC.Views.POS
+﻿Namespace DPC.Views.Sales.Quotes
     Public Class BillingStatement
         Private Sub New()
 
