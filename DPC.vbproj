@@ -507,6 +507,7 @@
     <Compile Include="Data\Converters\InverseBooleanToVisibilityConverter.vb" />
     <Compile Include="Data\Converters\PasswordMaskingBehavior.vb" />
     <Compile Include="Data\Converters\RetainCacheSupplier\CacheNewSupplier.vb" />
+    <Compile Include="Data\Converters\RetainCacheSupplier\CacheUserLoggedIn.vb" />
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
     <Compile Include="Data\Helpers\AutocompleteHelper.vb" />

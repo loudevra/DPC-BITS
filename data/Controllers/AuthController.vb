@@ -8,7 +8,9 @@ Imports MySql.Data.MySqlClient
 Imports DPC.DPC.Data.Model
 Imports DPC.DPC.Data.Helpers ' Import PBKDF2Hasher
 Imports Microsoft.AspNetCore.Cryptography.KeyDerivation
-Imports System.Windows ' Required for MessageBox.Show()
+Imports System.Windows
+Imports DPC.DPC.Data.Models
+Imports DPC.DPC.Components.Navigation ' Required for MessageBox.Show()
 
 Namespace DPC.Data.Controllers
     Public Class AuthController
@@ -20,11 +22,12 @@ Namespace DPC.Data.Controllers
         Private Const REFRESH_TOKEN_EXPIRY As Integer = 7 * 24 * 60 ' Minutes (7 days)
 
         ' Sign-in function
+        ' Adding an employee name and employee email to render the value when loggedin successfully in sidebar
         Public Shared Function SignIn(username As String, password As String) As (String, String)
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
                     conn.Open()
-                    Dim query As String = "SELECT EmployeeID, Password, UserRoleID FROM employee WHERE Username = @Username"
+                    Dim query As String = "SELECT EmployeeID, Password, UserRoleID, Name, Email FROM employee WHERE Username = @Username"
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@Username", username)
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
@@ -32,9 +35,21 @@ Namespace DPC.Data.Controllers
                                 Dim storedHashedPassword As String = reader("Password").ToString()
                                 Dim employeeID As String = reader("EmployeeID").ToString()
                                 Dim roleID As String = reader("UserRoleID").ToString()
+                                Dim Name As String = reader("Name").ToString()
+                                Dim Email As String = reader("Email").ToString()
 
                                 ' Verify password using PBKDF2Hasher
                                 If PBKDF2Hasher.VerifyPassword(password, storedHashedPassword) Then
+                                    ' Pass the value to the object
+                                    Dim UserLogs As New Sidebar()
+
+                                    'UserLogs._OnUserEmail = Email
+                                    'Console.WriteLine($"Email Logged : {Email}")
+                                    CacheOnLoggedInEmail = Email
+                                    'UserLogs._OnUserName = Name
+                                    'Console.WriteLine($"Name Logged : {Name}")
+                                    CacheOnLoggedInName = Name
+
                                     Dim userRole As String = GetUserRole(roleID)
                                     Dim accessToken As String = GenerateJwtToken(employeeID, username, userRole, ACCESS_TOKEN_EXPIRY)
                                     Dim refreshToken As String = GenerateJwtToken(employeeID, username, userRole, REFRESH_TOKEN_EXPIRY, True)

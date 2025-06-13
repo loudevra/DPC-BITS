@@ -313,6 +313,8 @@ Namespace DPC.Data.Controllers
             Dim queryInsertTo As String = ""
             Dim queryTransferFrom As String = ""
             Dim queryTransferTo As String = ""
+            ' Adding a query for the logs and will update the 
+            Dim actionTransferQuery = "UPDATE warehouse SET userActionBy = @userActionBy, transferWarehouseTo = @transferWarehouseNameTo, dateModified = NOW() WHERE warehouseID = @warehouseID"
 
             If productVariation = 0 Then
                 ' For productnovariation (productVariation = 0)
@@ -402,6 +404,17 @@ Namespace DPC.Data.Controllers
                                     cmdTo.Parameters.AddWithValue("@optionCombination", optionCombination)
                                 End If
                                 cmdTo.ExecuteNonQuery()
+                            End Using
+
+                            '"UPDATE warehouse SET userActionBy = @userActionBy, transferWarehouseTo = @transferWarehouseNameTo, dateModified = NOW() WHERE warehouseID = @warehouseID"
+
+
+                            'Step 5 Adding a Log whoever change the transfer stock
+                            Using actionTransferCmd As New MySqlCommand(actionTransferQuery, conn, transaction)
+                                actionTransferCmd.Parameters.AddWithValue("@userActionBy", CacheOnLoggedInName)
+                                actionTransferCmd.Parameters.AddWithValue("@transferWarehouseNameTo", CacheOnWarehouseTransferName)
+                                actionTransferCmd.Parameters.AddWithValue("@warehouseID", warehouseIDFrom)
+                                actionTransferCmd.ExecuteNonQuery()
                             End Using
 
                             ' Commit the transaction if all operations succeed
