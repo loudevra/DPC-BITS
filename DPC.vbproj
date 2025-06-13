@@ -458,8 +458,8 @@
     <Compile Include="Components\Forms\FilterPopOut.xaml.vb">
       <DependentUpon>FilterPopOut.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\Forms\StatusPopUp.xaml.vb">
-      <DependentUpon>StatusPopUp.xaml</DependentUpon>
+    <Compile Include="Components\Forms\ViewExportDeletePopUp.xaml.vb">
+      <DependentUpon>ViewExportDeletePopUp.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\VariationDetails.xaml.vb">
       <DependentUpon>VariationDetails.xaml</DependentUpon>
@@ -896,7 +896,7 @@
     <Page Include="Components\Forms\FilterPopOut.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Components\Forms\StatusPopUp.xaml">
+    <Page Include="Components\Forms\ViewExportDeletePopUp.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
