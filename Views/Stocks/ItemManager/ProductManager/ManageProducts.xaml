@@ -332,7 +332,7 @@
                         <DataGridTextColumn Header="Brand" Binding="{Binding Brand}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#474747"/>
                         <DataGridTextColumn Header="Supplier" Binding="{Binding Supplier}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#474747"/>
                         <DataGridTextColumn Header="Warehouse" Binding="{Binding Warehouse}" Width="Auto" MinWidth="110" FontFamily="Lexend" Foreground="#474747"/>
-                        <DataGridTextColumn Header="Stock Quantity" Binding="{Binding StockUnits}" Width="Auto" MinWidth="120" FontFamily="Lexend" Foreground="#474747"/>
+                        <DataGridTextColumn Header="Stock Quantity" Binding="{Binding StockQuantity}" Width="Auto" MinWidth="120" FontFamily="Lexend" Foreground="#474747"/>
                         <DataGridTextColumn Header="Alert" Binding="{Binding AlertQuantity}" Width="Auto" MinWidth="80" FontFamily="Lexend" Foreground="#474747"/>
                         <DataGridTemplateColumn Header="Settings" Width="80">
                             <DataGridTemplateColumn.CellTemplate>
