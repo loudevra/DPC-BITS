@@ -1,3 +1,9 @@
-﻿Public Class AddProject2
+﻿Namespace DPC.Views.Project
+    Partial Public Class AddProject2
+        Inherits UserControl
 
-End Class
+        Public Sub New()
+            InitializeComponent()
+        End Sub
+    End Class
+End Namespace

@@ -135,15 +135,15 @@
                         <!-- Low -->
                         <Border Background="White" CornerRadius="10" Margin="10" Width="170" Grid.Column="0" BorderBrush="#afafaf" BorderThickness="2">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
-                                  
-                                    <materialDesign:PackIcon Kind="ClipboardTextOutline"
+
+                                <materialDesign:PackIcon Kind="ClipboardTextOutline"
                                           Width="80" Height="80"
                                           Foreground="#afafaf"
                                           HorizontalAlignment="Center"
                                           VerticalAlignment="Center"/>
 
                                 <TextBlock Text="Low" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" Margin="0,0,0,0" Foreground="#afafaf"/>
-                               
+
                             </StackPanel>
                         </Border>
 
@@ -191,7 +191,7 @@
 
                             </StackPanel>
                         </Border>
-                        
+
                     </Grid>
 
                     <!-- Next Button -->
