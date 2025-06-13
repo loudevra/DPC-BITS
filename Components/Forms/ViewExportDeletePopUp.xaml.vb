@@ -1,5 +1,5 @@
 ﻿Namespace DPC.Components.Forms
-    Partial Public Class StatusPopUp
+    Partial Public Class ViewExportDeletePopUp
         Inherits UserControl
 
         Public Sub New()
