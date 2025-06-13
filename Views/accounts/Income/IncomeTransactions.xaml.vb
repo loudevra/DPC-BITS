@@ -1,3 +1,9 @@
-﻿Public Class IncomeTransactions
+﻿Namespace DPC.Views.Accounts.Income
+    Partial Public Class IncomeTransactions
+        Inherits UserControl
 
-End Class
+        Public Sub New()
+            InitializeComponent()
+        End Sub
+    End Class
+End Namespace

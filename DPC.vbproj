@@ -473,6 +473,9 @@
     <Compile Include="Components\Forms\VariationModal105.xaml.vb">
       <DependentUpon>VariationModal105.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\ViewPrintDeletePopUp.xaml.vb">
+      <DependentUpon>ViewPrintDeletePopUp.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Navigation\TopNavbar.xaml.vb">
       <DependentUpon>TopNavBar.xaml</DependentUpon>
     </Compile>
@@ -897,6 +900,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\VariationModal105.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\ViewPrintDeletePopUp.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

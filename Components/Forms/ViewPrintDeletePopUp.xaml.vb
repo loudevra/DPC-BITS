@@ -1,5 +1,5 @@
-﻿Namespace DPC.Views.Accounts.Accounts
-    Partial Public Class BalanceSheets
+﻿Namespace DPC.Components.Forms
+    Partial Public Class ViewPrintDeletePopUp
         Inherits UserControl
 
         Public Sub New()
