@@ -248,5 +248,10 @@ Namespace DPC.Components.Navigation
             Dim currentWindow As Window = Window.GetWindow(Me)
             If currentWindow IsNot Nothing Then currentWindow.Close()
         End Sub
+
+        Private Sub Sidebar_Loaded(sender As Object, e As RoutedEventArgs)
+            UserName.Text = CacheOnLoggedInName
+            UserEmail.Text = CacheOnLoggedInEmail
+        End Sub
     End Class
 End Namespace
