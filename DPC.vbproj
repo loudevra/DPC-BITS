@@ -680,12 +680,6 @@
     <Compile Include="Views\Misc\Documents\Documents.xaml.vb">
       <DependentUpon>Documents.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\POS\BillingStatement.xaml.vb">
-      <DependentUpon>BillingStatement.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\POS\CostEstimate.xaml.vb">
-      <DependentUpon>CostEstimate.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\POS\PaymentCardsConfirmation.xaml.vb">
       <DependentUpon>PaymentCardsConfirmation.xaml</DependentUpon>
     </Compile>
@@ -715,6 +709,12 @@
     </Compile>
     <Compile Include="Views\PromoCodes\ManagePromoCodes.xaml.vb">
       <DependentUpon>ManagePromoCodes.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\Quotes\BillingStatement.xaml.vb">
+      <DependentUpon>BillingStatement.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\Quotes\CostEstimate.xaml.vb">
+      <DependentUpon>CostEstimate.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Sales\Saless\SalesNewInvoice.xaml.vb">
       <DependentUpon>SalesNewInvoice.xaml</DependentUpon>
@@ -1185,14 +1185,6 @@
     <Page Include="Views\Misc\Documents\Documents.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\POS\BillingStatement.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\POS\CostEstimate.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\POS\PaymentCardsConfirmation.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1231,6 +1223,14 @@
     <Page Include="Views\PromoCodes\ManagePromoCodes.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Sales\Quotes\BillingStatement.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Quotes\CostEstimate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Sales\Saless\SalesNewInvoice.xaml">
       <SubType>Designer</SubType>
@@ -1386,7 +1386,6 @@
     <Folder Include="Themes\" />
     <Folder Include="Views\HRM\Payroll\" />
     <Folder Include="Views\Sales\POSSales\" />
-    <Folder Include="Views\Sales\Quotes\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ILLink\ILLink.Descriptors.LibraryBuild.xml" />
