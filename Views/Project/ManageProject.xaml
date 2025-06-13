@@ -319,7 +319,7 @@
                                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
                                     <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Width="211" Height="34">
                                         <Grid>
-                                            <TextBox BorderThickness="0" Background="Transparent" FontFamily="Lexend"  Name="txtSearch" Style="{StaticResource RoundedTextboxStyle}" Height="23" Margin="20,0,20,0" VerticalAlignment="Center"  TextChanged="TxtSearch_TextChanged" />
+                                            <TextBox BorderThickness="0" Background="Transparent" FontFamily="Lexend"  Name="txtSearch" Style="{StaticResource RoundedTextboxStyle}" Height="23" Margin="20,0,20,0" VerticalAlignment="Center"/>
                                             <TextBlock Text="Search" Foreground="#AEAEAE" FontSize="13" VerticalAlignment="Center" Margin="7,0,0,0" FontWeight="SemiBold"/>
                                             <materialDesign:PackIcon Kind="Magnify" Width="25" Height="26" Foreground="#AEAEAE" Margin="159,0,0,-2" VerticalAlignment="Bottom"/>
                                         </Grid>
