@@ -1,4 +1,4 @@
-﻿Namespace DPC.Views.DataReports
+﻿Namespace DPC.Views.DataReports.BusinessRegisters
     Public Class DTRBusinessRegisters
 
         Public Sub New()

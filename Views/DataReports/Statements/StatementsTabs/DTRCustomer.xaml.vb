@@ -1,5 +1,5 @@
 ﻿
-Namespace DPC.Views.DataReports
+Namespace DPC.Views.DataReports.Statements.StatementsTabs
     Public Class DTRCustomer
         Public Sub New()
             InitializeComponent()
