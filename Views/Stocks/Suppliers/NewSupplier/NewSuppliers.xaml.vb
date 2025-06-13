@@ -169,5 +169,27 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
             TxtPostalCode.Text = CacheCompanyPostalCode
             TxtTINID.Text = CacheCompanyTINID
         End Sub
+
+        Private Sub TxtTINID_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
+            If Not e.Text.All(AddressOf Char.IsDigit) Then
+                e.Handled = True
+                Return
+            End If
+        End Sub
+
+        Private Sub TxtPostalCode_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
+            ' Limit to 11 digits
+            Dim textBox = CType(sender, TextBox)
+            If textBox.Text.Length >= 11 Then
+                e.Handled = True
+            End If
+        End Sub
+
+        Private Sub TxtCountry_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
+            If Not e.Text.All(AddressOf Char.IsLetter) Then
+                e.Handled = True
+                Return
+            End If
+        End Sub
     End Class
 End Namespace
