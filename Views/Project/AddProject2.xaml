@@ -68,7 +68,7 @@
 
                                 <Button Grid.Column="1"
                     Style="{StaticResource DateButtonStyle}"
-                    Click="OrderDate_Click"
+                   
                     Width="Auto"
                     Margin="10,0,25,0">
                                     <TextBlock Text="{Binding OrderDate.SelectedDate, StringFormat='MMM dd, yyyy'}"
@@ -97,7 +97,7 @@ SelectedDate="{Binding OrderDate.SelectedDate, Mode=TwoWay, UpdateSourceTrigger=
 
                                 <Button Grid.Column="1"
 Style="{StaticResource DateButtonStyle}"
-Click="OrderDate_Click"
+
 Width="Auto"
 Margin="10,0,25,0">
                                     <TextBlock Text="{Binding OrderDate.SelectedDate, StringFormat='MMM dd, yyyy'}"
@@ -110,13 +110,13 @@ Margin="10,0,25,0">
 
                         <Button Style="{StaticResource RoundedButtonStyle}" Grid.Column="0" Margin="10,30,10,-16" Grid.Row="1">
                             <RadioButton x:Name="RadBtnDueDateOnly" Margin="10" BorderBrush="#474747" BorderThickness="1.5" 
-GroupName="CalculationMode" IsChecked="True" Checked="RadioButton_Checked">
+GroupName="CalculationMode" IsChecked="True" >
                                 <TextBlock Text="Due Date Only" FontSize="14" FontWeight="SemiBold" FontFamily="{StaticResource Lexend}" Foreground="#474747"/>
                             </RadioButton>
                         </Button>
                         <Button Style="{StaticResource RoundedButtonStyle}" Grid.Column="1" Margin="10,30,10,-16" Grid.Row="1">
                             <RadioButton x:Name="RadBtnStartDueDate" Margin="10" BorderBrush="#474747" BorderThickness="1.5"
-GroupName="CalculationMode" Checked="RadioButton_Checked">
+GroupName="CalculationMode">
                                 <TextBlock Text="Start to Due Date" FontSize="14" FontWeight="SemiBold" FontFamily="{StaticResource Lexend}" Foreground="#474747"/>
                             </RadioButton>
                         </Button>
