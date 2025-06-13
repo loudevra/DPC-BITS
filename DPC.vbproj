@@ -455,6 +455,9 @@
     <Compile Include="Components\Forms\FilterPopOut.xaml.vb">
       <DependentUpon>FilterPopOut.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\StatusPopUp.xaml.vb">
+      <DependentUpon>StatusPopUp.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\VariationDetails.xaml.vb">
       <DependentUpon>VariationDetails.xaml</DependentUpon>
     </Compile>
@@ -713,6 +716,9 @@
     <Compile Include="Views\Sales\Quotes\CostEstimate.xaml.vb">
       <DependentUpon>CostEstimate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Sales\Saless\SalesInvoices.xaml.vb">
+      <DependentUpon>SalesInvoices.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Sales\Saless\SalesNewInvoice.xaml.vb">
       <DependentUpon>SalesNewInvoice.xaml</DependentUpon>
     </Compile>
@@ -857,6 +863,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Forms\FilterPopOut.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\StatusPopUp.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\VariationDetails.xaml">
@@ -1222,6 +1232,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Sales\Quotes\CostEstimate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Saless\SalesInvoices.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

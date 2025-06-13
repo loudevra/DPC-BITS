@@ -42,14 +42,14 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
-                            
+
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        
+
                         <TextBlock Text="Start Date:" Margin="0,0,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747" Grid.Column="0" Grid.Row="0"/>
                         <Border Style="{StaticResource RoundedBorderStyle}" Margin="10,20,10,-16">
                             <Grid>
@@ -59,22 +59,22 @@
                                     <ColumnDefinition Width=".15*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Order Date -->
+                                <!-- Start Date -->
                                 <DatePicker x:Name="StartDatePicker"
                     Style="{StaticResource SingleDatePickerStyle}"
-                    SelectedDate="{Binding OrderDate.SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    SelectedDate="{Binding StartDate.SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                 <materialDesign:PackIcon Grid.Column="2" Kind="Calendar" Width="25" Height="25" Foreground="#474747" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,0,0,0"/>
 
                                 <Button Grid.Column="1"
-                    Style="{StaticResource DateButtonStyle}"
+                                Style="{StaticResource DateButtonStyle}"
                    
-                    Width="Auto"
-                    Margin="10,0,25,0">
-                                    <TextBlock Text="{Binding OrderDate.SelectedDate, StringFormat='MMM dd, yyyy'}"
-                       Margin="0,0,5,0"
-                       Foreground="#474747"
-                       Height="14"/>
+                                Width="Auto"
+                                Margin="10,0,25,0">
+                                    <TextBlock Text="{Binding StartDate.SelectedDate, StringFormat='MMM dd, yyyy'}"
+                                Margin="0,0,5,0"
+                                Foreground="#474747"
+                                Height="14"/>
                                 </Button>
                             </Grid>
                         </Border>
@@ -88,10 +88,10 @@
                                     <ColumnDefinition Width=".15*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Order Date -->
+                                <!-- Due Date -->
                                 <DatePicker x:Name="DueDatePicker"
 Style="{StaticResource SingleDatePickerStyle}"
-SelectedDate="{Binding OrderDate.SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+SelectedDate="{Binding DueDate.SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                 <materialDesign:PackIcon Grid.Column="2" Kind="Calendar" Width="25" Height="25" Foreground="#474747" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,0,0,0"/>
 
@@ -100,7 +100,7 @@ Style="{StaticResource DateButtonStyle}"
 
 Width="Auto"
 Margin="10,0,25,0">
-                                    <TextBlock Text="{Binding OrderDate.SelectedDate, StringFormat='MMM dd, yyyy'}"
+                                    <TextBlock Text="{Binding DueDate.SelectedDate, StringFormat='MMM dd, yyyy'}"
    Margin="0,0,5,0"
    Foreground="#474747"
    Height="14"/>
@@ -124,7 +124,7 @@ GroupName="CalculationMode">
                         <CheckBox Content="Link to Calendar" Margin="0,30,0,0" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold" Grid.Row="2" VerticalContentAlignment="Center"/>
 
                     </Grid>
-                    
+
                     <!-- Assign -->
                     <TextBlock Text="Assign to:" Margin="0,20,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                     <ComboBox x:Name="cmbAssign" Style="{StaticResource RoundedComboBoxStyle}" Width="773" Height="40" SelectedIndex="0" Margin="0,0,0,10">
@@ -141,8 +141,8 @@ GroupName="CalculationMode">
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                    <!-- Next Button -->
-                    <Button
+                        <!-- Next Button -->
+                        <Button
 Content="Next  &gt;"
 Width="140" Height="38" Margin="0,24,0,0"
 HorizontalAlignment="right"
@@ -152,21 +152,21 @@ Foreground="White"
 BorderBrush="Transparent"
                         Grid.Column="1"
                         HorizontalContentAlignment="Center">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}"
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}"
             CornerRadius="20"
             BorderBrush="{TemplateBinding BorderBrush}"
             BorderThickness="{TemplateBinding BorderThickness}">
-                                    <ContentPresenter HorizontalAlignment="Center"
+                                        <ContentPresenter HorizontalAlignment="Center"
                           VerticalAlignment="Center"
                           Margin="10,0"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                    <!-- Next Button -->
-                    <Button
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                        <!-- Back Button -->
+                        <Button
 Content="&lt;  Back"
 Width="140" Height="38" Margin="0,24,0,0"
 HorizontalAlignment="left"
@@ -176,19 +176,19 @@ Foreground="White"
 BorderBrush="Transparent"
                         Grid.Column="0"
                         HorizontalContentAlignment="Center">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}"
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}"
             CornerRadius="20"
             BorderBrush="{TemplateBinding BorderBrush}"
             BorderThickness="{TemplateBinding BorderThickness}">
-                                    <ContentPresenter HorizontalAlignment="Center"
+                                        <ContentPresenter HorizontalAlignment="Center"
                           VerticalAlignment="Center"
                           Margin="10,0"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
                     </Grid>
 
                 </StackPanel>

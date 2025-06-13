@@ -1,5 +1,5 @@
-﻿Namespace DPC.Views.Project
-    Partial Public Class AddProject3
+﻿Namespace DPC.Views.Sales.Saless
+    Partial Public Class SalesInvoices
         Inherits UserControl
 
         Public Sub New()

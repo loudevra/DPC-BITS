@@ -1,5 +1,5 @@
-﻿Namespace DPC.Views.Project
-    Partial Public Class AddProject3
+﻿Namespace DPC.Components.Forms
+    Partial Public Class StatusPopUp
         Inherits UserControl
 
         Public Sub New()
