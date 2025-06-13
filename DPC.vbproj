@@ -413,6 +413,9 @@
     <Compile Include="Components\Forms\CostEstimatePrintPopUp.xaml.vb">
       <DependentUpon>CostEstimatePrintPopUp.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\CreditNotesPopUp.xaml.vb">
+      <DependentUpon>CreditNotesPopUp.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\CRMAddNewClientGroup.xaml.vb">
       <DependentUpon>CRMAddNewClientGroup.xaml</DependentUpon>
     </Compile>
@@ -834,6 +837,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\CostEstimatePrintPopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\CreditNotesPopUp.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
