@@ -722,6 +722,12 @@
     <Compile Include="Views\Sales\EmailGenerator\EmailGenerator.xaml.vb">
       <DependentUpon>EmailGenerator.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Sales\EmailGenerator\SendEmail.xaml.vb">
+      <DependentUpon>SendEmail.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\EmailGenerator\SendSMS.xaml.vb">
+      <DependentUpon>SendSMS.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Sales\Quotes\BillingStatement.xaml.vb">
       <DependentUpon>BillingStatement.xaml</DependentUpon>
     </Compile>
@@ -1252,6 +1258,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Sales\EmailGenerator\EmailGenerator.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\EmailGenerator\SendEmail.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\EmailGenerator\SendSMS.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

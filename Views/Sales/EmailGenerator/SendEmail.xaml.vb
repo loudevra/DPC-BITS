@@ -1,7 +1,6 @@
 ﻿
-
 Namespace DPC.Views.Sales.EmailGenerator
-    Public Class EmailGenerator
+    Public Class SendEmail
 
         Public Sub New()
 
@@ -13,5 +12,4 @@ Namespace DPC.Views.Sales.EmailGenerator
         End Sub
 
     End Class
-
 End Namespace
