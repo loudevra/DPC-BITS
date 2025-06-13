@@ -617,20 +617,17 @@
     <Compile Include="Views\Dashboard\Dashboard.xaml.vb">
       <DependentUpon>Dashboard.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DataReports\DTRAccounts.xaml.vb">
+    <Compile Include="Views\DataReports\Statements\StatementsTabs\DTRAccounts.xaml.vb">
       <DependentUpon>DTRAccounts.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DataReports\DTRBusinessRegisters.xaml.vb">
+    <Compile Include="Views\DataReports\BusinessRegisters\DTRBusinessRegisters.xaml.vb">
       <DependentUpon>DTRBusinessRegisters.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DataReports\DTRCustomer.xaml.vb">
+    <Compile Include="Views\DataReports\Statements\StatementsTabs\DTRCustomer.xaml.vb">
       <DependentUpon>DTRCustomer.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DataReports\DTRTabStructured.xaml.vb">
+    <Compile Include="Views\DataReports\Statements\DTRTabStructured.xaml.vb">
       <DependentUpon>DTRTabStructured.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\DataReports\test2.xaml.vb">
-      <DependentUpon>test2.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\HRM\Departments\DepartmentsView.xaml.vb">
       <DependentUpon>DepartmentsView.xaml</DependentUpon>
@@ -1105,23 +1102,19 @@
     <Page Include="Views\Dashboard\Dashboard.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DataReports\DTRAccounts.xaml">
+    <Page Include="Views\DataReports\Statements\StatementsTabs\DTRAccounts.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DataReports\DTRBusinessRegisters.xaml">
+    <Page Include="Views\DataReports\BusinessRegisters\DTRBusinessRegisters.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DataReports\DTRCustomer.xaml">
+    <Page Include="Views\DataReports\Statements\StatementsTabs\DTRCustomer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DataReports\DTRTabStructured.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\DataReports\test2.xaml">
+    <Page Include="Views\DataReports\Statements\DTRTabStructured.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1384,6 +1377,11 @@
     <Folder Include="Data\Animations\" />
     <Folder Include="Installer\" />
     <Folder Include="Themes\" />
+    <Folder Include="Views\Accounts\Expense\" />
+    <Folder Include="Views\Accounts\Income\" />
+    <Folder Include="Views\Accounts\Transactions\" />
+    <Folder Include="Views\DataReports\GraphicalReports\" />
+    <Folder Include="Views\DataReports\SummaryReports\" />
     <Folder Include="Views\HRM\Payroll\" />
     <Folder Include="Views\Sales\POSSales\" />
   </ItemGroup>

@@ -1,6 +1,7 @@
-﻿Namespace DPC.Views.DataReports
-    Public Class DTRTabStructured
-        Public Sub New()
+﻿Namespace DPC.Views.DataReports.Statements.StatementsTabs
+
+    Public Class DTRAccounts
+        Private Sub New()
             InitializeComponent()
         End Sub
 

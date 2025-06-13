@@ -76,9 +76,9 @@ Namespace DPC.Data.Helpers.ViewLoader
 
                         Return New CRM.CRMNewResidentialClient
                     Case "businnessregisters"
-                        Return New DPC.Views.DataReports.DTRBusinessRegisters()
+                        Return New DPC.Views.DataReports.BusinessRegisters.DTRBusinessRegisters()
                     Case "generatestatement"
-                        Return New DPC.Views.DataReports.DTRTabStructured()
+                        Return New DPC.Views.DataReports.Statements.DTRTabStructured()
 
                         ' Employees Navigation
                     Case "permissions"
