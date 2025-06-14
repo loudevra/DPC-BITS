@@ -140,6 +140,19 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "clienttransactions"
                         Return New Accounts.Transactions.ClientsTransactions()
 
+                        ' Project Navigation
+                    Case "newproject"
+                        Return New Project.AddProject1()
+                    Case "addproject2"
+                        Return New Project.AddProject2()
+                    Case "addproject3"
+                        Return New Project.AddProject3()
+                    Case "manageproject"
+                        Return New Project.ManageProject()
+                    Case "todolist"
+                        Return New Project.ToDoList()
+
+
 
 
 
@@ -303,6 +316,18 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "addnewtransfer"
             ElseIf typeName = "clienttransactions" Then
                 Return "clienttransactions"
+
+                ' Projects Navigation
+            ElseIf typeName = "newproject" Then
+                Return "newproject"
+            ElseIf typeName = "addproject2" Then
+                Return "addproject2"
+            ElseIf typeName = "addproject3" Then
+                Return "addproject3"
+            ElseIf typeName = "manageproject" Then
+                Return "manageproject"
+            ElseIf typeName = "todolist" Then
+                Return "todolist"
 
 
             Else
