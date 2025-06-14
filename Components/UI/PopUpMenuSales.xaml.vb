@@ -112,7 +112,7 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToManageInvoices(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("salesinvoices", Me)
+            ViewLoader.DynamicView.NavigateToView("manageposinvoices", Me)
         End Sub
 
         Private Sub NavigateToNewQuote(sender As Object, e As RoutedEventArgs)
@@ -120,7 +120,7 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToManageQuote(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("salesinvoices", Me)
+            ViewLoader.DynamicView.NavigateToView("salesquote", Me)
         End Sub
 
         Private Sub NavigateToNewSubscription(sender As Object, e As RoutedEventArgs)
@@ -138,3 +138,4 @@ Namespace DPC.Components.UI
         End Sub
     End Class
 End Namespace
+

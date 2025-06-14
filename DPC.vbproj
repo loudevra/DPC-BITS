@@ -753,6 +753,9 @@
     <Compile Include="Views\Sales\EmailGenerator\SendSMS.xaml.vb">
       <DependentUpon>SendSMS.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Sales\POSSales\ManagePOSInvoices.xaml.vb">
+      <DependentUpon>ManagePOSInvoices.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Sales\Quotes\BillingStatement.xaml.vb">
       <DependentUpon>BillingStatement.xaml</DependentUpon>
     </Compile>
@@ -1332,6 +1335,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Sales\POSSales\ManagePOSInvoices.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Sales\Quotes\BillingStatement.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1507,7 +1514,6 @@
     <Folder Include="Views\DataReports\GraphicalReports\" />
     <Folder Include="Views\DataReports\SummaryReports\" />
     <Folder Include="Views\HRM\Payroll\" />
-    <Folder Include="Views\Sales\POSSales\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ILLink\ILLink.Descriptors.LibraryBuild.xml" />

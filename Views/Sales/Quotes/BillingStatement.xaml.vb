@@ -1,6 +1,6 @@
 ﻿Namespace DPC.Views.Sales.Quotes
     Public Class BillingStatement
-        Private Sub New()
+        Public Sub New()
 
             ' This call is required by the designer.
             InitializeComponent()

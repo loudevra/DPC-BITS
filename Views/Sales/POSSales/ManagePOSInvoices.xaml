@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="DPC.Views.Sales.Saless.SalesInvoices"
+﻿<UserControl x:Class="DPC.Views.Sales.POSSales.ManagePOSInvoices"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -158,8 +158,8 @@
                     <StackPanel Grid.Row="1" Margin="20">
                         <!-- Header Section -->
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <TextBlock Text="Invoices" FontSize="35" FontWeight="Bold" FontFamily="Lexend" Foreground="#474747" HorizontalAlignment="Left" />
-                            <Button Style="{StaticResource RoundedButtonStyle}" Background="#555555" Foreground="#ffffff" Width="130" Height="29" Margin="450,0,0,0"  Click="NavigateToSalesNewInvoice" >
+                            <TextBlock Text="Manage POS Invoices" FontSize="35" FontWeight="Bold" FontFamily="Lexend" Foreground="#474747" HorizontalAlignment="Left" />
+                            <Button Style="{StaticResource RoundedButtonStyle}" Background="#555555" Foreground="#ffffff" Width="130" Height="29" Margin="450,0,0,0"   >
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                                     <materialDesign:PackIcon Kind="Plus" Width="16" Height="16" Margin="0,0,0,0" VerticalAlignment="Center"/>
                                     <TextBlock Text="Add Invoice" FontSize="15" FontFamily="Lexend" Foreground="#ffffff" VerticalAlignment="Center"/>
