@@ -1,6 +1,7 @@
 ﻿Imports System.Windows.Controls.Primitives
 Imports System.Windows
 Imports System.Windows.Media
+Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Components.UI
     Public Class PopUpMenuProjects
@@ -104,15 +105,16 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToNewProject(sender As Object, e As RoutedEventArgs)
-            MessageBox.Show("Navigating to New Project", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+            ViewLoader.DynamicView.NavigateToView("newproject", Me)
         End Sub
 
         Private Sub NavigateToManageProject(sender As Object, e As RoutedEventArgs)
-            MessageBox.Show("Navigating to Manage Project", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+            ViewLoader.DynamicView.NavigateToView("manageproject", Me)
         End Sub
 
         Private Sub NavigateToToDoList(sender As Object, e As RoutedEventArgs)
-            MessageBox.Show("Navigating to To Do List", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+            ViewLoader.DynamicView.NavigateToView("todolist", Me)
         End Sub
     End Class
 End Namespace
+

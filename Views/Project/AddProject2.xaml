@@ -143,21 +143,22 @@ GroupName="CalculationMode">
                         </Grid.ColumnDefinitions>
                         <!-- Next Button -->
                         <Button
-Content="Next  &gt;"
-Width="140" Height="38" Margin="0,24,0,0"
-HorizontalAlignment="right"
-FontSize="16"
-Background="#444"
-Foreground="White"
-BorderBrush="Transparent"
+                        Content="Next  &gt;"
+                        Width="140" Height="38" Margin="0,24,0,0"
+                        HorizontalAlignment="right"
+                        FontSize="16"
+                        Background="#444"
+                        Foreground="White"
+                        Click="NavigateToNewProject"
+                        BorderBrush="Transparent"
                         Grid.Column="1"
                         HorizontalContentAlignment="Center">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border Background="{TemplateBinding Background}"
-            CornerRadius="20"
-            BorderBrush="{TemplateBinding BorderBrush}"
-            BorderThickness="{TemplateBinding BorderThickness}">
+                         CornerRadius="20"
+                         BorderBrush="{TemplateBinding BorderBrush}"
+                          BorderThickness="{TemplateBinding BorderThickness}">
                                         <ContentPresenter HorizontalAlignment="Center"
                           VerticalAlignment="Center"
                           Margin="10,0"/>
@@ -167,13 +168,13 @@ BorderBrush="Transparent"
                         </Button>
                         <!-- Back Button -->
                         <Button
-Content="&lt;  Back"
-Width="140" Height="38" Margin="0,24,0,0"
-HorizontalAlignment="left"
-FontSize="16"
-Background="#8a8a8a"
-Foreground="White"
-BorderBrush="Transparent"
+                    Content="&lt;  Back"
+                     Width="140" Height="38" Margin="0,24,0,0"
+                    HorizontalAlignment="left"
+                    FontSize="16"
+                    Background="#8a8a8a"
+                    Foreground="White"
+                    BorderBrush="Transparent"
                         Grid.Column="0"
                         HorizontalContentAlignment="Center">
                             <Button.Template>
