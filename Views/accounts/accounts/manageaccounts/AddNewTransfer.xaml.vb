@@ -1,6 +1,6 @@
 ﻿Namespace DPC.Views.Accounts.Accounts.ManageAccounts
     Public Class AddNewTransfer
-        Private Sub New()
+        Public Sub New()
             ' This call is required by the designer.
             InitializeComponent()
 

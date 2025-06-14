@@ -123,26 +123,26 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToNewTransaction(sender As Object, e As RoutedEventArgs)
-
+            ViewLoader.DynamicView.NavigateToView("addnewtransaction", Me)
         End Sub
 
         Private Sub NavigateToNewTransfer(sender As Object, e As RoutedEventArgs)
-
+            ViewLoader.DynamicView.NavigateToView("addnewtransfer", Me)
         End Sub
 
         Private Sub NavigateToClientsTransaction(sender As Object, e As RoutedEventArgs)
             ' Implementation for navigating to Clients Transaction
-            ViewLoader.DynamicView.NavigateToView("clientstransaction", Me)
+            ViewLoader.DynamicView.NavigateToView("clienttransactions", Me)
         End Sub
 
         Private Sub NavigateToIncome(sender As Object, e As RoutedEventArgs)
             ' Implementation for navigating to Income
-            ViewLoader.DynamicView.NavigateToView("income", Me)
+            ViewLoader.DynamicView.NavigateToView("accountsincome", Me)
         End Sub
 
         Private Sub NavigateToExpense(sender As Object, e As RoutedEventArgs)
             ' Implementation for navigating to Expense
-            ViewLoader.DynamicView.NavigateToView("expense", Me)
+            ViewLoader.DynamicView.NavigateToView("accountsexpense", Me)
         End Sub
     End Class
 End Namespace
