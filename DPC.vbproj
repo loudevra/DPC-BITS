@@ -579,6 +579,9 @@
     <Compile Include="Views\Accounts\Income\IncomeTransactions.xaml.vb">
       <DependentUpon>IncomeTransactions.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Accounts\Transactions\ClientsTransactions.xaml.vb">
+      <DependentUpon>ClientsTransactions.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Accounts\Transactions\ManageTransactions.xaml.vb">
       <DependentUpon>ManageTransactions.xaml</DependentUpon>
     </Compile>
@@ -1101,6 +1104,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Accounts\Income\IncomeTransactions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Transactions\ClientsTransactions.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

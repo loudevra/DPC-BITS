@@ -1,4 +1,5 @@
 ﻿Imports DPC.DPC.Views
+Imports DPC.DPC.Views.Accounts.Accounts.ManageAccounts
 Imports System.Windows
 Imports System.Windows.Controls
 Imports System.Windows.Media
@@ -122,6 +123,25 @@ Namespace DPC.Data.Helpers.ViewLoader
                         ' Accounts Navigation
                     Case "manageaccounts"
                         Return New Accounts.Accounts.ManageAccounts.ManageAccounts()
+                    Case "accountsexpense"
+                        Return New Accounts.Expense.ExpenseTransaction()
+                    Case "accountsincome"
+                        Return New Accounts.Income.IncomeTransactions()
+                    Case "viewtransactions"
+                        Return New Accounts.Transactions.ManageTransactions()
+                    Case "addnewtransaction"
+                        Return New Accounts.Accounts.ManageAccounts.AddNewTransaction()
+                    Case "balancesheets"
+                        Return New Accounts.Accounts.BalanceSheets()
+                    Case "accountstatement"
+                        Return New Accounts.Accounts.ManageAccounts.AccountStatement()
+                    Case "addnewtransfer"
+                        Return New Accounts.Accounts.ManageAccounts.AddNewTransfer()
+                    Case "clienttransactions"
+                        Return New Accounts.Transactions.ClientsTransactions()
+
+
+
 
 
                     Case Else
@@ -267,6 +287,24 @@ Namespace DPC.Data.Helpers.ViewLoader
                 ' Accounts Navigation
             ElseIf typeName = "manageaccounts" Then
                 Return "manageaccounts"
+            ElseIf typeName = "accountsexpense" Then
+                Return "accountsexpense"
+            ElseIf typeName = "accountsincome" Then
+                Return "accountsincome"
+            ElseIf typeName = "viewtransactions" Then
+                Return "viewtransactions"
+            ElseIf typeName = "addnewtransaction" Then
+                Return "addnewtransaction"
+            ElseIf typeName = "balancesheets" Then
+                Return "balancesheets"
+            ElseIf typeName = "accountstatement" Then
+                Return "accountstatement"
+            ElseIf typeName = "addnewtransfer" Then
+                Return "addnewtransfer"
+            ElseIf typeName = "clienttransactions" Then
+                Return "clienttransactions"
+
+
             Else
                 Return typeName
             End If

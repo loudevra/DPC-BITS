@@ -1,5 +1,8 @@
 ﻿Imports System.Windows.Controls.Primitives
 Imports DPC.DPC.Data.Controllers
+Imports System.Windows
+Imports DPC.DPC.Data.Helpers
+
 
 Namespace DPC.Views.Accounts.Accounts.ManageAccounts
     Partial Public Class ManageAccounts
