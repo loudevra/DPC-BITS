@@ -1,0 +1,548 @@
+﻿<UserControl x:Class="DPC.Views.Sales.Quotes.NewQuote"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Background="#D9D9D9">
+
+    <UserControl.Resources>
+        <!-- Border Style -->
+        <Style x:Key="RoundedBorderStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="15"/>
+        </Style>
+
+        <Style x:Key="RoundedGridStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="BorderBrush" Value="#D98CAB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+
+        <!-- Add the RoundedTextboxStyle that was missing in the original code -->
+        <Style x:Key="RoundedTextboxStyle" TargetType="TextBox">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="FontFamily" Value="Lexend"/>
+        </Style>
+
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="130"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Background" Value="#555555"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="15" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--Combo Box Style-->
+        <Style x:Key="RoundedComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Foreground" Value="#474747"/>
+            <Setter Property="BorderBrush" Value="#474747"/>
+            <Setter Property="Background" Value="#FDFDFD"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="FontFamily" Value="Lexend"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Border Style="{StaticResource RoundedBorderStyle}" 
+                         Background="{TemplateBinding Background}" 
+                         BorderBrush="{TemplateBinding BorderBrush}" 
+                         BorderThickness="1">
+                            <Grid>
+                                <!-- Define two columns, Content on left, Arrow on right -->
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="35" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Selected Item Content -->
+                                <ContentPresenter Name="ContentSite"
+                               IsHitTestVisible="False"
+                               Content="{TemplateBinding SelectionBoxItem}"
+                               ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                               VerticalAlignment="Center"
+                               Margin="10,0,5,0"/>
+
+                                <!-- Arrow Button (Right) -->
+                                <ToggleButton Name="ToggleButton" 
+                                   Grid.Column="1"
+                                   Focusable="False"
+                                   IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                   Background="Transparent"
+                                   BorderBrush="Transparent"
+                                   BorderThickness="0"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,5,0">
+                                    <ToggleButton.Style>
+                                        <Style TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="BorderBrush" Value="Transparent"/>
+                                            <Setter Property="Padding" Value="0"/>
+                                            <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ToggleButton">
+                                                        <Border Background="Transparent" BorderThickness="0">
+                                                            <materialDesign:PackIcon Kind="ChevronDown" Width="20" Height="20" Foreground="#474747"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ToggleButton.Style>
+                                </ToggleButton>
+
+                                <!-- Dropdown Items -->
+                                <Popup Name="Popup"
+                                Placement="Bottom"
+                                IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                AllowsTransparency="True"
+                                Focusable="False"
+                                MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                    <!-- MATCH WIDTH -->
+                                    <Border Style="{StaticResource RoundedBorderStyle}" 
+                                     Background="White" 
+                                     BorderBrush="Black"
+                                     Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                        <!-- MATCH WIDTH -->
+                                        <ScrollViewer>
+                                            <StackPanel>
+                                                <ItemsPresenter/>
+                                            </StackPanel>
+                                        </ScrollViewer>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <!-- Main Content Area -->
+        <Grid>
+            <!-- Main Content (ScrollViewer) -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="51*"/>
+                        <ColumnDefinition Width="385*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Main Content -->
+                    <StackPanel Grid.Row="1" Margin="20,20,20,20" Grid.ColumnSpan="2">
+                        <StackPanel Grid.Row="1" Background="Transparent" Margin="0,0,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!--Bill To Column-->
+                                <StackPanel Grid.Column="0" Orientation="Vertical" Margin="10,0,5,5">
+
+                                    <!--Header-->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!--Bill To Label-->
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Grid.Column="0" Text="Bill To" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                                        </StackPanel>
+
+                                        <!-- Add Client Button -->
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                            <Button
+                                           x:Name="BtnAddClient" Width="100"
+                                           Style="{StaticResource ButtonStyle}">
+                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <materialDesign:PackIcon Kind="AccountPlus" Width="16" Height="16" Foreground="#FDFDFD" Margin="0,0,5,0"/>
+                                                    <TextBlock Text="Client" FontSize="12" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#FDFDFD" Margin="0,0,5,0"/>
+                                                </StackPanel>
+                                            </Button>
+                                        </StackPanel>
+                                    </Grid>
+                                    <!--Search Client-->
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="Search Client:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,10"/>
+                                        <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Margin="0,0,0,10"
+                                            Padding="5" Width="300" Height="34" BorderBrush="#474747">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="3*"/>
+                                                    <RowDefinition Height="19*"/>
+                                                </Grid.RowDefinitions>
+                                                <TextBox BorderThickness="0" Background="Transparent" FontFamily="Lexend" 
+                                                     Text="Enter customer name or mobile number..."  Foreground="#AEAEAE" Name="txtSearchCustomer"
+                                                     TextWrapping="Wrap"
+                                                     Style="{StaticResource RoundedTextboxStyle}"
+                                                     Height="Auto" VerticalAlignment="Top" HorizontalAlignment="Left" Width="Auto" Grid.RowSpan="2"/>
+                                                <materialDesign:PackIcon Kind="Magnify" Width="25" Height="26" Foreground="#AEAEAE" Margin="250,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.RowSpan="2"/>
+                                            </Grid>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!--Client Details-->
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="Client Details:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,10"/>
+                                        <Border Width="Auto" Height="150" Padding="10" CornerRadius="10" Background="#FDFDFD" BorderBrush="#474747" BorderThickness="1"  Margin="0,0,0,10">
+                                            <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
+                                                <TextBlock x:Name="lblClientName" Text="Eli Clark:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,20,5"/>
+                                                <TextBlock Text="Phone: 09xxxxxxxxx" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                                                <TextBlock Text="Email: brookerose@gmail.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!--Warehouse-->
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="Warehouse:" FontSize="12" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#474747" Margin="0,0,5,10"/>
+                                        <ComboBox Style="{StaticResource RoundedComboBoxStyle}" Height="30" Width="300">
+                                            <ComboBoxItem Content="" IsSelected="True"/>
+                                            <ComboBoxItem Content=""/>
+                                            <ComboBoxItem Content=""/>
+                                            <ComboBoxItem Content=""/>
+                                        </ComboBox>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <!--Credit Note Column-->
+                                <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10,0,5,5" Width="300">
+                                    <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Margin="0,0,0,10"
+                                            Padding="15,15,15,15" Width="Auto" Height="Auto" BorderBrush="#474747">
+                                        <ScrollViewer>
+                                            <StackPanel Orientation="Vertical" Margin="5">
+                                                <!--Header Label: Credit Note-->
+                                                <TextBlock Grid.Column="0" Text="Credit Note" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#AEAEAE" VerticalAlignment="Center" Margin="0,0,20,0"/>
+
+                                                <!--Order Number-->
+                                                <StackPanel Orientation="Vertical">
+                                                    <TextBlock Grid.Column="0" Text="Order Number:" FontWeight="SemiBold" FontFamily="Lexend"
+                                                               FontSize="10" Foreground="#555555" VerticalAlignment="Center" Margin="0,10,20,5"/>
+                                                    <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Margin="0,0,0,10"
+                                                        Padding="5" Width="Auto" Height="34" BorderBrush="#474747">
+                                                        <TextBox x:Name="txtOrderNumber" BorderThickness="0" Background="Transparent"
+                                                                 FontFamily="Lexend" FontWeight="SemiBold"
+                                                                 Text=""  Foreground="#AEAEAE"
+                                                                 TextWrapping="Wrap"
+                                                                 Style="{StaticResource RoundedTextboxStyle}"
+                                                                 Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Width="Auto" Grid.RowSpan="2"/>
+                                                    </Border>
+                                                </StackPanel>
+
+                                                <!--Reference-->
+                                                <StackPanel Orientation="Vertical">
+                                                    <TextBlock Grid.Column="0" Text="Reference:" FontWeight="SemiBold" FontFamily="Lexend"
+                                                        FontSize="10" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,5"/>
+                                                    <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Margin="0,0,0,10"
+                                                        Padding="5" Width="Auto" Height="34" BorderBrush="#474747">
+                                                        <TextBox x:Name="txtReferenceNumber" BorderThickness="0" FontWeight="SemiBold"
+                                                                 Background="Transparent" FontFamily="Lexend" 
+                                                                 Text="Reference #"  Foreground="#AEAEAE"
+                                                                 TextWrapping="Wrap"
+                                                                 Style="{StaticResource RoundedTextboxStyle}"
+                                                                 Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Width="Auto" Grid.RowSpan="2"/>
+                                                    </Border>
+                                                </StackPanel>
+
+                                                <!--Order Date-->
+                                                <StackPanel Orientation="Vertical">
+                                                    <TextBlock Grid.Column="0" Text="Order Date:" FontWeight="SemiBold" FontFamily="Lexend"
+                                                      FontSize="10" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,5"/>
+                                                    <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Margin="0,0,0,10"
+                                                        Padding="5" Width="Auto" Height="34" BorderBrush="#474747">
+                                                        <Grid>
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="3*"/>
+                                                                <RowDefinition Height="19*"/>
+                                                            </Grid.RowDefinitions>
+                                                            <DatePickerTextBox x:Name="dptOrderDate" BorderThickness="0" FontWeight="SemiBold"
+                                                                 Background="Transparent" FontFamily="Lexend" 
+                                                                 Text="DD-MM-YYYY"  Foreground="#AEAEAE"
+                                                                 TextWrapping="Wrap"
+                                                                 Style="{StaticResource RoundedTextboxStyle}"
+                                                                 Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Width="Auto" Grid.RowSpan="2"/>
+                                                            <materialDesign:PackIcon Kind="Calendar" Width="25" Height="26" Foreground="#555555" Margin="200,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.RowSpan="2"/>
+                                                        </Grid>
+                                                    </Border>
+                                                </StackPanel>
+
+                                                <!--Order Due Date-->
+                                                <StackPanel Orientation="Vertical">
+                                                    <TextBlock Grid.Column="0" Text="Order Due Date:" FontWeight="SemiBold" FontFamily="Lexend"
+                                                        FontSize="10" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,5"/>
+                                                    <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Margin="0,0,0,10"
+                                                           Padding="5" Width="Auto" Height="34" BorderBrush="#474747">
+                                                        <Grid>
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="3*"/>
+                                                                <RowDefinition Height="19*"/>
+                                                            </Grid.RowDefinitions>
+                                                            <DatePickerTextBox x:Name="dptOrderDueDate" BorderThickness="0" FontWeight="SemiBold"
+                                                                 Background="Transparent" FontFamily="Lexend" 
+                                                                 Text="DD-MM-YYYY"  Foreground="#AEAEAE"
+                                                                 TextWrapping="Wrap"
+                                                                 Style="{StaticResource RoundedTextboxStyle}"
+                                                                 Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Width="Auto" Grid.RowSpan="2"/>
+                                                            <materialDesign:PackIcon Kind="Calendar" Width="25" Height="26" Foreground="#555555" Margin="200,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.RowSpan="2"/>
+                                                        </Grid>
+                                                    </Border>
+                                                </StackPanel>
+
+                                                <!--Tax-->
+                                                <StackPanel Orientation="Vertical">
+                                                    <TextBlock Grid.Column="0" Text="Tax:" FontWeight="SemiBold" FontFamily="Lexend"
+                                                        FontSize="10" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,5"/>
+                                                    <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Margin="0,0,0,10"
+                                                        Padding="5" Width="Auto" Height="34" BorderBrush="#474747">
+                                                        <TextBox x:Name="txtTaxSelection" BorderThickness="0" FontWeight="SemiBold"
+                                                                 Background="Transparent" FontFamily="Lexend" 
+                                                                 Text="Off"  Foreground="#AEAEAE"
+                                                                 TextWrapping="Wrap"
+                                                                 Style="{StaticResource RoundedTextboxStyle}"
+                                                                 Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Width="Auto" Grid.RowSpan="2"/>
+                                                    </Border>
+                                                </StackPanel>
+
+                                                <StackPanel Orientation="Vertical">
+                                                    <TextBlock Grid.Column="0" Text="Discount:" FontWeight="SemiBold" FontFamily="Lexend"
+                                                        FontSize="10" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,5"/>
+                                                    <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Margin="0,0,0,10"
+                                                        Padding="5" Width="Auto" Height="34" BorderBrush="#474747">
+                                                        <TextBox x:Name="txtDiscountSelection" BorderThickness="0" FontWeight="SemiBold"
+                                                             Background="Transparent" FontFamily="Lexend" 
+                                                             Text="Discount"  Foreground="#AEAEAE"
+                                                             TextWrapping="Wrap"
+                                                             Style="{StaticResource RoundedTextboxStyle}"
+                                                             Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Width="Auto" Grid.RowSpan="2"/>
+                                                    </Border>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </ScrollViewer>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+
+
+                            <!--Rectangle as line-->
+                            <Rectangle Grid.Row="0"
+                                       Width="auto"
+                                       Height="1" 
+                                       Stroke="#AEAEAE"
+                                       StrokeThickness="1"
+                                       Fill="Transparent"
+                                       VerticalAlignment="Top"
+                                       Margin="0,0,0,10"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Row="1" Margin="0,0,0,0" Orientation="Vertical" >
+                            <!--DataGrid: Produc Info-->
+                            <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Left" Margin="0,0,0,10" Background="Transparent">
+                                <DataGrid 
+                                     AutoGenerateColumns="False"
+                                     CanUserAddRows="False"
+                                     HeadersVisibility="Column"
+                                     GridLinesVisibility="None"
+                                     RowBackground="White"
+                                     AlternatingRowBackground="WhiteSmoke"
+                                     BorderThickness="0" Width="650">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Item Name" Binding="{Binding ItemName}" Width="100"/>
+                                        <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="80"/>
+                                        <DataGridTextColumn Header="Rate:" Binding="{Binding Rate}" Width="80"/>
+                                        <DataGridTextColumn Header="Tax (%)" Binding="{Binding TaxtPercent}" Width="80"/>
+                                        <DataGridTextColumn Header="Tax" Binding="{Binding TaxValue}" Width="80"/>
+                                        <DataGridTextColumn Header="Discount" Binding="{Binding Discount}" Width="100"/>
+                                        <DataGridTextColumn Header="Amount(₱)" Binding="{Binding Amount}" Width="100"/>
+                                    </DataGrid.Columns>
+                                    <DataGrid.RowStyle>
+                                        <Style TargetType="DataGridRow">
+                                            <Setter Property="FontFamily" Value="Lexend"/>
+                                            <Setter Property="Margin" Value="0,5,0,5"/>
+                                            <Setter Property="Padding" Value="5"/>
+                                            <Setter Property="Height" Value="Auto"/>
+                                            <Setter Property="MinHeight" Value="40"/>
+                                        </Style>
+                                    </DataGrid.RowStyle>
+                                    <DataGrid.ColumnHeaderStyle>
+                                        <Style TargetType="DataGridColumnHeader">
+                                            <Setter Property="FontFamily" Value="Lexend"/>
+                                            <Setter Property="FontSize" Value="8"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                            <Setter Property="Foreground" Value="#FDFDFD"/>
+                                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                            <Setter Property="Padding" Value="10,5"/>
+                                            <Setter Property="Background" Value="#D98CAB"/>
+                                            <Setter Property="BorderThickness" Value="1"/>
+                                        </Style>
+                                    </DataGrid.ColumnHeaderStyle>
+                                    <DataGrid.CellStyle>
+                                        <Style TargetType="DataGridCell">
+                                            <Setter Property="Padding" Value="10,5"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="DataGridCell">
+                                                        <Border Padding="{TemplateBinding Padding}" 
+                                                           BorderBrush="{TemplateBinding BorderBrush}" 
+                                                           BorderThickness="{TemplateBinding BorderThickness}" 
+                                                           Background="{TemplateBinding Background}">
+                                                            <ContentPresenter VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="TextBlock.TextWrapping" Value="NoWrap"/>
+                                            <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis"/>
+                                        </Style>
+                                    </DataGrid.CellStyle>
+                                </DataGrid>
+                            </StackPanel>
+
+                            <Border Background="White" CornerRadius="10" BorderBrush="#D98CAB" BorderThickness="1" Padding="10">
+                                <StackPanel Orientation="Vertical">
+                                    <StackPanel Orientation="Horizontal" Margin="10">
+                                        <!--Entering Product Name-->
+                                        <Border Style="{StaticResource RoundedGridStyle}" Width="100" Height="Auto" Margin="4,0,4,0">
+                                            <TextBox x:Name="txtProductName" BorderThickness="0" Background="Transparent" FontFamily="Lexend" FontSize="8" Foreground="#55555580" Style="{StaticResource RoundedTextboxStyle}"
+                                            Height="Auto" VerticalAlignment="Center" HorizontalAlignment="Center" Width="Auto" Text="Enter product name or code..." TextWrapping="Wrap" />
+                                        </Border>
+                                        <!--Entering Product Quantity-->
+                                        <Border Style="{StaticResource RoundedGridStyle}" Width="90" Height="Auto" Margin="4,0,4,0">
+                                            <TextBox x:Name="txtQuantity" BorderThickness="0" Background="Transparent" FontFamily="Lexend" FontSize="8" Foreground="#55555580" Style="{StaticResource RoundedTextboxStyle}"
+                                            Height="Auto" VerticalAlignment="Center" HorizontalAlignment="Center" Width="70" Text="" TextWrapping="Wrap" />
+                                        </Border>
+                                        <!--Entering Product Rate-->
+                                        <Border Style="{StaticResource RoundedGridStyle}" Width="90" Height="Auto" Margin="4,0,4,0">
+                                            <TextBox x:Name="txtRate" BorderThickness="0" Background="Transparent" FontFamily="Lexend" FontSize="8" Foreground="#55555580" Style="{StaticResource RoundedTextboxStyle}"
+                                            Height="Auto" VerticalAlignment="Center" HorizontalAlignment="Center" Width="70" Text="" TextWrapping="Wrap" />
+                                        </Border>
+                                        <!--Entering Product Tax Percent-->
+                                        <Border Style="{StaticResource RoundedGridStyle}" Width="90" Height="Auto" Margin="4,0,4,0">
+                                            <TextBox x:Name="txtTaxPercent" BorderThickness="0" Background="Transparent" FontFamily="Lexend" FontSize="8" Foreground="#55555580" Style="{StaticResource RoundedTextboxStyle}"
+                                            Height="Auto" VerticalAlignment="Center" HorizontalAlignment="Center" Width="70" Text="" TextWrapping="Wrap" />
+                                        </Border>
+                                        <!--Entering Product Tax-->
+                                        <Border Style="{StaticResource RoundedGridStyle}" Width="90" Height="Auto" Margin="4,0,4,0">
+                                            <TextBox x:Name="txtTax" BorderThickness="0" Background="Transparent" FontFamily="Lexend" FontSize="8" Foreground="#55555580" Style="{StaticResource RoundedTextboxStyle}"
+                                            Height="Auto" VerticalAlignment="Center" HorizontalAlignment="Center" Width="70" Text="" TextWrapping="Wrap" />
+                                        </Border>
+                                        <!--Entering Product Amount-->
+                                        <Border Style="{StaticResource RoundedGridStyle}" Width="100" Height="Auto" Margin="4,0,4,0" BorderThickness="0">
+                                            <TextBox Text="₱0.00" x:Name="txtAmount" BorderThickness="0" Background="Transparent" FontFamily="Lexend" FontSize="8" Foreground="#D98CAB" Style="{StaticResource RoundedTextboxStyle}"
+                                                Height="Auto" VerticalAlignment="Center" HorizontalAlignment="Left" Width="Auto" TextWrapping="Wrap" />
+                                        </Border>
+
+                                    </StackPanel>
+                                    <StackPanel Margin="10" Width="Auto">
+                                        <Border Style="{StaticResource RoundedGridStyle}" Width="Auto" Height="100" Margin="2,0,2,0" Padding="5">
+                                            <TextBox Text="Enter product description (Optional)" x:Name="txtProductDescription" BorderThickness="0" Background="Transparent" FontFamily="Lexend" FontSize="8" Foreground="#55555580" Style="{StaticResource RoundedTextboxStyle}"
+                                                Height="Auto" VerticalAlignment="Top" HorizontalAlignment="Left" Width="Auto" TextWrapping="Wrap" />
+                                        </Border>
+                                    </StackPanel>
+                                </StackPanel>
+
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!--Total Cost Info-->
+                    <StackPanel Grid.Row="2" Margin="20,10,20,10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!--Payment Terms-->
+                            <StackPanel Grid.Column="0" Orientation="Vertical">
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
+                                    <Button
+                                 Style="{StaticResource ButtonStyle}" Background="#2E466B">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                            <materialDesign:PackIcon Kind="PlaylistAdd" Width="16" Height="16" Foreground="#FFFFFF" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Row" FontSize="12" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#FFFFFF" Margin="0,0,5,0"/>
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                                <!--Payment Terms Combo Box-->
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="Payment Terms:" FontSize="12" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#474747" Margin="0,20,5,10"/>
+                                    <ComboBox Style="{StaticResource RoundedComboBoxStyle}" Height="30" Width="300">
+                                        <ComboBoxItem Content="" IsSelected="True"/>
+                                        <ComboBoxItem Content=""/>
+                                        <ComboBoxItem Content=""/>
+                                        <ComboBoxItem Content=""/>
+                                    </ComboBox>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <!--Generate Invoice-->
+                            <StackPanel Grid.Column="1" Orientation="Vertical">
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Margin="70,0,0,0">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <TextBlock Text="Total Tax:" FontSize="12" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#474747" Margin="0,10,0,0"/>
+                                        <TextBlock Text="₱ 0" FontSize="12" VerticalAlignment="Center" FontWeight="Bold" Foreground="#090909" Margin="20,10,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <TextBlock Text="Total Discount:" FontSize="12" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#474747" Margin="0,10,0,0"/>
+                                        <TextBlock Text="₱ 0" FontSize="12" VerticalAlignment="Center" FontWeight="Bold" Foreground="#090909"  Margin="20,10,0,0"/>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Right">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <TextBlock Text="Shipping:" FontSize="12" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#474747" Margin="0,10,0,0"/>
+                                        <Border BorderBrush="#474747" BorderThickness="1" Padding="1" Width="150" CornerRadius="10" Margin="20,10,0,0" Height="20">
+                                            <TextBlock x:Name="txtShipping" Text="" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#474747" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <TextBlock Text="Extra Discount:" FontSize="12" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#474747" Margin="0,10,0,0"/>
+                                        <Border BorderBrush="#474747" BorderThickness="1" Padding="1" Width="150" CornerRadius="10" Margin="20,10,0,0" Height="20">
+                                            <TextBlock x:Name="txtExtraDiscount" Text="" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#474747" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <TextBlock Text="Grand Total(₱):" FontSize="12" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#474747" Margin="0,10,0,0"/>
+                                        <Border BorderBrush="#474747" BorderThickness="1" Padding="1" Width="150" CornerRadius="10" Margin="20,10,0,0" Height="20">
+                                            <TextBlock x:Name="txtGrandTotal" Text="" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#474747" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical" HorizontalAlignment="Right" Margin="0,10,0,0">
+                                        <Button
+                                            Width="150"
+                                            Style="{StaticResource ButtonStyle}" Background="#1D5642">
+                                            <TextBlock Text="Generate Invoice" FontSize="12" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#FFFFFF" Margin="0,0,5,0"/>
+                                        </Button>
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+
+                </Grid>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</UserControl>

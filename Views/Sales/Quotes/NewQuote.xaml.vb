@@ -1,13 +1,9 @@
-﻿Namespace DPC.Views.Sales.Saless
-    Public Class SalesNewInvoice
+﻿Namespace DPC.Views.Sales.Quotes
+    Public Class NewQuote
         Public Sub New()
-
             ' This call is required by the designer.
             InitializeComponent()
-
             ' Add any initialization after the InitializeComponent() call.
-
         End Sub
     End Class
 End Namespace
-
