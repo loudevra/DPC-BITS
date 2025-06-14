@@ -106,6 +106,19 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New HRM.Employees.Employees.AddEmployee()
                     Case "viewemployee"
                         Return New HRM.Employees.Employees.EmployeesView()
+
+                         ' Sales Module Navigation
+                    Case "salesnewinvoice"
+                        Return New Sales.Saless.SalesNewInvoice()
+                    Case "salesinvoices"
+                        Return New Sales.Saless.SalesInvoices()
+                    Case "salesquote"
+                        Return New Sales.Quotes.Quote()
+                    Case "salesnewquote"
+                        Return New Sales.Quotes.NewQuote()
+                    Case "creditnote"
+                        Return New Sales.CreditNotes.CreditNotes()
+
                         ' Accounts Navigation
                     Case "manageaccounts"
                         Return New Accounts.Accounts.ManageAccounts.ManageAccounts()
@@ -239,6 +252,17 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "addnewemployee"
             ElseIf typeName = "viewemployee" Then
                 Return "viewemployee"
+                ' Sales Module Navigation
+            ElseIf typeName = "salesnewinvoice" Then
+                Return "salesnewinvoice"
+            ElseIf typeName = "salesinvoices" Then
+                Return "salesinvoices"
+            ElseIf typeName = "salesquote" Then
+                Return "salesquote"
+            ElseIf typeName = "salesnewquote" Then
+                Return "salesnewquote"
+            ElseIf typeName = "creditnote" Then
+                Return "creditnote"
 
                 ' Accounts Navigation
             ElseIf typeName = "manageaccounts" Then

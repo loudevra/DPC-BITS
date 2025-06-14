@@ -1,6 +1,6 @@
 ﻿Namespace DPC.Views.Sales.CreditNotes
     Public Class CreditNotes
-        Private Sub New()
+        Public Sub New()
 
             ' This call is required by the designer.
             InitializeComponent()

@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         Background="#F5F5F5"
-        Width="1000" Height="800">
+        Width="900" Height="800">
 
     <UserControl.Resources>
         <Style x:Key="AddNewButtonStyle" TargetType="Button">
@@ -190,7 +190,7 @@
                                 Style="{StaticResource ConvertButtonStyle}"
                                 Margin="0,0,0,0"
                                 VerticalAlignment="Center">
-                                <Border Background="#555555" CornerRadius="15" Padding="0" Width="120" Height="32" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <Border Background="#555555" CornerRadius="15" Padding="0" Width="120" Height="32" Margin="0,0,0,30" VerticalAlignment="Center" HorizontalAlignment="Center">
                                     <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>

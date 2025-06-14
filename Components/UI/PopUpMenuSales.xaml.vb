@@ -104,39 +104,37 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToNewInvoice(sender As Object, e As RoutedEventArgs)
-            ' You might want to use ViewLoader.DynamicView.NavigateToView as in PopUpMenuStocks
-            MessageBox.Show("Navigate to New Invoice", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+            ViewLoader.DynamicView.NavigateToView("salesnewinvoice", Me)
         End Sub
 
         Private Sub NavigateToNewInvoiceV2(sender As Object, e As RoutedEventArgs)
-            MessageBox.Show("Navigate to New Invoice V2 - Mobile", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+            ViewLoader.DynamicView.NavigateToView("salesinvoices", Me)
         End Sub
 
         Private Sub NavigateToManageInvoices(sender As Object, e As RoutedEventArgs)
-            MessageBox.Show("Navigate to Manage Invoices", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+            ViewLoader.DynamicView.NavigateToView("salesinvoices", Me)
         End Sub
 
         Private Sub NavigateToNewQuote(sender As Object, e As RoutedEventArgs)
-            MessageBox.Show("Navigate to New Quote", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+            ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
         End Sub
 
         Private Sub NavigateToManageQuote(sender As Object, e As RoutedEventArgs)
-            MessageBox.Show("Navigate to Manage Quote", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+            ViewLoader.DynamicView.NavigateToView("salesinvoices", Me)
         End Sub
 
         Private Sub NavigateToNewSubscription(sender As Object, e As RoutedEventArgs)
-            MessageBox.Show("Navigate to New Subscription", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+            ViewLoader.DynamicView.NavigateToView("salesinvoices", Me)
         End Sub
 
         Private Sub NavigateToSubscriptions(sender As Object, e As RoutedEventArgs)
-            MessageBox.Show("Navigate to Subscriptions", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+            ViewLoader.DynamicView.NavigateToView("salesinvoices", Me)
         End Sub
 
         Private Sub NavigateToCreditNotes(sender As Object, e As RoutedEventArgs)
-            MessageBox.Show("Navigate to Credit Notes", "Navigation", MessageBoxButton.OK, MessageBoxImage.Information)
+            ViewLoader.DynamicView.NavigateToView("creditnote", Me)
 
-            ' Example of ViewLoader navigation pattern:
-            ' ViewLoader.DynamicView.NavigateToView("creditnotes", Me)
+
         End Sub
     End Class
 End Namespace
