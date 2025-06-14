@@ -97,7 +97,7 @@
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
-                                <Hyperlink Click="NavigateToManageInvoices">
+                                <Hyperlink Click="NavigateToManageInvoices" >
                                     <TextBlock Text="Manage Invoices" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
                             </TextBlock>

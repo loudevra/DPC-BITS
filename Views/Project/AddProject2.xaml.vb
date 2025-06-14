@@ -105,8 +105,8 @@ Namespace DPC.Views.Project
             ViewLoader.DynamicView.NavigateToView("newproject", Me)
         End Sub
 
-        Private Sub NavigateToAddProj2(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("addproject2", Me)
+        Private Sub NavigateToAddProj3(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("addproject3", Me)
         End Sub
 
     End Class

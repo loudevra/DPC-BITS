@@ -111,6 +111,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                          ' Sales Module Navigation
                     Case "salesnewinvoice"
                         Return New Sales.Saless.SalesNewInvoice()
+                    Case "manageposinvoices"
+                        Return New Sales.POSSales.ManagePOSInvoices()
                     Case "salesinvoices"
                         Return New Sales.Saless.SalesInvoices()
                     Case "salesquote"
@@ -151,6 +153,13 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Project.ManageProject()
                     Case "todolist"
                         Return New Project.ToDoList()
+
+                         ' Sales Cost Estimate Navigation
+                    Case "costestimate"
+                        Return New Sales.Quotes.CostEstimate()
+                         ' Sales Billing Estimate Navigation
+                    Case "billingestimate"
+                        Return New Sales.Quotes.BillingStatement()
 
 
 
@@ -288,6 +297,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                 ' Sales Module Navigation
             ElseIf typeName = "salesnewinvoice" Then
                 Return "salesnewinvoice"
+            ElseIf typeName = "manageposinvoices" Then
+                Return "manageposinvoices"
             ElseIf typeName = "salesinvoices" Then
                 Return "salesinvoices"
             ElseIf typeName = "salesquote" Then
