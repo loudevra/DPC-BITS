@@ -27,9 +27,12 @@ Namespace DPC.Data.Controllers
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 conn.Open()
+
+
                 Using transaction = conn.BeginTransaction()
                     ' Call the appropriate insertion function based on variation flag
                     If variation = 0 Then
+
                         ' Validate required fields for no variation
                         If Not ProductController.ValidateProductFields(Checkbox, ProductName, ProductCode, Category, SubCategory, Warehouse, Brand, Supplier,
                               RetailPrice, PurchaseOrder, DefaultTax, DiscountRate, StockUnits,
@@ -69,8 +72,18 @@ Namespace DPC.Data.Controllers
                         transaction.Commit()
                         MessageBox.Show($"Product {ProductName.Text} with Product Code {productID} has been inserted successfully.")
                     Else
+
+
                         ' Get all variation combinations from the variation manager
                         Dim allVariationData = ProductController.variationManager.GetAllVariationData()
+
+                        ' Validate required fields with variation
+                        If Not ProductController.ValidateProductFieldsWithVariation(ProductName, ProductImage, Category, Brand,
+                                              Supplier, MeasurementUnit, Description,
+                                              allVariationData) Then
+                            MessageBox.Show("Please fill in all required fields!", "Input Error", MessageBoxButton.OK)
+                            Exit Sub
+                        End If
 
                         'Gets the list of all duplicates
                         Dim duplicates As String = VariationChecker(conn, transaction, allVariationData)
@@ -113,8 +126,6 @@ Namespace DPC.Data.Controllers
                         End If
                     End If
 
-                    DPC.Components.Forms.AddVariation._savedVariations.Clear()
-                    DPC.Data.Controllers.ProductController.variationManager.GetAllVariationData().Clear()
                 End Using
             End Using
         End Sub

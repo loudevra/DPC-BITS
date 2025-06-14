@@ -199,6 +199,53 @@ Namespace DPC.Data.Controllers
             End Try
         End Sub
 
+        Public Shared Function ValidateProductFieldsWithVariation(ProductName As TextBox, ProductImage As String, Category As ComboBox, Brand As ComboBox,
+                                              Supplier As ComboBox, MeasurementUnit As ComboBox, Description As TextBox, allVariationData As Dictionary(Of String, ProductVariationData)) As Boolean
+
+            ' Check for empty variation field
+            Dim emptySerialExist As Boolean = False
+            Dim emptyVarExist As Boolean = False
+            For Each varData In allVariationData.Values
+                If varData.WarehouseId < 0 OrElse
+                            varData.RetailPrice = 0 OrElse
+                            varData.StockUnits = 0 OrElse
+                            varData.AlertQuantity > varData.StockUnits Then
+                    For Each serialNumber In varData.SerialNumbers
+                        If String.IsNullOrWhiteSpace(serialNumber) Then
+
+                            emptySerialExist = True
+                            Exit For
+                        End If
+                    Next
+
+                    emptyVarExist = True
+                    Exit For
+                End If
+            Next
+
+
+
+
+            ' Check if any of the required fields are empty (except SubCategory, which can be Nothing)
+            If String.IsNullOrWhiteSpace(ProductName.Text) OrElse
+                    String.IsNullOrWhiteSpace(ProductImage) OrElse
+               String.IsNullOrWhiteSpace(Description.Text) OrElse
+               Category.SelectedItem Is Nothing OrElse
+               Brand.SelectedItem Is Nothing OrElse
+               Supplier.SelectedItem Is Nothing OrElse
+               MeasurementUnit.SelectedItem Is Nothing OrElse
+               String.IsNullOrWhiteSpace(Description.Text) OrElse
+               emptyVarExist = True OrElse
+               emptySerialExist = True Then
+
+
+                Return False
+            End If
+
+            ' ✅ If SubCategory is Nothing, set it to 0 when saving later
+            Return True
+        End Function
+
         Public Shared Function ValidateProductFields(Checkbox As Controls.CheckBox, ProductName As TextBox, ProductCode As TextBox, Category As ComboBox,
                                        SubCategory As ComboBox, Warehouse As ComboBox, Brand As ComboBox,
                                        Supplier As ComboBox, RetailPrice As TextBox, PurchaseOrder As TextBox,

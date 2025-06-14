@@ -149,8 +149,13 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             ProductController.SerialNumbers.Clear()
             TxtProductVariation.Text = Nothing
+            DPC.Components.Forms.AddVariation._savedVariations.Clear()
+            DPC.Data.Controllers.ProductController.variationManager.GetAllVariationData().Clear()
 
-            ResetImageComponents()
+            If Not String.IsNullOrWhiteSpace(base64Image) Then
+                ResetImageComponents()
+            End If
+
         End Sub
 
         Private Sub CategoryComboBox_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles ComboBoxCategory.SelectionChanged
