@@ -17,9 +17,8 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-                <TextBlock FontSize="32" Foreground="#474747" FontWeight="SemiBold" FontFamily="Lexend" Text="Account Statement" Margin="15,0,0,20" VerticalAlignment="Center"/>
+                <TextBlock FontSize="32" Foreground="#474747" FontWeight="Bold" FontFamily="Lexend" Text="Account Statement" Margin="15,0,0,20" VerticalAlignment="Center"/>
             </StackPanel>
-            <Button Grid.Column="1" Width="20" Height="20" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" BorderBrush="Transparent" x:Name="BtnClose"/>
 
             <StackPanel Grid.Row="1" Width="800" Margin="0,0,0,20">
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
@@ -51,7 +50,6 @@
                     <!--Product Name Value is here!-->
                     <TextBox x:Name="TxtEndTime" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend"/>
                 </Border>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,5"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="-5,10,0,10">
                     <Button Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#3ea2d3" Width="103" Margin="0,0,10,10">
                         <TextBlock Text="Export" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="15" FontFamily="Lexend"/>

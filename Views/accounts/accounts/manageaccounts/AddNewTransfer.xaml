@@ -44,7 +44,7 @@
                     <!--Product Name Value is here!-->
                     <TextBox x:Name="TxtAmount" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend"/>
                 </Border>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,5"/>
+                
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="-5,10,0,10">
                     
                     <Button Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#52C69D" Width="803">
