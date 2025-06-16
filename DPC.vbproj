@@ -461,6 +461,12 @@
     <Compile Include="Components\Forms\FilterPopOut.xaml.vb">
       <DependentUpon>FilterPopOut.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\SubscriptionChangeStatus.xaml.vb">
+      <DependentUpon>SubscriptionChangeStatus.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\SubscriptionStatus.xaml.vb">
+      <DependentUpon>SubscriptionStatus.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\ViewExportDeletePopUp.xaml.vb">
       <DependentUpon>ViewExportDeletePopUp.xaml</DependentUpon>
     </Compile>
@@ -774,6 +780,12 @@
     <Compile Include="Views\Sales\Saless\SalesNewInvoice.xaml.vb">
       <DependentUpon>SalesNewInvoice.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Sales\Subscriptions\NewSubscriptionInvoice.xaml.vb">
+      <DependentUpon>NewSubscriptionInvoice.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\Subscriptions\Subscriptions.xaml.vb">
+      <DependentUpon>Subscriptions.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stocks\ItemManager\NewProduct\ProductBatchEdit.xaml.vb">
       <DependentUpon>ProductBatchEdit.xaml</DependentUpon>
     </Compile>
@@ -923,6 +935,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Forms\FilterPopOut.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\SubscriptionChangeStatus.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\SubscriptionStatus.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\ViewExportDeletePopUp.xaml">
@@ -1360,6 +1380,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Sales\Saless\SalesNewInvoice.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Subscriptions\NewSubscriptionInvoice.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Subscriptions\Subscriptions.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

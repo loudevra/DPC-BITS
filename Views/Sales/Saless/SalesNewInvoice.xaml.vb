@@ -112,8 +112,9 @@ Namespace DPC.Views.Sales.Saless
             ViewLoader.DynamicView.NavigateToView("billingestimate", Me)
         End Sub
 
+        Private Sub ScrollViewer_ColorChanged(sender As Object, e As RoutedPropertyChangedEventArgs(Of Color))
 
-
+        End Sub
     End Class
 End Namespace
 
