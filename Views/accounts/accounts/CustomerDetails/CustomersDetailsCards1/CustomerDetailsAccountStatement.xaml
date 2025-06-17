@@ -191,7 +191,7 @@
         <!-- Type -->
         <StackPanel Grid.Row="1" Margin="0,0,0,10">
             <TextBlock Text="Type:" Margin="0,0,0,5" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold"/>
-            <ComboBox Style="{StaticResource RoundedComboBoxStyle}" SelectionChanged="ComboBox_SelectionChanged">
+            <ComboBox Style="{StaticResource RoundedComboBoxStyle}" >
                 <ComboBoxItem Content="All Transactions" IsSelected="True"/>
                 <ComboBoxItem Content="Deposits"/>
                 <ComboBoxItem Content="Withdrawals"/>
