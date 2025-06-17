@@ -206,12 +206,71 @@
                                         </Style>
                                     </StackPanel.Resources>
 
-                                    <TextBlock FontFamily="{StaticResource Lexend}" FontSize="12" Foreground="#AEAEAE">Personal Information</TextBlock>
-                                    <TextBlock FontFamily="{StaticResource Lexend}" FontSize="12" Foreground="#AEAEAE">Invoices</TextBlock>
-                                    <TextBlock FontFamily="{StaticResource Lexend}" FontSize="12" Foreground="#AEAEAE">Transactions</TextBlock>
-                                    <TextBlock FontFamily="{StaticResource Lexend}" FontSize="12" Foreground="#AEAEAE">Quotes</TextBlock>
-                                    <TextBlock FontFamily="{StaticResource Lexend}" FontSize="12" Foreground="#AEAEAE">Projects</TextBlock>
-                                    <TextBlock FontFamily="{StaticResource Lexend}" FontSize="12" Foreground="#AEAEAE">Subscriptions</TextBlock>
+                                    <Button Content="Personal Information" 
+        FontFamily="{StaticResource Lexend}" 
+        FontSize="12" 
+        Foreground="#AEAEAE"
+        Background="Transparent" 
+        BorderThickness="0"
+        HorizontalAlignment="Left"
+        Padding="0"
+        Cursor="Hand"
+        />
+
+                                    <Button Content="Invoices" 
+        FontFamily="{StaticResource Lexend}" 
+        FontSize="12" 
+        Foreground="#AEAEAE"
+        Background="Transparent" 
+        BorderThickness="0"
+        HorizontalAlignment="Left"
+        Padding="0"
+        Cursor="Hand"
+         />
+
+                                    <Button Content="Transactions" 
+        FontFamily="{StaticResource Lexend}" 
+        FontSize="12" 
+        Foreground="#AEAEAE"
+        Background="Transparent" 
+        BorderThickness="0"
+        HorizontalAlignment="Left"
+        Padding="0"
+        Cursor="Hand"
+         />
+
+                                    <Button Content="Quotes" 
+        FontFamily="{StaticResource Lexend}" 
+        FontSize="12" 
+        Foreground="#AEAEAE"
+        Background="Transparent" 
+        BorderThickness="0"
+        HorizontalAlignment="Left"
+        Padding="0"
+        Cursor="Hand"
+         />
+
+                                    <Button Content="Projects" 
+        FontFamily="{StaticResource Lexend}" 
+        FontSize="12" 
+        Foreground="#AEAEAE"
+        Background="Transparent" 
+        BorderThickness="0"
+        HorizontalAlignment="Left"
+        Padding="0"
+        Cursor="Hand"
+         />
+
+                                    <Button Content="Subscriptions" 
+        FontFamily="{StaticResource Lexend}" 
+        FontSize="12" 
+        Foreground="#AEAEAE"
+        Background="Transparent" 
+        BorderThickness="0"
+        HorizontalAlignment="Left"
+        Padding="0"
+        Cursor="Hand"
+         />
                                 </StackPanel>
 
                                 <Rectangle Fill="#D9D9D9" Height="1"/>
@@ -224,8 +283,27 @@
                                         </Style>
                                     </StackPanel.Resources>
 
-                                    <TextBlock FontFamily="{StaticResource Lexend}" FontSize="12" Foreground="#AEAEAE">Notes</TextBlock>
-                                    <TextBlock FontFamily="{StaticResource Lexend}" FontSize="12" Foreground="#AEAEAE">Documents</TextBlock>
+                                    <Button Content="Notes" 
+FontFamily="{StaticResource Lexend}" 
+FontSize="12" 
+Foreground="#AEAEAE"
+Background="Transparent" 
+BorderThickness="0"
+HorizontalAlignment="Left"
+Padding="0"
+Cursor="Hand"
+ />
+
+                                    <Button Content="Documents" 
+FontFamily="{StaticResource Lexend}" 
+FontSize="12" 
+Foreground="#AEAEAE"
+Background="Transparent" 
+BorderThickness="0"
+HorizontalAlignment="Left"
+Padding="0"
+Cursor="Hand"
+ />
                                 </StackPanel>
                             </StackPanel>
                         </Border>
