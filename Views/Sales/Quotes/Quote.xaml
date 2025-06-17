@@ -186,7 +186,7 @@
                                        Foreground="#555555"
                                        VerticalAlignment="Center"/>
                             <StackPanel VerticalAlignment="Center">
-                                <Button x:Name="BtnAddQuote" HorizontalAlignment="Right" Style="{StaticResource AddQuoteButtonStyle}" Margin="20,0,0,0" Height="35" Width="152">
+                                <Button x:Name="BtnAddQuote" HorizontalAlignment="Right" Style="{StaticResource AddQuoteButtonStyle}" Margin="20,0,0,0" Height="35" Width="152" Click="NavigateToQuotes">
                                     <StackPanel Orientation="Horizontal">
                                         <materialDesign:PackIcon Kind="Plus" Width="25" Height="25" Foreground="#FDFDFD"/>
                                         <TextBlock Text="Add Quote" FontSize="17" Foreground="#FDFDFD"/>
