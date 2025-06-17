@@ -561,6 +561,57 @@
     <Compile Include="Views\Accounts\Accounts\BalanceSheets.xaml.vb">
       <DependentUpon>BalanceSheets.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomerDetailsMain.xaml.vb">
+      <DependentUpon>CustomerDetailsMain.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsAccountStatement.xaml.vb">
+      <DependentUpon>CustomerDetailsAccountStatement.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsAddBalance.xaml.vb">
+      <DependentUpon>CustomerDetailsAddBalance.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsInvoices.xaml.vb">
+      <DependentUpon>CustomerDetailsInvoices.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsProjects.xaml.vb">
+      <DependentUpon>CustomerDetailsProjects.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsQuotes.xaml.vb">
+      <DependentUpon>CustomerDetailsQuotes.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsSubscriptions.xaml.vb">
+      <DependentUpon>CustomerDetailsSubscriptions.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsWallet.xaml.vb">
+      <DependentUpon>CustomerDetailsWallet.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CutomerDetailsTransaction.xaml.vb">
+      <DependentUpon>CutomerDetailsTransaction.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Corporational\EditProfilePersonalInfo.xaml.vb">
+      <DependentUpon>EditProfilePersonalInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Corporational\EditProfileSOthers.xaml.vb">
+      <DependentUpon>EditProfileSOthers.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\CustomerDetailsMain1.xaml.vb">
+      <DependentUpon>CustomerDetailsMain1.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\CustomerDetailsMain2.xaml.vb">
+      <DependentUpon>CustomerDetailsMain2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Residential\EditProfileBillingAddress.xaml.vb">
+      <DependentUpon>EditProfileBillingAddress.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Residential\EditProfilePersonalInfo.xaml.vb">
+      <DependentUpon>EditProfilePersonalInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Residential\EditProfileShippingAddress.xaml.vb">
+      <DependentUpon>EditProfileShippingAddress.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Residential\EditProfileSOthers.xaml.vb">
+      <DependentUpon>EditProfileSOthers.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Accounts\Accounts\ManageAccounts\AccountStatement.xaml.vb">
       <DependentUpon>AccountStatement.xaml</DependentUpon>
     </Compile>
@@ -1100,6 +1151,74 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Accounts\Accounts\BalanceSheets.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomerDetailsMain.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsAccountStatement.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsAddBalance.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsInvoices.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsProjects.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsQuotes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsSubscriptions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsWallet.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CutomerDetailsTransaction.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Corporational\EditProfilePersonalInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Corporational\EditProfileSOthers.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\CustomerDetailsMain1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\CustomerDetailsMain2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Residential\EditProfileBillingAddress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Residential\EditProfilePersonalInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Residential\EditProfileShippingAddress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Residential\EditProfileSOthers.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
