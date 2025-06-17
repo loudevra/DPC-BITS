@@ -14,6 +14,7 @@ Namespace DPC
         Implements INotifyPropertyChanged
 
         ' Sidebar animation settings
+        Private Property RoleName As String
         Private SidebarExpandedWidth As Double = 260
         Private SidebarCollapsedWidth As Double = 80
         Private SidebarPOSWidth As Double = 360  ' Special width for POS
@@ -40,12 +41,16 @@ Namespace DPC
         Private defaultSidebar As Sidebar
 
         ' Constructor
-        Public Sub New()
+        Public Sub New(_roleName As String)
             InitializeComponent()
 
+            RoleName = _roleName
+
             ' Load Sidebar
-            defaultSidebar = New Sidebar()
+            defaultSidebar = New Sidebar(RoleName)
             SidebarContainer.Child = defaultSidebar
+
+            'MessageBox.Show(defaultSidebar.RoleName)
 
             ' Load Top Navigation Bar
             Dim topNavBar As New TopNavBar()

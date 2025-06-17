@@ -202,6 +202,7 @@ HorizontalAlignment="right"
 FontSize="16"
 Background="#444"
 Foreground="White"
+Click="NavigateToAddProj2"
 BorderBrush="Transparent">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">

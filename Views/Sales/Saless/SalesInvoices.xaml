@@ -159,7 +159,7 @@
                         <!-- Header Section -->
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <TextBlock Text="Invoices" FontSize="35" FontWeight="Bold" FontFamily="Lexend" Foreground="#474747" HorizontalAlignment="Left" />
-                            <Button Style="{StaticResource RoundedButtonStyle}" Background="#555555" Foreground="#ffffff" Width="130" Height="29" Margin="565,0,0,0">
+                            <Button Style="{StaticResource RoundedButtonStyle}" Background="#555555" Foreground="#ffffff" Width="130" Height="29" Margin="450,0,0,0"  Click="NavigateToSalesNewInvoice" >
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                                     <materialDesign:PackIcon Kind="Plus" Width="16" Height="16" Margin="0,0,0,0" VerticalAlignment="Center"/>
                                     <TextBlock Text="Add Invoice" FontSize="15" FontFamily="Lexend" Foreground="#ffffff" VerticalAlignment="Center"/>

@@ -1,11 +1,13 @@
-﻿Namespace DPC.Views.Accounts.Accounts.ManageAccounts
-    Public Class AddNewTransfer
-        Public Sub New()
+﻿Namespace DPC.Components.Forms
+    Public Class SubscriptionStatus
+        Private Sub New()
+
             ' This call is required by the designer.
             InitializeComponent()
 
             ' Add any initialization after the InitializeComponent() call.
+
         End Sub
     End Class
-
 End Namespace
+

@@ -298,6 +298,16 @@ Namespace DPC.Data.Controllers
         ''' <summary>
         ''' Validates all product fields before saving
         ''' </summary>
+        ''' 
+        Public Shared Function ValidateProductFieldsWithVariation(ProductName As TextBox, ProductImage As String, Category As ComboBox, Brand As ComboBox,
+                                              Supplier As ComboBox, MeasurementUnit As ComboBox, Description As TextBox,
+                                               allVariationData As Dictionary(Of String, ProductVariationData)) As Boolean
+
+            Return LogicProduct.ValidateProductFieldsWithVariation(ProductName, ProductImage, Category, Brand,
+                                              Supplier, MeasurementUnit, Description,
+                                              allVariationData)
+        End Function
+
         Public Shared Function ValidateProductFields(Checkbox As Controls.CheckBox, ProductName As TextBox, ProductCode As TextBox, Category As ComboBox,
                                               SubCategory As ComboBox, Warehouse As ComboBox, Brand As ComboBox,
                                               Supplier As ComboBox, RetailPrice As TextBox, PurchaseOrder As TextBox,

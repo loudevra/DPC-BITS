@@ -461,6 +461,12 @@
     <Compile Include="Components\Forms\FilterPopOut.xaml.vb">
       <DependentUpon>FilterPopOut.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\SubscriptionChangeStatus.xaml.vb">
+      <DependentUpon>SubscriptionChangeStatus.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\SubscriptionStatus.xaml.vb">
+      <DependentUpon>SubscriptionStatus.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\ViewExportDeletePopUp.xaml.vb">
       <DependentUpon>ViewExportDeletePopUp.xaml</DependentUpon>
     </Compile>
@@ -578,6 +584,9 @@
     </Compile>
     <Compile Include="Views\Accounts\Income\IncomeTransactions.xaml.vb">
       <DependentUpon>IncomeTransactions.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Transactions\ClientsTransactions.xaml.vb">
+      <DependentUpon>ClientsTransactions.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Accounts\Transactions\ManageTransactions.xaml.vb">
       <DependentUpon>ManageTransactions.xaml</DependentUpon>
@@ -729,6 +738,9 @@
     <Compile Include="Views\Project\SupportTickets.xaml.vb">
       <DependentUpon>SupportTickets.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Project\ToDoList.xaml.vb">
+      <DependentUpon>ToDoList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PromoCodes\AddPromoCode.xaml.vb">
       <DependentUpon>AddPromoCode.xaml</DependentUpon>
     </Compile>
@@ -747,11 +759,17 @@
     <Compile Include="Views\Sales\EmailGenerator\SendSMS.xaml.vb">
       <DependentUpon>SendSMS.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Sales\POSSales\ManagePOSInvoices.xaml.vb">
+      <DependentUpon>ManagePOSInvoices.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Sales\Quotes\BillingStatement.xaml.vb">
       <DependentUpon>BillingStatement.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Sales\Quotes\CostEstimate.xaml.vb">
       <DependentUpon>CostEstimate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\Quotes\NewQuote.xaml.vb">
+      <DependentUpon>NewQuote.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Sales\Quotes\Quote.xaml.vb">
       <DependentUpon>Quote.xaml</DependentUpon>
@@ -761,6 +779,12 @@
     </Compile>
     <Compile Include="Views\Sales\Saless\SalesNewInvoice.xaml.vb">
       <DependentUpon>SalesNewInvoice.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\Subscriptions\NewSubscriptionInvoice.xaml.vb">
+      <DependentUpon>NewSubscriptionInvoice.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\Subscriptions\Subscriptions.xaml.vb">
+      <DependentUpon>Subscriptions.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Stocks\ItemManager\NewProduct\ProductBatchEdit.xaml.vb">
       <DependentUpon>ProductBatchEdit.xaml</DependentUpon>
@@ -911,6 +935,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Forms\FilterPopOut.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\SubscriptionChangeStatus.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\SubscriptionStatus.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\ViewExportDeletePopUp.xaml">
@@ -1098,6 +1130,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Accounts\Income\IncomeTransactions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Transactions\ClientsTransactions.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1291,6 +1327,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Project\ToDoList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\PromoCodes\AddPromoCode.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1315,11 +1355,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Sales\POSSales\ManagePOSInvoices.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Sales\Quotes\BillingStatement.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Sales\Quotes\CostEstimate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Quotes\NewQuote.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1332,6 +1380,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Sales\Saless\SalesNewInvoice.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Subscriptions\NewSubscriptionInvoice.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Subscriptions\Subscriptions.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1486,7 +1542,6 @@
     <Folder Include="Views\DataReports\GraphicalReports\" />
     <Folder Include="Views\DataReports\SummaryReports\" />
     <Folder Include="Views\HRM\Payroll\" />
-    <Folder Include="Views\Sales\POSSales\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ILLink\ILLink.Descriptors.LibraryBuild.xml" />

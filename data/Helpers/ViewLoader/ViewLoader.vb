@@ -1,4 +1,5 @@
 ﻿Imports DPC.DPC.Views
+Imports DPC.DPC.Views.Accounts.Accounts.ManageAccounts
 Imports System.Windows
 Imports System.Windows.Controls
 Imports System.Windows.Media
@@ -106,9 +107,63 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New HRM.Employees.Employees.AddEmployee()
                     Case "viewemployee"
                         Return New HRM.Employees.Employees.EmployeesView()
+
+                         ' Sales Module Navigation
+                    Case "salesnewinvoice"
+                        Return New Sales.Saless.SalesNewInvoice()
+                    Case "manageposinvoices"
+                        Return New Sales.POSSales.ManagePOSInvoices()
+                    Case "salesinvoices"
+                        Return New Sales.Saless.SalesInvoices()
+                    Case "salesquote"
+                        Return New Sales.Quotes.Quote()
+                    Case "salesnewquote"
+                        Return New Sales.Quotes.NewQuote()
+                    Case "creditnote"
+                        Return New Sales.CreditNotes.CreditNotes()
+
                         ' Accounts Navigation
                     Case "manageaccounts"
                         Return New Accounts.Accounts.ManageAccounts.ManageAccounts()
+                    Case "accountsexpense"
+                        Return New Accounts.Expense.ExpenseTransaction()
+                    Case "accountsincome"
+                        Return New Accounts.Income.IncomeTransactions()
+                    Case "viewtransactions"
+                        Return New Accounts.Transactions.ManageTransactions()
+                    Case "addnewtransaction"
+                        Return New Accounts.Accounts.ManageAccounts.AddNewTransaction()
+                    Case "balancesheets"
+                        Return New Accounts.Accounts.BalanceSheets()
+                    Case "accountstatement"
+                        Return New Accounts.Accounts.ManageAccounts.AccountStatement()
+                    Case "addnewtransfer"
+                        Return New Accounts.Accounts.ManageAccounts.AddNewTransfer()
+                    Case "clienttransactions"
+                        Return New Accounts.Transactions.ClientsTransactions()
+
+                        ' Project Navigation
+                    Case "newproject"
+                        Return New Project.AddProject1()
+                    Case "addproject2"
+                        Return New Project.AddProject2()
+                    Case "addproject3"
+                        Return New Project.AddProject3()
+                    Case "manageproject"
+                        Return New Project.ManageProject()
+                    Case "todolist"
+                        Return New Project.ToDoList()
+
+                         ' Sales Cost Estimate Navigation
+                    Case "costestimate"
+                        Return New Sales.Quotes.CostEstimate()
+                         ' Sales Billing Estimate Navigation
+                    Case "billingestimate"
+                        Return New Sales.Quotes.BillingStatement()
+
+
+
+
 
 
                     Case Else
@@ -239,10 +294,53 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "addnewemployee"
             ElseIf typeName = "viewemployee" Then
                 Return "viewemployee"
+                ' Sales Module Navigation
+            ElseIf typeName = "salesnewinvoice" Then
+                Return "salesnewinvoice"
+            ElseIf typeName = "manageposinvoices" Then
+                Return "manageposinvoices"
+            ElseIf typeName = "salesinvoices" Then
+                Return "salesinvoices"
+            ElseIf typeName = "salesquote" Then
+                Return "salesquote"
+            ElseIf typeName = "salesnewquote" Then
+                Return "salesnewquote"
+            ElseIf typeName = "creditnote" Then
+                Return "creditnote"
 
                 ' Accounts Navigation
             ElseIf typeName = "manageaccounts" Then
                 Return "manageaccounts"
+            ElseIf typeName = "accountsexpense" Then
+                Return "accountsexpense"
+            ElseIf typeName = "accountsincome" Then
+                Return "accountsincome"
+            ElseIf typeName = "viewtransactions" Then
+                Return "viewtransactions"
+            ElseIf typeName = "addnewtransaction" Then
+                Return "addnewtransaction"
+            ElseIf typeName = "balancesheets" Then
+                Return "balancesheets"
+            ElseIf typeName = "accountstatement" Then
+                Return "accountstatement"
+            ElseIf typeName = "addnewtransfer" Then
+                Return "addnewtransfer"
+            ElseIf typeName = "clienttransactions" Then
+                Return "clienttransactions"
+
+                ' Projects Navigation
+            ElseIf typeName = "newproject" Then
+                Return "newproject"
+            ElseIf typeName = "addproject2" Then
+                Return "addproject2"
+            ElseIf typeName = "addproject3" Then
+                Return "addproject3"
+            ElseIf typeName = "manageproject" Then
+                Return "manageproject"
+            ElseIf typeName = "todolist" Then
+                Return "todolist"
+
+
             Else
                 Return typeName
             End If

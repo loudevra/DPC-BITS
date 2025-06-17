@@ -2,20 +2,20 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Background="#F5F5F5"
-        Width="1000" Height="800">
+        Background="Transparent"
+        Width="Auto" Height="Auto">
 
     <UserControl.Resources>
-        <Style x:Key="AddNewButtonStyle" TargetType="Button">
+        <!--Add Quote Button Style-->
+        <Style x:Key="AddQuoteButtonStyle" TargetType="Button">
             <Setter Property="Width" Value="120"/>
             <Setter Property="Height" Value="30"/>
-            <Setter Property="Background" Value="#D9D9D9"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="BorderBrush" Value="#474747"/>
+            <Setter Property="Background" Value="#555555"/>
+            <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="15" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="20" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
@@ -185,24 +185,14 @@
                                        FontFamily="Lexend"
                                        Foreground="#555555"
                                        VerticalAlignment="Center"/>
-                            <Button
-                                Grid.Column="1"
-                                Style="{StaticResource ConvertButtonStyle}"
-                                Margin="0,0,0,0"
-                                VerticalAlignment="Center">
-                                <Border Background="#555555" CornerRadius="15" Padding="0" Width="120" Height="32" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="0">
-                                            <materialDesign:PackIcon Kind="Plus" Width="18" Height="18" Foreground="#FDFDFD" Margin="0,0,5,0" VerticalAlignment="Center"/>
-                                            <TextBlock Text="Add Quote" FontSize="14" VerticalAlignment="Center" FontWeight="Normal" Foreground="#FDFDFD" Margin="0,0,0,0" TextAlignment="Center" FontFamily="lexend"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
-                            </Button>
+                            <StackPanel VerticalAlignment="Center">
+                                <Button x:Name="BtnAddQuote" HorizontalAlignment="Right" Style="{StaticResource AddQuoteButtonStyle}" Margin="20,0,0,0" Height="35" Width="152">
+                                    <StackPanel Orientation="Horizontal">
+                                        <materialDesign:PackIcon Kind="Plus" Width="25" Height="25" Foreground="#FDFDFD"/>
+                                        <TextBlock Text="Add Quote" FontSize="17" Foreground="#FDFDFD"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
                         </Grid>
 
                         <!-- Filters and Controls -->
@@ -215,20 +205,10 @@
 
                                 <!-- Left Controls -->
                                 <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                    <!-- Excel Button: Icon with "Export" text below and vertical line to the right -->
-                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                        <Button Style="{StaticResource RoundedButtonStyle}" 
-                                                Background="Transparent" 
-                                                BorderBrush="Transparent"
-                                                Foreground="#227346" 
-                                                Width="50" Height="50" Margin="10,0,0,0">
-                                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <materialDesign:PackIcon Kind="MicrosoftExcel" Width="25" Height="25" Foreground="#227346"/>
-                                                <TextBlock Text="Export" Foreground="#227346" FontSize="12" FontFamily="Lexend" HorizontalAlignment="Center" Margin="-5,2,0,0" FontWeight="Bold"/>
-                                            </StackPanel>
-                                        </Button>
-                                        <Border Width="1" Height="36" Background="#D9D9D9" Margin="8,0,8,0" VerticalAlignment="Center"/>
-                                    </StackPanel>
+                                    <!-- Excel Button -->
+                                    <Button Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" Foreground="White" Width="75" Height="29" Margin="10,0,10,0">
+                                        <materialDesign:PackIcon Kind="MicrosoftExcel" Width="25" Height="25"/>
+                                    </Button>
                                     <ComboBox Width="75" Style="{StaticResource RoundedComboBoxStyle}" Height="28" Foreground="#AEAEAE">
                                         <ComboBoxItem Content="10" IsSelected="True"/>
                                         <ComboBoxItem Content="25"/>

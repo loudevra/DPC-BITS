@@ -1,11 +1,8 @@
 ﻿Imports System.Windows.Controls.Primitives
-Imports System.Windows
 Imports DPC.DPC.Data.Helpers
 
-Namespace DPC.Components.UI
-    Public Class PopUpMenuSales
-        Inherits UserControl
-
+Namespace DPC.Views.Sales.Quotes
+    Public Class NewQuote
         Public Sub New()
             InitializeComponent()
         End Sub
@@ -103,39 +100,12 @@ Namespace DPC.Components.UI
                                      End Sub
         End Sub
 
-        Private Sub NavigateToNewInvoice(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("salesnewinvoice", Me)
+        Private Sub NavigateToCostEstimate(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("costestimate", Me)
         End Sub
 
-        Private Sub NavigateToNewInvoiceV2(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("salesinvoices", Me)
-        End Sub
-
-        Private Sub NavigateToManageInvoices(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("manageposinvoices", Me)
-        End Sub
-
-        Private Sub NavigateToNewQuote(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
-        End Sub
-
-        Private Sub NavigateToManageQuote(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("salesquote", Me)
-        End Sub
-
-        Private Sub NavigateToNewSubscription(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("salesinvoices", Me)
-        End Sub
-
-        Private Sub NavigateToSubscriptions(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("salesinvoices", Me)
-        End Sub
-
-        Private Sub NavigateToCreditNotes(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("creditnote", Me)
-
-
+        Private Sub NavigateToCostEstimate1(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("costestimate", Me)
         End Sub
     End Class
 End Namespace
-
