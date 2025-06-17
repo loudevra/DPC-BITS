@@ -7,6 +7,51 @@
              FontFamily="Lexend"
              Background="Transparent">
 
+    <UserControl.Resources>
+        <!-- DatePicker Style -->
+        <Style x:Key="RoundedDatePickerStyle" TargetType="DatePicker">
+            <Setter Property="FontFamily" Value="Lexend"/>
+            <Setter Property="Foreground" Value="#474747"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Height" Value="45"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush" Value="#474747"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DatePicker">
+                        <Border
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="25">
+                            <Grid>
+                                <DatePickerTextBox x:Name="PART_TextBox"
+                                           Background="Transparent"
+                                           BorderThickness="0"
+                                           VerticalContentAlignment="Center"
+                                           Padding="10,0"
+                                           Foreground="Black"/>
+                                <Button x:Name="PART_Button"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Width="40"
+                                Height="40"
+                                Padding="0"
+                                Margin="0,0,10,0"
+                                BorderThickness="0"
+                                Background="Transparent">
+                                    <materialDesign:PackIcon Kind="CalendarOutline" Width="30" Height="30" Foreground="#555555"/>
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    
     <materialDesign:Card Width="900" Padding="40" Background="#D9D9D9"
                             HorizontalAlignment="Center" VerticalAlignment="Center"
                             UniformCornerRadius="20">
@@ -36,20 +81,17 @@
                     <!--Product Name Value is here!-->
                     <TextBox x:Name="TxtDateTimePicker" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend"/>
                 </Border>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                    <TextBlock Text="From Date:" Foreground="#474747" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend" Margin="0,10,5,0"/>
+                
+                <StackPanel Grid.Row="2" Margin="0,0,0,10">
+                    <TextBlock Text="From Date:" Margin="0,0,0,5" FontSize="16" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"/>
+                    <DatePicker Style="{StaticResource RoundedDatePickerStyle}" SelectedDate="2025-03-12" Margin="0,0,0,5"/>
                 </StackPanel>
-                <Border BorderBrush="#474747" BorderThickness="2" Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10">
-                    <!--Product Name Value is here!-->
-                    <TextBox x:Name="TxtStartTime" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend"/>
-                </Border>
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                    <TextBlock Text="To Date:" Foreground="#474747" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend" Margin="0,10,5,0"/>
+
+                <StackPanel Grid.Row="2" Margin="0,0,0,10">
+                    <TextBlock Text="To Date:" Margin="0,0,0,5" FontSize="16" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"/>
+                    <DatePicker Style="{StaticResource RoundedDatePickerStyle}" SelectedDate="2025-03-12" Margin="0,0,0,5"/>
                 </StackPanel>
-                <Border BorderBrush="#474747" BorderThickness="2" Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,20">
-                    <!--Product Name Value is here!-->
-                    <TextBox x:Name="TxtEndTime" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend"/>
-                </Border>
+                
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="-5,10,0,10">
                     <Button Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#3ea2d3" Width="103" Margin="0,0,10,10">
                         <TextBlock Text="Export" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="15" FontFamily="Lexend"/>
