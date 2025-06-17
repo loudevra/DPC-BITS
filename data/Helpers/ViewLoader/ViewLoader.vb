@@ -141,6 +141,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Accounts.Accounts.ManageAccounts.AddNewTransfer()
                     Case "clienttransactions"
                         Return New Accounts.Transactions.ClientsTransactions()
+                    Case "navaddaccount"
+                        'path of the design you want to see
+                        Return New Accounts.Accounts.ManageAccounts.AddAccount()
 
                         ' Project Navigation
                     Case "newproject"
@@ -327,6 +330,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "addnewtransfer"
             ElseIf typeName = "clienttransactions" Then
                 Return "clienttransactions"
+            ElseIf typeName = "navaddaccount" Then
+                Return "navaddaccount"
 
                 ' Projects Navigation
             ElseIf typeName = "newproject" Then
