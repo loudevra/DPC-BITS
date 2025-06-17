@@ -163,6 +163,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                          ' Sales Billing Estimate Navigation
                     Case "billingestimate"
                         Return New Sales.Quotes.BillingStatement()
+                    Case "navigatetoquotes"
+                        Return New Sales.Quotes.NewQuote()
 
 
 
