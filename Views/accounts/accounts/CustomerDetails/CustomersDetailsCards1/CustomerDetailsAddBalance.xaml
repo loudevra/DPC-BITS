@@ -28,7 +28,7 @@
                     <!--Amount Balance-->
                     <TextBox x:Name="TxtBalance" Style="{StaticResource RoundedTextboxStyle}"/>
                 </Border>
-                <Button Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#92B77C" Click="BtnAddBrand">
+                <Button Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#92B77C">
                     <TextBlock Text="Add Balance" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FDFDFD" FontSize="15"/>
                 </Button>
             </StackPanel>
