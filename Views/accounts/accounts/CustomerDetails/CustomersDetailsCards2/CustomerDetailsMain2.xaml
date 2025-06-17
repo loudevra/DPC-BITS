@@ -1,12 +1,182 @@
-﻿<UserControl x:Class="CustomerDetailsMain2"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:DPC"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+﻿<UserControl x:Class="DPC.Views.Accounts.Accounts.CustomerDetails.CustomerDetailsCards2.CustomerDetailsMain2"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Background="#D9D9D9">
+
+    <UserControl.Resources>
+        <!-- Border Style -->
+        <Style x:Key="RoundedBorderStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="15"/>
+        </Style>
+
+        <Style x:Key="RoundedGridStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="BorderBrush" Value="#AEAEAE"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+
+        <!-- Add the RoundedTextboxStyle that was missing in the original code -->
+        <Style x:Key="RoundedTextboxStyle" TargetType="TextBox">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="FontFamily" Value="Lexend"/>
+        </Style>
+
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="50"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="Background" Value="#090909"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="50" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </UserControl.Resources>
+
     <Grid>
-            
+        <!-- Main Content Area -->
+        <Grid>
+            <!-- Main Content (ScrollViewer) -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Main Content -->
+                    <StackPanel Grid.Row="1" Margin="20,20,20,20" Grid.ColumnSpan="2">
+                        <!-- Header Section -->
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,10,0,10">
+                            <materialDesign:PackIcon Kind="ChevronLeft" Width="25" Height="30" Foreground="#555555" Margin="0,0,10,0"/>
+                            <TextBlock Text="Transaction Details" FontWeight="SemiBold" FontFamily="Lexend" FontSize="20" Foreground="#474747" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- DPC Store Info Header -->
+                        <Border Grid.Row="1" Padding="30" Background="White" CornerRadius="20,20,0,0" Margin="0,0,0,0" BorderThickness="0" >
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="500"/>
+                                    <ColumnDefinition Width="200"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <!-- DPC Description Info -->
+                                <StackPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Center">
+                                    <TextBlock Text="DREAM PC BUILD OFFICIAL STORE" FontSize="20" FontWeight="Bold" FontFamily="Lexend"
+                                    Foreground="#474747" VerticalAlignment="Center" Margin="0,0,0,20"/>
+
+                                    <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
+                                        <TextBlock Text="ANTIPOLO" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#555555" VerticalAlignment="Center"/>
+                                        <TextBlock Text="ANTIPOLO CITY, RIZAL" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#555555" VerticalAlignment="Center"/>
+                                        <TextBlock Text="PHILIPPINES" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#555555" VerticalAlignment="Center"/>
+                                        <TextBlock Text="09156443871" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#555555" VerticalAlignment="Center"/>
+                                        <TextBlock Text="info.dreampcbuild@gmail.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#555555" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <!-- Print Button -->
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right">
+                                    <Button
+                                        Style="{StaticResource ButtonStyle}">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <materialDesign:PackIcon Kind="PrinterOutline" Width="35" Height="35" Foreground="#FDFDFD"/>
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                        
+                        <!--Info Description-->
+                        <StackPanel Grid.Row="1" Margin="0,0,0,0" >
+                            <Border Background="White" CornerRadius="0,0,20,20"  BorderThickness="0" Padding="10,10,10,30">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!--Rectangle as line-->
+                                    <Rectangle Grid.Row="0"
+                                       Width="auto"
+                                       Height="1.5" 
+                                       Stroke="#AEAEAE"
+                                       StrokeThickness="1"
+                                       Fill="Transparent"
+                                       VerticalAlignment="Top"
+                                       Margin="0,0,0,20"/>
+
+                                    <!--Date & Category Info-->
+                                    <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Right" Margin="5">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <TextBlock Text="Date:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#090909" VerticalAlignment="Center"/>
+                                            <Border Background="White" BorderThickness="2,2,2,1"  BorderBrush="#090909"
+                                            Padding="5" Width="200" Margin="10,0,0,0">
+                                                <TextBlock x:Name="tbDate" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#090909"/>
+                                            </Border>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <TextBlock Text="ID:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#090909" VerticalAlignment="Center"/>
+                                            <Border Background="White" BorderThickness="2,1,2,1" BorderBrush="#090909"
+                                             Padding="5" Width="200" Margin="10,0,0,0">
+                                                <TextBlock x:Name="tbID" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#090909"/>
+                                            </Border>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <TextBlock Text="Category:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#090909" VerticalAlignment="Center"/>
+                                            <Border Background="White" BorderThickness="2,1,2,2" BorderBrush="#090909"
+                                             Padding="5" Width="200" Margin="10,0,0,0">
+                                                <TextBlock x:Name="tbCategory" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#090909"/>
+                                            </Border>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    
+                                    <!--Amount Display-->
+                                    <StackPanel Grid.Row="2" Orientation="Vertical" HorizontalAlignment="Left">
+                                        <!--Debit-->
+                                        <StackPanel Orientation="Vertical" Margin="20,0,0,0">
+                                            <TextBlock Text="Debit" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#AEAEAE" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="tbDebit" Text="₱ 0.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,10,0,10"/>
+                                        </StackPanel>
+                                        <!--Credit-->
+                                        <StackPanel Orientation="Vertical" Margin="20,0,0,0">
+                                            <TextBlock Text="Credit" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#AEAEAE" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="tbCredit" Text="₱ 11,030.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,10,0,10"/>
+                                        </StackPanel>
+                                        <!--Credit-->
+                                        <StackPanel Orientation="Vertical" Margin="20,0,0,0">
+                                            <TextBlock Text="Type" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#AEAEAE" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="tbType" Text="Income" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,10,0,10"/>
+                                        </StackPanel>
+                                        <!--Note-->
+                                        <StackPanel Orientation="Vertical" Margin="20,0,0,0">
+                                            <TextBlock Text="Note" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#AEAEAE" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="tbNote" Text="#35068-Cash" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,10,0,10"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </UserControl>

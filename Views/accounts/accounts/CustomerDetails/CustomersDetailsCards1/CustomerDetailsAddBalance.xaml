@@ -1,12 +1,37 @@
-﻿<UserControl x:Class="CustomerDetailsAddBalance"
+﻿<UserControl x:Class="DPC.Views.Accounts.Accounts.CustomerDetails.CustomerDetailsCards1.CustomerDetailsAddBalance"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:DPC"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
-    </Grid>
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             Height="Auto"
+             FontFamily="{StaticResource Lexend}"
+             Background="Transparent">
+
+    <materialDesign:Card Width="450" Padding="20" Background="White"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            UniformCornerRadius="20">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20">
+                <materialDesign:PackIcon Kind="WalletAddOutline" Width="40" Height="40" Margin="0,0,15,0" VerticalAlignment="Center" Foreground="#555555"/>
+                <TextBlock FontSize="22" Foreground="#555555" FontWeight="Bold" Text="Add Balance" Margin="0,0,0,0" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <StackPanel Grid.Row="1">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <TextBlock Text="Amount:" Foreground="#555555" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                </StackPanel>
+                <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,20">
+                    <!--Amount Balance-->
+                    <TextBox x:Name="TxtBalance" Style="{StaticResource RoundedTextboxStyle}"/>
+                </Border>
+                <Button Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#92B77C" Click="BtnAddBrand">
+                    <TextBlock Text="Add Balance" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FDFDFD" FontSize="15"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </materialDesign:Card>
 </UserControl>
