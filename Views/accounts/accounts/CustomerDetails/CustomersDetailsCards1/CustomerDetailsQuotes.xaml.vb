@@ -1,3 +1,8 @@
-﻿Public Class CustomerDetailsQuotes
+﻿Namespace DPC.Views.Accounts.Accounts.CustomerDetails.CustomerDetailsCards1
 
-End Class
+    Public Class CustomerDetailsQuotes
+        Public Sub New()
+            InitializeComponent()
+        End Sub
+    End Class
+End Namespace
