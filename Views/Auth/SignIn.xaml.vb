@@ -1,8 +1,10 @@
-Imports DPC.DPC.Data.Helpers
-Imports DPC.DPC.Data.Controllers
 Imports System.Windows
 Imports DPC.DPC.Components
 Imports DPC.DPC.Components.ConfirmationModals
+Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Helpers
+Imports Microsoft.VisualBasic.ApplicationServices
+Imports MySql.Data.MySqlClient
 
 Namespace DPC.Views.Auth
     Public Class SignIn
@@ -12,6 +14,7 @@ Namespace DPC.Views.Auth
         ' Fields for password handling
         Private passwordHidden As Boolean = True
         Private realPassword As String = ""
+        Private Shared UserRoleID As Integer
 
         ' Add modal instance
         Private confirmationModal As LoginConfirmationModals
@@ -37,6 +40,7 @@ Namespace DPC.Views.Auth
 
         ' Handle Sign-In Process
         Private Sub BtnSignIn_Click(sender As Object, e As RoutedEventArgs)
+
             PerformSignIn()
         End Sub
 
@@ -57,6 +61,20 @@ Namespace DPC.Views.Auth
             Dim refreshToken As String = authResult.Item2
 
             If Not String.IsNullOrEmpty(accessToken) AndAlso Not String.IsNullOrEmpty(refreshToken) Then
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    Try
+                        conn.Open()
+                        Dim query As String = "SELECT UserRoleID FROM employee WHERE Username = '" & username & "'"
+                        Dim cmd As New MySqlCommand(query, conn)
+                        Dim reader = cmd.ExecuteReader()
+                        While (reader.Read)
+                            UserRoleID = reader.GetInt32("UserRoleID")
+                        End While
+                    Catch ex As Exception
+
+                    End Try
+                End Using
+
                 ' Store tokens for session
                 SessionManager.SetSessionTokens(accessToken, refreshToken)
 
@@ -76,17 +94,38 @@ Namespace DPC.Views.Auth
 
         ' Handle successful login
         Private Sub OnLoginSuccess()
-            ' Redirect to Base.xaml and load Dashboard view
-            Dim baseWindow As New Base With {
-                .CurrentView = ViewLoader.DynamicView.Load("dashboard") ' Set CurrentView to Dashboard
-            } ' Create instance of Base.xaml
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Dim query As String = "SELECT RoleName FROM userroles WHERE RoleID = " & UserRoleID
+                    Dim cmd As New MySqlCommand(query, conn)
+                    Dim reader = cmd.ExecuteReader()
+                    While (reader.Read)
 
-            ' Show the Base window
-            baseWindow.Show()
+                        'MessageBox.Show(reader.GetString("RoleName"))
+                        Dim Role As String = reader.GetString("RoleName")
 
-            ' Close the current window (SignIn window)
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            currentWindow?.Close()
+                        ' Redirect to Base.xaml and load Dashboard view
+                        Dim baseWindow As New Base(Role) With {
+                            .CurrentView = ViewLoader.DynamicView.Load("dashboard") ' Set CurrentView to Dashboard
+                        } ' Create instance of Base.xaml
+
+
+                        ' Show the Base window
+                        baseWindow.Show()
+
+                        ' Close the current window (SignIn window)
+                        Dim currentWindow As Window = Window.GetWindow(Me)
+                        currentWindow?.Close()
+                    End While
+
+
+                Catch ex As Exception
+
+                End Try
+            End Using
+
+
         End Sub
 
         ' Handle retry after login error
