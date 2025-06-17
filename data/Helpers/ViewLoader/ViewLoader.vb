@@ -169,6 +169,9 @@ Namespace DPC.Data.Helpers.ViewLoader
 
 
 
+
+
+
                     Case Else
                         ' Return a placeholder UserControl with error text
                         Dim errorContent As New TextBlock With {
@@ -344,6 +347,10 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "manageproject"
             ElseIf typeName = "todolist" Then
                 Return "todolist"
+
+
+
+
 
 
             Else
