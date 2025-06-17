@@ -1,0 +1,93 @@
+﻿<UserControl x:Class="DPC.Components.Forms.SubscriptionStatus"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             Height="Auto" Width="Auto"
+             FontFamily="{StaticResource Lexend}"
+             Background="Transparent">
+
+    <materialDesign:Card Width="Auto" Padding="20" Background="White"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            UniformCornerRadius="20">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <!--Subscription Status Header-->
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,15,0">
+                    <Ellipse Width="55" Height="55" Fill="#555555" VerticalAlignment="Center"/>
+                    <materialDesign:PackIcon Kind="Cached" Width="40" Height="40" Foreground="#FDFDFD" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="-55,0,0,0"/>
+                </StackPanel>
+                <TextBlock Text="Subscription Status" FontSize="24" Foreground="#555555" FontFamily="Lexend" FontWeight="SemiBold" Margin="0,0,0,0" VerticalAlignment="Center"/>
+            </StackPanel>
+            
+            <!--Mark as & Borders-->
+            <StackPanel Grid.Row="1" Orientation="Vertical" Width="Auto">
+                <StackPanel Margin="0,0,0,5">
+                    <TextBlock Text="Mark As:" Foreground="#555555" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                </StackPanel>
+                <Grid> 
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <!--Active Border-->
+                    <Border Grid.Column="0" BorderBrush="#AEAEAE" BorderThickness="2" CornerRadius="20"
+                        Width="170" Height="140" Margin="0,0,5,0">
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10" HorizontalAlignment="Center">
+                                <Ellipse Width="55" Height="55" Fill="#F2F2F2" VerticalAlignment="Center"/>
+                                <materialDesign:PackIcon Kind="Cached" Width="40" Height="40" Foreground="#AEAEAE" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="-55,0,0,0"/>
+                            </StackPanel>
+                            <TextBlock Text="Active" FontSize="18" Foreground="#AEAEAE" FontFamily="Lexend" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Border>
+                    <!--Reccured-->
+                    <Border Grid.Column="1" BorderBrush="#AEAEAE" BorderThickness="2" CornerRadius="20"
+                        Width="170" Height="140" Margin="5,0,5,0">
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10" HorizontalAlignment="Center">
+                                <Ellipse Width="55" Height="55" Fill="#F2F2F2" VerticalAlignment="Center"/>
+                                <materialDesign:PackIcon Kind="Refresh" Width="40" Height="40" Foreground="#AEAEAE" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="-55,0,0,0"/>
+                            </StackPanel>
+                            <TextBlock Text="Reccured" FontSize="18" Foreground="#AEAEAE" FontFamily="Lexend" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Border>
+                    <!--Stopped Border-->
+                    <Border Grid.Column="2" BorderBrush="#AEAEAE" BorderThickness="2" CornerRadius="20"
+                        Width="170" Height="140" Margin="5,0,0,0">
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10" HorizontalAlignment="Center">
+                                <Ellipse Width="55" Height="55" Fill="#F2F2F2" VerticalAlignment="Center"/>
+                                <materialDesign:PackIcon Kind="Cancel" Width="40" Height="40" Foreground="#AEAEAE" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="-55,0,0,0"/>
+                            </StackPanel>
+                            <TextBlock Text="Stopped" FontSize="18" Foreground="#AEAEAE" FontFamily="Lexend" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </StackPanel>
+            
+            <!--Buttons-->
+            <StackPanel Grid.Row="2" Width="Auto" Margin="0,10,0,0" HorizontalAlignment="Center">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <!--Cancel Button-->
+                    <Button Grid.Column="0" Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#AEAEAE" Width="255" Margin="0,0,10,0">
+                        <TextBlock Text="Cancel" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="#555555" FontSize="15"/>
+                    </Button>
+                    <!--Change Status Button-->
+                    <Button Grid.Column="1" Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#52C69D" Width="255" Margin="0,0,0,0">
+                        <TextBlock Text="Change Status" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="White" FontSize="15"/>
+                    </Button>
+                </Grid>
+            </StackPanel>
+        </Grid>
+    </materialDesign:Card>
+</UserControl>
