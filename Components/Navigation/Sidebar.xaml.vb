@@ -204,7 +204,7 @@ Namespace DPC.Components.Navigation
         ''' </summary>
         Private Sub OpenProject(sender As Object, e As RoutedEventArgs)
             If Project = True Or AssignProject = True Or AssignProject = False Or RoleName = "Administrator" Then
-                Dim popupMenu As New PopUpMenuProjects(AssignProject)
+                Dim popupMenu As New PopUpMenuProjects(AssignProject, RoleName)
 
                 ' Get the position of the Stocks button
                 Dim button As Button = CType(sender, Button)
