@@ -1,4 +1,5 @@
-﻿Imports DPC.DPC.Data.Controllers
+﻿Imports DPC.DPC.Components.Forms
+Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Controllers.CalendarController
 Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
@@ -35,7 +36,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             }
             AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
             AddHandler TxtSupplier.TextChanged, AddressOf TxtSupplier_TextChanged
-            AddHandler LstItems.SelectionChanged, AddressOf LstItems_SelectionChanged
+            'AddHandler LstItems.SelectionChanged, AddressOf LstItems_SelectionChanged
 
             MyDynamicGrid = CType(TableGridPanel.Children(0), Grid)
             AddNewRow()
@@ -69,7 +70,22 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
             ' Start the timer
             _typingTimer.Start()
+
+            HandleSuppliers()
         End Sub
+
+        Private Sub HandleSuppliers()
+            ' Configure popup if needed
+            If AutoCompletePopup.PlacementTarget Is Nothing Then
+                AutoCompletePopup.PlacementTarget = TxtSupplier
+                AutoCompletePopup.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom
+                AutoCompletePopup.StaysOpen = False
+                AutoCompletePopup.AllowsTransparency = True
+                AutoCompletePopup.IsOpen = True
+            End If
+        End Sub
+
+
         Private Sub OnTypingTimerTick(sender As Object, e As EventArgs)
             ' Stop the timer
             _typingTimer.Stop()
@@ -87,21 +103,27 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             AutoCompletePopup.Width = TxtSupplier.ActualWidth
         End Sub
 
-        Private Sub LstItems_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
-            If LstItems.SelectedItem IsNot Nothing Then
-                Dim previousSupplier As SupplierDataModel = _selectedSupplier
-                _selectedSupplier = CType(LstItems.SelectedItem, SupplierDataModel)
-                TxtSupplier.Text = _selectedSupplier.SupplierName
-                UpdateSupplierDetails(_selectedSupplier)
-                AutoCompletePopup.IsOpen = False
 
-                ' Clear existing rows and create a fresh one when supplier changes
-                If previousSupplier Is Nothing OrElse previousSupplier.SupplierID <> _selectedSupplier.SupplierID Then
-                    ClearAllRows()
-                    AddNewRow()
-                End If
-            End If
-        End Sub
+        'Private Sub LstItems_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+        '    If LstItems.SelectedItem IsNot Nothing Then
+        '        Dim previousSupplier As SupplierDataModel = _selectedSupplier
+        '        _selectedSupplier = CType(LstItems.SelectedItem, SupplierDataModel)
+        '        TxtSupplier.Text = _selectedSupplier.SupplierName
+        '        UpdateSupplierDetails(_selectedSupplier)
+        '        AutoCompletePopup.IsOpen = False
+
+
+
+        '        ' Clear existing rows and create a fresh one when supplier changes
+        '        If previousSupplier Is Nothing OrElse previousSupplier.SupplierID <> _selectedSupplier.SupplierID Then
+        '            ClearAllRows()
+        '            AddNewRow()
+        '        End If
+        '    End If
+        'End Sub
+
+
+
 
         ' Add a new method to clear all rows
         Private Sub ClearAllRows()
@@ -144,6 +166,76 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             End If
         End Sub
 #End Region
+
+        '#Region "Products Autocomplete"
+        '        ' ========== Products Autocomplete Methods ==========
+
+        '        Private Sub TxtProduct_TextChanged(sender As Object, e As TextChangedEventArgs, textBox As TextBox)
+        '            ' Reset the timer
+        '            _typingTimerProduct.Stop()
+
+        '            ' If text is empty, close popup
+        '            If String.IsNullOrWhiteSpace(textBox.Text) Then
+        '                AutoCompletePopup.IsOpen = False
+        '                Return
+        '            End If
+
+        '            ' Start the timer
+        '            _typingTimerProduct.Start()
+        '            TxtProducts = textBox
+
+        '            HandleProducts(textBox)
+        '        End Sub
+
+
+        '        Private Sub HandleProducts(textBox As TextBox)
+        '            Dim popup As New Popup()
+        '            popup.PlacementTarget = textBox
+        '            popup.Placement = PlacementMode.Bottom
+        '            'popup.PopupAnimation = 2
+
+        '            Dim border As New Border()
+        '            border.Background = New SolidColorBrush(Colors.White)
+        '            border.BorderBrush = New SolidColorBrush(Colors.LightGray)
+        '            border.MaxHeight = 150
+        '            border.Width = textBox.ActualWidth
+
+        '            Dim stackPanel As New StackPanel()
+
+        '            Dim textBlock As New TextBlock()
+        '            textBlock.Text = textBox.Text
+        '            textBlock.FontWeight = FontWeights.SemiBold
+
+        '            stackPanel.Children.Add(textBlock)
+        '            border.Child = stackPanel
+
+        '            ' Configure popup if needed
+        '            If popup.PlacementTarget Is Nothing Then
+        '                popup.PlacementTarget = textBox
+        '                popup.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom
+        '                popup.StaysOpen = False
+        '                popup.AllowsTransparency = True
+        '                popup.IsOpen = True
+        '            End If
+        '        End Sub
+
+        '        Private Sub OnTypingTimerTickProduct(sender As Object, e As EventArgs)
+        '            ' Stop the timer
+        '            _typingTimer.Stop()
+
+        '            ' Search for suppliers
+        '            _products = SupplierController.SearchProducts(TxtProducts.Text)
+
+        '            ' Update the list
+        '            'LstItems.ItemsSource = _products
+
+        '            ' Show popup if we have results
+        '            AutoCompletePopup.IsOpen = _products.Count > 0
+
+        '            ' Adjust popup width to match the textbox
+        '            AutoCompletePopup.Width = TxtProducts.ActualWidth
+        '        End Sub
+        '#End Region
 
 #Region "Product Autocomplete"
         ' Create product popup for a specific row
@@ -262,9 +354,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             ' Reset and start timer
             _productTypingTimers(timerKey).Stop()
 
+            Dim popupKey As String = $"ProductPopup_{row}"
+
             ' Close popup if textbox is empty
             If String.IsNullOrWhiteSpace(textBox.Text) Then
-                Dim popupKey As String = $"ProductPopup_{row}"
+
                 If _productPopups.ContainsKey(popupKey) Then
                     _productPopups(popupKey).IsOpen = False
                 End If
@@ -273,6 +367,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
             ' Start timer
             _productTypingTimers(timerKey).Start()
+
         End Sub
 
         ' Typing timer tick handler for product search
@@ -297,8 +392,10 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             Dim popup As Popup = _productPopups(popupKey)
             Dim listBox As ListBox = _productListBoxes(listBoxKey)
 
+            MessageBox.Show("aksfbk")
+
             ' Search for products from the supplier
-            If _selectedSupplier IsNot Nothing Then
+            If Not String.IsNullOrWhiteSpace(TxtSupplierDetails.Text) Then
                 ' Call product controller to search products by supplier ID and search text
                 _products = PurchaseOrderController.SearchProductsBySupplier(_selectedSupplier.SupplierID, textBox.Text)
 
@@ -307,6 +404,20 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
                 ' Show popup if we have results
                 popup.IsOpen = _products.Count > 0
+                popup.PlacementTarget = textBox
+                popup.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom
+
+
+
+
+                '' Configure popup if needed
+                'If _productPopups(popupKey).PlacementTarget Is Nothing Then
+                '    _productPopups(popupKey).PlacementTarget = textBox
+                '    _productPopups(popupKey).Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom
+                '    _productPopups(popupKey).StaysOpen = False
+                '    _productPopups(popupKey).AllowsTransparency = True
+                '    _productPopups(popupKey).IsOpen = True
+                'End If
 
                 ' Update popup placement
                 popup.PlacementTarget = textBox
@@ -452,6 +563,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                 .Margin = New Thickness(2, 0, 0, 0),
                 .Background = Brushes.Transparent
             }
+
 
             ' For product name field, adjust to allow more text
             If column = 0 Then
