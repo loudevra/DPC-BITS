@@ -71,7 +71,7 @@
                 </StackPanel>
                 <Border BorderBrush="#474747" BorderThickness="2" Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10">
                     <!--Product Name Value is here!-->
-                    <TextBox x:Name="TxtEmployee" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend"/>
+                    <TextBox x:Name="TxtEmployee" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontSize="16"/>
                 </Border>
 
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
@@ -79,7 +79,7 @@
                 </StackPanel>
                 <Border BorderBrush="#474747" BorderThickness="2" Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10">
                     <!--Product Name Value is here!-->
-                    <TextBox x:Name="TxtDateTimePicker" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend"/>
+                    <TextBox x:Name="TxtDateTimePicker" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontSize="16"/>
                 </Border>
                 
                 <StackPanel Grid.Row="2" Margin="0,0,0,10">

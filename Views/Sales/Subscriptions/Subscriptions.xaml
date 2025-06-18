@@ -119,7 +119,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Style="{StaticResource RoundedBorderStyle}" Background="{TemplateBinding Background}">
+                        <Border Style="{StaticResource RoundedBorderStyle}" Background="{TemplateBinding Background}" CornerRadius="20">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
@@ -242,8 +242,8 @@
                                   BorderThickness="0"
                                   Width="Auto">
                                     <DataGrid.Columns>
-                                        <DataGridTextColumn Header="No" Binding="{Binding Number}" Width="100"/>
-                                        <DataGridTextColumn Header="#" Binding="{Binding NumberID}" Width="100"/>
+                                        <DataGridTextColumn Header="No" Binding="{Binding Number}" Width="70"/>
+                                        <DataGridTextColumn Header="#" Binding="{Binding NumberID}" Width="70"/>
                                         <DataGridTextColumn Header="Customer" Binding="{Binding Customer}" Width="120"/>
                                         <DataGridTextColumn Header="Date" Binding="{Binding Date}" Width="120"/>
                                         <DataGridTextColumn Header="Amount" Binding="{Binding Amount}" Width="120"/>

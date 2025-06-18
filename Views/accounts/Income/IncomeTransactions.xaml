@@ -270,7 +270,7 @@
                                   CanUserResizeRows="False"
                                   CanUserResizeColumns="False"
                                   IsReadOnly="True"
-                                  RowHeight="40" FontFamily="Lexend" Foreground="#474747">
+                                  RowHeight="40" FontFamily="Lexend" Foreground="#474747" BorderThickness="0">
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="Date#" Binding="{Binding Date}" Width="90"/>
                                         <DataGridTemplateColumn Header="Account" Width="120">
@@ -279,9 +279,19 @@
                                         <DataGridTextColumn Header="Credit" Binding="{Binding Credit}" Width="120"/>
                                         <DataGridTextColumn Header="Payer" Binding="{Binding Payer}" Width="120"/>
                                         <DataGridTextColumn Header="Method" Binding="{Binding Method}" Width="120"/>
-                                        
-                                        
                                     </DataGrid.Columns>
+                                    <DataGrid.ColumnHeaderStyle>
+                                        <Style TargetType="DataGridColumnHeader">
+                                            <Setter Property="FontFamily" Value="Lexend"/>
+                                            <Setter Property="FontSize" Value="13"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                            <Setter Property="Foreground" Value="#474747"/>
+                                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                            <Setter Property="Padding" Value="10,5"/>
+                                            <Setter Property="Background" Value="White"/>
+                                        </Style>
+                                    </DataGrid.ColumnHeaderStyle>
                                 </DataGrid>
                             </StackPanel>
                         </Border>

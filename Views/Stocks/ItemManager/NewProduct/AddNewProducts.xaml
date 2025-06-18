@@ -134,7 +134,7 @@
                                 <!-- Modified TextBox with binding -->
                                 <TextBox x:Name="TxtProductName" 
                      Style="{StaticResource RoundedTextboxStyle}"
-                     Text="{Binding ProductName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                     Text="{Binding ProductName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" FontFamily="Lexend"/>
                             </Border>
                         </StackPanel>
 
@@ -146,7 +146,7 @@
                                 <!-- Modified TextBox with binding -->
                                 <TextBox x:Name="TxtProductCode" 
                      Style="{StaticResource RoundedTextboxStyle}"
-                     Text="{Binding ProductCode, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                     Text="{Binding ProductCode, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" FontFamily="Lexend"/>
                             </Border>
                         </StackPanel>
 
@@ -203,7 +203,7 @@
                                     <materialDesign:PackIcon Grid.Column="0" Kind="Calendar" Width="25" Height="25" Foreground="#474747" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,0,0,0"/>
                                     <!-- Date Display - Now uses FormattedDate property -->
                                     <Button x:Name="DateButton" Grid.Column="1" Style="{StaticResource DateButtonStyle}" Click="StartDate_Click" Width="Auto" Margin="10,0,25,0">
-                                        <TextBlock Text="{Binding FormattedDate}" Margin="0,0,5,0" Foreground="#474747" Height="14"/>
+                                        <TextBlock Text="{Binding FormattedDate}" Margin="0,0,5,0" Foreground="#474747" Height="14" FontFamily="Lexend"/>
                                     </Button>
                                 </Grid>
                             </Border>
@@ -215,16 +215,16 @@
                                 <TextBlock Text="Description:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                                 <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
                             </StackPanel>
-                            <Border Style="{StaticResource RoundedBorderStyle}">
+                            <Border Style="{StaticResource RoundedBorderStyle}" Padding="10">
                                 <!-- Description Value with binding -->
                                 <TextBox x:Name="TxtDescription" 
-                 Style="{StaticResource RoundedTextboxStyle}" 
-                 Height="100" 
-                 VerticalContentAlignment="Top" 
-                 Margin="20,2,20,1" 
-                 TextWrapping="Wrap"
-                 AcceptsReturn="True"
-                 Text="{Binding Description, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                 Style="{StaticResource RoundedTextboxStyle}" 
+                                 Height="100" 
+                                 VerticalContentAlignment="Top" 
+                                 Margin="20,2,20,1" 
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 Text="{Binding Description, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" FontFamily="Lexend" Foreground="#474747"/>
                             </Border>
                         </StackPanel>
 
@@ -304,8 +304,8 @@
                                         <!-- TextBox with Rounded Style -->
                                         <!-- Product Purchase Order Value-->
                                         <TextBox x:Name="TxtPurchaseOrder" Style="{StaticResource RoundedTextboxStyle}" Margin="0,0,25,0" Grid.Column="1"
-                PreviewTextInput="IntegerOnlyTextInputHandler"
-                DataObject.Pasting="IntegerOnlyPasteHandler"/>
+                                            PreviewTextInput="IntegerOnlyTextInputHandler"
+                                            DataObject.Pasting="IntegerOnlyPasteHandler"/>
                                     </Grid>
                                 </Border>
                             </StackPanel>
