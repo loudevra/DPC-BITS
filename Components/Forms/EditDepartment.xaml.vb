@@ -7,6 +7,7 @@ Namespace DPC.Components.Forms
         ' Closing the popup
         Public Event close(sender As Object, e As RoutedEventArgs)
         Public DepartmentID As Integer
+        Dim BeforeDepartmentName As String
 
         ' Refresh the data after updating
         Public Event DepartmentSaved As EventHandler
@@ -23,6 +24,7 @@ Namespace DPC.Components.Forms
             ' You can assign these to fields or textboxes
             Me.DepartmentID = departmentID
             TxtDepartment.Text = departmentName
+            BeforeDepartmentName = departmentName
         End Sub
 
         Private Sub SaveDepartment_Click(sender As Object, e As RoutedEventArgs)
@@ -30,6 +32,8 @@ Namespace DPC.Components.Forms
                 Dim departmentName As String = TxtDepartment.Text()
 
                 If HRMController.EditDepartments(DepartmentID, departmentName) Then
+                    HRMController.ActionLogs(CacheOnLoggedInName, "Update", BeforeDepartmentName, departmentName)
+
                     RaiseEvent DepartmentSaved(Me, EventArgs.Empty)
                     RaiseEvent close(Me, e)
                     PopupHelper.ClosePopup()

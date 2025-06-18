@@ -5,6 +5,7 @@ Namespace DPC.Components.ConfirmationModals
     Public Class HRMDeleteDepartment
         ' Storing the id
         Public DepartmentID As Integer
+        Dim BeforeDepartmentName As String
         ' Refreshing the Data
         Public Event DepartmentSaved As EventHandler
 
@@ -19,13 +20,16 @@ Namespace DPC.Components.ConfirmationModals
 
         End Sub
 
-        Public Sub SetDepartment(departmentID As Integer)
+        Public Sub SetDepartment(departmentID As Integer, departmentName As String)
             ' You can assign these to fields or textboxes
             Me.DepartmentID = departmentID
+            BeforeDepartmentName = departmentName
         End Sub
 
         Private Sub Confirm_Click(sender As Object, e As RoutedEventArgs)
             If HRMController.DeleteDepartment(DepartmentID) Then
+                HRMController.ActionLogs(CacheOnLoggedInName, "Delete", BeforeDepartmentName, Nothing)
+
                 RaiseEvent DepartmentSaved(Me, EventArgs.Empty)
                 RaiseEvent close(Me, e)
                 PopupHelper.ClosePopup()

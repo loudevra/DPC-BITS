@@ -4,6 +4,7 @@ Imports DPC.DPC.Data.Model
 Imports DPC.DPC.Data.Models
 Imports MySql.Data.MySqlClient
 Imports OpenTK.Graphics.ES11
+Imports OpenTK.Graphics.OpenGL
 
 Namespace DPC.Data.Controllers
     Public Class HRMController
@@ -159,6 +160,54 @@ Namespace DPC.Data.Controllers
                 Return True
             Catch ex As Exception
                 MessageBox.Show($"Error in Deleting Root Department - {ex.Message}")
+                Return False
+            End Try
+        End Function
+
+        Public Shared Function ActionLogs(EmployeeName As String, Action As String, BeforeDepartmentName As String, AfterDepartmentName As String) As Boolean
+            Try
+                Dim ActionLogsQuery As String = "
+            INSERT INTO departmentlogs (
+                EmployeeName, 
+                Action, 
+                BeforeDepartmentName, 
+                AfterDepartmentName, 
+                DateCreated, 
+                DateModified
+            ) 
+            VALUES (
+                @EmployeeName, 
+                @Action, 
+                @BeforeDepartmentName, 
+                @AfterDepartmentName, 
+                NOW(), 
+                NOW()
+            )"
+
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Using transaction As MySqlTransaction = conn.BeginTransaction()
+                        Try
+                            Using cmd As New MySqlCommand(ActionLogsQuery, conn, transaction)
+                                cmd.Parameters.AddWithValue("@EmployeeName", EmployeeName)
+                                cmd.Parameters.AddWithValue("@Action", Action)
+                                cmd.Parameters.AddWithValue("@BeforeDepartmentName", If(BeforeDepartmentName, DBNull.Value))
+                                cmd.Parameters.AddWithValue("@AfterDepartmentName", If(AfterDepartmentName, DBNull.Value))
+
+                                cmd.ExecuteNonQuery()
+                            End Using
+
+                            transaction.Commit()
+                            Return True
+                        Catch ex As Exception
+                            transaction.Rollback()
+                            MessageBox.Show($"Error logging department action - {ex.Message}")
+                            Return False
+                        End Try
+                    End Using
+                End Using
+            Catch ex As Exception
+                MessageBox.Show($"Error accessing database for logging - {ex.Message}")
                 Return False
             End Try
         End Function

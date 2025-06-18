@@ -50,6 +50,8 @@ Namespace DPC.Components.Forms
                 Dim departmentName As String = TxtDepartment.Text()
 
                 If HRMController.InsertDepartment(departmentName) Then
+                    HRMController.ActionLogs(CacheOnLoggedInName, "Insert", Nothing, departmentName)
+
                     RaiseEvent close(Me, e)
                     PopupHelper.ClosePopup()
                     RaiseEvent DepartmentSaved(Me, EventArgs.Empty)

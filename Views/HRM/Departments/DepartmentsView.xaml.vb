@@ -83,7 +83,7 @@ Namespace DPC.Views.HRM.Departments
 
                 ' Create the edit form and pass the data
                 Dim deleteForm As New DPC.Components.ConfirmationModals.HRMDeleteDepartment()
-                deleteForm.SetDepartment(departmentID)
+                deleteForm.SetDepartment(departmentID, departmentName)
 
                 ' Attach the event handler to refresh the DataGrid after editing
                 AddHandler deleteForm.DepartmentSaved, AddressOf OnDepartmentSaved
