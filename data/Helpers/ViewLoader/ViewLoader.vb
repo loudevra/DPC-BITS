@@ -144,6 +144,10 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "navaddaccount"
                         'path of the design you want to see
                         Return New Accounts.Accounts.ManageAccounts.AddAccount()
+                    Case "customerdetailsmain"
+                        Return New Accounts.Accounts.CustomerDetails.CustomerDetailsMain()
+                    Case "navaddnewtransaction"
+                        Return New Accounts.Accounts.ManageAccounts.AddNewTransaction()
 
                         ' Project Navigation
                     Case "newproject"
