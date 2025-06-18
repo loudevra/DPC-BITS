@@ -1,12 +1,12 @@
-﻿Imports MySql.Data.MySqlClient
-Imports System.Collections.ObjectModel
-Imports DPC.DPC.Data.Model
+﻿Imports System.Collections.ObjectModel
+Imports System.Data
+Imports System.IO
 Imports System.Web
 Imports System.Windows.Controls.Primitives
-Imports System.Data
-Imports DPC.DPC.Data.Models
-Imports System.IO
 Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Model
+Imports DPC.DPC.Data.Models
+Imports MySql.Data.MySqlClient
 
 Namespace DPC.Data.Controllers
     Public Class PurchaseOrderController
@@ -120,8 +120,8 @@ Namespace DPC.Data.Controllers
                                               OrderItems As String, TotalPrice As String, TotalTax As String, TotalDiscount As String, OrderNote As String) As Boolean
 
             Dim query As String = "INSERT INTO purchaseorders (InvoiceNumber, OrderDate, DueDate, Tax, Discount, SupplierID, SupplierName, WarehouseID, WarehouseName,
-                                    OrderItems, TotalTax, TotalDiscount, TotalPrice, OrderNote) VALUES (" & InvoiceNumber & ", '" & OrderDate & "', '" & DueDate & "', '" & Tax & "', '" & Discount & "', " & SupplierID & ", '" &
-                                    SupplierName & "', " & WarehouseID & ", '" & WarehouseName & "', '" & OrderItems & "', " & TotalTax & ", " & TotalDiscount & ", " & TotalPrice & ", '" & OrderNote & "')"
+                                    OrderItems, TotalTax, TotalDiscount, TotalPrice, OrderNote, DateAdded, Username) VALUES (" & InvoiceNumber & ", '" & OrderDate & "', '" & DueDate & "', '" & Tax & "', '" & Discount & "', " & SupplierID & ", '" &
+                                    SupplierName & "', " & WarehouseID & ", '" & WarehouseName & "', '" & OrderItems & "', " & TotalTax & ", " & TotalDiscount & ", " & TotalPrice & ", '" & OrderNote & "', '" & DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") & "', '" & CacheOnLoggedInName & "')"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
 
