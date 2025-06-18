@@ -374,6 +374,9 @@
     <Compile Include="Components\ConfirmationModals\HRMConfirmationEmployeeSalaryUpdate.xaml.vb">
       <DependentUpon>HRMConfirmationEmployeeSalaryUpdate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\ConfirmationModals\HRMDeleteDepartment.xaml.vb">
+      <DependentUpon>HRMDeleteDepartment.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\ConfirmationModals\HRMEmployerSalariesModal.xaml.vb">
       <DependentUpon>HRMEmployerSalariesModal.xaml</DependentUpon>
     </Compile>
@@ -427,6 +430,9 @@
     </Compile>
     <Compile Include="Components\Forms\EditBrand.xaml.vb">
       <DependentUpon>EditBrand.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\EditDepartment.xaml.vb">
+      <DependentUpon>EditDepartment.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\EditProductCategory.xaml.vb">
       <DependentUpon>EditProductCategory.xaml</DependentUpon>
@@ -501,6 +507,7 @@
     <Compile Include="Data\Controllers\DocumentController.vb" />
     <Compile Include="Data\Controllers\EmployeeController.vb" />
     <Compile Include="Data\Controllers\CalendarController.vb" />
+    <Compile Include="Data\Controllers\HRM\HRMController.vb" />
     <Compile Include="Data\Controllers\ManageProductsController.vb" />
     <Compile Include="Data\Controllers\Permissions\PermissionItem.vb" />
     <Compile Include="Data\Controllers\ProductCategoryController.vb" />
@@ -545,6 +552,7 @@
     <Compile Include="Data\Models\BusinessLocation.vb" />
     <Compile Include="Data\Models\Client.vb" />
     <Compile Include="Data\Models\ClientGroup.vb" />
+    <Compile Include="Data\Models\DepartmentsSection.vb" />
     <Compile Include="Data\Models\Document.vb" />
     <Compile Include="Data\Models\Employee.vb" />
     <Compile Include="Data\Helpers\ExcelExporter.vb" />
@@ -821,6 +829,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\ConfirmationModals\HRMDeleteDepartment.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\ConfirmationModals\HRMEmployerSalariesModal.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -892,6 +904,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\ConfirmationModals\HRMConfirmationEmployeeSalaryUpdate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\EditDepartment.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

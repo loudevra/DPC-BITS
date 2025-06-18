@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="DPC.Components.Forms.AddDepartment"
+﻿<UserControl x:Class="DPC.Components.Forms.EditDepartment"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -24,14 +24,14 @@
 
                     <StackPanel Grid.Column="0" Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="ShapeRectanglePlus" Width="40" Height="40" Margin="0,0,15,0" VerticalAlignment="Center" Foreground="#555555"/>
-                        <TextBlock FontSize="20" Foreground="#555555" FontWeight="Bold" Text="Add Department" Margin="0,0,0,0" VerticalAlignment="Center"/>
+                        <TextBlock FontSize="20" Foreground="#555555" FontWeight="Bold" Text="Edit Department" Margin="0,0,0,0" VerticalAlignment="Center"/>
                     </StackPanel>
 
                     <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Top">
                         <Button x:Name="ClosePopup" Background="Transparent" BorderThickness="0" HorizontalAlignment="Right" Click="ClosePopup_Click">
                             <materialDesign:PackIcon Kind="close" Foreground="#555555" Width="20" Height="20"/>
                         </Button>
-                    </StackPanel> 
+                    </StackPanel>
                 </Grid>
             </StackPanel>
 
@@ -43,8 +43,8 @@
                     <!--Product Name Value is here!-->
                     <TextBox x:Name="TxtDepartment" Style="{StaticResource RoundedTextboxStyle}"/>
                 </Border>
-                <Button Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#52C69D" Click="AddDepartment">
-                    <TextBlock Text="Add" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="15"/>
+                <Button Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#52C69D" Click="SaveDepartment_Click">
+                    <TextBlock Text="Save" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="15"/>
                 </Button>
             </StackPanel>
         </Grid>
