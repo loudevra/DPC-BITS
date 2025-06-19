@@ -29,10 +29,10 @@
                     . This action cannot be undone. Please confirm if you’d like to proceed..
                 </TextBlock>
                 <DockPanel Margin="0,50,0,0" LastChildFill="False">
-                    <Button DockPanel.Dock="Right" Margin="0,0,0,0" Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#D23636" Click="ConfirmDeletion_Click" >
+                    <Button DockPanel.Dock="Right" Margin="0,0,0,0" Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#D23636">
                         <TextBlock Text="Confirm" Margin="35, 10" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Lexend}" FontWeight="SemiBold" Foreground="White" FontSize="15"/>
                     </Button>
-                    <Button DockPanel.Dock="Right" Margin="0, 0,10,0" VerticalAlignment="Center" Style="{StaticResource RoundedButtonStyle}" BorderThickness="2" Background="Transparent"  BorderBrush="#AEAEAE" Click="CloseDeleteDialog">
+                    <Button DockPanel.Dock="Right" Margin="0, 0,10,0" VerticalAlignment="Center" Style="{StaticResource RoundedButtonStyle}" BorderThickness="2" Background="Transparent"  BorderBrush="#AEAEAE">
                         <TextBlock Text="Close" Margin="35, 10" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Lexend}" FontWeight="SemiBold" Foreground="#AEAEAE" FontSize="15"/>
                     </Button>
                 </DockPanel>
