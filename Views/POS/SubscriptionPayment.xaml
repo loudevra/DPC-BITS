@@ -1,0 +1,172 @@
+﻿<UserControl x:Class="DPC.Views.POS.SubscriptionPayment"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"
+             Background="Transparent"
+             d:DesignHeight="600" d:DesignWidth="600"
+             FontFamily="Lexend">
+
+    <UserControl.Resources>
+        <!-- Rounded TextBox Style -->
+        <Style x:Key="RoundedTextBoxStyle" TargetType="TextBox">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="15,0"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontFamily" Value="Lexend"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="20"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ScrollViewer x:Name="PART_ContentHost"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!-- Rounded DatePicker Style -->
+        <Style x:Key="RoundedDatePickerStyle" TargetType="DatePicker">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontFamily" Value="Lexend"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DatePicker">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="20"
+                                BorderBrush="#555555"
+                                BorderThickness="1"
+                                Height="40">
+                            <Grid>
+                                <DatePickerTextBox x:Name="PART_TextBox"
+                                                   Background="Transparent"
+                                                   BorderThickness="0"
+                                                   VerticalContentAlignment="Center"
+                                                   FontSize="16"
+                                                   />
+                                <Button x:Name="PART_Button"
+                                        Width="30"
+                                        Height="30"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Margin="0,0,8,0"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Focusable="False"
+                                        Cursor="Hand">
+                                    <materialDesign:PackIcon Kind="Calendar" Width="20" Height="20" Foreground="#474747"/>
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!-- RadioButton Style -->
+        <Style x:Key="CustomRadioButtonStyle" TargetType="RadioButton">
+            <Setter Property="Foreground" Value="#AEAEAE"/>
+            <Setter Property="FontFamily" Value="Lexend"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Margin" Value="15,8,0,8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <StackPanel Orientation="Horizontal">
+                            <Grid Width="18" Height="18" VerticalAlignment="Center" Margin="0,0,10,0">
+                                <Ellipse x:Name="CheckedEllipse" Stroke="#AEAEAE" StrokeThickness="2" Fill="Transparent"/>
+                                <Ellipse Fill="#AEAEAE" Width="10" Height="10" Visibility="Collapsed"/>
+                            </Grid>
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="CheckedEllipse" Property="Visibility" Value="Visible"/>
+                                <Setter Property="Foreground" Value="#555555"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Border Background="White" CornerRadius="18" BorderBrush="#B7C5B0" BorderThickness="2" Padding="0">
+        <Grid Margin="32">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Grid Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <materialDesign:PackIcon Grid.Column="0" Kind="CreditCardOutline" Width="58" Height="58" Foreground="#474747" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="1" Text="Subscription Payment" FontWeight="SemiBold" FontSize="30" VerticalAlignment="Center" Margin="12,0,0,0" FontFamily="Lexend" Foreground="#555555"/>
+                <Button Grid.Column="2" Width="40" Height="40" Background="Transparent" BorderThickness="0" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,0,0">
+                    <materialDesign:PackIcon Kind="Close" Width="30" Height="30" Foreground="#555555" VerticalAlignment="Center" Margin="0,10,0,0"/>
+                </Button>
+            </Grid>
+
+            <!-- Amount -->
+            <StackPanel Grid.Row="1" Margin="0 0 0 20" HorizontalAlignment="Stretch">
+                <TextBlock Text="₱ 100.00" Foreground="#92B77C" FontWeight="SemiBold" FontSize="38" Margin="0,0,0,10" HorizontalAlignment="Center" FontFamily="Lexend"/>
+                <TextBlock Text="Amount:" FontWeight="DemiBold" FontSize="16" Margin="0,0,0,4" FontFamily="Lexend" Foreground="#555555"/>
+                <TextBox Text="100.00" Style="{StaticResource RoundedTextBoxStyle}" HorizontalAlignment="Stretch" Foreground="#555555" BorderBrush="#555555" FontSize="16"/>
+            </StackPanel>
+
+            <!-- Payment Date -->
+            <StackPanel Grid.Row="2" Margin="0,0,0,20" HorizontalAlignment="Stretch">
+                <TextBlock Text="Payment Date:" FontWeight="DemiBold" FontSize="16" Margin="0,0,0,4" FontFamily="Lexend" Foreground="#555555"/>
+                <DatePicker SelectedDate="06-13-2025"
+                            Style="{StaticResource RoundedDatePickerStyle}"
+                            HorizontalAlignment="Stretch"
+                            Foreground="#555555"
+                            BorderBrush="#555555"
+                            FontSize="16">
+                    <DatePicker.Resources>
+                        <Style TargetType="DatePickerTextBox">
+                            <Setter Property="Padding" Value="7,0,0,0"/>
+                        </Style>
+                    </DatePicker.Resources>
+                </DatePicker>
+            </StackPanel>
+
+            <!-- Payment Method -->
+            <StackPanel Grid.Row="3" Margin="0,0,0,0" HorizontalAlignment="Stretch">
+                <TextBlock Text="Payment Method" FontWeight="DemiBold" FontSize="16" Margin="0,0,0,8" FontFamily="Lexend" Foreground="#555555"/>
+                <Border BorderBrush="#555555" BorderThickness="1" CornerRadius="8" Background="White">
+                    <StackPanel>
+                        <RadioButton Style="{StaticResource CustomRadioButtonStyle}" Content="Cash" GroupName="PaymentMethod"/>
+                        <Separator Background="#F5F5F5" Height="1" BorderBrush="#AEAEAE" BorderThickness="2"/>
+                        <RadioButton Style="{StaticResource CustomRadioButtonStyle}" Content="Card" GroupName="PaymentMethod"/>
+                        <Separator Background="#F5F5F5" Height="1" BorderBrush="#AEAEAE" BorderThickness="2"/>
+                        <RadioButton Style="{StaticResource CustomRadioButtonStyle}" Content="E-Wallet" GroupName="PaymentMethod"/>
+                        <Separator Background="#F5F5F5" Height="1" BorderBrush="#AEAEAE" BorderThickness="2"/>
+                        <RadioButton Style="{StaticResource CustomRadioButtonStyle}" Content="Bank" GroupName="PaymentMethod"/>
+                        <Separator Background="#DDDDDD" Height="1" BorderBrush="#AEAEAE" BorderThickness="2"/>
+                        <RadioButton Style="{StaticResource CustomRadioButtonStyle}" Content="Cheque" GroupName="PaymentMethod"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>
