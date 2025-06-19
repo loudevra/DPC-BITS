@@ -573,6 +573,9 @@
     <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsInvoices.xaml.vb">
       <DependentUpon>CustomerDetailsInvoices.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsPersonalInformation.xaml.vb">
+      <DependentUpon>CustomerDetailsPersonalInformation.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsProjects.xaml.vb">
       <DependentUpon>CustomerDetailsProjects.xaml</DependentUpon>
     </Compile>
@@ -1170,6 +1173,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsInvoices.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsPersonalInformation.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
