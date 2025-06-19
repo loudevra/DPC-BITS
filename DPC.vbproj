@@ -425,6 +425,9 @@
     <Compile Include="Components\Forms\DeleteBrandPopup.xaml.vb">
       <DependentUpon>DeleteBrandPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\DeleteCouponPopout.xaml.vb">
+      <DependentUpon>DeleteCouponPopout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\EditBrand.xaml.vb">
       <DependentUpon>EditBrand.xaml</DependentUpon>
     </Compile>
@@ -466,6 +469,12 @@
     </Compile>
     <Compile Include="Components\Forms\SubscriptionStatus.xaml.vb">
       <DependentUpon>SubscriptionStatus.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\UpdateCouponsPopout.xaml.vb">
+      <DependentUpon>UpdateCouponsPopout.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\UpdateCouponsPopoutError.xaml.vb">
+      <DependentUpon>UpdateCouponsPopoutError.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\ViewExportDeletePopUp.xaml.vb">
       <DependentUpon>ViewExportDeletePopUp.xaml</DependentUpon>
@@ -941,6 +950,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\Forms\DeleteCouponPopout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\Forms\EditBrand.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -996,6 +1009,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\SubscriptionStatus.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\UpdateCouponsPopout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\UpdateCouponsPopoutError.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
