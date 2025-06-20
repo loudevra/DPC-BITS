@@ -143,7 +143,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
         Private Sub OpenClientFiles()
 
             Dim openFileDialog As New OpenFileDialog With {
-                .Filter = "Supported Files|*.jpg;*.jpeg;*.png;*.gif;*.docx;*.docs;*.txt;*.xls;*.xlsx",
+                .Filter = "Supported Files|*.jpg;*.jpeg;*.png;*.gif;*.docx;*.docs;*.txt;*.xls;*.xlsx;*.pdf",
                 .Title = "Select an Image"
             }
 
@@ -171,7 +171,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             End If
 
             ' Check file extension
-            Dim validExtensions As String() = {".jpg", ".jpeg", ".png", ".gif", ".docx", ".docs", ".txt", ".xls", ".xlsx"}
+            Dim validExtensions As String() = {".jpg", ".jpeg", ".png", ".gif", ".docx", ".docs", ".txt", ".xls", ".xlsx", ".pdf"}
             If Not validExtensions.Contains(fileInfo.Extension.ToLower()) Then
                 MessageBox.Show("Invalid file format!", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 Return False
@@ -277,6 +277,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
         .Height = 20,
         .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#C75757")),
         .Margin = New Thickness(5, 0, 0, 0),
+        .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
         .VerticalAlignment = VerticalAlignment.Center,
         .HorizontalAlignment = HorizontalAlignment.Right,
         .Cursor = Cursors.Hand
