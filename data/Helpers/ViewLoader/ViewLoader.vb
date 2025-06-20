@@ -166,7 +166,8 @@ Namespace DPC.Data.Helpers.ViewLoader
 
 
 
-
+                    Case "purchaseorderstatement"
+                        Return New Stocks.PurchaseOrder.NewOrder.BillingStatement()
 
 
                     Case Else
@@ -344,7 +345,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "manageproject"
             ElseIf typeName = "todolist" Then
                 Return "todolist"
-
+            ElseIf typeName = "purchaseorderstatement" Then
+                Return "purchaseorderstatement"
 
             Else
                 Return typeName

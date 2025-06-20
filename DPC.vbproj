@@ -528,6 +528,7 @@
     <Compile Include="Data\Converters\RetainCacheSupplier\CacheUserLoggedIn.vb" />
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
+    <Compile Include="Data\DataModules\StatementDetails.vb" />
     <Compile Include="Data\Helpers\AutocompleteHelper.vb" />
     <Compile Include="Data\Helpers\Base64Utility.vb" />
     <Compile Include="Data\Helpers\ViewLoader\DynamicView.vb" />
@@ -549,6 +550,7 @@
     <Compile Include="Data\Models\Employee.vb" />
     <Compile Include="Data\Helpers\ExcelExporter.vb" />
     <Compile Include="Data\Models\ManageProducts.vb" />
+    <Compile Include="Data\Models\Invoice.vb" />
     <Compile Include="Data\Models\PermissionItem.vb" />
     <Compile Include="Data\Models\Product.vb" />
     <Compile Include="Data\Models\ProductCategory.vb" />
@@ -845,6 +847,9 @@
     </Compile>
     <Compile Include="Views\Stocks\ProductCategories\AddNewCategory.xaml.vb">
       <DependentUpon>AddNewCategory.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\PurchaseOrder\NewOrder\BillingStatement.xaml.vb">
+      <DependentUpon>BillingStatement.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Stocks\Suppliers\ManageBrands\ManageBrands.xaml.vb">
       <DependentUpon>ManageBrands.xaml</DependentUpon>
@@ -1519,6 +1524,10 @@
     <Page Include="Views\Stocks\ProductCategories\AddNewCategory.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\PurchaseOrder\NewOrder\BillingStatement.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Stocks\Suppliers\ManageBrands\ManageBrands.xaml">
       <Generator>MSBuild:Compile</Generator>

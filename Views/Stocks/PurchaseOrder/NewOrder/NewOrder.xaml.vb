@@ -8,6 +8,7 @@ Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Controllers.CalendarController
 Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
+Imports DPC.DPC.[Date].Models
 Imports Newtonsoft.Json
 Imports NuGet.Protocol.Core.Types
 
@@ -47,6 +48,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             MyDynamicGrid = CType(TableGridPanel.Children(0), Grid)
             AddNewRow()
 
+            StatementDetails.InvoiceNumberCache = Nothing
+            StatementDetails.InvoiceDateCache = Nothing
+            StatementDetails.DueDateCache = Nothing
+            StatementDetails.TaxCache = Nothing
+            StatementDetails.TotalCostCache = Nothing
+            StatementDetails.OrderItemsCache = Nothing
 
             InvoiceNumber.Text = PurchaseOrderController.GenerateInvoice()
             ProductController.GetWarehouse(ComboBoxWarehouse)
@@ -181,6 +188,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 #End Region
 
         Private Sub ClearFields()
+            StatementDetails.InvoiceNumberCache = Nothing
+            StatementDetails.InvoiceDateCache = Nothing
+            StatementDetails.DueDateCache = Nothing
+            StatementDetails.TaxCache = Nothing
+            StatementDetails.TotalCostCache = Nothing
+            StatementDetails.OrderItemsCache = Nothing
             _selectedSupplier = Nothing
             _selectedProduct = Nothing
             ClearAllRows()
@@ -1079,6 +1092,17 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                     MessageBox.Show("Purchase order created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
 
                     'Clears fields only after successfully adding
+
+                    StatementDetails.InvoiceNumberCache = InvoiceNumber.Text
+                    StatementDetails.InvoiceDateCache = Date.Now.ToString("M/d/yyyy")
+                    StatementDetails.DueDateCache = dueSelectedDate.ToString("MM-dd-yyyy")
+                    StatementDetails.TaxCache = $"₱ {TotalTax.Text}"
+                    StatementDetails.TotalCostCache = $"₱ {TotalPrice.Text}"
+                    StatementDetails.OrderItemsCache = itemArray
+
+
+                    ViewLoader.DynamicView.NavigateToView("purchaseorderstatement", Me)
+
                     ClearFields()
                 End If
             Catch ex As Exception

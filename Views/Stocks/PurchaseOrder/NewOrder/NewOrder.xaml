@@ -245,7 +245,7 @@
 
                 <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical">
 
-                    <Button x:Name="btnAddRow" Width="120" Height="35" HorizontalAlignment="Left" Margin="25,5,0,10" Background="#2E466B">
+                    <Button x:Name="btnAddRow" Cursor="Hand" Width="120" Height="35" HorizontalAlignment="Left" Margin="25,5,0,10" Background="#2E466B">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border Background="{TemplateBinding Background}" CornerRadius="15" Padding="5">
@@ -318,7 +318,7 @@
                     </StackPanel>
 
                     <StackPanel>
-                        <Button x:Name="btnGenerateOrder"  Width="120" Height="25" HorizontalAlignment="Left" Margin="0,0,0,0" Background="#1D5642">
+                        <Button x:Name="btnGenerateOrder" Cursor="Hand" Width="120" Height="25" HorizontalAlignment="Left" Margin="0,0,0,0" Background="#1D5642">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border Background="{TemplateBinding Background}" CornerRadius="15" Padding="5">
