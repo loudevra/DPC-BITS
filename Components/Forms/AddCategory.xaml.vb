@@ -5,11 +5,10 @@ Imports System.Windows.Controls.Primitives
 
 Namespace DPC.Components.Forms
     Public Class AddCategory
-
         Private categoryNameTextBoxes As New List(Of TextBox)()
         Private categoryDescriptionTextBoxes As New List(Of TextBox)()
+        Private categoryPanels As New List(Of StackPanel)()
         Public Event CategoryAdded As EventHandler
-
 
         Public Sub New()
             InitializeComponent()
@@ -91,13 +90,24 @@ Namespace DPC.Components.Forms
             descriptionPanel.Children.Add(descriptionLabelPanel)
             descriptionPanel.Children.Add(descriptionBorder)
 
+            categoryPanels.Add(categoryPanel)
+            categoryPanels.Add(descriptionPanel)
+
             MainContent.Children.Add(categoryPanel)
             MainContent.Children.Add(descriptionPanel)
         End Sub
 
         Private Sub RemoveCategoryPanel()
-            If MainContent.Children.Count > 0 Then
-                MainContent.Children.RemoveAt(MainContent.Children.Count - 1)
+            If categoryPanels.Count >= 2 Then
+                ' Remove last added panels from UI and list
+                Dim lastDescriptionPanel As StackPanel = categoryPanels(categoryPanels.Count - 1)
+                Dim lastSubcategoryPanel As StackPanel = categoryPanels(categoryPanels.Count - 2)
+
+                MainContent.Children.Remove(lastDescriptionPanel)
+                MainContent.Children.Remove(lastSubcategoryPanel)
+
+                categoryPanels.RemoveAt(categoryPanels.Count - 1)
+                categoryPanels.RemoveAt(categoryPanels.Count - 1)
             End If
         End Sub
 
@@ -126,6 +136,5 @@ Namespace DPC.Components.Forms
                 RemoveCategoryTextBoxes()
             End If
         End Sub
-
     End Class
 End Namespace
