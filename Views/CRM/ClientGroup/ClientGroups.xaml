@@ -183,6 +183,7 @@
                                        Grid.Column="0"/>
                             <Button x:Name="BtnAddNew"
                                     Style="{StaticResource AddNewButtonStyle}"
+                                    Click="NavigateToAddNewClientGroup"
                                     Margin="20,0,0,0"
                                     Height="35"
                                     Grid.Column="1"

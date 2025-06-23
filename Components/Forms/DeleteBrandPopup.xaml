@@ -22,7 +22,7 @@
 
             <StackPanel Grid.Row="1">
 
-                <TextBlock Margin="0,20,0,0" FontWeight="SemiBold"  FontSize="20" FontFamily="{StaticResource Lexend}" Foreground="#AEAEAE" >
+                <TextBlock Margin="0,20,0,0" FontWeight="SemiBold"  FontSize="20" FontFamily="{StaticResource Lexend}" Foreground="#AEAEAE" TextWrapping="Wrap">
                     Confirm deletion of 
                     <TextBlock x:Name="brandName">
                         

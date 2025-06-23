@@ -33,15 +33,19 @@
             </Grid.RowDefinitions>
 
             <!-- Header -->
-            <StackPanel Grid.Row="0" Orientation="Horizontal">
-                <materialDesign:PackIcon Kind="ShapeRectanglePlus" Foreground="#555555" Margin="5,0,0,10" Width="28" Height="28"/>
-                <TextBlock FontSize="18" Foreground="#555555" FontWeight="Bold" Text="Add Payroll Transaction" Margin="7,0,0,10"/>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <materialDesign:PackIcon Kind="ShapeRectanglePlus" Foreground="#555555" Margin="5,0,0,0" Width="28" Height="28" Grid.Column="0"/>
+                <TextBlock FontSize="18" Foreground="#555555" FontWeight="Bold" Text="Add Payroll Transaction" Margin="7,0,0,10" Grid.Column="1"/>
                 <Button Background="Transparent" BorderThickness="0"
-            HorizontalAlignment="Right" Margin="246,0,0,0">
-                    <materialDesign:PackIcon Kind="Close" Foreground="#555555" Width="20" Height="20" Margin="-8,0,0,16"/>
+                        HorizontalAlignment="Right" Margin="0,0,0,10" Grid.Column="2" x:Name="BtnClose">
+                    <materialDesign:PackIcon Kind="Close" Foreground="#555555" Width="20" Height="20"/>
                 </Button>
-            </StackPanel>
-
+            </Grid>
 
             <!-- Fields -->
             <TextBlock Grid.Row="1" Text="Search Player:" Foreground="#555555" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontWeight="Medium" Margin="0,5,0,0"/>
