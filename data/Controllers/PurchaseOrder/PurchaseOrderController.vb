@@ -1,12 +1,12 @@
-﻿Imports MySql.Data.MySqlClient
-Imports System.Collections.ObjectModel
-Imports DPC.DPC.Data.Model
+﻿Imports System.Collections.ObjectModel
+Imports System.Data
+Imports System.IO
 Imports System.Web
 Imports System.Windows.Controls.Primitives
-Imports System.Data
-Imports DPC.DPC.Data.Models
-Imports System.IO
 Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Model
+Imports DPC.DPC.Data.Models
+Imports MySql.Data.MySqlClient
 
 Namespace DPC.Data.Controllers
     Public Class PurchaseOrderController
@@ -78,8 +78,8 @@ Namespace DPC.Data.Controllers
         Public Shared Function GetNextINvoiceCounter(datePart As String) As Integer
 
             'will be creating a new table soon
-            Dim query As String = "SELECT MAX(CAST(SUBSTRING(productID, 11, 4) AS UNSIGNED)) FROM product " &
-                  "WHERE productID LIKE '20" & datePart & "%'"
+            Dim query As String = "SELECT MAX(CAST(SUBSTRING(InvoiceNumber, 11, 4) AS UNSIGNED)) FROM purchaseorders " &
+                  "WHERE InvoiceNumber LIKE '30" & datePart & "%'"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
@@ -99,6 +99,49 @@ Namespace DPC.Data.Controllers
                     Return 1
                 End Try
             End Using
+        End Function
+
+        Public Shared Function InsertPurchaseOrder(InvoiceNumber As String, OrderDate As String, DueDate As String,
+                                              Tax As String, Discount As String, SupplierID As String,
+                                              SupplierName As String, WarehouseID As Integer, WarehouseName As String,
+                                              OrderItems As String, TotalPrice As String, TotalTax As String, TotalDiscount As String, OrderNote As String) As Boolean
+
+
+
+            Return InsertPurchaseOrderToDatabase(InvoiceNumber, OrderDate, DueDate,
+                                              Tax, Discount, SupplierID,
+                                              SupplierName, WarehouseID, WarehouseName,
+                                              OrderItems, TotalPrice, TotalTax, TotalDiscount, OrderNote)
+        End Function
+
+        Public Shared Function InsertPurchaseOrderToDatabase(InvoiceNumber As String, OrderDate As String, DueDate As String,
+                                              Tax As String, Discount As String, SupplierID As String,
+                                              SupplierName As String, WarehouseID As Integer, WarehouseName As String,
+                                              OrderItems As String, TotalPrice As String, TotalTax As String, TotalDiscount As String, OrderNote As String) As Boolean
+
+            Dim query As String = "INSERT INTO purchaseorders (InvoiceNumber, OrderDate, DueDate, Tax, Discount, SupplierID, SupplierName, WarehouseID, WarehouseName,
+                                    OrderItems, TotalTax, TotalDiscount, TotalPrice, OrderNote, DateAdded, Username) VALUES (" & InvoiceNumber & ", '" & OrderDate & "', '" & DueDate & "', '" & Tax & "', '" & Discount & "', " & SupplierID & ", '" &
+                                    SupplierName & "', " & WarehouseID & ", '" & WarehouseName & "', '" & OrderItems & "', " & TotalTax & ", " & TotalDiscount & ", " & TotalPrice & ", '" & OrderNote & "', '" & DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") & "', '" & CacheOnLoggedInName & "')"
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+
+                        cmd.ExecuteNonQuery()
+
+                    End Using
+
+
+                Catch ex As Exception
+                    MessageBox.Show($"Error: {ex.Message}")
+                    Return False
+                End Try
+
+            End Using
+
+            Return True
         End Function
     End Class
 End Namespace
