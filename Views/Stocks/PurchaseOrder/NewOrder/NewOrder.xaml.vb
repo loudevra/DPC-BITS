@@ -1,15 +1,23 @@
-﻿Imports DPC.DPC.Data.Controllers
+﻿Imports System.Collections.ObjectModel
+Imports System.Text.Json.Nodes
+Imports System.Windows.Controls.Primitives
+Imports System.Windows.Threading
+Imports DocumentFormat.OpenXml.Office2010.ExcelAc
+Imports DPC.DPC.Components.Forms
+Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Controllers.CalendarController
 Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
-Imports System.Collections.ObjectModel
-Imports System.Windows.Controls.Primitives
-Imports System.Windows.Threading
+Imports DPC.DPC.[Date].Models
+Imports Newtonsoft.Json
+Imports NuGet.Protocol.Core.Types
 
 Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
     Public Class NewOrder
 
 #Region "Initialization and Properties"
+        Private namesList, quantityList, rateList, taxRateList, taxList, discountList, priceList, descriptionList As New List(Of String)
+
         Private rowCount As Integer = 0
         Private MyDynamicGrid As Grid
         Private _suppliers As New ObservableCollection(Of SupplierDataModel)
@@ -40,6 +48,14 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             MyDynamicGrid = CType(TableGridPanel.Children(0), Grid)
             AddNewRow()
 
+            StatementDetails.InvoiceNumberCache = Nothing
+            StatementDetails.InvoiceDateCache = Nothing
+            StatementDetails.DueDateCache = Nothing
+            StatementDetails.TaxCache = Nothing
+            StatementDetails.TotalCostCache = Nothing
+            StatementDetails.OrderItemsCache = Nothing
+
+            InvoiceNumber.Text = PurchaseOrderController.GenerateInvoice()
             ProductController.GetWarehouse(ComboBoxWarehouse)
         End Sub
 #End Region
@@ -69,7 +85,22 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
             ' Start the timer
             _typingTimer.Start()
+
+            HandleSuppliers()
         End Sub
+
+        Private Sub HandleSuppliers()
+            ' Configure popup if needed
+            If AutoCompletePopup.PlacementTarget Is Nothing Then
+                AutoCompletePopup.PlacementTarget = TxtSupplier
+                AutoCompletePopup.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom
+                AutoCompletePopup.StaysOpen = False
+                AutoCompletePopup.AllowsTransparency = True
+                AutoCompletePopup.IsOpen = True
+            End If
+        End Sub
+
+
         Private Sub OnTypingTimerTick(sender As Object, e As EventArgs)
             ' Stop the timer
             _typingTimer.Stop()
@@ -87,6 +118,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             AutoCompletePopup.Width = TxtSupplier.ActualWidth
         End Sub
 
+
         Private Sub LstItems_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
             If LstItems.SelectedItem IsNot Nothing Then
                 Dim previousSupplier As SupplierDataModel = _selectedSupplier
@@ -98,10 +130,20 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                 ' Clear existing rows and create a fresh one when supplier changes
                 If previousSupplier Is Nothing OrElse previousSupplier.SupplierID <> _selectedSupplier.SupplierID Then
                     ClearAllRows()
+                    namesList.Clear()
+                    quantityList.Clear()
+                    rateList.Clear()
+                    taxRateList.Clear()
+                    taxList.Clear()
+                    discountList.Clear()
+                    priceList.Clear()
                     AddNewRow()
                 End If
             End If
         End Sub
+
+
+
 
         ' Add a new method to clear all rows
         Private Sub ClearAllRows()
@@ -109,7 +151,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             Dim rowsToRemove As New List(Of Integer)
 
             ' Collect all row indices
-            For i As Integer = 0 To rowCount - 1
+            For i As Integer = 1 To rowCount
                 rowsToRemove.Add(i * 2) ' Each item occupies 2 rows (main row + notes row)
             Next
 
@@ -144,6 +186,34 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             End If
         End Sub
 #End Region
+
+        Private Sub ClearFields()
+            StatementDetails.InvoiceNumberCache = Nothing
+            StatementDetails.InvoiceDateCache = Nothing
+            StatementDetails.DueDateCache = Nothing
+            StatementDetails.TaxCache = Nothing
+            StatementDetails.TotalCostCache = Nothing
+            StatementDetails.OrderItemsCache = Nothing
+            _selectedSupplier = Nothing
+            _selectedProduct = Nothing
+            ClearAllRows()
+            namesList.Clear()
+            quantityList.Clear()
+            rateList.Clear()
+            taxRateList.Clear()
+            taxList.Clear()
+            discountList.Clear()
+            priceList.Clear()
+            OrderNote.Clear()
+            TxtSupplier.Clear()
+            TxtSupplierDetails.Clear()
+            InvoiceNumber.Clear()
+            TotalDiscount.Text = 0
+            TotalTax.Text = 0
+            TotalPrice.Text = 0
+            AddNewRow()
+            InvoiceNumber.Text = PurchaseOrderController.GenerateInvoice()
+        End Sub
 
 #Region "Product Autocomplete"
         ' Create product popup for a specific row
@@ -236,11 +306,10 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
         Private Sub ProductTextBox_TextChanged(sender As Object, e As TextChangedEventArgs)
             Dim textBox As TextBox = CType(sender, TextBox)
             Dim parts As String() = textBox.Name.Split("_"c)
-
             If parts.Length < 3 Then Return
 
-            Dim row As Integer
-            If Not Integer.TryParse(parts(1), row) Then Return
+            Dim row As Integer = parts(1)
+            'If Not Integer.TryParse(parts(1), row) Then Return
 
             Dim timerKey As String = $"ProductTimer_{row}"
 
@@ -249,6 +318,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                 Dim timer As New DispatcherTimer With {
                     .Interval = TimeSpan.FromMilliseconds(300)
                 }
+
+
 
                 ' Add a closure to capture the row
                 Dim rowCaptured As Integer = row
@@ -262,9 +333,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             ' Reset and start timer
             _productTypingTimers(timerKey).Stop()
 
+            Dim popupKey As String = $"ProductPopup_{row}"
+
             ' Close popup if textbox is empty
             If String.IsNullOrWhiteSpace(textBox.Text) Then
-                Dim popupKey As String = $"ProductPopup_{row}"
+
                 If _productPopups.ContainsKey(popupKey) Then
                     _productPopups(popupKey).IsOpen = False
                 End If
@@ -273,10 +346,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
             ' Start timer
             _productTypingTimers(timerKey).Start()
+
         End Sub
 
         ' Typing timer tick handler for product search
         Private Sub OnProductTypingTimerTick(sender As Object, e As EventArgs, row As Integer)
+
+
             ' Stop the timer
             Dim timerKey As String = $"ProductTimer_{row}"
             If _productTypingTimers.ContainsKey(timerKey) Then
@@ -285,7 +361,10 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
             ' Get the textbox
             Dim textBoxName As String = $"txt_{row}_0"
-            Dim textBox As TextBox = GetTextBoxFromBorder(textBoxName)
+            Dim textBox As TextBox = GetTextBoxFromStackPanel(textBoxName)
+            Dim rateBoxName As String = $"txt_{row}_2"
+            Dim rate As TextBox = GetTextBoxFromStackPanel(rateBoxName)
+
             If textBox Is Nothing Then Return
 
             ' Get the popup and listbox
@@ -296,6 +375,14 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
             Dim popup As Popup = _productPopups(popupKey)
             Dim listBox As ListBox = _productListBoxes(listBoxKey)
+            AddHandler listBox.SelectionChanged, Sub()
+                                                     _selectedProduct = listBox.SelectedItem
+
+                                                     If _selectedProduct IsNot Nothing Then
+                                                         textBox.Text = _selectedProduct.ProductName
+                                                         rate.Text = _selectedProduct.BuyingPrice
+                                                     End If
+                                                 End Sub
 
             ' Search for products from the supplier
             If _selectedSupplier IsNot Nothing Then
@@ -305,11 +392,16 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                 ' Update the ListBox
                 listBox.ItemsSource = _products
 
-                ' Show popup if we have results
-                popup.IsOpen = _products.Count > 0
 
-                ' Update popup placement
-                popup.PlacementTarget = textBox
+
+                ' Show popup if we have results
+                If _products IsNot Nothing Then
+                    popup.PlacementTarget = textBox
+                    popup.IsOpen = _products.Count > 0
+                    popup.PlacementTarget = textBox
+                    popup.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom
+                End If
+
                 CType(popup.Child, Border).Width = textBox.ActualWidth
             End If
         End Sub
@@ -458,7 +550,26 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                 txt.TextWrapping = TextWrapping.NoWrap
                 txt.MaxWidth = 500 ' Increase maximum width for product names
                 txt.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto ' Enable horizontal scrolling if needed
+
+
             End If
+
+            Select Case column
+                Case 0
+                    namesList.Add(txtName)
+                Case 1
+                    quantityList.Add(txtName)
+                Case 2
+                    rateList.Add(txtName)
+                Case 3
+                    taxRateList.Add(txtName)
+                Case 4
+                    taxList.Add(txtName)
+                Case 5
+                    discountList.Add(txtName)
+                Case 6
+                    priceList.Add(txtName)
+            End Select
 
             ' Create a Border and apply the style
             ' Wrap TextBox inside the Border
@@ -554,6 +665,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
             ' Add to Grid
             MyDynamicGrid.Children.Add(stackPanel)
+
+            descriptionList.Add(txtName)
         End Sub
 
         ' ➜ Create Delete Button in a StackPanel
@@ -612,6 +725,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             For Each element As UIElement In MyDynamicGrid.Children
                 If Grid.GetRow(element) = row Or Grid.GetRow(element) = row + 1 Then
                     elementsToRemove.Add(element)
+                    namesList.Remove($"txt_{row}_0")
+                    quantityList.Remove($"txt_{row}_1")
+                    priceList.Remove($"txt_{row}_2")
+                    taxRateList.Remove($"txt_{row}_3")
+                    taxList.Remove($"txt_{row}_4")
+                    discountList.Remove($"txt_{row}_5")
+                    priceList.Remove($"txt_{row}_6")
                 End If
             Next
 
@@ -803,6 +923,68 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             If amountTxt IsNot Nothing Then
                 amountTxt.Text = totalAmount.ToString("0.00")
             End If
+
+            ' Update Total Tax
+            TotalTax.Text = 0
+            Dim taxTotal As Double = Double.Parse(TotalTax.Text)
+
+            For Each list In taxList
+                Dim tax As TextBox = GetTextBoxFromStackPanel($"{list}")
+
+                If String.IsNullOrWhiteSpace(tax.Text) Then
+                    tax.Text = 0.00
+                End If
+
+                Dim taxAdded As Double = Double.Parse(tax.Text)
+
+                If tax IsNot Nothing Then
+                    taxTotal = taxTotal + taxAdded
+
+                    TotalTax.Text = taxTotal
+                End If
+            Next
+
+
+            ' Update Total Discount
+            TotalDiscount.Text = 0
+            Dim discountTotal As Double = Double.Parse(TotalDiscount.Text)
+
+            For Each list In discountList
+                Dim discountAmount As TextBox = GetTextBoxFromStackPanel($"{list}")
+
+                If String.IsNullOrWhiteSpace(discountAmount.Text) Then
+                    discountAmount.Text = 0.00
+                End If
+
+                Dim discountAdded As Double = Double.Parse(discountAmount.Text)
+
+                If discountAmount IsNot Nothing Then
+                    discountTotal = discountTotal + discountAdded
+
+                    TotalDiscount.Text = discountTotal
+                End If
+            Next
+
+
+            ' Update Total Price
+            TotalPrice.Text = 0
+            Dim priceTotal As Double = Double.Parse(TotalPrice.Text)
+
+            For Each list In priceList
+                Dim price As TextBox = GetTextBoxFromStackPanel($"{list}")
+
+                If String.IsNullOrWhiteSpace(price.Text) Then
+                    price.Text = 0.00
+                End If
+
+                Dim priceAdded As Double = Double.Parse(price.Text)
+
+                If price IsNot Nothing Then
+                    priceTotal = priceTotal + priceAdded
+
+                    TotalPrice.Text = priceTotal
+                End If
+            Next
         End Sub
 
         Private Sub TextBoxValueChanged(sender As Object, e As TextChangedEventArgs)
@@ -840,13 +1022,89 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
             ' Example implementation:
             Try
-                ' Create order header
-                ' Add order items
-                ' Update inventory if needed
+                ' Generate JSON for items
+                Dim itemArray As New List(Of Dictionary(Of String, String))
 
-                MessageBox.Show("Purchase order created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
 
-                ' Optional: Clear form or navigate to orders list
+                For i As Integer = 0 To namesList.Count - 1
+                    Dim itemDetails As New Dictionary(Of String, String)
+
+                    Dim name As TextBox = GetTextBoxFromStackPanel($"{namesList(i)}")
+                    If name IsNot Nothing Then
+                        itemDetails.Add("ItemName", name.Text)
+                    End If
+
+                    Dim quantity As TextBox = GetTextBoxFromStackPanel($"{quantityList(i)}")
+                    If quantity IsNot Nothing Then
+                        itemDetails.Add("Quantity", quantity.Text)
+                    End If
+
+                    Dim rate As TextBox = GetTextBoxFromStackPanel($"{rateList(i)}")
+                    If rate IsNot Nothing Then
+                        itemDetails.Add("Rate", rate.Text)
+                    End If
+
+                    Dim taxRate As TextBox = GetTextBoxFromStackPanel($"{taxRateList(i)}")
+                    If taxRate IsNot Nothing Then
+                        itemDetails.Add("TaxRate", taxRate.Text)
+                    End If
+
+                    Dim tax As TextBox = GetTextBoxFromStackPanel($"{taxList(i)}")
+                    If tax IsNot Nothing Then
+                        itemDetails.Add("Tax", tax.Text)
+                    End If
+
+                    Dim discount As TextBox = GetTextBoxFromStackPanel($"{discountList(i)}")
+                    If discount IsNot Nothing Then
+                        itemDetails.Add("Discount", discount.Text)
+                    End If
+
+                    Dim price As TextBox = GetTextBoxFromStackPanel($"{priceList(i)}")
+                    If price IsNot Nothing Then
+                        itemDetails.Add("Price", price.Text)
+                    End If
+
+                    Dim description As TextBox = GetTextBoxFromStackPanel($"{descriptionList(i + 1)}")
+                    If description IsNot Nothing Then
+                        itemDetails.Add("Description", description.Text)
+                    End If
+
+                    itemArray.Add(itemDetails)
+
+                Next
+
+
+                Dim itemsJSON As String = JsonConvert.SerializeObject(itemArray, Formatting.Indented)
+
+                Dim selectedItem As ComboBoxItem = CType(ComboBoxWarehouse.SelectedItem, ComboBoxItem)
+                Dim warehouseID As Integer = selectedItem.Tag
+
+                Dim orderSelectedDate As Date = OrderDatePicker.SelectedDate
+                Dim dueSelectedDate As Date = OrderDueDatePicker.SelectedDate
+
+                Dim orderDate As String = orderSelectedDate.ToString("yyyy-MM-dd")
+                Dim dueDate As String = dueSelectedDate.ToString("yyyy-MM-dd")
+
+                Dim isSuccess = PurchaseOrderController.InsertPurchaseOrder(InvoiceNumber.Text, orderDate, dueDate, Tax.Text, Discount.Text,
+                                                            _selectedSupplier.SupplierID, _selectedSupplier.SupplierName, warehouseID, ComboBoxWarehouse.Text, itemsJSON, TotalPrice.Text, TotalTax.Text, TotalDiscount.Text, OrderNote.Text)
+
+                If isSuccess Then
+                    MessageBox.Show("Purchase order created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+
+                    'Clears fields only after successfully adding
+
+                    StatementDetails.InvoiceNumberCache = InvoiceNumber.Text
+                    StatementDetails.InvoiceDateCache = Date.Now.ToString("M/d/yyyy")
+                    StatementDetails.DueDateCache = dueSelectedDate.ToString("MM-dd-yyyy")
+                    StatementDetails.TaxCache = $"₱ {TotalTax.Text}"
+                    StatementDetails.TotalCostCache = $"₱ {TotalPrice.Text}"
+                    StatementDetails.OrderItemsCache = itemArray
+
+
+                    ViewLoader.DynamicView.NavigateToView("purchaseorderstatement", Me)
+
+                    ClearFields()
+                End If
             Catch ex As Exception
                 MessageBox.Show($"Error creating purchase order: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try

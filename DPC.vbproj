@@ -416,6 +416,9 @@
     <Compile Include="Components\Forms\CostEstimatePrintPopUp.xaml.vb">
       <DependentUpon>CostEstimatePrintPopUp.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\CreditNoteSalesInvoicePrintPopUp.xaml.vb">
+      <DependentUpon>CreditNoteSalesInvoicePrintPopUp.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\CreditNotesPopUp.xaml.vb">
       <DependentUpon>CreditNotesPopUp.xaml</DependentUpon>
     </Compile>
@@ -428,8 +431,24 @@
     <Compile Include="Components\Forms\DeleteBrandPopup.xaml.vb">
       <DependentUpon>DeleteBrandPopup.xaml</DependentUpon>
     </Compile>
+
     <Compile Include="Components\Forms\DeleteCouponPopout.xaml.vb">
       <DependentUpon>DeleteCouponPopout.xaml</DependentUpon>
+</Compile>
+    <Compile Include="Components\Forms\DeleteCreditNotePopUp.xaml.vb">
+      <DependentUpon>DeleteCreditNotePopUp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\DeleteInvoicePopUp.xaml.vb">
+      <DependentUpon>DeleteInvoicePopUp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\DeletePOSInvoicePopUp.xaml.vb">
+      <DependentUpon>DeletePOSInvoicePopUp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\DeleteQuotePopUp.xaml.vb">
+      <DependentUpon>DeleteQuotePopUp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\DeleteSubscriptionPopUp.xaml.vb">
+      <DependentUpon>DeleteSubscriptionPopUp.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\EditBrand.xaml.vb">
       <DependentUpon>EditBrand.xaml</DependentUpon>
@@ -445,6 +464,9 @@
     </Compile>
     <Compile Include="Components\Forms\PayrollTrasactionControl.xaml.vb">
       <DependentUpon>PayrollTrasactionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\POSInvoicePrintPopUp.xaml.vb">
+      <DependentUpon>POSInvoicePrintPopUp.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\POSPayment.xaml.vb">
       <DependentUpon>POSPayment.xaml</DependentUpon>
@@ -472,6 +494,9 @@
     </Compile>
     <Compile Include="Components\Forms\SubscriptionChangeStatus.xaml.vb">
       <DependentUpon>SubscriptionChangeStatus.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\SubscriptionSalesInvoicePrintPopUp.xaml.vb">
+      <DependentUpon>SubscriptionSalesInvoicePrintPopUp.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\SubscriptionStatus.xaml.vb">
       <DependentUpon>SubscriptionStatus.xaml</DependentUpon>
@@ -544,6 +569,7 @@
     <Compile Include="Data\Converters\RetainCacheSupplier\CacheUserLoggedIn.vb" />
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
+    <Compile Include="Data\DataModules\StatementDetails.vb" />
     <Compile Include="Data\Helpers\AutocompleteHelper.vb" />
     <Compile Include="Data\Helpers\Base64Utility.vb" />
     <Compile Include="Data\Helpers\ViewLoader\DynamicView.vb" />
@@ -566,6 +592,7 @@
     <Compile Include="Data\Models\Employee.vb" />
     <Compile Include="Data\Helpers\ExcelExporter.vb" />
     <Compile Include="Data\Models\ManageProducts.vb" />
+    <Compile Include="Data\Models\Invoice.vb" />
     <Compile Include="Data\Models\PermissionItem.vb" />
     <Compile Include="Data\Models\Product.vb" />
     <Compile Include="Data\Models\ProductCategory.vb" />
@@ -839,6 +866,9 @@
     <Compile Include="Views\Sales\CreditNotes\CreditNotes.xaml.vb">
       <DependentUpon>CreditNotes.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Sales\CreditNotes\CreditNotesSalesInvoice.xaml.vb">
+      <DependentUpon>CreditNotesSalesInvoice.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Sales\EmailGenerator\EmailGenerator.xaml.vb">
       <DependentUpon>EmailGenerator.xaml</DependentUpon>
     </Compile>
@@ -850,6 +880,9 @@
     </Compile>
     <Compile Include="Views\Sales\POSSales\ManagePOSInvoices.xaml.vb">
       <DependentUpon>ManagePOSInvoices.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\POSSales\POSInvoice.xaml.vb">
+      <DependentUpon>POSInvoice.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Sales\Quotes\BillingStatement.xaml.vb">
       <DependentUpon>BillingStatement.xaml</DependentUpon>
@@ -875,6 +908,9 @@
     <Compile Include="Views\Sales\Subscriptions\Subscriptions.xaml.vb">
       <DependentUpon>Subscriptions.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Sales\Subscriptions\SubscriptionSalesInvoice.xaml.vb">
+      <DependentUpon>SubscriptionSalesInvoice.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stocks\ItemManager\NewProduct\ProductBatchEdit.xaml.vb">
       <DependentUpon>ProductBatchEdit.xaml</DependentUpon>
     </Compile>
@@ -883,6 +919,9 @@
     </Compile>
     <Compile Include="Views\Stocks\ProductCategories\AddNewCategory.xaml.vb">
       <DependentUpon>AddNewCategory.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\PurchaseOrder\NewOrder\BillingStatement.xaml.vb">
+      <DependentUpon>BillingStatement.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Stocks\Suppliers\ManageBrands\ManageBrands.xaml.vb">
       <DependentUpon>ManageBrands.xaml</DependentUpon>
@@ -964,6 +1003,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\Forms\CreditNoteSalesInvoicePrintPopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\Forms\CreditNotesPopUp.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -980,7 +1023,28 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+
     <Page Include="Components\Forms\DeleteCouponPopout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\DeleteCreditNotePopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\DeleteInvoicePopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\DeletePOSInvoicePopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\DeleteQuotePopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\DeleteSubscriptionPopUp.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1005,6 +1069,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\PayrollTrasactionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\POSInvoicePrintPopUp.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1039,6 +1107,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\SubscriptionChangeStatus.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\SubscriptionSalesInvoicePrintPopUp.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1548,6 +1620,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Sales\CreditNotes\CreditNotesSalesInvoice.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Sales\EmailGenerator\EmailGenerator.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1561,6 +1637,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Sales\POSSales\ManagePOSInvoices.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\POSSales\POSInvoice.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1596,6 +1676,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Sales\Subscriptions\SubscriptionSalesInvoice.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Stocks\ItemManager\NewProduct\ProductBatchEdit.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1605,6 +1689,10 @@
     <Page Include="Views\Stocks\ProductCategories\AddNewCategory.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\PurchaseOrder\NewOrder\BillingStatement.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Stocks\Suppliers\ManageBrands\ManageBrands.xaml">
       <Generator>MSBuild:Compile</Generator>
