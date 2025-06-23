@@ -181,7 +181,8 @@
                                     Style="{StaticResource AddNewButtonStyle}"
                                     Margin="20,0,0,0"
                                     Height="35"
-                                    Grid.Column="1">
+                                    Grid.Column="1"
+                                    Click="NavigateToAddPromoCode">
                                 <StackPanel Orientation="Horizontal">
                                     <materialDesign:PackIcon Kind="Plus" Width="25" Height="25" Foreground="White"/>
                                     <TextBlock Text="Add New" FontSize="17" Foreground="White"/>

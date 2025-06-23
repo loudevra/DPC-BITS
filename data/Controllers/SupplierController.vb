@@ -221,6 +221,39 @@ Namespace DPC.Data.Controllers
             End Using
             Return supplier
         End Function
+
+
+        Public Shared Function SearchProducts(searchText As String) As ObservableCollection(Of ProductDataModel)
+            Dim products As New ObservableCollection(Of ProductDataModel)
+            Dim query As String = "
+            SELECT *
+            FROM product
+            WHERE productName LIKE @searchText 
+               OR productID LIKE @searchText 
+            ORDER BY productName ASC
+            LIMIT 10;
+            "
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@searchText", "%" & searchText & "%")
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            While reader.Read()
+                                Dim product As New ProductDataModel With {
+                            .ProductID = reader("productID").ToString(),
+                            .ProductName = reader("productName").ToString()
+                        }
+                                products.Add(product)
+                            End While
+                        End Using
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show($"Error searching suppliers: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                End Try
+            End Using
+            Return products
+        End Function
     End Class
 End Namespace
 

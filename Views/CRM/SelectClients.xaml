@@ -1,11 +1,8 @@
-﻿<Window x:Class="DPC.Views.CRM.SelectClients"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Title=""
-        Height="450" Width="600" Background="#DDDDDD"
-        WindowStyle="None"
-        AllowsTransparency="True">
+﻿<UserControl x:Class="DPC.Views.CRM.SelectClients"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    Height="Auto" Width="Auto" Background="Transparent">
     <Grid Margin="0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -97,4 +94,4 @@
             </TextBlock>
         </StackPanel>
     </Grid>
-</Window>
+</UserControl>
