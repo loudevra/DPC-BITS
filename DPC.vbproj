@@ -1679,6 +1679,9 @@
     <Resource Include="Assets\images\logosidebar.png" />
     <Resource Include="Assets\logo\BLACK WHOL.ico" />
     <Resource Include="Assets\images\logosidebarBlack.png" />
+    <Content Include="Assets\images\profile3.png" />
+    <Content Include="Assets\images\profile1.png" />
+    <Resource Include="Assets\images\profile2.png" />
     <Content Include="Assets\mails\password_reset_code.html" />
     <Content Include="Assets\mails\password_reset_success.html" />
   </ItemGroup>
