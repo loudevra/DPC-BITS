@@ -720,6 +720,9 @@
     <Compile Include="Views\Dashboard\Dashboard.xaml.vb">
       <DependentUpon>Dashboard.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\DataReports\GraphicalReportsTab.xaml.vb">
+      <DependentUpon>GraphicalReportsTab.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\DataReports\Statements\StatementsTabs\DTRAccounts.xaml.vb">
       <DependentUpon>DTRAccounts.xaml</DependentUpon>
     </Compile>
@@ -731,6 +734,9 @@
     </Compile>
     <Compile Include="Views\DataReports\Statements\DTRTabStructured.xaml.vb">
       <DependentUpon>DTRTabStructured.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DataReports\SummaryReportsTab.xaml.vb">
+      <DependentUpon>SummaryReportsTab.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\HRM\Departments\DepartmentsView.xaml.vb">
       <DependentUpon>DepartmentsView.xaml</DependentUpon>
@@ -1374,6 +1380,10 @@
     <Page Include="Views\Dashboard\Dashboard.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\DataReports\GraphicalReportsTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\DataReports\Statements\StatementsTabs\DTRAccounts.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1387,6 +1397,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DataReports\Statements\DTRTabStructured.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DataReports\SummaryReportsTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
