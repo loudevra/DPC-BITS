@@ -11,13 +11,13 @@ Imports Mysqlx.XDevAPI.Common
 
 Namespace DPC.Data.Controllers
     Public Class CreateProduct
-        Public Shared Sub InsertNewProduct(Toggle As System.Windows.Controls.Primitives.ToggleButton, Checkbox As Controls.CheckBox,
+        Public Shared Function InsertNewProduct(Toggle As System.Windows.Controls.Primitives.ToggleButton, Checkbox As Controls.CheckBox,
             ProductName As TextBox, ProductCode As TextBox, Category As ComboBox, SubCategory As ComboBox, Warehouse As ComboBox,
             Brand As ComboBox, Supplier As ComboBox,
             RetailPrice As TextBox, PurchaseOrder As TextBox, DefaultTax As TextBox,
             DiscountRate As TextBox, StockUnits As TextBox, AlertQuantity As TextBox,
             MeasurementUnit As ComboBox, Description As TextBox, ValidDate As DatePicker,
-            SerialNumbers As List(Of TextBox), ProductImage As String)
+            SerialNumbers As List(Of TextBox), ProductImage As String) As Boolean
 
             ' Determine if the product is a variation
             Dim variation As Integer = If(Toggle.IsChecked = True, 1, 0)
@@ -38,7 +38,7 @@ Namespace DPC.Data.Controllers
                               RetailPrice, PurchaseOrder, DefaultTax, DiscountRate, StockUnits,
                               AlertQuantity, MeasurementUnit, Description, ValidDate, SerialNumbers) Then
                             MessageBox.Show("Please fill in all required fields!", "Input Error", MessageBoxButton.OK)
-                            Exit Sub
+                            Return False
                         End If
 
                         ' Generate product ID
@@ -71,6 +71,7 @@ Namespace DPC.Data.Controllers
 
                         transaction.Commit()
                         MessageBox.Show($"Product {ProductName.Text} with Product Code {productID} has been inserted successfully.")
+                        Return True
                     Else
 
 
@@ -82,7 +83,7 @@ Namespace DPC.Data.Controllers
                                               Supplier, MeasurementUnit, Description,
                                               allVariationData) Then
                             MessageBox.Show("Please fill in all required fields!", "Input Error", MessageBoxButton.OK)
-                            Exit Sub
+                            Return False
                         End If
 
                         'Gets the list of all duplicates
@@ -121,14 +122,16 @@ Namespace DPC.Data.Controllers
 
                             transaction.Commit()
                             MessageBox.Show($"Product {ProductName.Text} with Product Code {productID} has been inserted successfully.")
+                            Return True
                         Else
+                            Return False
                             MessageBox.Show($"Serial number/s {duplicates} exist. Product not added.")
                         End If
                     End If
 
                 End Using
             End Using
-        End Sub
+        End Function
 
         Public Shared Sub InsertNonVariationProduct(conn As MySqlConnection, transaction As MySqlTransaction, productID As String,
                                      Warehouse As ComboBox, SellingPrice As TextBox, BuyingPrice As TextBox,

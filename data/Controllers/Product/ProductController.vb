@@ -327,22 +327,32 @@ Namespace DPC.Data.Controllers
         ''' <summary>
         ''' Inserts a new product into the database
         ''' </summary>
-        Public Shared Sub InsertNewProduct(Toggle As System.Windows.Controls.Primitives.ToggleButton, Checkbox As Controls.CheckBox,
+        Public Shared Function InsertNewProduct(Toggle As System.Windows.Controls.Primitives.ToggleButton, Checkbox As Controls.CheckBox,
             ProductName As TextBox, ProductCode As TextBox, Category As ComboBox, SubCategory As ComboBox, Warehouse As ComboBox,
             Brand As ComboBox, Supplier As ComboBox,
             RetailPrice As TextBox, PurchaseOrder As TextBox, DefaultTax As TextBox,
             DiscountRate As TextBox, StockUnits As TextBox, AlertQuantity As TextBox,
             MeasurementUnit As ComboBox, Description As TextBox, ValidDate As DatePicker,
-            SerialNumbers As List(Of TextBox), ProductImage As String)
+            SerialNumbers As List(Of TextBox), ProductImage As String) As Boolean
 
-            CreateProduct.InsertNewProduct(Toggle, Checkbox,
+            Try
+                Dim isSuccesCreateProduct As Boolean = CreateProduct.InsertNewProduct(Toggle, Checkbox,
                 ProductName, ProductCode, Category, SubCategory, Warehouse,
                 Brand, Supplier,
                 RetailPrice, PurchaseOrder, DefaultTax,
                 DiscountRate, StockUnits, AlertQuantity,
                 MeasurementUnit, Description, ValidDate,
                 SerialNumbers, ProductImage)
-        End Sub
+
+                If isSuccesCreateProduct Then
+                    Return True
+                Else
+                    Return False
+                End If
+            Catch ex As Exception
+                Return False
+            End Try
+        End Function
 
         ''' <summary>
         ''' Inserts a product without variations into the database
