@@ -33,15 +33,19 @@
             </Grid.RowDefinitions>
 
             <!-- Header -->
-            <StackPanel Grid.Row="0" Orientation="Horizontal">
-                <materialDesign:PackIcon Kind="ShapeRectanglePlus" Foreground="#555555" Margin="5,0,0,10" Width="28" Height="28"/>
-                <TextBlock FontSize="18" Foreground="#555555" FontWeight="Bold" Text="Add Payroll Transaction" Margin="7,0,0,10"/>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <materialDesign:PackIcon Kind="ShapeRectanglePlus" Foreground="#555555" Margin="5,0,0,0" Width="28" Height="28" Grid.Column="0"/>
+                <TextBlock FontSize="18" Foreground="#555555" FontWeight="Bold" Text="Add Payroll Transaction" Margin="7,0,0,10" Grid.Column="1"/>
                 <Button Background="Transparent" BorderThickness="0"
-            HorizontalAlignment="Right" Margin="246,0,0,0">
-                    <materialDesign:PackIcon Kind="Close" Foreground="#555555" Width="20" Height="20" Margin="-8,0,0,16"/>
+                        HorizontalAlignment="Right" Margin="0,0,0,10" Grid.Column="2" x:Name="BtnClose">
+                    <materialDesign:PackIcon Kind="Close" Foreground="#555555" Width="20" Height="20"/>
                 </Button>
-            </StackPanel>
-
+            </Grid>
 
             <!-- Fields -->
             <TextBlock Grid.Row="1" Text="Search Player:" Foreground="#555555" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontWeight="Medium" Margin="0,5,0,0"/>
@@ -61,26 +65,8 @@
             </Border>
 
             <TextBlock Grid.Row="7" Text="Date:" Foreground="#555555" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontWeight="Medium" Margin="0,5,0,0"/>
-            <Border Style="{StaticResource RoundedBorderStyle}" Grid.Row="8">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width=".05*"/>
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <!-- Single Date Picker -->
-                    <DatePicker x:Name="SingleDatePicker"
-Style="{StaticResource SingleDatePickerStyle}"
-SelectedDate="{Binding SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-SelectedDateChanged="SingleDatePicker_SelectedDateChanged"
-Opacity="0"
-IsHitTestVisible="False" />
-                    <!-- Calendar Icon -->
-                    <materialDesign:PackIcon Grid.Column="0" Kind="Calendar" Width="32" Height="25" Foreground="#474747" VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="10,0,0,0"/>
-                    <!-- Date Display - Now uses FormattedDate property -->
-                    <Button x:Name="DateButton" Grid.Column="1" Style="{StaticResource DateButtonStyle}" Click="StartDate_Click" Width="Auto" Margin="28,0,25,0">
-                        <TextBlock Text="{Binding FormattedDate}" Margin="0,0,5,0" Foreground="#474747" Height="14"/>
-                    </Button>
-                </Grid>
+            <Border Grid.Row="8" Height="35" Margin="0,5,0,0" BorderBrush="#555555" BorderThickness="2" CornerRadius="18">
+                <TextBox Background="Transparent" BorderThickness="0" Padding="10"/>
             </Border>
 
             <TextBlock Grid.Row="9" Text="Amount:" Foreground="#555555" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontWeight="Medium" Margin="0,5,0,0"/>
