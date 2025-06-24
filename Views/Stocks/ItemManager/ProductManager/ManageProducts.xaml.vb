@@ -11,6 +11,11 @@ Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
 Imports Microsoft.Win32
 Imports MySql.Data.MySqlClient
+Imports DPC.DPC.Components.Forms
+Imports DPC.DPC.Data.Model
+Imports System.Collections.ObjectModel
+Imports DocumentFormat.OpenXml.Office.MetaAttributes
+Imports DPC.DPC.Components.ConfirmationModals
 
 Namespace DPC.Views.Stocks.ItemManager.ProductManager
     Public Class ManageProducts
@@ -209,5 +214,153 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
         Public Sub RefreshData()
             LoadData() ' This will reload the data and update the stats
         End Sub
+
+        'Checks other product details regardless if has variation or not
+        Public Sub GetProductDetailsBasedOnVariation(table As String, param As Int64)
+            Dim GetProduct As String = "SELECT warehouseID, sellingPrice, buyingPrice, stockUnit, alertQuantity FROM " & table & " WHERE productID = @productID"
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(GetProduct, conn)
+                        cmd.Parameters.AddWithValue("@productID", param)
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            If reader.Read() Then
+
+                                'store data in a cache
+                                cacheWarehouseID = Convert.ToString(reader("warehouseID"))
+                                cacheSellingPrice = Convert.ToDouble(reader("sellingPrice"))
+                                cacheBuyingPrice = Convert.ToDouble(reader("buyingPrice"))
+                                cacheStockUnit = Convert.ToInt16(reader("stockUnit"))
+                                cacheAlertQuantity = Convert.ToInt64(reader("alertQuantity"))
+                            End If
+                        End Using
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show("Error retrieving product details: " & ex.Message)
+                End Try
+            End Using
+        End Sub
+        Private Sub OpenEditProduct(sender As Object, e As RoutedEventArgs)
+            Dim editProductWindow As New DPC.Views.Stocks.ItemManager.ProductManager.EditProduct()
+            Dim product As DataRowView = TryCast(dataGrid.SelectedItem, DataRowView)
+
+
+            'get product details
+            Dim connStr As String = SplashScreen.GetDatabaseConnection().ConnectionString
+            Using conn As New MySqlConnection(connStr)
+                Dim GetProductQuery As String = "SELECT * FROM product WHERE productID = @productID"
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(GetProductQuery, conn)
+                        cmd.Parameters.AddWithValue("@productID", product("ID"))
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            While reader.Read()
+
+                                'store data in a cache
+                                cacheProductID = product("ID")
+                                cacheProductCode = reader("productCode").ToString()
+                                cacheProductName = reader("productName").ToString()
+                                cacheCategoryID = Convert.ToInt64(reader("categoryID"))
+                                cacheSubCategoryID = Convert.ToInt64(reader("subcategoryID"))
+                                cacheSupplierID = Convert.ToInt64(reader("subcategoryID"))
+                                cacheBrandID = Convert.ToInt64(reader("brandID"))
+                                cacheProductImage = reader("productImage").ToString()
+                                cacheMeasurementUnit = reader("measurementUnit").ToString()
+                                cacheProductDescription = reader("productDescription").ToString()
+                                cacheProductVariation = Convert.ToBoolean(reader("productVariation"))
+                            End While
+                        End Using
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show("Error retrieving product code: " & ex.Message)
+                End Try
+
+                If cacheProductVariation Then
+                    'if has variation
+                    GetProductDetailsBasedOnVariation("productvariationstock", product("ID"))
+                    MessageBox.Show("Products with variation are still on progress...")
+                Else
+                    'if has no variation
+                    GetProductDetailsBasedOnVariation("productnovariation", product("ID"))
+
+                    'store selected product's serial numbers
+                    Dim serialData As List(Of Tuple(Of Integer, String)) = GetProduct.GetSerialDataForProduct(product("ID"))
+
+                    cacheSerialNumbers = serialData.Select(Function(x) x.Item2).ToList()
+                    cacheSerialID = serialData.Select(Function(x) x.Item1).ToList()
+
+
+
+                    'Dim message As String = String.Join(Environment.NewLine, serialData.Select(Function(x) $"SerialID: {x.Item1}, SerialNumber: {x.Item2}"))
+                    'MessageBox.Show(message, "Serial Data")
+
+                    ViewLoader.DynamicView.NavigateToView("editproduct", Me)
+                End If
+            End Using
+        End Sub
+
+        Private Sub DeleteProduct(sender As Object, e As RoutedEventArgs)
+            Dim deleteProduct As New DPC.Components.ConfirmationModals.DeleteProductConfirmation()
+            Dim product As DataRowView = TryCast(dataGrid.SelectedItem, DataRowView)
+
+            cacheDeleteProductID = product("ID")
+            cacheDeleteProductName = product("Name")
+
+            AddHandler deleteProduct.Confirm, AddressOf DeleteProductConfirmation_Closed
+            Dim parentWindow As Window = Window.GetWindow(Me)
+            PopupHelper.OpenPopupWithControl(sender, deleteProduct, "windowcenter", -100, 0, False, parentWindow)
+        End Sub
+
+        Private Sub DeleteProductConfirmation_Closed()
+            Dim VariationQuery As String = "SELECT productVariation FROM product WHERE productID = @productID"
+            Dim SerialQuery As String = "SELECT COUNT(*) FROM serialnumberproduct WHERE productID = @productID"
+
+            Dim hasVariation As Boolean
+            Dim hasSerials As Boolean
+
+
+            'Handles the deletion of product
+            Dim connStr As String = SplashScreen.GetDatabaseConnection().ConnectionString
+            Try
+                Using conn As New MySqlConnection(connStr)
+                    conn.Open()
+                    Using VariationCmd As New MySqlCommand(VariationQuery, conn)
+                        VariationCmd.Parameters.AddWithValue("@productID", cacheDeleteProductID)
+                        Dim result = VariationCmd.ExecuteScalar()
+                        If result IsNot Nothing Then
+                            hasVariation = Convert.ToBoolean(result)
+                        End If
+                    End Using
+
+                    Using SerialCmd As New MySqlCommand(SerialQuery, conn)
+                        SerialCmd.Parameters.AddWithValue("@productID", cacheDeleteProductID)
+                        Dim serialCount As Integer = Convert.ToInt32(SerialCmd.ExecuteScalar())
+                        hasSerials = (serialCount > 0)
+                    End Using
+                End Using
+
+                'Checks if the product has variation
+                If hasVariation Then
+                    MessageBox.Show("Cannot delete product with variations yet.")
+                Else
+
+                    ' If no variations, delete from productnovariation and product tables
+                    UpdateProduct.DeleteProductData("productnovariation", cacheDeleteProductID)
+
+                    'Checks if has serials
+                    If hasSerials Then
+                        UpdateProduct.DeleteProductData("serialnumberproduct", cacheDeleteProductID)
+                    End If
+                    UpdateProduct.DeleteProductData("product", cacheDeleteProductID)
+                End If
+
+                MessageBox.Show("Product Deleted Successfully!")
+                LoadData()
+            Catch ex As Exception
+                MessageBox.Show("Error deleting product: " & ex.Message)
+            End Try
+        End Sub
+
+
     End Class
 End Namespace
