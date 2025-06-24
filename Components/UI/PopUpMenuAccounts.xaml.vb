@@ -144,10 +144,5 @@ Namespace DPC.Components.UI
             ' Implementation for navigating to Expense
             ViewLoader.DynamicView.NavigateToView("accountsexpense", Me)
         End Sub
-
-        Private Sub NavigateToCustomerDetailsMain(sender As Object, e As RoutedEventArgs)
-            ' Implementation for navigating to Customer Details Main
-            ViewLoader.DynamicView.NavigateToView("customerdetailsmain", Me)
-        End Sub
     End Class
 End Namespace

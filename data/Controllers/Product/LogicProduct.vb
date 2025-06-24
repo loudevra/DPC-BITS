@@ -276,5 +276,46 @@ Namespace DPC.Data.Controllers
             ' ✅ If SubCategory is Nothing, set it to 0 when saving later
             Return True
         End Function
+
+        Public Shared Function EditProductValidateFields(Checkbox As Controls.CheckBox,
+                                                         ProductName As String,
+                                                         ProductCode As String,
+                                                         Category As Int64,
+                                                         SubCategory As Int64,
+                                                         Warehouse As Integer,
+                                                         Brand As Int64,
+                                                         Supplier As Int64,
+                                                         RetailPrice As TextBox,
+                                                         PurchaseOrder As TextBox,
+                                                         DefaultTax As Double,
+                                                         DiscountRate As Double,
+                                                         StockUnits As Integer,
+                                                         AlertQuantity As Integer,
+                                                         MeasurementUnit As String,
+                                                         Description As String,
+                                                         SerialNumbers As List(Of String)) As Boolean
+
+            ' Check if any of the required fields are empty (except SubCategory, which can be Nothing)
+            If String.IsNullOrWhiteSpace(ProductName) OrElse
+               String.IsNullOrWhiteSpace(ProductCode) OrElse
+               Category = Nothing OrElse
+               Warehouse = Nothing OrElse
+               Brand = Nothing OrElse
+               Supplier = Nothing OrElse
+               String.IsNullOrWhiteSpace(RetailPrice.Text) OrElse
+               String.IsNullOrWhiteSpace(PurchaseOrder.Text) OrElse
+               String.IsNullOrWhiteSpace(DefaultTax) OrElse
+               String.IsNullOrWhiteSpace(DiscountRate) OrElse
+               String.IsNullOrWhiteSpace(StockUnits) OrElse
+               String.IsNullOrWhiteSpace(AlertQuantity) OrElse
+               MeasurementUnit Is Nothing OrElse
+               String.IsNullOrWhiteSpace(Description) OrElse
+               (Checkbox.IsChecked = True AndAlso SerialNumbers.Any(Function(txt) String.IsNullOrWhiteSpace(txt))) Then
+                Return False
+            End If
+
+            ' ✅ If SubCategory is Nothing, set it to 0 when saving later
+            Return True
+        End Function
     End Class
 End Namespace

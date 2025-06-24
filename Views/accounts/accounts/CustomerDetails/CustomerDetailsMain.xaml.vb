@@ -1,8 +1,4 @@
-﻿Imports DPC.DPC.Data.Helpers
-Imports DPC.DPC.Views.Accounts.Accounts.CustomerDetails.CustomerDetailsCards1
-
-Namespace DPC.Views.Accounts.Accounts.CustomerDetails
-
+﻿Namespace DPC.Views.Accounts.Accounts
     Public Class CustomerDetailsMain
         Inherits UserControl ' ✅ Ensure this is inheriting from UserControl (if not already in designer)
 
@@ -54,5 +50,4 @@ Namespace DPC.Views.Accounts.Accounts.CustomerDetails
             customerdetailsmaincontent.Content = New CustomerDetailsWallet()
         End Sub
     End Class
-
 End Namespace

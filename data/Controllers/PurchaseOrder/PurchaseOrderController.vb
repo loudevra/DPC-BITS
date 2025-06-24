@@ -143,6 +143,67 @@ Namespace DPC.Data.Controllers
 
             Return True
         End Function
+
+        Public Shared Function InsertInvoicePurchaseOrder(InvoiceNumber As String, InvoiceDate As String, DueDate As String,
+                                              BillAddress As String, OrderItems As String, SubVat As String, Install As String, Mobilization As String,
+                                                          Vat As String, TotalCost As String, SignatureImage As String) As Boolean
+
+            Dim checkExist As String = "SELECT * FROM invoice WHERE InvoiceNumber='" & InvoiceNumber & "'"
+            Dim invoiceExist As Boolean = False
+
+            Dim query As String = "INSERT INTO invoice (InvoiceNumber, InvoiceDate, DueDate, BillAddress, OrderItems, SubVat, Install, Mobilization,
+                                                          Vat, TotalCost, SignatureImage, SalesRep) VALUES (" & InvoiceNumber & ", '" & InvoiceDate & "', '" & DueDate & "', '" & BillAddress & "', '" & OrderItems & "', '" & SubVat & "', '" &
+                                    Install & "', '" & Mobilization & "', '" & Vat & "', '" & TotalCost & "', '" & SignatureImage & "', '" & CacheOnLoggedInName & "' )"
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(checkExist, conn)
+
+                        Dim reader = cmd.ExecuteReader()
+
+                        If reader.HasRows Then
+                            invoiceExist = True
+                        Else
+                            invoiceExist = False
+                        End If
+
+                    End Using
+
+
+                Catch ex As Exception
+                    MessageBox.Show($"Error: {ex.Message}")
+                    Return False
+                End Try
+
+            End Using
+
+            If invoiceExist = False Then
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+
+                    Try
+                        conn.Open()
+                        Using cmd As New MySqlCommand(query, conn)
+
+                            cmd.ExecuteNonQuery()
+
+                        End Using
+
+
+                    Catch ex As Exception
+                        MessageBox.Show($"Error: {ex.Message}")
+                        Return False
+                    End Try
+
+                End Using
+            Else
+                MessageBox.Show("Purchase order already added.")
+                Return False
+            End If
+
+            Return True
+        End Function
     End Class
 End Namespace
 

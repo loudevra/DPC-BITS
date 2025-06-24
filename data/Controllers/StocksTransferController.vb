@@ -1,12 +1,11 @@
-﻿
-
-Imports MySql.Data.MySqlClient
+﻿Imports MySql.Data.MySqlClient
 Imports System.Collections.ObjectModel
 Imports DPC.DPC.Data.Model
 Imports System.Web
 Imports System.Windows.Controls.Primitives
 Imports System.Data
 Imports DPC.DPC.Data.Models
+Imports DocumentFormat.OpenXml.Bibliography
 
 
 Namespace DPC.Data.Controllers
@@ -307,114 +306,77 @@ Namespace DPC.Data.Controllers
 
         Public Shared Sub TransferStock(productID As String, warehouseIDFrom As String, warehouseIDTo As String, transferQty As Integer, productVariation As Integer, optionCombination As String)
             ' Define queries based on product variation type
-            Dim queryCheckFrom As String = ""
-            Dim queryCheckTo As String = ""
-            Dim queryInsertFrom As String = ""
-            Dim queryInsertTo As String = ""
-            Dim queryTransferFrom As String = ""
-            Dim queryTransferTo As String = ""
-            ' Adding a query for the logs and will update the 
-            Dim actionTransferQuery = "UPDATE warehouse SET userActionBy = @userActionBy, transferWarehouseTo = @transferWarehouseNameTo, dateModified = NOW() WHERE warehouseID = @warehouseID"
+            Dim CheckProductQuery As String = ""
+            Dim UpdateProductQuery As String = ""
+            Dim BeforeStockUnit As Integer = 0
 
+            ' Product Variations Statement
             If productVariation = 0 Then
                 ' For productnovariation (productVariation = 0)
-                queryCheckFrom = "SELECT COUNT(*) FROM productnovariation WHERE productID = @productID AND warehouseID = @warehouseIDFrom"
-                queryCheckTo = "SELECT COUNT(*) FROM productnovariation WHERE productID = @productID AND warehouseID = @warehouseIDTo"
-                queryInsertFrom = "INSERT INTO productnovariation (productID, warehouseID, stockUnit, sellingPrice, buyingPrice, defaultTax, taxType, discountRate, alertQuantity, dateCreated, dateModified) VALUES (@productID, @warehouseIDFrom, 0, 0, 0, 0, NULL, 0, 0, NOW(), NOW())"
-                queryInsertTo = "INSERT INTO productnovariation (productID, warehouseID, stockUnit, sellingPrice, buyingPrice, defaultTax, taxType, discountRate, alertQuantity, dateCreated, dateModified) VALUES (@productID, @warehouseIDTo, 0, 0, 0, 0, NULL, 0, 0, NOW(), NOW())"
-                queryTransferFrom = "UPDATE productnovariation SET stockUnit = stockUnit - @transferQty, dateModified = NOW() WHERE productID = @productID AND warehouseID = @warehouseIDFrom"
-                queryTransferTo = "UPDATE productnovariation SET stockUnit = stockUnit + @transferQty, dateModified = NOW() WHERE productID = @productID AND warehouseID = @warehouseIDTo"
+                CheckProductQuery = "SELECT * FROM productnovariation WHERE productID = @productID AND warehouseID = @warehouseIDFrom"
+                UpdateProductQuery = "UPDATE productnovariation SET warehouseID = @warehouseIDTo, stockUnit = @transferQty, dateModified = NOW() WHERE productID = @productID"
             ElseIf productVariation = 1 Then
                 ' For productvariationstock (productVariation = 1)
-                queryCheckFrom = "SELECT COUNT(*) FROM productvariationstock WHERE productID = @productID AND warehouseID = @warehouseIDFrom AND optionCombination = @optionCombination"
-                queryCheckTo = "SELECT COUNT(*) FROM productvariationstock WHERE productID = @productID AND warehouseID = @warehouseIDTo AND optionCombination = @optionCombination"
-                queryInsertFrom = "INSERT INTO productvariationstock (productID, warehouseID, optionCombination, stockUnit, sellingPrice, buyingPrice, defaultTax, taxType, discountRate, alertQuantity, dateCreated, dateModified) VALUES (@productID, @warehouseIDFrom, @optionCombination, 0, 0, 0, 0, NULL, 0, 0, NOW(), NOW())"
-                queryInsertTo = "INSERT INTO productvariationstock (productID, warehouseID, optionCombination, stockUnit, sellingPrice, buyingPrice, defaultTax, taxType, discountRate, alertQuantity, dateCreated, dateModified) VALUES (@productID, @warehouseIDTo, @optionCombination, 0, 0, 0, 0, NULL, 0, 0, NOW(), NOW())"
-                queryTransferFrom = "UPDATE productvariationstock SET stockUnit = stockUnit - @transferQty, dateModified = NOW() WHERE productID = @productID AND warehouseID = @warehouseIDFrom AND optionCombination = @optionCombination"
-                queryTransferTo = "UPDATE productvariationstock SET stockUnit = stockUnit + @transferQty, dateModified = NOW() WHERE productID = @productID AND warehouseID = @warehouseIDTo AND optionCombination = @optionCombination"
+                CheckProductQuery = "SELECT * FROM productvariationstock WHERE productID = @productID AND warehouseID = @warehouseIDFrom AND optionCombination = @optionCombination"
+                UpdateProductQuery = "UPDATE productvariationstock SET warehouseID = @warehouseIDTo, stockUnit = @transferQty, dateModified = NOW() WHERE productID = @productID AND optionCombination = @optionCombination"
             End If
 
+            ' Query for Loggin the stock transfer
+            Dim loggingStockTransferQuery As String = "INSERT INTO stocktransferlogs (warehouseFrom, warehouseTo, actionEmployeeID, actionEmployeeName, productID, productName, beforestockunit, newstockunit, dateLog) VALUES (@warehouseFrom, @warehouseTo, @actionEmployeeID, @actionEmployeeName, @productID, @productName, @beforeStockUnit, @newStockUnit, NOW())"
+
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                conn.Open()
+
                 Try
-                    conn.Open()
-                    ' Start a transaction to ensure the entire operation is atomic
+                    ' Begin the transaction 
                     Using transaction As MySqlTransaction = conn.BeginTransaction()
                         Try
-                            ' Step 1: Check existence in "from" warehouse, insert if not exists
-                            Using cmdCheckFrom As New MySqlCommand(queryCheckFrom, conn, transaction)
-                                cmdCheckFrom.Parameters.AddWithValue("@productID", productID)
-                                cmdCheckFrom.Parameters.AddWithValue("@warehouseIDFrom", warehouseIDFrom)
+                            ' Check for the existing productID and Check the current stockUnit and store it in BeforeStockUnit
+                            Using CheckProductCmd As New MySqlCommand(CheckProductQuery, conn, transaction)
+                                CheckProductCmd.Parameters.AddWithValue("@productID", productID)
+                                CheckProductCmd.Parameters.AddWithValue("@warehouseIDFrom", warehouseIDFrom)
                                 If productVariation = 1 Then
-                                    cmdCheckFrom.Parameters.AddWithValue("@optionCombination", optionCombination)
+                                    CheckProductCmd.Parameters.AddWithValue("@optionCombination", optionCombination)
+                                End If
+                                Dim reader = CheckProductCmd.ExecuteReader()
+
+                                If reader.HasRows Then
+                                    While reader.Read() ' Move cursor to the first row
+                                        BeforeStockUnit = reader("stockUnit")
+                                    End While
+
                                 End If
 
-                                Dim existsFrom As Integer = Convert.ToInt32(cmdCheckFrom.ExecuteScalar())
-                                If existsFrom = 0 Then
-                                    ' Insert product if it doesn't exist in the "from" warehouse
-                                    Using cmdInsertFrom As New MySqlCommand(queryInsertFrom, conn, transaction)
-                                        cmdInsertFrom.Parameters.AddWithValue("@productID", productID)
-                                        cmdInsertFrom.Parameters.AddWithValue("@warehouseIDFrom", warehouseIDFrom)
-                                        If productVariation = 1 Then
-                                            cmdInsertFrom.Parameters.AddWithValue("@optionCombination", optionCombination)
-                                        End If
-                                        cmdInsertFrom.ExecuteNonQuery()
-                                    End Using
-                                End If
+                                reader.Close()
                             End Using
 
-                            ' Step 2: Check existence in "to" warehouse, insert if not exists
-                            Using cmdCheckTo As New MySqlCommand(queryCheckTo, conn, transaction)
-                                cmdCheckTo.Parameters.AddWithValue("@productID", productID)
-                                cmdCheckTo.Parameters.AddWithValue("@warehouseIDTo", warehouseIDTo)
+                            ' Updating the whole warehouseID and the stockUnit
+                            Using UpdateProductCmd As New MySqlCommand(UpdateProductQuery, conn, transaction)
+                                UpdateProductCmd.Parameters.AddWithValue("@warehouseIDTo", warehouseIDTo)
+                                UpdateProductCmd.Parameters.AddWithValue("@transferQty", transferQty)
+                                UpdateProductCmd.Parameters.AddWithValue("@productID", productID)
                                 If productVariation = 1 Then
-                                    cmdCheckTo.Parameters.AddWithValue("@optionCombination", optionCombination)
+                                    UpdateProductCmd.Parameters.AddWithValue("@optionCombination", optionCombination)
                                 End If
+                                UpdateProductCmd.ExecuteNonQuery()
 
-                                Dim existsTo As Integer = Convert.ToInt32(cmdCheckTo.ExecuteScalar())
-                                If existsTo = 0 Then
-                                    ' Insert product if it doesn't exist in the "to" warehouse
-                                    Using cmdInsertTo As New MySqlCommand(queryInsertTo, conn, transaction)
-                                        cmdInsertTo.Parameters.AddWithValue("@productID", productID)
-                                        cmdInsertTo.Parameters.AddWithValue("@warehouseIDTo", warehouseIDTo)
-                                        If productVariation = 1 Then
-                                            cmdInsertTo.Parameters.AddWithValue("@optionCombination", optionCombination)
-                                        End If
-                                        cmdInsertTo.ExecuteNonQuery()
-                                    End Using
-                                End If
+                                MessageBox.Show("Successfully Updates the Stock in this Product")
                             End Using
 
-                            ' Step 3: Update stock in the "from" warehouse
-                            Using cmdFrom As New MySqlCommand(queryTransferFrom, conn, transaction)
-                                cmdFrom.Parameters.AddWithValue("@productID", productID)
-                                cmdFrom.Parameters.AddWithValue("@warehouseIDFrom", warehouseIDFrom)
-                                cmdFrom.Parameters.AddWithValue("@transferQty", transferQty)
-                                If productVariation = 1 Then
-                                    cmdFrom.Parameters.AddWithValue("@optionCombination", optionCombination)
-                                End If
-                                cmdFrom.ExecuteNonQuery()
-                            End Using
-
-                            ' Step 4: Update stock in the "to" warehouse
-                            Using cmdTo As New MySqlCommand(queryTransferTo, conn, transaction)
-                                cmdTo.Parameters.AddWithValue("@productID", productID)
-                                cmdTo.Parameters.AddWithValue("@warehouseIDTo", warehouseIDTo)
-                                cmdTo.Parameters.AddWithValue("@transferQty", transferQty)
-                                If productVariation = 1 Then
-                                    cmdTo.Parameters.AddWithValue("@optionCombination", optionCombination)
-                                End If
-                                cmdTo.ExecuteNonQuery()
-                            End Using
-
-                            '"UPDATE warehouse SET userActionBy = @userActionBy, transferWarehouseTo = @transferWarehouseNameTo, dateModified = NOW() WHERE warehouseID = @warehouseID"
-
-
-                            'Step 5 Adding a Log whoever change the transfer stock
-                            Using actionTransferCmd As New MySqlCommand(actionTransferQuery, conn, transaction)
-                                actionTransferCmd.Parameters.AddWithValue("@userActionBy", CacheOnLoggedInName)
-                                actionTransferCmd.Parameters.AddWithValue("@transferWarehouseNameTo", CacheOnWarehouseTransferName)
-                                actionTransferCmd.Parameters.AddWithValue("@warehouseID", warehouseIDFrom)
+                            ' Logging the Stock Transfer to the stocktransferlogs table
+                            ' UPDATE 16 / 06 / 2025 at 12:34pm - Change the Codes where it will insert inside of the stocktransferlog table 
+                            Using actionTransferCmd As New MySqlCommand(loggingStockTransferQuery, conn, transaction)
+                                actionTransferCmd.Parameters.AddWithValue("@warehouseFrom", CacheOnWarehouseFromTransferName)
+                                actionTransferCmd.Parameters.AddWithValue("@warehouseTo", CacheOnWarehouseToTransferName)
+                                actionTransferCmd.Parameters.AddWithValue("@actionEmployeeID", CacheOnEmployeeID)
+                                actionTransferCmd.Parameters.AddWithValue("@actionEmployeeName", CacheOnLoggedInName)
+                                actionTransferCmd.Parameters.AddWithValue("@productID", CacheStockTransferProductID)
+                                actionTransferCmd.Parameters.AddWithValue("@productName", CacheStockTransferProductName)
+                                actionTransferCmd.Parameters.AddWithValue("@beforeStockUnit", BeforeStockUnit)
+                                actionTransferCmd.Parameters.AddWithValue("@newStockUnit", transferQty)
                                 actionTransferCmd.ExecuteNonQuery()
+
+                                MessageBox.Show("Successfully Logs the Stock Transfer")
                             End Using
 
                             ' Commit the transaction if all operations succeed

@@ -5,19 +5,55 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
-             HorizontalAlignment="Stretch"
-             VerticalAlignment="Stretch"
-             Background="Transparent"
-             MinWidth="0"
-             MinHeight="0">
+             Background="#D9D9D9"
+             MinWidth="250"
+             FontFamily="Lexend" Width="432">
 
     <UserControl.Resources>
         <!-- Rounded Border -->
         <Style x:Key="RoundedBorderStyle" TargetType="Border">
             <Setter Property="CornerRadius" Value="15"/>
         </Style>
-
-        <!-- ComboBox style (you can fill as needed, or reuse your original) -->
+        <!-- DatePicker Style -->
+        <Style x:Key="RoundedDatePickerStyle" TargetType="DatePicker">
+            <Setter Property="FontFamily" Value="Lexend"/>
+            <Setter Property="Foreground" Value="#555555"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="MinHeight" Value="30"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#555555"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DatePicker">
+                        <Border Style="{StaticResource RoundedBorderStyle}"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <Grid>
+                                <DatePickerTextBox x:Name="PART_TextBox"
+                                                   Background="Transparent"
+                                                   BorderThickness="0"
+                                                   VerticalContentAlignment="Center"
+                                                   Padding="10,0"
+                                                   Foreground="Black"/>
+                                <Button x:Name="PART_Button"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Width="30"
+                                        Height="20"
+                                        Padding="0"
+                                        Margin="0"
+                                        BorderThickness="0"
+                                        Background="Transparent">
+                                    <materialDesign:PackIcon Kind="CalendarOutline" Width="20" Height="20" Foreground="#555555"/>
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Style x:Key="RoundedComboBoxStyle" TargetType="ComboBox">
             <Setter Property="BorderBrush" Value="#555555"/>
             <Setter Property="Background" Value="White"/>
@@ -35,6 +71,7 @@
                                     Background="{TemplateBinding Background}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="1">
+
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
@@ -42,12 +79,15 @@
                                     </Grid.ColumnDefinitions>
 
                                     <ContentPresenter Name="ContentSite"
+
                                                       Content="{TemplateBinding SelectionBoxItem}"
                                                       VerticalAlignment="Center"
                                                       Margin="10,0,5,0"
                                                       RecognizesAccessKey="True" />
 
+
                                     <ToggleButton Grid.Column="1"
+
                                                   Focusable="False"
                                                   IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                                                   Background="Transparent"
@@ -55,15 +95,18 @@
                                                   BorderThickness="0"
                                                   HorizontalContentAlignment="Center"
                                                   VerticalContentAlignment="Center">
+
                                         <ToggleButton.Template>
                                             <ControlTemplate TargetType="ToggleButton">
                                                 <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
                                                     <materialDesign:PackIcon Kind="ChevronDown"
+
                                                                              Width="20"
                                                                              Height="20"
                                                                              Foreground="#555555"
                                                                              VerticalAlignment="Center"
                                                                              HorizontalAlignment="Center"/>
+
                                                 </Grid>
                                             </ControlTemplate>
                                         </ToggleButton.Template>
@@ -72,6 +115,7 @@
                             </Border>
 
                             <Popup Name="Popup"
+
                                    Placement="Bottom"
                                    IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
                                    AllowsTransparency="True"
@@ -86,6 +130,7 @@
                                         Margin="0,5,0,0">
                                     <ScrollViewer Margin="0"
                                                   SnapsToDevicePixels="True">
+
                                         <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
                                     </ScrollViewer>
                                 </Border>
@@ -107,6 +152,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
+
                         <Border Background="{TemplateBinding Background}" 
                                 CornerRadius="20"
                                 BorderBrush="{TemplateBinding BorderBrush}"
@@ -142,6 +188,7 @@
                         CornerRadius="25"
                         Padding="{TemplateBinding Padding}">
                             <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Left"/>
+
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
@@ -192,7 +239,7 @@
     </UserControl.Resources>
 
     <!-- Main Layout -->
-    <Grid Margin="0">
+    <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -203,7 +250,7 @@
 
         <!-- Title -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-            <TextBlock Text="Account Statements"
+            <TextBlock Text="Quotes"
                        FontWeight="SemiBold"
                        FontFamily="Lexend"
                        FontSize="25"

@@ -132,6 +132,10 @@ Namespace DPC.Data.Controllers
             RenderProduct.AddSerialRow(sender, e, skipStockUpdate)
         End Sub
 
+        Public Shared Sub BtnEditProductAddRow_Click(serialNumber As String)
+            RenderProduct.EditProductAddSerialRow(serialNumber)
+        End Sub
+
         ''' <summary>
         ''' Event handler for removing a serial number row
         ''' </summary>
@@ -257,6 +261,26 @@ Namespace DPC.Data.Controllers
                           singleDatePicker,
                           mainContainer)
         End Sub
+
+        Public Shared Sub EditProductClearInputFields(txtProductName As TextBox,
+                                                      txtProductCode As TextBox,
+                                                      txtRetailPrice As TextBox,
+                                                      txtPurchaseOrder As TextBox,
+                                                      txtDefaultTax As TextBox,
+                                                      txtDiscountRate As TextBox,
+                                                      txtStockUnits As TextBox,
+                                                      txtAlertQuantity As TextBox,
+                                                      txtDescription As TextBox,
+                                                      comboBoxCategory As ComboBox,
+                                                      comboBoxSubCategory As ComboBox,
+                                                      comboBoxWarehouse As ComboBox,
+                                                      comboBoxMeasurementUnit As ComboBox,
+                                                      comboBoxBrand As ComboBox,
+                                                      comboBoxSupplier As ComboBox,
+                                                      mainContainer As Panel)
+
+            RenderProduct.EditProductClearInputFieldsNoVariation(txtProductName, txtProductCode, txtRetailPrice, txtPurchaseOrder, txtDefaultTax, txtDiscountRate, txtStockUnits, txtAlertQuantity, txtDescription, comboBoxCategory, comboBoxSubCategory, comboBoxWarehouse, comboBoxMeasurementUnit, comboBoxBrand, comboBoxSupplier, mainContainer)
+        End Sub
 #End Region
 
 #Region "Validation Methods"
@@ -321,6 +345,73 @@ Namespace DPC.Data.Controllers
                                               Description, ValidDate, SerialNumbers)
         End Function
 
+#End Region
+
+#Region "Edit Product Methods"
+        Public Shared Sub UpdateSelectedProduct(Toggle As System.Windows.Controls.Primitives.ToggleButton,
+                                                Checkbox As Controls.CheckBox,
+                                                ProductName As String,
+                                                ProductCode As String,
+                                                Category As Int64,
+                                                SubCategory As Int64,
+                                                Warehouse As Integer,
+                                                Brand As Int64,
+                                                Supplier As Int64,
+                                                RetailPrice As TextBox,
+                                                PurchaseOrder As TextBox,
+                                                DefaultTax As Double,
+                                                DiscountRate As Double,
+                                                StockUnits As Integer,
+                                                AlertQuantity As Integer,
+                                                MeasurementUnit As String,
+                                                Description As String,
+                                                SerialNumbers As List(Of String),
+                                                ProductImage As String)
+
+            UpdateProduct.UpdateSelectedProduct(Toggle,
+                                                Checkbox,
+                                                ProductName,
+                                                ProductCode,
+                                                Category,
+                                                SubCategory,
+                                                Warehouse,
+                                                Brand,
+                                                Supplier,
+                                                RetailPrice,
+                                                PurchaseOrder,
+                                                DefaultTax,
+                                                DiscountRate,
+                                                StockUnits,
+                                                AlertQuantity,
+                                                MeasurementUnit,
+                                                Description,
+                                                SerialNumbers,
+                                                ProductImage)
+        End Sub
+
+        Public Shared Function Editproductvalidatefields(checkbox As Controls.CheckBox,
+                                                         productname As String,
+                                                         productcode As String,
+                                                         category As Int64,
+                                                         subcategory As Int64,
+                                                         warehouse As Integer,
+                                                         brand As Int64,
+                                                         supplier As Int64,
+                                                         retailprice As TextBox,
+                                                         purchaseorder As TextBox,
+                                                         defaulttax As Double,
+                                                         discountrate As Double,
+                                                         stockunits As Integer,
+                                                         alertquantity As Integer,
+                                                         measurementunit As String,
+                                                         description As String,
+                                                         serialnumbers As List(Of String)) As Boolean
+
+            Return LogicProduct.EditProductValidateFields(checkbox, productname, productcode, category,
+                                              subcategory, warehouse, brand, supplier, retailprice, purchaseorder,
+                                              defaulttax, discountrate, stockunits, alertquantity, measurementunit,
+                                              description, serialnumbers)
+        End Function
 #End Region
 
 #Region "Product Creation Methods"

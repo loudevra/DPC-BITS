@@ -40,6 +40,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Stocks.ItemManager.ProductManager.ManageProducts()
                     Case "newproducts"
                         Return New Stocks.ItemManager.NewProduct.AddNewProducts()
+                    Case "editproduct"
+                        Return New Stocks.ItemManager.ProductManager.EditProduct()
                     Case "batcheditproductvar"
                         Return New Stocks.ItemManager.NewProduct.ProductBatchEdit()
                     Case "productvariationdetails"
@@ -161,10 +163,6 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "navaddaccount"
                         'path of the design you want to see
                         Return New Accounts.Accounts.ManageAccounts.AddAccount()
-                    Case "customerdetailsmain"
-                        Return New Accounts.Accounts.CustomerDetails.CustomerDetailsMain()
-                    Case "navaddnewtransaction"
-                        Return New Accounts.Accounts.ManageAccounts.AddNewTransaction()
 
                         ' Project Navigation
                     Case "newproject"
@@ -194,15 +192,13 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "subscriptions"
                         Return New Sales.Subscriptions.Subscriptions()
 
-
-
-
-
-
+                    Case "purchaseorderstatement"
+                        Return New Stocks.PurchaseOrder.NewOrder.BillingStatement()
+                    Case "printpreview"
+                        Return New DPC.Components.Forms.PreviewPrintStatement()
 
                     Case "purchaseorderstatement"
                         Return New Stocks.PurchaseOrder.NewOrder.BillingStatement()
-
 
                     Case Else
                         ' Return a placeholder UserControl with error text
@@ -274,6 +270,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "customersrecord"
             ElseIf typeName = "suppliersrecord" Then
                 Return "suppliersrecord"
+            ElseIf typeName = "editproduct" Then
+                Return "editproduct"
 
 
                 ' Promo Codes Navigation
@@ -396,13 +394,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "todolist"
             ElseIf typeName = "purchaseorderstatement" Then
                 Return "purchaseorderstatement"
-
-
-
-
-
-
-
+            ElseIf typeName = "printpreview" Then
+                Return "printpreview"
 
             Else
                 Return typeName

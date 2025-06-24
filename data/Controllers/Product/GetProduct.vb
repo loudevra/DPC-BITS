@@ -6,9 +6,37 @@ Imports System.Windows.Controls.Primitives
 Imports System.Data
 Imports DPC.DPC.Data.Models
 Imports System.IO
+Imports System.IO.Ports
 
 Namespace DPC.Data.Controllers
     Public Class GetProduct
+
+        'Call this to call serialnumberID of selected product
+
+
+
+        'Call this to call serial numbers of selected product
+        Public Shared Function GetSerialDataForProduct(productID As String) As List(Of Tuple(Of Integer, String))
+            Dim serialData As New List(Of Tuple(Of Integer, String))()
+            Dim query As String = "SELECT serialID, SerialNumber FROM serialnumberproduct WHERE ProductID = @ProductID"
+
+            Dim connStr As String = SplashScreen.GetDatabaseConnection().ConnectionString
+            Using conn As New MySqlConnection(connStr)
+                conn.Open()
+                Using cmd As New MySqlCommand(query, conn)
+                    cmd.Parameters.AddWithValue("@ProductID", productID)
+                    Using reader As MySqlDataReader = cmd.ExecuteReader()
+                        While reader.Read()
+                            Dim id As Integer = Convert.ToInt32(reader("serialID"))
+                            Dim sn As String = reader("SerialNumber").ToString()
+                            serialData.Add(Tuple.Create(id, sn))
+                        End While
+                    End Using
+                End Using
+            End Using
+
+            Return serialData
+        End Function
 
         'Call this on comboboxes to get brands
         Public Shared Sub GetBrands(comboBox As ComboBox)
@@ -95,9 +123,9 @@ Namespace DPC.Data.Controllers
                                     Dim supplierID As String = reader("supplierID").ToString()
 
                                     Dim item As New ComboBoxItem With {
-                            .Content = supplierName,
-                            .Tag = supplierID
-                        }
+                                        .Content = supplierName,
+                                        .Tag = supplierID
+                                    }
                                     comboBox.Items.Add(item)
                                 End While
                                 comboBox.SelectedIndex = 0
