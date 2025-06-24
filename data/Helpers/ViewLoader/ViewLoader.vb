@@ -40,6 +40,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Stocks.ItemManager.ProductManager.ManageProducts()
                     Case "newproducts"
                         Return New Stocks.ItemManager.NewProduct.AddNewProducts()
+                    Case "editproduct"
+                        Return New Stocks.ItemManager.ProductManager.EditProduct()
                     Case "batcheditproductvar"
                         Return New Stocks.ItemManager.NewProduct.ProductBatchEdit()
                     Case "productvariationdetails"
@@ -165,7 +167,6 @@ Namespace DPC.Data.Helpers.ViewLoader
 
 
 
-
                     Case Else
                         ' Return a placeholder UserControl with error text
                         Dim errorContent As New TextBlock With {
@@ -236,6 +237,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "customersrecord"
             ElseIf typeName = "suppliersrecord" Then
                 Return "suppliersrecord"
+            ElseIf typeName = "editproduct" Then
+                Return "editproduct"
 
 
                 ' Promo Codes Navigation

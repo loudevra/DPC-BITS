@@ -371,6 +371,9 @@
     <Compile Include="Components\ConfirmationModals\DeleteCategoryModal.xaml.vb">
       <DependentUpon>DeleteCategoryModal.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\ConfirmationModals\DeleteProductConfirmation.xaml.vb">
+      <DependentUpon>DeleteProductConfirmation.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\ConfirmationModals\HRMConfirmationEmployeeSalaryUpdate.xaml.vb">
       <DependentUpon>HRMConfirmationEmployeeSalaryUpdate.xaml</DependentUpon>
     </Compile>
@@ -506,6 +509,7 @@
     <Compile Include="Data\Controllers\Product\ProductController.vb" />
     <Compile Include="Data\Controllers\Product\ProductViewModel.vb" />
     <Compile Include="Data\Controllers\Product\RenderProduct.vb" />
+    <Compile Include="Data\Controllers\Product\UpdateProduct.vb" />
     <Compile Include="Data\Controllers\Product\UploadProduct.vb" />
     <Compile Include="Data\Controllers\PromoCodeController.vb" />
     <Compile Include="Data\Controllers\PurchaseOrder\PurchaseOrderController.vb" />
@@ -518,6 +522,7 @@
     <Compile Include="Data\Converters\BooleanToVisibilityConverter.vb" />
     <Compile Include="Data\Converters\InverseBooleanToVisibilityConverter.vb" />
     <Compile Include="Data\Converters\PasswordMaskingBehavior.vb" />
+    <Compile Include="Data\Converters\RetainCacheProduct\CacheEditProduct.vb" />
     <Compile Include="Data\Converters\RetainCacheSupplier\CacheNewSupplier.vb" />
     <Compile Include="Data\Converters\RetainCacheSupplier\CacheUserLoggedIn.vb" />
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
@@ -780,6 +785,9 @@
     <Compile Include="Views\Stocks\ItemManager\NewProduct\ProductVariationDetails.xaml.vb">
       <DependentUpon>ProductVariationDetails.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Stocks\ItemManager\ProductManager\EditProduct.xaml.vb">
+      <DependentUpon>EditProduct.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stocks\ProductCategories\AddNewCategory.xaml.vb">
       <DependentUpon>AddNewCategory.xaml</DependentUpon>
     </Compile>
@@ -806,6 +814,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\ConfirmationModals\DeleteCategoryModal.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ConfirmationModals\DeleteProductConfirmation.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1367,6 +1379,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Stocks\ItemManager\NewProduct\ProductVariationDetails.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\ItemManager\ProductManager\EditProduct.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Stocks\ProductCategories\AddNewCategory.xaml">

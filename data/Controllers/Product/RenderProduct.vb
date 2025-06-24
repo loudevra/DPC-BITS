@@ -92,6 +92,64 @@ Namespace DPC.Data.Controllers
             End If
         End Sub
 
+        'Add serial number row (FOR EDITING PRODUCTS)
+        Public Shared Sub EditProductAddSerialRow(serialNumber As String)
+            If MainContainer Is Nothing OrElse TxtStockUnits Is Nothing Then
+                MessageBox.Show("MainContainer or TxtStockUnits is not initialized.")
+                Return
+            End If
+
+            Dim outerStackPanel As New StackPanel With {.Margin = New Thickness(25, 20, 10, 20)}
+
+            Dim grid As New Grid()
+            grid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
+            grid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
+
+            ' Access the named component using Application.Current.TryFindResource
+            Dim textBox As New TextBox With {
+                .Style = CType(Application.Current.TryFindResource("RoundedTextboxStyle"), Style),
+                .Text = serialNumber
+            }
+            SerialNumbers.Add(textBox)
+
+            Dim textBoxBorder As New Border With {.Style = CType(Application.Current.TryFindResource("RoundedBorderStyle"), Style), .Child = textBox}
+            Grid.SetColumn(textBoxBorder, 0)
+            grid.Children.Add(textBoxBorder)
+
+            Dim buttonPanel As New StackPanel With {.Orientation = Orientation.Horizontal, .Margin = New Thickness(10, 0, 0, 0)}
+
+            ' Add Row Button
+            Dim addRowButton As New Button With {.Background = Brushes.White, .BorderThickness = New Thickness(0), .Name = "BtnAddRow"}
+            Dim addIcon As New MaterialDesignThemes.Wpf.PackIcon With {.Kind = MaterialDesignThemes.Wpf.PackIconKind.TableRowAddAfter, .Width = 40, .Height = 30, .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#456B2E"))}
+            addRowButton.Content = addIcon
+            AddHandler addRowButton.Click, Sub(s, ev) AddSerialRow(s, ev)
+            buttonPanel.Children.Add(addRowButton)
+
+            ' Remove Row Button
+            Dim removeRowButton As New Button With {.Background = Brushes.White, .BorderThickness = New Thickness(0), .Name = "BtnRemoveRow"}
+            Dim removeIcon As New MaterialDesignThemes.Wpf.PackIcon With {.Kind = MaterialDesignThemes.Wpf.PackIconKind.TableRowRemove, .Width = 40, .Height = 30, .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#D23636"))}
+            removeRowButton.Content = removeIcon
+            AddHandler removeRowButton.Click, Sub(s, ev) ProductController.BtnRemoveRow_Click(s, ev)
+            buttonPanel.Children.Add(removeRowButton)
+
+            ' Separator Border
+            Dim separatorBorder As New Border With {.BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")), .BorderThickness = New Thickness(1), .Height = 30}
+            buttonPanel.Children.Add(separatorBorder)
+
+            ' Row Controller Button
+            Dim rowControllerButton As New Button With {.Background = Brushes.White, .BorderThickness = New Thickness(0), .Name = "BtnRowController"}
+            Dim menuIcon As New MaterialDesignThemes.Wpf.PackIcon With {.Kind = MaterialDesignThemes.Wpf.PackIconKind.MenuDown, .Width = 30, .Height = 30, .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))}
+            rowControllerButton.Content = menuIcon
+            AddHandler rowControllerButton.Click, AddressOf ProductController.BtnRowController_Click
+            buttonPanel.Children.Add(rowControllerButton)
+
+            Grid.SetColumn(buttonPanel, 1)
+            grid.Children.Add(buttonPanel)
+            outerStackPanel.Children.Add(grid)
+
+            MainContainer.Children.Add(outerStackPanel)
+        End Sub
+
         'Open Row Controller Popup
         Public Shared Sub OpenRowController(sender As Object, e As RoutedEventArgs)
             Dim clickedButton As Button = TryCast(sender, Button)
@@ -176,6 +234,37 @@ Namespace DPC.Data.Controllers
 
             ' Add back one row for Serial Number input
             ProductController.BtnAddRow_Click(Nothing, Nothing)
+        End Sub
+
+
+        Public Shared Sub EditProductClearInputFieldsNoVariation(txtProductName As TextBox, txtProductCode As TextBox, txtRetailPrice As TextBox, txtPurchaseOrder As TextBox, txtDefaultTax As TextBox, txtDiscountRate As TextBox, txtStockUnits As TextBox, txtAlertQuantity As TextBox, txtDescription As TextBox, comboBoxCategory As ComboBox, comboBoxSubCategory As ComboBox, comboBoxWarehouse As ComboBox, comboBoxMeasurementUnit As ComboBox, comboBoxBrand As ComboBox, comboBoxSupplier As ComboBox, mainContainer As Panel)
+
+            ' Clear TextBoxes
+            txtProductName.Clear()
+            txtProductCode.Clear()
+            txtRetailPrice.Clear()
+            txtPurchaseOrder.Clear()
+            txtDefaultTax.Text = "12"
+            txtDiscountRate.Clear()
+            txtAlertQuantity.Clear()
+            txtDescription.Clear()
+
+            ' Reset ComboBoxes to first item (index 0)
+            If comboBoxCategory.Items.Count > 0 Then comboBoxCategory.SelectedIndex = 0
+            If comboBoxSubCategory.Items.Count > 0 Then comboBoxSubCategory.SelectedIndex = 0
+            If comboBoxWarehouse.Items.Count > 0 Then comboBoxWarehouse.SelectedIndex = 0
+            If comboBoxMeasurementUnit.Items.Count > 0 Then comboBoxMeasurementUnit.SelectedIndex = 0
+            If comboBoxBrand.Items.Count > 0 Then comboBoxBrand.SelectedIndex = 0
+            If comboBoxSupplier.Items.Count > 0 Then comboBoxSupplier.SelectedIndex = 0
+
+            ' Clear Serial Numbers and reset to one row
+            If SerialNumbers IsNot Nothing Then
+                SerialNumbers.Clear()
+            End If
+
+            If mainContainer IsNot Nothing Then
+                mainContainer.Children.Clear()
+            End If
         End Sub
 
 
