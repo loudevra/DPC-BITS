@@ -46,17 +46,21 @@ Background="#2E466B"/>
         Background="#2E466B"/>
                     </StackPanel>
                 </DockPanel>
-                <Border x:Name="PrintPreview" Background="White"  BorderThickness="0" Padding="10">
-                    <Grid Margin="0,40,0,0">
+                <Border Height="1121.28" x:Name="PrintPreview" Background="White"  BorderThickness="0" Padding="10">
+                    
+
+                    <Grid Margin="0,40,0,50">
+                        <Grid.Background>
+                            <ImageBrush ImageSource="/Assets/images/watermark.png" Opacity="0.1" Stretch="UniformToFill"/>
+                        </Grid.Background>
+
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
@@ -94,6 +98,22 @@ Background="#2E466B"/>
                             </StackPanel>
                         </StackPanel>
 
+                        <!--DreamPC's Info-->
+                        <StackPanel Grid.Row="2" Orientation="Vertical" HorizontalAlignment="Left" Margin="5">
+                            <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,5">
+                                <TextBlock Text="Bill from:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#090909" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <!--Info-->
+                            <StackPanel Orientation="Vertical" HorizontalAlignment="Right">
+                                <TextBlock Text="Dream PC Build and I.T Solutions" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
+                                <TextBlock Text="Unit 2A and 2B Legenda Building " FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
+                                <TextBlock Text="Circumferential RD Antipolo, Philippines" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
+                                <TextBlock Text="+639171873722" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
+                                <TextBlock  Text="info.dreampcbuild@gmail.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
+                                <TextBlock  Text="dreampcbuild.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </StackPanel>
+
                         <!--Customers' Info-->
                         <StackPanel Grid.Row="3" Orientation="Vertical" HorizontalAlignment="Left" Margin="5">
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,5">
@@ -112,30 +132,30 @@ Background="#2E466B"/>
                         <StackPanel Grid.Row="3" Orientation="Vertical" HorizontalAlignment="Right" Margin="5">
                             <!--Status-->
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="2">
-                                <TextBlock Text="Status:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="8" Foreground="#555555" VerticalAlignment="Center"/>
-                                <Border Background="#F0F0F0" BorderBrush="#090909" CornerRadius="5" Padding="1" Width="120" Margin="10,0,0,0">
+                                <TextBlock Text="Status:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#555555" VerticalAlignment="Center"/>
+                                <Border Background="#F0F0F0" BorderBrush="#090909" CornerRadius="5" Padding="1" Width="130" Margin="10,0,0,0">
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <TextBlock Text="Approved" FontWeight="SemiBold" FontFamily="Lexend" FontSize="8" Foreground="#B1CCA1" VerticalAlignment="Center" Width="80"/>
+                                        <TextBlock Text="Approved" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="ForestGreen" VerticalAlignment="Center" Width="90"/>
                                         <materialDesign:PackIcon Kind="CogSyncOutline" Width="12" Height="12" Foreground="#B3B3B3" Margin="10,0,5,0" VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </Border>
                             </StackPanel>
                             <!--Payment Terms-->
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="2">
-                                <TextBlock Text="Payment Terms:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="8" Foreground="#555555" VerticalAlignment="Center"/>
-                                <Border Background="#F0F0F0" BorderBrush="#090909" CornerRadius="5" Padding="1" Width="120" Margin="10,0,0,0">
+                                <TextBlock Text="Payment Terms:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#555555" VerticalAlignment="Center"/>
+                                <Border Background="#F0F0F0" BorderBrush="#090909" CornerRadius="5" Padding="1" Width="130" Margin="10,0,0,0">
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <TextBlock Text="Payment on Receipt" FontWeight="SemiBold" FontFamily="Lexend" FontSize="8" Foreground="#AEAEAE" VerticalAlignment="Center" Width="80"/>
+                                        <TextBlock Text="Payment on Receipt" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="Black" VerticalAlignment="Center" Width="90"/>
                                         <materialDesign:PackIcon Kind="CogSyncOutline" Width="12" Height="12" Foreground="#B3B3B3" Margin="10,0,5,0" VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </Border>
                             </StackPanel>
                             <!--Due Date-->
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="2">
-                                <TextBlock Text="Due Date:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="8" Foreground="#555555" VerticalAlignment="Center"/>
-                                <Border Background="#F0F0F0" BorderBrush="#090909" CornerRadius="5" Padding="1" Width="120" Margin="10,0,0,0">
+                                <TextBlock Text="Due Date:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#555555" VerticalAlignment="Center"/>
+                                <Border Background="#F0F0F0" BorderBrush="#090909" CornerRadius="5" Padding="1" Width="130" Margin="10,0,0,0">
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <TextBlock x:Name="DueDate" FontWeight="SemiBold" FontFamily="Lexend" FontSize="8" Foreground="#AEAEAE" VerticalAlignment="Center" Width="80"/>
+                                        <TextBlock x:Name="DueDate" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="Black" VerticalAlignment="Center" Width="90"/>
                                         <materialDesign:PackIcon Kind="CogSyncOutline" Width="12" Height="12" Foreground="#B3B3B3" Margin="10,0,5,0" VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </Border>
@@ -152,8 +172,8 @@ Background="#2E466B"/>
                     CanUserAddRows="False"
                     HeadersVisibility="Column"
                     GridLinesVisibility="None"
-                    RowBackground="White"
-                    AlternatingRowBackground="WhiteSmoke"
+                    Background="Transparent"
+                    RowBackground="Transparent"
                     BorderThickness="0">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Sales Representative:" Binding="{Binding SalesRep}" Width="*"/>
@@ -215,8 +235,8 @@ Background="#2E466B"/>
                           CanUserAddRows="False"
                           HeadersVisibility="Column"
                           GridLinesVisibility="None"
-                          RowBackground="White"
-                          AlternatingRowBackground="WhiteSmoke"
+                          Background="Transparent"
+                          RowBackground="Transparent"
                           BorderThickness="0">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="150"/>
@@ -270,86 +290,101 @@ Background="#2E466B"/>
                         </DataGrid>
 
 
-                        <!--Customer Confirmation -->
-                        <Border MaxHeight="70"  Grid.Row="6" BorderBrush="#090909" BorderThickness="1" Margin="5,0,5,0" Padding="0">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Row="6">
+                            <!--Customer Confirmation -->
+                            <Border MaxHeight="70" BorderBrush="#090909" BorderThickness="1" Margin="5,0,5,0" Padding="0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
 
-                                <!--Signature-->
-                                <Border Grid.Column="0" BorderBrush="#090909" BorderThickness="0,0,1,0">
-                                    <TextBlock FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
-                        PRINTED NAME<LineBreak/>AND SIGNATURE
-                                    </TextBlock>
-                                </Border>
+                                    <!--Signature-->
+                                    <Border Grid.Column="0" BorderBrush="#090909" BorderThickness="0,0,1,0">
+                                        <TextBlock FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
+PRINTED NAME<LineBreak/>AND SIGNATURE
+                                        </TextBlock>
+                                    </Border>
 
-                                <!--Upload Signature-->
-                                <Border x:Name="BrowseFile" Background="White" Grid.Column="1" BorderBrush="#090909" BorderThickness="0,0,1,0">
-
-                                </Border>
-
-                                <!--Total Cost Section-->
-                                <Border Grid.Column="2">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <StackPanel Grid.Column="0">
-                                            <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
-                                                <TextBlock Text="SUBTOTAL VAT EX." FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                            </Border>
-                                            <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
-                                                <TextBlock Text="INSTALLATION/CONFIGURATION" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                            </Border>
-                                            <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
-                                                <TextBlock Text="MOBILIZATION" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                            </Border>
-                                            <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
-                                                <TextBlock Text="VAT 12%" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                            </Border>
-                                            <Border BorderBrush="#090909" BorderThickness="0,0,1,0" Padding="1">
-                                                <TextBlock Text="TOTAL COST" FontWeight="Bold" FontFamily="Lexend" FontSize="9" Foreground="#C75757" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                            </Border>
+                                    <!--Upload Signature-->
+                                    <Border x:Name="BrowseFile" Cursor="Hand" Background="White" Grid.Column="1" BorderBrush="#090909" BorderThickness="0,0,1,0">
+                                        <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                <materialDesign:PackIcon Kind="TrayUpload" Width="12" Height="12" Foreground="#555555" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                <TextBlock Text="Upload Signature (.png, .jpeg) " FontWeight="Bold" FontFamily="Lexend" FontSize="9" Foreground="#AEAEAE" VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5">
+                                                <Border  BorderBrush="#AEAEAE" BorderThickness="1" Padding="1" Width="50" CornerRadius="5">
+                                                    <TextBlock Text="Browse" FontWeight="Bold" FontFamily="Lexend" FontSize="9" Foreground="#AEAEAE" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </StackPanel>
                                         </StackPanel>
-                                        <StackPanel Grid.Column="1">
-                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                <TextBlock x:Name="SubVat" Text="₱ 0.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                            </Border>
-                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                <TextBlock x:Name="Install" Text="₱ 0.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                            </Border>
-                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                <TextBlock x:Name="Mobilization" Text="₱ 0.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                            </Border>
-                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                <TextBlock x:Name="Tax" Text="₱ 0.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                            </Border>
-                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
-                                                <TextBlock x:Name="TotalCost" Text="₱ 0.00" FontWeight="Bold" FontFamily="Lexend" FontSize="9" Foreground="#C75757" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                            </Border>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
-                            </Grid>
-                        </Border>
+                                    </Border>
 
-                        <!--Notes-->
-                        <Border Grid.Row="7" BorderBrush="#090909" BorderThickness="1,0,1,1" Margin="5,0,5,0" Padding="0">
-                            <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
-                                <TextBlock Text="Notes:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" VerticalAlignment="Center" Margin="10"/>
-                            </StackPanel>
-                        </Border>
-                        <!--Remarks-->
-                        <Border Grid.Row="8" BorderBrush="#090909" BorderThickness="1,0,1,1" Margin="5,0,5,0" Padding="0">
-                            <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
-                                <TextBlock Text="Remarks:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" VerticalAlignment="Center" Margin="10"/>
-                            </StackPanel>
-                        </Border>
+                                    <!--Total Cost Section-->
+                                    <Border Grid.Column="2">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0">
+                                                <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
+                                                    <TextBlock Text="SUBTOTAL VAT EX." FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                </Border>
+                                                <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
+                                                    <TextBlock Text="INSTALLATION/CONFIGURATION" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                </Border>
+                                                <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
+                                                    <TextBlock Text="MOBILIZATION" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                </Border>
+                                                <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
+                                                    <TextBlock Text="VAT 12%" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                </Border>
+                                                <Border BorderBrush="#090909" BorderThickness="0,0,1,0" Padding="1">
+                                                    <TextBlock Text="TOTAL COST" FontWeight="Bold" FontFamily="Lexend" FontSize="9" Foreground="#C75757" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                </Border>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1">
+                                                <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                    <TextBlock x:Name="SubVat" Text="₱ 0.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                </Border>
+                                                <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                    <TextBlock x:Name="Install" Text="₱ 0.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                </Border>
+                                                <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                    <TextBlock x:Name="Mobilization" Text="₱ 0.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                </Border>
+                                                <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                    <TextBlock x:Name="Tax" Text="₱ 0.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                </Border>
+                                                <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
+                                                    <TextBlock x:Name="TotalCost" Text="₱ 0.00" FontWeight="Bold" FontFamily="Lexend" FontSize="9" Foreground="#C75757" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                </Border>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+                            </Border>
+
+                            <!--Notes-->
+                            <Border BorderBrush="#090909" BorderThickness="1,0,1,1" Margin="5,0,5,0" Padding="0">
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
+                                    <TextBlock Text="Notes:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" VerticalAlignment="Center" Margin="10"/>
+                                </StackPanel>
+                            </Border>
+                            <!--Remarks-->
+                            <Border BorderBrush="#090909" BorderThickness="1,0,1,1" Margin="5,0,5,0" Padding="0">
+                                <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
+                                    <TextBlock Text="Remarks:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" VerticalAlignment="Center" Margin="10"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                        
                     </Grid>
                 </Border>
             </StackPanel>
