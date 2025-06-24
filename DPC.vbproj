@@ -431,10 +431,9 @@
     <Compile Include="Components\Forms\DeleteBrandPopup.xaml.vb">
       <DependentUpon>DeleteBrandPopup.xaml</DependentUpon>
     </Compile>
-
     <Compile Include="Components\Forms\DeleteCouponPopout.xaml.vb">
       <DependentUpon>DeleteCouponPopout.xaml</DependentUpon>
-</Compile>
+    </Compile>
     <Compile Include="Components\Forms\DeleteCreditNotePopUp.xaml.vb">
       <DependentUpon>DeleteCreditNotePopUp.xaml</DependentUpon>
     </Compile>
@@ -1023,7 +1022,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-
     <Page Include="Components\Forms\DeleteCouponPopout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
