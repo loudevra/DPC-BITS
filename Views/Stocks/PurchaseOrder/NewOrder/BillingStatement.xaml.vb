@@ -5,6 +5,7 @@ Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
 Imports MaterialDesignThemes.Wpf
 Imports Microsoft.Win32
+Imports NuGet.Protocol.Plugins
 
 Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
     Public Class BillingStatement
@@ -12,6 +13,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
         Private base64Image As String
         Private itemDataSource As New ObservableCollection(Of OrderItems)
         Private checkingDataSource As New ObservableCollection(Of Checker)
+        Private itemOrder As New List(Of Dictionary(Of String, String))
 
 
         Public Sub New()
@@ -26,12 +28,15 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             DueDate.Text = StatementDetails.DueDateCache
             Tax.Text = StatementDetails.TaxCache
             TotalCost.Text = StatementDetails.TotalCostCache
+            itemOrder = StatementDetails.OrderItemsCache
 
             For Each item In StatementDetails.OrderItemsCache
 
                 itemDataSource.Add(New OrderItems With {
                     .Quantity = item("Quantity"),
-                    .Description = item("ItemName")
+                    .Description = item("ItemName"),
+                    .UnitPrice = item("Rate"),
+                    .LinePrice = item("Price")
                 })
             Next
 
@@ -240,7 +245,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
         .Margin = New Thickness(0, 0, 5, 0),
         .VerticalAlignment = VerticalAlignment.Center
     }
-            grid.SetColumn(pdfIcon, 0)
+            Grid.SetColumn(pdfIcon, 0)
 
             ' File Info StackPanel
             Dim fileInfoPanel As New StackPanel With {
@@ -299,6 +304,21 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
             Return border
         End Function
+#End Region
+
+#Region "Navigation"
+        Private Sub PrintPreview(sender As Object, e As RoutedEventArgs)
+            StatementDetails.signature = If(String.IsNullOrWhiteSpace(base64Image), False, True)
+            StatementDetails.InvoiceNumberCache = InvoiceNumber.Text
+            StatementDetails.InvoiceDateCache = InvoiceDate.Text
+            StatementDetails.DueDateCache = DueDate.Text
+            StatementDetails.TaxCache = Tax.Text
+            StatementDetails.TotalCostCache = TotalCost.Text
+            StatementDetails.OrderItemsCache = itemOrder
+
+            ViewLoader.DynamicView.NavigateToView("printpreview", Me)
+        End Sub
+
 #End Region
 
     End Class

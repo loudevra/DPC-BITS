@@ -190,11 +190,10 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "subscriptions"
                         Return New Sales.Subscriptions.Subscriptions()
 
-
-
-
-
-
+                    Case "purchaseorderstatement"
+                        Return New Stocks.PurchaseOrder.NewOrder.BillingStatement()
+                    Case "printpreview"
+                        Return New DPC.Components.Forms.PreviewPrintStatement()
 
                     Case "purchaseorderstatement"
                         Return New Stocks.PurchaseOrder.NewOrder.BillingStatement()
@@ -392,13 +391,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "todolist"
             ElseIf typeName = "purchaseorderstatement" Then
                 Return "purchaseorderstatement"
-
-
-
-
-
-
-
+            ElseIf typeName = "printpreview" Then
+                Return "printpreview"
 
             Else
                 Return typeName

@@ -93,7 +93,7 @@
                                         </StackPanel>
                                     </Button>
                                     <!--print-->
-                                    <Button Style="{StaticResource IconButton}">
+                                    <Button Background="White" Click="PrintPreview" Style="{StaticResource IconButton}">
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                             <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                                                 <materialDesign:PackIcon Kind="PrinterOutline" Width="20" Height="20" Margin="10,10,5,0" Foreground="#555555"/>
@@ -294,12 +294,13 @@
                                                   RowBackground="White"
                                                   AlternatingRowBackground="WhiteSmoke"
                                                   BorderThickness="0">
-                                            <DataGrid.Columns>
-                                                <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="150"/>
-                                                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*"/>
-                                                <DataGridTextColumn Header="" Binding="{Binding Action}" Width="150"/>
-                                            </DataGrid.Columns>
-                                            <DataGrid.RowStyle>
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="150"/>
+                                            <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*"/>
+                                            <DataGridTextColumn Header="Unit Price" Binding="{Binding UnitPrice}" Width="*"/>
+                                            <DataGridTextColumn Header="Line Price" Binding="{Binding LinePrice}" Width="*"/>
+                                        </DataGrid.Columns>
+                                        <DataGrid.RowStyle>
                                                 <Style TargetType="DataGridRow">
                                                     <Setter Property="FontFamily" Value="Lexend"/>
                                                     <Setter Property="FontSize" Value="6"/>
@@ -414,10 +415,10 @@
                                                             <TextBlock Text="₱ 0.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
                                                         </Border>
                                                         <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                            <TextBlock x:Name="Tax" FontWeight="SemiBold" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                            <TextBlock x:Name="Tax" Text="₱ 0.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
                                                         </Border>
                                                         <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
-                                                            <TextBlock x:Name="TotalCost" FontWeight="Bold" FontFamily="Lexend" FontSize="6" Foreground="#C75757" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                            <TextBlock x:Name="TotalCost" Text="₱ 0.00" FontWeight="Bold" FontFamily="Lexend" FontSize="6" Foreground="#C75757" HorizontalAlignment="Left" Margin="5,0,5,0"/>
                                                         </Border>
                                                     </StackPanel>
                                                 </Grid>

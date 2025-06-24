@@ -458,6 +458,9 @@
     <Compile Include="Components\Forms\POSWalkInClient.xaml.vb">
       <DependentUpon>POSWalkInClient.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\PreviewPrintStatement.xaml.vb">
+      <DependentUpon>PreviewPrintStatement.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\QuotePopout.xaml.vb">
       <DependentUpon>QuotePopout.xaml</DependentUpon>
     </Compile>
@@ -1026,6 +1029,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\POSWalkInClient.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\PreviewPrintStatement.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
