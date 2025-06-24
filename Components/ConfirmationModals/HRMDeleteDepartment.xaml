@@ -41,7 +41,7 @@
 
                         <!-- Keep Editing Button (Outlined) -->
                         <Button Content="Cancel"
-                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                               
                                 materialDesign:ButtonAssist.CornerRadius="20"
                                 Foreground="Gray"
                                 BorderBrush="Gray"
@@ -55,7 +55,7 @@
 
                         <!-- Cancel Button (Raised) -->
                         <Button Content="Yes"
-                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                               
                                 materialDesign:ButtonAssist.CornerRadius="20"
                                 Foreground="White"
                                 FontWeight="SemiBold"   
