@@ -8,7 +8,7 @@ Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Controllers.CalendarController
 Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
-Imports DPC.DPC.[Date].Models
+Imports DPC.DPC.Components.ConfirmationModals
 Imports Newtonsoft.Json
 Imports NuGet.Protocol.Core.Types
 
@@ -1017,6 +1017,16 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                 Return
             End If
 
+            Dim confirmation As New ConfirmPurchaseOrder()
+            confirmation.ShowDialog()
+
+            If confirmation.UserConfirmed Then
+                ConfirmOrder()
+            End If
+
+        End Sub
+
+        Private Sub ConfirmOrder()
             ' Add your order generation code here
             ' This would include collecting all the data and saving to database
 

@@ -365,6 +365,9 @@
     <Compile Include="Components\ConfirmationModals\CancelSupplierAdding.xaml.vb">
       <DependentUpon>CancelSupplierAdding.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\ConfirmationModals\ConfirmPurchaseOrder.xaml.vb">
+      <DependentUpon>ConfirmPurchaseOrder.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\ConfirmationModals\ConfirmWarehouseDeletion.xaml.vb">
       <DependentUpon>ConfirmWarehouseDeletion.xaml</DependentUpon>
     </Compile>
@@ -908,6 +911,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\ConfirmationModals\CancelSupplierAdding.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ConfirmationModals\ConfirmPurchaseOrder.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\ConfirmationModals\ConfirmWarehouseDeletion.xaml">

@@ -10,6 +10,7 @@ Imports NuGet.Protocol.Plugins
 Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
     Public Class BillingStatement
 
+        Private tempImagePath As String
         Private base64Image As String
         Private itemDataSource As New ObservableCollection(Of OrderItems)
         Private checkingDataSource As New ObservableCollection(Of Checker)
@@ -29,6 +30,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             Tax.Text = StatementDetails.TaxCache
             TotalCost.Text = StatementDetails.TotalCostCache
             itemOrder = StatementDetails.OrderItemsCache
+            base64Image = StatementDetails.ImageCache
+            tempImagePath = StatementDetails.PathCache
+
+            If Not String.IsNullOrWhiteSpace(base64Image) Then
+                DisplayUploadedImage()
+            End If
 
             For Each item In StatementDetails.OrderItemsCache
 
@@ -85,6 +92,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             ' Convert image to Base64 using Base64Utility
             Try
                 base64Image = Base64Utility.EncodeFileToBase64(filePath)
+                ImageCache = base64Image
             Catch ex As Exception
                 MessageBox.Show("Error encoding image: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 Exit Sub
@@ -104,9 +112,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             DisplayUploadedImage()
         End Sub
 
-        Private Sub DisplayUploadedImage()
+        Public Sub DisplayUploadedImage()
             Try
-                Dim tempImagePath As String = Path.Combine(Path.GetTempPath(), "decoded_image.png")
+                tempImagePath = Path.Combine(Path.GetTempPath(), "decoded_image.png")
 
                 ' Clean up previous image file
                 If File.Exists(tempImagePath) Then
@@ -315,6 +323,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             StatementDetails.TaxCache = Tax.Text
             StatementDetails.TotalCostCache = TotalCost.Text
             StatementDetails.OrderItemsCache = itemOrder
+            StatementDetails.ImageCache = base64Image
+            StatementDetails.PathCache = tempImagePath
 
             ViewLoader.DynamicView.NavigateToView("printpreview", Me)
         End Sub
