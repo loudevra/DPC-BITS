@@ -238,6 +238,9 @@ Namespace DPC.Components.UI
 
 
 
+
+
+
         ''' <summary>
         ''' This method is used in the XAML to handle navigation for all buttons
         ''' You would need to modify the XAML to call each specific method instead of one general method

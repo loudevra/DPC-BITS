@@ -193,13 +193,15 @@
                HorizontalAlignment="Left"
                VerticalAlignment="Center" />
 
-    <Button Grid.Column="1"
+                            <Button Grid.Column="1"
             Style="{StaticResource RoundedButtonStyle}"
             Background="#555555"
             Foreground="#ffffff"
             Width="140"
+
             Height="29" Margin="0,0,0,6" VerticalAlignment="Bottom" Click="NavigateToNewTransaction" x:Name="BtnNewTransaction">
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+
             <materialDesign:PackIcon Kind="Plus"
                                      Width="16"
                                      Height="16"

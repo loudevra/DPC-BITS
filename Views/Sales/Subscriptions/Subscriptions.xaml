@@ -156,7 +156,7 @@
                             <!--Subscriptions-->
                             <TextBlock Text="Subscriptions" FontSize="35" FontWeight="Bold" FontFamily="Lexend" Foreground="#474747" VerticalAlignment="Center" Grid.Column="0" />
                             <StackPanel VerticalAlignment="Center">
-                                <Button x:Name="BtnAddSub" HorizontalAlignment="Right" Style="{StaticResource ButtonStyle}" Margin="20,0,0,0" Height="35" Width="180" Background="#555555">
+                                <Button x:Name="BtnAddSub" HorizontalAlignment="Right" Style="{StaticResource ButtonStyle}" Margin="20,0,0,0" Height="35" Width="180" Background="#555555" Click="NavigateToNewSubscriptionInvoice">
                                     <StackPanel Orientation="Horizontal">
                                         <materialDesign:PackIcon Kind="Plus" Width="25" Height="25" Foreground="#FDFDFD"/>
                                         <TextBlock Text="Add Subscription" FontSize="17" Foreground="#FDFDFD"/>

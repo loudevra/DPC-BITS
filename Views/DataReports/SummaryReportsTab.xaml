@@ -1,0 +1,132 @@
+﻿<UserControl x:Class="DPC.Views.DataReports.SummaryReportsTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" d:DesignHeight="580"
+             Background="Transparent" Width="804"
+             FontFamily="Lexend">
+
+    <Grid Background="#D9D9D9" Margin="-68,0,24,0">
+        <!-- Header -->
+        <TextBlock Text="Summary Reports"
+                   FontWeight="SemiBold"
+                   FontSize="32"
+                   Foreground="#474747"
+                   Margin="8,12,0,0"
+                   VerticalAlignment="Top"
+                   HorizontalAlignment="Left"/>
+
+        <!-- Tabs -->
+        <StackPanel Orientation="Horizontal"
+                    Margin="0,80,0,0"
+                    VerticalAlignment="Top"
+                    Height="38">
+            <Button Content="Product Sales"
+                    Background="Transparent"
+                    BorderThickness="0,0,0,2"
+                    BorderBrush="#555555"
+                    Foreground="#474747"
+                    FontWeight="SemiBold"
+                    Padding="10,0"
+                    FontSize="14"
+                    Height="38"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,0,0"
+                    Cursor="Hand"/>
+            <Button Content="Product Categories"
+                    Background="Transparent"
+                    BorderThickness="0,0,0,1"
+                    BorderBrush="#E0E0E0"
+                    Foreground="#AEAEAE"
+                    FontWeight="SemiBold"
+                    Padding="10,0"
+                    FontSize="14"
+                    Height="38"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,0,0"
+                    Cursor="Hand"/>
+            <Button Content="Trending Products"
+                    Background="Transparent"
+                    BorderThickness="0,0,0,1"
+                    BorderBrush="#E0E0E0"
+                    Foreground="#AEAEAE"
+                    FontWeight="SemiBold"
+                    Padding="10,0"
+                    FontSize="14"
+                    Height="38"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,0,0"
+                    Cursor="Hand"/>
+            <Button Content="Profit"
+                    Background="Transparent"
+                    BorderThickness="0,0,0,1"
+                    BorderBrush="#E0E0E0"
+                    Foreground="#AEAEAE"
+                    FontWeight="SemiBold"
+                    Padding="10,0"
+                    FontSize="14"
+                    Height="38"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,0,0"
+                    Cursor="Hand"/>
+            <Button Content="Top Customers"
+                    Background="Transparent"
+                    BorderThickness="0,0,0,1"
+                    BorderBrush="#E0E0E0"
+                    Foreground="#AEAEAE"
+                    FontWeight="SemiBold"
+                    Padding="10,0"
+                    FontSize="14"
+                    Height="38"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,0,0"
+                    Cursor="Hand"/>
+            <Button Content="Income vs Expenses"
+                    Background="Transparent"
+                    BorderThickness="0,0,0,1"
+                    BorderBrush="#E0E0E0"
+                    Foreground="#AEAEAE"
+                    FontWeight="SemiBold"
+                    Padding="10,0"
+                    FontSize="14"
+                    Height="38"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,0,0"
+                    Cursor="Hand"/>
+            <Button Content="Income"
+                    Background="Transparent"
+                    BorderThickness="0,0,0,1"
+                    BorderBrush="#E0E0E0"
+                    Foreground="#AEAEAE"
+                    FontWeight="SemiBold"
+                    Padding="10,0"
+                    FontSize="14"
+                    Height="38"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,0,0"
+                    Cursor="Hand"/>
+            <Button Content="Expenses"
+                    Background="Transparent"
+                    BorderThickness="0,0,0,1"
+                    BorderBrush="#E0E0E0"
+                    Foreground="#AEAEAE"
+                    FontWeight="SemiBold"
+                    Padding="10,0"
+                    FontSize="14"
+                    Height="38"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,0,0"
+                    Cursor="Hand"/>
+        </StackPanel>
+
+        <!-- Underline for active tab -->
+        <Border Height="2"
+                Background="#AEAEAE"
+                VerticalAlignment="Top"
+                Margin="0,118,0,0"/>
+
+        <!-- Content placeholder -->
+        <Grid Margin="0,124,-25,0"/>
+    </Grid>
+</UserControl>

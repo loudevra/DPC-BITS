@@ -60,9 +60,15 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "promocodes"
                         Return New PromoCodes.ManagePromoCodes()
 
+                    Case "addpromocode"
+                        Return New PromoCodes.AddPromoCode()
+
                          ' CRM Navigation
                     Case "clientgroups"
                         Return New CRM.ClientGroup.ClientGroups()
+
+                    Case "addnewclientgroup"
+                        Return New CRM.ClientGroup.AddNewClientGroup()
 
                     Case "manageclients"
                         Return New CRM.CRMClients()
@@ -73,6 +79,12 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New CRM.CRMNewResidentialClient()
                     Case "newcorporationalclient"
                         Return New CRM.CRMCorporationalTabStructured()
+                    Case "selectclients"
+                        Return New CRM.SelectClients()
+
+
+
+
 
 
                         Return New CRM.CRMNewResidentialClient
@@ -121,6 +133,11 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Sales.Quotes.NewQuote()
                     Case "creditnote"
                         Return New Sales.CreditNotes.CreditNotes()
+                    Case "newsubscriptioninvoice"
+                        Return New Sales.Subscriptions.NewSubscriptionInvoice()
+                    Case "newquote"
+                        Return New Sales.Quotes.NewQuote()
+
 
                         ' Accounts Navigation
                     Case "manageaccounts"
@@ -182,6 +199,9 @@ Namespace DPC.Data.Helpers.ViewLoader
 
 
 
+
+                    Case "purchaseorderstatement"
+                        Return New Stocks.PurchaseOrder.NewOrder.BillingStatement()
 
 
                     Case Else
@@ -260,6 +280,9 @@ Namespace DPC.Data.Helpers.ViewLoader
             ElseIf typeName = "promocodes" Then
                 Return "promocodes"
 
+            ElseIf typeName = "addpromocode" Then
+                Return "addpromocode"
+
                 ' Employees Navigation
             ElseIf typeName = "permissions" Then
                 Return "permissions"
@@ -270,6 +293,10 @@ Namespace DPC.Data.Helpers.ViewLoader
                 ' ClientGroup Navigation
             ElseIf typeName = "clientgroups" Then
                 Return "clientgroups"
+
+                ' AddnewClientGroup Navigation
+            ElseIf typeName = "addnewclientgroup" Then
+                Return "addnewclientgroup"
 
                 ' Client Navigation
             ElseIf typeName = "manageclients" Then
@@ -287,6 +314,10 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "businnessregisters"
             ElseIf typeName = "generatestatement" Then
                 Return "generatestatement"
+
+                ' Select Client Navigation
+            ElseIf typeName = "selectclients" Then
+                Return "selectclients"
 
                 ' Salaries Navigation
             ElseIf typeName = "salaries" Then
@@ -325,6 +356,10 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "salesnewquote"
             ElseIf typeName = "creditnote" Then
                 Return "creditnote"
+            ElseIf typeName = "newsubscriptioninvoice" Then
+                Return "newsubscriptioninvoice"
+
+
 
                 ' Accounts Navigation
             ElseIf typeName = "manageaccounts" Then
@@ -359,6 +394,10 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "manageproject"
             ElseIf typeName = "todolist" Then
                 Return "todolist"
+            ElseIf typeName = "purchaseorderstatement" Then
+                Return "purchaseorderstatement"
+
+
 
 
 

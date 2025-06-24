@@ -1,4 +1,4 @@
-﻿Imports System.Windows.Controls.Primitives
+Imports System.Windows.Controls.Primitives
 Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Views.Accounts.Transactions
