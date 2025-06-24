@@ -135,25 +135,28 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         End Sub
 
         Private Sub BtnAddProduct_Click(sender As Object, e As RoutedEventArgs)
-            ProductController.InsertNewProduct(Toggle, CheckBoxSerialNumber,
-                TxtProductName, TxtProductCode, ComboBoxCategory, ComboBoxSubCategory,
-                ComboBoxWarehouse, ComboBoxBrand, ComboBoxSupplier, TxtRetailPrice,
-                TxtPurchaseOrder, TxtDefaultTax, TxtDiscountRate, TxtStockUnits,
-                TxtAlertQuantity, ComboBoxMeasurementUnit, TxtDescription,
-                SingleDatePicker, ProductController.SerialNumbers, base64Image)
+            Dim isSuccessAddProduct As Boolean = ProductController.InsertNewProduct(Toggle, CheckBoxSerialNumber,
+            TxtProductName, TxtProductCode, ComboBoxCategory, ComboBoxSubCategory,
+            ComboBoxWarehouse, ComboBoxBrand, ComboBoxSupplier, TxtRetailPrice,
+            TxtPurchaseOrder, TxtDefaultTax, TxtDiscountRate, TxtStockUnits,
+            TxtAlertQuantity, ComboBoxMeasurementUnit, TxtDescription,
+            SingleDatePicker, ProductController.SerialNumbers, base64Image)
 
-            ProductController.ClearInputFields(TxtProductName, TxtProductCode, TxtRetailPrice, TxtPurchaseOrder,
+            If isSuccessAddProduct Then
+                ProductController.ClearInputFields(TxtProductName, TxtProductCode, TxtRetailPrice, TxtPurchaseOrder,
                 TxtDefaultTax, TxtDiscountRate, TxtStockUnits, TxtAlertQuantity, TxtDescription,
                 ComboBoxCategory, ComboBoxSubCategory, ComboBoxWarehouse, ComboBoxMeasurementUnit,
                 ComboBoxBrand, ComboBoxSupplier, SingleDatePicker, MainContainer)
 
-            ProductController.SerialNumbers.Clear()
-            TxtProductVariation.Text = Nothing
-            DPC.Components.Forms.AddVariation._savedVariations.Clear()
-            DPC.Data.Controllers.ProductController.variationManager.GetAllVariationData().Clear()
+                ProductController.SerialNumbers.Clear()
+                TxtProductVariation.Text = Nothing
+                DPC.Components.Forms.AddVariation._savedVariations.Clear()
+                DPC.Data.Controllers.ProductController.variationManager.GetAllVariationData().Clear()
+                DPC.Data.Controllers.ProductController.variationManager.CurrentCombination = Nothing
 
-            If Not String.IsNullOrWhiteSpace(base64Image) Then
-                ResetImageComponents()
+                If Not String.IsNullOrWhiteSpace(base64Image) Then
+                    ResetImageComponents()
+                End If
             End If
 
         End Sub

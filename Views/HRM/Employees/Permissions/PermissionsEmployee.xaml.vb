@@ -1,14 +1,18 @@
-﻿Imports DPC.DPC.Data.Controllers
-Imports System.Collections.ObjectModel
-Imports DPC.DPC.Data.Helpers
+﻿Imports System.Collections.ObjectModel
+Imports System.ComponentModel
 Imports System.Windows
 Imports System.Windows.Controls
-Imports System.ComponentModel
+Imports System.Text.Json
 Imports System.Windows.Media
+Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Helpers
+Imports MySql.Data.MySqlClient
 
 Namespace DPC.Views.HRM.Employees.Permissions
     Public Class PermissionsEmployee
         Inherits UserControl
+
+        Private Shared moduleData As New List(Of Object)
 
         Private _permissionItems As ObservableCollection(Of PermissionItem)
         Private _hasUnsavedChanges As Boolean = False
@@ -37,36 +41,88 @@ Namespace DPC.Views.HRM.Employees.Permissions
         Private Sub LoadSampleData()
             _permissionItems.Clear()
 
-            ' Define the modules with their default permissions
-            Dim moduleData As New List(Of Object) From {
-                New With {.Id = 1, .Name = "Sales"},
-                New With {.Id = 2, .Name = "Stock"},
-                New With {.Id = 3, .Name = "Crm"},
-                New With {.Id = 4, .Name = "Project"},
-                New With {.Id = 5, .Name = "Accounts"},
-                New With {.Id = 6, .Name = "Miscellaneous"},
-                New With {.Id = 7, .Name = "Assign Project"},
-                New With {.Id = 8, .Name = "Customer Profile"},
-                New With {.Id = 9, .Name = "Employees"},
-                New With {.Id = 10, .Name = "Reports"},
-                New With {.Id = 11, .Name = "Delete"},
-                New With {.Id = 12, .Name = "POS"},
-                New With {.Id = 13, .Name = "Sales Edit"},
-                New With {.Id = 14, .Name = "Stock Edit"}
-            }
+            'Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+            '    Try
+            '        conn.Open()
+            '        Dim query As String = "SELECT * FROM permissio WHERE 1" 
+            '        Dim cmd As New MySqlCommand(query, conn)
+            '        Dim reader = cmd.ExecuteReader()
+            '        While (reader.Read)
+            '            UserRoleID = reader.GetInt32("UserRoleID")
+            '        End While
+            '    Catch ex As Exception
 
-            For Each item In moduleData
-                _permissionItems.Add(New PermissionItem() With {
-                    .Id = item.Id,
-                    .Name = item.Name,
-                    .HasInventoryManager = False,
-                    .HasSalesPerson = False,
-                    .HasSalesManager = False,
-                    .HasBusinessManager = False,
-                    .HasBusinessOwner = True,
-                    .HasProjectManager = False
-                })
+            '    End Try
+            'End Using
+
+            ' Define the modules with their default permissions
+            moduleData.Add(New With {.Id = 1, .Name = "Sales"})
+            moduleData.Add(New With {.Id = 2, .Name = "Stock"})
+            moduleData.Add(New With {.Id = 3, .Name = "Crm"})
+            moduleData.Add(New With {.Id = 4, .Name = "Project"})
+            moduleData.Add(New With {.Id = 5, .Name = "Accounts"})
+            moduleData.Add(New With {.Id = 6, .Name = "Miscellaneous"})
+            moduleData.Add(New With {.Id = 7, .Name = "Assign Project"})
+            moduleData.Add(New With {.Id = 8, .Name = "Customer Profile"})
+            moduleData.Add(New With {.Id = 9, .Name = "Employees"})
+            moduleData.Add(New With {.Id = 10, .Name = "Reports"})
+            moduleData.Add(New With {.Id = 11, .Name = "Delete"})
+            moduleData.Add(New With {.Id = 12, .Name = "POS"})
+            moduleData.Add(New With {.Id = 13, .Name = "Sales Edit"})
+            moduleData.Add(New With {.Id = 14, .Name = "Stock Edit"})
+
+            Dim moduleDict As New Dictionary(Of String, PermissionItem)()
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                conn.Open()
+
+                Dim cmd As New MySqlCommand("SELECT * FROM permissions", conn)
+                Using reader As MySqlDataReader = cmd.ExecuteReader()
+                    ' Get column names from the table
+                    Dim columnNames As New List(Of String)
+                    For i As Integer = 0 To reader.FieldCount - 1
+                        columnNames.Add(reader.GetName(i))
+                    Next
+
+                    While reader.Read()
+                        Dim role As String = reader("Role").ToString()
+
+                        ' Loop through module columns (excluding "Role")
+                        For i As Integer = 1 To columnNames.Count - 1
+                            Dim moduleName As String = columnNames(i)
+                            Dim hasPermission As Boolean = reader.GetInt32(moduleName) = 1
+
+                            ' Match module name to get its ID
+                            Dim matchedModule = moduleData.FirstOrDefault(Function(m) m.Name = moduleName)
+                            If matchedModule Is Nothing Then Continue For ' Skip if not found
+
+                            ' Initialize the PermissionItem if it doesn't exist yet
+                            If Not moduleDict.ContainsKey(moduleName) Then
+                                moduleDict(moduleName) = New PermissionItem() With {
+                                    .Id = matchedModule.Id,
+                                    .Name = moduleName
+                                }
+                            End If
+
+                            ' Assign permission based on role
+                            With moduleDict(moduleName)
+                                If role = "Inventory Manager" Then .HasInventoryManager = hasPermission
+                                If role = "Sales Person" Then .HasSalesPerson = hasPermission
+                                If role = "Sales Manager" Then .HasSalesManager = hasPermission
+                                If role = "Business Manager" Then .HasBusinessManager = hasPermission
+                                If role = "Business Owner" Then .HasBusinessOwner = hasPermission
+                                If role = "Project Manager" Then .HasProjectManager = hasPermission
+                            End With
+                        Next
+                    End While
+                End Using
+            End Using
+
+            ' Push final values to _permissionItems
+            For Each item In moduleDict.Values
+                _permissionItems.Add(item)
             Next
+
         End Sub
 
         Private Sub OnPermissionItemsChanged(sender As Object, e As System.Collections.Specialized.NotifyCollectionChangedEventArgs)
@@ -154,32 +210,45 @@ Namespace DPC.Views.HRM.Employees.Permissions
             Try
                 ' Create a dictionary of role permissions for this module
                 Dim permissions As New Dictionary(Of String, Boolean) From {
-                    {"InventoryManager", item.HasInventoryManager},
-                    {"SalesPerson", item.HasSalesPerson},
-                    {"SalesManager", item.HasSalesManager},
-                    {"BusinessManager", item.HasBusinessManager},
-                    {"BusinessOwner", item.HasBusinessOwner},
-                    {"ProjectManager", item.HasProjectManager}
+                    {"Inventory Manager", item.HasInventoryManager},
+                    {"Sales Person", item.HasSalesPerson},
+                    {"Sales Manager", item.HasSalesManager},
+                    {"Business Manager", item.HasBusinessManager},
+                    {"Business Owner", item.HasBusinessOwner},
+                    {"Project Manager", item.HasProjectManager}
                 }
 
                 ' Log the permissions being saved (for debugging)
-                Console.WriteLine($"Saving permissions for module '{item.Name}' (ID: {item.Id}):")
+                Console.WriteLine($"{item.Name}")
                 For Each kvp In permissions
                     Console.WriteLine($"  {kvp.Key}: {kvp.Value}")
+
+                    Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                        conn.Open()
+
+                        Dim cmd As New MySqlCommand("UPDATE permissions SET  `" & item.Name & "` = " & kvp.Value & " WHERE Role = '" & kvp.Key & "'", conn)
+                        cmd.ExecuteNonQuery()
+
+                    End Using
                 Next
+
+
+                'Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                '    conn.Open()
+
+                '    Dim com As New MySqlCommand("Select * From permissions", conn)
+                '    Dim reader = com.ExecuteReader()
+
+                '    While (reader.Read)
+                '        MessageBox.Show(reader.GetString("Role"))
+                '    End While
+
+                'End Using
+
 
                 ' Here you would execute your database update logic
                 ' Example:
-                ' Using conn As New SqlConnection(connectionString)
-                '     conn.Open()
-                '     For Each role In permissions
-                '         Dim cmd As New SqlCommand("UPDATE ModulePermissions SET HasAccess = @hasAccess WHERE ModuleId = @moduleId AND RoleName = @roleName", conn)
-                '         cmd.Parameters.AddWithValue("@hasAccess", role.Value)
-                '         cmd.Parameters.AddWithValue("@moduleId", item.Id)
-                '         cmd.Parameters.AddWithValue("@roleName", role.Key)
-                '         cmd.ExecuteNonQuery()
-                '     Next
-                ' End Using
+
 
             Catch ex As Exception
                 Throw New Exception($"Failed to save permissions for module '{item.Name}': {ex.Message}")

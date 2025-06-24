@@ -124,11 +124,11 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToNewSubscription(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("salesinvoices", Me)
+            ViewLoader.DynamicView.NavigateToView("newsubscriptions", Me)
         End Sub
 
         Private Sub NavigateToSubscriptions(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("salesinvoices", Me)
+            ViewLoader.DynamicView.NavigateToView("subscriptions", Me)
         End Sub
 
         Private Sub NavigateToCreditNotes(sender As Object, e As RoutedEventArgs)

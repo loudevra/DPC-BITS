@@ -215,16 +215,16 @@
                                 <TextBlock Text="Description:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                                 <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
                             </StackPanel>
-                            <Border Style="{StaticResource RoundedBorderStyle}">
+                            <Border Style="{StaticResource RoundedBorderStyle}" Padding="0,10,0,10">
                                 <!-- Description Value with binding -->
                                 <TextBox x:Name="TxtDescription" 
-                 Style="{StaticResource RoundedTextboxStyle}" 
-                 Height="100" 
-                 VerticalContentAlignment="Top" 
-                 Margin="20,2,20,1" 
-                 TextWrapping="Wrap"
-                 AcceptsReturn="True"
-                 Text="{Binding Description, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                                 Style="{StaticResource RoundedTextboxStyle}" 
+                                 Height="100" 
+                                 VerticalContentAlignment="Top" 
+                                 Margin="20,2,20,1" 
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 Text="{Binding Description, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                             </Border>
                         </StackPanel>
 

@@ -158,15 +158,22 @@ Namespace DPC.Views.Stocks.StocksTransfer
             Dim selectedProduct As ComboBoxItem = CType(ComboBoxProduct.SelectedItem, ComboBoxItem)
             Dim productID As String = CType(selectedProduct.Tag, String)
 
+            CacheStockTransferProductID = productID
+            CacheStockTransferProductName = selectedProduct.Content.ToString()
+
             Dim selectedTransferFromWarehouse As ComboBoxItem = CType(ComboBoxTransferFrom.SelectedItem, ComboBoxItem)
             Dim warehouseIDFrom As String = CType(selectedTransferFromWarehouse.Tag, String)
+            Dim selectedWarehouseFromNameText As String = selectedTransferFromWarehouse.Content.ToString()
 
+            Console.WriteLine($"From Warehouse ID : {warehouseIDFrom}")
+            CacheOnWarehouseFromTransferName = selectedWarehouseFromNameText
 
             Dim selectedTransferToWarehouse As ComboBoxItem = CType(ComboBoxTransferTo.SelectedItem, ComboBoxItem)
             Dim warehouseIDTo As String = CType(selectedTransferToWarehouse.Tag, String)
-            Dim selectedText As String = selectedTransferToWarehouse.Content.ToString()
+            Dim selectedWarehouseToNameText As String = selectedTransferToWarehouse.Content.ToString()
 
-            CacheOnWarehouseTransferName = selectedText
+            Console.WriteLine($"To Warehouse ID : {warehouseIDTo}")
+            CacheOnWarehouseToTransferName = selectedWarehouseToNameText
 
             ' Get the transfer quantity from the TxtProductQty TextBox
             Dim transferQty As Integer
