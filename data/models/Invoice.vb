@@ -8,6 +8,8 @@
     Public Class OrderItems
         Public Property Quantity As Integer
         Public Property Description As String
+        Public Property UnitPrice As String
+        Public Property LinePrice As String
     End Class
 
 End Namespace

@@ -124,7 +124,7 @@
 
                                     <TextBlock Text="Invoice Number:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
                                     <Border Style="{StaticResource RoundedBorderStyle}" Width="Auto" Margin="0,0,10,10" Padding="0,1">
-                                        <TextBox x:Name="InvoiceNumber" Style="{StaticResource RoundedTextboxStyle}"/>
+                                        <TextBox x:Name="InvoiceNumber" IsReadOnly="True" Style="{StaticResource RoundedTextboxStyle}"/>
                                     </Border>
 
                                     <TextBlock Text="Order Date:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,5"/>
@@ -318,12 +318,12 @@
                     </StackPanel>
 
                     <StackPanel>
-                        <Button x:Name="btnGenerateOrder" Cursor="Hand" Width="120" Height="25" HorizontalAlignment="Left" Margin="0,0,0,0" Background="#1D5642">
+                        <Button x:Name="btnGenerateOrder" Cursor="Hand" Width="90" Height="25" HorizontalAlignment="Left" Margin="0,0,0,0" Background="#1D5642">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border Background="{TemplateBinding Background}" CornerRadius="15" Padding="5">
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                            <TextBlock Text="Generate Order" VerticalAlignment="Center" FontFamily="Lexend" FontSize="12" Foreground="white"/>
+                                            <TextBlock Text="Proceed" VerticalAlignment="Center" FontFamily="Lexend" FontSize="12" Foreground="white"/>
                                         </StackPanel>
                                     </Border>
                                 </ControlTemplate>

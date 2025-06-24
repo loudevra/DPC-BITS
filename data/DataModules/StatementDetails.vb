@@ -5,4 +5,8 @@
     Public TaxCache As String
     Public TotalCostCache As String
     Public OrderItemsCache As List(Of Dictionary(Of String, String))
+    Public signature As Boolean
+    Public ImageCache As String
+    Public PathCache As String
+
 End Module

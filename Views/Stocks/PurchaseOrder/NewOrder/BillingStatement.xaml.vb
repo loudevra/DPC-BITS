@@ -5,13 +5,16 @@ Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
 Imports MaterialDesignThemes.Wpf
 Imports Microsoft.Win32
+Imports NuGet.Protocol.Plugins
 
 Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
     Public Class BillingStatement
 
+        Private tempImagePath As String
         Private base64Image As String
         Private itemDataSource As New ObservableCollection(Of OrderItems)
         Private checkingDataSource As New ObservableCollection(Of Checker)
+        Private itemOrder As New List(Of Dictionary(Of String, String))
 
 
         Public Sub New()
@@ -26,12 +29,21 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             DueDate.Text = StatementDetails.DueDateCache
             Tax.Text = StatementDetails.TaxCache
             TotalCost.Text = StatementDetails.TotalCostCache
+            itemOrder = StatementDetails.OrderItemsCache
+            base64Image = StatementDetails.ImageCache
+            tempImagePath = StatementDetails.PathCache
+
+            If Not String.IsNullOrWhiteSpace(base64Image) Then
+                DisplayUploadedImage()
+            End If
 
             For Each item In StatementDetails.OrderItemsCache
 
                 itemDataSource.Add(New OrderItems With {
                     .Quantity = item("Quantity"),
-                    .Description = item("ItemName")
+                    .Description = item("ItemName"),
+                    .UnitPrice = item("Rate"),
+                    .LinePrice = item("Price")
                 })
             Next
 
@@ -80,6 +92,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             ' Convert image to Base64 using Base64Utility
             Try
                 base64Image = Base64Utility.EncodeFileToBase64(filePath)
+                ImageCache = base64Image
             Catch ex As Exception
                 MessageBox.Show("Error encoding image: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 Exit Sub
@@ -99,9 +112,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             DisplayUploadedImage()
         End Sub
 
-        Private Sub DisplayUploadedImage()
+        Public Sub DisplayUploadedImage()
             Try
-                Dim tempImagePath As String = Path.Combine(Path.GetTempPath(), "decoded_image.png")
+                tempImagePath = Path.Combine(Path.GetTempPath(), "decoded_image.png")
 
                 ' Clean up previous image file
                 If File.Exists(tempImagePath) Then
@@ -240,7 +253,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
         .Margin = New Thickness(0, 0, 5, 0),
         .VerticalAlignment = VerticalAlignment.Center
     }
-            grid.SetColumn(pdfIcon, 0)
+            Grid.SetColumn(pdfIcon, 0)
 
             ' File Info StackPanel
             Dim fileInfoPanel As New StackPanel With {
@@ -299,6 +312,23 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
             Return border
         End Function
+#End Region
+
+#Region "Navigation"
+        Private Sub PrintPreview(sender As Object, e As RoutedEventArgs)
+            StatementDetails.signature = If(String.IsNullOrWhiteSpace(base64Image), False, True)
+            StatementDetails.InvoiceNumberCache = InvoiceNumber.Text
+            StatementDetails.InvoiceDateCache = InvoiceDate.Text
+            StatementDetails.DueDateCache = DueDate.Text
+            StatementDetails.TaxCache = Tax.Text
+            StatementDetails.TotalCostCache = TotalCost.Text
+            StatementDetails.OrderItemsCache = itemOrder
+            StatementDetails.ImageCache = base64Image
+            StatementDetails.PathCache = tempImagePath
+
+            ViewLoader.DynamicView.NavigateToView("printpreview", Me)
+        End Sub
+
 #End Region
 
     End Class
