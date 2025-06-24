@@ -321,6 +321,7 @@ Namespace DPC.Components.Navigation
             If currentWindow IsNot Nothing Then currentWindow.Close()
         End Sub
 
+        ' Reflects the User who logged in
         Private Sub Sidebar_Loaded(sender As Object, e As RoutedEventArgs)
             UserName.Text = CacheOnLoggedInName
             UserEmail.Text = CacheOnLoggedInEmail

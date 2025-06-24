@@ -99,40 +99,45 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     ' Query from paste-2.txt
                     Dim query As String = "
-                SELECT 
-                    p.productID AS ID,
-                    p.productName AS Name,
-                    c.categoryName AS Category,
-                    sc.subcategoryName AS SubCategory,
-                    b.brandName AS Brand,
-                    s.supplierName AS Supplier,
-                    GROUP_CONCAT(
-                        DISTINCT CASE 
-                            WHEN pnv.stockUnit > 0 THEN w.warehouseName
-                            WHEN pvs.stockUnit > 0 THEN wv.warehouseName
-                            ELSE NULL
-                        END
-                        SEPARATOR ', '
-                    ) AS Warehouse,
-                    SUM(COALESCE(pnv.stockUnit, 0) + COALESCE(pvs.stockUnit, 0)) AS StockQuantity,
-                    MAX(COALESCE(pnv.alertQuantity, pvs.alertQuantity, 0)) AS AlertQuantity,
-                    p.productImage AS ProductImage,
-                    p.productVariation AS HasVariations
-                FROM product p
-                LEFT JOIN category c ON p.categoryID = c.categoryID
-                LEFT JOIN subcategory sc ON p.subcategoryID = sc.subcategoryID
-                LEFT JOIN brand b ON p.brandID = b.brandID
-                LEFT JOIN supplier s ON p.supplierID = s.supplierID
-                
-                -- For products without variations
-                LEFT JOIN productnovariation pnv ON p.productID = pnv.productID AND p.productVariation = 0
-                LEFT JOIN warehouse w ON pnv.warehouseID = w.warehouseID
-                
-                -- For products with variations
-                LEFT JOIN productvariationstock pvs ON p.productID = pvs.productID AND p.productVariation = 1
-                LEFT JOIN warehouse wv ON pvs.warehouseID = wv.warehouseID
-                
-                GROUP BY p.productID, p.productName, c.categoryName, sc.subcategoryName, b.brandName, s.supplierName, p.productImage, p.productVariation
+                    SELECT  
+                    p.productID AS ID,  
+                    p.productName AS Name,  
+                    c.categoryName AS Category,  
+                    sc.subcategoryName AS SubCategory,  
+                    b.brandName AS Brand,  
+                    s.supplierName AS Supplier,  
+                    GROUP_CONCAT(DISTINCT WarehouseFiltered.warehouseName SEPARATOR ', ') AS Warehouse,  
+                    SUM(COALESCE(pnv.stockUnit, 0) + COALESCE(pvs.stockUnit, 0)) AS StockQuantity,  
+                    MAX(COALESCE(pnv.alertQuantity, pvs.alertQuantity, 0)) AS AlertQuantity,  
+                    p.productImage AS ProductImage,  
+                    p.productVariation AS HasVariations  
+
+                FROM product p  
+
+                LEFT JOIN category c ON p.categoryID = c.categoryID  
+                LEFT JOIN subcategory sc ON p.subcategoryID = sc.subcategoryID  
+                LEFT JOIN brand b ON p.brandID = b.brandID  
+                LEFT JOIN supplier s ON p.supplierID = s.supplierID  
+
+                -- Products without variations  
+                LEFT JOIN productnovariation pnv ON p.productID = pnv.productID AND p.productVariation = 0  
+                LEFT JOIN warehouse w ON pnv.warehouseID = w.warehouseID AND pnv.stockUnit > 0  
+
+                -- Products with variations  
+                LEFT JOIN productvariationstock pvs ON p.productID = pvs.productID AND p.productVariation = 1  
+                LEFT JOIN warehouse wv ON pvs.warehouseID = wv.warehouseID AND pvs.stockUnit > 0  
+
+                -- Unified warehouse list filtered by stock  
+                LEFT JOIN (
+                    SELECT warehouseID, warehouseName FROM warehouse
+                ) AS WarehouseFiltered ON 
+                    (p.productVariation = 0 AND w.warehouseID = WarehouseFiltered.warehouseID) OR
+                    (p.productVariation = 1 AND wv.warehouseID = WarehouseFiltered.warehouseID)  
+
+                GROUP BY  
+                    p.productID, p.productName, c.categoryName, sc.subcategoryName,  
+                    b.brandName, s.supplierName, p.productImage, p.productVariation  
+
                 ORDER BY p.productName;
             "
                     conn.Open()

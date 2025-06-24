@@ -516,6 +516,7 @@
     <Compile Include="Data\Controllers\DocumentController.vb" />
     <Compile Include="Data\Controllers\EmployeeController.vb" />
     <Compile Include="Data\Controllers\CalendarController.vb" />
+    <Compile Include="Data\Controllers\EmployeeLoginHistoryController.vb" />
     <Compile Include="Data\Controllers\HRM\HRMController.vb" />
     <Compile Include="Data\Controllers\ManageProductsController.vb" />
     <Compile Include="Data\Controllers\Permissions\PermissionItem.vb" />
@@ -541,6 +542,7 @@
     <Compile Include="Data\Converters\InverseBooleanToVisibilityConverter.vb" />
     <Compile Include="Data\Converters\PasswordMaskingBehavior.vb" />
     <Compile Include="Data\Converters\RetainCacheSupplier\CacheNewSupplier.vb" />
+    <Compile Include="Data\Converters\RetainCacheSupplier\CacheStockTransfer.vb" />
     <Compile Include="Data\Converters\RetainCacheSupplier\CacheUserLoggedIn.vb" />
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
