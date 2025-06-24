@@ -4,10 +4,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+            
              mc:Ignorable="d"
-             Background="#D9D9D9"
-             MinWidth="250"
-             FontFamily="Lexend" Width="432">
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch"
+             Background="Transparent"
+             MinWidth="0"
+             MinHeight="0">
 
     <UserControl.Resources>
         <!-- Rounded Border -->
@@ -28,25 +31,25 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="DatePicker">
                         <Border Style="{StaticResource RoundedBorderStyle}"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}">
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
                             <Grid>
                                 <DatePickerTextBox x:Name="PART_TextBox"
-                                                   Background="Transparent"
-                                                   BorderThickness="0"
-                                                   VerticalContentAlignment="Center"
-                                                   Padding="10,0"
-                                                   Foreground="Black"/>
+                                               Background="Transparent"
+                                               BorderThickness="0"
+                                               VerticalContentAlignment="Center"
+                                               Padding="10,0"
+                                               Foreground="Black"/>
                                 <Button x:Name="PART_Button"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        Width="30"
-                                        Height="20"
-                                        Padding="0"
-                                        Margin="0"
-                                        BorderThickness="0"
-                                        Background="Transparent">
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Width="30"
+                                    Height="20"
+                                    Padding="0"
+                                    Margin="0"
+                                    BorderThickness="0"
+                                    Background="Transparent">
                                     <materialDesign:PackIcon Kind="CalendarOutline" Width="20" Height="20" Foreground="#555555"/>
                                 </Button>
                             </Grid>
@@ -71,10 +74,10 @@
                         <Grid>
                             <!-- Main Border -->
                             <Border x:Name="MainBorder"
-                            Style="{StaticResource RoundedBorderStyle}"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="1">
+                        Style="{StaticResource RoundedBorderStyle}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="1">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
@@ -83,29 +86,29 @@
 
                                     <!-- Content -->
                                     <ContentPresenter Name="ContentSite"
-                                              Content="{TemplateBinding SelectionBoxItem}"
-                                              VerticalAlignment="Center"
-                                              Margin="10,0,5,0"
-                                              RecognizesAccessKey="True" />
+                                          Content="{TemplateBinding SelectionBoxItem}"
+                                          VerticalAlignment="Center"
+                                          Margin="10,0,5,0"
+                                          RecognizesAccessKey="True" />
 
                                     <!-- Drop Down Button -->
                                     <ToggleButton Grid.Column="1"
-                                          Focusable="False"
-                                          IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
-                                          Background="Transparent"
-                                          BorderBrush="Transparent"
-                                          BorderThickness="0"
-                                          HorizontalContentAlignment="Center"
-                                          VerticalContentAlignment="Center">
+                                      Focusable="False"
+                                      IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                      Background="Transparent"
+                                      BorderBrush="Transparent"
+                                      BorderThickness="0"
+                                      HorizontalContentAlignment="Center"
+                                      VerticalContentAlignment="Center">
                                         <ToggleButton.Template>
                                             <ControlTemplate TargetType="ToggleButton">
                                                 <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
                                                     <materialDesign:PackIcon Kind="ChevronDown"
-                                                                     Width="20"
-                                                                     Height="20"
-                                                                     Foreground="#555555"
-                                                                     VerticalAlignment="Center"
-                                                                     HorizontalAlignment="Center"/>
+                                                                 Width="20"
+                                                                 Height="20"
+                                                                 Foreground="#555555"
+                                                                 VerticalAlignment="Center"
+                                                                 HorizontalAlignment="Center"/>
                                                 </Grid>
                                             </ControlTemplate>
                                         </ToggleButton.Template>
@@ -115,20 +118,20 @@
 
                             <!-- Dropdown Popup -->
                             <Popup Name="Popup"
-                           Placement="Bottom"
-                           IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
-                           AllowsTransparency="True"
-                           Focusable="False"
-                           StaysOpen="False"
-                           MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                       Placement="Bottom"
+                       IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                       AllowsTransparency="True"
+                       Focusable="False"
+                       StaysOpen="False"
+                       MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
                                 <Border Background="White"
-                                BorderBrush="#CCCCCC"
-                                BorderThickness="1"
-                                CornerRadius="15"
-                                SnapsToDevicePixels="True"
-                                Margin="0,5,0,0">
+                            BorderBrush="#CCCCCC"
+                            BorderThickness="1"
+                            CornerRadius="15"
+                            SnapsToDevicePixels="True"
+                            Margin="0,5,0,0">
                                     <ScrollViewer Margin="0"
-                                          SnapsToDevicePixels="True">
+                                      SnapsToDevicePixels="True">
                                         <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
                                     </ScrollViewer>
                                 </Border>
@@ -150,16 +153,16 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border 
-                    Background="{TemplateBinding Background}" 
-                    CornerRadius="20" 
-                    BorderBrush="{TemplateBinding BorderBrush}"
-                    BorderThickness="{TemplateBinding BorderThickness}">
+                Background="{TemplateBinding Background}" 
+                CornerRadius="20" 
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}">
                             <TextBlock Text="View"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               FontFamily="Lexend"
-                               FontSize="16"
-                               Foreground="White"/>
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontFamily="Lexend"
+                           FontSize="16"
+                           Foreground="White"/>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
@@ -169,7 +172,7 @@
     </UserControl.Resources>
 
     <!-- Main Layout -->
-    <Grid Margin="20">
+    <Grid Margin="0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -180,7 +183,7 @@
 
         <!-- Title -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-            <TextBlock Text="Quotes"
+            <TextBlock Text="Account Statements"
                        FontWeight="SemiBold"
                        FontFamily="Lexend"
                        FontSize="25"
@@ -215,3 +218,7 @@
         </StackPanel>
     </Grid>
 </UserControl>
+
+
+
+
