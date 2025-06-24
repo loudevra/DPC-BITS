@@ -71,7 +71,10 @@
                     <TextBlock Text="Account:" Foreground="#474747" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend" Margin="0,0,5,0" />
                 </StackPanel>
                 <Border BorderBrush="#474747" BorderThickness="2" Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10">
-                    <TextBox x:Name="TxtEmployee" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend"/>
+
+                    <!--Product Name Value is here!-->
+                    <TextBox x:Name="TxtEmployee" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontSize="16"/>
+
                 </Border>
 
                 <!-- Type -->
@@ -79,7 +82,10 @@
                     <TextBlock Text="Type:" Foreground="#474747" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend" Margin="0,10,0,0"/>
                 </StackPanel>
                 <Border BorderBrush="#474747" BorderThickness="2" Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10">
-                    <TextBox x:Name="TxtDateTimePicker" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend"/>
+
+                    <!--Product Name Value is here!-->
+                    <TextBox x:Name="TxtDateTimePicker" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontSize="16"/>
+
                 </Border>
 
                 <!-- FROM DATE -->

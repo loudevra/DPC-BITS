@@ -316,19 +316,18 @@
                             <StackPanel>
                                 <!-- Data Grid -->
                                 <DataGrid x:Name="dgPromoCodes"
-                  AutoGenerateColumns="False"
-                  CanUserAddRows="False"
-                  CanUserResizeRows="False"
-                  CanUserResizeColumns="False"
-                  IsReadOnly="True"
-                  RowHeight="40"
-                  FontFamily="Lexend"
-                  Foreground="#555555"
-                  FontSize="13"
-                  FontWeight="SemiBold"
-                  ColumnHeaderStyle="{StaticResource {x:Type DataGridColumnHeader}}"
-                  CellStyle="{StaticResource PromoCodesDataGridTextStyle}">
-
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  CanUserResizeRows="False"
+                                  CanUserResizeColumns="False"
+                                  IsReadOnly="True"
+                                  RowHeight="40"
+                                  FontFamily="Lexend"
+                                  Foreground="#555555"
+                                  FontSize="13" BorderThickness="0"
+                                  FontWeight="SemiBold"
+                                  ColumnHeaderStyle="{StaticResource {x:Type DataGridColumnHeader}}"
+                                  CellStyle="{StaticResource PromoCodesDataGridTextStyle}">
                                     <DataGrid.Resources>
                                         <Style TargetType="DataGridCell">
                                             <Setter Property="FontFamily" Value="Lexend"/>
@@ -340,13 +339,16 @@
                                             <Setter Property="FontFamily" Value="Lexend"/>
                                             <Setter Property="FontSize" Value="13"/>
                                             <Setter Property="FontWeight" Value="SemiBold"/>
-                                            <Setter Property="Foreground" Value="#555555"/>
+                                            <Setter Property="Foreground" Value="#474747"/>
+                                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                            <Setter Property="Padding" Value="10,5"/>
+                                            <Setter Property="Background" Value="White"/>
                                         </Style>
                                     </DataGrid.Resources>
 
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="#" Binding="{Binding Index}" Width="50" FontFamily="lexend"/>
-
                                         <DataGridTemplateColumn Header="Code" Width="200">
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
@@ -363,7 +365,6 @@
                                         <DataGridTextColumn Header="Valid" Binding="{Binding ValidDate}" Width="200"/>
                                         <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
                                     </DataGrid.Columns>
-
                                 </DataGrid>
                             </StackPanel>
                         </Border>
