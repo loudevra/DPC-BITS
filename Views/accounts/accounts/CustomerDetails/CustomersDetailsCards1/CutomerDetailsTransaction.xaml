@@ -1,16 +1,12 @@
 ﻿<UserControl x:Class="DPC.Views.Accounts.Accounts.CustomerDetails.CustomerDetailsCards1.CustomerDetailsTransaction"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-            
-             mc:Ignorable="d"
-             HorizontalAlignment="Stretch"
-             VerticalAlignment="Stretch"
-             Background="Transparent"
-             MinWidth="0"
-             MinHeight="0">
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="DPC.Views.Accounts.Accounts.CustomerDetails.CustomerDetailsCards1.CustomerDetailsInnvoices"
+        mc:Ignorable="d"
+        Background="#D9D9D9">
 
     <UserControl.Resources>
         <Style x:Key="AddNewButtonStyle" TargetType="Button">
@@ -174,25 +170,14 @@
     </UserControl.Resources>
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <Grid Margin="0,0,0,0"
-      HorizontalAlignment="Stretch"
-      VerticalAlignment="Stretch">
+        <Grid Margin="20">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <!-- Header -->
-                <RowDefinition Height="Auto"/>
-                <!-- Controls -->
-                <RowDefinition Height="Auto"/>
-                <!-- Filters or Extra -->
                 <RowDefinition Height="*"/>
-                <!-- DataGrid -->
-                <RowDefinition Height="Auto"/>
-                <!-- Pagination -->
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-
 
             <!-- Title and Add Button -->
             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,10,0,10">
@@ -209,7 +194,7 @@
 
 
             <!-- Filters and Controls -->
-            <Border Grid.Row="2" Padding="5" Background="#F5F5F5" CornerRadius="10" BorderBrush="White" Margin="0,0,0,0">
+            <Border Grid.Row="2" Padding="5" Background="White" CornerRadius="10" BorderBrush="White" Margin="0,0,0,10">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -234,8 +219,7 @@
 
                     <!-- Right Controls -->
                     <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Width="Auto" Height="34" BorderBrush="#AEAEAE">
-
+                        <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Width="211" Height="34" BorderBrush="#AEAEAE">
                             <Grid>
                                 <TextBox BorderThickness="0" Background="Transparent" FontFamily="Lexend" Name="txtSearch" Style="{StaticResource RoundedTextboxStyle}" Height="23" Margin="20,0,20,0" VerticalAlignment="Center" />
                                 <materialDesign:PackIcon Kind="Magnify" Width="25" Height="25" Foreground="#AEAEAE" Margin="159,0,0,0" VerticalAlignment="Center"/>
@@ -246,21 +230,14 @@
             </Border>
 
             <!-- DataGrid Container -->
-            <Border Grid.Row="3"
-        Background="White"
-        CornerRadius="10"
-        BorderBrush="White"
-        BorderThickness="1"
-        Margin="0,0">
+            <Border Grid.Row="3" Background="White" CornerRadius="10" BorderBrush="White" BorderThickness="1">
                 <DataGrid Name="dataGrid"
-              Style="{StaticResource CustomDataGridStyle}"
-              HorizontalAlignment="Stretch"
-              VerticalAlignment="Stretch"
-              Margin="5"
-              HorizontalScrollBarVisibility="Auto"
-              VerticalScrollBarVisibility="Auto"
-              HeadersVisibility="All"
-              CanUserAddRows="False">
+                      Style="{StaticResource CustomDataGridStyle}"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      Margin="5"
+                      HorizontalScrollBarVisibility="Visible"
+                      VerticalScrollBarVisibility="Visible">
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
                             <Setter Property="Margin" Value="0,5,0,5"/>
@@ -284,19 +261,17 @@
                     </DataGrid.ColumnHeaderStyle>
 
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Date" Width="*" FontFamily="Lexend" Foreground="#474747"/>
+                        <DataGridTextColumn Header="Date"  Width="Auto" FontFamily="Lexend" Foreground="#474747"/>
                         <DataGridTemplateColumn Header="Debit" Width="110"/>
-                        <DataGridTextColumn Header="Credit" Width="*" MinWidth="100" FontFamily="Lexend" Foreground="#474747"/>
-                        <DataGridTextColumn Header="Account" Width="*" MinWidth="100" FontFamily="Lexend" Foreground="#474747"/>
-                        <DataGridTextColumn Header="Method" Width="*" MinWidth="120" FontFamily="Lexend" Foreground="#474747"/>
+                        <DataGridTextColumn Header="Credit" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#474747"/>
+                        <DataGridTextColumn Header="Account"  Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#474747"/>
+                        <DataGridTextColumn Header="Method" Width="Auto" MinWidth="120" FontFamily="Lexend" Foreground="#474747"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </Border>
 
-
             <!-- Pagination Controls -->
-            <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,10">
-
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="4">
                 <Border Background="White" CornerRadius="30" Padding="10,5" BorderThickness="2" BorderBrush="#adadad">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" >
 

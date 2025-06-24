@@ -27,7 +27,7 @@
                 </StackPanel>
                 <Border BorderBrush="#474747" BorderThickness="2" Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10">
                     <!--Product Name Value is here!-->
-                    <TextBox x:Name="TxtFromAccount" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontSize="16"/>
+                    <TextBox x:Name="TxtFromAccount" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend"/>
                 </Border>
 
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
@@ -35,14 +35,14 @@
                 </StackPanel>
                 <Border BorderBrush="#474747" BorderThickness="2" Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10">
                     <!--Product Name Value is here!-->
-                    <TextBox x:Name="TxtToAccount" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontSize="16"/>
+                    <TextBox x:Name="TxtToAccount" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend"/>
                 </Border>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                     <TextBlock Text="Amount:" Foreground="#474747" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend" Margin="0,10,5,0"/>
                 </StackPanel>
                 <Border BorderBrush="#474747" BorderThickness="2" Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10">
                     <!--Product Name Value is here!-->
-                    <TextBox x:Name="TxtAmount" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontSize="16"/>
+                    <TextBox x:Name="TxtAmount" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend"/>
                 </Border>
                 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="-5,10,0,10">

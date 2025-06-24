@@ -1,6 +1,6 @@
 ﻿Namespace DPC.Views.Accounts.Accounts.CustomerDetails.CustomerDetailsCards1
 
-    Public Class CustomerDetailsInvoices
+    Public Class CustomerDetailsInnvoices
         Public Sub New()
             InitializeComponent()
         End Sub

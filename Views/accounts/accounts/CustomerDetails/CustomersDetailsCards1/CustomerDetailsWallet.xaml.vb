@@ -1,6 +1,6 @@
 ﻿Namespace DPC.Views.Accounts.Accounts.CustomerDetails.CustomerDetailsCards1
     Public Class CustomerDetailsWallet
-        Public Sub New()
+        Private Sub New()
 
             ' This call is required by the designer.
             InitializeComponent()

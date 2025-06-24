@@ -1,18 +1,16 @@
 ﻿<UserControl x:Class="DPC.Views.Accounts.Accounts.CustomerDetails.CustomerDetailsCards1.CustomerDetailsWallet"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             Background="Transparent"
-             HorizontalAlignment="Stretch"
-             MinWidth="450">
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Background="Transparent" Width="650">
 
     <UserControl.Resources>
-        <!-- Rounded Border Style -->
+        <!--Border Style-->
         <Style x:Key="RoundedBorderStyle" TargetType="Border">
             <Setter Property="CornerRadius" Value="15"/>
         </Style>
 
-        <!-- ComboBox Style -->
+        <!--Combo Box Style-->
         <Style x:Key="RoundedComboBoxStyle" TargetType="ComboBox">
             <Setter Property="Foreground" Value="#AEAEAE"/>
             <Setter Property="BorderBrush" Value="#AEAEAE"/>
@@ -23,37 +21,45 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="ComboBox">
                         <Border Style="{StaticResource RoundedBorderStyle}" 
-                                Background="{TemplateBinding Background}" 
-                                BorderBrush="{TemplateBinding BorderBrush}" 
-                                BorderThickness="1">
+                        Background="{TemplateBinding Background}" 
+                        BorderBrush="{TemplateBinding BorderBrush}" 
+                        BorderThickness="1">
                             <Grid>
+                                <!-- Define two columns, Content on left, Arrow on right -->
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="35" />
                                 </Grid.ColumnDefinitions>
 
+                                <!-- Selected Item Content -->
                                 <ContentPresenter Name="ContentSite"
-                                                  IsHitTestVisible="False"
-                                                  Content="{TemplateBinding SelectionBoxItem}"
-                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                                  VerticalAlignment="Center"
-                                                  Margin="10,0,5,0"/>
+                                      IsHitTestVisible="False"
+                                      Content="{TemplateBinding SelectionBoxItem}"
+                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                      VerticalAlignment="Center"
+                                      Margin="10,0,5,0"/>
 
+                                <!-- Arrow Button (Right) -->
                                 <ToggleButton Name="ToggleButton" 
-                                              Grid.Column="1"
-                                              Focusable="False"
-                                              IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
-                                              Background="Transparent"
-                                              BorderBrush="Transparent"
-                                              BorderThickness="0"
-                                              Margin="0,0,5,0">
+                                  Grid.Column="1"
+                                  Focusable="False"
+                                  IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                  Background="Transparent"
+                                  BorderBrush="Transparent"
+                                  BorderThickness="0"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Center"
+                                  Margin="0,0,5,0">
                                     <ToggleButton.Style>
                                         <Style TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="BorderBrush" Value="Transparent"/>
+                                            <Setter Property="Padding" Value="0"/>
                                             <Setter Property="OverridesDefaultStyle" Value="True"/>
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="ToggleButton">
-                                                        <Border Background="Transparent">
+                                                        <Border Background="Transparent" BorderThickness="0">
                                                             <materialDesign:PackIcon Kind="ChevronDown" Width="20" Height="20" Foreground="#AEAEAE"/>
                                                         </Border>
                                                     </ControlTemplate>
@@ -63,15 +69,19 @@
                                     </ToggleButton.Style>
                                 </ToggleButton>
 
+                                <!-- Dropdown Items -->
                                 <Popup Name="Popup"
-                                       Placement="Bottom"
-                                       IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
-                                       AllowsTransparency="True"
-                                       MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                   Placement="Bottom"
+                                   IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                    <!-- MATCH WIDTH -->
                                     <Border Style="{StaticResource RoundedBorderStyle}" 
-                                            Background="White" 
-                                            BorderBrush="Black"
-                                            Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                        Background="White" 
+                                        BorderBrush="Black"
+                                        Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                        <!-- MATCH WIDTH -->
                                         <ScrollViewer>
                                             <StackPanel>
                                                 <ItemsPresenter/>
@@ -86,7 +96,7 @@
             </Setter>
         </Style>
 
-        <!-- Grid Style -->
+        <!--Rounder Grid Style-->
         <Style x:Key="RoundedGridStyle" TargetType="Border">
             <Setter Property="CornerRadius" Value="17"/>
             <Setter Property="BorderBrush" Value="#AEAEAE"/>
@@ -95,7 +105,7 @@
             <Setter Property="Padding" Value="5"/>
         </Style>
 
-        <!-- Textbox Style -->
+        <!-- Add the RoundedTextboxStyle that was missing in the original code -->
         <Style x:Key="RoundedTextboxStyle" TargetType="TextBox">
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Background" Value="Transparent"/>
@@ -118,73 +128,88 @@
     </UserControl.Resources>
 
     <Grid>
-        <ScrollViewer VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Disabled">
-            <Border Background="Transparent" CornerRadius="15" Padding="10">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
+        <!-- Main Content Area -->
+        <Grid>
+            <!-- Main Content (ScrollViewer) -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <Border Background="White" CornerRadius="15" Padding="5" Width="Auto">
+                    <Grid Margin="20">
+                        <!--<Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="51*"/>
+                            <ColumnDefinition Width="385*"/>
+                        </Grid.ColumnDefinitions>-->
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
 
-                    <StackPanel Grid.Row="0" Margin="10">
-                        <!-- Wallet Header -->
-                        <TextBlock Text="Wallet" FontSize="22" FontWeight="Bold" FontFamily="Lexend"
-                                   Foreground="#555555" Margin="0,0,0,20"/>
-
-                        <!-- Balance Card -->
-                        <Border Padding="20" Background="#767E8B" CornerRadius="10" Margin="0,0,0,15">
-                            <StackPanel>
-                                <TextBlock Text="Current Balance" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend"
-                                           Foreground="#FDFDFD" Margin="0,0,0,20"/>
-                                <TextBlock Text="₱ 1,000.00" FontSize="30" FontWeight="Bold" FontFamily="Lexend"
-                                           Foreground="#FDFDFD"/>
-                                <Button x:Name="BtnAddBalance" HorizontalAlignment="Right" Style="{StaticResource ButtonStyle}"
-                                        Margin="0,20,0,0" Height="40" Width="160" Background="#A0B2BA">
-                                    <StackPanel Orientation="Horizontal">
-                                        <materialDesign:PackIcon Kind="WalletAddOutline" Width="25" Height="25" Foreground="#FDFDFD" Margin="0,0,5,0"/>
-                                        <TextBlock Text="Add Balance" FontSize="17" Foreground="#FDFDFD" FontFamily="Lexend" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                </Button>
-                            </StackPanel>
-                        </Border>
-
-                        <!-- Payment History Section -->
-                        <StackPanel Margin="0,20,0,0">
-                            <TextBlock Text="Payment History" FontSize="22" FontWeight="Bold" FontFamily="Lexend"
-                                       Foreground="#555555" Margin="0,0,0,20"/>
-
-                            <!-- Payment Item -->
-                            <Border Padding="20,10" Background="#F5F5F5" CornerRadius="15" Margin="0,0,0,10">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <Ellipse Grid.Column="0" Width="70" Height="70" Fill="#AEAEAE"/>
-                                    <!-- Optional image:
-                                    <Ellipse.Fill>
-                                        <ImageBrush ImageSource="your_image_path_here"/>
-                                    </Ellipse.Fill>
-                                    -->
-
-                                    <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center" Margin="15,0,0,0">
-                                        <TextBlock Text="Legs Potato Chips" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend"
-                                                   Foreground="#555555"/>
-                                        <TextBlock Text="5 days ago" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend"
-                                                   Foreground="#AEAEAE"/>
-                                    </StackPanel>
-
-                                    <TextBlock Grid.Column="2" Text="₱ 550.00" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend"
-                                               Foreground="#555555" VerticalAlignment="Center"/>
-                                </Grid>
+                        <!-- Main Content -->
+                        <StackPanel Grid.Row="0" Margin="20,20,20,20">
+                            <!-- Header Section -->
+                            <TextBlock Text="Wallet" FontSize="22" FontWeight="Bold" FontFamily="Lexend"
+                            Foreground="#555555" VerticalAlignment="Center" Margin="0,0,0,20"/>
+                            <!-- Current Balance -->
+                            <Border Grid.Row="1" Padding="20" Background="#767E8B" CornerRadius="10"
+                                    BorderBrush="White" Margin="0,0,0,15" >
+                                <StackPanel Orientation="Vertical">
+                                    <!--Current Balance-->
+                                    <TextBlock Text="Current Balance" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend"
+                                    Foreground="#FDFDFD" VerticalAlignment="Center" Margin="0,0,0,20"/>
+                                   <!--Balance-->
+                                    <TextBlock Text="₱ 1,000.00" FontSize="30" FontWeight="Bold" FontFamily="Lexend"
+                                    Foreground="#FDFDFD" VerticalAlignment="Center" Margin="0,0,0,0"/>
+                                    <!--Add Balance Button-->
+                                    <Button x:Name="BtnAddBalance" HorizontalAlignment="Right" Style="{StaticResource ButtonStyle}"
+                                            Margin="20,0,0,0" Height="40" Width="160" Background="#A0B2BA">
+                                        <StackPanel Orientation="Horizontal">
+                                            <materialDesign:PackIcon Kind="WalletAddOutline" Width="25" Height="25" Foreground="#FDFDFD" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Add Balance" FontSize="17" Foreground="#FDFDFD" FontFamily="Lexend" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
                             </Border>
+
+                            <!-- Payment History-->
+                            <StackPanel Grid.Row="1" Margin="0,20,0,0" Orientation="Vertical">
+                                <TextBlock Text="Payment History" FontSize="22" FontWeight="Bold" FontFamily="Lexend"
+                                    Foreground="#555555" VerticalAlignment="Center" Margin="0,0,0,20"/>
+                                <Border Padding="20,10,20,10" Background="#F5F5F5" CornerRadius="15"
+                                Margin="0,0,0,10" >
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!--Insert Image of the Product: Use the Ellipse Fill-->
+                                        <Ellipse Grid.Column="0" Width="70" Height="70" Fill="#AEAEAE">
+                                            <!--UNCOMMENT THIS AND INSERT IMAGE-->
+                                            
+                                            <!--<Ellipse.Fill>
+                                                <ImageBrush ImageSource=""/>
+                                            </Ellipse.Fill>-->
+                                        </Ellipse>
+                                        
+                                        <!--Product name and History Purchase-->
+                                        <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center" Margin="15,0,0,0">
+                                            <TextBlock Text="Legs Potato Chips" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend"
+                                            Foreground="#555555"/>
+                                            <TextBlock Text="5 days ago" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend"
+                                            Foreground="#AEAEAE"/>
+                                        </StackPanel>
+                                        
+                                        <!--Product Price-->
+                                        <TextBlock Grid.Column="2" Text="₱ 550.00" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend"
+                                        Foreground="#555555" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
                         </StackPanel>
-                    </StackPanel>
-                </Grid>
-            </Border>
-        </ScrollViewer>
+                    </Grid>
+                </Border>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </UserControl>
