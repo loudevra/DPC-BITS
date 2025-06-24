@@ -582,7 +582,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
             ' Create StackPanel to contain the Border
             Dim stackPanel As New StackPanel With {
-                .Margin = New Thickness(2.5, 0, 2.5, 0)
+                .Margin = New Thickness(2.5, 10, 2.5, 0)
             }
 
             stackPanel.Children.Add(border)
@@ -652,7 +652,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
             ' Create StackPanel to contain the Border
             Dim stackPanel As New StackPanel With {
-                .Margin = New Thickness(2.5, 0, 2.5, 0)
+                .Margin = New Thickness(2.5, 2.5, 2.5, 0)
             }
 
             stackPanel.Children.Add(border)
@@ -1105,11 +1105,17 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
                     'Clears fields only after successfully adding
 
+                    Dim TaxNumber As Decimal = TotalTax.Text
+                    Dim TotalCostNumber As Decimal = TotalPrice.Text
+
+                    Dim TaxFormatted As String = TaxNumber.ToString("N2")
+                    Dim TotalFormatted As String = TotalCostNumber.ToString("N2")
+
                     StatementDetails.InvoiceNumberCache = InvoiceNumber.Text
                     StatementDetails.InvoiceDateCache = Date.Now.ToString("M/d/yyyy")
                     StatementDetails.DueDateCache = dueSelectedDate.ToString("MM-dd-yyyy")
-                    StatementDetails.TaxCache = $"₱ {TotalTax.Text}"
-                    StatementDetails.TotalCostCache = $"₱ {TotalPrice.Text}"
+                    StatementDetails.TaxCache = $"₱ {TaxFormatted}"
+                    StatementDetails.TotalCostCache = $"₱ {TotalFormatted}"
                     StatementDetails.OrderItemsCache = itemArray
                     StatementDetails.SupplierName = _selectedSupplier.SupplierName
                     StatementDetails.City = _selectedSupplier.City
