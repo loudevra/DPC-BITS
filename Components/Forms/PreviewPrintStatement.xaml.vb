@@ -1,9 +1,12 @@
 ﻿Imports System.Collections.ObjectModel
 Imports System.IO
+Imports System.Windows.Markup
+Imports DocumentFormat.OpenXml.Bibliography
+Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
 Imports Newtonsoft.Json
-Imports DPC.DPC.Data.Controllers
+Imports SkiaSharp
 
 Namespace DPC.Components.Forms
     Public Class PreviewPrintStatement
@@ -30,6 +33,11 @@ Namespace DPC.Components.Forms
             itemOrder = StatementDetails.OrderItemsCache
             base64Image = StatementDetails.ImageCache
             tempImagePath = StatementDetails.PathCache
+            SupplierNameBox.Text = StatementDetails.SupplierName
+            AddressLineOne.Text = StatementDetails.City & ", " & StatementDetails.Region
+            AddressLineTwo.Text = StatementDetails.Country
+            PhoneBox.Text = StatementDetails.Phone
+            EmailBox.Text = StatementDetails.Email
 
             If StatementDetails.signature = False Then
                 BrowseFile.Child = Nothing
@@ -58,6 +66,11 @@ Namespace DPC.Components.Forms
         End Sub
 
         Private Sub CancelButton(sender As Object, e As RoutedEventArgs)
+            Dim _city, _region As String
+
+            _city = StatementDetails.City
+            _region = StatementDetails.Region
+
             StatementDetails.InvoiceNumberCache = InvoiceNumber.Text
             StatementDetails.InvoiceDateCache = InvoiceDate.Text
             StatementDetails.DueDateCache = DueDate.Text
@@ -66,13 +79,19 @@ Namespace DPC.Components.Forms
             StatementDetails.OrderItemsCache = itemOrder
             StatementDetails.ImageCache = base64Image
             StatementDetails.PathCache = tempImagePath
+            StatementDetails.SupplierName = SupplierNameBox.Text
+            StatementDetails.City = _city
+            StatementDetails.Region = _region
+            StatementDetails.Country = AddressLineTwo.Text
+            StatementDetails.Phone = PhoneBox.Text
+            StatementDetails.Email = EmailBox.Text
 
             ViewLoader.DynamicView.NavigateToView("purchaseorderstatement", Me)
         End Sub
 
         Private Sub SavePrint(sender As Object, e As RoutedEventArgs)
             Dim dlg As New PrintDialog()
-            Dim docName As String = "PurchaseOrder-" & DateTime.Now.ToString()
+            Dim docName As String = "PurchaseOrder-" & DateTime.Now.ToString("yyyyMMdd-HHmmss")
 
             If dlg.ShowDialog() = True Then
                 ' Save original parent and layout
@@ -92,9 +111,11 @@ Namespace DPC.Components.Forms
                 PrintPreview.Margin = New Thickness(0)
                 PrintPreview.LayoutTransform = Transform.Identity
 
-                ' Measure the original size of the border
+                ' Ensure full layout and rendering
+                PrintPreview.UpdateLayout()
                 PrintPreview.Measure(New Size(Double.PositiveInfinity, Double.PositiveInfinity))
                 PrintPreview.Arrange(New Rect(PrintPreview.DesiredSize))
+                PrintPreview.UpdateLayout()
 
                 Dim borderWidth = PrintPreview.ActualWidth
                 Dim borderHeight = PrintPreview.ActualHeight
@@ -108,16 +129,29 @@ Namespace DPC.Components.Forms
                 Dim scaleY = printableHeight / borderHeight
                 Dim scale = Math.Min(scaleX, scaleY)
 
-                ' Wrap the Border in a Grid container with scale
+                ' Use your existing "container" Grid name
                 Dim container As New Grid()
                 container.LayoutTransform = New ScaleTransform(scale, scale)
                 container.Children.Add(PrintPreview)
 
                 container.Measure(New Size(printableWidth, printableHeight))
                 container.Arrange(New Rect(New Point(0, 0), New Size(printableWidth, printableHeight)))
+                container.UpdateLayout()
 
-                ' Print the Grid containing the scaled Border
-                dlg.PrintVisual(container, docName)
+                ' Wrap in a FixedDocument to ensure full fidelity
+                Dim fixedPage As New FixedPage()
+                fixedPage.Width = printableWidth
+                fixedPage.Height = printableHeight
+                fixedPage.Children.Add(container)
+
+                Dim pageContent As New PageContent()
+                CType(pageContent, IAddChild).AddChild(fixedPage)
+
+                Dim fixedDoc As New FixedDocument()
+                fixedDoc.Pages.Add(pageContent)
+
+                ' Print using DocumentPaginator (works for printer and PDF)
+                dlg.PrintDocument(fixedDoc.DocumentPaginator, docName)
 
                 ' Restore original layout
                 container.Children.Clear()
@@ -143,6 +177,12 @@ Namespace DPC.Components.Forms
             StatementDetails.signature = False
             StatementDetails.ImageCache = Nothing
             StatementDetails.PathCache = Nothing
+            StatementDetails.SupplierName = Nothing
+            StatementDetails.City = Nothing
+            StatementDetails.Region = Nothing
+            StatementDetails.Country = Nothing
+            StatementDetails.Phone = Nothing
+            StatementDetails.Email = Nothing
         End Sub
 
         Private Sub SaveToDB()
@@ -199,7 +239,7 @@ Namespace DPC.Components.Forms
 
                 Dim imagePreview As New Image()
                 imagePreview.Source = imageSource
-                imagePreview.MaxHeight = 50
+                imagePreview.MaxHeight = 70
 
                 BrowseFile.Child = imagePreview
 

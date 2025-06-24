@@ -32,6 +32,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             itemOrder = StatementDetails.OrderItemsCache
             base64Image = StatementDetails.ImageCache
             tempImagePath = StatementDetails.PathCache
+            SupplierNameBox.Text = StatementDetails.SupplierName
+            AddressLineOne.Text = StatementDetails.City & ", " & StatementDetails.Region
+            AddressLineTwo.Text = StatementDetails.Country
+            PhoneBox.Text = StatementDetails.Phone
+            EmailBox.Text = StatementDetails.Email
 
             If Not String.IsNullOrWhiteSpace(base64Image) Then
                 DisplayUploadedImage()
@@ -316,6 +321,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
 #Region "Navigation"
         Private Sub PrintPreview(sender As Object, e As RoutedEventArgs)
+            Dim _city, _region As String
+
+            _city = StatementDetails.City
+            _region = StatementDetails.Region
+
             StatementDetails.signature = If(String.IsNullOrWhiteSpace(base64Image), False, True)
             StatementDetails.InvoiceNumberCache = InvoiceNumber.Text
             StatementDetails.InvoiceDateCache = InvoiceDate.Text
@@ -325,6 +335,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             StatementDetails.OrderItemsCache = itemOrder
             StatementDetails.ImageCache = base64Image
             StatementDetails.PathCache = tempImagePath
+            StatementDetails.SupplierName = SupplierNameBox.Text
+            StatementDetails.City = _city
+            StatementDetails.Region = _region
+            StatementDetails.Country = AddressLineTwo.Text
+            StatementDetails.Phone = PhoneBox.Text
+            StatementDetails.Email = EmailBox.Text
 
             ViewLoader.DynamicView.NavigateToView("printpreview", Me)
         End Sub

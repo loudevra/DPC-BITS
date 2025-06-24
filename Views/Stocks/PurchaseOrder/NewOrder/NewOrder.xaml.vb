@@ -48,12 +48,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             MyDynamicGrid = CType(TableGridPanel.Children(0), Grid)
             AddNewRow()
 
-            StatementDetails.InvoiceNumberCache = Nothing
-            StatementDetails.InvoiceDateCache = Nothing
-            StatementDetails.DueDateCache = Nothing
-            StatementDetails.TaxCache = Nothing
-            StatementDetails.TotalCostCache = Nothing
-            StatementDetails.OrderItemsCache = Nothing
+            ClearFields()
+
 
             InvoiceNumber.Text = PurchaseOrderController.GenerateInvoice()
             ProductController.GetWarehouse(ComboBoxWarehouse)
@@ -194,6 +190,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             StatementDetails.TaxCache = Nothing
             StatementDetails.TotalCostCache = Nothing
             StatementDetails.OrderItemsCache = Nothing
+            StatementDetails.SupplierName = Nothing
+            StatementDetails.City = Nothing
+            StatementDetails.Region = Nothing
+            StatementDetails.Country = Nothing
+            StatementDetails.Phone = Nothing
+            StatementDetails.Email = Nothing
             _selectedSupplier = Nothing
             _selectedProduct = Nothing
             ClearAllRows()
@@ -1109,11 +1111,15 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                     StatementDetails.TaxCache = $"₱ {TotalTax.Text}"
                     StatementDetails.TotalCostCache = $"₱ {TotalPrice.Text}"
                     StatementDetails.OrderItemsCache = itemArray
+                    StatementDetails.SupplierName = _selectedSupplier.SupplierName
+                    StatementDetails.City = _selectedSupplier.City
+                    StatementDetails.Region = _selectedSupplier.Region
+                    StatementDetails.Country = _selectedSupplier.Country
+                    StatementDetails.Phone = _selectedSupplier.SupplierPhone
+                    StatementDetails.Email = _selectedSupplier.SupplierEmail
 
 
                     ViewLoader.DynamicView.NavigateToView("purchaseorderstatement", Me)
-
-                    ClearFields()
                 End If
             Catch ex As Exception
                 MessageBox.Show($"Error creating purchase order: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
