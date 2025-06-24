@@ -3,26 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="namespace:DPC.Views.Stocks.PurchaseOrder"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Background="#D9D9D9" FontFamily="Lexend">
+        Background="#D9D9D9">
 
-    <UserControl.Resources>
-        <Style x:Key="ButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="130"/>
-            <Setter Property="Height" Value="40"/>
-            <Setter Property="Background" Value="#555555"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="20" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </UserControl.Resources>
-    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -134,7 +116,7 @@
 
                 <StackPanel Grid.Row="0" Grid.Column="1"  Margin="25,10,0,10" Orientation="Vertical">
                     <Border BorderThickness="2" BorderBrush="Gray" CornerRadius="20" Background="White"
-                Padding="20,15,10,15" Margin="10,10,40,10" Height="360">
+                Padding="5" Margin="10,10,40,10" Height="360">
                         <ScrollViewer VerticalScrollBarVisibility="Auto" Style="{StaticResource ModernScrollViewerStyle}">
                             <StackPanel Background="#FDFDFD">
                                 <StackPanel>
@@ -220,10 +202,8 @@
                                     </StackPanel>
 
                                     <TextBlock Text="Order Note:" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,0,0"/>
-
-                                    <Border Style="{StaticResource RoundedBorderStyle}" Width="Auto" Margin="0,0,10,10" Padding="0,10,0,10" HorizontalAlignment="Stretch">
-                                        <TextBox Style="{StaticResource RoundedTextboxStyle}" Height="130" VerticalContentAlignment="Top" TextWrapping="Wrap"/>
-
+                                    <Border Style="{StaticResource RoundedBorderStyle}" Width="Auto" Margin="0,0,10,10" Padding="0,1" HorizontalAlignment="Stretch">
+                                        <TextBox x:Name="OrderNote" Style="{StaticResource RoundedTextboxStyle}" Height="130" VerticalContentAlignment="Top" Width="Auto"/>
                                     </Border>
                                 </StackPanel>
                             </StackPanel>
@@ -249,7 +229,7 @@
                             <ColumnDefinition Width=".1*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Border Grid.Row="0" Grid.ColumnSpan="8" Background="#555555" Padding="15" CornerRadius="10,10,0,0" Margin="0,0,0,5" />
+                        <Border Grid.Row="0" Grid.ColumnSpan="8" Background="#555555" Padding="20" CornerRadius="10,10,0,0"/>
 
                         <TextBlock Text="Item Name" Grid.Row="0" Grid.Column="0" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                         <TextBlock Text="Quantity" Grid.Row="0" Grid.Column="1" FontFamily="Lexend" Foreground="White" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Center"/>
@@ -262,7 +242,6 @@
                     </Grid>
 
                 </StackPanel>
-
 
                 <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical">
 
@@ -307,43 +286,31 @@
                     </StackPanel>
 
                     <Grid>
-
-                <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical" Margin="30,20,20,10">
-                    <Grid Width="Auto">
-
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
+                            <!-- For Label -->
+                            <ColumnDefinition Width="*"/>
+                            <!-- For Input Field -->
                         </Grid.ColumnDefinitions>
 
-                        <!--Payment Terms-->
-                        <StackPanel Grid.Column="0" Orientation="Vertical" Width="350">
-                            <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
-                                <Button x:Name="btnAddRow"
- Style="{StaticResource ButtonStyle}" Background="#2E466B">
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                        <materialDesign:PackIcon Kind="PlaylistAdd" Width="30" Height="30" Foreground="#FFFFFF" Margin="-15,0,5,0"/>
-                                        <TextBlock Text="Row" FontSize="16" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#FFFFFF" Margin="0,0,5,0"/>
-                                    </StackPanel>
-                                </Button>
-                            </StackPanel>
-                            <!--Payment Terms Combo Box-->
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock Text="Payment Terms:" FontSize="16" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#474747" Margin="0,20,5,10"/>
-                                <ComboBox Style="{StaticResource RoundedComboBoxStyle}" Height="40" Width="Auto">
-                                    <ComboBoxItem Content="" IsSelected="True"/>
-                                    <ComboBoxItem Content=""/>
-                                    <ComboBoxItem Content=""/>
-                                    <ComboBoxItem Content=""/>
-                                </ComboBox>
-                            </StackPanel>
-                            <TextBlock Text="Update Stock:" FontFamily="Lexend" FontSize="16" Foreground="#474747" FontWeight="SemiBold" Margin="0,20,0,5"/>
-                            <StackPanel Orientation="Horizontal">
-                                <RadioButton Content="Yes" IsChecked="True" GroupName="Choices" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,5,0"/>
-                                <RadioButton Content="No" GroupName="Choices" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="5,0,0,0"/>
-                            </StackPanel>
-                        </StackPanel>
+                        <!-- Shipping Label -->
+                        <TextBlock Text="Shipping: " FontFamily="Lexend" FontSize="14"
+                   Foreground="#474747" Margin="0,0,5,0"
+                   VerticalAlignment="Top" Grid.Column="0"/>
 
+                        <!-- Input Field with Border -->
+                        <StackPanel Grid.Column="1">
+                            <Border Style="{StaticResource RoundedBorderStyle}"
+                                    Margin="0,0,10,5" Padding="0,1"
+                                    HorizontalAlignment="Stretch">
+                                <TextBox Style="{StaticResource RoundedTextboxStyle}"
+                                         Height="14" Width="Auto"
+                                         HorizontalAlignment="Stretch"/>
+                            </Border>
+                            <TextBlock Text="( Tax: 0 )" FontFamily="Lexend" FontSize="10"
+                                       Foreground="#474747"/>
+                        </StackPanel>
+                    </Grid>
 
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                         <TextBlock Text="Grand Total: " FontFamily="Lexend" FontSize="14" Foreground="#474747"/>
@@ -358,50 +325,11 @@
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                             <TextBlock Text="Generate Order" VerticalAlignment="Center" FontFamily="Lexend" FontSize="12" Foreground="white"/>
                                         </StackPanel>
-
-                        <!--Generate Invoice-->
-                        <StackPanel Grid.Column="1" Orientation="Vertical" Width="Auto" HorizontalAlignment="Right" Margin="40,0,0,0">
-                            <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <TextBlock Text="Total Tax:" FontSize="16" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#474747" Margin="0,10,0,0"/>
-                                    <TextBlock Text="₱ 0" FontSize="16" VerticalAlignment="Center" FontWeight="Bold" Foreground="#090909" Margin="20,10,0,0"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <TextBlock Text="Total Discount:" FontSize="16" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#474747" Margin="0,10,0,0"/>
-                                    <TextBlock Text="₱ 0" FontSize="16" VerticalAlignment="Center" FontWeight="Bold" Foreground="#090909"  Margin="20,10,0,0"/>
-                                </StackPanel>
-                            </StackPanel>
-
-                            <StackPanel Orientation="Vertical" HorizontalAlignment="Left" Width="Auto">
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <TextBlock Text="Shipping:" FontSize="16" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#474747" Margin="0,10,0,0"/>
-                                    <Border Background="White" BorderBrush="#474747" BorderThickness="1" Padding="1" Width="240" CornerRadius="20" Margin="20,10,0,0" Height="40">
-                                        <TextBlock x:Name="txtShipping" Text="" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#474747" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
                                     </Border>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <TextBlock Text="Extra Discount:" FontSize="16" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#474747" Margin="0,10,0,0"/>
-                                    <Border Background="White" BorderBrush="#474747" BorderThickness="1" Padding="1" Width="240" CornerRadius="20" Margin="20,10,0,0" Height="40">
-                                        <TextBlock x:Name="txtExtraDiscount" Text="" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#474747" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <TextBlock Text="Grand Total(₱):" FontSize="16" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#474747" Margin="0,10,0,0"/>
-                                    <Border Background="White" BorderBrush="#474747" BorderThickness="1" Padding="1" Width="240" CornerRadius="20" Margin="20,10,0,0" Height="40">
-                                        <TextBlock x:Name="txtGrandTotal" Text="" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#474747" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                </StackPanel>
-                                <StackPanel Orientation="Vertical" HorizontalAlignment="Right" Margin="0,10,0,0">
-                                    <Button x:Name="btnGenerateOrder"
-                                     Width="240"
-                                     Style="{StaticResource ButtonStyle}" Background="#1D5642">
-                                        <TextBlock Text="Generate Order" FontSize="16" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#FFFFFF" Margin="0,0,5,0"/>
-                                    </Button>
-                                </StackPanel>
-                            </StackPanel>
-                        </StackPanel>
-                    </Grid>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
                 </StackPanel>
             </Grid>
         </ScrollViewer>

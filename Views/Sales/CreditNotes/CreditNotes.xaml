@@ -119,7 +119,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Style="{StaticResource RoundedBorderStyle}" Background="{TemplateBinding Background}" CornerRadius="20">
+                        <Border Style="{StaticResource RoundedBorderStyle}" Background="{TemplateBinding Background}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
