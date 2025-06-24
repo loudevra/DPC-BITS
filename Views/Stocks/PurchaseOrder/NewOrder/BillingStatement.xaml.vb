@@ -158,165 +158,165 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 #End Region
 
 #Region "Client File Upload"
-        Private Sub OpenClientFiles()
+        '    Private Sub OpenClientFiles()
 
-            Dim openFileDialog As New OpenFileDialog With {
-                .Filter = "Supported Files|*.jpg;*.jpeg;*.png;*.gif;*.docx;*.docs;*.txt;*.xls;*.xlsx;*.pdf",
-                .Title = "Select an Image"
-            }
+        '        Dim openFileDialog As New OpenFileDialog With {
+        '            .Filter = "Supported Files|*.jpg;*.jpeg;*.png;*.gif;*.docx;*.docs;*.txt;*.xls;*.xlsx;*.pdf",
+        '            .Title = "Select an Image"
+        '        }
 
-            If openFileDialog.ShowDialog() = True Then
-                Dim filePath As String = openFileDialog.FileName
-                Dim fileInfo As New FileInfo(filePath)
+        '        If openFileDialog.ShowDialog() = True Then
+        '            Dim filePath As String = openFileDialog.FileName
+        '            Dim fileInfo As New FileInfo(filePath)
 
-                If ValidateClientFiles(filePath) Then
-                    Dim fileSize As Double = Math.Round(fileInfo.Length / (1024 * 1024), 2)
+        '            If ValidateClientFiles(filePath) Then
+        '                Dim fileSize As Double = Math.Round(fileInfo.Length / (1024 * 1024), 2)
 
-                    Dim border As Border = CreateFilePreview(fileInfo.Name, fileSize)
+        '                Dim border As Border = CreateFilePreview(fileInfo.Name, fileSize)
 
-                    ClientFiles.Children.Add(border)
-                End If
-            End If
-        End Sub
+        '                ClientFiles.Children.Add(border)
+        '            End If
+        '        End If
+        '    End Sub
 
-        Public Shared Function ValidateClientFiles(filePath As String) As Boolean
-            Dim fileInfo As New FileInfo(filePath)
+        '    Public Shared Function ValidateClientFiles(filePath As String) As Boolean
+        '        Dim fileInfo As New FileInfo(filePath)
 
-            ' Check file size (2MB max)
-            If fileInfo.Length > 2 * 1024 * 1024 Then
-                MessageBox.Show("File is too large! Please upload an image under 2MB.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
-                Return False
-            End If
+        '        ' Check file size (2MB max)
+        '        If fileInfo.Length > 2 * 1024 * 1024 Then
+        '            MessageBox.Show("File is too large! Please upload an image under 2MB.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+        '            Return False
+        '        End If
 
-            ' Check file extension
-            Dim validExtensions As String() = {".jpg", ".jpeg", ".png", ".gif", ".docx", ".docs", ".txt", ".xls", ".xlsx", ".pdf"}
-            If Not validExtensions.Contains(fileInfo.Extension.ToLower()) Then
-                MessageBox.Show("Invalid file format!", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
-                Return False
-            End If
+        '        ' Check file extension
+        '        Dim validExtensions As String() = {".jpg", ".jpeg", ".png", ".gif", ".docx", ".docs", ".txt", ".xls", ".xlsx", ".pdf"}
+        '        If Not validExtensions.Contains(fileInfo.Extension.ToLower()) Then
+        '            MessageBox.Show("Invalid file format!", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+        '            Return False
+        '        End If
 
-            Return True
-        End Function
+        '        Return True
+        '    End Function
 
-        Private Sub Border_DragOver(sender As Object, e As DragEventArgs)
-            If e.Data.GetDataPresent(DataFormats.FileDrop) Then
-                e.Effects = DragDropEffects.Copy
-            Else
-                e.Effects = DragDropEffects.None
-            End If
-            e.Handled = True
-        End Sub
+        '    Private Sub Border_DragOver(sender As Object, e As DragEventArgs)
+        '        If e.Data.GetDataPresent(DataFormats.FileDrop) Then
+        '            e.Effects = DragDropEffects.Copy
+        '        Else
+        '            e.Effects = DragDropEffects.None
+        '        End If
+        '        e.Handled = True
+        '    End Sub
 
-        Private Sub Border_Drop(sender As Object, e As DragEventArgs)
-            If e.Data.GetDataPresent(DataFormats.FileDrop) Then
-                Dim files() As String = CType(e.Data.GetData(DataFormats.FileDrop), String())
+        '    Private Sub Border_Drop(sender As Object, e As DragEventArgs)
+        '        If e.Data.GetDataPresent(DataFormats.FileDrop) Then
+        '            Dim files() As String = CType(e.Data.GetData(DataFormats.FileDrop), String())
 
 
-                For Each file In files
+        '            For Each file In files
 
-                    Dim fileInfo As New FileInfo(file)
+        '                Dim fileInfo As New FileInfo(file)
 
-                    If ValidateClientFiles(file) Then
-                        Dim fileSize As Double = Math.Round(fileInfo.Length / (1024 * 1024), 2)
+        '                If ValidateClientFiles(file) Then
+        '                    Dim fileSize As Double = Math.Round(fileInfo.Length / (1024 * 1024), 2)
 
-                        Dim border As Border = CreateFilePreview(fileInfo.Name, fileSize)
+        '                    Dim border As Border = CreateFilePreview(fileInfo.Name, fileSize)
 
-                        ClientFiles.Children.Add(border)
-                    End If
+        '                    ClientFiles.Children.Add(border)
+        '                End If
 
-                Next
-            End If
-        End Sub
+        '            Next
+        '        End If
+        '    End Sub
 
-        Private Function CreateFilePreview(fileName As String, fileSizeMB As Double) As Border
-            ' Outer Border
-            Dim border As New Border With {
-        .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
-        .CornerRadius = New CornerRadius(3),
-        .Margin = New Thickness(0, 5, 0, 0)
-    }
+        '    Private Function CreateFilePreview(fileName As String, fileSizeMB As Double) As Border
+        '        ' Outer Border
+        '        Dim border As New Border With {
+        '    .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
+        '    .CornerRadius = New CornerRadius(3),
+        '    .Margin = New Thickness(0, 5, 0, 0)
+        '}
 
-            ' StackPanel container
-            Dim stackPanel As New StackPanel With {
-        .Orientation = Orientation.Vertical,
-        .HorizontalAlignment = HorizontalAlignment.Stretch,
-        .Margin = New Thickness(5)
-    }
+        '        ' StackPanel container
+        '        Dim stackPanel As New StackPanel With {
+        '    .Orientation = Orientation.Vertical,
+        '    .HorizontalAlignment = HorizontalAlignment.Stretch,
+        '    .Margin = New Thickness(5)
+        '}
 
-            ' Grid
-            Dim grid As New Grid()
-            grid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
-            grid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
-            grid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
+        '        ' Grid
+        '        Dim grid As New Grid()
+        '        grid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
+        '        grid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
+        '        grid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
 
-            ' PDF Icon
-            Dim pdfIcon As New PackIcon With {
-        .Kind = PackIconKind.FilePdfBox,
-        .Width = 20,
-        .Height = 20,
-        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#090909")),
-        .Margin = New Thickness(0, 0, 5, 0),
-        .VerticalAlignment = VerticalAlignment.Center
-    }
-            Grid.SetColumn(pdfIcon, 0)
+        '        ' PDF Icon
+        '        Dim pdfIcon As New PackIcon With {
+        '    .Kind = PackIconKind.FilePdfBox,
+        '    .Width = 20,
+        '    .Height = 20,
+        '    .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#090909")),
+        '    .Margin = New Thickness(0, 0, 5, 0),
+        '    .VerticalAlignment = VerticalAlignment.Center
+        '}
+        '        Grid.SetColumn(pdfIcon, 0)
 
-            ' File Info StackPanel
-            Dim fileInfoPanel As New StackPanel With {
-        .Orientation = Orientation.Vertical,
-        .VerticalAlignment = VerticalAlignment.Center
-    }
-            Grid.SetColumn(fileInfoPanel, 1)
+        '        ' File Info StackPanel
+        '        Dim fileInfoPanel As New StackPanel With {
+        '    .Orientation = Orientation.Vertical,
+        '    .VerticalAlignment = VerticalAlignment.Center
+        '}
+        '        Grid.SetColumn(fileInfoPanel, 1)
 
-            ' File Name Text
-            Dim fileNameText As New TextBlock With {
-        .Text = fileName,
-        .FontWeight = FontWeights.SemiBold,
-        .FontFamily = New FontFamily("Lexend"),
-        .FontSize = 6,
-        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#090909"))
-    }
+        '        ' File Name Text
+        '        Dim fileNameText As New TextBlock With {
+        '    .Text = fileName,
+        '    .FontWeight = FontWeights.SemiBold,
+        '    .FontFamily = New FontFamily("Lexend"),
+        '    .FontSize = 6,
+        '    .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#090909"))
+        '}
 
-            ' File Size Text
-            Dim fileSizeText As New TextBlock With {
-        .Text = $"{Math.Round(fileSizeMB, 2)} mb",
-        .FontWeight = FontWeights.SemiBold,
-        .FontFamily = New FontFamily("Lexend"),
-        .FontSize = 6,
-        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555"))
-    }
+        '        ' File Size Text
+        '        Dim fileSizeText As New TextBlock With {
+        '    .Text = $"{Math.Round(fileSizeMB, 2)} mb",
+        '    .FontWeight = FontWeights.SemiBold,
+        '    .FontFamily = New FontFamily("Lexend"),
+        '    .FontSize = 6,
+        '    .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555"))
+        '}
 
-            fileInfoPanel.Children.Add(fileNameText)
-            fileInfoPanel.Children.Add(fileSizeText)
+        '        fileInfoPanel.Children.Add(fileNameText)
+        '        fileInfoPanel.Children.Add(fileSizeText)
 
-            ' Trash Icon
-            Dim trashIcon As New PackIcon With {
-        .Kind = PackIconKind.TrashCanOutline,
-        .Width = 20,
-        .Height = 20,
-        .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#C75757")),
-        .Margin = New Thickness(5, 0, 0, 0),
-        .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
-        .VerticalAlignment = VerticalAlignment.Center,
-        .HorizontalAlignment = HorizontalAlignment.Right,
-        .Cursor = Cursors.Hand
-    }
-            AddHandler trashIcon.MouseLeftButtonUp, Sub()
-                                                        ClientFiles.Children.Remove(border)
-                                                    End Sub
+        '        ' Trash Icon
+        '        Dim trashIcon As New PackIcon With {
+        '    .Kind = PackIconKind.TrashCanOutline,
+        '    .Width = 20,
+        '    .Height = 20,
+        '    .Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#C75757")),
+        '    .Margin = New Thickness(5, 0, 0, 0),
+        '    .Background = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE")),
+        '    .VerticalAlignment = VerticalAlignment.Center,
+        '    .HorizontalAlignment = HorizontalAlignment.Right,
+        '    .Cursor = Cursors.Hand
+        '}
+        '        AddHandler trashIcon.MouseLeftButtonUp, Sub()
+        '                                                    ClientFiles.Children.Remove(border)
+        '                                                End Sub
 
-            Grid.SetColumn(trashIcon, 2)
+        '        Grid.SetColumn(trashIcon, 2)
 
-            ' Combine into Grid
-            grid.Children.Add(pdfIcon)
-            grid.Children.Add(fileInfoPanel)
-            grid.Children.Add(trashIcon)
+        '        ' Combine into Grid
+        '        grid.Children.Add(pdfIcon)
+        '        grid.Children.Add(fileInfoPanel)
+        '        grid.Children.Add(trashIcon)
 
-            ' Add grid to stack panel and stack panel to border
-            stackPanel.Children.Add(grid)
-            border.Child = stackPanel
+        '        ' Add grid to stack panel and stack panel to border
+        '        stackPanel.Children.Add(grid)
+        '        border.Child = stackPanel
 
-            Return border
-        End Function
+        '        Return border
+        '    End Function
 #End Region
 
 #Region "Navigation"
