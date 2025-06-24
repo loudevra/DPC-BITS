@@ -225,12 +225,12 @@
                                             Padding="15,15,15,15" Width="Auto" Height="450" BorderThickness="0">
                                     <ScrollViewer VerticalScrollBarVisibility="Hidden">
                                         <StackPanel Orientation="Vertical" Margin="5" >
-                                            <!--Header Label: Credit Note-->
-                                            <TextBlock Grid.Column="0" Text="Credit Note" FontWeight="SemiBold" FontFamily="Lexend" FontSize="20" Foreground="#AEAEAE" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                                            <!--Header Label: Quote Properties-->
+                                            <TextBlock Grid.Column="0" Text="Quote Properties" FontWeight="SemiBold" FontFamily="Lexend" FontSize="20" Foreground="#AEAEAE" VerticalAlignment="Center" Margin="0,0,20,0"/>
 
-                                            <!--Order Number-->
+                                            <!--Quote Number-->
                                             <StackPanel Orientation="Vertical">
-                                                <TextBlock Grid.Column="0" Text="Order Number:" FontWeight="SemiBold" FontFamily="Lexend"
+                                                <TextBlock Grid.Column="0" Text="Quote Number:" FontWeight="SemiBold" FontFamily="Lexend"
                                                                FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,10,20,5"/>
                                                 <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Margin="0,0,0,10"
                                                         Padding="5" Width="Auto" Height="34" BorderBrush="#474747">
@@ -258,9 +258,9 @@
                                                 </Border>
                                             </StackPanel>
 
-                                            <!--Order Date-->
+                                            <!--Quote Date-->
                                             <StackPanel Orientation="Vertical">
-                                                <TextBlock Grid.Column="0" Text="Order Date:" FontWeight="SemiBold" FontFamily="Lexend"
+                                                <TextBlock Grid.Column="0" Text="Quote Date:" FontWeight="SemiBold" FontFamily="Lexend"
                                                       FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,5"/>
                                                 <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Margin="0,0,0,10"
                                                         Padding="5" Width="Auto" Height="34" BorderBrush="#474747">
@@ -280,9 +280,9 @@
                                                 </Border>
                                             </StackPanel>
 
-                                            <!--Order Due Date-->
+                                            <!--Quote Validity-->
                                             <StackPanel Orientation="Vertical">
-                                                <TextBlock Grid.Column="0" Text="Order Due Date:" FontWeight="SemiBold" FontFamily="Lexend"
+                                                <TextBlock Grid.Column="0" Text="Quote Validity:" FontWeight="SemiBold" FontFamily="Lexend"
                                                         FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,5"/>
                                                 <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Margin="0,0,0,10"
                                                            Padding="5" Width="Auto" Height="34" BorderBrush="#474747">
@@ -382,7 +382,7 @@
                                         <Setter Property="HorizontalContentAlignment" Value="Center"/>
                                         <Setter Property="VerticalContentAlignment" Value="Center"/>
                                         <Setter Property="Padding" Value="10"/>
-                                        <Setter Property="Background" Value="#D98CAB"/>
+                                        <Setter Property="Background" Value="#1D3242"/>
                                     </Style>
                                 </DataGrid.ColumnHeaderStyle>
 
@@ -407,12 +407,12 @@
                                 </DataGrid.CellStyle>
                             </DataGrid>
                             <!--Products Info after the DataGrid-->
-                            <Border BorderBrush="#D98CAB" BorderThickness="2" Background="#FDFDFD" CornerRadius="15" Padding="0">
+                            <Border BorderBrush="#1D3242" BorderThickness="2" Background="#FDFDFD" CornerRadius="15" Padding="0">
                                 <StackPanel Orientation="Vertical" Width="Auto" >
                                     <!--Inputs of Product Into-->
                                     <StackPanel Orientation="Horizontal" Margin="10">
                                         <!--Product Name-->
-                                        <Border BorderBrush="#D98CAB" BorderThickness="2" Background="#FDFDFD"
+                                        <Border BorderBrush="#1D3242" BorderThickness="2" Background="#FDFDFD"
                                                 CornerRadius="15" Padding="5" Margin="0,0,5,0" Width="150">
                                             <TextBox x:Name="txtProductName"
                                             Text="Enter product name or code..." FontFamily="Lexend" FontSize="12"
@@ -421,7 +421,7 @@
                                                 />
                                         </Border>
                                         <!--Product Quantity-->
-                                        <Border BorderBrush="#D98CAB" BorderThickness="2" Background="#FDFDFD"
+                                        <Border BorderBrush="#1D3242" BorderThickness="2" Background="#FDFDFD"
                                                 CornerRadius="15" Padding="5" Margin="0,0,5,0">
                                             <TextBox x:Name="txtProductQuantiy"
                                                 Text="" FontFamily="Lexend" FontSize="12" Width="95"
@@ -430,7 +430,7 @@
                                                 />
                                         </Border>
                                         <!--Product Rate-->
-                                        <Border BorderBrush="#D98CAB" BorderThickness="2" Background="#FDFDFD"
+                                        <Border BorderBrush="#1D3242" BorderThickness="2" Background="#FDFDFD"
                                                 CornerRadius="15" Padding="5" Margin="0,0,5,0">
                                             <TextBox x:Name="txtProductRate"
                                                Text="" FontFamily="Lexend" FontSize="12" Width="80"
@@ -439,7 +439,7 @@
                                                />
                                         </Border>
                                         <!--Product Tax Percent-->
-                                        <Border BorderBrush="#D98CAB" BorderThickness="2" Background="#FDFDFD"
+                                        <Border BorderBrush="#1D3242" BorderThickness="2" Background="#FDFDFD"
                                                 CornerRadius="15" Padding="5" Margin="0,0,5,0">
                                             <TextBox x:Name="txtTaxPercent"
                                                Text="" FontFamily="Lexend" FontSize="12" Width="85"
@@ -457,7 +457,7 @@
                                                />
                                         </Border>
                                         <!--Product Discount -->
-                                        <Border BorderBrush="#D98CAB" BorderThickness="2" Background="#FDFDFD"
+                                        <Border BorderBrush="#1D3242" BorderThickness="2" Background="#FDFDFD"
                                                 CornerRadius="15" Padding="5" Margin="0,0,20,0">
                                             <TextBox x:Name="txtDiscount"
                                                Text="" FontFamily="Lexend" FontSize="12" Width="90"
@@ -470,7 +470,7 @@
                                                 CornerRadius="15" Padding="5" Margin="0,0,0,0" HorizontalAlignment="Center">
                                             <TextBlock x:Name="txtAmount"
                                                Text="₱0.00" FontFamily="Lexend" FontSize="12" Width="50"
-                                               Foreground="#D98CAB" FontWeight="SemiBold" TextWrapping="Wrap" Padding="5" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                               Foreground="#1D3242" FontWeight="SemiBold" TextWrapping="Wrap" Padding="5" HorizontalAlignment="Center" VerticalAlignment="Center"
                                                />
                                         </Border>
                                         <materialDesign:PackIcon Kind="PlaylistRemove" Width="50" Height="40" Foreground="#D23636" VerticalAlignment="Center"/>
@@ -478,7 +478,7 @@
                                     <!--Input of Product Description-->
                                     <StackPanel Width="Auto">
                                         <Border Margin="10"
-                                            BorderBrush="#D98CAB" BorderThickness="2"
+                                            BorderBrush="#1D3242" BorderThickness="2"
                                             CornerRadius="5" Padding="10" Width="Auto"
                                             Height="120" Background="Transparent">
                                             <TextBox Text="Enter product description (Optional)" x:Name="txtProductDescription"
