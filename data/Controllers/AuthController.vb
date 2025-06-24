@@ -10,7 +10,8 @@ Imports DPC.DPC.Data.Helpers ' Import PBKDF2Hasher
 Imports Microsoft.AspNetCore.Cryptography.KeyDerivation
 Imports System.Windows
 Imports DPC.DPC.Data.Models
-Imports DPC.DPC.Components.Navigation ' Required for MessageBox.Show()
+Imports DPC.DPC.Components.Navigation
+Imports System.Collections.ObjectModel ' Required for MessageBox.Show()
 
 Namespace DPC.Data.Controllers
     Public Class AuthController
@@ -23,6 +24,7 @@ Namespace DPC.Data.Controllers
 
         ' Sign-in function
         ' Adding an employee name and employee email to render the value when loggedin successfully in sidebar
+        ' Adding an log whenever the user login it will add to the logs
         Public Shared Function SignIn(username As String, password As String) As (String, String)
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
@@ -43,12 +45,11 @@ Namespace DPC.Data.Controllers
                                     ' Pass the value to the object
                                     Dim UserLogs As New Sidebar()
 
-                                    'UserLogs._OnUserEmail = Email
-                                    'Console.WriteLine($"Email Logged : {Email}")
                                     CacheOnLoggedInEmail = Email
-                                    'UserLogs._OnUserName = Name
-                                    'Console.WriteLine($"Name Logged : {Name}")
                                     CacheOnLoggedInName = Name
+                                    CacheOnEmployeeID = employeeID
+
+                                    EmployeeLoginHistoryController.AddLoginHistory(employeeID, Name, Email, DateTime.Now())
 
                                     Dim userRole As String = GetUserRole(roleID)
                                     Dim accessToken As String = GenerateJwtToken(employeeID, username, userRole, ACCESS_TOKEN_EXPIRY)
