@@ -246,9 +246,30 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                        <TextBlock Text="Date:" FontFamily="Lexend" FontWeight="Bold" FontSize="14" Foreground="#474747"/>
-                        <Border Style="{StaticResource RoundedBorderStyle}" Height="40">
-                            <TextBox Style="{StaticResource RoundedTextboxStyle}" Tag="MM/DD/YYYY"/>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,0" Grid.Column="1">
+                            <TextBlock Text="Date:" FontFamily="Lexend" FontWeight="Bold" FontSize="14" Foreground="#474747"/>
+                        </StackPanel>
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width=".05*"/>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <!-- Single Date Picker -->
+                                <DatePicker x:Name="SingleDatePicker"
+Style="{StaticResource SingleDatePickerStyle}"
+SelectedDate="{Binding SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+          
+SelectedDateChanged="SingleDatePicker_SelectedDateChanged"
+Opacity="0"
+IsHitTestVisible="False" />
+                                <!-- Calendar Icon -->
+                                <materialDesign:PackIcon Grid.Column="0" Kind="Calendar" Width="32" Height="25" Foreground="#474747" VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="10,0,0,0"/>
+                                <!-- Date Display - Now uses FormattedDate property -->
+                                <Button x:Name="DateButton" Grid.Column="1" Style="{StaticResource DateButtonStyle}" Click="StartDate_Click" Width="Auto" Margin="28,0,25,0">
+                                    <TextBlock Text="{Binding FormattedDate}" Margin="0,0,5,0" Foreground="#474747" Height="14"/>
+                                </Button>
+                            </Grid>
                         </Border>
                     </StackPanel>
 

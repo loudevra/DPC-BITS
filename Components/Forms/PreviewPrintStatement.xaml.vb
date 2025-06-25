@@ -1,0 +1,261 @@
+﻿Imports System.Collections.ObjectModel
+Imports System.IO
+Imports System.Windows.Markup
+Imports DocumentFormat.OpenXml.Bibliography
+Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Helpers
+Imports DPC.DPC.Data.Model
+Imports Newtonsoft.Json
+Imports SkiaSharp
+
+Namespace DPC.Components.Forms
+    Public Class PreviewPrintStatement
+
+        Private tempImagePath As String
+        Private base64Image As String
+        Private itemDataSource As New ObservableCollection(Of OrderItems)
+        Private itemOrder As New List(Of Dictionary(Of String, String))
+        Private checkingDataSource As New ObservableCollection(Of Checker)
+        Private Address As String
+
+        Public Sub New()
+
+            ' This call is required by the designer.
+            InitializeComponent()
+
+            ' Add any initialization after the InitializeComponent() call.
+
+            InvoiceNumber.Text = StatementDetails.InvoiceNumberCache
+            InvoiceDate.Text = StatementDetails.InvoiceDateCache
+            DueDate.Text = StatementDetails.DueDateCache
+            Tax.Text = StatementDetails.TaxCache
+            TotalCost.Text = StatementDetails.TotalCostCache
+            itemOrder = StatementDetails.OrderItemsCache
+            base64Image = StatementDetails.ImageCache
+            tempImagePath = StatementDetails.PathCache
+            SupplierNameBox.Text = StatementDetails.SupplierName
+            AddressLineOne.Text = StatementDetails.City & ", " & StatementDetails.Region
+            AddressLineTwo.Text = StatementDetails.Country
+            PhoneBox.Text = StatementDetails.Phone
+            EmailBox.Text = StatementDetails.Email
+
+            If StatementDetails.signature = False Then
+                BrowseFile.Child = Nothing
+            Else
+                DisplayUploadedImage()
+            End If
+
+            For Each item In StatementDetails.OrderItemsCache
+                Dim rate As Decimal = item("Rate")
+                Dim rateFormatted As String = rate.ToString("N2")
+
+                Dim linePrice As Decimal = item("Price")
+                Dim linePriceFormatted As String = linePrice.ToString("N2")
+
+                itemDataSource.Add(New OrderItems With {
+                        .Quantity = item("Quantity"),
+                        .Description = item("ItemName"),
+                        .UnitPrice = rateFormatted,
+                        .LinePrice = linePriceFormatted
+                    })
+            Next
+
+            checkingDataSource.Add(New Checker With {
+                    .SalesRep = CacheOnLoggedInName
+                })
+
+            checkingGrid.ItemsSource = checkingDataSource
+            dataGrid.ItemsSource = itemDataSource
+
+            AddHandler SaveDb.Click, AddressOf SaveToDB
+        End Sub
+
+        Private Sub CancelButton(sender As Object, e As RoutedEventArgs)
+            Dim _city, _region As String
+
+            _city = StatementDetails.City
+            _region = StatementDetails.Region
+
+            StatementDetails.InvoiceNumberCache = InvoiceNumber.Text
+            StatementDetails.InvoiceDateCache = InvoiceDate.Text
+            StatementDetails.DueDateCache = DueDate.Text
+            StatementDetails.TaxCache = Tax.Text
+            StatementDetails.TotalCostCache = TotalCost.Text
+            StatementDetails.OrderItemsCache = itemOrder
+            StatementDetails.ImageCache = base64Image
+            StatementDetails.PathCache = tempImagePath
+            StatementDetails.SupplierName = SupplierNameBox.Text
+            StatementDetails.City = _city
+            StatementDetails.Region = _region
+            StatementDetails.Country = AddressLineTwo.Text
+            StatementDetails.Phone = PhoneBox.Text
+            StatementDetails.Email = EmailBox.Text
+
+            ViewLoader.DynamicView.NavigateToView("purchaseorderstatement", Me)
+        End Sub
+
+        Private Sub SavePrint(sender As Object, e As RoutedEventArgs)
+            Dim dlg As New PrintDialog()
+            Dim docName As String = "PurchaseOrder-" & DateTime.Now.ToString("yyyyMMdd-HHmmss")
+
+            If dlg.ShowDialog() = True Then
+                ' Save original parent and layout
+                Dim originalParent = VisualTreeHelper.GetParent(PrintPreview)
+                Dim originalIndex As Integer = -1
+                Dim originalMargin = PrintPreview.Margin
+                Dim originalTransform = PrintPreview.LayoutTransform
+
+                ' Detach from parent if it's inside a Panel
+                If TypeOf originalParent Is Panel Then
+                    Dim panel = CType(originalParent, Panel)
+                    originalIndex = panel.Children.IndexOf(PrintPreview)
+                    panel.Children.Remove(PrintPreview)
+                End If
+
+                ' Remove margin and reset transform
+                PrintPreview.Margin = New Thickness(0)
+                PrintPreview.LayoutTransform = Transform.Identity
+
+                ' Ensure full layout and rendering
+                PrintPreview.UpdateLayout()
+                PrintPreview.Measure(New Size(Double.PositiveInfinity, Double.PositiveInfinity))
+                PrintPreview.Arrange(New Rect(PrintPreview.DesiredSize))
+                PrintPreview.UpdateLayout()
+
+                Dim borderWidth = PrintPreview.ActualWidth
+                Dim borderHeight = PrintPreview.ActualHeight
+
+                ' Get printable area
+                Dim printableWidth = dlg.PrintableAreaWidth
+                Dim printableHeight = dlg.PrintableAreaHeight
+
+                ' Calculate scale factor
+                Dim scaleX = printableWidth / borderWidth
+                Dim scaleY = printableHeight / borderHeight
+                Dim scale = Math.Min(scaleX, scaleY)
+
+                ' Use your existing "container" Grid name
+                Dim container As New Grid()
+                container.LayoutTransform = New ScaleTransform(scale, scale)
+                container.Children.Add(PrintPreview)
+
+                container.Measure(New Size(printableWidth, printableHeight))
+                container.Arrange(New Rect(New Point(0, 0), New Size(printableWidth, printableHeight)))
+                container.UpdateLayout()
+
+                ' Wrap in a FixedDocument to ensure full fidelity
+                Dim fixedPage As New FixedPage()
+                fixedPage.Width = printableWidth
+                fixedPage.Height = printableHeight
+                fixedPage.Children.Add(container)
+
+                Dim pageContent As New PageContent()
+                CType(pageContent, IAddChild).AddChild(fixedPage)
+
+                Dim fixedDoc As New FixedDocument()
+                fixedDoc.Pages.Add(pageContent)
+
+                ' Print using DocumentPaginator (works for printer and PDF)
+                dlg.PrintDocument(fixedDoc.DocumentPaginator, docName)
+
+                ' Restore original layout
+                container.Children.Clear()
+                PrintPreview.LayoutTransform = originalTransform
+                PrintPreview.Margin = originalMargin
+
+                If TypeOf originalParent Is Panel AndAlso originalIndex >= 0 Then
+                    Dim panel = CType(originalParent, Panel)
+                    panel.Children.Insert(originalIndex, PrintPreview)
+                End If
+            End If
+
+            SaveToDB()
+        End Sub
+
+        Private Sub ClearCache()
+            StatementDetails.InvoiceNumberCache = Nothing
+            StatementDetails.InvoiceDateCache = Nothing
+            StatementDetails.DueDateCache = Nothing
+            StatementDetails.TaxCache = Nothing
+            StatementDetails.TotalCostCache = Nothing
+            StatementDetails.OrderItemsCache = Nothing
+            StatementDetails.signature = False
+            StatementDetails.ImageCache = Nothing
+            StatementDetails.PathCache = Nothing
+            StatementDetails.SupplierName = Nothing
+            StatementDetails.City = Nothing
+            StatementDetails.Region = Nothing
+            StatementDetails.Country = Nothing
+            StatementDetails.Phone = Nothing
+            StatementDetails.Email = Nothing
+        End Sub
+
+        Private Sub SaveToDB()
+            Dim itemsJSON As String = JsonConvert.SerializeObject(itemOrder, Formatting.Indented)
+            Dim InvoiceDate As String = Date.Now.ToString("yyyy-MM-dd")
+            Dim SubVatString As String = SubVat.Text.Trim("₱"c, " "c)
+            Dim InstallString As String = Install.Text.Trim("₱"c, " "c)
+            Dim MobilizationString As String = Mobilization.Text.Trim("₱"c, " "c)
+            Dim TaxString As String = Tax.Text.Trim("₱"c, " "c)
+            Dim TotalCostString As String = TotalCost.Text.Trim("₱"c, " "c)
+
+            Dim DateParsed As Date = Date.Parse(StatementDetails.DueDateCache)
+            Dim DueDateFormatted As String = DateParsed.ToString("yyyy-MM-dd")
+
+            For Each child In BillAddress.Children
+                Address += child.Text & Environment.NewLine
+            Next
+
+            Dim success As Boolean = PurchaseOrderController.InsertInvoicePurchaseOrder(InvoiceNumber.Text, InvoiceDate, DueDateFormatted, Address, itemsJSON, SubVatString, InstallString, MobilizationString, TaxString, TotalCostString, base64Image)
+
+            If success Then
+                MessageBox.Show("Added to database")
+            End If
+
+            ClearCache()
+            ViewLoader.DynamicView.NavigateToView("neworder", Me)
+        End Sub
+
+        Public Sub DisplayUploadedImage()
+            Try
+                'Dim tempImagePath As String = Path.Combine(Path.GetTempPath(), "decoded_image.png")
+
+                ' Clean up previous image file
+                If File.Exists(tempImagePath) Then
+                    GC.Collect()
+                    GC.WaitForPendingFinalizers()
+                    File.Delete(tempImagePath)
+                End If
+
+                ' Decode and save new image
+                Base64Utility.DecodeBase64ToFile(base64Image, tempImagePath)
+
+                ' Load image safely
+                Dim imageSource As New BitmapImage()
+                Using stream As New FileStream(tempImagePath, FileMode.Open, FileAccess.Read, FileShare.Read)
+                    imageSource.BeginInit()
+                    imageSource.CacheOption = BitmapCacheOption.OnLoad
+                    imageSource.StreamSource = stream
+                    imageSource.EndInit()
+                End Using
+                imageSource.Freeze() ' Allow image to be accessed in different threads
+
+                BrowseFile.Child = Nothing
+
+                Dim imagePreview As New Image()
+                imagePreview.Source = imageSource
+                imagePreview.MaxHeight = 70
+
+                BrowseFile.Child = imagePreview
+
+                '' Set the image source
+                'UploadedImage.Source = imageSource
+            Catch ex As Exception
+                MessageBox.Show("Error decoding image: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+        End Sub
+    End Class
+
+End Namespace
+
+

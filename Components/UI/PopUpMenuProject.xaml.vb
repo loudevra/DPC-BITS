@@ -7,9 +7,11 @@ Namespace DPC.Components.UI
     Public Class PopUpMenuProjects
         Inherits UserControl
         Private Shared AssignProjects As Boolean
+        Private Shared RoleName As String
 
-        Public Sub New(Optional _assignProjects As Boolean = False)
+        Public Sub New(Optional _assignProjects As Boolean = False, Optional _roleName As String = Nothing)
             AssignProjects = _assignProjects
+            RoleName = _roleName
 
             InitializeComponent()
         End Sub
@@ -108,7 +110,7 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToNewProject(sender As Object, e As RoutedEventArgs)
-            If AssignProjects = True Then
+            If AssignProjects = True Or RoleName = "Administrator" Then
                 ViewLoader.DynamicView.NavigateToView("newproject", Me)
             Else
                 MessageBox.Show("Access not permitted. Consult with admin")
@@ -116,7 +118,7 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToManageProject(sender As Object, e As RoutedEventArgs)
-            If AssignProjects = True Then
+            If AssignProjects = True Or RoleName = "Administrator" Then
                 ViewLoader.DynamicView.NavigateToView("manageproject", Me)
             Else
                 MessageBox.Show("Access not permitted. Consult with admin")

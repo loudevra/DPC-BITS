@@ -1,6 +1,6 @@
-﻿Namespace DPC.Views.Sales.Saless
+﻿Namespace DPC.Views.Sales.Subscriptions
     Public Class NewSubscriptionInvoice
-        Private Sub New()
+        Public Sub New()
 
             ' This call is required by the designer.
             InitializeComponent()

@@ -24,7 +24,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         Public Sub New()
             InitializeComponent()
             SetupTimers()
-            InitializeUIElements()
             SetupControllerReferences()
             LoadInitialData()
 
@@ -34,6 +33,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         Private Sub AddNewProducts_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
             ' Now initialize the markup UI after the control has been loaded
             InitializeMarkupUI()
+            InitializeUIElements()
         End Sub
 
         Private Sub SetupTimers()
@@ -51,21 +51,21 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             If ProductController.IsVariation = Nothing Or ProductController.IsVariation = False Then
                 Toggle.IsChecked = False
                 ProductController.VariationChecker(Toggle, StackPanelVariation, StackPanelWarehouse,
-        StackPanelRetailPrice, StackPanelOrderPrice, StackPanelTaxRate,
-        StackPanelDiscountRate, StackPanelMarkup, BorderStocks, StackPanelAlertQuantity,
-        StackPanelStockUnits, OuterStackPanel)
+                                                   StackPanelRetailPrice, StackPanelOrderPrice, StackPanelTaxRate,
+                                                   StackPanelDiscountRate, StackPanelMarkup, BorderStocks, StackPanelAlertQuantity,
+                                                   StackPanelStockUnits, OuterStackPanel)
 
             ElseIf ProductController.IsVariation = True Then
                 Toggle.IsChecked = True
                 ProductController.VariationChecker(Toggle, StackPanelVariation, StackPanelWarehouse,
-        StackPanelRetailPrice, StackPanelOrderPrice, StackPanelTaxRate,
-        StackPanelDiscountRate, StackPanelMarkup, BorderStocks, StackPanelAlertQuantity,
-        StackPanelStockUnits, OuterStackPanel)
+                                                   StackPanelRetailPrice, StackPanelOrderPrice, StackPanelTaxRate,
+                                                   StackPanelDiscountRate, StackPanelMarkup, BorderStocks, StackPanelAlertQuantity,
+                                                   StackPanelStockUnits, OuterStackPanel)
             End If
 
             CheckBoxSerialNumber.IsChecked = True
             ProductController.SerialNumberChecker(CheckBoxSerialNumber, StackPanelSerialRow,
-    TxtStockUnits, BorderStockUnits)
+                                                  TxtStockUnits, BorderStockUnits)
 
             ' Set default values
             TxtDefaultTax.Text = "12"
@@ -135,25 +135,28 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         End Sub
 
         Private Sub BtnAddProduct_Click(sender As Object, e As RoutedEventArgs)
-            ProductController.InsertNewProduct(Toggle, CheckBoxSerialNumber,
-                TxtProductName, TxtProductCode, ComboBoxCategory, ComboBoxSubCategory,
-                ComboBoxWarehouse, ComboBoxBrand, ComboBoxSupplier, TxtRetailPrice,
-                TxtPurchaseOrder, TxtDefaultTax, TxtDiscountRate, TxtStockUnits,
-                TxtAlertQuantity, ComboBoxMeasurementUnit, TxtDescription,
-                SingleDatePicker, ProductController.SerialNumbers, base64Image)
+            Dim isSuccessAddProduct As Boolean = ProductController.InsertNewProduct(Toggle, CheckBoxSerialNumber,
+            TxtProductName, TxtProductCode, ComboBoxCategory, ComboBoxSubCategory,
+            ComboBoxWarehouse, ComboBoxBrand, ComboBoxSupplier, TxtRetailPrice,
+            TxtPurchaseOrder, TxtDefaultTax, TxtDiscountRate, TxtStockUnits,
+            TxtAlertQuantity, ComboBoxMeasurementUnit, TxtDescription,
+            SingleDatePicker, ProductController.SerialNumbers, base64Image)
 
-            ProductController.ClearInputFields(TxtProductName, TxtProductCode, TxtRetailPrice, TxtPurchaseOrder,
+            If isSuccessAddProduct Then
+                ProductController.ClearInputFields(TxtProductName, TxtProductCode, TxtRetailPrice, TxtPurchaseOrder,
                 TxtDefaultTax, TxtDiscountRate, TxtStockUnits, TxtAlertQuantity, TxtDescription,
                 ComboBoxCategory, ComboBoxSubCategory, ComboBoxWarehouse, ComboBoxMeasurementUnit,
                 ComboBoxBrand, ComboBoxSupplier, SingleDatePicker, MainContainer)
 
-            ProductController.SerialNumbers.Clear()
-            TxtProductVariation.Text = Nothing
-            DPC.Components.Forms.AddVariation._savedVariations.Clear()
-            DPC.Data.Controllers.ProductController.variationManager.GetAllVariationData().Clear()
+                ProductController.SerialNumbers.Clear()
+                TxtProductVariation.Text = Nothing
+                DPC.Components.Forms.AddVariation._savedVariations.Clear()
+                DPC.Data.Controllers.ProductController.variationManager.GetAllVariationData().Clear()
+                DPC.Data.Controllers.ProductController.variationManager.CurrentCombination = Nothing
 
-            If Not String.IsNullOrWhiteSpace(base64Image) Then
-                ResetImageComponents()
+                If Not String.IsNullOrWhiteSpace(base64Image) Then
+                    ResetImageComponents()
+                End If
             End If
 
         End Sub

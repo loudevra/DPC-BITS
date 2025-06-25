@@ -365,14 +365,23 @@
     <Compile Include="Components\ConfirmationModals\CancelSupplierAdding.xaml.vb">
       <DependentUpon>CancelSupplierAdding.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\ConfirmationModals\ConfirmPurchaseOrder.xaml.vb">
+      <DependentUpon>ConfirmPurchaseOrder.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\ConfirmationModals\ConfirmWarehouseDeletion.xaml.vb">
       <DependentUpon>ConfirmWarehouseDeletion.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\ConfirmationModals\DeleteCategoryModal.xaml.vb">
       <DependentUpon>DeleteCategoryModal.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\ConfirmationModals\DeleteProductConfirmation.xaml.vb">
+      <DependentUpon>DeleteProductConfirmation.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\ConfirmationModals\HRMConfirmationEmployeeSalaryUpdate.xaml.vb">
       <DependentUpon>HRMConfirmationEmployeeSalaryUpdate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\ConfirmationModals\HRMDeleteDepartment.xaml.vb">
+      <DependentUpon>HRMDeleteDepartment.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\ConfirmationModals\HRMEmployerSalariesModal.xaml.vb">
       <DependentUpon>HRMEmployerSalariesModal.xaml</DependentUpon>
@@ -425,8 +434,14 @@
     <Compile Include="Components\Forms\DeleteBrandPopup.xaml.vb">
       <DependentUpon>DeleteBrandPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\DeleteCouponPopout.xaml.vb">
+      <DependentUpon>DeleteCouponPopout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\EditBrand.xaml.vb">
       <DependentUpon>EditBrand.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\EditDepartment.xaml.vb">
+      <DependentUpon>EditDepartment.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\EditProductCategory.xaml.vb">
       <DependentUpon>EditProductCategory.xaml</DependentUpon>
@@ -449,6 +464,9 @@
     <Compile Include="Components\Forms\POSWalkInClient.xaml.vb">
       <DependentUpon>POSWalkInClient.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\PreviewPrintStatement.xaml.vb">
+      <DependentUpon>PreviewPrintStatement.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\QuotePopout.xaml.vb">
       <DependentUpon>QuotePopout.xaml</DependentUpon>
     </Compile>
@@ -466,6 +484,12 @@
     </Compile>
     <Compile Include="Components\Forms\SubscriptionStatus.xaml.vb">
       <DependentUpon>SubscriptionStatus.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\UpdateCouponsPopout.xaml.vb">
+      <DependentUpon>UpdateCouponsPopout.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\UpdateCouponsPopoutError.xaml.vb">
+      <DependentUpon>UpdateCouponsPopoutError.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\ViewExportDeletePopUp.xaml.vb">
       <DependentUpon>ViewExportDeletePopUp.xaml</DependentUpon>
@@ -501,6 +525,8 @@
     <Compile Include="Data\Controllers\DocumentController.vb" />
     <Compile Include="Data\Controllers\EmployeeController.vb" />
     <Compile Include="Data\Controllers\CalendarController.vb" />
+    <Compile Include="Data\Controllers\EmployeeLoginHistoryController.vb" />
+    <Compile Include="Data\Controllers\HRM\HRMController.vb" />
     <Compile Include="Data\Controllers\ManageProductsController.vb" />
     <Compile Include="Data\Controllers\Permissions\PermissionItem.vb" />
     <Compile Include="Data\Controllers\ProductCategoryController.vb" />
@@ -512,6 +538,7 @@
     <Compile Include="Data\Controllers\Product\ProductController.vb" />
     <Compile Include="Data\Controllers\Product\ProductViewModel.vb" />
     <Compile Include="Data\Controllers\Product\RenderProduct.vb" />
+    <Compile Include="Data\Controllers\Product\UpdateProduct.vb" />
     <Compile Include="Data\Controllers\Product\UploadProduct.vb" />
     <Compile Include="Data\Controllers\PromoCodeController.vb" />
     <Compile Include="Data\Controllers\PurchaseOrder\PurchaseOrderController.vb" />
@@ -524,10 +551,13 @@
     <Compile Include="Data\Converters\BooleanToVisibilityConverter.vb" />
     <Compile Include="Data\Converters\InverseBooleanToVisibilityConverter.vb" />
     <Compile Include="Data\Converters\PasswordMaskingBehavior.vb" />
+    <Compile Include="Data\Converters\RetainCacheProduct\CacheEditProduct.vb" />
     <Compile Include="Data\Converters\RetainCacheSupplier\CacheNewSupplier.vb" />
+    <Compile Include="Data\Converters\RetainCacheSupplier\CacheStockTransfer.vb" />
     <Compile Include="Data\Converters\RetainCacheSupplier\CacheUserLoggedIn.vb" />
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
+    <Compile Include="Data\DataModules\StatementDetails.vb" />
     <Compile Include="Data\Helpers\AutocompleteHelper.vb" />
     <Compile Include="Data\Helpers\Base64Utility.vb" />
     <Compile Include="Data\Helpers\ViewLoader\DynamicView.vb" />
@@ -545,10 +575,12 @@
     <Compile Include="Data\Models\BusinessLocation.vb" />
     <Compile Include="Data\Models\Client.vb" />
     <Compile Include="Data\Models\ClientGroup.vb" />
+    <Compile Include="Data\Models\DepartmentsSection.vb" />
     <Compile Include="Data\Models\Document.vb" />
     <Compile Include="Data\Models\Employee.vb" />
     <Compile Include="Data\Helpers\ExcelExporter.vb" />
     <Compile Include="Data\Models\ManageProducts.vb" />
+    <Compile Include="Data\Models\Invoice.vb" />
     <Compile Include="Data\Models\PermissionItem.vb" />
     <Compile Include="Data\Models\Product.vb" />
     <Compile Include="Data\Models\ProductCategory.vb" />
@@ -560,6 +592,60 @@
     </Compile>
     <Compile Include="Views\Accounts\Accounts\BalanceSheets.xaml.vb">
       <DependentUpon>BalanceSheets.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomerDetailsMain.xaml.vb">
+      <DependentUpon>CustomerDetailsMain.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsAccountStatement.xaml.vb">
+      <DependentUpon>CustomerDetailsAccountStatement.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsAddBalance.xaml.vb">
+      <DependentUpon>CustomerDetailsAddBalance.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsInvoices.xaml.vb">
+      <DependentUpon>CustomerDetailsInvoices.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsPersonalInformation.xaml.vb">
+      <DependentUpon>CustomerDetailsPersonalInformation.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsProjects.xaml.vb">
+      <DependentUpon>CustomerDetailsProjects.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsQuotes.xaml.vb">
+      <DependentUpon>CustomerDetailsQuotes.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsSubscriptions.xaml.vb">
+      <DependentUpon>CustomerDetailsSubscriptions.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsWallet.xaml.vb">
+      <DependentUpon>CustomerDetailsWallet.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CutomerDetailsTransaction.xaml.vb">
+      <DependentUpon>CutomerDetailsTransaction.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Corporational\EditProfilePersonalInfo.xaml.vb">
+      <DependentUpon>EditProfilePersonalInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Corporational\EditProfileSOthers.xaml.vb">
+      <DependentUpon>EditProfileSOthers.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\CustomerDetailsMain1.xaml.vb">
+      <DependentUpon>CustomerDetailsMain1.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\CustomerDetailsMain2.xaml.vb">
+      <DependentUpon>CustomerDetailsMain2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Residential\EditProfileBillingAddress.xaml.vb">
+      <DependentUpon>EditProfileBillingAddress.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Residential\EditProfilePersonalInfo.xaml.vb">
+      <DependentUpon>EditProfilePersonalInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Residential\EditProfileShippingAddress.xaml.vb">
+      <DependentUpon>EditProfileShippingAddress.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Residential\EditProfileSOthers.xaml.vb">
+      <DependentUpon>EditProfileSOthers.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Accounts\Accounts\ManageAccounts\AccountStatement.xaml.vb">
       <DependentUpon>AccountStatement.xaml</DependentUpon>
@@ -602,6 +688,9 @@
     </Compile>
     <Compile Include="Views\Auth\VerifyCode.xaml.vb">
       <DependentUpon>VerifyCode.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CRM\ClientGroup\AddNewClientGroupxaml.xaml.vb">
+      <DependentUpon>AddNewClientGroupxaml.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\CRM\ClientGroup\ClientGroups.xaml.vb">
       <DependentUpon>ClientGroups.xaml</DependentUpon>
@@ -654,6 +743,9 @@
     <Compile Include="Views\Dashboard\Dashboard.xaml.vb">
       <DependentUpon>Dashboard.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\DataReports\GraphicalReportsTab.xaml.vb">
+      <DependentUpon>GraphicalReportsTab.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\DataReports\Statements\StatementsTabs\DTRAccounts.xaml.vb">
       <DependentUpon>DTRAccounts.xaml</DependentUpon>
     </Compile>
@@ -665,6 +757,9 @@
     </Compile>
     <Compile Include="Views\DataReports\Statements\DTRTabStructured.xaml.vb">
       <DependentUpon>DTRTabStructured.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DataReports\SummaryReportsTab.xaml.vb">
+      <DependentUpon>SummaryReportsTab.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\HRM\Departments\DepartmentsView.xaml.vb">
       <DependentUpon>DepartmentsView.xaml</DependentUpon>
@@ -714,6 +809,12 @@
     <Compile Include="Views\Misc\Documents\Documents.xaml.vb">
       <DependentUpon>Documents.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\POS\CreditPayment.xaml.vb">
+      <DependentUpon>CreditPayment.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\POS\InvoicePayment.xaml.vb">
+      <DependentUpon>InvoicePayment.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\POS\PaymentCardsConfirmation.xaml.vb">
       <DependentUpon>PaymentCardsConfirmation.xaml</DependentUpon>
     </Compile>
@@ -722,6 +823,9 @@
     </Compile>
     <Compile Include="Views\POS\POSForm.xaml.vb">
       <DependentUpon>POSForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\POS\SubscriptionPayment.xaml.vb">
+      <DependentUpon>SubscriptionPayment.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Project\AddProject1.xaml.vb">
       <DependentUpon>AddProject1.xaml</DependentUpon>
@@ -792,8 +896,14 @@
     <Compile Include="Views\Stocks\ItemManager\NewProduct\ProductVariationDetails.xaml.vb">
       <DependentUpon>ProductVariationDetails.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Stocks\ItemManager\ProductManager\EditProduct.xaml.vb">
+      <DependentUpon>EditProduct.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stocks\ProductCategories\AddNewCategory.xaml.vb">
       <DependentUpon>AddNewCategory.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\PurchaseOrder\NewOrder\BillingStatement.xaml.vb">
+      <DependentUpon>BillingStatement.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Stocks\Suppliers\ManageBrands\ManageBrands.xaml.vb">
       <DependentUpon>ManageBrands.xaml</DependentUpon>
@@ -813,11 +923,23 @@
     <Page Include="Components\ConfirmationModals\CancelSupplierAdding.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\ConfirmationModals\ConfirmPurchaseOrder.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\ConfirmationModals\ConfirmWarehouseDeletion.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\ConfirmationModals\DeleteCategoryModal.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ConfirmationModals\DeleteProductConfirmation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ConfirmationModals\HRMDeleteDepartment.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -887,11 +1009,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\Forms\DeleteCouponPopout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\Forms\EditBrand.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\ConfirmationModals\HRMConfirmationEmployeeSalaryUpdate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\EditDepartment.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -923,6 +1053,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\Forms\PreviewPrintStatement.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\Forms\QuotePopout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -942,6 +1076,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\SubscriptionStatus.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\UpdateCouponsPopout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\UpdateCouponsPopoutError.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1103,6 +1245,78 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomerDetailsMain.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsAccountStatement.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsAddBalance.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsInvoices.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsPersonalInformation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsProjects.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsQuotes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsSubscriptions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CustomerDetailsWallet.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards1\CutomerDetailsTransaction.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Corporational\EditProfilePersonalInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Corporational\EditProfileSOthers.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\CustomerDetailsMain1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\CustomerDetailsMain2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Residential\EditProfileBillingAddress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Residential\EditProfilePersonalInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Residential\EditProfileShippingAddress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Accounts\CustomerDetails\CustomersDetailsCards2\Residential\EditProfileSOthers.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Accounts\Accounts\ManageAccounts\AccountStatement.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1151,6 +1365,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Auth\VerifyCode.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\ClientGroup\AddNewClientGroupxaml.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\CRM\ClientGroup\ClientGroups.xaml">
@@ -1220,6 +1438,10 @@
     <Page Include="Views\Dashboard\Dashboard.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\DataReports\GraphicalReportsTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\DataReports\Statements\StatementsTabs\DTRAccounts.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1233,6 +1455,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DataReports\Statements\DTRTabStructured.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DataReports\SummaryReportsTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1296,6 +1522,14 @@
     <Page Include="Views\Misc\Documents\Documents.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\POS\CreditPayment.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\POS\InvoicePayment.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\POS\PaymentCardsConfirmation.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1305,6 +1539,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\POS\POSForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\POS\SubscriptionPayment.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Project\AddProject1.xaml">
@@ -1397,9 +1635,17 @@
     <Page Include="Views\Stocks\ItemManager\NewProduct\ProductVariationDetails.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Stocks\ItemManager\ProductManager\EditProduct.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Stocks\ProductCategories\AddNewCategory.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\PurchaseOrder\NewOrder\BillingStatement.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Stocks\Suppliers\ManageBrands\ManageBrands.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -1553,6 +1799,10 @@
     <Resource Include="Assets\images\logosidebar.png" />
     <Resource Include="Assets\logo\BLACK WHOL.ico" />
     <Resource Include="Assets\images\logosidebarBlack.png" />
+    <Resource Include="Assets\images\watermark.png" />
+    <Content Include="Assets\images\profile3.png" />
+    <Content Include="Assets\images\profile1.png" />
+    <Resource Include="Assets\images\profile2.png" />
     <Content Include="Assets\mails\password_reset_code.html" />
     <Content Include="Assets\mails\password_reset_success.html" />
   </ItemGroup>

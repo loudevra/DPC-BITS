@@ -197,7 +197,8 @@ Style="{StaticResource RoundedButtonStyle}"
 Background="#555555"
 Foreground="#ffffff"
 Width="140"
-Height="29">
+Height="29"
+                                    Click="NavigateToAddNewTransaction">
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                                     <materialDesign:PackIcon Kind="Plus"
                          Width="16"

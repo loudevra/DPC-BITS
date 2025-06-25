@@ -1,0 +1,468 @@
+﻿<UserControl x:Class="DPC.Views.Stocks.PurchaseOrder.NewOrder.BillingStatement"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Background="#D9D9D9">
+
+    <UserControl.Resources>
+        <!-- Border Style -->
+        <Style x:Key="RoundedBorderStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="15"/>
+        </Style>
+
+        <Style x:Key="RoundedGridStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="BorderBrush" Value="#AEAEAE"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+
+        <!-- Add the RoundedTextboxStyle that was missing in the original code -->
+        <Style x:Key="RoundedTextboxStyle" TargetType="TextBox">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="FontFamily" Value="Lexend"/>
+        </Style>
+
+        <Style x:Key="ConvertButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="130"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Background" Value="#555555"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="15" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </UserControl.Resources>
+
+    <Grid>
+        <!-- Main Content Area -->
+        <Grid>
+            <!-- Main Content (ScrollViewer) -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="51*"/>
+                        <ColumnDefinition Width="385*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Main Content -->
+                    <StackPanel Grid.Row="1" Margin="20,20,20,20" Grid.ColumnSpan="2">
+                        <!-- Header Section -->
+                        <StackPanel x:Name="BackBtn" Cursor="Hand" Grid.Row="0" Orientation="Horizontal" Margin="0,10,0,10">
+                            <materialDesign:PackIcon Kind="ChevronLeft" Width="15" Height="20" Foreground="#555555" Margin="0,0,10,0"/>
+                            <TextBlock Text="Invoice" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#555555" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- buttons controls (views, link, print) -->
+                        <Border Grid.Row="1" Padding="5" Background="White" CornerRadius="10,10,0,0" Margin="0,0,0,0" BorderThickness="0" >
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <!-- Left Controls -->
+                                <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="10,0,5,5">
+                                    <!--view-->
+                                    <Button Style="{StaticResource IconButton}">
+                                        <StackPanel>
+                                            <materialDesign:PackIcon Kind="FolderEyeOutline" Width="20" Height="20" Margin="10,10,10,0" Foreground="#555555"/>
+                                            <TextBlock Text="View" FontSize="8" HorizontalAlignment="Center" Foreground="#555555"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <!--link-->
+                                    <Button Style="{StaticResource IconButton}">
+                                        <StackPanel>
+                                            <materialDesign:PackIcon Kind="LinkBoxVariantOutline" Width="20" Height="20" Margin="10,10,10,0" Foreground="#555555"/>
+                                            <TextBlock Text="Link" FontSize="8" HorizontalAlignment="Center" Foreground="#555555"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <!--print-->
+                                    <Button Background="White" Click="PrintPreview" Style="{StaticResource IconButton}">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                                                <materialDesign:PackIcon Kind="PrinterOutline" Width="20" Height="20" Margin="10,10,5,0" Foreground="#555555"/>
+                                                <TextBlock Text="Print" FontSize="8" HorizontalAlignment="Center" Margin="5,0,0,0" Foreground="#555555"/>
+                                            </StackPanel>
+                                            <materialDesign:PackIcon Kind="ChevronUp" Width="10" Height="10" VerticalAlignment="Center" Foreground="#555555"/>
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+
+                                <!-- Convert Buttons -->
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                    <Button
+                                        Style="{StaticResource ConvertButtonStyle}">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <materialDesign:PackIcon Kind="ArrowLeftTop" Width="16" Height="16" Foreground="#ADE0C1" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Convert to" FontSize="12" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#ADE0C1" Margin="0,0,5,0"/>
+                                            <materialDesign:PackIcon Kind="ChevronUp" Width="16" Height="16" Foreground="#ADE0C1"/>
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                        <StackPanel Grid.Row="1" Margin="0,0,0,0" >
+                            <Border Height="1121.28" Background="White" CornerRadius="0,0,10,10"  BorderThickness="0" Padding="10">
+                                <Grid>
+
+                                    <Grid.Background>
+                                        <ImageBrush ImageSource="/Assets/images/watermark.png" Opacity="0.1" Stretch="UniformToFill"/>
+                                    </Grid.Background>
+                                    
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="Auto"/>
+
+                                    </Grid.RowDefinitions>
+
+                                    <!--Rectangle as line-->
+                                    <Rectangle Grid.Row="0"
+                                       Width="auto"
+                                       Height="1" 
+                                       Stroke="#AEAEAE"
+                                       StrokeThickness="1"
+                                       Fill="Transparent"
+                                       VerticalAlignment="Top"
+                                       Margin="10,0"/>
+
+                                    <!--DPC Logo Side Bar-->
+                                    <StackPanel Grid.Row="0" Height="Auto" Width="232" HorizontalAlignment="Left" Orientation="Horizontal" Margin="0,10,0,17" Background="White" Grid.RowSpan="2">
+                                        <Image Source="/Assets/images/logosidebarBlack.png" Stretch="Fill" Width="234" Height="75"/>
+                                    </StackPanel>
+                                    <!--Billing Statement Label-->
+                                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,10">
+                                        <TextBlock Text="PURCHASE ORDER" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <!--Invoice and Date-->
+                                    <StackPanel Grid.Row="2" Orientation="Vertical" HorizontalAlignment="Right" Margin="5">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <TextBlock Text="PO #:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#090909" VerticalAlignment="Center"/>
+                                            <Border Background="White" BorderThickness="0.5,0.5,0.5,0.25"  BorderBrush="#090909" Padding="5,0" Width="100" Margin="10,0,0,0">
+                                                <TextBlock x:Name="InvoiceNumber" FontSize="10"/>
+                                            </Border>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <TextBlock Text="Date:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#090909" VerticalAlignment="Center"/>
+                                            <Border Background="White" BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="#090909" Padding="5,0" Width="100" Margin="10,0,0,0">
+                                                <TextBlock x:Name="InvoiceDate" FontSize="10"/>
+                                            </Border>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!--DreamPC's Info-->
+                                    <StackPanel Grid.Row="2" Orientation="Vertical" HorizontalAlignment="Left" Margin="5">
+                                        <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,5">
+                                            <TextBlock Text="Bill from:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#090909" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                        <!--Info-->
+                                        <StackPanel Orientation="Vertical" HorizontalAlignment="Right">
+                                            <TextBlock Text="Dream PC Build and I.T Solutions" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
+                                            <TextBlock Text="Unit 2A and 2B Legenda Building " FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
+                                            <TextBlock Text="Circumferential RD Antipolo, Philippines" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
+                                            <TextBlock Text="+639171873722" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
+                                            <TextBlock  Text="info.dreampcbuild@gmail.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
+                                            <TextBlock  Text="dreampcbuild.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!--Customers' Info-->
+                                    <StackPanel Grid.Row="3" Orientation="Vertical" HorizontalAlignment="Left" Margin="5">
+                                        <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,5">
+                                            <TextBlock Text="Bill to:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#090909" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                        <!--Info-->
+                                        <StackPanel Orientation="Vertical" HorizontalAlignment="Right">
+                                            <TextBlock x:Name="SupplierNameBox" Text="Eli Clark" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="AddressLineOne" Text="Wales, Swansea" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="AddressLineTwo" Text="United Kingdom" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="PhoneBox" Text="+63966634982" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="EmailBox" Text="brookerose@gmail.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <!--Status Info-->
+                                    <StackPanel Grid.Row="3" Orientation="Vertical" HorizontalAlignment="Right" Margin="5">
+                                        <!--Status-->
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="2">
+                                            <TextBlock Text="Status:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#555555" VerticalAlignment="Center"/>
+                                            <Border Background="#F0F0F0" BorderBrush="#090909" CornerRadius="5" Padding="1" Width="130" Margin="10,0,0,0">
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                    <TextBlock Text="Approved" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="ForestGreen" VerticalAlignment="Center" Width="90"/>
+                                                    <materialDesign:PackIcon Kind="CogSyncOutline" Width="12" Height="12" Foreground="#B3B3B3" Margin="10,0,5,0" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </StackPanel>
+                                        <!--Payment Terms-->
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="2">
+                                            <TextBlock Text="Payment Terms:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#555555" VerticalAlignment="Center"/>
+                                            <Border Background="#F0F0F0" BorderBrush="#090909" CornerRadius="5" Padding="1" Width="130" Margin="10,0,0,0">
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                    <TextBlock Text="Payment on Receipt" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="Black" VerticalAlignment="Center" Width="90"/>
+                                                    <materialDesign:PackIcon Kind="CogSyncOutline" Width="12" Height="12" Foreground="#B3B3B3" Margin="10,0,5,0" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </StackPanel>
+                                        <!--Due Date-->
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="2">
+                                            <TextBlock Text="Due Date:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#555555" VerticalAlignment="Center"/>
+                                            <Border Background="#F0F0F0" BorderBrush="#090909" CornerRadius="5" Padding="1" Width="130" Margin="10,0,0,0">
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                    <TextBlock x:Name="DueDate" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="Black" VerticalAlignment="Center" Width="90"/>
+                                                    <materialDesign:PackIcon Kind="CogSyncOutline" Width="12" Height="12" Foreground="#B3B3B3" Margin="10,0,5,0" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!--DataGrid 1: Seller Info-->
+                                    <DataGrid 
+            Margin="5"
+            Grid.Row="4"
+        IsReadOnly="True"
+x:Name="checkingGrid"
+AutoGenerateColumns="False"
+CanUserAddRows="False"
+HeadersVisibility="Column"
+GridLinesVisibility="None"
+                                        Background="Transparent"
+RowBackground="Transparent"
+BorderThickness="0">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Sales Representative:" Binding="{Binding SalesRep}" Width="*"/>
+                                            <DataGridTextColumn Header="Checked by:" Binding="{Binding CheckedBy}" Width="*"/>
+                                            <DataGridTextColumn Header="Approved by:" Binding="{Binding ApprovedBy}" Width="*"/>
+                                            <DataGridTextColumn Header="Payment Terms:" Width="*"/>
+                                        </DataGrid.Columns>
+                                        <DataGrid.RowStyle>
+                                            <Style TargetType="DataGridRow">
+                                                <Setter Property="FontFamily" Value="Lexend"/>
+                                                <Setter Property="FontSize" Value="9"/>
+                                                <Setter Property="Margin" Value="0,5,0,5"/>
+                                                <Setter Property="Padding" Value="5"/>
+                                                <Setter Property="Height" Value="Auto"/>
+                                                <Setter Property="MinHeight" Value="25"/>
+                                            </Style>
+                                        </DataGrid.RowStyle>
+
+                                        <DataGrid.ColumnHeaderStyle>
+                                            <Style TargetType="DataGridColumnHeader">
+                                                <Setter Property="FontFamily" Value="Lexend"/>
+                                                <Setter Property="FontSize" Value="9"/>
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                                <Setter Property="Foreground" Value="#FDFDFD"/>
+                                                <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                                <Setter Property="Padding" Value="10,5"/>
+                                                <Setter Property="Background" Value="#AEAEAE"/>
+                                            </Style>
+                                        </DataGrid.ColumnHeaderStyle>
+
+                                        <DataGrid.CellStyle>
+                                            <Style TargetType="DataGridCell">
+                                                <Setter Property="Padding" Value="10,5"/>
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="DataGridCell">
+                                                            <Border Padding="{TemplateBinding Padding}" 
+                      BorderBrush="{TemplateBinding BorderBrush}" 
+                      BorderThickness="{TemplateBinding BorderThickness}" 
+                      Background="{TemplateBinding Background}">
+                                                                <ContentPresenter VerticalAlignment="Center"/>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Setter Property="TextBlock.TextWrapping" Value="NoWrap"/>
+                                                <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis"/>
+                                            </Style>
+                                        </DataGrid.CellStyle>
+                                    </DataGrid>
+
+
+                                    <!--Bill Info-->
+                                        <DataGrid Grid.Row="5" Margin="5"
+                                                  x:Name="dataGrid"
+                                                  IsReadOnly="True"
+                                                  AutoGenerateColumns="False"
+                                                  CanUserAddRows="False"
+                                                  HeadersVisibility="Column"
+                                                  GridLinesVisibility="None"
+                                                  Background="Transparent"
+                                                  RowBackground="Transparent"
+                                                  BorderThickness="0">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="150"/>
+                                            <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*"/>
+                                            <DataGridTextColumn Header="Unit Price" Binding="{Binding UnitPrice}" Width="*"/>
+                                            <DataGridTextColumn Header="Line Price" Binding="{Binding LinePrice}" Width="*"/>
+                                        </DataGrid.Columns>
+                                        <DataGrid.RowStyle>
+                                                <Style TargetType="DataGridRow">
+                                                    <Setter Property="FontFamily" Value="Lexend"/>
+                                                    <Setter Property="FontSize" Value="9"/>
+                                                    <Setter Property="Margin" Value="0,5,0,5"/>
+                                                    <Setter Property="Padding" Value="5"/>
+                                                    <Setter Property="Height" Value="Auto"/>
+                                                    <Setter Property="MinHeight" Value="25"/>
+                                                </Style>
+                                            </DataGrid.RowStyle>
+
+                                            <DataGrid.ColumnHeaderStyle>
+                                                <Style TargetType="DataGridColumnHeader">
+                                                    <Setter Property="FontFamily" Value="Lexend"/>
+                                                    <Setter Property="FontSize" Value="9"/>
+                                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                                    <Setter Property="Foreground" Value="#FDFDFD"/>
+                                                    <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                                    <Setter Property="Padding" Value="10,5"/>
+                                                    <Setter Property="Background" Value="#090909"/>
+                                                </Style>
+                                            </DataGrid.ColumnHeaderStyle>
+
+                                            <DataGrid.CellStyle>
+                                                <Style TargetType="DataGridCell">
+                                                    <Setter Property="Padding" Value="10,5"/>
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="DataGridCell">
+                                                                <Border Padding="{TemplateBinding Padding}" 
+                                                                    BorderBrush="{TemplateBinding BorderBrush}" 
+                                                                    BorderThickness="{TemplateBinding BorderThickness}" 
+                                                                    Background="{TemplateBinding Background}">
+                                                                    <ContentPresenter VerticalAlignment="Center"/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Setter Property="TextBlock.TextWrapping" Value="NoWrap"/>
+                                                    <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis"/>
+                                                </Style>
+                                            </DataGrid.CellStyle>
+                                        </DataGrid>
+
+
+                                    <StackPanel Grid.Row="6">
+                                        <!--Customer Confirmation -->
+                                        <Border MaxHeight="70" BorderBrush="#090909" BorderThickness="1" Margin="5,0,5,0" Padding="0">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <!--Signature-->
+                                                <Border Grid.Column="0" BorderBrush="#090909" BorderThickness="0,0,1,0">
+                                                    <TextBlock FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
+            PRINTED NAME<LineBreak/>AND SIGNATURE
+                                                    </TextBlock>
+                                                </Border>
+
+                                                <!--Upload Signature-->
+                                                <Border x:Name="BrowseFile" Cursor="Hand" Background="White" Grid.Column="1" BorderBrush="#090909" BorderThickness="0,0,1,0">
+                                                    <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5">
+                                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                            <materialDesign:PackIcon Kind="TrayUpload" Width="12" Height="12" Foreground="#555555" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                            <TextBlock Text="Upload Signature (.png, .jpeg) " FontWeight="Bold" FontFamily="Lexend" FontSize="9" Foreground="#AEAEAE" VerticalAlignment="Center"/>
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5">
+                                                            <Border  BorderBrush="#AEAEAE" BorderThickness="1" Padding="1" Width="50" CornerRadius="5">
+                                                                <TextBlock Text="Browse" FontWeight="Bold" FontFamily="Lexend" FontSize="9" Foreground="#AEAEAE" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </StackPanel>
+                                                </Border>
+
+                                                <!--Total Cost Section-->
+                                                <Border Grid.Column="2">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="*" />
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <StackPanel Grid.Column="0">
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
+                                                                <TextBlock Text="SUBTOTAL VAT EX." FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
+                                                                <TextBlock Text="INSTALLATION/CONFIGURATION" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
+                                                                <TextBlock Text="MOBILIZATION" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
+                                                                <TextBlock Text="VAT 12%" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,1,0" Padding="1">
+                                                                <TextBlock Text="TOTAL COST" FontWeight="Bold" FontFamily="Lexend" FontSize="9" Foreground="#C75757" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                        </StackPanel>
+                                                        <StackPanel Grid.Column="1">
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                                <TextBlock Text="₱ 0.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                                <TextBlock Text="₱ 0.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                                <TextBlock Text="₱ 0.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                                <TextBlock x:Name="Tax" Text="₱ 0.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
+                                                                <TextBlock x:Name="TotalCost" Text="₱ 0.00" FontWeight="Bold" FontFamily="Lexend" FontSize="9" Foreground="#C75757" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </Grid>
+                                                </Border>
+                                            </Grid>
+                                        </Border>
+
+                                        <!--Notes-->
+                                        <Border BorderBrush="#090909" BorderThickness="1,0,1,1" Margin="5,0,5,0" Padding="0">
+                                            <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
+                                                <TextBlock Text="Notes:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" VerticalAlignment="Center" Margin="10"/>
+                                            </StackPanel>
+                                        </Border>
+                                        <!--Remarks-->
+                                        <Border BorderBrush="#090909" BorderThickness="1,0,1,1" Margin="5,0,5,0" Padding="0">
+                                            <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
+                                                <TextBlock Text="Remarks:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" VerticalAlignment="Center" Margin="10"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+                                   
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</UserControl>

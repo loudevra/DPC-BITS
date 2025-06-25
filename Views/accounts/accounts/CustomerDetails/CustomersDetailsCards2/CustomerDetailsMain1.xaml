@@ -1,0 +1,369 @@
+﻿<UserControl x:Class="DPC.Views.Accounts.Accounts.CustomerDetails.CustomerDetailsCards2.CustomerDetailsMain1"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Background="#D9D9D9">
+
+    <UserControl.Resources>
+        <!-- Border Style -->
+        <Style x:Key="RoundedBorderStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="15"/>
+        </Style>
+
+        <Style x:Key="RoundedGridStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="BorderBrush" Value="#AEAEAE"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+
+        <!-- Add the RoundedTextboxStyle that was missing in the original code -->
+        <Style x:Key="RoundedTextboxStyle" TargetType="TextBox">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="FontFamily" Value="Lexend"/>
+        </Style>
+
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="50"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="Background" Value="#090909"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="20" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!--Combo Box Style-->
+        <Style x:Key="RoundedComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Foreground" Value="#AEAEAE"/>
+            <Setter Property="BorderBrush" Value="#AEAEAE"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="FontFamily" Value="Lexend"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Border Style="{StaticResource RoundedBorderStyle}" 
+                 Background="{TemplateBinding Background}" 
+                 BorderBrush="{TemplateBinding BorderBrush}" 
+                 BorderThickness="1">
+                            <Grid>
+                                <!-- Define two columns, Content on left, Arrow on right -->
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="35" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Selected Item Content -->
+                                <ContentPresenter Name="ContentSite"
+                               IsHitTestVisible="False"
+                               Content="{TemplateBinding SelectionBoxItem}"
+                               ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                               VerticalAlignment="Center"
+                               Margin="10,0,5,0"/>
+
+                                <!-- Arrow Button (Right) -->
+                                <ToggleButton Name="ToggleButton" 
+                           Grid.Column="1"
+                           Focusable="False"
+                           IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                           Background="Transparent"
+                           BorderBrush="Transparent"
+                           BorderThickness="0"
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Center"
+                           Margin="0,0,5,0">
+                                    <ToggleButton.Style>
+                                        <Style TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="BorderBrush" Value="Transparent"/>
+                                            <Setter Property="Padding" Value="0"/>
+                                            <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ToggleButton">
+                                                        <Border Background="Transparent" BorderThickness="0">
+                                                            <materialDesign:PackIcon Kind="ChevronDown" Width="20" Height="20" Foreground="#AEAEAE"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ToggleButton.Style>
+                                </ToggleButton>
+
+                                <!-- Dropdown Items -->
+                                <Popup Name="Popup"
+                            Placement="Bottom"
+                            IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                            AllowsTransparency="True"
+                            Focusable="False"
+                            MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                    <!-- MATCH WIDTH -->
+                                    <Border Style="{StaticResource RoundedBorderStyle}" 
+                                 Background="White" 
+                                 BorderBrush="Black"
+                                 Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                        <!-- MATCH WIDTH -->
+                                        <ScrollViewer>
+                                            <StackPanel>
+                                                <ItemsPresenter/>
+                                            </StackPanel>
+                                        </ScrollViewer>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <!-- Main Content Area -->
+        <Grid>
+            <!-- Main Content (ScrollViewer) -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Main Content -->
+                    <StackPanel Grid.Row="1" Margin="20,20,20,20" Grid.ColumnSpan="2">
+                        <!-- Header Section -->
+                        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,10,0,10">
+                            <materialDesign:PackIcon Kind="ChevronLeft" Width="25" Height="30" Foreground="#555555" Margin="0,0,10,0"/>
+                            <TextBlock Text="Account Details" FontWeight="SemiBold" FontFamily="Lexend" FontSize="20" Foreground="#474747" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- Account Balance Info -->
+                        <Border Grid.Row="1" Padding="30" Background="White" CornerRadius="20,20,0,0"
+                        Margin="0,0,0,0" BorderThickness="0" Width="700">
+                            <StackPanel Orientation="Vertical">
+                                <!--Company Header-->
+                                <TextBlock Text="DREAM PC BUILD" FontSize="20" FontWeight="Bold" FontFamily="Lexend"
+                                Foreground="#474747" VerticalAlignment="Center" Margin="0,0,0,20"/>
+                                <!--Account Number Info-->
+                                <StackPanel Margin="0,0,0,5">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <TextBlock Grid.Column="0" Text="Account No" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend"
+                                        Foreground="#AEAEAE" VerticalAlignment="Center" Margin="0,0,50,0"/>
+                                        <TextBlock Grid.Column="1" x:Name="tbAccountNo" Text="1" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend"
+                                        Foreground="#555555" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </StackPanel>
+                                <!--Balance Info-->
+                                <StackPanel Margin="0,0,0,5">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" Text="Balance" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend"
+                                        Foreground="#AEAEAE" VerticalAlignment="Center" Margin="0,0,50,0"/>
+                                        <TextBlock Grid.Column="1" x:Name="tbBalance" Text="₱ 219,952.60" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend"
+                                        Foreground="#555555" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </StackPanel>
+                                <!--Opening Date Info-->
+                                <StackPanel Margin="0,0,0,5">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" Text="Opening Date" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend"
+                                        Foreground="#AEAEAE" VerticalAlignment="Center" Margin="0,0,50,0"/>
+                                        <TextBlock Grid.Column="1" x:Name="tbOpeningDate" Text="21-05-2023 12:04:57" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend"
+                                        Foreground="#555555" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </StackPanel>
+                                <!--Note Info-->
+                                <StackPanel Margin="0,0,0,5">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" Text="Note" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend"
+                                        Foreground="#AEAEAE" VerticalAlignment="Center" Margin="0,0,50,0"/>
+                                        <TextBlock Grid.Column="1" x:Name="tbNote" Text="Yuh" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend"
+                                        Foreground="#555555" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </StackPanel>
+                                <!--Type Info-->
+                                <StackPanel Margin="0,0,0,5">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" Text="Type" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend"
+                                        Foreground="#AEAEAE" VerticalAlignment="Center" Margin="0,0,50,0"/>
+                                        <TextBlock Grid.Column="1" x:Name="tbType" Text="Basic" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend"
+                                        Foreground="#555555" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!--Info Description-->
+                        <StackPanel Grid.Row="1" Margin="0,0,0,0" >
+                            <Border Background="White" CornerRadius="0,0,20,20"  BorderThickness="0" Padding="10,10,10,30">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!--Rectangle as line-->
+                                    <Rectangle Grid.Row="0"
+                                       Width="auto"
+                                       Height="1.5" 
+                                       Stroke="#AEAEAE"
+                                       StrokeThickness="1"
+                                       Fill="Transparent"
+                                       VerticalAlignment="Top"
+                                       Margin="0,0,0,20"/>
+                                    
+                                    <!-- Filters and Controls -->
+                                    <Border Grid.Row="1" Padding="10" Background="Transparent" CornerRadius="10" BorderBrush="White" Margin="0,0,0,15" VerticalAlignment="Center">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Left Controls -->
+                                            <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="10,0,0,0">
+                                                <ComboBox Width="130" Style="{StaticResource RoundedComboBoxStyle}" Height="28">
+                                                    <ComboBoxItem Content="All-Transactions" IsSelected="True"/>
+                                                    <ComboBoxItem Content=""/>
+                                                    <ComboBoxItem Content=""/>
+                                                    <ComboBoxItem Content=""/>
+                                                </ComboBox>
+                                                
+                                                <Border Style="{StaticResource RoundedGridStyle}" MinWidth="100" CornerRadius="15" Background="Transparent"
+                                                    Padding="5" Width="Auto" Height="28" VerticalAlignment="Center" Margin="10,0,0,0">
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="3*"/>
+                                                            <RowDefinition Height="19*"/>
+                                                        </Grid.RowDefinitions>
+                                                        <DatePickerTextBox x:Name="OrderDueDate" BorderThickness="0" BorderBrush="Transparent" FontWeight="SemiBold"
+                                                         Background="Transparent" FontFamily="Lexend" Margin="10,0,0,0"
+                                                         Text="DD-MM-YYYY"  Foreground="#AEAEAE"
+                                                         Height="12" VerticalAlignment="Center" HorizontalAlignment="Left" Width="90" Grid.RowSpan="2"/>
+                                                        <materialDesign:PackIcon Kind="Calendar" Width="20" Height="20" Foreground="#555555" Margin="100,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.RowSpan="2"/>
+                                                    </Grid>
+                                                </Border>
+
+                                            </StackPanel>
+
+                                            <!-- Right Controls -->
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <Button x:Name="BtnView" Style="{StaticResource ButtonStyle}" Height="35" Width="100" Background="#86BCD5">
+                                                    <TextBlock Text="View" FontSize="17" Foreground="#FDFDFD" FontWeight="SemiBold"/>
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                    <StackPanel Grid.Row="2">
+                                        <!-- Data Grid -->
+                                        <DataGrid x:Name="ProjectsDataGrid"
+                                           AutoGenerateColumns="False"
+                                           CanUserAddRows="False"
+                                           HeadersVisibility="Column"
+                                           GridLinesVisibility="None"
+                                           RowBackground="White"
+                                           AlternatingRowBackground="WhiteSmoke"
+                                           BorderThickness="0"
+                                           Width="Auto">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn Header="Date" Binding="{Binding Date}" Width="130"/>
+                                                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="130"/>
+                                                <DataGridTextColumn Header="Debit" Binding="{Binding Debit}" Width="130"/>
+                                                <DataGridTextColumn Header="Credit" Binding="{Binding Credit}" Width="130"/>
+                                                <DataGridTextColumn Header="Balance" Binding="{Binding Balance}" Width="130"/>
+                                            </DataGrid.Columns>
+                                            <DataGrid.RowStyle>
+                                                <Style TargetType="DataGridRow">
+                                                    <Setter Property="FontFamily" Value="Lexend"/>
+                                                    <Setter Property="Margin" Value="0,5,0,5"/>
+                                                    <Setter Property="Padding" Value="5"/>
+                                                    <Setter Property="Height" Value="Auto"/>
+                                                    <Setter Property="MinHeight" Value="40"/>
+                                                </Style>
+                                            </DataGrid.RowStyle>
+
+                                            <DataGrid.ColumnHeaderStyle>
+                                                <Style TargetType="DataGridColumnHeader">
+                                                    <Setter Property="FontFamily" Value="Lexend"/>
+                                                    <Setter Property="FontSize" Value="13"/>
+                                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                                    <Setter Property="Foreground" Value="#555555"/>
+                                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                                    <Setter Property="Padding" Value="10,9"/>
+                                                    <Setter Property="Background" Value="#AEAEAE"/>
+                                                </Style>
+                                            </DataGrid.ColumnHeaderStyle>
+
+                                            <DataGrid.CellStyle>
+                                                <Style TargetType="DataGridCell">
+                                                    <Setter Property="Padding" Value="10,5"/>
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="DataGridCell">
+                                                                <Border Padding="{TemplateBinding Padding}" 
+                 BorderBrush="{TemplateBinding BorderBrush}" 
+                 BorderThickness="{TemplateBinding BorderThickness}" 
+                 Background="{TemplateBinding Background}">
+                                                                    <ContentPresenter VerticalAlignment="Center"/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Setter Property="TextBlock.TextWrapping" Value="NoWrap"/>
+                                                    <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis"/>
+                                                </Style>
+                                            </DataGrid.CellStyle>
+                                        </DataGrid>
+                                    </StackPanel>
+
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</UserControl>

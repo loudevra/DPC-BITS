@@ -194,7 +194,8 @@
                 <Button x:Name="BtnAddNew"
                         Style="{StaticResource AddNewButtonStyle}"
                         Margin="20,0,0,0"
-                        Width="130">
+                        Width="130"
+                        Click="NavigateToAddAccout">
                     <StackPanel Orientation="Horizontal">
                         <materialDesign:PackIcon Kind="TextBoxPlusOutline" Width="25" Height="25" Foreground="#474747"/>
                         <TextBlock Text="Account" FontSize="17" Foreground="#474747" Margin="5,0,0,0"/>
