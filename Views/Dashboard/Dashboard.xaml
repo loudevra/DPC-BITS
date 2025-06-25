@@ -59,7 +59,8 @@
                                 </ToggleButton.Style>
                             </ToggleButton>
 
-                            <!-- Dropdown Items --><!--
+                            <!-- Dropdown Items -->
+                            <!--
                             <Popup Name="Popup"
                                    Placement="Bottom"
                                    IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
@@ -86,7 +87,7 @@
             <!-- Sticky Header -->
             <Border Grid.Row="0" Background="#D9D9D9" Padding="25,10,25,0">
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                    <TextBlock Text="Dashboard" FontSize="25" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    <TextBlock Text="Dashboard" FontSize="45" FontWeight="SemiBold" VerticalAlignment="Center" FontFamily="Lexend" />
                 </StackPanel>
             </Border>
 
@@ -121,8 +122,8 @@
                                                              HorizontalAlignment="Center"
                                                              VerticalAlignment="Center"/>
                                 </Grid>
-                                <TextBlock Text="Today Invoices" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center"/>
-                                <TextBlock Text="20" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Today Invoices" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" FontFamily="Lexend" />
+                                <TextBlock Text="20" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" FontFamily="Lexend" />
                             </StackPanel>
                         </Border>
 
@@ -137,8 +138,8 @@
                                                              HorizontalAlignment="Center"
                                                              VerticalAlignment="Center"/>
                                 </Grid>
-                                <TextBlock Text="This Month Invoices" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center"/>
-                                <TextBlock Text="20" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center"/>
+                                <TextBlock Text="This Month Invoices" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" FontFamily="Lexend" />
+                                <TextBlock Text="20" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" FontFamily="Lexend" />
                             </StackPanel>
                         </Border>
 
@@ -153,8 +154,8 @@
                                                              HorizontalAlignment="Center"
                                                              VerticalAlignment="Center"/>
                                 </Grid>
-                                <TextBlock Text="Today Sales" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center"/>
-                                <TextBlock Text="+?0.00" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Today Sales" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" FontFamily="Lexend" />
+                                <TextBlock Text="+?0.00" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" FontFamily="Lexend" />
                             </StackPanel>
                         </Border>
 
@@ -169,8 +170,8 @@
                                                              HorizontalAlignment="Center"
                                                              VerticalAlignment="Center"/>
                                 </Grid>
-                                <TextBlock Text="This Month Sales" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center"/>
-                                <TextBlock Text="+?0.00" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center"/>
+                                <TextBlock Text="This Month Sales" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" FontFamily="Lexend" />
+                                <TextBlock Text="+?0.00" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" FontFamily="Lexend" />
                             </StackPanel>
                         </Border>
                     </Grid>
@@ -183,8 +184,9 @@
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Text="Overview"
+                                       FontFamily="Lexend"
                                        FontWeight="SemiBold"
-                                       FontSize="14"
+                                       FontSize="20"
                                        VerticalAlignment="Top"
                                        HorizontalAlignment="Left"/>
 
@@ -219,7 +221,7 @@
                         <!-- Recent Buyers -->
                         <Border Background="White" CornerRadius="10" Padding="10" Margin="0,0,10,0">
                             <StackPanel>
-                                <TextBlock Text="Recent Buyers" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,10"/>
+                                <TextBlock Text="Recent Buyers" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,10" FontFamily="Lexend" />
                                 <!-- Buyer 1 -->
                                 <Grid Margin="0,5">
                                     <Grid.ColumnDefinitions>
@@ -244,7 +246,7 @@
                                         </Border>
                                     </StackPanel>
                                     <!-- Amount -->
-                                    <TextBlock Text="?10,000.00" Grid.Column="2" VerticalAlignment="Center" Foreground="#4CAF50" FontWeight="Bold"/>
+                                    <TextBlock Text="?10,000.00" Grid.Column="2" FontFamily="Lexend" VerticalAlignment="Center" Foreground="#4CAF50" FontWeight="Bold"/>
                                 </Grid>
 
                                 <!-- Buyer 2 -->
@@ -268,7 +270,7 @@
                                             <TextBlock Text="DUE" FontFamily="Lexend" Foreground="#F44336" FontSize="10" FontWeight="SemiBold"/>
                                         </Border>
                                     </StackPanel>
-                                    <TextBlock Text="?10,000.00" Grid.Column="2" VerticalAlignment="Center" Foreground="#F44336" FontWeight="Bold"/>
+                                    <TextBlock Text="?10,000.00" Grid.Column="2" FontFamily="Lexend" VerticalAlignment="Center" Foreground="#F44336" FontWeight="Bold"/>
                                 </Grid>
 
                                 <!-- Buyer 3 -->
@@ -292,7 +294,7 @@
                                             <TextBlock Text="PARTIAL" FontFamily="Lexend" Foreground="#2196F3" FontSize="10" FontWeight="SemiBold"/>
                                         </Border>
                                     </StackPanel>
-                                    <TextBlock Text="?10,000.00" Grid.Column="2" VerticalAlignment="Center" Foreground="#2196F3" FontWeight="Bold"/>
+                                    <TextBlock Text="?10,000.00" Grid.Column="2" FontFamily="Lexend" VerticalAlignment="Center" Foreground="#2196F3" FontWeight="Bold"/>
                                 </Grid>
                             </StackPanel>
                         </Border>
@@ -309,6 +311,7 @@
                                     </Grid.ColumnDefinitions>
 
                                     <TextBlock Text="Recent Invoices"
+                                               FontFamily="Lexend"
                                        FontWeight="SemiBold"
                                        FontSize="14"
                                        VerticalAlignment="Top"
@@ -392,7 +395,7 @@
                                 </DataGrid>
                             </StackPanel>
                         </Border>
-                        
+
                     </Grid>
                     <Grid Grid.Row="3" Margin="10">
                         <Grid.RowDefinitions>
@@ -408,36 +411,36 @@
                         <!-- February Income -->
                         <Border Grid.Column="0" Background="White" CornerRadius="10" Margin="5">
                             <StackPanel Margin="10" VerticalAlignment="Center">
-                                <TextBlock Text="0%" FontWeight="Bold" FontSize="20"/>
-                                <TextBlock Text="10,000" />
-                                <TextBlock Text="February Income" FontFamily="Lexend" />
+                                <TextBlock Text="0%" FontWeight="Bold" FontSize="20" FontFamily="Lexend"/>
+                                <TextBlock Text="10,000" FontFamily="Lexend" />
+                                <TextBlock Text="February Income" FontFamily="Lexend" FontWeight="Bold" />
                             </StackPanel>
                         </Border>
 
                         <!-- February Expenses -->
                         <Border Grid.Column="1" Background="White" CornerRadius="10" Margin="5">
                             <StackPanel Margin="10" VerticalAlignment="Center">
-                                <TextBlock Text="0%" FontWeight="Bold" FontSize="20"/>
-                                <TextBlock Text="10,000" />
-                                <TextBlock Text="February Expenses" FontFamily="Lexend"/>
+                                <TextBlock Text="0%" FontWeight="Bold" FontSize="20"  FontFamily="Lexend"/>
+                                <TextBlock Text="10,000" FontFamily="Lexend" />
+                                <TextBlock Text="February Expenses" FontFamily="Lexend" FontWeight="Bold"/>
                             </StackPanel>
                         </Border>
 
                         <!-- February Sales -->
                         <Border Grid.Column="2" Background="White" CornerRadius="10" Margin="5">
                             <StackPanel Margin="10" VerticalAlignment="Center">
-                                <TextBlock Text="0%" FontWeight="Bold" FontSize="20"/>
-                                <TextBlock Text="10,000" />
-                                <TextBlock Text="February Sales"/>
+                                <TextBlock Text="0%" FontWeight="Bold" FontSize="20"  FontFamily="Lexend"/>
+                                <TextBlock Text="10,000" FontFamily="Lexend" />
+                                <TextBlock Text="February Sales" FontWeight="Bold" FontFamily="Lexend"/>
                             </StackPanel>
                         </Border>
 
                         <!-- February Net Income -->
                         <Border Grid.Column="3" Background="White" CornerRadius="10" Margin="5">
                             <StackPanel Margin="10" VerticalAlignment="Center">
-                                <TextBlock Text="0%" FontWeight="Bold" FontSize="20"/>
-                                <TextBlock Text="10,000" />
-                                <TextBlock Text="February Net Income"/>
+                                <TextBlock Text="0%" FontWeight="Bold" FontSize="20" FontFamily="Lexend"/>
+                                <TextBlock Text="10,000" FontFamily="Lexend" />
+                                <TextBlock Text="February Net Income" FontFamily="Lexend" FontWeight="Bold"/>
                             </StackPanel>
                         </Border>
 
@@ -468,13 +471,14 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Text="Cashflow"
+                                               FontFamily="Lexend"
                                        FontWeight="SemiBold"
-                                       FontSize="14"
+                                       FontSize="30"
                                        VerticalAlignment="Center"
                                        Grid.Column="0"/>
-                                    <ComboBox Width="75" Style="{StaticResource cmbCashFlow}">
-                                        <ComboBoxItem Content="Income" IsSelected="True"/>
-                                        <ComboBoxItem Content="Expense"/>
+                                    <ComboBox Width="89" Style="{StaticResource cmbCashFlow}" HorizontalAlignment="Left" Margin="364,0,0,0">
+                                        <ComboBoxItem Content="Income" IsSelected="True" FontFamily="Lexend" />
+                                        <ComboBoxItem Content="Expense" FontFamily="Lexend"/>
                                     </ComboBox>
                                 </Grid>
 
@@ -491,7 +495,7 @@
                         <!-- Income/Expenses Gauge -->
                         <Border Grid.Column="1" Background="White" CornerRadius="10" Margin="5" Padding="10">
                             <StackPanel HorizontalAlignment="Center">
-                                <TextBlock Text="Income/Expenses"
+                                <TextBlock Text="Income/Expenses"  FontFamily="Lexend"
                                    FontWeight="SemiBold"
                                    FontSize="12"
                                    HorizontalAlignment="Center"

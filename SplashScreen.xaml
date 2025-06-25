@@ -40,15 +40,15 @@
                        HorizontalAlignment="Center"/>
 
                 <!-- Title -->
-                <TextBlock Text="DREAM PC BUILD" FontSize="32" FontWeight="Bold" Foreground="White"
+                <TextBlock Text="DREAM PC BUILD" FontSize="32" FontWeight="Bold" Foreground="White" FontFamily="Lexend"
                            HorizontalAlignment="Center" Grid.Row="1" Margin="0,10,0,0"/>
 
                 <!-- Subtitle -->
-                <TextBlock Text="Management System" FontSize="18" FontWeight="Regular" Foreground="White"
+                <TextBlock Text="Management System" FontSize="18" FontWeight="Regular" Foreground="White" FontFamily="Lexend"
                            HorizontalAlignment="Center" Grid.Row="2"/>
 
                 <!-- Loading Text -->
-                <TextBlock x:Name="LoadingText" Text="Loading..." FontSize="14" Foreground="LightGray"
+                <TextBlock x:Name="LoadingText" Text="Loading..." FontSize="14" Foreground="LightGray" FontFamily="Lexend"
                            HorizontalAlignment="Center" Grid.Row="3" Margin="0,5,0,0"/>
 
                 <!-- Progress Bar -->

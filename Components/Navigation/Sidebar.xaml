@@ -125,8 +125,8 @@
             <StackPanel x:Name="UserProfile" Orientation="Horizontal" VerticalAlignment="Bottom" Margin="5,20,0,10">
                 <Ellipse Width="35" Height="35" Fill="White"/>
                 <StackPanel Margin="10,0,0,0">
-                    <TextBlock x:Name="UserName" Text="Username" Foreground="White" FontWeight="Bold"/>
-                    <TextBlock x:Name="UserEmail" Text="name@mail.com" Foreground="Gray" FontSize="12"/>
+                    <TextBlock x:Name="UserName" Text="Username" Foreground="White" FontWeight="Bold" FontFamily="Lexend" />
+                    <TextBlock x:Name="UserEmail" Text="name@mail.com" Foreground="Gray" FontSize="12" FontFamily="Lexend" />
                 </StackPanel>
                 <materialDesign:PackIcon Kind="Cog" Width="24" Height="24" Foreground="White" Margin="50,5,0,0" FontFamily="Lexend"/>
             </StackPanel>

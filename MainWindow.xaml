@@ -35,9 +35,9 @@
                                     </Image.Effect>
                                 </Image>
 
-                                <TextBlock Text="DREAM PC BUILD" Foreground="White"
+                                <TextBlock Text="DREAM PC BUILD" Foreground="White" FontFamily="Lexend"
                                            FontSize="24" FontWeight="Bold" TextAlignment="Center"/>
-                                <TextBlock Text="AND IT SOLUTIONS INC." Foreground="Gray"
+                                <TextBlock Text="AND IT SOLUTIONS INC." Foreground="Gray" FontFamily="Lexend"
                                            FontSize="14" TextAlignment="Center"/>
                             </StackPanel>
                         </Grid>
