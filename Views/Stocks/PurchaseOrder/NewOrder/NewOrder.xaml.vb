@@ -1113,7 +1113,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
                     StatementDetails.InvoiceNumberCache = InvoiceNumber.Text
                     StatementDetails.InvoiceDateCache = Date.Now.ToString("M/d/yyyy")
-                    StatementDetails.DueDateCache = dueSelectedDate.ToString("MM-dd-yyyy")
+                    StatementDetails.DueDateCache = dueSelectedDate.ToString("M/d/yyyy")
                     StatementDetails.TaxCache = $"₱ {TaxFormatted}"
                     StatementDetails.TotalCostCache = $"₱ {TotalFormatted}"
                     StatementDetails.OrderItemsCache = itemArray
@@ -1123,6 +1123,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                     StatementDetails.Country = _selectedSupplier.Country
                     StatementDetails.Phone = _selectedSupplier.SupplierPhone
                     StatementDetails.Email = _selectedSupplier.SupplierEmail
+                    StatementDetails.paymentTerms = cmbPaymentTerms.Text
 
 
                     ViewLoader.DynamicView.NavigateToView("purchaseorderstatement", Me)
