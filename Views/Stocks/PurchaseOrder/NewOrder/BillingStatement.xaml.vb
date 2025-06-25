@@ -44,11 +44,17 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
             For Each item In StatementDetails.OrderItemsCache
 
+                Dim rate As Decimal = item("Rate")
+                Dim rateFormatted As String = rate.ToString("N2")
+
+                Dim linePrice As Decimal = item("Price")
+                Dim linePriceFormatted As String = linePrice.ToString("N2")
+
                 itemDataSource.Add(New OrderItems With {
                     .Quantity = item("Quantity"),
                     .Description = item("ItemName"),
-                    .UnitPrice = item("Rate"),
-                    .LinePrice = item("Price")
+                    .UnitPrice = rateFormatted,
+                    .LinePrice = linePriceFormatted
                 })
             Next
 
