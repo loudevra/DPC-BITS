@@ -445,7 +445,7 @@ PRINTED NAME AND SIGNATURE
                             </Border>
                             <Border BorderBrush="#090909" BorderThickness="1,0,1,1" Margin="5,0,5,0" Padding="0,3">
                                 <StackPanel>
-                                    <TextBlock Text="Unit 2A &amp; 2B LEGENDA BUILDING CIRCUMFERENCIAL RD. | ANTIPOLO CITY, RIZAL 1870 | PHONE: +639171873722 | TEL: 02-8801-4252 | EMAIL: CS.DREAMPCBUILD@OUTLOOK.COM" TextAlignment="Center" FontFamily="Lexend" FontSize="7" Foreground="#090909"/>
+                                    <TextBlock Text="Unit 2A &amp; 2B LEGENDA BUILDING CIRCUMFERENCIAL RD. | ANTIPOLO CITY, RIZAL 1870 | PHONE: +639171873722 | TEL: 02-8801-4252 | EMAIL: INFO.DREAMPCBUILD@GMAIL.COM" TextAlignment="Center" FontFamily="Lexend" FontSize="7" Foreground="#090909"/>
                                     <TextBlock Text="MAKE ALL CHECKS PAYABLE TO DREAM PC BUILD AND IT SOLUTIONS INC" FontWeight="Bold" Margin="0,3,0,0" TextAlignment="Center" FontFamily="Lexend" FontSize="11" Foreground="#090909"/>
                                     <TextBlock Text="Thank you for your business!" TextAlignment="Center" FontFamily="Lexend" FontSize="8" Foreground="#090909"/>
                                 </StackPanel>
