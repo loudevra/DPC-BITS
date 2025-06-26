@@ -3,7 +3,8 @@ Imports System.Collections.ObjectModel
 Imports DPC.DPC.Data.Model
 Imports System.Security.Cryptography
 Imports System.Text
-Imports DPC.DPC.Data.Helpers ' Import PBKDF2Hasher
+Imports DPC.DPC.Data.Helpers
+Imports DPC.DPC.Data.Models ' Import PBKDF2Hasher
 
 Namespace DPC.Data.Controllers
     Public Class EmployeeController
@@ -94,8 +95,8 @@ Namespace DPC.Data.Controllers
             Public Property Value As String
         End Class
 
-        Public Shared Function GetBusinessLocations() As List(Of Location)
-            Dim locations As New List(Of Location)
+        Public Shared Function GetBusinessLocations() As List(Of KeyValuePair(Of Integer, String))
+            Dim locations As New List(Of KeyValuePair(Of Integer, String))
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
@@ -103,10 +104,7 @@ Namespace DPC.Data.Controllers
                     Using cmd As New MySqlCommand(query, conn)
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
-                                locations.Add(New Location With {
-                            .Key = reader.GetInt32(0),
-                            .Value = reader.GetString(1)
-                        })
+                                locations.Add(New KeyValuePair(Of Integer, String)(reader.GetInt32(0), reader.GetString(1)))
                             End While
                         End Using
                     End Using
@@ -115,6 +113,26 @@ Namespace DPC.Data.Controllers
                 MessageBox.Show($"Error fetching business locations: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
             Return locations
+        End Function
+
+        Public Shared Function GetDepartments() As List(Of String)
+            Dim department As New List(Of String)
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "SELECT departmentName FROM departments"
+                    Using cmd As New MySqlCommand(query, conn)
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            While reader.Read()
+                                department.Add(reader.GetString(0))
+                            End While
+                        End Using
+                    End Using
+                End Using
+            Catch ex As Exception
+                MessageBox.Show($"Error fetching business locations: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+            Return department
         End Function
 
         ' Get Employee Info with Role and Location

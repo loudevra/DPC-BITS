@@ -262,7 +262,7 @@
                 <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Vertical"  Margin="25,10,0,10">
                     <TextBlock Text="Payment Terms:"  FontFamily="Lexend" FontSize="14" Foreground="#474747" FontWeight="SemiBold" Margin="0,0,0,5"/>
                     <StackPanel HorizontalAlignment="Stretch" Width="Auto">
-                        <ComboBox SelectedIndex="0" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold">
+                        <ComboBox x:Name="cmbPaymentTerms" SelectedIndex="0" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold">
                             <ComboBoxItem Content="Payment on Receipt"/>
                         </ComboBox>
                     </StackPanel>

@@ -36,8 +36,11 @@ Namespace DPC.Components.Forms
             SupplierNameBox.Text = StatementDetails.SupplierName
             AddressLineOne.Text = StatementDetails.City & ", " & StatementDetails.Region
             AddressLineTwo.Text = StatementDetails.Country
-            PhoneBox.Text = StatementDetails.Phone
+            PhoneBox.Text = "TEL: " & StatementDetails.Phone
             EmailBox.Text = StatementDetails.Email
+            noteBox.Text = StatementDetails.noteTxt
+            remarksBox.Text = StatementDetails.remarksTxt
+            StatementDetails.paymentTerms = PaymentTerms.Text
 
             If StatementDetails.signature = False Then
                 BrowseFile.Child = Nothing
@@ -71,10 +74,11 @@ Namespace DPC.Components.Forms
         End Sub
 
         Private Sub CancelButton(sender As Object, e As RoutedEventArgs)
-            Dim _city, _region As String
+            Dim _city, _region, _phone As String
 
             _city = StatementDetails.City
             _region = StatementDetails.Region
+            _phone = StatementDetails.Phone
 
             StatementDetails.InvoiceNumberCache = InvoiceNumber.Text
             StatementDetails.InvoiceDateCache = InvoiceDate.Text
@@ -88,8 +92,11 @@ Namespace DPC.Components.Forms
             StatementDetails.City = _city
             StatementDetails.Region = _region
             StatementDetails.Country = AddressLineTwo.Text
-            StatementDetails.Phone = PhoneBox.Text
+            StatementDetails.Phone = _phone
             StatementDetails.Email = EmailBox.Text
+            StatementDetails.noteTxt = noteBox.Text
+            StatementDetails.remarksTxt = remarksBox.Text
+            StatementDetails.paymentTerms = PaymentTerms.Text
 
             ViewLoader.DynamicView.NavigateToView("purchaseorderstatement", Me)
         End Sub
@@ -188,6 +195,9 @@ Namespace DPC.Components.Forms
             StatementDetails.Country = Nothing
             StatementDetails.Phone = Nothing
             StatementDetails.Email = Nothing
+            StatementDetails.noteTxt = Nothing
+            StatementDetails.remarksTxt = Nothing
+            StatementDetails.paymentTerms = Nothing
         End Sub
 
         Private Sub SaveToDB()
