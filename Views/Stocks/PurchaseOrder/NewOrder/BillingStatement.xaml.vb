@@ -35,8 +35,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             SupplierNameBox.Text = StatementDetails.SupplierName
             AddressLineOne.Text = StatementDetails.City & ", " & StatementDetails.Region
             AddressLineTwo.Text = StatementDetails.Country
-            PhoneBox.Text = StatementDetails.Phone
+            PhoneBox.Text = "TEL: " & StatementDetails.Phone
             EmailBox.Text = StatementDetails.Email
+            noteBox.Text = StatementDetails.noteTxt
+            remarksBox.Text = StatementDetails.remarksTxt
+            PaymentTerms.Text = StatementDetails.paymentTerms
 
             If Not String.IsNullOrWhiteSpace(base64Image) Then
                 DisplayUploadedImage()
@@ -151,7 +154,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
                 Dim imagePreview As New Image()
                 imagePreview.Source = imageSource
-                imagePreview.MaxHeight = 50
+                imagePreview.MaxHeight = 70
 
                 BrowseFile.Child = imagePreview
 
@@ -327,10 +330,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
 #Region "Navigation"
         Private Sub PrintPreview(sender As Object, e As RoutedEventArgs)
-            Dim _city, _region As String
+            Dim _city, _region, _phone As String
 
             _city = StatementDetails.City
             _region = StatementDetails.Region
+            _phone = StatementDetails.Phone
+
 
             StatementDetails.signature = If(String.IsNullOrWhiteSpace(base64Image), False, True)
             StatementDetails.InvoiceNumberCache = InvoiceNumber.Text
@@ -345,8 +350,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             StatementDetails.City = _city
             StatementDetails.Region = _region
             StatementDetails.Country = AddressLineTwo.Text
-            StatementDetails.Phone = PhoneBox.Text
+            StatementDetails.Phone = _phone
             StatementDetails.Email = EmailBox.Text
+            StatementDetails.noteTxt = noteBox.Text
+            StatementDetails.remarksTxt = remarksBox.Text
+            StatementDetails.paymentTerms = PaymentTerms.Text
 
             ViewLoader.DynamicView.NavigateToView("printpreview", Me)
         End Sub
