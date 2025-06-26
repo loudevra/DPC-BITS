@@ -29,32 +29,32 @@
                     <!-- Username -->
                     <TextBlock Text="Username:" Margin="0,0,0,5" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                     <Border Style="{StaticResource RoundedBorderStyle}" Width="773">
-                        <TextBox x:Name="txtUsername" Height="30" Margin="22,0,20,5" Style="{StaticResource RoundedTextboxStyle}" TextChanged="TxtUsername_TextChanged" FontFamily="Lexend" FontWeight="SemiBold" />
+                        <TextBox x:Name="txtUsername" Height="30" Margin="20,5,20,5" Style="{StaticResource RoundedTextboxStyle}" TextChanged="TxtUsername_TextChanged" FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
                     </Border>
                     <TextBlock x:Name="txtInvalidChars" Text="Username must be 6–20 chars, include upper/lowercase, number, and special character." Foreground="Red" Visibility="Collapsed" FontWeight="SemiBold" FontFamily="Lexend" Margin="5,0,0,5"/>
                     <TextBlock x:Name="txtValidUsername" Text="Username is valid and correct." Foreground="Green" FontWeight="SemiBold" FontFamily="Lexend" Margin="5,0,0,5" Visibility="Collapsed"/>
 
                     <!-- Business Location -->
                     <TextBlock Text="Business Location:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
-                    <ComboBox x:Name="cmbBusinessLocation" Style="{StaticResource RoundedComboBoxStyle}" Width="773" Height="40" SelectedIndex="0" Margin="0" FontFamily="Lexend" FontWeight="SemiBold">
+                    <ComboBox x:Name="cmbBusinessLocation" Style="{StaticResource RoundedComboBoxStyle}" Width="773" Height="40" SelectedIndex="0" Margin="0" FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747">
                     </ComboBox>
 
                     <!-- Role -->
                     <TextBlock Text="User Role:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
-                    <ComboBox x:Name="cmbUserRole" Style="{StaticResource RoundedComboBoxStyle}" Width="774" Height="40" SelectedIndex="0" Margin="0" FontFamily="Lexend" FontWeight="SemiBold">
+                    <ComboBox x:Name="cmbUserRole" Style="{StaticResource RoundedComboBoxStyle}" Width="773" Height="40" SelectedIndex="0" Margin="0" FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747">
                     </ComboBox>
                     <!-- Email -->
                     <TextBlock Text="Email:" Margin="0,5,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
-                    <Border Style="{StaticResource RoundedBorderStyle}" Width="772">
-                        <TextBox x:Name="txtEmail" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="734" FontFamily="Lexend" FontWeight="SemiBold"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Width="773">
+                        <TextBox x:Name="txtEmail" Height="30" Margin="0,5,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="734" FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747" />
                     </Border>
 
                     <!-- Password -->
                     <TextBlock Text="Password:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
-                    <Border Style="{StaticResource RoundedBorderStyle}" Width="774">
-                        <TextBox x:Name="txtPassword" Height="30" Margin="0,0,0,5"
+                    <Border Style="{StaticResource RoundedBorderStyle}" Width="773">
+                        <TextBox x:Name="txtPassword" Height="30" Margin="0,5,0,5"
                         Style="{StaticResource RoundedTextboxStyle}" Width="736"
-                        TextChanged="TxtPassword_TextChanged" FontFamily="Lexend" FontWeight="SemiBold"/>
+                        TextChanged="TxtPassword_TextChanged" FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
                     </Border>
                     <StackPanel x:Name="PasswordCriteriaPanel" Margin="10,0,0,0">
                         <TextBlock x:Name="chkLength" Text="✓ At least 6 characters" Foreground="Green" Visibility="Collapsed" FontWeight="SemiBold" FontFamily="Lexend" />
@@ -69,14 +69,14 @@
 
                     <!-- Full Name -->
                     <TextBlock Text="Full Name:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
-                    <Border Style="{StaticResource RoundedBorderStyle}" Width="768">
-                        <TextBox x:Name="txtName" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="735" FontFamily="Lexend" FontWeight="SemiBold"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Width="773">
+                        <TextBox x:Name="txtName" Height="30" Margin="0,5,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="735" FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
                     </Border>
 
                     <!-- Address Fields -->
                     <TextBlock Text="Street Address:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
-                    <Border Style="{StaticResource RoundedBorderStyle}" Width="767">
-                        <TextBox x:Name="txtStreetAddress" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="729" FontFamily="Lexend" FontWeight="SemiBold"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Width="773">
+                        <TextBox x:Name="txtStreetAddress" Height="30" Margin="0,5,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="729" FontFamily="Lexend" FontWeight="SemiBold"/>
                     </Border>
 
                     <Grid Margin="10,10,0,10">
@@ -93,8 +93,8 @@
                         <!-- City -->
                         <StackPanel Grid.Column="0">
                             <TextBlock Text="City:" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747" Margin="0,10,0,10" />
-                            <Border Style="{StaticResource RoundedBorderStyle}" Width="232">
-                                <TextBox x:Name="txtCity" Height="30" Margin="17,0,19,5" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" />
+                            <Border Style="{StaticResource RoundedBorderStyle}" Width="225">
+                                <TextBox x:Name="txtCity" Height="30" Margin="17,5,17,5" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" />
                             </Border>
                         </StackPanel>
 
@@ -102,40 +102,40 @@
                         <StackPanel Grid.Column="2">
                             <TextBlock Text="Region:" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747" Margin="0,10,0,10" />
                             <Border Style="{StaticResource RoundedBorderStyle}" Width="228">
-                                <TextBox x:Name="txtRegion" Height="30" Margin="20,0,15,5" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" />
+                                <TextBox x:Name="txtRegion" Height="30" Margin="20,5,20,5" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" />
                             </Border>
                         </StackPanel>
 
                         <!-- Country -->
                         <StackPanel Grid.Column="3" Grid.ColumnSpan="2" Margin="30,0,0,0">
                             <TextBlock Text="Country:" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747" Margin="0,10,0,10" />
-                            <Border Style="{StaticResource RoundedBorderStyle}" Width="217">
-                                <TextBox x:Name="txtCountry" Height="30" Margin="16,0,14,5" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" />
+                            <Border Style="{StaticResource RoundedBorderStyle}" Width="228">
+                                <TextBox x:Name="txtCountry" Height="30" Margin="16,5,16,5" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" />
                             </Border>
                         </StackPanel>
                     </Grid>
 
                     <TextBlock Text="Postal Code:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
-                    <Border Style="{StaticResource RoundedBorderStyle}" Width="749">
-                        <TextBox x:Name="txtPostalCode" Height="30" Margin="16,0,17,0" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Width="773">
+                        <TextBox x:Name="txtPostalCode" Height="30" Margin="16,0,16,0" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
                     </Border>
 
                     <!-- Phone Number -->
                     <TextBlock Text="Phone Number:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
-                    <Border Style="{StaticResource RoundedBorderStyle}" Width="755">
-                        <TextBox x:Name="txtPhone" Height="30" Margin="18,0,19,0" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Width="773">
+                        <TextBox x:Name="txtPhone" Height="30" Margin="18,0,18,0" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
                     </Border>
                     <Separator Margin="0,30,0,10" Height="1" Background="#474747"/>
                     <!-- Salary -->
                     <TextBlock Text="Salary:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
-                    <Border Style="{StaticResource RoundedBorderStyle}" Width="761">
-                        <TextBox x:Name="txtSalary" Height="30" Margin="18,0,17,0" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Width="773">
+                        <TextBox x:Name="txtSalary" Height="30" Margin="18,0,18,0" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
                     </Border>
 
                     <!-- Sales Commission -->
                     <TextBlock Text="Sales Commission (%):" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
-                    <Border Style="{StaticResource RoundedBorderStyle}" Width="766">
-                        <TextBox x:Name="txtSalesCommission" Height="30" Margin="18,0,18,0" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Width="773">
+                        <TextBox x:Name="txtSalesCommission" Height="30" Margin="18,0,18,0" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
                     </Border>
 
                     <StackPanel x:Name="SalesCommissionPanel" Margin="15,5,0,0">
@@ -144,19 +144,25 @@
 
                     <!-- Department -->
                     <TextBlock Text="Department:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
+<<<<<<< feature/employee-adding-rev
                     <ComboBox x:Name="cmbDepartments" Style="{StaticResource RoundedComboBoxStyle}" Width="773" Height="40" SelectedIndex="0" Margin="0" FontFamily="Lexend" FontWeight="SemiBold">
                     </ComboBox>
+=======
+                    <Border Style="{StaticResource RoundedBorderStyle}" Width="773">
+                        <TextBox x:Name="txtDepartment" Height="30" Margin="19,5,19,5" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
+                    </Border>
+>>>>>>> main-deployment
 
                 </StackPanel>
 
                 <!-- Submit Button -->
-                <Button x:Name="btnAddEmployee" Background="Transparent" HorizontalAlignment="Right" BorderThickness="0" VerticalAlignment="Center" Click="BtnAddEmployee_Click" Margin="0,10,0,15">
-                    <Border Style="{StaticResource RoundedBorderStyle}" Padding="1" Background="#1D5642" BorderBrush="#1D5642" Width="330">
-                        <StackPanel Orientation="Horizontal" Background="#1D5642" Margin="18,0,37,0">
-                            <TextBlock Text="Add Employee" Foreground="White" VerticalAlignment="Center" Margin="100,5" FontWeight="Bold" FontFamily="Lexend" />
-                        </StackPanel>
-                    </Border>
-                </Button>
+                <StackPanel Margin="20,20,20,20">
+                    <Button x:Name="btnAddEmployee" Background="Transparent" HorizontalAlignment="Right" BorderThickness="0" VerticalAlignment="Center" Click="BtnAddEmployee_Click">
+                        <Border Style="{StaticResource RoundedBorderStyle}" Padding="1" Background="#1D5642" BorderThickness="0" Width="300" Height="40">
+                            <TextBlock Text="Add Employee" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14"  FontWeight="SemiBold" FontFamily="Lexend" />
+                        </Border>
+                    </Button>
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
     </Grid>
