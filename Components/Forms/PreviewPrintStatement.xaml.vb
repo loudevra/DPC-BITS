@@ -6,7 +6,6 @@ Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
 Imports Newtonsoft.Json
-Imports SkiaSharp
 
 Namespace DPC.Components.Forms
     Public Class PreviewPrintStatement
@@ -40,7 +39,19 @@ Namespace DPC.Components.Forms
             EmailBox.Text = StatementDetails.Email
             noteBox.Text = StatementDetails.noteTxt
             remarksBox.Text = StatementDetails.remarksTxt
-            StatementDetails.paymentTerms = PaymentTerms.Text
+            PaymentTerms.Text = StatementDetails.paymentTerms
+            Term1.Text = StatementDetails.Term1
+            Term2.Text = StatementDetails.Term2
+            Term3.Text = StatementDetails.Term3
+            Term4.Text = StatementDetails.Term4
+            Term5.Text = StatementDetails.Term5
+            Term6.Text = StatementDetails.Term6
+            Term7.Text = StatementDetails.Term7
+            Term8.Text = StatementDetails.Term8
+            Term9.Text = StatementDetails.Term9
+            Term10.Text = StatementDetails.Term10
+            Term11.Text = StatementDetails.Term11
+            Term12.Text = StatementDetails.Term12
 
             If StatementDetails.signature = False Then
                 BrowseFile.Child = Nothing
@@ -97,6 +108,18 @@ Namespace DPC.Components.Forms
             StatementDetails.noteTxt = noteBox.Text
             StatementDetails.remarksTxt = remarksBox.Text
             StatementDetails.paymentTerms = PaymentTerms.Text
+            StatementDetails.Term1 = Term1.Text
+            StatementDetails.Term2 = Term2.Text
+            StatementDetails.Term3 = Term3.Text
+            StatementDetails.Term4 = Term4.Text
+            StatementDetails.Term5 = Term5.Text
+            StatementDetails.Term6 = Term6.Text
+            StatementDetails.Term7 = Term7.Text
+            StatementDetails.Term8 = Term8.Text
+            StatementDetails.Term9 = Term9.Text
+            StatementDetails.Term10 = Term10.Text
+            StatementDetails.Term11 = Term11.Text
+            StatementDetails.Term12 = Term12.Text
 
             ViewLoader.DynamicView.NavigateToView("purchaseorderstatement", Me)
         End Sub
@@ -198,6 +221,18 @@ Namespace DPC.Components.Forms
             StatementDetails.noteTxt = Nothing
             StatementDetails.remarksTxt = Nothing
             StatementDetails.paymentTerms = Nothing
+            StatementDetails.Term1 = Nothing
+            StatementDetails.Term2 = Nothing
+            StatementDetails.Term3 = Nothing
+            StatementDetails.Term4 = Nothing
+            StatementDetails.Term5 = Nothing
+            StatementDetails.Term6 = Nothing
+            StatementDetails.Term7 = Nothing
+            StatementDetails.Term8 = Nothing
+            StatementDetails.Term9 = Nothing
+            StatementDetails.Term10 = Nothing
+            StatementDetails.Term11 = Nothing
+            StatementDetails.Term12 = Nothing
         End Sub
 
         Private Sub SaveToDB()
