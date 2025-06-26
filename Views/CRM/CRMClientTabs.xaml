@@ -63,10 +63,10 @@
                         </Setter>
                     </Style>
                 </TabControl.Resources>
-                <TabItem Header="Personal Info"/>
-                <TabItem Header="Billing Address"/>
-                <TabItem Header="Shipping Address"/>
-                <TabItem Header="Other Settings"/>
+                <TabItem Header="Personal Info" FontFamily="Lexend" FontWeight="SemiBold"/>
+                <TabItem Header="Billing Address" FontFamily="Lexend" FontWeight="SemiBold"/>
+                <TabItem Header="Shipping Address" FontFamily="Lexend" FontWeight="SemiBold"/>
+                <TabItem Header="Other Settings" FontFamily="Lexend" FontWeight="SemiBold"/>
             </TabControl>
         </StackPanel>
     </Grid>
