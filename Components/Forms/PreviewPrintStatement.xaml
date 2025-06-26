@@ -108,12 +108,6 @@ Background="#2E466B"/>
                                     <TextBlock x:Name="PaymentTerms" Text="Payment on Receipt" FontSize="9"/>
                                 </Border>
                             </StackPanel>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <TextBlock Text="Status:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" VerticalAlignment="Center"/>
-                                <Border Background="White" BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="#090909" Padding="5,0" Width="100" Margin="10,0,0,0">
-                                    <TextBlock x:Name="Status" Text="Approved" FontSize="9"/>
-                                </Border>
-                            </StackPanel>
                         </StackPanel>
 
                         <!--DreamPC's Info-->
@@ -390,16 +384,16 @@ PRINTED NAME AND SIGNATURE
                                                 <TextBlock Text="For CASH payments:" TextAlignment="Center" FontWeight="Bold" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                             </Border>
                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                <TextBlock Text="50% upon ordering" TextAlignment="Center"  FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                <TextBox IsReadOnly="True" x:Name="Term1" BorderThickness="0" Text="50% upon ordering" TextAlignment="Center"  FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                             </Border>
                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                <TextBlock Text="30% upon delivery" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                <TextBox IsReadOnly="True" x:Name="Term2" BorderThickness="0" Text="30% upon delivery" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                             </Border>
                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                <TextBlock Text="20% upon completion" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                <TextBox IsReadOnly="True" x:Name="Term3" BorderThickness="0" Text="20% upon completion" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                             </Border>
                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
-                                                <TextBlock Text="Progress billing remaining balance (for bulk orders)" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                <TextBox IsReadOnly="True" x:Name="Term4" BorderThickness="0" Text="Progress billing remaining balance (for bulk orders)" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                             </Border>
                                         </StackPanel>
                                     </Border>
@@ -409,16 +403,16 @@ PRINTED NAME AND SIGNATURE
                                                 <TextBlock Text="For CHEQUES payment:" TextAlignment="Center" FontWeight="Bold" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                             </Border>
                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                <TextBlock Text="Order will process upon clearance of cheque" TextAlignment="Center"  FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                <TextBox IsReadOnly="True" x:Name="Term5" BorderThickness="0" Text="Order will process upon clearance of cheque" TextAlignment="Center"  FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                             </Border>
                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                <TextBlock Text="Any additional orders will be charged seperately" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                <TextBox IsReadOnly="True" x:Name="Term6" BorderThickness="0" Text="Any additional orders will be charged seperately" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                             </Border>
                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                <TextBlock Text="No return after installation" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                <TextBox IsReadOnly="True" x:Name="Term7" BorderThickness="0" Text="No return after installation" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                             </Border>
                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
-                                                <TextBlock Text="" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                <TextBox IsReadOnly="True" x:Name="Term8" BorderThickness="0" Text="" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                             </Border>
                                         </StackPanel>
                                     </Border>
@@ -428,16 +422,16 @@ PRINTED NAME AND SIGNATURE
                                                 <TextBlock Text="For out of town projects:" TextAlignment="Center" FontWeight="Bold" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                             </Border>
                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                <TextBlock Text="Additional delivery charges" TextAlignment="Center"  FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                <TextBox IsReadOnly="True" x:Name="Term9" BorderThickness="0" Text="Additional delivery charges" TextAlignment="Center"  FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                             </Border>
                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                <TextBlock Text="Please indicate lead time for installation" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                <TextBox IsReadOnly="True" x:Name="Term10" BorderThickness="0" Text="Please indicate lead time for installation" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                             </Border>
                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                <TextBlock Text="We will have a site inscpetions prior to installation" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                <TextBox IsReadOnly="True" x:Name="Term11" BorderThickness="0" Text="We will have a site inscpetions prior to installation" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                             </Border>
                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
-                                                <TextBlock Text="" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                <TextBox IsReadOnly="True" x:Name="Term12" BorderThickness="0" Text="" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                             </Border>
                                         </StackPanel>
                                     </Border>

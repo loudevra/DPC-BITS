@@ -1,5 +1,6 @@
 ﻿Imports System.Collections.ObjectModel
 Imports System.IO
+Imports DPC.DPC.Components.Forms
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
@@ -15,7 +16,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
         Private itemDataSource As New ObservableCollection(Of OrderItems)
         Private checkingDataSource As New ObservableCollection(Of Checker)
         Private itemOrder As New List(Of Dictionary(Of String, String))
-
+        Private Shared element As FrameworkElement
 
         Public Sub New()
 
@@ -40,6 +41,18 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             noteBox.Text = StatementDetails.noteTxt
             remarksBox.Text = StatementDetails.remarksTxt
             PaymentTerms.Text = StatementDetails.paymentTerms
+            Term1.Text = StatementDetails.Term1
+            Term2.Text = StatementDetails.Term2
+            Term3.Text = StatementDetails.Term3
+            Term4.Text = StatementDetails.Term4
+            Term5.Text = StatementDetails.Term5
+            Term6.Text = StatementDetails.Term6
+            Term7.Text = StatementDetails.Term7
+            Term8.Text = StatementDetails.Term8
+            Term9.Text = StatementDetails.Term9
+            Term10.Text = StatementDetails.Term10
+            Term11.Text = StatementDetails.Term11
+            Term12.Text = StatementDetails.Term12
 
             If Not String.IsNullOrWhiteSpace(base64Image) Then
                 DisplayUploadedImage()
@@ -73,6 +86,21 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                                                       ViewLoader.DynamicView.NavigateToView("neworder", Me)
                                                   End Sub
         End Sub
+
+#Region "Text Editor Function"
+        Private Sub TextEditorPopOut(sender As Object, e As MouseButtonEventArgs)
+            element = TryCast(sender, FrameworkElement)
+            Dim elementText = DirectCast(element, TextBlock).Text
+
+            Dim txtEditor As New PopOutTextEditor(elementText)
+            txtEditor.ShowDialog()
+        End Sub
+
+        Public Shared Sub ModifyText(textEdited As String)
+            DirectCast(element, TextBlock).Text = textEdited
+        End Sub
+#End Region
+
 
 #Region "Signature Upload"
         Private Sub OpenFiles()
@@ -355,6 +383,18 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             StatementDetails.noteTxt = noteBox.Text
             StatementDetails.remarksTxt = remarksBox.Text
             StatementDetails.paymentTerms = PaymentTerms.Text
+            StatementDetails.Term1 = Term1.Text
+            StatementDetails.Term2 = Term2.Text
+            StatementDetails.Term3 = Term3.Text
+            StatementDetails.Term4 = Term4.Text
+            StatementDetails.Term5 = Term5.Text
+            StatementDetails.Term6 = Term6.Text
+            StatementDetails.Term7 = Term7.Text
+            StatementDetails.Term8 = Term8.Text
+            StatementDetails.Term9 = Term9.Text
+            StatementDetails.Term10 = Term10.Text
+            StatementDetails.Term11 = Term11.Text
+            StatementDetails.Term12 = Term12.Text
 
             ViewLoader.DynamicView.NavigateToView("printpreview", Me)
         End Sub
