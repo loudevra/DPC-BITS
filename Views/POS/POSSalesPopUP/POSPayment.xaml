@@ -1,0 +1,65 @@
+﻿<UserControl x:Class="DPC.Views.POS.POSSalesPopUP.POSPayment"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             Height="Auto"
+             FontFamily="{StaticResource Lexend}"
+             Background="Transparent">
+
+    <materialDesign:Card Width="450" Padding="20" Background="White"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            UniformCornerRadius="20">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                <materialDesign:PackIcon Kind="Payment" Width="40" Height="40" Margin="0,0,15,0" VerticalAlignment="Center" Foreground="#555555"/>
+                <TextBlock FontSize="20" Foreground="#555555" FontWeight="Bold" Text="Payment" Margin="0,0,0,0" VerticalAlignment="Center"/>
+            </StackPanel>
+            <Button Grid.Column="1" Width="20" Height="20" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" BorderBrush="Transparent" x:Name="BtnClose">
+                <materialDesign:PackIcon Kind="Close" Foreground="#555555" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Button>
+
+            <StackPanel Grid.Row="1">
+                <!-- Name -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,0" HorizontalAlignment="Center">
+                    <TextBlock Text="₱ 100.00" Foreground="#01adff" FontSize="45" FontWeight="bold" Margin="0,20,0,30"/>
+                </StackPanel>
+
+                <!-- Phone -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                    <TextBlock Text="Amount:" Foreground="#555555" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                </StackPanel>
+                <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10">
+                    <TextBox x:Name="TxtPhone" Style="{StaticResource RoundedTextboxStyle}"/>
+                </Border>
+
+
+                <!-- Group -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                    <TextBlock Text="Account:" Foreground="#555555" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,5"/>
+                </StackPanel>
+                <ComboBox Style="{StaticResource RoundedComboBoxStyle}" Margin="0,0,0,40"/>
+
+                <!-- Balance Due -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                    <TextBlock Text="Balance Due:" Foreground="#aaaaaa" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,5"/>
+                    <TextBlock Text="₱0.00" Foreground="#555555" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,5"/>
+                </StackPanel>
+
+                <!-- Balance Due -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                    <TextBlock Text="Change:" Foreground="#aaaaaa" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,5"/>
+                    <TextBlock Text="₱50.00" Foreground="#555555" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,50"/>
+                </StackPanel>
+
+                <Button Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#52C69D" >
+                    <TextBlock Text="Process Payment" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="15"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </materialDesign:Card>
+</UserControl>
