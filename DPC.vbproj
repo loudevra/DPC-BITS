@@ -824,6 +824,9 @@
     <Compile Include="Views\POS\POSForm.xaml.vb">
       <DependentUpon>POSForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\POS\POSInvoice.xaml.vb">
+      <DependentUpon>POSInvoice.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\POS\SubscriptionPayment.xaml.vb">
       <DependentUpon>SubscriptionPayment.xaml</DependentUpon>
     </Compile>
@@ -1539,6 +1542,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\POS\POSForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\POS\POSInvoice.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\POS\SubscriptionPayment.xaml">
