@@ -830,7 +830,18 @@
     </Compile>
     <Compile Include="Views\POS\POSInvoice.xaml.vb">
       <DependentUpon>POSInvoice.xaml</DependentUpon>
-
+    </Compile>
+    <Compile Include="Views\POS\POSSalesPopUP\POSPayment.xaml.vb">
+      <DependentUpon>POSPayment.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\POS\POSSalesPopUP\POSRegister.xaml.vb">
+      <DependentUpon>POSRegister.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\POS\POSSalesPopUP\POSRegister2.xaml.vb">
+      <DependentUpon>POSRegister2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\POS\POSSalesPopUP\POSWalkInClient.xaml.vb">
+      <DependentUpon>POSWalkInClient.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\POS\SubscriptionPayment.xaml.vb">
       <DependentUpon>SubscriptionPayment.xaml</DependentUpon>
@@ -1553,11 +1564,25 @@
     <Page Include="Views\POS\POSForm.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-
     <Page Include="Views\POS\POSInvoice.xaml">
-
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\POS\POSSalesPopUP\POSPayment.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\POS\POSSalesPopUP\POSRegister.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\POS\POSSalesPopUP\POSRegister2.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\POS\POSSalesPopUP\POSWalkInClient.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\POS\SubscriptionPayment.xaml">
       <SubType>Designer</SubType>
