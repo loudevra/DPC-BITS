@@ -111,13 +111,13 @@ Background="#2E466B"/>
                             </StackPanel>
                             <!--Info-->
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Right">
-                                <TextBlock Text="Dream PC Build and I.T Solutions I" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#7C7C7C" VerticalAlignment="Center"/>
-                                <TextBlock Text="Unit 2A and 2B Legenda Building " FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#7C7C7C" VerticalAlignment="Center"/>
-                                <TextBlock Text="Circumferential RD Antipolo, Philippines" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#7C7C7C" VerticalAlignment="Center"/>
-                                <TextBlock Text="Phone No: +63 917 187 3722" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#7C7C7C" VerticalAlignment="Center"/>
-                                <TextBlock  Text="information@dreampcbuild.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#7C7C7C" VerticalAlignment="Center"/>
-                                <TextBlock  Text="dreampcbuild.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#7C7C7C" VerticalAlignment="Center"/>
-                                <TextBlock  Text="Tel No: 02-880-14252" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#7C7C7C" VerticalAlignment="Center"/>
+                                <TextBlock Text="Dream PC Build and I.T Solutions I" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                <TextBlock Text="Unit 2A and 2B Legenda Building " FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                <TextBlock Text="Circumferential RD Antipolo, Philippines" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                <TextBlock Text="Phone No: +63 917 187 3722" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                <TextBlock  Text="information@dreampcbuild.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                <TextBlock  Text="dreampcbuild.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                <TextBlock  Text="Tel No: 02-880-14252" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
                             </StackPanel>
                         </StackPanel>
 
@@ -128,11 +128,11 @@ Background="#2E466B"/>
                             </StackPanel>
                             <!--Info-->
                             <StackPanel x:Name="BillAddress" Orientation="Vertical" HorizontalAlignment="Right">
-                                <TextBlock x:Name="SupplierNameBox" Text="Eli Clark" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#7C7C7C" VerticalAlignment="Center"/>
-                                <TextBlock x:Name="AddressLineOne" Text="Wales, Swansea" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#7C7C7C" VerticalAlignment="Center"/>
-                                <TextBlock x:Name="AddressLineTwo" Text="United Kingdom" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#7C7C7C" VerticalAlignment="Center"/>
-                                <TextBlock x:Name="PhoneBox" Text="+63966634982" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#7C7C7C" VerticalAlignment="Center"/>
-                                <TextBlock x:Name="EmailBox" Text="brookerose@gmail.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#7C7C7C" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="SupplierNameBox" Text="Eli Clark" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="AddressLineOne" Text="Wales, Swansea" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="AddressLineTwo" Text="United Kingdom" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="PhoneBox" Text="+63966634982" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="EmailBox" Text="brookerose@gmail.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
                             </StackPanel>
                         </StackPanel>
 
