@@ -245,6 +245,7 @@ Namespace DPC.Components.Forms
             StatementDetails.Term10 = Nothing
             StatementDetails.Term11 = Nothing
             StatementDetails.Term12 = Nothing
+            StatementDetails.DeliveryCost = Nothing
             StatementDetails.paymentTerms = Nothing
             StatementDetails.isCustomTerm = Nothing
             StatementDetails.Approved = Nothing
