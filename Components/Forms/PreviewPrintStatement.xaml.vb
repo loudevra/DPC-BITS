@@ -253,6 +253,7 @@ Namespace DPC.Components.Forms
         Private Sub SaveToDB()
             Dim itemsJSON As String = JsonConvert.SerializeObject(itemOrder, Formatting.Indented)
             Dim InvoiceDate As String = Date.Now.ToString("yyyy-MM-dd")
+            Dim DeliveryString As String = Delivery.Text.Trim("₱"c, " "c)
             Dim TaxString As String = Tax.Text.Trim("₱"c, " "c)
             Dim TotalCostString As String = TotalCost.Text.Trim("₱"c, " "c)
 
@@ -263,7 +264,7 @@ Namespace DPC.Components.Forms
                 Address += child.Text & Environment.NewLine
             Next
 
-            Dim success As Boolean = PurchaseOrderController.InsertInvoicePurchaseOrder(InvoiceNumber.Text, InvoiceDate, DueDateFormatted, Address, itemsJSON, 0, TaxString, TotalCostString, base64Image)
+            Dim success As Boolean = PurchaseOrderController.InsertInvoicePurchaseOrder(InvoiceNumber.Text, InvoiceDate, DueDateFormatted, Address, itemsJSON, DeliveryString, TaxString, TotalCostString, base64Image, Approved.Text, PaymentTerms.Text, noteBox.Text)
 
             If success Then
                 MessageBox.Show("Added to database")

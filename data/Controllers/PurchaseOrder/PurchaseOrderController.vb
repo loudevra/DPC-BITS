@@ -146,13 +146,13 @@ Namespace DPC.Data.Controllers
 
         Public Shared Function InsertInvoicePurchaseOrder(InvoiceNumber As String, InvoiceDate As String, DueDate As String,
                                               BillAddress As String, OrderItems As String, Delivery As String,
-                                                          Vat As String, TotalCost As String, SignatureImage As String) As Boolean
+                                                          Vat As String, TotalCost As String, SignatureImage As String, ApprovedBy As String, PaymentTerms As String, Note As String) As Boolean
 
             Dim checkExist As String = "SELECT * FROM invoice WHERE InvoiceNumber='" & InvoiceNumber & "'"
             Dim invoiceExist As Boolean = False
 
             Dim query As String = "INSERT INTO invoice (InvoiceNumber, InvoiceDate, DueDate, BillAddress, OrderItems, SubVat,
-                                                          TotalCost,  Delivery, SignatureImage, SalesRep) VALUES (" & InvoiceNumber & ", '" & InvoiceDate & "', '" & DueDate & "', '" & BillAddress & "', '" & OrderItems & "', '" & Vat & "', '" & TotalCost & "', '" & Delivery & "', '" & SignatureImage & "', '" & CacheOnLoggedInName & "' )"
+                                                          TotalCost,  Delivery, SignatureImage, SalesRep, ApprovedBy, PaymentTerms, Note) VALUES (" & InvoiceNumber & ", '" & InvoiceDate & "', '" & DueDate & "', '" & BillAddress & "', '" & OrderItems & "', '" & Vat & "', '" & TotalCost & "', '" & Delivery & "', '" & SignatureImage & "', '" & CacheOnLoggedInName & "', '" & ApprovedBy & "', '" & PaymentTerms & "', '" & Note & "' )"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
 
