@@ -145,15 +145,14 @@ Namespace DPC.Data.Controllers
         End Function
 
         Public Shared Function InsertInvoicePurchaseOrder(InvoiceNumber As String, InvoiceDate As String, DueDate As String,
-                                              BillAddress As String, OrderItems As String, SubVat As String, Install As String, Mobilization As String,
+                                              BillAddress As String, OrderItems As String, Delivery As String,
                                                           Vat As String, TotalCost As String, SignatureImage As String) As Boolean
 
             Dim checkExist As String = "SELECT * FROM invoice WHERE InvoiceNumber='" & InvoiceNumber & "'"
             Dim invoiceExist As Boolean = False
 
-            Dim query As String = "INSERT INTO invoice (InvoiceNumber, InvoiceDate, DueDate, BillAddress, OrderItems, SubVat, Install, Mobilization,
-                                                          Vat, TotalCost, SignatureImage, SalesRep) VALUES (" & InvoiceNumber & ", '" & InvoiceDate & "', '" & DueDate & "', '" & BillAddress & "', '" & OrderItems & "', '" & SubVat & "', '" &
-                                    Install & "', '" & Mobilization & "', '" & Vat & "', '" & TotalCost & "', '" & SignatureImage & "', '" & CacheOnLoggedInName & "' )"
+            Dim query As String = "INSERT INTO invoice (InvoiceNumber, InvoiceDate, DueDate, BillAddress, OrderItems, SubVat,
+                                                          TotalCost,  Delivery, SignatureImage, SalesRep) VALUES (" & InvoiceNumber & ", '" & InvoiceDate & "', '" & DueDate & "', '" & BillAddress & "', '" & OrderItems & "', '" & Vat & "', '" & TotalCost & "', '" & Delivery & "', '" & SignatureImage & "', '" & CacheOnLoggedInName & "' )"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
 

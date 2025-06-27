@@ -14,7 +14,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
         Private tempImagePath As String
         Private base64Image As String
         Private itemDataSource As New ObservableCollection(Of OrderItems)
-        Private checkingDataSource As New ObservableCollection(Of Checker)
         Private itemOrder As New List(Of Dictionary(Of String, String))
         Private Shared element As FrameworkElement
 
@@ -28,19 +27,19 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             InvoiceNumber.Text = StatementDetails.InvoiceNumberCache
             InvoiceDate.Text = StatementDetails.InvoiceDateCache
             DueDate.Text = StatementDetails.DueDateCache
-            Tax.Text = StatementDetails.TaxCache
-            TotalCost.Text = StatementDetails.TotalCostCache
+            Tax.Text = "₱ " & StatementDetails.TaxCache.ToString("N2")
+            TotalCost.Text = "₱ " & (StatementDetails.TotalCostCache + StatementDetails.DeliveryCost).ToString("N2")
+            Delivery.Text = StatementDetails.DeliveryCost.ToString("N2")
             itemOrder = StatementDetails.OrderItemsCache
             base64Image = StatementDetails.ImageCache
             tempImagePath = StatementDetails.PathCache
             SupplierNameBox.Text = StatementDetails.SupplierName
             AddressLineOne.Text = StatementDetails.City & ", " & StatementDetails.Region
             AddressLineTwo.Text = StatementDetails.Country
-            PhoneBox.Text = "TEL: " & StatementDetails.Phone
+            PhoneBox.Text = "Tel No: " & StatementDetails.Phone
             EmailBox.Text = StatementDetails.Email
             noteBox.Text = StatementDetails.noteTxt
             remarksBox.Text = StatementDetails.remarksTxt
-            PaymentTerms.Text = StatementDetails.paymentTerms
             Term1.Text = StatementDetails.Term1
             Term2.Text = StatementDetails.Term2
             Term3.Text = StatementDetails.Term3
@@ -53,6 +52,15 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             Term10.Text = StatementDetails.Term10
             Term11.Text = StatementDetails.Term11
             Term12.Text = StatementDetails.Term12
+            SalesRep.Text = CacheOnLoggedInName
+            cmbApproved.Text = StatementDetails.Approved
+
+            If StatementDetails.isCustomTerm = True Then
+                CustomTerms.Text = StatementDetails.paymentTerms
+                cmbTerms.SelectedIndex = 4
+            Else
+                cmbTerms.Text = StatementDetails.paymentTerms
+            End If
 
             If Not String.IsNullOrWhiteSpace(base64Image) Then
                 DisplayUploadedImage()
@@ -74,17 +82,46 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                 })
             Next
 
-            checkingDataSource.Add(New Checker With {
-                    .SalesRep = CacheOnLoggedInName
-                })
 
-            checkingGrid.ItemsSource = checkingDataSource
+
             dataGrid.ItemsSource = itemDataSource
 
+            AddHandler Delivery.TextChanged, Sub(s, e)
+                                                 ComputeCost(s, e)
+                                             End Sub
             AddHandler BrowseFile.MouseLeftButtonUp, AddressOf OpenFiles
             AddHandler BackBtn.MouseLeftButtonUp, Sub()
                                                       ViewLoader.DynamicView.NavigateToView("neworder", Me)
                                                   End Sub
+        End Sub
+
+        Private Sub ComputeCost(s As Object, e As TextChangedEventArgs)
+
+            TotalCost.Text = "₱ " & StatementDetails.TotalCostCache.ToString("N2")
+
+            Dim tb = TryCast(s, TextBox)
+            If tb IsNot Nothing Then
+                ' Allow digits and one dot only
+                Dim filtered = New String(tb.Text.Where(Function(c) Char.IsDigit(c) OrElse c = "."c).ToArray())
+
+                ' Ensure only one dot exists
+                Dim dotIndex = filtered.IndexOf("."c)
+                If dotIndex <> -1 Then
+                    ' Keep only the first dot, remove the rest
+                    filtered = filtered.Substring(0, dotIndex + 1) &
+                   filtered.Substring(dotIndex + 1).Replace("."c, "")
+                End If
+
+                ' Update only if changed
+                If tb.Text <> filtered Then
+                    tb.Text = filtered
+                    tb.CaretIndex = tb.Text.Length
+                End If
+            End If
+
+            If Not String.IsNullOrWhiteSpace(Delivery.Text) Then
+                TotalCost.Text = "₱ " & (StatementDetails.TotalCostCache + Delivery.Text).ToString("N2")
+            End If
         End Sub
 
 #Region "Text Editor Function"
@@ -364,13 +401,31 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             _region = StatementDetails.Region
             _phone = StatementDetails.Phone
 
+            If cmbTerms.SelectedIndex = 4 Then
+                StatementDetails.isCustomTerm = True
+                StatementDetails.paymentTerms = CustomTerms.Text
+            Else
+                StatementDetails.isCustomTerm = False
+                StatementDetails.paymentTerms = cmbTerms.Text
+            End If
+
+            Dim _deliveryCost, _tax, _totalCost As Decimal
+
+
+            If Not String.IsNullOrWhiteSpace(Delivery.Text) Then
+                _deliveryCost = Delivery.Text.Trim("₱"c, " "c)
+            Else
+                _deliveryCost = 0.00
+            End If
+            _tax = StatementDetails.TaxCache
+            _totalCost = StatementDetails.TotalCostCache
 
             StatementDetails.signature = If(String.IsNullOrWhiteSpace(base64Image), False, True)
             StatementDetails.InvoiceNumberCache = InvoiceNumber.Text
             StatementDetails.InvoiceDateCache = InvoiceDate.Text
             StatementDetails.DueDateCache = DueDate.Text
-            StatementDetails.TaxCache = Tax.Text
-            StatementDetails.TotalCostCache = TotalCost.Text
+            StatementDetails.TaxCache = _tax
+            StatementDetails.TotalCostCache = _totalCost
             StatementDetails.OrderItemsCache = itemOrder
             StatementDetails.ImageCache = base64Image
             StatementDetails.PathCache = tempImagePath
@@ -382,7 +437,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             StatementDetails.Email = EmailBox.Text
             StatementDetails.noteTxt = noteBox.Text
             StatementDetails.remarksTxt = remarksBox.Text
-            StatementDetails.paymentTerms = PaymentTerms.Text
             StatementDetails.Term1 = Term1.Text
             StatementDetails.Term2 = Term2.Text
             StatementDetails.Term3 = Term3.Text
@@ -395,6 +449,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             StatementDetails.Term10 = Term10.Text
             StatementDetails.Term11 = Term11.Text
             StatementDetails.Term12 = Term12.Text
+            StatementDetails.DeliveryCost = _deliveryCost
+            StatementDetails.Approved = cmbApproved.Text
 
             ViewLoader.DynamicView.NavigateToView("printpreview", Me)
         End Sub
