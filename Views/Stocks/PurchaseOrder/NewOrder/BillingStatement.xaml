@@ -150,7 +150,7 @@
                                         </StackPanel>
                                         <!--Info-->
                                         <StackPanel Orientation="Vertical" HorizontalAlignment="Right">
-                                            <TextBlock Text="Dream PC Build and I.T Solutions I" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                            <TextBlock Text="Dream PC Build and I.T Solutions Inc" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
                                             <TextBlock Text="Unit 2A and 2B Legenda Building " FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
                                             <TextBlock Text="Circumferential RD Antipolo, Philippines" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
                                             <TextBlock Text="Phone No: +63 917 187 3722" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
