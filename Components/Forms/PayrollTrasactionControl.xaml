@@ -36,11 +36,10 @@
             <StackPanel Grid.Row="0" Orientation="Horizontal">
                 <materialDesign:PackIcon Kind="ShapeRectanglePlus" Foreground="#555555" Margin="5,0,0,10" Width="28" Height="28"/>
                 <TextBlock FontSize="18" Foreground="#555555" FontWeight="Bold" Text="Add Payroll Transaction" Margin="7,0,0,10"/>
-                <Button Background="Transparent" BorderThickness="0"
-            HorizontalAlignment="Right" Margin="246,0,0,0">
-                    <materialDesign:PackIcon Kind="Close" Foreground="#555555" Width="20" Height="20" Margin="-8,0,0,16"/>
-                </Button>
             </StackPanel>
+            <Button Grid.Column="1" Width="20" Height="20" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" BorderBrush="Transparent" x:Name="BtnClose">
+                <materialDesign:PackIcon Kind="Close" Foreground="#555555" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Button>
 
 
             <!-- Fields -->
