@@ -119,32 +119,26 @@
                                     </StackPanel>
                                     <!--Billing Statement Label-->
                                     <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,10">
-                                        <TextBlock Text="PURCHASE ORDER" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                        <TextBlock Text="PURCHASE ORDER" FontWeight="SemiBold" FontFamily="Lexend" FontSize="15" Foreground="#090909" VerticalAlignment="Center"/>
                                     </StackPanel>
                                     <!--Invoice and Date-->
                                     <StackPanel Grid.Row="2" Orientation="Vertical" HorizontalAlignment="Right" Margin="5">
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                            <TextBlock Text="PO #:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" VerticalAlignment="Center"/>
-                                            <Border Background="White" BorderThickness="0.5,0.5,0.5,0.25"  BorderBrush="#090909" Padding="5,0" Width="100" Margin="10,0,0,0">
-                                                <TextBlock x:Name="InvoiceNumber" FontSize="9"/>
+                                            <TextBlock Text="PO #:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                            <Border Background="White" BorderThickness="0.5,0.5,0.5,0.25"  BorderBrush="#090909" Padding="5,0" Width="130" Margin="10,0,0,0">
+                                                <TextBlock x:Name="InvoiceNumber" FontSize="12"/>
                                             </Border>
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                            <TextBlock Text="Date:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" VerticalAlignment="Center"/>
-                                            <Border Background="White" BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="#090909" Padding="5,0" Width="100" Margin="10,0,0,0">
-                                                <TextBlock x:Name="InvoiceDate" FontSize="9"/>
+                                            <TextBlock Text="Date:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                            <Border Background="White" BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="#090909" Padding="5,0" Width="130" Margin="10,0,0,0">
+                                                <TextBlock x:Name="InvoiceDate" FontSize="12"/>
                                             </Border>
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                            <TextBlock Text="Due Date:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" VerticalAlignment="Center"/>
-                                            <Border Background="White" BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="#090909" Padding="5,0" Width="100" Margin="10,0,0,0">
-                                                <TextBlock x:Name="DueDate" FontSize="9"/>
-                                            </Border>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                            <TextBlock Text="Payment Terms:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" VerticalAlignment="Center"/>
-                                            <Border Background="White" BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="#090909" Padding="5,0" Width="100" Margin="10,0,0,0">
-                                                <TextBlock x:Name="PaymentTerms" Text="Payment on Receipt" FontSize="9"/>
+                                            <TextBlock Text="Due Date:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                            <Border Background="White" BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="#090909" Padding="5,0" Width="130" Margin="10,0,0,0">
+                                                <TextBlock x:Name="DueDate" FontSize="12"/>
                                             </Border>
                                         </StackPanel>
                                     </StackPanel>
@@ -152,99 +146,92 @@
                                     <!--DreamPC's Info-->
                                     <StackPanel Grid.Row="2" Orientation="Vertical" HorizontalAlignment="Left" Margin="5">
                                         <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,5">
-                                            <TextBlock Text="Bill from:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#090909" VerticalAlignment="Center"/>
+                                            <TextBlock Text="Bill from:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
                                         </StackPanel>
                                         <!--Info-->
                                         <StackPanel Orientation="Vertical" HorizontalAlignment="Right">
-                                            <TextBlock Text="Dream PC Build and I.T Solutions" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
-                                            <TextBlock Text="Unit 2A and 2B Legenda Building " FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
-                                            <TextBlock Text="Circumferential RD Antipolo, Philippines" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#7C7C7C" VerticalAlignment="Center"/>
-                                            <TextBlock Text="TEL: +639171873722" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
-                                            <TextBlock  Text="info.dreampcbuild@gmail.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
-                                            <TextBlock  Text="dreampcbuild.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
+                                            <TextBlock Text="Dream PC Build and I.T Solutions Inc" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                            <TextBlock Text="Unit 2A and 2B Legenda Building " FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                            <TextBlock Text="Circumferential RD Antipolo, Philippines" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                            <TextBlock Text="Phone No: +63 917 187 3722" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                            <TextBlock  Text="information@dreampcbuild.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                            <TextBlock  Text="dreampcbuild.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                            <TextBlock  Text="Tel No: 02 880 14252" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </StackPanel>
 
                                     <!--Customers' Info-->
                                     <StackPanel Grid.Row="3" Orientation="Vertical" HorizontalAlignment="Left" Margin="5">
                                         <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,5">
-                                            <TextBlock Text="Bill to:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#090909" VerticalAlignment="Center"/>
+                                            <TextBlock Text="Bill to:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
                                         </StackPanel>
                                         <!--Info-->
                                         <StackPanel Orientation="Vertical" HorizontalAlignment="Right">
-                                            <TextBlock x:Name="SupplierNameBox" Text="Eli Clark" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
-                                            <TextBlock x:Name="AddressLineOne" Text="Wales, Swansea" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
-                                            <TextBlock x:Name="AddressLineTwo" Text="United Kingdom" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
-                                            <TextBlock x:Name="PhoneBox" Text="+63966634982" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
-                                            <TextBlock x:Name="EmailBox" Text="brookerose@gmail.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#7C7C7C" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="SupplierNameBox" Text="Eli Clark" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="AddressLineOne" Text="Wales, Swansea" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="AddressLineTwo" Text="United Kingdom" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="PhoneBox" Text="+63966634982" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="EmailBox" Text="brookerose@gmail.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
                                         </StackPanel>
                                     </StackPanel>
 
 
-                                    <!--DataGrid 1: Seller Info-->
-                                    <DataGrid 
-            Margin="5,0"
-            Grid.Row="4"
-        IsReadOnly="True"
-x:Name="checkingGrid"
-AutoGenerateColumns="False"
-CanUserAddRows="False"
-HeadersVisibility="Column"
-GridLinesVisibility="None"
-                                        Background="Transparent"
-RowBackground="Transparent"
-            BorderThickness="1, 1, 1, 0"
-BorderBrush="#AEAEAE">
-                                        <DataGrid.Columns>
-                                            <DataGridTextColumn Header="Prepared by:" Binding="{Binding SalesRep}" Width="*"/>
-                                            <DataGridTextColumn Header="Approved by:" Binding="{Binding ApprovedBy}" Width="*"/>
-                                            <DataGridTextColumn Header="Payment Terms:" Width="*"/>
-                                        </DataGrid.Columns>
-                                        <DataGrid.RowStyle>
-                                            <Style TargetType="DataGridRow">
-                                                <Setter Property="FontFamily" Value="Lexend"/>
-                                                <Setter Property="FontSize" Value="8"/>
-                                                <Setter Property="Margin" Value="0,5,0,5"/>
-                                                <Setter Property="Padding" Value="5"/>
-                                                <Setter Property="Height" Value="Auto"/>
-                                                <Setter Property="MinHeight" Value="15"/>
-                                            </Style>
-                                        </DataGrid.RowStyle>
+                                    <Border BorderThickness="1,0" BorderBrush="Black" Grid.Row="4" Margin="5,0">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
 
-                                        <DataGrid.ColumnHeaderStyle>
-                                            <Style TargetType="DataGridColumnHeader">
-                                                <Setter Property="FontFamily" Value="Lexend"/>
-                                                <Setter Property="FontSize" Value="8"/>
-                                                <Setter Property="FontWeight" Value="SemiBold"/>
-                                                <Setter Property="Foreground" Value="#FDFDFD"/>
-                                                <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                                                <Setter Property="VerticalContentAlignment" Value="Center"/>
-                                                <Setter Property="Padding" Value="10,5"/>
-                                                <Setter Property="Background" Value="#AEAEAE"/>
-                                            </Style>
-                                        </DataGrid.ColumnHeaderStyle>
+                                        <!-- Column Header-->
+                                        <Border Grid.Row="0" Grid.Column="0" Height="20" VerticalAlignment="Center" Background="Black" Padding="10,0,0,0">
+                                            <TextBlock Height="10" Text="Prepared by:" Foreground="#FDFDFD" FontSize="10" FontWeight="SemiBold" FontFamily="{StaticResource Lexend}"/>
+                                        </Border>
+                                        <Border Grid.Row="0" Grid.Column="1" Height="20" VerticalAlignment="Center" Background="Black" Padding="10,0,0,0">
+                                            <TextBlock Height="10" Text="Approved by:" Foreground="#FDFDFD" FontSize="10" FontWeight="SemiBold" FontFamily="{StaticResource Lexend}"/>
+                                        </Border>
+                                        <Border Grid.Row="0" Grid.Column="2" Height="20" VerticalAlignment="Center" Background="Black" Padding="10,0,0,0">
+                                            <TextBlock Height="10" Text="Payment Terms:" Foreground="#FDFDFD" FontSize="10" FontWeight="SemiBold" FontFamily="{StaticResource Lexend}"/>
+                                        </Border>
 
-                                        <DataGrid.CellStyle>
-                                            <Style TargetType="DataGridCell">
-                                                <Setter Property="Padding" Value="10,5"/>
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="DataGridCell">
-                                                            <Border Padding="{TemplateBinding Padding}" 
-                      BorderBrush="{TemplateBinding BorderBrush}" 
-                      BorderThickness="{TemplateBinding BorderThickness}" 
-                      Background="{TemplateBinding Background}">
-                                                                <ContentPresenter VerticalAlignment="Center"/>
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                                <Setter Property="TextBlock.TextWrapping" Value="NoWrap"/>
-                                                <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis"/>
-                                            </Style>
-                                        </DataGrid.CellStyle>
-                                    </DataGrid>
+                                        <!-- Row Items -->
+                                        <Border Grid.Row="1" Grid.Column="0" Height="20" VerticalAlignment="Center" Padding="10,0,0,0">
+                                            <TextBlock x:Name="SalesRep" Height="10" Text="Prepared by:" Foreground="#090909" FontSize="10" FontFamily="{StaticResource Lexend}"/>
+                                        </Border>
+                                        <Border Grid.Row="1" Grid.Column="1" Height="20" VerticalAlignment="Center" >
+                                                <ComboBox x:Name="cmbApproved" FontSize="10">
+                                                    <ComboBoxItem Content="Alecksandra Balingit"/>
+                                                    <ComboBoxItem Content="Parvit Kumar"/>
+                                                </ComboBox>
+                                            </Border>
+                                        <Border Grid.Row="1" Grid.Column="2" Height="20" VerticalAlignment="Center" >
+                                                <ComboBox x:Name="cmbTerms" FontSize="10">
+                                                <ComboBoxItem Content="Cash"/>
+                                                <ComboBoxItem Content="7 Days PDC"/>
+                                                <ComboBoxItem Content="14 Days PDC"/>
+                                                <ComboBoxItem Content="30 Days PDC"/>
+                                                <ComboBoxItem>
+                                                    <Grid Width="230">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="auto"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Grid.Column="0" Text="Custom:" Margin="5,0"/>
+                                                        <TextBox Grid.Column="1" x:Name="CustomTerms"/>
+                                                    </Grid>
+                                                </ComboBoxItem>
+                                            </ComboBox>
+                                        </Border>
 
+
+
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                    </Grid>
+                                    </Border>
 
                                     <!--Bill Info-->
                                     <DataGrid Grid.Row="5" Margin="5,0"
@@ -278,7 +265,7 @@ BorderBrush="#AEAEAE">
                                         <DataGrid.ColumnHeaderStyle>
                                             <Style TargetType="DataGridColumnHeader">
                                                 <Setter Property="FontFamily" Value="Lexend"/>
-                                                <Setter Property="FontSize" Value="8"/>
+                                                <Setter Property="FontSize" Value="10"/>
                                                 <Setter Property="FontWeight" Value="SemiBold"/>
                                                 <Setter Property="Foreground" Value="#FDFDFD"/>
                                                 <Setter Property="HorizontalContentAlignment" Value="Left"/>
@@ -352,38 +339,28 @@ BorderBrush="#AEAEAE">
                                                             <ColumnDefinition Width="*" />
                                                         </Grid.ColumnDefinitions>
 
-                                                        <StackPanel Grid.Column="0">
-                                                            <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
-                                                                <TextBlock Text="SUBTOTAL VAT EX." FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                                            </Border>
-                                                            <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
-                                                                <TextBlock Text="INSTALLATION/CONFIGURATION" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                                            </Border>
-                                                            <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
-                                                                <TextBlock Text="MOBILIZATION" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                                            </Border>
-                                                            <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
-                                                                <TextBlock Text="VAT 12%" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                                            </Border>
-                                                            <Border BorderBrush="#090909" BorderThickness="0,0,1,0" Padding="1">
-                                                                <TextBlock Text="TOTAL COST" FontWeight="Bold" FontFamily="Lexend" FontSize="9" Foreground="#C75757" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                                            </Border>
-                                                        </StackPanel>
+                                                        <Border Grid.Column="0" BorderBrush="#090909" BorderThickness="0,0,1,0">
+                                                            <StackPanel>
+                                                                <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                                    <TextBlock Text="DELIVERY" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                                </Border>
+                                                                <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                                    <TextBlock Text="SUBTOTAL VAT EX." FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                                </Border>
+                                                                <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
+                                                                    <TextBlock Text="TOTAL COST" FontWeight="Bold" FontFamily="Lexend" FontSize="14" Foreground="#C75757" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                                </Border>
+                                                            </StackPanel>
+                                                        </Border>
                                                         <StackPanel Grid.Column="1">
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBlock Text="₱ 0.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                                <TextBox  x:Name="Delivery" Text="₱ 0.00" FontWeight="SemiBold" BorderThickness="0" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBlock Text="₱ 0.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                                            </Border>
-                                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBlock Text="₱ 0.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                                            </Border>
-                                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBlock x:Name="Tax" Text="₱ 0.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="9" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                                <TextBlock x:Name="Tax" Text="₱ 0.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
-                                                                <TextBlock x:Name="TotalCost" Text="₱ 0.00" FontWeight="Bold" FontFamily="Lexend" FontSize="9" Foreground="#C75757" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                                <TextBlock x:Name="TotalCost" Text="₱ 0.00" FontWeight="Bold" FontFamily="Lexend" FontSize="14" Foreground="#C75757" HorizontalAlignment="Left" Margin="5,0,5,0"/>
                                                             </Border>
                                                         </StackPanel>
                                                     </Grid>
@@ -399,93 +376,95 @@ BorderBrush="#AEAEAE">
                                             </DockPanel>
                                         </Border>
                                         <!--Remarks-->
-                                        <Border BorderBrush="#090909" Height="20" BorderThickness="1,0,1,1" Margin="5,0,5,0" Padding="0,3">
-                                            <DockPanel>
-                                                <TextBlock Text="Remarks:" Margin="2,0,5,0" FontWeight="SemiBold" FontFamily="Lexend" FontSize="8" Foreground="#090909"  />
-                                                <TextBlock x:Name="remarksBox"  MouseLeftButtonUp="TextEditorPopOut" FontSize="8" Foreground="Black" TextWrapping="Wrap"/>
-                                            </DockPanel>
-                                        </Border>
+                                        <StackPanel Visibility="Collapsed">
+                                            <Border BorderBrush="#090909" Height="20" BorderThickness="1,0,1,1" Margin="5,0,5,0" Padding="0,3">
+                                                <DockPanel>
+                                                    <TextBlock Text="Remarks:" Margin="2,0,5,0" FontWeight="SemiBold" FontFamily="Lexend" FontSize="8" Foreground="#090909"  />
+                                                    <TextBlock x:Name="remarksBox"  MouseLeftButtonUp="TextEditorPopOut" FontSize="8" Foreground="Black" TextWrapping="Wrap"/>
+                                                </DockPanel>
+                                            </Border>
 
-                                        <Border BorderBrush="#090909" BorderThickness="1,0,1,1" Margin="5,0,5,0" Padding="0,1">
-                                            <TextBlock Text="TERMS" TextAlignment="Center" FontWeight="Bold" FontFamily="Lexend" FontSize="6" Foreground="#090909"/>
-                                        </Border>
+                                            <Border BorderBrush="#090909" BorderThickness="1,0,1,1" Margin="5,0,5,0" Padding="0,1">
+                                                <TextBlock Text="TERMS" TextAlignment="Center" FontWeight="Bold" FontFamily="Lexend" FontSize="6" Foreground="#090909"/>
+                                            </Border>
 
-                                        <Border BorderBrush="#090909"  BorderThickness="1, 0, 1, 1" Margin="5,0,5,0">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition/>
-                                                    <ColumnDefinition/>
-                                                    <ColumnDefinition/>
-                                                </Grid.ColumnDefinitions>
+                                            <Border BorderBrush="#090909"  BorderThickness="1, 0, 1, 1" Margin="5,0,5,0">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition/>
+                                                    </Grid.ColumnDefinitions>
 
-                                                <Border Grid.Column="0" BorderBrush="#090909" BorderThickness="0,0,1,0">
-                                                    <StackPanel>
-                                                        <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                            <TextBlock Text="For CASH payments:" TextAlignment="Center" FontWeight="Bold" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
-                                                        </Border>
-                                                        <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                            <TextBlock x:Name="Term1" MouseLeftButtonUp="TextEditorPopOut" Text="50% upon ordering" TextAlignment="Center"  FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
-                                                        </Border>
-                                                        <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                            <TextBlock x:Name="Term2" MouseLeftButtonUp="TextEditorPopOut"  Text="30% upon delivery" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
-                                                        </Border>
-                                                        <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                            <TextBlock x:Name="Term3" MouseLeftButtonUp="TextEditorPopOut" Text="20% upon completion" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
-                                                        </Border>
-                                                        <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
-                                                            <TextBlock x:Name="Term4" MouseLeftButtonUp="TextEditorPopOut" Text="Progress billing remaining balance (for bulk orders)" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
-                                                        </Border>
-                                                    </StackPanel>
-                                                </Border>
-                                                <Border Grid.Column="1" BorderBrush="#090909" BorderThickness="0,0,1,0">
-                                                    <StackPanel>
-                                                        <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                            <TextBlock Text="For CHEQUES payment:" TextAlignment="Center" FontWeight="Bold" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
-                                                        </Border>
-                                                        <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                            <TextBlock x:Name="Term5" MouseLeftButtonUp="TextEditorPopOut" Text="Order will process upon clearance of cheque" TextAlignment="Center"  FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
-                                                        </Border>
-                                                        <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                            <TextBlock x:Name="Term6" MouseLeftButtonUp="TextEditorPopOut" Text="Any additional orders will be charged seperately" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
-                                                        </Border>
-                                                        <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                            <TextBlock x:Name="Term7" MouseLeftButtonUp="TextEditorPopOut" Text="No return after installation" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
-                                                        </Border>
-                                                        <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
-                                                            <TextBlock x:Name="Term8" MouseLeftButtonUp="TextEditorPopOut" Text="" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
-                                                        </Border>
-                                                    </StackPanel>
-                                                </Border>
-                                                <Border Grid.Column="2" BorderBrush="#090909" BorderThickness="0,0,0,0">
-                                                    <StackPanel>
-                                                        <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                            <TextBlock Text="For out of town projects:" TextAlignment="Center" FontWeight="Bold" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
-                                                        </Border>
-                                                        <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                            <TextBlock x:Name="Term9" MouseLeftButtonUp="TextEditorPopOut" Text="Additional delivery charges" TextAlignment="Center"  FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
-                                                        </Border>
-                                                        <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                            <TextBlock x:Name="Term10" MouseLeftButtonUp="TextEditorPopOut" Text="Please indicate lead time for installation" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
-                                                        </Border>
-                                                        <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                            <TextBlock x:Name="Term11" MouseLeftButtonUp="TextEditorPopOut" Text="We will have a site inscpetions prior to installation" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
-                                                        </Border>
-                                                        <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
-                                                            <TextBlock x:Name="Term12" MouseLeftButtonUp="TextEditorPopOut" Text="" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
-                                                        </Border>
-                                                    </StackPanel>
-                                                </Border>
+                                                    <Border Grid.Column="0" BorderBrush="#090909" BorderThickness="0,0,1,0">
+                                                        <StackPanel>
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                                <TextBlock Text="For CASH payments:" TextAlignment="Center" FontWeight="Bold" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                                <TextBlock x:Name="Term1" MouseLeftButtonUp="TextEditorPopOut" Text="50% upon ordering" TextAlignment="Center"  FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                                <TextBlock x:Name="Term2" MouseLeftButtonUp="TextEditorPopOut"  Text="30% upon delivery" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                                <TextBlock x:Name="Term3" MouseLeftButtonUp="TextEditorPopOut" Text="20% upon completion" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
+                                                                <TextBlock x:Name="Term4" MouseLeftButtonUp="TextEditorPopOut" Text="Progress billing remaining balance (for bulk orders)" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </Border>
+                                                    <Border Grid.Column="1" BorderBrush="#090909" BorderThickness="0,0,1,0">
+                                                        <StackPanel>
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                                <TextBlock Text="For CHEQUES payment:" TextAlignment="Center" FontWeight="Bold" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                                <TextBlock x:Name="Term5" MouseLeftButtonUp="TextEditorPopOut" Text="Order will process upon clearance of cheque" TextAlignment="Center"  FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                                <TextBlock x:Name="Term6" MouseLeftButtonUp="TextEditorPopOut" Text="Any additional orders will be charged seperately" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                                <TextBlock x:Name="Term7" MouseLeftButtonUp="TextEditorPopOut" Text="No return after installation" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
+                                                                <TextBlock x:Name="Term8" MouseLeftButtonUp="TextEditorPopOut" Text="" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </Border>
+                                                    <Border Grid.Column="2" BorderBrush="#090909" BorderThickness="0,0,0,0">
+                                                        <StackPanel>
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                                <TextBlock Text="For out of town projects:" TextAlignment="Center" FontWeight="Bold" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                                <TextBlock x:Name="Term9" MouseLeftButtonUp="TextEditorPopOut" Text="Additional delivery charges" TextAlignment="Center"  FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                                <TextBlock x:Name="Term10" MouseLeftButtonUp="TextEditorPopOut" Text="Please indicate lead time for installation" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                                <TextBlock x:Name="Term11" MouseLeftButtonUp="TextEditorPopOut" Text="We will have a site inscpetions prior to installation" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
+                                                                <TextBlock x:Name="Term12" MouseLeftButtonUp="TextEditorPopOut" Text="" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </Border>
 
 
-                                            </Grid>
-                                        </Border>
-                                        <Border BorderBrush="#090909" BorderThickness="1,0,1,1" Margin="5,0,5,0" Padding="0,3">
-                                            <StackPanel>
-                                                <TextBlock Text="Unit 2A &amp; 2B LEGENDA BUILDING CIRCUMFERENCIAL RD. | ANTIPOLO CITY, RIZAL 1870 | PHONE: +639171873722 | TEL: 02-8801-4252 | EMAIL: INFO.DREAMPCBUILD@GMAIL.COM" TextAlignment="Center" FontFamily="Lexend" FontSize="7" Foreground="#090909"/>
-                                                <TextBlock Text="MAKE ALL CHECKS PAYABLE TO DREAM PC BUILD AND IT SOLUTIONS INC" FontWeight="Bold" Margin="0,3,0,0" TextAlignment="Center" FontFamily="Lexend" FontSize="11" Foreground="#090909"/>
-                                                <TextBlock Text="Thank you for your business!" TextAlignment="Center" FontFamily="Lexend" FontSize="8" Foreground="#090909"/>
-                                            </StackPanel>
-                                        </Border>
+                                                </Grid>
+                                            </Border>
+                                            <Border BorderBrush="#090909" BorderThickness="1,0,1,1" Margin="5,0,5,0" Padding="0,3">
+                                                <StackPanel>
+                                                    <TextBlock Text="Unit 2A &amp; 2B LEGENDA BUILDING CIRCUMFERENCIAL RD. | ANTIPOLO CITY, RIZAL 1870 | PHONE: +639171873722 | TEL: 02-8801-4252 | EMAIL: INFO.DREAMPCBUILD@GMAIL.COM" TextAlignment="Center" FontFamily="Lexend" FontSize="7" Foreground="#090909"/>
+                                                    <TextBlock Text="MAKE ALL CHECKS PAYABLE TO DREAM PC BUILD AND IT SOLUTIONS INC" FontWeight="Bold" Margin="0,3,0,0" TextAlignment="Center" FontFamily="Lexend" FontSize="11" Foreground="#090909"/>
+                                                    <TextBlock Text="Thank you for your business!" TextAlignment="Center" FontFamily="Lexend" FontSize="8" Foreground="#090909"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </StackPanel>
                                     </StackPanel>
 
                                 </Grid>

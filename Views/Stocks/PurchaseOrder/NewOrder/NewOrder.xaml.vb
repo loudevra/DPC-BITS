@@ -190,12 +190,34 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             StatementDetails.TaxCache = Nothing
             StatementDetails.TotalCostCache = Nothing
             StatementDetails.OrderItemsCache = Nothing
+            StatementDetails.signature = False
+            StatementDetails.ImageCache = Nothing
+            StatementDetails.PathCache = Nothing
             StatementDetails.SupplierName = Nothing
             StatementDetails.City = Nothing
             StatementDetails.Region = Nothing
             StatementDetails.Country = Nothing
             StatementDetails.Phone = Nothing
             StatementDetails.Email = Nothing
+            StatementDetails.noteTxt = Nothing
+            StatementDetails.remarksTxt = Nothing
+            StatementDetails.paymentTerms = Nothing
+            StatementDetails.Term1 = Nothing
+            StatementDetails.Term2 = Nothing
+            StatementDetails.Term3 = Nothing
+            StatementDetails.Term4 = Nothing
+            StatementDetails.Term5 = Nothing
+            StatementDetails.Term6 = Nothing
+            StatementDetails.Term7 = Nothing
+            StatementDetails.Term8 = Nothing
+            StatementDetails.Term9 = Nothing
+            StatementDetails.Term10 = Nothing
+            StatementDetails.Term11 = Nothing
+            StatementDetails.Term12 = Nothing
+            StatementDetails.DeliveryCost = Nothing
+            StatementDetails.paymentTerms = Nothing
+            StatementDetails.isCustomTerm = Nothing
+            StatementDetails.Approved = Nothing
             _selectedSupplier = Nothing
             _selectedProduct = Nothing
             ClearAllRows()
@@ -1114,8 +1136,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                     StatementDetails.InvoiceNumberCache = InvoiceNumber.Text
                     StatementDetails.InvoiceDateCache = Date.Now.ToString("M/d/yyyy")
                     StatementDetails.DueDateCache = dueSelectedDate.ToString("M/d/yyyy")
-                    StatementDetails.TaxCache = $"₱ {TaxFormatted}"
-                    StatementDetails.TotalCostCache = $"₱ {TotalFormatted}"
+                    StatementDetails.TaxCache = TaxFormatted
+                    StatementDetails.TotalCostCache = TotalFormatted
                     StatementDetails.OrderItemsCache = itemArray
                     StatementDetails.SupplierName = _selectedSupplier.SupplierName
                     StatementDetails.City = _selectedSupplier.City
@@ -1123,7 +1145,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                     StatementDetails.Country = _selectedSupplier.Country
                     StatementDetails.Phone = _selectedSupplier.SupplierPhone
                     StatementDetails.Email = _selectedSupplier.SupplierEmail
-                    StatementDetails.paymentTerms = cmbPaymentTerms.Text
 
 
                     ViewLoader.DynamicView.NavigateToView("purchaseorderstatement", Me)

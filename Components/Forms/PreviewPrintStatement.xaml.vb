@@ -14,8 +14,8 @@ Namespace DPC.Components.Forms
         Private base64Image As String
         Private itemDataSource As New ObservableCollection(Of OrderItems)
         Private itemOrder As New List(Of Dictionary(Of String, String))
-        Private checkingDataSource As New ObservableCollection(Of Checker)
         Private Address As String
+        Private isCustom As Boolean
 
         Public Sub New()
 
@@ -24,22 +24,23 @@ Namespace DPC.Components.Forms
 
             ' Add any initialization after the InitializeComponent() call.
 
+
             InvoiceNumber.Text = StatementDetails.InvoiceNumberCache
             InvoiceDate.Text = StatementDetails.InvoiceDateCache
             DueDate.Text = StatementDetails.DueDateCache
-            Tax.Text = StatementDetails.TaxCache
-            TotalCost.Text = StatementDetails.TotalCostCache
+            Tax.Text = "₱ " & StatementDetails.TaxCache.ToString("N2")
+            TotalCost.Text = "₱ " & (StatementDetails.TotalCostCache + DeliveryCost).ToString("N2")
+            Delivery.Text = "₱ " & StatementDetails.DeliveryCost.ToString("N2")
             itemOrder = StatementDetails.OrderItemsCache
             base64Image = StatementDetails.ImageCache
             tempImagePath = StatementDetails.PathCache
             SupplierNameBox.Text = StatementDetails.SupplierName
             AddressLineOne.Text = StatementDetails.City & ", " & StatementDetails.Region
             AddressLineTwo.Text = StatementDetails.Country
-            PhoneBox.Text = "TEL: " & StatementDetails.Phone
+            PhoneBox.Text = "Tel No: " & StatementDetails.Phone
             EmailBox.Text = StatementDetails.Email
             noteBox.Text = StatementDetails.noteTxt
             remarksBox.Text = StatementDetails.remarksTxt
-            PaymentTerms.Text = StatementDetails.paymentTerms
             Term1.Text = StatementDetails.Term1
             Term2.Text = StatementDetails.Term2
             Term3.Text = StatementDetails.Term3
@@ -52,6 +53,10 @@ Namespace DPC.Components.Forms
             Term10.Text = StatementDetails.Term10
             Term11.Text = StatementDetails.Term11
             Term12.Text = StatementDetails.Term12
+            SalesRep.Text = CacheOnLoggedInName
+            PaymentTerms.Text = StatementDetails.paymentTerms
+            isCustom = StatementDetails.isCustomTerm
+            Approved.Text = StatementDetails.Approved
 
             If StatementDetails.signature = False Then
                 BrowseFile.Child = Nothing
@@ -74,11 +79,7 @@ Namespace DPC.Components.Forms
                     })
             Next
 
-            checkingDataSource.Add(New Checker With {
-                    .SalesRep = CacheOnLoggedInName
-                })
 
-            checkingGrid.ItemsSource = checkingDataSource
             dataGrid.ItemsSource = itemDataSource
 
             AddHandler SaveDb.Click, AddressOf SaveToDB
@@ -91,11 +92,20 @@ Namespace DPC.Components.Forms
             _region = StatementDetails.Region
             _phone = StatementDetails.Phone
 
+            Dim _deliveryCost, _tax, _totalCost As Decimal
+
+            _deliveryCost = StatementDetails.DeliveryCost
+            _tax = StatementDetails.TaxCache
+            _totalCost = StatementDetails.TotalCostCache
+
+            StatementDetails.paymentTerms = PaymentTerms.Text
+
+            StatementDetails.signature = If(String.IsNullOrWhiteSpace(base64Image), False, True)
             StatementDetails.InvoiceNumberCache = InvoiceNumber.Text
             StatementDetails.InvoiceDateCache = InvoiceDate.Text
             StatementDetails.DueDateCache = DueDate.Text
-            StatementDetails.TaxCache = Tax.Text
-            StatementDetails.TotalCostCache = TotalCost.Text
+            StatementDetails.TaxCache = _tax
+            StatementDetails.TotalCostCache = _totalCost
             StatementDetails.OrderItemsCache = itemOrder
             StatementDetails.ImageCache = base64Image
             StatementDetails.PathCache = tempImagePath
@@ -107,7 +117,6 @@ Namespace DPC.Components.Forms
             StatementDetails.Email = EmailBox.Text
             StatementDetails.noteTxt = noteBox.Text
             StatementDetails.remarksTxt = remarksBox.Text
-            StatementDetails.paymentTerms = PaymentTerms.Text
             StatementDetails.Term1 = Term1.Text
             StatementDetails.Term2 = Term2.Text
             StatementDetails.Term3 = Term3.Text
@@ -120,6 +129,9 @@ Namespace DPC.Components.Forms
             StatementDetails.Term10 = Term10.Text
             StatementDetails.Term11 = Term11.Text
             StatementDetails.Term12 = Term12.Text
+            StatementDetails.DeliveryCost = _deliveryCost
+            StatementDetails.isCustomTerm = isCustom
+            StatementDetails.Approved = Approved.Text
 
             ViewLoader.DynamicView.NavigateToView("purchaseorderstatement", Me)
         End Sub
@@ -233,14 +245,16 @@ Namespace DPC.Components.Forms
             StatementDetails.Term10 = Nothing
             StatementDetails.Term11 = Nothing
             StatementDetails.Term12 = Nothing
+            StatementDetails.DeliveryCost = Nothing
+            StatementDetails.paymentTerms = Nothing
+            StatementDetails.isCustomTerm = Nothing
+            StatementDetails.Approved = Nothing
         End Sub
 
         Private Sub SaveToDB()
             Dim itemsJSON As String = JsonConvert.SerializeObject(itemOrder, Formatting.Indented)
             Dim InvoiceDate As String = Date.Now.ToString("yyyy-MM-dd")
-            Dim SubVatString As String = SubVat.Text.Trim("₱"c, " "c)
-            Dim InstallString As String = Install.Text.Trim("₱"c, " "c)
-            Dim MobilizationString As String = Mobilization.Text.Trim("₱"c, " "c)
+            Dim DeliveryString As String = Delivery.Text.Trim("₱"c, " "c)
             Dim TaxString As String = Tax.Text.Trim("₱"c, " "c)
             Dim TotalCostString As String = TotalCost.Text.Trim("₱"c, " "c)
 
@@ -251,7 +265,7 @@ Namespace DPC.Components.Forms
                 Address += child.Text & Environment.NewLine
             Next
 
-            Dim success As Boolean = PurchaseOrderController.InsertInvoicePurchaseOrder(InvoiceNumber.Text, InvoiceDate, DueDateFormatted, Address, itemsJSON, SubVatString, InstallString, MobilizationString, TaxString, TotalCostString, base64Image)
+            Dim success As Boolean = PurchaseOrderController.InsertInvoicePurchaseOrder(InvoiceNumber.Text, InvoiceDate, DueDateFormatted, Address, itemsJSON, DeliveryString, TaxString, TotalCostString, base64Image, Approved.Text, PaymentTerms.Text, noteBox.Text)
 
             If success Then
                 MessageBox.Show("Added to database")
