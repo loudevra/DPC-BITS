@@ -79,7 +79,7 @@
                         <TextBox x:Name="txtStreetAddress" Height="30" Margin="0,5,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="729" FontFamily="Lexend" FontWeight="SemiBold"/>
                     </Border>
 
-                    <Grid Margin="0,10,0,10">
+                    <Grid Margin="10,10,0,10">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="30"/>
@@ -107,7 +107,7 @@
                         </StackPanel>
 
                         <!-- Country -->
-                        <StackPanel Grid.Column="3" Grid.ColumnSpan="2" Margin="30,0,19,0">
+                        <StackPanel Grid.Column="3" Grid.ColumnSpan="2" Margin="30,0,0,0">
                             <TextBlock Text="Country:" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747" Margin="0,10,0,10" />
                             <Border Style="{StaticResource RoundedBorderStyle}" Width="228">
                                 <TextBox x:Name="txtCountry" Height="30" Margin="16,5,16,5" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" />
@@ -144,12 +144,9 @@
 
                     <!-- Department -->
                     <TextBlock Text="Department:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
-                    <Border Style="{StaticResource RoundedBorderStyle}" Width="773">
-                        <TextBox x:Name="txtDepartment" Height="30" Margin="19,5,19,5" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
-                    </Border>
-
+                    <ComboBox x:Name="cmbDepartments" Style="{StaticResource RoundedComboBoxStyle}" Width="773" Height="40" SelectedIndex="0" Margin="0" FontFamily="Lexend" FontWeight="SemiBold">
+                    </ComboBox>
                 </StackPanel>
-
                 <!-- Submit Button -->
                 <StackPanel Margin="20,20,20,20">
                     <Button x:Name="btnAddEmployee" Background="Transparent" HorizontalAlignment="Right" BorderThickness="0" VerticalAlignment="Center" Click="BtnAddEmployee_Click">

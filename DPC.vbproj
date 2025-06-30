@@ -437,6 +437,21 @@
     <Compile Include="Components\Forms\DeleteCouponPopout.xaml.vb">
       <DependentUpon>DeleteCouponPopout.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\DeleteCreditPopUp.xaml.vb">
+      <DependentUpon>DeleteCreditPopUp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\DeleteInvoicePopUp.xaml.vb">
+      <DependentUpon>DeleteInvoicePopUp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\DeletePOSInvoicePopUp.xaml.vb">
+      <DependentUpon>DeletePOSInvoicePopUp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\DeleteQuotePopUp.xaml.vb">
+      <DependentUpon>DeleteQuotePopUp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\DeleteSubscriptionPopUp.xaml.vb">
+      <DependentUpon>DeleteSubscriptionPopUp.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\EditBrand.xaml.vb">
       <DependentUpon>EditBrand.xaml</DependentUpon>
     </Compile>
@@ -451,6 +466,9 @@
     </Compile>
     <Compile Include="Components\Forms\PayrollTrasactionControl.xaml.vb">
       <DependentUpon>PayrollTrasactionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\PopOutTextEditor.xaml.vb">
+      <DependentUpon>PopOutTextEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\POSPayment.xaml.vb">
       <DependentUpon>POSPayment.xaml</DependentUpon>
@@ -542,6 +560,7 @@
     <Compile Include="Data\Controllers\Product\UploadProduct.vb" />
     <Compile Include="Data\Controllers\PromoCodeController.vb" />
     <Compile Include="Data\Controllers\PurchaseOrder\PurchaseOrderController.vb" />
+    <Compile Include="Data\Controllers\Quotes\QuotesController.vb" />
     <Compile Include="Data\Controllers\ResetPassController.vb" />
     <Compile Include="Data\Controllers\SessionManager.vb" />
     <Compile Include="Data\Controllers\StocksStatsController.vb" />
@@ -821,11 +840,30 @@
     <Compile Include="Views\POS\PaymentGateway.xaml.vb">
       <DependentUpon>PaymentGateway.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\POS\POS.xaml.vb">
+      <DependentUpon>POS.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\POS\POSForm.xaml.vb">
       <DependentUpon>POSForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\POS\SalesNewInvoice.xaml.vb">
       <DependentUpon>SalesNewInvoice.xaml</DependentUpon>
+
+    <Compile Include="Views\POS\POSInvoice.xaml.vb">
+      <DependentUpon>POSInvoice.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\POS\POSSalesPopUP\POSPayment.xaml.vb">
+      <DependentUpon>POSPayment.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\POS\POSSalesPopUP\POSRegister.xaml.vb">
+      <DependentUpon>POSRegister.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\POS\POSSalesPopUP\POSRegister2.xaml.vb">
+      <DependentUpon>POSRegister2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\POS\POSSalesPopUP\POSWalkInClient.xaml.vb">
+      <DependentUpon>POSWalkInClient.xaml</DependentUpon>
+
     </Compile>
     <Compile Include="Views\POS\SubscriptionPayment.xaml.vb">
       <DependentUpon>SubscriptionPayment.xaml</DependentUpon>
@@ -1016,6 +1054,26 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\Forms\DeleteCreditPopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\DeleteInvoicePopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\DeletePOSInvoicePopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\DeleteQuotePopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\DeleteSubscriptionPopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\Forms\EditBrand.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1037,6 +1095,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\PayrollTrasactionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\PopOutTextEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1541,13 +1603,40 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\POS\POS.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\POS\POSForm.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+
     <Page Include="Views\POS\SalesNewInvoice.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+
+    <Page Include="Views\POS\POSInvoice.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\POS\POSSalesPopUP\POSPayment.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\POS\POSSalesPopUP\POSRegister.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\POS\POSSalesPopUP\POSRegister2.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\POS\POSSalesPopUP\POSWalkInClient.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+
     <Page Include="Views\POS\SubscriptionPayment.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

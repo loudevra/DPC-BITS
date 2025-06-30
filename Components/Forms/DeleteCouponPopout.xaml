@@ -17,12 +17,12 @@
             </Grid.RowDefinitions>
 
 
-            <TextBlock Grid.Row="0" FontSize="32" Foreground="#D23636" FontWeight="SemiBold" Text="Delete Coupon?" Margin="0,0,0,0" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="0" FontSize="32" Foreground="#D23636" FontWeight="SemiBold" FontFamily="Lexend" Text="Delete Coupon?" Margin="0,0,0,0" VerticalAlignment="Center"/>
 
 
             <StackPanel Grid.Row="1">
 
-                <TextBlock Margin="0,20,0,0" FontWeight="SemiBold"  FontSize="20" FontFamily="{StaticResource Lexend}" Foreground="#AEAEAE" >
+                <TextBlock Margin="0,20,0,0" FontWeight="SemiBold"  FontSize="20" FontFamily="Lexend" Foreground="#AEAEAE" >
                     Deleting this coupon will remove all its details.
                     <TextBlock x:Name="brandName">
                         
@@ -31,10 +31,10 @@
                 </TextBlock>
                 <DockPanel Margin="0,50,0,0" LastChildFill="False">
                     <Button DockPanel.Dock="Right" Margin="0,0,0,0" Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#D23636" >
-                        <TextBlock Text="Confirm" Margin="35, 10" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Lexend}" FontWeight="SemiBold" Foreground="White" FontSize="15"/>
+                        <TextBlock Text="Confirm" Margin="35, 10" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Lexend" FontWeight="SemiBold" Foreground="White" FontSize="15"/>
                     </Button>
                     <Button DockPanel.Dock="Right" Margin="0, 0,10,0" VerticalAlignment="Center" Style="{StaticResource RoundedButtonStyle}" BorderThickness="2" Background="Transparent"  BorderBrush="#AEAEAE" >
-                        <TextBlock Text="Close" Margin="35, 10" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource Lexend}" FontWeight="SemiBold" Foreground="#AEAEAE" FontSize="15"/>
+                        <TextBlock Text="Close" Margin="35, 10" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Lexend" FontWeight="SemiBold" Foreground="#AEAEAE" FontSize="15"/>
                     </Button>
                 </DockPanel>
             </StackPanel>
