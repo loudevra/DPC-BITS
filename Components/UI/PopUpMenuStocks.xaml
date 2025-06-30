@@ -180,7 +180,7 @@
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
-                                <Hyperlink >
+                                <Hyperlink Click="NavigateToWalkIn">
                                  <TextBlock Text="Walk-In Client" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
                             </TextBlock>

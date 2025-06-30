@@ -65,6 +65,12 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "addpromocode"
                         Return New PromoCodes.AddPromoCode()
 
+                    Case "newwalkinclient"
+                        Return New Stocks.PurchaseOrder.WalkIn.AddNewWalkInClient()
+
+                    Case "walkinorder"
+                        Return New Stocks.PurchaseOrder.WalkIn.WalkInNewOrder()
+
                          ' CRM Navigation
                     Case "clientgroups"
                         Return New CRM.ClientGroup.ClientGroups()
