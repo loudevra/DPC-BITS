@@ -1,6 +1,6 @@
 ﻿Namespace DPC.Data.Models
     Public Class Client
-        Public Property ClientID As Integer
+        Public Property ClientID As Long
         Public Property ClientGroupID As Integer
         Public Property Name As String
         Public Property Company As String
@@ -12,5 +12,18 @@
         Public Property Language As String
         Public Property CreatedAt As DateTime
         Public Property UpdatedAt As DateTime
+    End Class
+
+    Public Class ClientBillingAddress
+        'Public Property CompanyName As String
+        'Public Property Address As String
+        'Public Property City As String
+        'Public Property Region As String
+        'Public Property Country As String
+        'Public Property ZipCode As String
+
+        Public Property Street As String
+        Public Property City As String
+        Public Property ZIP As String
     End Class
 End Namespace

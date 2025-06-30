@@ -29,7 +29,7 @@
                 </StackPanel>
                 <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10">
                     <!--Product Name Value is here!-->
-                    <TextBox x:Name="TxtEmployee" Style="{StaticResource RoundedTextboxStyle}"/>
+                    <TextBox x:Name="TxtEmployee" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold"/>
                 </Border>
 
                 <StackPanel Margin="0,10">
@@ -54,7 +54,7 @@
                             <materialDesign:PackIcon Grid.Column="0" Kind="Calendar" Width="32" Height="25" Foreground="#474747" VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="10,0,0,0"/>
                             <!-- Date Display - Now uses FormattedDate property -->
                             <Button x:Name="DateButton" Grid.Column="1" Style="{StaticResource DateButtonStyle}" Click="StartDate_Click" Width="Auto" Margin="28,0,25,0">
-                                <TextBlock Text="{Binding FormattedDate}" Margin="0,0,5,0" Foreground="#474747" Height="14"/>
+                                <TextBlock Text="{Binding FormattedDate}" Margin="0,0,5,0" Height="14" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold" />
                             </Button>
                         </Grid>
                     </Border>
@@ -66,24 +66,24 @@
                 </StackPanel>
                 <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10">
                     <!--Product Name Value is here!-->
-                    <TextBox x:Name="TxtStartTime" Style="{StaticResource RoundedTextboxStyle}"/>
+                    <TextBox x:Name="TxtStartTime" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold"/>
                 </Border>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                     <TextBlock Text="To:" Foreground="#555555" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                 </StackPanel>
                 <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,20">
                     <!--Product Name Value is here!-->
-                    <TextBox x:Name="TxtEndTime" Style="{StaticResource RoundedTextboxStyle}"/>
+                    <TextBox x:Name="TxtEndTime" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold"/>
                 </Border>
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                     <TextBlock Text="Note:" Foreground="#555555" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                 </StackPanel>
-                <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10" Height="129" >
+                <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10" Height="129" Padding="0,15,0,15">
                     <!--Product Name Value is here!-->
-                    <TextBox x:Name="TxtNote" Style="{StaticResource RoundedTextboxStyle}"/>
+                    <TextBox x:Name="TxtNote" Style="{StaticResource RoundedTextboxStyle}" Height="Auto" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold"/>
                 </Border>
                 <Button Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#52C69D" >
-                    <TextBlock Text="Add" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="15"/>
+                    <TextBlock Text="Add" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="15" FontWeight="SemiBold"/>
                 </Button>
             </StackPanel>
         </Grid>

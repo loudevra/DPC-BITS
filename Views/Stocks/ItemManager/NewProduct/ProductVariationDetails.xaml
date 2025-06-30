@@ -104,7 +104,7 @@
                                 <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
                             </StackPanel>
                             <!--Warehouse Value-->
-                            <ComboBox x:Name="ComboBoxWarehouse" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0"/>
+                            <ComboBox x:Name="ComboBoxWarehouse" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0" FontFamily="Lexend"  Foreground="#474747" FontWeight="SemiBold"/>
                         </StackPanel>
 
 
@@ -130,7 +130,7 @@
                                         <!-- Product Purchase Order Value-->
                                         <TextBox x:Name="TxtPurchaseOrder" Style="{StaticResource RoundedTextboxStyle}" Margin="0,0,25,0" Grid.Column="1"
                                     PreviewTextInput="IntegerOnlyTextInputHandler"
-                                    DataObject.Pasting="IntegerOnlyPasteHandler"/>
+                                    DataObject.Pasting="IntegerOnlyPasteHandler" FontFamily="Lexend"  Foreground="#474747" FontWeight="SemiBold"/>
                                     </Grid>
                                 </Border>
                             </StackPanel>
@@ -180,7 +180,7 @@
                          PreviewTextInput="IntegerOnlyTextInputHandler"
                          DataObject.Pasting="IntegerOnlyPasteHandler" 
                          TextChanged="TxtMarkup_TextChanged"
-                         VerticalAlignment="Center"/>
+                         VerticalAlignment="Center" FontFamily="Lexend"  Foreground="#474747" FontWeight="SemiBold"/>
                                     </Grid>
                                 </Border>
                             </StackPanel>
@@ -208,7 +208,7 @@
                                         <TextBox x:Name="TxtRetailPrice" Style="{StaticResource RoundedTextboxStyle}" Margin="0,0,25,0" Grid.Column="1" 
                                     PreviewTextInput="IntegerOnlyTextInputHandler"
                                     DataObject.Pasting="IntegerOnlyPasteHandler"
-                                    IsReadOnly="True"/>
+                                    IsReadOnly="True" FontFamily="Lexend"  Foreground="#474747" FontWeight="SemiBold"/>
                                     </Grid>
                                 </Border>
                             </StackPanel>
@@ -256,7 +256,7 @@
                                     <!-- Default Discount Rate-->
                                     <TextBox x:Name="TxtDiscountRate" Style="{StaticResource RoundedTextboxStyle}" Margin="25,0,0,0" Grid.Column="0"
                                 PreviewTextInput="IntegerOnlyTextInputHandler"
-                                DataObject.Pasting="IntegerOnlyPasteHandler"/>
+                                DataObject.Pasting="IntegerOnlyPasteHandler" FontFamily="Lexend"  Foreground="#474747" FontWeight="SemiBold"/>
 
                                     <!-- Icon with Vertical Centering -->
                                     <materialDesign:PackIcon Kind="PercentOutline" Width="25" Height="20" Margin="0,0,10,0" VerticalAlignment="Center" Grid.Column="1"/>
@@ -274,7 +274,7 @@
                                 <TextBox x:Name="TxtStockUnits" Style="{StaticResource RoundedTextboxStyle}"
                                 PreviewTextInput="IntegerOnlyTextInputHandler"
                                 DataObject.Pasting="IntegerOnlyPasteHandler"
-                                KeyDown="TxtStockUnits_KeyDown"/>
+                                KeyDown="TxtStockUnits_KeyDown" FontFamily="Lexend"  Foreground="#474747" FontWeight="SemiBold"/>
                             </Border>
                         </StackPanel>
 
@@ -287,7 +287,7 @@
                                 <!-- Alert Quantity Value-->
                                 <TextBox x:Name="TxtAlertQuantity" Style="{StaticResource RoundedTextboxStyle}"      
     PreviewTextInput="IntegerOnlyTextInputHandler"
-    DataObject.Pasting="IntegerOnlyPasteHandler"/>
+    DataObject.Pasting="IntegerOnlyPasteHandler" FontFamily="Lexend"  Foreground="#474747" FontWeight="SemiBold"/>
                             </Border>
                         </StackPanel>
                     </StackPanel>
@@ -333,7 +333,7 @@
                            Foreground="White"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
-                           Margin="0,0,0,0"/>
+                           Margin="0,0,0,0" FontFamily="Lexend" FontWeight="SemiBold"/>
                 </Button>
             </StackPanel>
         </Grid>

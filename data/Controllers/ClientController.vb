@@ -1,6 +1,10 @@
-﻿Imports MySql.Data.MySqlClient
-Imports System.Collections.ObjectModel
+﻿Imports System.Collections.ObjectModel
+Imports DocumentFormat.OpenXml.Office2016.Drawing
+Imports DPC.DPC.Data.Model
 Imports DPC.DPC.Data.Models
+Imports MailKit.Search
+Imports MySql.Data.MySqlClient
+Imports Newtonsoft.Json
 
 Namespace DPC.Data.Controllers
     Public Class ClientController
@@ -156,6 +160,42 @@ Namespace DPC.Data.Controllers
             Return client
         End Function
 
+        Public Shared Function SearchClient(searchClientName As String) As ObservableCollection(Of Client)
+            Dim clients As New ObservableCollection(Of Client)
+            Dim SearchClientQuery As String = "SELECT * FROM client
+                                                WHERE Name LIKE @searchText 
+                                                   OR ClientID LIKE @searchText 
+                                                   OR Email LIKE @searchText
+                                                ORDER BY Name ASC
+                                                LIMIT 10"
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
 
+                    Using cmd As New MySqlCommand(SearchClientQuery, conn)
+                        cmd.Parameters.AddWithValue("@searchText", "%" & searchClientName & "%")
+                        Using reader As MySqlDataReader = cmd.ExecuteReader
+                            While reader.Read()
+                                Dim client As New Client With {
+                                .ClientID = reader("ClientID"),
+                                .ClientGroupID = If(IsDBNull(reader("ClientGroupID")), 0, Convert.ToInt32(reader("ClientGroupID"))),
+                                .Name = reader("Name").ToString(),
+                                .Company = reader("Company").ToString(),
+                                .Phone = reader("Phone").ToString(),
+                                .Email = reader("Email").ToString(),
+                                .CustomerGroup = reader("CustomerGroup").ToString(),
+                                .Language = reader("Language").ToString()
+                            }
+                                clients.Add(client)
+                            End While
+                        End Using
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show($"Error searching ClientController: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                End Try
+            End Using
+            'Return as observablecollection
+            Return clients
+        End Function
     End Class
 End Namespace
