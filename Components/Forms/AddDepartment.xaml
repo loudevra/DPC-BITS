@@ -41,7 +41,7 @@
                 </StackPanel>
                 <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,20">
                     <!--Product Name Value is here!-->
-                    <TextBox x:Name="TxtDepartment" Style="{StaticResource RoundedTextboxStyle}"/>
+                    <TextBox x:Name="TxtDepartment" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold"/>
                 </Border>
                 <Button Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#52C69D" Click="AddDepartment">
                     <TextBlock Text="Add" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="15"/>
