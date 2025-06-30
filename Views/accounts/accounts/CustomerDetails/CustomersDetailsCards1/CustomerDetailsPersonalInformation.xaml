@@ -1,13 +1,13 @@
 ﻿<UserControl x:Class="DPC.Views.Accounts.Accounts.CustomerDetails.CustomerDetailsCards1.CustomerDetailsPersonalInformation"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              Background="Transparent"
              HorizontalAlignment="Stretch"
              MinWidth="600"
              FontFamily="Lexend">
 
     <UserControl.Resources>
-        <!-- Enforce Lexend on all relevant controls -->
         <Style TargetType="TextBlock">
             <Setter Property="FontFamily" Value="Lexend"/>
         </Style>
@@ -21,195 +21,198 @@
 
     <Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <Viewbox Stretch="Uniform" StretchDirection="Both">
-                <Grid Width="900" Background="Transparent" Margin="20">
-                    <Border Background="White" CornerRadius="15" Padding="40">
-                        <StackPanel>
+            <Grid Background="Transparent" Margin="0">
+                <Border Background="White" CornerRadius="15" Padding="30">
+                    <StackPanel HorizontalAlignment="Stretch">
 
-                            <!-- Header -->
-                            <TextBlock Text="Personal Information"
-                                       FontSize="33"
-                                       FontWeight="SemiBold"
-                                       Foreground="#555"
-                                       Margin="0,0,0,40"/>
+                        <!-- Header -->
+                        <TextBlock Text="Personal Information"
+                                   FontSize="32"
+                                   FontWeight="SemiBold"
+                                   Foreground="#333"
+                                   Margin="0,0,0,30"/>
 
+                        <!-- Aligned Information Grid -->
+                        <UniformGrid Columns="3" Margin="0,0,0,30" HorizontalAlignment="Stretch">
                             <!-- Row 1 -->
-                            <UniformGrid Columns="3" Margin="0,0,0,30">
-                                <StackPanel Margin="0,0,20,0">
-                                    <TextBlock Text="Name" Margin="0,0,0,6" Foreground="#AEAEAE" FontSize="14"/>
-                                    <TextBlock Text="Eli Clark" Foreground="#555555" FontSize="16"/>
-                                </StackPanel>
-                                <StackPanel Margin="0,0,20,0">
-                                    <TextBlock Text="Email" Margin="0,0,0,6" Foreground="#AEAEAE" FontSize="14"/>
-                                    <TextBlock Text="brookerose@gmail.com" Foreground="#555555" FontSize="16"/>
-                                </StackPanel>
-                                <StackPanel>
-                                    <TextBlock Text="Contact No." Margin="0,0,0,6" Foreground="#AEAEAE" FontSize="14"/>
-                                    <TextBlock Text="+44 7701756259" Foreground="#555555" FontSize="16"/>
-                                </StackPanel>
-                            </UniformGrid>
+                            <StackPanel Margin="0,0,20,0">
+                                <TextBlock Text="Name" FontSize="14" Foreground="#AEAEAE" Margin="0,0,0,4"/>
+                                <TextBlock Text="Eli Clark" FontSize="16" Foreground="#555"/>
+                            </StackPanel>
+                            <!-- Email -->
+                            <StackPanel Margin="0,0,20,0">
+                                <TextBlock Text="Email" FontSize="14" Foreground="#AEAEAE" Margin="0,0,0,4"/>
+                                <TextBlock Text="brookerose@gmail.com"
+               FontSize="16"
+               Foreground="#555"
+               TextTrimming="CharacterEllipsis"
+               ToolTip="brookerose@gmail.com"
+               MaxWidth="180"/>
+                            </StackPanel>
+                            <!-- Contact Number -->
+                            <StackPanel>
+                                <TextBlock Text="Contact No." FontSize="14" Foreground="#AEAEAE" Margin="0,0,0,4"/>
+                                <TextBlock Text="+44 7701756259"
+               FontSize="16"
+               Foreground="#555"
+               TextTrimming="CharacterEllipsis"
+               ToolTip="+44 7701756259"
+               MaxWidth="180"/>
+                            </StackPanel>
 
                             <!-- Row 2 -->
-                            <UniformGrid Columns="3" Margin="0,0,0,30">
-                                <StackPanel Margin="0,0,20,0">
-                                    <TextBlock Text="Address" Margin="0,0,0,6" Foreground="#AEAEAE" FontSize="14"/>
-                                    <TextBlock Text="59 Tredegar St" Foreground="#555555" FontSize="16"/>
-                                </StackPanel>
-                                <StackPanel Margin="0,0,20,0">
-                                    <TextBlock Text="City" Margin="0,0,0,6" Foreground="#AEAEAE" FontSize="14"/>
-                                    <TextBlock Text="Newport" Foreground="#555555" FontSize="16"/>
-                                </StackPanel>
-                                <StackPanel>
-                                    <TextBlock Text="Region" Margin="0,0,0,6" Foreground="#AEAEAE" FontSize="14"/>
-                                    <TextBlock Text="Olatus" Foreground="#555555" FontSize="16"/>
-                                </StackPanel>
-                            </UniformGrid>
+                            <StackPanel Margin="0,0,20,0">
+                                <TextBlock Text="Address" FontSize="14" Foreground="#AEAEAE" Margin="0,0,0,4"/>
+                                <TextBlock Text="59 Tredegar St" FontSize="16" Foreground="#555"/>
+                            </StackPanel>
+                            <StackPanel Margin="0,0,20,0">
+                                <TextBlock Text="City" FontSize="14" Foreground="#AEAEAE" Margin="0,0,0,4"/>
+                                <TextBlock Text="Newport" FontSize="16" Foreground="#555"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="Postal Code" FontSize="14" Foreground="#AEAEAE" Margin="0,0,0,4"/>
+                                <TextBlock Text="NP10" FontSize="16" Foreground="#555"/>
+                            </StackPanel>
 
                             <!-- Row 3 -->
-                            <UniformGrid Columns="3" Margin="0,0,0,40">
-                                <StackPanel Margin="0,0,20,0">
-                                    <TextBlock Text="Country" Margin="0,0,0,6" Foreground="#AEAEAE" FontSize="14"/>
-                                    <TextBlock Text="Wales" Foreground="#555555" FontSize="16"/>
-                                </StackPanel>
+                            <StackPanel Margin="0,0,20,0">
+                                <TextBlock Text="Region" FontSize="14" Foreground="#AEAEAE" Margin="0,0,0,4"/>
+                                <TextBlock Text="Olatus" FontSize="16" Foreground="#555"/>
+                            </StackPanel>
+                            <StackPanel Margin="0,0,20,0">
+                                <TextBlock Text="Country" FontSize="14" Foreground="#AEAEAE" Margin="0,0,0,4"/>
+                                <TextBlock Text="Wales" FontSize="16" Foreground="#555"/>
+                            </StackPanel>
+                            <StackPanel />
+                        </UniformGrid>
+
+                        <!-- Divider between personal info and shipping address -->
+                        <Separator Margin="0,0,0,30"/>
+
+                        <!-- Shipping Address Grid -->
+                        <UniformGrid Columns="3" Margin="0,0,0,30" HorizontalAlignment="Stretch">
+                            <!-- Row 4 -->
+                            <StackPanel Margin="0,0,20,0">
+                                <TextBlock Text="Shipping Address" FontSize="14" Foreground="#AEAEAE" Margin="0,0,0,4"/>
+                                <TextBlock Text="59 Tredegar St" FontSize="16" Foreground="#555"/>
+                            </StackPanel>
+                            <StackPanel Margin="0,0,20,0">
+                                <TextBlock Text="City" FontSize="14" Foreground="#AEAEAE" Margin="0,0,0,4"/>
+                                <TextBlock Text="Newport" FontSize="16" Foreground="#555"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Text="Postal Code" FontSize="14" Foreground="#AEAEAE" Margin="0,0,0,4"/>
+                                <TextBlock Text="NP10" FontSize="16" Foreground="#555"/>
+                            </StackPanel>
+
+                            <!-- Row 5 -->
+                            <StackPanel Margin="0,0,20,0">
+                                <TextBlock Text="Region" FontSize="14" Foreground="#AEAEAE" Margin="0,0,0,4"/>
+                                <TextBlock Text="Olatus" FontSize="16" Foreground="#555"/>
+                            </StackPanel>
+                            <StackPanel Margin="0,0,20,0">
+                                <TextBlock Text="Country" FontSize="14" Foreground="#AEAEAE" Margin="0,0,0,4"/>
+                                <TextBlock Text="Wales" FontSize="16" Foreground="#555"/>
+                            </StackPanel>
+                            <StackPanel />
+                        </UniformGrid>
+
+                        <!-- Divider -->
+                        <Separator Margin="0,0,0,30"/>
+
+                        <!-- Registration Info -->
+                        <Grid Margin="0,0,0,30">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                                <TextBlock Text="Register Date" FontSize="14" Foreground="#AEAEAE" Margin="0,0,0,4"/>
+                                <TextBlock Text="01/01/2024" FontSize="16" Foreground="#555"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Document ID" FontSize="14" Foreground="#AEAEAE" Margin="0,0,0,4"/>
+                                <TextBlock Text="DOC-112233" FontSize="16" Foreground="#555"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Summary Header -->
+                        <TextBlock Text="Summary"
+                                   FontSize="24"
+                                   FontWeight="SemiBold"
+                                   Foreground="#333"
+                                   Margin="0,0,0,20"/>
+
+                        <!-- Summary Cards -->
+                        <WrapPanel Margin="0,0,0,20">
+                            <WrapPanel.Resources>
+                                <Style TargetType="Border" x:Key="SummaryCardStyle">
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                    <Setter Property="Background" Value="#FAFAFA"/>
+                                    <Setter Property="BorderBrush" Value="#D9D9D9"/>
+                                    <Setter Property="BorderThickness" Value="1"/>
+                                    <Setter Property="Padding" Value="12,10,12,10"/>
+                                    <Setter Property="Margin" Value="0,0,12,12"/>
+                                    <Setter Property="Height" Value="150"/>
+                                    <Setter Property="Width" Value="200"/>
+                                </Style>
+                                <Style TargetType="TextBlock" x:Key="CardLabelStyle">
+                                    <Setter Property="FontSize" Value="13"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style>
+                                <Style TargetType="TextBlock" x:Key="CardAmountStyle">
+                                    <Setter Property="FontSize" Value="18"/>
+                                    <Setter Property="Foreground" Value="#B0B0B0"/>
+                                    <Setter Property="Margin" Value="0,2,0,0"/>
+                                </Style>
+                            </WrapPanel.Resources>
+
+                            <Border Style="{StaticResource SummaryCardStyle}">
                                 <StackPanel>
-                                    <TextBlock Text="Postal Code" Margin="0,0,0,6" Foreground="#AEAEAE" FontSize="14"/>
-                                    <TextBlock Text="NP10" Foreground="#555555" FontSize="16"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
+                                        <materialDesign:PackIcon Kind="TrendingUp" Width="16" Height="16" Foreground="#89AC74" Margin="0,0,6,0"/>
+                                        <TextBlock Text="Income" Style="{StaticResource CardLabelStyle}" Foreground="#89AC74"/>
+                                    </StackPanel>
+                                    <TextBlock Text="₱ 0.00" Style="{StaticResource CardAmountStyle}"/>
                                 </StackPanel>
-                            </UniformGrid>
+                            </Border>
 
-                            <!-- Divider -->
-                            <Separator Margin="0,0,0,30"/>
-
-                            <!-- Shipping Row 1 -->
-                            <UniformGrid Columns="3" Margin="0,0,0,30">
-                                <StackPanel Margin="0,0,20,0">
-                                    <TextBlock Text="Shipping Address" Margin="0,0,0,6" Foreground="#AEAEAE" FontSize="14"/>
-                                    <TextBlock Text="59 Tredegar St" Foreground="#555555" FontSize="16"/>
-                                </StackPanel>
-                                <StackPanel Margin="0,0,20,0">
-                                    <TextBlock Text="City" Margin="0,0,0,6" Foreground="#AEAEAE" FontSize="14"/>
-                                    <TextBlock Text="Newport" Foreground="#555555" FontSize="16"/>
-                                </StackPanel>
+                            <Border Style="{StaticResource SummaryCardStyle}">
                                 <StackPanel>
-                                    <TextBlock Text="Region" Margin="0,0,0,6" Foreground="#AEAEAE" FontSize="14"/>
-                                    <TextBlock Text="Olatus" Foreground="#555555" FontSize="16"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
+                                        <materialDesign:PackIcon Kind="TrendingDown" Width="16" Height="16" Foreground="#D96A6C" Margin="0,0,6,0"/>
+                                        <TextBlock Text="Expenses" Style="{StaticResource CardLabelStyle}" Foreground="#D96A6C"/>
+                                    </StackPanel>
+                                    <TextBlock Text="₱ 0.00" Style="{StaticResource CardAmountStyle}"/>
                                 </StackPanel>
-                            </UniformGrid>
+                            </Border>
 
-                            <!-- Shipping Row 2 -->
-                            <UniformGrid Columns="3" Margin="0,0,0,40">
-                                <StackPanel Margin="0,0,20,0">
-                                    <TextBlock Text="Country" Margin="0,0,0,6" Foreground="#AEAEAE" FontSize="14"/>
-                                    <TextBlock Text="Wales" Foreground="#555555" FontSize="16"/>
-                                </StackPanel>
+                            <Border Style="{StaticResource SummaryCardStyle}">
                                 <StackPanel>
-                                    <TextBlock Text="Postal Code" Margin="0,0,0,6" Foreground="#AEAEAE" FontSize="14"/>
-                                    <TextBlock Text="NP10" Foreground="#555555" FontSize="16"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
+                                        <materialDesign:PackIcon Kind="ReceiptText" Width="16" Height="16" Foreground="#86BCD5" Margin="0,0,6,0"/>
+                                        <TextBlock Text="Total Due" Style="{StaticResource CardLabelStyle}" Foreground="#86BCD5"/>
+                                    </StackPanel>
+                                    <TextBlock Text="₱ 0.00" Style="{StaticResource CardAmountStyle}"/>
                                 </StackPanel>
-                            </UniformGrid>
+                            </Border>
 
-                            <!-- Divider -->
-                            <Separator Margin="0,0,0,30"/>
-
-                            <!-- Register/Doc Info -->
-                            <UniformGrid Columns="3" Margin="0,0,0,30">
-                                <StackPanel Margin="0,0,20,0">
-                                    <TextBlock Text="Register Date:" Margin="0,0,0,6" Foreground="#AEAEAE" FontSize="14"/>
-                                    <TextBlock Text="59 Tredegar St" Foreground="#555555" FontSize="16"/>
+                            <Border Style="{StaticResource SummaryCardStyle}">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
+                                        <materialDesign:PackIcon Kind="PercentBoxOutline" Width="16" Height="16" Foreground="#6A7F9E" Margin="0,0,6,0"/>
+                                        <TextBlock Text="Total Discount" Style="{StaticResource CardLabelStyle}" Foreground="#6A7F9E"/>
+                                    </StackPanel>
+                                    <TextBlock Text="₱ 0.00" Style="{StaticResource CardAmountStyle}"/>
                                 </StackPanel>
-                                <StackPanel Margin="0,0,20,0">
-                                    <TextBlock Text="Document ID" Margin="0,0,0,6" Foreground="#AEAEAE" FontSize="14"/>
-                                    <TextBlock Text="Newport" Foreground="#555555" FontSize="16"/>
-                                </StackPanel>
-                            </UniformGrid>
+                            </Border>
+                        </WrapPanel>
 
-                            <!-- Summary Title -->
-                            <TextBlock Text="Summary"
-                                       FontSize="24"
-                                       FontWeight="SemiBold"
-                                       Foreground="#333"
-                                       Margin="0,0,0,25"
-                                       />
-
-                            <!-- Summary Cards Grid -->
-                            <UniformGrid Columns="4" HorizontalAlignment="Stretch" Margin="0,0,0,20"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
-
-                                <!-- Shared Card Styles -->
-                                <UniformGrid.Resources>
-                                    <Style TargetType="Border" x:Key="SummaryCardStyle">
-                                        <Setter Property="CornerRadius" Value="10"/>
-                                        <Setter Property="Background" Value="#FAFAFA"/>
-                                        <Setter Property="BorderBrush" Value="#D9D9D9"/>
-                                        <Setter Property="BorderThickness" Value="1"/>
-                                        <Setter Property="Padding" Value="12,10,12,10"/>
-                                        <Setter Property="Margin" Value="0,0,12,0"/>
-                                        <Setter Property="Height" Value="150"/>
-                                    </Style>
-                                    <Style TargetType="TextBlock" x:Key="CardLabelStyle">
-                                        <Setter Property="FontSize" Value="13"/>
-                                        <Setter Property="FontWeight" Value="SemiBold"/>
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                    </Style>
-                                    <Style TargetType="TextBlock" x:Key="CardAmountStyle">
-                                        <Setter Property="FontSize" Value="18"/>
-                                        <Setter Property="Foreground" Value="#B0B0B0"/>
-                                        <Setter Property="Margin" Value="0,2,0,0"/>
-                                    </Style>
-                                </UniformGrid.Resources>
-
-                                <!-- Income -->
-                                <Border Style="{StaticResource SummaryCardStyle}">
-                                    <StackPanel>
-                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
-                                            <materialDesign:PackIcon Kind="TrendingUp" Width="16" Height="16" Foreground="#89AC74" Margin="0,0,6,0"/>
-                                            <TextBlock Text="Income" Style="{StaticResource CardLabelStyle}" Foreground="#89AC74"/>
-                                        </StackPanel>
-                                        <TextBlock Text="₱ 0.00" Style="{StaticResource CardAmountStyle}"/>
-                                    </StackPanel>
-                                </Border>
-
-                                <!-- Expenses -->
-                                <Border Style="{StaticResource SummaryCardStyle}">
-                                    <StackPanel>
-                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
-                                            <materialDesign:PackIcon Kind="TrendingDown" Width="16" Height="16" Foreground="#D96A6C" Margin="0,0,6,0"/>
-                                            <TextBlock Text="Expenses" Style="{StaticResource CardLabelStyle}" Foreground="#D96A6C"/>
-                                        </StackPanel>
-                                        <TextBlock Text="₱ 0.00" Style="{StaticResource CardAmountStyle}"/>
-                                    </StackPanel>
-                                </Border>
-
-                                <!-- Total Due -->
-                                <Border Style="{StaticResource SummaryCardStyle}">
-                                    <StackPanel>
-                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
-                                            <materialDesign:PackIcon Kind="ReceiptText" Width="16" Height="16" Foreground="#86BCD5" Margin="0,0,6,0"/>
-                                            <TextBlock Text="Total Due" Style="{StaticResource CardLabelStyle}" Foreground="#86BCD5"/>
-                                        </StackPanel>
-                                        <TextBlock Text="₱ 0.00" Style="{StaticResource CardAmountStyle}"/>
-                                    </StackPanel>
-                                </Border>
-
-                                <!-- Total Discount -->
-                                <Border Style="{StaticResource SummaryCardStyle}" Margin="0">
-                                    <StackPanel>
-                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
-                                            <materialDesign:PackIcon Kind="PercentBoxOutline" Width="16" Height="16" Foreground="#6A7F9E" Margin="0,0,6,0"/>
-                                            <TextBlock Text="Total Discount" Style="{StaticResource CardLabelStyle}" Foreground="#6A7F9E"/>
-                                        </StackPanel>
-                                        <TextBlock Text="₱ 0.00" Style="{StaticResource CardAmountStyle}"/>
-                                    </StackPanel>
-                                </Border>
-
-                            </UniformGrid>
-
-
-
-                        </StackPanel>
-                    </Border>
-                </Grid>
-            </Viewbox>
+                    </StackPanel>
+                </Border>
+            </Grid>
         </ScrollViewer>
     </Grid>
 </UserControl>
