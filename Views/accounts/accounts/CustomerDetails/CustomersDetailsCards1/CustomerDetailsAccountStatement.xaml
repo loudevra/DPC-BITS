@@ -14,6 +14,7 @@
         <Style x:Key="RoundedBorderStyle" TargetType="Border">
             <Setter Property="CornerRadius" Value="15"/>
         </Style>
+
         <!-- DatePicker Style -->
         <Style x:Key="RoundedDatePickerStyle" TargetType="DatePicker">
             <Setter Property="FontFamily" Value="Lexend"/>
@@ -54,6 +55,8 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Rounded ComboBox -->
         <Style x:Key="RoundedComboBoxStyle" TargetType="ComboBox">
             <Setter Property="BorderBrush" Value="#555555"/>
             <Setter Property="Background" Value="White"/>
@@ -66,47 +69,43 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="ComboBox">
                         <Grid>
+                            <!-- Main Border -->
                             <Border x:Name="MainBorder"
-                                    Style="{StaticResource RoundedBorderStyle}"
-                                    Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="1">
-
+                            Style="{StaticResource RoundedBorderStyle}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="1">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="35" />
                                     </Grid.ColumnDefinitions>
 
+                                    <!-- Content -->
                                     <ContentPresenter Name="ContentSite"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              VerticalAlignment="Center"
+                                              Margin="10,0,5,0"
+                                              RecognizesAccessKey="True" />
 
-                                                      Content="{TemplateBinding SelectionBoxItem}"
-                                                      VerticalAlignment="Center"
-                                                      Margin="10,0,5,0"
-                                                      RecognizesAccessKey="True" />
-
-
+                                    <!-- Drop Down Button -->
                                     <ToggleButton Grid.Column="1"
-
-                                                  Focusable="False"
-                                                  IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
-                                                  Background="Transparent"
-                                                  BorderBrush="Transparent"
-                                                  BorderThickness="0"
-                                                  HorizontalContentAlignment="Center"
-                                                  VerticalContentAlignment="Center">
-
+                                          Focusable="False"
+                                          IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                          Background="Transparent"
+                                          BorderBrush="Transparent"
+                                          BorderThickness="0"
+                                          HorizontalContentAlignment="Center"
+                                          VerticalContentAlignment="Center">
                                         <ToggleButton.Template>
                                             <ControlTemplate TargetType="ToggleButton">
                                                 <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
                                                     <materialDesign:PackIcon Kind="ChevronDown"
-
-                                                                             Width="20"
-                                                                             Height="20"
-                                                                             Foreground="#555555"
-                                                                             VerticalAlignment="Center"
-                                                                             HorizontalAlignment="Center"/>
-
+                                                                     Width="20"
+                                                                     Height="20"
+                                                                     Foreground="#555555"
+                                                                     VerticalAlignment="Center"
+                                                                     HorizontalAlignment="Center"/>
                                                 </Grid>
                                             </ControlTemplate>
                                         </ToggleButton.Template>
@@ -114,23 +113,22 @@
                                 </Grid>
                             </Border>
 
+                            <!-- Dropdown Popup -->
                             <Popup Name="Popup"
-
-                                   Placement="Bottom"
-                                   IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
-                                   AllowsTransparency="True"
-                                   Focusable="False"
-                                   StaysOpen="False"
-                                   MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                           Placement="Bottom"
+                           IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                           AllowsTransparency="True"
+                           Focusable="False"
+                           StaysOpen="False"
+                           MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
                                 <Border Background="White"
-                                        BorderBrush="#CCCCCC"
-                                        BorderThickness="1"
-                                        CornerRadius="15"
-                                        SnapsToDevicePixels="True"
-                                        Margin="0,5,0,0">
+                                BorderBrush="#CCCCCC"
+                                BorderThickness="1"
+                                CornerRadius="15"
+                                SnapsToDevicePixels="True"
+                                Margin="0,5,0,0">
                                     <ScrollViewer Margin="0"
-                                                  SnapsToDevicePixels="True">
-
+                                          SnapsToDevicePixels="True">
                                         <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
                                     </ScrollViewer>
                                 </Border>
@@ -141,7 +139,6 @@
             </Setter>
         </Style>
 
-        <!-- View Button Style -->
         <Style x:Key="ViewButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#86BCD5"/>
             <Setter Property="Padding" Value="10,5"/>
@@ -152,90 +149,23 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-
-                        <Border Background="{TemplateBinding Background}" 
-                                CornerRadius="20"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}">
+                        <Border 
+                    Background="{TemplateBinding Background}" 
+                    CornerRadius="20" 
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}">
                             <TextBlock Text="View"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       FontFamily="Lexend"
-                                       FontSize="16"
-                                       Foreground="White"/>
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               FontFamily="Lexend"
+                               FontSize="16"
+                               Foreground="White"/>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
 
-        <Style x:Key="DateButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="BorderBrush" Value="#474747"/>
-            <Setter Property="Padding" Value="10,0"/>
-            <Setter Property="FontFamily" Value="Lexend"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Foreground" Value="#474747"/>
-            <Setter Property="HorizontalAlignment" Value="Left"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="25"
-                        Padding="{TemplateBinding Padding}">
-                            <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Left"/>
-
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- RoundedDatePickerStyle -->
-        <Style x:Key="RoundedDatePickerStyle" TargetType="DatePicker">
-            <Setter Property="FontFamily" Value="Lexend"/>
-            <Setter Property="Foreground" Value="#474747"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="Height" Value="45"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="#474747"/>
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="DatePicker">
-                        <Border Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="25">
-                            <Grid>
-                                <DatePickerTextBox x:Name="PART_TextBox"
-                                                   Background="Transparent"
-                                                   BorderThickness="0"
-                                                   VerticalContentAlignment="Center"
-                                                   Padding="10,0"
-                                                   Foreground="Black"/>
-                                <Button x:Name="PART_Button"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        Width="40"
-                                        Height="40"
-                                        Padding="0"
-                                        Margin="0,0,10,0"
-                                        BorderThickness="0"
-                                        Background="Transparent">
-                                    <materialDesign:PackIcon Kind="CalendarOutline" Width="30" Height="30" Foreground="#555555"/>
-                                </Button>
-                            </Grid>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </UserControl.Resources>
 
     <!-- Main Layout -->
@@ -261,7 +191,7 @@
         <!-- Type -->
         <StackPanel Grid.Row="1" Margin="0,0,0,10">
             <TextBlock Text="Type:" Margin="0,0,0,5" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold"/>
-            <ComboBox Style="{StaticResource RoundedComboBoxStyle}">
+            <ComboBox Style="{StaticResource RoundedComboBoxStyle}" >
                 <ComboBoxItem Content="All Transactions" IsSelected="True"/>
                 <ComboBoxItem Content="Deposits"/>
                 <ComboBoxItem Content="Withdrawals"/>
@@ -269,133 +199,18 @@
             </ComboBox>
         </StackPanel>
 
-        <!-- FROM DATE -->
-        <StackPanel Margin="0,10" Grid.Row="2">
-            <TextBlock Text="From Date:"
-               Foreground="#555555"
-               FontSize="16"
-               FontWeight="SemiBold"
-               Margin="0,0,0,5"
-               FontFamily="Lexend"/>
-
-            <Border Background="White"
-            BorderBrush="#474747"
-            BorderThickness="2"
-            CornerRadius="15"
-            Padding="0">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-
-                    <!-- Hidden DatePicker -->
-                    <DatePicker x:Name="FromDatePicker"
-                        SelectedDateChanged="FromDatePicker_SelectedDateChanged"
-                        Opacity="0"
-                        IsHitTestVisible="False"/>
-
-                    <!-- Button displays selected date -->
-                    <Button x:Name="FromDateButton"
-                    Grid.Column="0"
-                    Style="{StaticResource DateButtonStyle}"
-                    Click="FromDateButton_Click"
-                    HorizontalAlignment="Stretch"
-                    BorderThickness="0"
-                    Background="Transparent"
-                    Padding="10,0">
-                        <TextBlock VerticalAlignment="Center">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Text" Value="{Binding SelectedDate, ElementName=FromDatePicker, StringFormat='{}{0:MMM dd, yyyy}'}"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding SelectedDate, ElementName=FromDatePicker}" Value="{x:Null}">
-                                            <Setter Property="Text" Value="Select date"/>
-                                            <Setter Property="Foreground" Value="#999"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                    </Button>
-
-                    <!-- Calendar Icon -->
-                    <materialDesign:PackIcon Grid.Column="1"
-                                     Kind="Calendar"
-                                     Width="24"
-                                     Height="24"
-                                     VerticalAlignment="Center"
-                                     Margin="10,0,10,0"
-                                     Foreground="#474747"/>
-                </Grid>
-            </Border>
+        <!-- From Date -->
+        <StackPanel Grid.Row="2" Margin="0,0,0,10">
+            <TextBlock Text="From Date:" Margin="0,0,0,5" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold"/>
+            <DatePicker Style="{StaticResource RoundedDatePickerStyle}" SelectedDate="2025-03-12" Margin="0,0,0,5"/>
         </StackPanel>
 
-
-        <!-- TO DATE -->
-        <StackPanel Margin="0,10" Grid.Row="3">
-            <TextBlock Text="To Date:"
-               Foreground="#555555"
-               FontSize="16"
-               FontWeight="SemiBold"
-               Margin="0,0,0,5"
-               FontFamily="Lexend"/>
-
-            <Border Background="White"
-            BorderBrush="#474747"
-            BorderThickness="2"
-            CornerRadius="15"
-            Padding="0">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-
-                    <!-- Hidden DatePicker -->
-                    <DatePicker x:Name="ToDatePicker"
-                        SelectedDateChanged="ToDatePicker_SelectedDateChanged"
-                        Opacity="0"
-                        IsHitTestVisible="False"/>
-
-                    <!-- Button displays selected date -->
-                    <Button x:Name="ToDateButton"
-                    Grid.Column="0"
-                    Style="{StaticResource DateButtonStyle}"
-                    Click="ToDateButton_Click"
-                    HorizontalAlignment="Stretch"
-                    BorderThickness="0"
-                    Background="Transparent"
-                    Padding="10,0">
-                        <TextBlock VerticalAlignment="Center">
-                            <TextBlock.Style>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Text" Value="{Binding SelectedDate, ElementName=ToDatePicker, StringFormat='{}{0:MMM dd, yyyy}'}"/>
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding SelectedDate, ElementName=ToDatePicker}" Value="{x:Null}">
-                                            <Setter Property="Text" Value="Select date"/>
-                                            <Setter Property="Foreground" Value="#999"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </TextBlock.Style>
-                        </TextBlock>
-                    </Button>
-
-                    <!-- Calendar Icon -->
-                    <materialDesign:PackIcon Grid.Column="1"
-                                     Kind="Calendar"
-                                     Width="24"
-                                     Height="24"
-                                     VerticalAlignment="Center"
-                                     Margin="10,0,10,0"
-                                     Foreground="#474747"/>
-                </Grid>
-            </Border>
+        <!-- To Date -->
+        <StackPanel Grid.Row="3" Margin="0,0,0,20">
+            <TextBlock Text="To Date:" Margin="0,0,0,5" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold"/>
+            <DatePicker Style="{StaticResource RoundedDatePickerStyle}" SelectedDate="2025-03-12" Margin="0,0,0,5"/>
         </StackPanel>
-
-        <!-- View Button -->
-        <StackPanel Grid.Row="4" Margin="0,20,0,0">
+        <StackPanel Grid.Row="4">
             <Button Style="{StaticResource ViewButtonStyle}" />
         </StackPanel>
     </Grid>
