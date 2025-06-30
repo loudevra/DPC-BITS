@@ -14,7 +14,7 @@
         <!-- Sticky Header - Bill From -->
         <StackPanel Grid.Row="0" Background="#D9D9D9" Orientation="Horizontal" Margin="25,10,0,0">
             <TextBlock Text="Add Walk-In Client" FontWeight="SemiBold" FontFamily="Lexend" FontSize="25" Margin="0,0,10,0" Foreground="#474747" VerticalAlignment="Center"/>
-            <Button x:Name="BtnAddSupplier" Style="{StaticResource RoundedButtonStyle}" Background="Transparent" Margin="0">
+            <Button x:Name="BtnAddClient" Style="{StaticResource RoundedButtonStyle}" Background="Transparent" Margin="0">
                 <StackPanel Orientation="Horizontal" Margin="10,0">
                     <materialDesign:PackIcon Kind="AccountAdd" Foreground="#474747" Width="25" Height="25" Margin="0,0,5,0"/>
                     <TextBlock Text="New Client" FontFamily="Lexend" Foreground="#474747" VerticalAlignment="Center" FontSize="17"/>
