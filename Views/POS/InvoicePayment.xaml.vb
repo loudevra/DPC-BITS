@@ -1,6 +1,6 @@
 ﻿Namespace DPC.Views.POS
     Public Class InvoicePayment
-        Private Sub New()
+        Public Sub New()
 
             ' This call is required by the designer.
             InitializeComponent()

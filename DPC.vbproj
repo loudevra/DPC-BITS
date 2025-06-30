@@ -861,6 +861,9 @@
     <Compile Include="Views\POS\POSSalesPopUP\POSWalkInClient.xaml.vb">
       <DependentUpon>POSWalkInClient.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\POS\SalesNewInvoice.xaml.vb">
+      <DependentUpon>SalesNewInvoice.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\POS\SubscriptionPayment.xaml.vb">
       <DependentUpon>SubscriptionPayment.xaml</DependentUpon>
     </Compile>
@@ -941,6 +944,21 @@
     </Compile>
     <Compile Include="Views\Stocks\PurchaseOrder\NewOrder\BillingStatement.xaml.vb">
       <DependentUpon>BillingStatement.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\PurchaseOrder\WalkIn\AddNewWalkInClient.xaml.vb">
+      <DependentUpon>AddNewWalkInClient.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\PurchaseOrder\WalkIn\PreviewWalkinClientPrintStatement.xaml.vb">
+      <DependentUpon>PreviewWalkinClientPrintStatement.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\PurchaseOrder\WalkIn\WalkInBillingStatement.xaml.vb">
+      <DependentUpon>WalkInBillingStatement.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\PurchaseOrder\WalkIn\WalkInConfirmation.xaml.vb">
+      <DependentUpon>WalkInConfirmation.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\PurchaseOrder\WalkIn\WalkInNewOrder.xaml.vb">
+      <DependentUpon>WalkInNewOrder.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Stocks\Suppliers\ManageBrands\ManageBrands.xaml.vb">
       <DependentUpon>ManageBrands.xaml</DependentUpon>
@@ -1626,6 +1644,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\POS\SalesNewInvoice.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\POS\SubscriptionPayment.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1731,6 +1753,26 @@
     <Page Include="Views\Stocks\PurchaseOrder\NewOrder\BillingStatement.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Stocks\PurchaseOrder\WalkIn\AddNewWalkInClient.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\PurchaseOrder\WalkIn\PreviewWalkinClientPrintStatement.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\PurchaseOrder\WalkIn\WalkInBillingStatement.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\PurchaseOrder\WalkIn\WalkInConfirmation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\PurchaseOrder\WalkIn\WalkInNewOrder.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Stocks\Suppliers\ManageBrands\ManageBrands.xaml">
       <Generator>MSBuild:Compile</Generator>
