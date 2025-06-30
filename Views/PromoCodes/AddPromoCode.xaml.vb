@@ -21,7 +21,7 @@ Namespace DPC.Views.PromoCodes
                 .Code = txtCode.Text,
                 .Amount = Decimal.Parse(txtAmount.Text),
                 .Quantity = Integer.Parse(txtQuantity.Text),
-                .ValidUntil = If(dpValidUntil.SelectedDate, DateTime.Now),
+                .ValidUntil = If(StartDatePicker.SelectedDate, DateTime.Now),
                 .IsLinked = chkLinkToAccount.IsChecked.GetValueOrDefault(False),
                 .Account = If(chkLinkToAccount.IsChecked.GetValueOrDefault(False) AndAlso cmbAccount.SelectedItem IsNot Nothing, cmbAccount.SelectedItem.ToString(), String.Empty),
                 .Note = txtNote.Text
