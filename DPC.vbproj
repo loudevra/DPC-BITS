@@ -846,6 +846,11 @@
     <Compile Include="Views\POS\POSForm.xaml.vb">
       <DependentUpon>POSForm.xaml</DependentUpon>
     </Compile>
+
+    <Compile Include="Views\POS\SalesNewInvoice.xaml.vb">
+      <DependentUpon>SalesNewInvoice.xaml</DependentUpon>
+	</Compile>
+
     <Compile Include="Views\POS\POSInvoice.xaml.vb">
       <DependentUpon>POSInvoice.xaml</DependentUpon>
     </Compile>
