@@ -89,11 +89,33 @@
                                 <TextBlock Text="Valid Until:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                                 <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
                             </StackPanel>
-                            <Border Style="{StaticResource RoundedBorderStyle}">
-                                <DatePicker x:Name="dpValidUntil" 
-                                            Style="{StaticResource SingleDatePickerStyle}" 
-                                            DisplayDateStart="{x:Static sys:DateTime.Today}"
-                                            xmlns:sys="clr-namespace:System;assembly=mscorlib"/>
+                            <!-- DatePicker with TextBox -->
+                            <Border Style="{StaticResource RoundedBorderStyle}" Margin="10,0,5,0" SnapsToDevicePixels="True" BorderBrush="#aeaeae" BorderThickness="1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50*"/>
+                                        <ColumnDefinition Width="127*"/>
+                                        <ColumnDefinition Width="0*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Start Date -->
+                                    <DatePicker x:Name="StartDatePicker"
+        Style="{StaticResource SingleDatePickerStyle}"
+        SelectedDate="{Binding StartDate.SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2" Height="35" Margin="0,0,42,0" VerticalAlignment="Center" />
+
+                                    <materialDesign:PackIcon Grid.Column="2" Kind="Calendar" Width="25" Height="25" Foreground="#474747" VerticalAlignment="Center" Margin="10,0,5,0"/>
+
+                                    <Button Grid.Column="1"
+        Style="{StaticResource DateButtonStyle}"
+                   
+            Width="Auto"
+          Margin="10,0,25,0">
+                                        <TextBlock Text="{Binding StartDate.SelectedDate, StringFormat='MMM dd, yyyy'}"
+                Margin="0,0,5,0"
+                Foreground="#474747"
+                Height="14"/>
+                                    </Button>
+                                </Grid>
                             </Border>
                         </StackPanel>
 

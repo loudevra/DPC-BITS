@@ -190,11 +190,62 @@
                                     </ComboBox>
 
                                     <!--Calendar Date Time-->
-                                    <Border Style="{StaticResource RoundedGridStyle}" MinWidth="180" Width="200" Height="34" Margin="10,0,0,0" VerticalAlignment="Center">
+                                    <Border Style="{StaticResource RoundedGridStyle}" HorizontalAlignment="Right" Margin="10" MinWidth="250" Height="30">
                                         <Grid>
-                                            <TextBox BorderThickness="0" Background="Transparent" FontFamily="Lexend" Name="txtQuickSearch" Style="{StaticResource RoundedTextboxStyle}" Height="23" Margin="20,0,20,0" VerticalAlignment="Center"/>
-                                            <TextBlock Text="12-05-2025 - 11-06-2025" FontFamily="Lexend" Foreground="#AEAEAE" FontSize="12" VerticalAlignment="Center" Margin="7,0,0,0" FontWeight="SemiBold" IsHitTestVisible="False"/>
-                                            <materialDesign:PackIcon Kind="CalendarToday" Width="22" Height="17" Foreground="#555555" Margin="0,0,10,0" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <DatePicker x:Name="StartDatePicker"
+                SelectedDate="{Binding StartDate, Mode=TwoWay}"
+                Visibility="Hidden"/>
+
+                                            <Button Grid.Column="0"
+            Background="Transparent"
+            BorderThickness="0"
+            HorizontalAlignment="Stretch"
+            >
+                                                <TextBlock Text="{Binding StartDate, StringFormat='MMM dd, yyyy'}"
+                   FontFamily="Lexend"
+                   FontSize="12"
+                   VerticalAlignment="Center"
+                   Margin="10,0,5,0"/>
+                                            </Button>
+
+                                            <TextBlock Text=" - "
+               FontFamily="Lexend"
+               FontSize="12"
+               VerticalAlignment="Center"
+               Grid.Column="1"/>
+
+                                            <DatePicker x:Name="EndDatePicker"
+                SelectedDate="{Binding EndDate, Mode=TwoWay}"
+                Visibility="Hidden"/>
+
+                                            <Button Grid.Column="2"
+            Background="Transparent"
+            BorderThickness="0"
+            Padding="0"
+            HorizontalAlignment="Stretch"
+            >
+                                                <TextBlock Text="{Binding EndDate, StringFormat='MMM dd, yyyy'}"
+                   FontFamily="Lexend"
+                   FontSize="12"
+                   VerticalAlignment="Center"
+                   Margin="5,0,10,0"/>
+                                            </Button>
+
+                                            <materialDesign:PackIcon Kind="Calendar"
+                             Width="20"
+                             Height="20"
+                             Foreground="Black"
+                             HorizontalAlignment="Right"
+                             VerticalAlignment="Center"
+                             Grid.Column="3"
+                             Margin="0,0,5,0"/>
                                         </Grid>
                                     </Border>
 
