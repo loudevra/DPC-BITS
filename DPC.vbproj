@@ -437,6 +437,21 @@
     <Compile Include="Components\Forms\DeleteCouponPopout.xaml.vb">
       <DependentUpon>DeleteCouponPopout.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\DeleteCreditPopUp.xaml.vb">
+      <DependentUpon>DeleteCreditPopUp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\DeleteInvoicePopUp.xaml.vb">
+      <DependentUpon>DeleteInvoicePopUp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\DeletePOSInvoicePopUp.xaml.vb">
+      <DependentUpon>DeletePOSInvoicePopUp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\DeleteQuotePopUp.xaml.vb">
+      <DependentUpon>DeleteQuotePopUp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\DeleteSubscriptionPopUp.xaml.vb">
+      <DependentUpon>DeleteSubscriptionPopUp.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\EditBrand.xaml.vb">
       <DependentUpon>EditBrand.xaml</DependentUpon>
     </Compile>
@@ -1032,6 +1047,26 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\DeleteCouponPopout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\DeleteCreditPopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\DeleteInvoicePopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\DeletePOSInvoicePopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\DeleteQuotePopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\DeleteSubscriptionPopUp.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
