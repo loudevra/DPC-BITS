@@ -187,7 +187,8 @@
                            FontSize="25"
                            Foreground="#474747"
                            VerticalAlignment="Center"/>
-                <Button x:Name="BtnAddNew"
+                <Button x:Name="BtnAddSalaries"
+                        Click="AddSalaries"
                         Style="{StaticResource AddNewButtonStyle}"
                         Margin="20,0,0,0">
                     <StackPanel Orientation="Horizontal">

@@ -462,7 +462,7 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Background="#2E466B" Grid.Column="0">
-                        <Button Style="{StaticResource RoundedButtonStyle}" Margin="0" BorderThickness="0" Background="Transparent">
+                        <Button x:Name="BtnCostEstimate" Click="NavigateToCostEstimate" Style="{StaticResource RoundedButtonStyle}" Margin="0" BorderThickness="0" Background="Transparent">
                             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="ContentSaveOutline" Foreground="#FDFDFD" Width="20" Height="20" Margin="0,0,5,0" VerticalAlignment="Center"/>
                                 <TextBlock Text="Cost Estimate" FontSize="12" Foreground="#FDFDFD" FontWeight="SemiBold" VerticalAlignment="Center"/>
@@ -471,7 +471,7 @@
                     </StackPanel>
 
                     <StackPanel Background="#7C9885" Grid.Column="1">
-                        <Button Style="{StaticResource RoundedButtonStyle}" Margin="0" BorderThickness="0" Background="Transparent">
+                        <Button x:Name="BtnBillingStatement" Click="NavigateToBillingStatement" Style="{StaticResource RoundedButtonStyle}" Margin="0" BorderThickness="0" Background="Transparent">
                             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="InvoiceTextOutline" Foreground="#FDFDFD" Width="20" Height="20" Margin="0,0,5,0" VerticalAlignment="Center"/>
                                 <TextBlock Text="Billing Statement" FontSize="12" Foreground="#FDFDFD" FontWeight="SemiBold" VerticalAlignment="Center"/>
