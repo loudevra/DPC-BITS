@@ -113,6 +113,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         'Salaries Navigation
                     Case "salaries"
                         Return New HRM.Employees.Salaries.EmployeeSalaries()
+                    Case "addnewsalaries"
+                        Return New HRM.Employees.Employees.AddEmployee()
                     Case "addpromocode"
                         Return New DPC.Views.PromoCodes.AddPromoCode()
                     Case "editbrand"
@@ -130,11 +132,11 @@ Namespace DPC.Data.Helpers.ViewLoader
 
                          ' Sales Module Navigation
                     Case "salesnewinvoice"
-                        Return New Sales.Saless.SalesNewInvoice()
+                        Return New POS.SalesNewInvoice()
                     Case "manageposinvoices"
                         Return New Sales.POSSales.ManagePOSInvoices()
                     Case "salesinvoices"
-                        Return New Sales.Saless.SalesInvoices()
+                        Return New POS.POS()
                     Case "salesquote"
                         Return New Sales.Quotes.Quote()
                     Case "salesnewquote"
@@ -169,6 +171,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "navaddaccount"
                         'path of the design you want to see
                         Return New Accounts.Accounts.ManageAccounts.AddAccount()
+                    Case "addclienttabs"
+                        'path of the design you want to see
+                        Return New Accounts.Transactions.ClientAddTabs.AddClientTabs()
 
                         ' Project Navigation
                     Case "newproject"
@@ -205,6 +210,19 @@ Namespace DPC.Data.Helpers.ViewLoader
 
                     Case "purchaseorderstatement"
                         Return New Stocks.PurchaseOrder.NewOrder.BillingStatement()
+
+                    Case "addcustomlabel"
+                        Return New Stocks.ProductsLabel.CustomLabel.CustomLabel()
+                    Case "addstandardlabel"
+                        Return New Stocks.ProductsLabel.StandardLabel.StandardLabel()
+
+
+
+                    ' POS Navigation
+                    Case "navigatetobillingstatement"
+                        Return New Stocks.PurchaseOrder.WalkIn.WalkInBillingStatement()
+                    Case "navigatetocostestimate"
+                        Return New Sales.Quotes.CostEstimate()
 
                     Case Else
                         ' Return a placeholder UserControl with error text

@@ -1,5 +1,5 @@
-﻿Namespace DPC.Views.POS
-    Public Class POS
+﻿Namespace DPC.Views.Accounts.Transactions.ClientAddTabs
+    Public Class AddClientShippingAddress
         Public Sub New()
             InitializeComponent()
         End Sub

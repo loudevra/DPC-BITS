@@ -409,6 +409,9 @@
     <Compile Include="Components\Forms\AddDepartment.xaml.vb">
       <DependentUpon>AddDepartment.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\AddHoliday.xaml.vb">
+      <DependentUpon>AddHoliday.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\AddRowPopout.xaml.vb">
       <DependentUpon>AddRowPopout.xaml</DependentUpon>
     </Compile>
@@ -695,6 +698,21 @@
     </Compile>
     <Compile Include="Views\Accounts\Income\IncomeTransactions.xaml.vb">
       <DependentUpon>IncomeTransactions.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Transactions\ClientAddTabs\AddClientBillingAddress.xaml.vb">
+      <DependentUpon>AddClientBillingAddress.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Transactions\ClientAddTabs\AddClientOtherSettings.xaml.vb">
+      <DependentUpon>AddClientOtherSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Transactions\ClientAddTabs\AddClientPersonalInfo.xaml.vb">
+      <DependentUpon>AddClientPersonalInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Transactions\ClientAddTabs\AddClientShippingAddress.xaml.vb">
+      <DependentUpon>AddClientShippingAddress.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Transactions\ClientAddTabs\AddClientTabs.xaml.vb">
+      <DependentUpon>AddClientTabs.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Accounts\Transactions\ClientsTransactions.xaml.vb">
       <DependentUpon>ClientsTransactions.xaml</DependentUpon>
@@ -1029,6 +1047,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\AddDepartment.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\AddHoliday.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1432,6 +1454,26 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Accounts\Income\IncomeTransactions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Transactions\ClientAddTabs\AddClientBillingAddress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Transactions\ClientAddTabs\AddClientOtherSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Transactions\ClientAddTabs\AddClientPersonalInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Transactions\ClientAddTabs\AddClientShippingAddress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Transactions\ClientAddTabs\AddClientTabs.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

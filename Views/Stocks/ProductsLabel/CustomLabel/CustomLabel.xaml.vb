@@ -1,4 +1,4 @@
-﻿Imports System.Collections.ObjectModel
+Imports System.Collections.ObjectModel
 Imports DPC.DPC.Data.Controllers.Stocks
 Imports DPC.DPC.Data.Model
 
@@ -219,7 +219,6 @@ Namespace DPC.Views.Stocks.ProductsLabel.CustomLabel
             lblPreview.ShowDialog()
         End Sub
 
-
         'Product Name
         'Private Sub Add_CheckedProductName(sender As Object, e As RoutedEventArgs)
         '    UpdateStyles(AddBorderProductName, AddIconProductName, "#456B2E", True)
@@ -321,5 +320,6 @@ Namespace DPC.Views.Stocks.ProductsLabel.CustomLabel
         'Private Sub Remove_UncheckedProducts(sender As Object, e As RoutedEventArgs)
         '    UpdateStyles(RemoveBorderProducts, RemoveIconProducts, "#D23636", False)
         'End Sub
+
     End Class
 End Namespace

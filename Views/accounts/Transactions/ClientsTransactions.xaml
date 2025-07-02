@@ -28,7 +28,7 @@
                        FontSize="25"
                        Foreground="#474747"
                        VerticalAlignment="Center"/>
-            <Button x:Name="btnAddNew" Style="{StaticResource RoundedButtonStyle}" Margin="20,0,0,0" Background="Transparent">
+            <Button x:Name="btnAddNew" Click="AddClient" Style="{StaticResource RoundedButtonStyle}" Margin="20,0,0,0" Background="Transparent">
                 <Grid Margin="15,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
