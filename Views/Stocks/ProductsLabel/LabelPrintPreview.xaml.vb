@@ -24,7 +24,7 @@ Namespace DPC.Views.Stocks.ProductsLabel
 
         Private Sub SavePrint(sender As Object, e As RoutedEventArgs)
             Dim dlg As New PrintDialog()
-            Dim docName As String = "PurchaseOrder-" & DateTime.Now.ToString("yyyyMMdd-HHmmss")
+            Dim docName As String = "Barcode-" & DateTime.Now.ToString("yyyyMMdd-HHmmss")
 
             If dlg.ShowDialog() = True Then
                 ' Save original parent and layout
