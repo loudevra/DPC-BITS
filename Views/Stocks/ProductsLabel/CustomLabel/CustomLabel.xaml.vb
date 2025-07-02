@@ -1,4 +1,6 @@
-﻿Namespace DPC.Views.Stocks.ProductsLabel.CustomLabel
+﻿Imports DPC.DPC.Data.Helpers
+
+Namespace DPC.Views.Stocks.ProductsLabel.CustomLabel
     ''' <summary>
     ''' Interaction logic for CustomLabel.xaml
     ''' </summary>
@@ -141,5 +143,13 @@
         Private Sub Remove_UncheckedProducts(sender As Object, e As RoutedEventArgs)
             UpdateStyles(RemoveBorderProducts, RemoveIconProducts, "#D23636", False)
         End Sub
+
+        Private Sub CustomLabel(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("addcustomlabel", Me)
+        End Sub
+        Private Sub StandardLabel(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("addstandardlabel", Me)
+        End Sub
+
     End Class
 End Namespace
