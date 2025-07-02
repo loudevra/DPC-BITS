@@ -44,6 +44,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
             AddHandler TxtSupplier.TextChanged, AddressOf TxtSupplier_TextChanged
             AddHandler LstItems.SelectionChanged, AddressOf LstItems_SelectionChanged
+            AddHandler Tax.SelectionChanged, AddressOf TaxChange
 
             MyDynamicGrid = CType(TableGridPanel.Children(0), Grid)
             AddNewRow()
@@ -55,6 +56,18 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             ProductController.GetWarehouse(ComboBoxWarehouse)
         End Sub
 #End Region
+
+        Private Sub TaxChange()
+            For Each list In taxRateList
+                Dim taxBox As TextBox = GetTextBoxFromStackPanel($"{list}")
+
+                If Tax.SelectedIndex = 0 Then
+                    taxBox.Text = 12
+                Else
+                    taxBox.Text = 0
+                End If
+            Next
+        End Sub
 
 #Region "Calendar Controls"
         Private Sub OrderDate_Click(sender As Object, e As RoutedEventArgs)
@@ -587,6 +600,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                     rateList.Add(txtName)
                 Case 3
                     taxRateList.Add(txtName)
+                    txt.IsReadOnly = True
+                    If Tax.SelectedIndex = 0 Then
+                        txt.Text = 12
+                    Else
+                        txt.Text = 0
+                    End If
                 Case 4
                     taxList.Add(txtName)
                 Case 5
@@ -1055,6 +1074,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             ' This would include collecting all the data and saving to database
 
             ' Example implementation:
+            Dim subtotalVatEx As Decimal = 0
+
             Try
                 ' Generate JSON for items
                 Dim itemArray As New List(Of Dictionary(Of String, String))
@@ -1103,6 +1124,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                         itemDetails.Add("Description", description.Text)
                     End If
 
+                    subtotalVatEx += quantity.Text * rate.Text
+
                     itemArray.Add(itemDetails)
 
                 Next
@@ -1127,7 +1150,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
                     'Clears fields only after successfully adding
 
-                    Dim TaxNumber As Decimal = TotalTax.Text
+
+
+                    Dim TaxNumber As Decimal = subtotalVatEx
                     Dim TotalCostNumber As Decimal = TotalPrice.Text
 
                     Dim TaxFormatted As String = TaxNumber.ToString("N2")

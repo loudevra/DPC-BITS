@@ -251,9 +251,7 @@
     <Reference Include="System.Diagnostics.DiagnosticSource, Version=9.0.0.4, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Diagnostics.DiagnosticSource.9.0.4\lib\net462\System.Diagnostics.DiagnosticSource.dll</HintPath>
     </Reference>
-    <Reference Include="System.Drawing.Common, Version=9.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>packages\System.Drawing.Common.9.0.4\lib\net462\System.Drawing.Common.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Formats.Asn1, Version=9.0.0.4, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Formats.Asn1.9.0.4\lib\net462\System.Formats.Asn1.dll</HintPath>
     </Reference>
@@ -336,6 +334,7 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
@@ -349,6 +348,12 @@
     <Reference Include="PresentationCore" />
     <Reference Include="ZstdSharp, Version=0.8.5.0, Culture=neutral, PublicKeyToken=8d151af33a4ad5cf, processorArchitecture=MSIL">
       <HintPath>packages\ZstdSharp.Port.0.8.5\lib\net462\ZstdSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="zxing, Version=0.16.10.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
+      <HintPath>packages\ZXing.Net.0.16.10\lib\net48\zxing.dll</HintPath>
+    </Reference>
+    <Reference Include="zxing.presentation, Version=0.16.10.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
+      <HintPath>packages\ZXing.Net.0.16.10\lib\net48\zxing.presentation.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -565,6 +570,7 @@
     <Compile Include="Data\Controllers\SessionManager.vb" />
     <Compile Include="Data\Controllers\StocksStatsController.vb" />
     <Compile Include="Data\Controllers\StocksTransferController.vb" />
+    <Compile Include="Data\Controllers\Stocks\StocksLabelController.vb" />
     <Compile Include="Data\Controllers\SupplierController.vb" />
     <Compile Include="Data\Controllers\WarehouseController.vb" />
     <Compile Include="Data\Converters\BooleanToVisibilityConverter.vb" />
@@ -941,6 +947,9 @@
     </Compile>
     <Compile Include="Views\Stocks\ProductCategories\AddNewCategory.xaml.vb">
       <DependentUpon>AddNewCategory.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\ProductsLabel\LabelPrintPreview.xaml.vb">
+      <DependentUpon>LabelPrintPreview.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Stocks\PurchaseOrder\NewOrder\BillingStatement.xaml.vb">
       <DependentUpon>BillingStatement.xaml</DependentUpon>
@@ -1747,6 +1756,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Stocks\ProductCategories\AddNewCategory.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\ProductsLabel\LabelPrintPreview.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
