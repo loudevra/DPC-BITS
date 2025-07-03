@@ -193,31 +193,85 @@ Namespace DPC.Views.Stocks.ProductsLabel.CustomLabel
 
         Private Sub PrintBarcodes(sender As Object, e As RoutedEventArgs)
             If SerialNumberList Is Nothing Then Exit Sub
+
+            ' Clear UI
             wrapPanel.Children.Clear()
+            testBorder.Child = Nothing
 
+            ' Copy count setup
             Dim copyCount As Integer = 1
-
             If Not Integer.TryParse(copies.Text, copyCount) OrElse copyCount < 1 Then
                 copies.Text = "1"
                 copyCount = 1
             End If
 
+            ' Container for multiple pages
             Dim containerPanel As New StackPanel With {.Orientation = Orientation.Vertical}
-            Dim currentBorder As New Border
+            Dim pageHeightLimit As Double = 1122.52 ' A4 height
+            Dim pageWidth As Double = 793.7 ' A4 width
+
+            ' Initialize first page
+            Dim currentWrapPanel As New WrapPanel With {.Width = pageWidth}
+            Dim currentBorder As New Border With {
+                .Background = New SolidColorBrush(Colors.White),
+                .Padding = New Thickness(30),
+                .Margin = New Thickness(0, 0, 0, 10),
+                .Width = pageWidth,
+                .Child = currentWrapPanel
+            }
+
+            ' Use testBorder to measure page height
+            testBorder.Child = currentBorder
+            testBorder.Measure(New Size(pageWidth, 5000))
+            testBorder.Arrange(New Rect(0, 0, pageWidth, 5000))
+            testBorder.UpdateLayout()
 
             For i As Integer = 0 To copyCount - 1
                 For Each serialNumber As String In SerialNumberList
-                    If CreateBarcodePanel(serialNumber).Children.Count < 1 Then
-                        Exit Sub
-                    End If
+                    Dim panel = CreateBarcodePanel(serialNumber)
+                    currentWrapPanel.Children.Add(panel)
 
-                    wrapPanel.Children.Add(CreateBarcodePanel(serialNumber))
+                    ' Update layout to check overflow
+                    testBorder.UpdateLayout()
+
+                    If testBorder.ActualHeight > pageHeightLimit Then
+                        ' Remove overflowing panel
+                        currentWrapPanel.Children.Remove(panel)
+
+                        ' Disconnect from testBorder before adding to container
+                        testBorder.Child = Nothing
+                        containerPanel.Children.Add(currentBorder)
+
+                        ' Start a new page
+                        currentWrapPanel = New WrapPanel With {.Width = pageWidth}
+                        currentWrapPanel.Children.Add(panel)
+
+                        currentBorder = New Border With {
+                            .Background = New SolidColorBrush(Colors.White),
+                            .Padding = New Thickness(30),
+                            .Margin = New Thickness(0, 0, 0, 10),
+                            .Width = pageWidth,
+                            .Child = currentWrapPanel
+                        }
+
+                        testBorder.Child = currentBorder
+                        testBorder.UpdateLayout()
+                    End If
                 Next
             Next
 
-            Dim lblPreview As New LabelPrintPreview(wrapPanel)
+            ' Add last page if it has content
+            If currentWrapPanel.Children.Count > 0 Then
+                testBorder.Child = Nothing
+                containerPanel.Children.Add(currentBorder)
+            End If
+
+            ' Show preview
+            Dim lblPreview As New LabelPrintPreview(containerPanel)
             lblPreview.ShowDialog()
         End Sub
+
+
 
         'Product Name
         'Private Sub Add_CheckedProductName(sender As Object, e As RoutedEventArgs)

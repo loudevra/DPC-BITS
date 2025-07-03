@@ -1,13 +1,18 @@
 ﻿Imports System.Windows.Markup
+Imports System.IO
+Imports System.Xml
+Imports System.Windows.Controls
+Imports System.Windows.Documents
+Imports System.Windows.Media
 
 Namespace DPC.Views.Stocks.ProductsLabel
     Public Class LabelPrintPreview
-        Public Sub New(element As FrameworkElement)
+        Private wp As StackPanel ' Global stack panel reference
 
-            ' This call is required by the designer.
+        Public Sub New(element As FrameworkElement)
             InitializeComponent()
 
-            Dim wp As WrapPanel = DirectCast(element, WrapPanel)
+            wp = DirectCast(element, StackPanel)
             wp.HorizontalAlignment = HorizontalAlignment.Stretch
 
             ' Disconnect wp from any existing parent
@@ -18,7 +23,7 @@ Namespace DPC.Views.Stocks.ProductsLabel
                 End If
             End If
 
-            ' Assign the WrapPanel to the preview border
+            ' Assign wp to the preview border
             preview.Child = wp
         End Sub
 
@@ -27,75 +32,60 @@ Namespace DPC.Views.Stocks.ProductsLabel
             Dim docName As String = "Barcode-" & DateTime.Now.ToString("yyyyMMdd-HHmmss")
 
             If dlg.ShowDialog() = True Then
-                ' Save original parent and layout
-                Dim originalParent = VisualTreeHelper.GetParent(preview)
-                Dim originalIndex As Integer = -1
-                Dim originalMargin = preview.Margin
-                Dim originalTransform = preview.LayoutTransform
-
-                ' Detach from parent if it's inside a Panel
-                If TypeOf originalParent Is Panel Then
-                    Dim panel = CType(originalParent, Panel)
-                    originalIndex = panel.Children.IndexOf(preview)
-                    panel.Children.Remove(preview)
-                End If
-
-                ' Remove margin and reset transform
-                preview.Margin = New Thickness(0)
-                preview.LayoutTransform = Transform.Identity
-
-                ' Ensure full layout and rendering
-                preview.UpdateLayout()
-                preview.Measure(New Size(Double.PositiveInfinity, Double.PositiveInfinity))
-                preview.Arrange(New Rect(preview.DesiredSize))
-                preview.UpdateLayout()
-
-                Dim borderWidth = preview.ActualWidth
-                Dim borderHeight = preview.ActualHeight
-
-                ' Get printable area
                 Dim printableWidth = dlg.PrintableAreaWidth
                 Dim printableHeight = dlg.PrintableAreaHeight
 
-                ' Calculate scale factor
-                Dim scaleX = printableWidth / borderWidth
-                Dim scaleY = printableHeight / borderHeight
-                Dim scale = Math.Min(scaleX, scaleY)
-
-                ' Use your existing "container" Grid name
-                Dim container As New Grid()
-                container.LayoutTransform = New ScaleTransform(scale, scale)
-                container.Children.Add(preview)
-
-                container.Measure(New Size(printableWidth, printableHeight))
-                container.Arrange(New Rect(New Point(0, 0), New Size(printableWidth, printableHeight)))
-                container.UpdateLayout()
-
-                ' Wrap in a FixedDocument to ensure full fidelity
-                Dim fixedPage As New FixedPage()
-                fixedPage.Width = printableWidth
-                fixedPage.Height = printableHeight
-                fixedPage.Children.Add(container)
-
-                Dim pageContent As New PageContent()
-                CType(pageContent, IAddChild).AddChild(fixedPage)
-
                 Dim fixedDoc As New FixedDocument()
-                fixedDoc.Pages.Add(pageContent)
+                Dim pagePanel As New StackPanel()
+                Dim currentHeight As Double = 0
 
-                ' Print using DocumentPaginator (works for printer and PDF)
+                ' Store and clear original children
+                Dim originalChildren = wp.Children.Cast(Of UIElement).ToList()
+                wp.Children.Clear()
+
+                For Each child As UIElement In originalChildren
+                    child.Measure(New Size(printableWidth, Double.PositiveInfinity))
+                    Dim h = child.DesiredSize.Height
+
+                    ' Only add a page if there's content
+                    If currentHeight + h > printableHeight AndAlso pagePanel.Children.Count > 0 Then
+                        AddFixedPage(fixedDoc, pagePanel, printableWidth, printableHeight)
+                        pagePanel = New StackPanel()
+                        currentHeight = 0
+                    End If
+
+                    pagePanel.Children.Add(child)
+                    currentHeight += h
+                Next
+
+                ' Add remaining items as the last page if any
+                If pagePanel.Children.Count > 0 Then
+                    AddFixedPage(fixedDoc, pagePanel, printableWidth, printableHeight)
+                End If
+
                 dlg.PrintDocument(fixedDoc.DocumentPaginator, docName)
 
                 ' Restore original layout
-                container.Children.Clear()
-                preview.LayoutTransform = originalTransform
-                preview.Margin = originalMargin
-
-                If TypeOf originalParent Is Panel AndAlso originalIndex >= 0 Then
-                    Dim panel = CType(originalParent, Panel)
-                    panel.Children.Insert(originalIndex, preview)
-                End If
+                For Each child In originalChildren
+                    Dim parent = LogicalTreeHelper.GetParent(child)
+                    If TypeOf parent Is Panel Then
+                        CType(parent, Panel).Children.Remove(child)
+                    End If
+                    wp.Children.Add(child)
+                Next
             End If
+        End Sub
+
+
+        Private Sub AddFixedPage(fixedDoc As FixedDocument, content As StackPanel, width As Double, height As Double)
+            Dim fixedPage As New FixedPage With {.Width = width, .Height = height}
+            content.Measure(New Size(width, height))
+            content.Arrange(New Rect(New Size(width, height)))
+            fixedPage.Children.Add(content)
+
+            Dim pageContent As New PageContent()
+            CType(pageContent, IAddChild).AddChild(fixedPage)
+            fixedDoc.Pages.Add(pageContent)
         End Sub
     End Class
 End Namespace

@@ -807,12 +807,14 @@ BorderThickness="1" HorizontalContentAlignment="Left">
                                 <TextBlock Text="Product Name:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top"/>
                             </StackPanel>
                             <ToggleButton x:Name="includeProductName" IsChecked="True" Grid.Row="2" Margin="0,0,0,10" Grid.Column="0" Style="{StaticResource ToggleSwitchStyle}"/>
-                            
-                            <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" >
-                                <TextBlock Text="Business Location:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top"/>
-                            </StackPanel>
-                            <ToggleButton x:Name="includeBusinessLocation" Grid.Row="4" Margin="0,0,0,10" Grid.Column="0" Style="{StaticResource ToggleSwitchStyle}"/>
 
+                            <!-- Detail not yet added (Remove collapsed stack panel if will add details) -->
+                            <StackPanel Visibility="Collapsed">
+                                <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" >
+                                    <TextBlock Text="Business Location:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top"/>
+                                </StackPanel>
+                                <ToggleButton x:Name="includeBusinessLocation" Grid.Row="4" Margin="0,0,0,10" Grid.Column="0" Style="{StaticResource ToggleSwitchStyle}"/>
+                            </StackPanel>
 
                             <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2">
                                 <TextBlock Text="Warehouse:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top"/>
@@ -831,18 +833,22 @@ BorderThickness="1" HorizontalContentAlignment="Left">
                             </StackPanel>
                             <ToggleButton x:Name="includeProductCode" IsChecked="True" Grid.Row="10" Margin="0,0,0,10" Grid.Column="0" Style="{StaticResource ToggleSwitchStyle}" />
 
-                            
-                            <StackPanel Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="2" >
-                                <TextBlock Text="Products:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top"/>
+                            <!-- Detail not yet added (Remove collapsed stack panel if will add details) -->
+                            <StackPanel Visibility="Collapsed">
+                                <StackPanel Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="2" >
+                                    <TextBlock Text="Products:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top"/>
+                                </StackPanel>
+                                <ToggleButton x:Name="includeProduct" Grid.Row="12" Margin="0,0,0,10" Grid.Column="0" Style="{StaticResource ToggleSwitchStyle}"/>
+
                             </StackPanel>
-                            <ToggleButton x:Name="includeProduct" Grid.Row="12" Margin="0,0,0,10" Grid.Column="0" Style="{StaticResource ToggleSwitchStyle}"/>
                             
 
                             <StackPanel Grid.Row="13" Grid.Column="0" Grid.ColumnSpan="2" Margin="25,25,25,40" HorizontalAlignment="Right">
                                 <Button Click="PrintBarcodes" Content="Print" Style="{StaticResource PrinterButton}"/>
                             </StackPanel>
                         </Grid>
-                        <StackPanel x:Name="BarcodeImagePanel" Width="auto" Height="auto"></StackPanel>
+                        <Border x:Name="testBorder" Width="793.7" Height="auto" Visibility="Hidden">
+                        </Border>
                     </StackPanel>
                 </Grid>
             </ScrollViewer>
