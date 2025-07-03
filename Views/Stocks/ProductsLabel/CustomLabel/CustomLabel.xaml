@@ -278,7 +278,7 @@
                                     </Grid.ColumnDefinitions>
                                     <!-- Yes Button with Border -->
                                     <Border Grid.Column="0" Background="#AEAEAE" CornerRadius="20" Padding="10" Margin="25,0,25,25">
-                                        <RadioButton Content="Custom" IsChecked="True" GroupName="Custom_Standard" FontFamily="Lexend" FontSize="14" Foreground="White" x:Name="BtnCustomLabel" Click="CustomLabel">
+                                        <RadioButton Content="Custom" IsChecked="True" GroupName="Custom_Standard" FontFamily="Lexend" FontSize="14" Foreground="White" x:Name="BtnCustomLabel">
                                             <RadioButton.Style>
                                                 <Style TargetType="RadioButton">
                                                     <Setter Property="Template">
@@ -305,7 +305,7 @@
 
                                     <!-- No Button with Border -->
                                     <Border Grid.Column="1" Background="#AEAEAE" CornerRadius="20" Padding="10" Margin="25,0,25,25">
-                                        <RadioButton Content="Standard" GroupName="Custom_Standard" FontFamily="Lexend" FontSize="14" Foreground="White" x:Name="BtnStandardLabel" Click="StandardLabel">
+                                        <RadioButton Content="Standard" GroupName="Custom_Standard" FontFamily="Lexend" FontSize="14" Foreground="White" x:Name="BtnStandardLabel">
                                             <RadioButton.Style>
                                                 <Style TargetType="RadioButton">
                                                     <Setter Property="Template">
