@@ -49,7 +49,7 @@ Background="#2E466B"/>
                 <Border Height="1121.28" x:Name="PrintPreview" Background="White"  BorderThickness="0" Padding="10">
 
 
-                    <Grid Margin="40,40,40,70">
+                    <Grid Margin="40,40,40,40">
                         <Grid.Background>
                             <ImageBrush ImageSource="/Assets/images/watermark.png" Opacity="0.1" Stretch="UniformToFill"/>
                         </Grid.Background>
@@ -86,20 +86,20 @@ Background="#2E466B"/>
                         <StackPanel Grid.Row="2" Orientation="Vertical" HorizontalAlignment="Right" Margin="5">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                 <TextBlock Text="PO #:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                <Border Background="White" BorderThickness="0.5,0.5,0.5,0.25"  BorderBrush="#090909" Padding="5,0" Width="130" Margin="10,0,0,0">
+                                <Border Background="White" BorderThickness="0.5,0.5,0.5,0.25"  BorderBrush="#090909" Padding="5,0" Width="150" Margin="10,0,0,0">
                                     <TextBlock x:Name="InvoiceNumber" FontSize="12"/>
                                 </Border>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                 <TextBlock Text="Date:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                <Border Background="White" BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="#090909" Padding="5,0" Width="130" Margin="10,0,0,0">
+                                <Border Background="White" BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="#090909" Padding="5,0" Width="150" Margin="10,0,0,0">
                                     <TextBlock x:Name="InvoiceDate" FontSize="12"/>
                                 </Border>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                 <TextBlock Text="Due Date:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                <Border Background="White" BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="#090909" Padding="5,0" Width="130" Margin="10,0,0,0">
-                                    <TextBlock x:Name="DueDate" FontSize="12"/>
+                                <Border Background="White" BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="#D23636" Padding="5,0" Width="150" Margin="10,0,0,0">
+                                    <TextBlock Text="sgdknskgksjn" x:Name="DueDate" Foreground="#D23636" FontSize="12"/>
                                 </Border>
                             </StackPanel>
                         </StackPanel>
@@ -157,13 +157,13 @@ Background="#2E466B"/>
 
                                 <!-- Row Items -->
                                 <Border Grid.Row="1" Grid.Column="0" Height="20" VerticalAlignment="Center" Padding="10,0,0,0">
-                                    <TextBlock x:Name="SalesRep" Height="15" Text="Prepared by:" Foreground="#090909" FontSize="10" FontFamily="{StaticResource Lexend}"/>
+                                    <TextBlock x:Name="SalesRep" FontWeight="Bold" Height="15" Text="Prepared by:" Foreground="#090909" FontSize="10" FontFamily="{StaticResource Lexend}"/>
                                 </Border>
                                 <Border Grid.Row="1" Grid.Column="1" Height="20" VerticalAlignment="Center" Padding="10,0,0,0">
-                                    <TextBlock Text="Approved" x:Name="Approved" Height="15" Foreground="#090909" FontSize="10" FontFamily="{StaticResource Lexend}"/>
+                                    <TextBlock Text="Approved" FontWeight="Bold" x:Name="Approved" Height="15" Foreground="#090909" FontSize="10" FontFamily="{StaticResource Lexend}"/>
                                 </Border>
                                 <Border Grid.Row="1" Grid.Column="2" Height="20" VerticalAlignment="Center" Padding="10,0,0,0">
-                                    <TextBlock Text="Terms" x:Name="PaymentTerms" Height="15" Foreground="#090909" FontSize="10" FontFamily="{StaticResource Lexend}"/>
+                                    <TextBlock Text="Terms" FontWeight="Bold" x:Name="PaymentTerms" Height="15" Foreground="#D23636" FontSize="10" FontFamily="{StaticResource Lexend}"/>
                                 </Border>
 
 
@@ -177,68 +177,77 @@ Background="#2E466B"/>
                         </Border>
 
                         <!--Bill Info-->
+                        <Border Grid.Row="5" Margin="5,0" BorderThickness="1, 1, 1, 0"
+BorderBrush="Black">
+                            <StackPanel>
+                                <DataGrid 
+            x:Name="dataGrid"
+            IsReadOnly="True"
+            AutoGenerateColumns="False"
+            CanUserAddRows="False"
+            HeadersVisibility="Column"
+            GridLinesVisibility="None"
+            Background="Transparent"
+            RowBackground="Transparent"
+            BorderThickness="0"
+           >
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="80"/>
+                                        <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*"/>
+                                        <DataGridTextColumn Header="Unit Price" Binding="{Binding UnitPrice}" Width="100"/>
+                                        <DataGridTextColumn Header="Line Price" Binding="{Binding LinePrice}" Width="100"/>
+                                    </DataGrid.Columns>
+                                    <DataGrid.RowStyle>
+                                        <Style TargetType="DataGridRow">
+                                            <Setter Property="FontFamily" Value="Lexend"/>
+                                            <Setter Property="FontSize" Value="8"/>
+                                            <Setter Property="Margin" Value="0,2,0,2"/>
+                                            <Setter Property="Padding" Value="2"/>
+                                            <Setter Property="Height" Value="Auto"/>
+                                            <Setter Property="MinHeight" Value="15"/>
+                                        </Style>
+                                    </DataGrid.RowStyle>
 
-                        <DataGrid Grid.Row="5" Margin="5, 0"
-                          x:Name="dataGrid"
-                              IsReadOnly="True"
-                          AutoGenerateColumns="False"
-                          CanUserAddRows="False"
-                          HeadersVisibility="Column"
-                          GridLinesVisibility="None"
-                          Background="Transparent"
-                          RowBackground="Transparent"
-                          BorderThickness="1, 1, 1, 0"
-                                  BorderBrush="Black">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="80"/>
-                                <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*"/>
-                                <DataGridTextColumn Header="Unit Price" Binding="{Binding UnitPrice}" Width="100"/>
-                                <DataGridTextColumn Header="Line Price" Binding="{Binding LinePrice}" Width="100"/>
-                            </DataGrid.Columns>
-                            <DataGrid.RowStyle>
-                                <Style TargetType="DataGridRow">
-                                    <Setter Property="FontFamily" Value="Lexend"/>
-                                    <Setter Property="FontSize" Value="8"/>
-                                    <Setter Property="Margin" Value="0,2,0,2"/>
-                                    <Setter Property="Padding" Value="2"/>
-                                    <Setter Property="Height" Value="Auto"/>
-                                    <Setter Property="MinHeight" Value="15"/>
-                                </Style>
-                            </DataGrid.RowStyle>
+                                    <DataGrid.ColumnHeaderStyle>
+                                        <Style TargetType="DataGridColumnHeader">
+                                            <Setter Property="FontFamily" Value="Lexend"/>
+                                            <Setter Property="FontSize" Value="10"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                            <Setter Property="Foreground" Value="#FDFDFD"/>
+                                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                            <Setter Property="Padding" Value="10,5"/>
+                                            <Setter Property="Background" Value="#090909"/>
+                                        </Style>
+                                    </DataGrid.ColumnHeaderStyle>
 
-                            <DataGrid.ColumnHeaderStyle>
-                                <Style TargetType="DataGridColumnHeader">
-                                    <Setter Property="FontFamily" Value="Lexend"/>
-                                    <Setter Property="FontSize" Value="10"/>
-                                    <Setter Property="FontWeight" Value="SemiBold"/>
-                                    <Setter Property="Foreground" Value="#FDFDFD"/>
-                                    <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
-                                    <Setter Property="Padding" Value="10,5"/>
-                                    <Setter Property="Background" Value="#090909"/>
-                                </Style>
-                            </DataGrid.ColumnHeaderStyle>
-
-                            <DataGrid.CellStyle>
-                                <Style TargetType="DataGridCell">
-                                    <Setter Property="Padding" Value="5,2"/>
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="DataGridCell">
-                                                <Border Padding="{TemplateBinding Padding}" 
-                             BorderBrush="{TemplateBinding BorderBrush}" 
-                             BorderThickness="{TemplateBinding BorderThickness}" 
-                             Background="{TemplateBinding Background}">
-                                                    <ContentPresenter VerticalAlignment="Center"/>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                    <Setter Property="TextBlock.TextWrapping" Value="NoWrap"/>
-                                    <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis"/>
-                                </Style>
-                            </DataGrid.CellStyle>
-                        </DataGrid>
+                                    <DataGrid.CellStyle>
+                                        <Style TargetType="DataGridCell">
+                                            <Setter Property="Padding" Value="5,2"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="DataGridCell">
+                                                        <Border Padding="{TemplateBinding Padding}" 
+                              BorderBrush="{TemplateBinding BorderBrush}" 
+                              BorderThickness="{TemplateBinding BorderThickness}" 
+                              Background="{TemplateBinding Background}">
+                                                            <ContentPresenter VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="TextBlock.TextWrapping" Value="NoWrap"/>
+                                            <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis"/>
+                                        </Style>
+                                    </DataGrid.CellStyle>
+                                </DataGrid>
+                                <StackPanel Margin="0,5,0,0" Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Rectangle Height="1" Fill="Black" HorizontalAlignment="Stretch" Width="170"/>
+                                    <TextBlock FontWeight="SemiBold" Width="auto" FontSize="9" Text="NOTHING TO FOLLOW" Margin="10,0" FontFamily="{StaticResource Lexend}"/>
+                                    <Rectangle Height="1" Fill="Black" HorizontalAlignment="Stretch" Width="170"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
 
 
                         <StackPanel Grid.Row="6">
@@ -253,7 +262,7 @@ Background="#2E466B"/>
 
                                     <!--Signature-->
                                     <Border Grid.Column="0" BorderBrush="#090909" Background="White" BorderThickness="0,0,1,0">
-                                        <TextBlock FontWeight="SemiBold" FontFamily="Lexend" FontSize="8" Foreground="#090909" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="4">
+                                        <TextBlock FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#090909" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="4">
 PRINTED NAME AND SIGNATURE
                                         </TextBlock>
                                     </Border>
@@ -313,10 +322,10 @@ PRINTED NAME AND SIGNATURE
                             </Border>
 
                             <!--Notes-->
-                            <Border BorderBrush="#090909" Height="50" BorderThickness="1,0,1,1" Margin="5,0,5,0" Padding="0,3">
+                            <Border BorderBrush="#090909" Height="65" BorderThickness="1,0,1,1" Margin="5,0,5,0" Padding="0,3">
                                 <DockPanel>
-                                    <TextBlock Text="Notes:" Margin="2,0,5,0" FontWeight="SemiBold" FontFamily="Lexend" FontSize="8" Foreground="#090909" />
-                                    <TextBlock x:Name="noteBox"  FontSize="8" Foreground="Black" TextWrapping="Wrap"/>
+                                    <TextBlock Text="Notes:" Margin="2,0,5,0" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#090909" />
+                                    <TextBlock x:Name="noteBox" FontSize="10" Foreground="Black" TextWrapping="Wrap"/>
                                 </DockPanel>
                             </Border>
                             <!--Remarks-->

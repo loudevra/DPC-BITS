@@ -14,7 +14,8 @@ Namespace DPC.Data.Model
         Public Property DefaultTax As Decimal
         Public Property DiscountRate As Decimal
         Public Property StockUnits As Integer
-        Public Property AlertQuantity As Integer
+
+        Public Property ProductCode As String
         Public Property ProductDescription As String
         Public Property MeasurementUnit As String
         Public Property CreatedAt As DateTime

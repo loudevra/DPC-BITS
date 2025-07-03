@@ -64,22 +64,22 @@ Namespace DPC.Data.Controllers
         End Function
 
         Public Shared Function GenerateInvoice() As String
-            Dim prefix As String = "30"
-            Dim datePart As String = DateTime.Now.ToString("MMddyyyy") ' MMDDYYYY format
+            Dim prefix As String = "PO-30"
+            Dim datePart As String = DateTime.Now.ToString("MM-ddyyyy") ' MMDDYYYY format
             Dim counter As Integer = GetNextINvoiceCounter(datePart)
 
             ' Format counter to be 4 digits (e.g., 0001, 0025, 0150)
             Dim counterPart As String = counter.ToString("D4")
 
             ' Concatenate to get full ProductCode
-            Return prefix & datePart & counterPart
+            Return prefix & datePart & "-" & counterPart
         End Function
 
         Public Shared Function GetNextINvoiceCounter(datePart As String) As Integer
 
             'will be creating a new table soon
-            Dim query As String = "SELECT MAX(CAST(SUBSTRING(InvoiceNumber, 11, 4) AS UNSIGNED)) FROM purchaseorders " &
-                  "WHERE InvoiceNumber LIKE '30" & datePart & "%'"
+            Dim query As String = "SELECT MAX(CAST(SUBSTRING(InvoiceNumber, 18, 4) AS UNSIGNED)) FROM purchaseorders " &
+                  "WHERE InvoiceNumber LIKE 'PO-30" & datePart & "%'"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
@@ -120,7 +120,7 @@ Namespace DPC.Data.Controllers
                                               OrderItems As String, TotalPrice As String, TotalTax As String, TotalDiscount As String, OrderNote As String) As Boolean
 
             Dim query As String = "INSERT INTO purchaseorders (InvoiceNumber, OrderDate, DueDate, Tax, Discount, SupplierID, SupplierName, WarehouseID, WarehouseName,
-                                    OrderItems, TotalTax, TotalDiscount, TotalPrice, OrderNote, DateAdded, Username) VALUES (" & InvoiceNumber & ", '" & OrderDate & "', '" & DueDate & "', '" & Tax & "', '" & Discount & "', " & SupplierID & ", '" &
+                                    OrderItems, TotalTax, TotalDiscount, TotalPrice, OrderNote, DateAdded, Username) VALUES ('" & InvoiceNumber & "', '" & OrderDate & "', '" & DueDate & "', '" & Tax & "', '" & Discount & "', " & SupplierID & ", '" &
                                     SupplierName & "', " & WarehouseID & ", '" & WarehouseName & "', '" & OrderItems & "', " & TotalTax & ", " & TotalDiscount & ", " & TotalPrice & ", '" & OrderNote & "', '" & DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") & "', '" & CacheOnLoggedInName & "')"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
@@ -152,7 +152,7 @@ Namespace DPC.Data.Controllers
             Dim invoiceExist As Boolean = False
 
             Dim query As String = "INSERT INTO invoice (InvoiceNumber, InvoiceDate, DueDate, BillAddress, OrderItems, SubVat,
-                                                          TotalCost,  Delivery, SignatureImage, SalesRep, ApprovedBy, PaymentTerms, Note) VALUES (" & InvoiceNumber & ", '" & InvoiceDate & "', '" & DueDate & "', '" & BillAddress & "', '" & OrderItems & "', '" & Vat & "', '" & TotalCost & "', '" & Delivery & "', '" & SignatureImage & "', '" & CacheOnLoggedInName & "', '" & ApprovedBy & "', '" & PaymentTerms & "', '" & Note & "' )"
+                                                          TotalCost,  Delivery, SignatureImage, SalesRep, ApprovedBy, PaymentTerms, Note) VALUES ('" & InvoiceNumber & "', '" & InvoiceDate & "', '" & DueDate & "', '" & BillAddress & "', '" & OrderItems & "', '" & Vat & "', '" & TotalCost & "', '" & Delivery & "', '" & SignatureImage & "', '" & CacheOnLoggedInName & "', '" & ApprovedBy & "', '" & PaymentTerms & "', '" & Note & "' )"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
 
