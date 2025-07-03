@@ -74,7 +74,7 @@
                                 </StackPanel>
                             </Border>
                             <!-- Checkmark -->
-                            <Ellipse Width="54" Height="54" Fill="#444" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,-15"/>
+                            <Ellipse Width="53" Height="54" Fill="#444" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,-15"/>
                             <Path Width="40" Height="40"
                                   Stroke="White"
                                   StrokeThickness="5"
