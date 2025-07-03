@@ -132,7 +132,7 @@ Namespace DPC.Data.Helpers.ViewLoader
 
                          ' Sales Module Navigation
                     Case "salesnewinvoice"
-                        Return New POS.SalesNewInvoice()
+                        Return New Views.Sales.Saless.SalesNewInvoice()
                     Case "manageposinvoices"
                         Return New Sales.POSSales.ManagePOSInvoices()
                     Case "salesinvoices"
