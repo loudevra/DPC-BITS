@@ -58,7 +58,7 @@
             <ScrollViewer Grid.Row="1" Margin="0,0,0,20" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
                 <DockPanel LastChildFill="True">
                     <StackPanel DockPanel.Dock="Left" Margin="20">
-                        <Border Height="1122.5" Width="793.7" Background="White" Padding="40" x:Name="preview">
+                        <Border x:Name="preview">
                             <!-- dynamically added labels go here -->
                         </Border>
                     </StackPanel>
