@@ -2,6 +2,7 @@
     Public CEQuoteNumberCache As String
     Public CEClientIDCache As String
     Public CEClientDetailsCache As String ' Add to render when editing
+    Public CESubTotalCache As String ' Subtotal cache for the cost estimate
     Public CETaxProperty As String
     Public CEDiscountProperty As String
     Public CEWarehouseIDCache As String

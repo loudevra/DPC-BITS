@@ -34,7 +34,7 @@ Namespace DPC.Components.Forms
             QuoteNumber.Text = CostEstimateDetails.CEQuoteNumberCache
             QuoteDate.Text = CostEstimateDetails.CEQuoteDateCache
             QuoteValidityDate.Text = CostEstimateDetails.CEQuoteValidityDateCache
-            Subtotal.Text = CostEstimateDetails.CETotalAmountCache
+            Subtotal.Text = CostEstimateDetails.CESubTotalCache
             TotalCost.Text = CostEstimateDetails.CETotalAmountCache
             Delivery.Text = "₱ " & CostEstimateDetails.CEDeliveryCost.ToString("N2")
             itemOrder = CostEstimateDetails.CEQuoteItemsCache
