@@ -108,7 +108,7 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToNewInvoiceV2(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("salesinvoices", Me)
+            ViewLoader.DynamicView.NavigateToView("salesnewposinvoicemobile", Me)
         End Sub
 
         Private Sub NavigateToManageInvoices(sender As Object, e As RoutedEventArgs)
@@ -133,9 +133,11 @@ Namespace DPC.Components.UI
 
         Private Sub NavigateToCreditNotes(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("creditnote", Me)
-
-
         End Sub
+        Private Sub NavigateToNewPOSInvoice(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("salesnewposinvoice", Me)
+        End Sub
+
     End Class
 End Namespace
 

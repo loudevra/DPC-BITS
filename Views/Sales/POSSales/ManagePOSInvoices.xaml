@@ -25,6 +25,14 @@
         <!-- Border Style -->
         <Style x:Key="RoundedBorderStyle" TargetType="Border">
             <Setter Property="CornerRadius" Value="15"/>
+            
+        </Style>
+        <Style x:Key="RoundedBorderDateStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="15"/>
+            <Setter Property="Margin" Value="10,0,5,0"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="BorderBrush" Value="#aeaeae"/>
+            <Setter Property="BorderThickness" Value="1"/>
         </Style>
 
         <!-- Button Style -->
@@ -193,29 +201,25 @@
                                     </ComboBox>
 
                                     <!-- DatePicker with TextBox -->
-                                    <Border Style="{StaticResource RoundedBorderStyle}" Height="35" CornerRadius="18" Margin="10,0,5,0" SnapsToDevicePixels="True" BorderBrush="#aeaeae" BorderThickness="1" Width="161">
+
+                                    <Border Style="{StaticResource RoundedBorderDateStyle}" Grid.Row="8" Height="40">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width=".15*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width=".15*"/>
+                                                <ColumnDefinition Width=".05*"/>
+                                                <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
-                                            <!-- Start Date -->
-                                            <DatePicker x:Name="StartDatePicker"
-                                            Style="{StaticResource SingleDatePickerStyle}"
-                                            SelectedDate="{Binding StartDate.SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="35" Margin="20,0,42,0" VerticalAlignment="Center" />
-
-                                            <materialDesign:PackIcon Grid.Column="1" Kind="Calendar" Width="25" Height="25" Foreground="#555555" VerticalAlignment="Center" Margin="-30,0,15,0" HorizontalAlignment="Right"/>
-
-                                            <Button Grid.Column="0" Click="StartDate_Click"
-                                                    Style="{StaticResource DateButtonStyle}"
-                                                    Width="Auto"
-                                                    Margin="20,0,25,0">
-                                                <TextBlock Text="{Binding StartDate.SelectedDate, StringFormat='MMM dd, yyyy'}"
-                                                    Margin="0,0,5,0"
-                                                    Foreground="#474747"
-                                                    Height="18"/>
+                                            <!-- Single Date Picker -->
+                                            <DatePicker x:Name="SingleDatePicker"
+Style="{StaticResource SingleDatePickerStyle}"
+SelectedDate="{Binding SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+SelectedDateChanged="SingleDatePicker_SelectedDateChanged"
+Opacity="0"
+IsHitTestVisible="False" />
+                                            <!-- Calendar Icon -->
+                                            <materialDesign:PackIcon Grid.Column="1" Kind="Calendar" Width="30" Height="23" Foreground="#474747" VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="10,0,0,0"/>
+                                            <!-- Date Display - Now uses FormattedDate property -->
+                                            <Button x:Name="DateButton" Grid.Column="0" Style="{StaticResource DateButtonStyle}" Click="StartDate_Click" Width="Auto" Margin="28,0,25,0">
+                                                <TextBlock Text="{Binding FormattedDate}" Margin="0,-5,5,0" Foreground="#555555" FontWeight="SemiBold" Height="14"/>
                                             </Button>
 
                                         </Grid>

@@ -897,6 +897,9 @@
     <Compile Include="Views\POS\SalesNewInvoice.xaml.vb">
       <DependentUpon>SalesNewInvoice.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\POS\SalesNewInvoiceMobile.xaml.vb">
+      <DependentUpon>SalesNewInvoiceMobile.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\POS\SubscriptionPayment.xaml.vb">
       <DependentUpon>SubscriptionPayment.xaml</DependentUpon>
     </Compile>
@@ -1713,6 +1716,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\POS\SalesNewInvoice.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\POS\SalesNewInvoiceMobile.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
