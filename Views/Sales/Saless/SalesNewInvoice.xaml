@@ -44,80 +44,57 @@
 
         <!--Combo Box Style-->
         <Style x:Key="RoundedComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="FontFamily" Value="{StaticResource Lexend}"/>
+            <Setter Property="FontSize" Value="14"/>
             <Setter Property="Foreground" Value="#474747"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Width" Value="Auto"/>
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Background" Value="White"/>
             <Setter Property="BorderBrush" Value="#474747"/>
-            <Setter Property="Background" Value="#FDFDFD"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="FontFamily" Value="Lexend"/>
+
+            <!-- Control Template with No Hover Effect and Scrollable Dropdown -->
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ComboBox">
-                        <Border Style="{StaticResource RoundedBorderStyle}" 
-                         Background="{TemplateBinding Background}" 
-                         BorderBrush="{TemplateBinding BorderBrush}" 
-                         BorderThickness="1" CornerRadius="20">
+                        <Border x:Name="ComboBorder"
+     Background="{TemplateBinding Background}"
+     BorderBrush="{TemplateBinding BorderBrush}"
+     BorderThickness="{TemplateBinding BorderThickness}"
+     CornerRadius="20"
+     Padding="0">
                             <Grid>
-                                <!-- Define two columns, Content on left, Arrow on right -->
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="35" />
-                                </Grid.ColumnDefinitions>
+                                <!-- ComboBox Content -->
+                                <ContentPresenter Margin="10,0,30,0"
+                       VerticalAlignment="Center"
+                       Content="{TemplateBinding SelectionBoxItem}"
+                       ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"/>
 
-                                <!-- Selected Item Content -->
-                                <ContentPresenter Name="ContentSite"
-                               IsHitTestVisible="False"
-                               Content="{TemplateBinding SelectionBoxItem}"
-                               ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                               VerticalAlignment="Center"
-                               Margin="10,0,5,0"/>
+                                <!-- Dropdown Toggle Button -->
+                                <ToggleButton x:Name="ToggleButton"
+                   IsChecked="{Binding Path=IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                   Focusable="False"
+                   Background="Transparent"
+                   BorderThickness="0"
+                   Style="{StaticResource ComboBoxToggleButton}"/>
 
-                                <!-- Arrow Button (Right) -->
-                                <ToggleButton Name="ToggleButton" 
-                                   Grid.Column="1"
-                                   Focusable="False"
-                                   IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
-                                   Background="Transparent"
-                                   BorderBrush="Transparent"
-                                   BorderThickness="0"
-                                   HorizontalAlignment="Right"
-                                   VerticalAlignment="Center"
-                                   Margin="0,0,5,0">
-                                    <ToggleButton.Style>
-                                        <Style TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
-                                            <Setter Property="Background" Value="Transparent"/>
-                                            <Setter Property="BorderBrush" Value="Transparent"/>
-                                            <Setter Property="Padding" Value="0"/>
-                                            <Setter Property="OverridesDefaultStyle" Value="True"/>
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="ToggleButton">
-                                                        <Border Background="Transparent" BorderThickness="0">
-                                                            <materialDesign:PackIcon Kind="ChevronDown" Width="20" Height="20" Foreground="#474747"/>
-                                                        </Border>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </ToggleButton.Style>
-                                </ToggleButton>
-
-                                <!-- Dropdown Items -->
-                                <Popup Name="Popup"
-                                Placement="Bottom"
-                                IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
-                                AllowsTransparency="True"
-                                Focusable="False"
-                                MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-                                    <!-- MATCH WIDTH -->
-                                    <Border Style="{StaticResource RoundedBorderStyle}" 
-                                     Background="White" 
-                                     BorderBrush="Black"
-                                     Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-                                        <!-- MATCH WIDTH -->
-                                        <ScrollViewer>
-                                            <StackPanel>
-                                                <ItemsPresenter/>
-                                            </StackPanel>
+                                <!-- Default Popup for Dropdown -->
+                                <Popup x:Name="Popup"
+            Placement="Bottom"
+            IsOpen="{TemplateBinding IsDropDownOpen}"
+            AllowsTransparency="True"
+            PopupAnimation="Slide"
+            Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                    <Border Background="White"
+                 CornerRadius="10"
+                 BorderBrush="Gray"
+                 BorderThickness="1"
+                 MaxHeight="200">
+                                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                            <ItemsPresenter/>
                                         </ScrollViewer>
                                     </Border>
                                 </Popup>
@@ -515,10 +492,13 @@
                                     <StackPanel Orientation="Vertical">
                                         <TextBlock Text="Payment Terms:" FontSize="16" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#474747" Margin="0,20,5,10"/>
                                         <ComboBox Style="{StaticResource RoundedComboBoxStyle}" Height="40" Width="Auto">
-                                            <ComboBoxItem Content="" IsSelected="True"/>
-                                            <ComboBoxItem Content=""/>
-                                            <ComboBoxItem Content=""/>
-                                            <ComboBoxItem Content=""/>
+                                            <ComboBoxItem Content="Cash" IsSelected="True"/>
+                                            <ComboBoxItem Content="7 Days PDC"/>
+                                            <ComboBoxItem Content="14 Days PDC"/>
+                                            <ComboBoxItem Content="30 Days PDC"/>
+                                            <ComboBoxItem Content="45 Days PDC"/>
+                                            <ComboBoxItem Content="60 Days PDC"/>
+                                            <ComboBoxItem Content="Custom"/>
                                         </ComboBox>
                                     </StackPanel>
                                 </StackPanel>
