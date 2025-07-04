@@ -475,6 +475,9 @@
     <Compile Include="Components\Forms\PayrollTrasactionControl.xaml.vb">
       <DependentUpon>PayrollTrasactionControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\PopOutQuoteTextEditor.xaml.vb">
+      <DependentUpon>PopOutQuoteTextEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\PopOutTextEditor.xaml.vb">
       <DependentUpon>PopOutTextEditor.xaml</DependentUpon>
     </Compile>
@@ -489,6 +492,9 @@
     </Compile>
     <Compile Include="Components\Forms\POSWalkInClient.xaml.vb">
       <DependentUpon>POSWalkInClient.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\PreviewPrintQuote.xaml.vb">
+      <DependentUpon>PreviewPrintQuote.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\PreviewPrintStatement.xaml.vb">
       <DependentUpon>PreviewPrintStatement.xaml</DependentUpon>
@@ -585,6 +591,7 @@
     <Compile Include="Data\Converters\RetainCacheSupplier\CacheUserLoggedIn.vb" />
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
+    <Compile Include="Data\DataModules\CostEstimateDetails.vb" />
     <Compile Include="Data\DataModules\StatementDetails.vb" />
     <Compile Include="Data\Helpers\AutocompleteHelper.vb" />
     <Compile Include="Data\Helpers\Base64Utility.vb" />
@@ -613,7 +620,9 @@
     <Compile Include="Data\Models\Product.vb" />
     <Compile Include="Data\Models\ProductCategory.vb" />
     <Compile Include="Data\Models\PromoCode.vb" />
+    <Compile Include="Data\Models\PurchaseOrderModel.vb" />
     <Compile Include="Data\Models\Supplier.vb" />
+    <Compile Include="Data\Models\UpdatedClient.vb" />
     <Compile Include="Data\Models\Warehouses.vb" />
     <Compile Include="SplashScreen.xaml.vb">
       <DependentUpon>SplashScreen.xaml</DependentUpon>
@@ -1146,6 +1155,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\Forms\PopOutQuoteTextEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\Forms\PopOutTextEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1163,6 +1176,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\POSWalkInClient.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\PreviewPrintQuote.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1989,9 +2006,16 @@
     <Resource Include="Assets\logo\BLACK WHOL.ico" />
     <Resource Include="Assets\images\logosidebarBlack.png" />
     <Resource Include="Assets\images\watermark.png" />
+    <Resource Include="Assets\images\DPC WATERMARK STRAIGHT COMPACT.png" />
+    <Resource Include="Assets\images\DPC WATERMARK STRAIGHT SPACED.png" />
+    <Resource Include="Assets\images\DREAMPCBUILD LOGO WATERMARK SLANTED SPACED.png" />
+    <Resource Include="Assets\images\DREAMPCBUILD LOGO WATERMARK STRAIGHT SPACED.png" />
+    <Resource Include="Assets\images\DREAMPCBUILD WATERMARK SLANTED SPACED.png" />
+    <Resource Include="Assets\images\DREAMPCBUILD WATERMARK STRAIGHT SPACED.png" />
     <Content Include="Assets\images\profile3.png" />
     <Content Include="Assets\images\profile1.png" />
     <Resource Include="Assets\images\profile2.png" />
+    <Resource Include="Assets\images\watermarkv2.png" />
     <Content Include="Assets\mails\password_reset_code.html" />
     <Content Include="Assets\mails\password_reset_success.html" />
   </ItemGroup>

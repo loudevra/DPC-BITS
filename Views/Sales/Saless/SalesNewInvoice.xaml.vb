@@ -1,9 +1,19 @@
-﻿Imports System.Windows.Controls.Primitives
+﻿Imports System.Runtime.InteropServices.ComTypes
+Imports System.Windows.Controls.Primitives
+Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Views.Sales.Saless
     Public Class SalesNewInvoice
+        Public Property OrderDate As New CalendarController.SingleCalendar()
+        Public Property OrderDueDate As New CalendarController.SingleCalendar()
         Public Sub New()
+
+            OrderDate.SelectedDate = Date.Today
+            OrderDueDate.SelectedDate = Date.Today
+
+            DataContext = Me
+            ' Add Sidebar to SidebarCont
 
             ' This call is required by the designer.
             InitializeComponent()
@@ -114,6 +124,12 @@ Namespace DPC.Views.Sales.Saless
 
         Private Sub ScrollViewer_ColorChanged(sender As Object, e As RoutedPropertyChangedEventArgs(Of Color))
 
+        End Sub
+        Private Sub OrderDate_Click(sender As Object, e As RoutedEventArgs)
+            OrderDatePicker.IsDropDownOpen = True
+        End Sub
+        Private Sub OrderDueDate_Click(sender As Object, e As RoutedEventArgs)
+            OrderDatePicker.IsDropDownOpen = True
         End Sub
     End Class
 End Namespace

@@ -5,10 +5,13 @@ Imports System.Windows.Controls.Primitives
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
 Imports System.Data
+Imports MySql.Data.MySqlClient
 
 Namespace DPC.Views.Stocks.Suppliers.ManageSuppliers
     Public Class ManageSuppliers
         Inherits UserControl
+
+        Private _supplierID As String
 
         ' Properties for pagination
         Private _paginationHelper As PaginationHelper
@@ -57,6 +60,46 @@ Namespace DPC.Views.Stocks.Suppliers.ManageSuppliers
 
             ' Initialize and load suppliers data
             LoadData()
+        End Sub
+
+
+        Private Sub DeleteProduct(sender As Object, e As RoutedEventArgs)
+            Dim deleteSupplier As New DPC.Components.ConfirmationModals.DeleteProductConfirmation()
+            For Each cellInfo As DataGridCellInfo In dataGrid.SelectedCells
+                Dim rowItem As Object = cellInfo.Item
+
+                ' Try to get SupplierID directly
+                Dim prop = rowItem.GetType().GetProperty("SupplierID")
+                If prop IsNot Nothing Then
+                    _supplierID = prop.GetValue(rowItem)?.ToString()
+                    Exit For
+                End If
+            Next
+
+            AddHandler deleteSupplier.Confirm, AddressOf DeleteProductConfirmation_Closed
+
+            Dim parentWindow As Window = Window.GetWindow(Me)
+            PopupHelper.OpenPopupWithControl(sender, deleteSupplier, "windowcenter", -100, 0, False, parentWindow)
+        End Sub
+
+        Private Sub DeleteProductConfirmation_Closed()
+            Dim query As String = "DELETE FROM supplier WHERE supplierID = '" & _supplierID & "'"
+
+            'Handles the deletion of product
+            Dim connStr As String = SplashScreen.GetDatabaseConnection().ConnectionString
+            Try
+                Using conn As New MySqlConnection(connStr)
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.ExecuteNonQuery()
+                    End Using
+                End Using
+
+                dataGrid.ItemsSource = Nothing
+                LoadData()
+            Catch ex As Exception
+                MessageBox.Show("Error deleting product: " & ex.Message)
+            End Try
         End Sub
 
         ' Event handler for TextChanged to update the filter

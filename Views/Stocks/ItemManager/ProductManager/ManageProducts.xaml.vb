@@ -94,7 +94,7 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
         Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
 
             ' Excel exporter if datagrid does not have a model
-            ExcelExporter.ExportExcel(dataGrid, 9, "ProductExport")
+            ExcelExporter.ExportExcel(dataGrid, 11, "ProductExport")
         End Sub
 
         ' Load Data Using ProductController and update stock stats
@@ -105,45 +105,48 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
                     ' Query from paste-2.txt
                     Dim query As String = "
                     SELECT  
-                    p.productID AS ID,  
-                    p.productName AS Name,  
-                    c.categoryName AS Category,  
-                    sc.subcategoryName AS SubCategory,  
-                    b.brandName AS Brand,  
-                    s.supplierName AS Supplier,  
-                    GROUP_CONCAT(DISTINCT WarehouseFiltered.warehouseName SEPARATOR ', ') AS Warehouse,  
-                    SUM(COALESCE(pnv.stockUnit, 0) + COALESCE(pvs.stockUnit, 0)) AS StockQuantity,  
-                    MAX(COALESCE(pnv.alertQuantity, pvs.alertQuantity, 0)) AS AlertQuantity,  
-                    p.productImage AS ProductImage,  
-                    p.productVariation AS HasVariations  
+    p.productID AS ID,  
+    p.productName AS Name,  
+    c.categoryName AS Category,  
+    sc.subcategoryName AS SubCategory,  
+    b.brandName AS Brand,  
+    s.supplierName AS Supplier,  
+    GROUP_CONCAT(DISTINCT WarehouseFiltered.warehouseName SEPARATOR ', ') AS Warehouse,  
+    SUM(COALESCE(pnv.stockUnit, 0) + COALESCE(pvs.stockUnit, 0)) AS StockQuantity,  
+    MAX(COALESCE(pnv.alertQuantity, pvs.alertQuantity, 0)) AS AlertQuantity,  
+    MAX(COALESCE(pnv.buyingPrice, pvs.buyingPrice, 0)) AS BuyingPrice,
+    MAX(COALESCE(pnv.sellingPrice, pvs.sellingPrice, 0)) AS SellingPrice,
+    p.productImage AS ProductImage,  
+    p.productVariation AS HasVariations  
 
-                FROM product p  
+FROM product p  
 
-                LEFT JOIN category c ON p.categoryID = c.categoryID  
-                LEFT JOIN subcategory sc ON p.subcategoryID = sc.subcategoryID  
-                LEFT JOIN brand b ON p.brandID = b.brandID  
-                LEFT JOIN supplier s ON p.supplierID = s.supplierID  
+LEFT JOIN category c ON p.categoryID = c.categoryID  
+LEFT JOIN subcategory sc ON p.subcategoryID = sc.subcategoryID  
+LEFT JOIN brand b ON p.brandID = b.brandID  
+LEFT JOIN supplier s ON p.supplierID = s.supplierID  
 
-                -- Products without variations  
-                LEFT JOIN productnovariation pnv ON p.productID = pnv.productID AND p.productVariation = 0  
-                LEFT JOIN warehouse w ON pnv.warehouseID = w.warehouseID AND pnv.stockUnit > 0  
+-- Products without variations  
+LEFT JOIN productnovariation pnv ON p.productID = pnv.productID AND p.productVariation = 0  
+LEFT JOIN warehouse w ON pnv.warehouseID = w.warehouseID AND pnv.stockUnit > 0  
 
-                -- Products with variations  
-                LEFT JOIN productvariationstock pvs ON p.productID = pvs.productID AND p.productVariation = 1  
-                LEFT JOIN warehouse wv ON pvs.warehouseID = wv.warehouseID AND pvs.stockUnit > 0  
+-- Products with variations  
+LEFT JOIN productvariationstock pvs ON p.productID = pvs.productID AND p.productVariation = 1  
+LEFT JOIN warehouse wv ON pvs.warehouseID = wv.warehouseID AND pvs.stockUnit > 0  
 
-                -- Unified warehouse list filtered by stock  
-                LEFT JOIN (
-                    SELECT warehouseID, warehouseName FROM warehouse
-                ) AS WarehouseFiltered ON 
-                    (p.productVariation = 0 AND w.warehouseID = WarehouseFiltered.warehouseID) OR
-                    (p.productVariation = 1 AND wv.warehouseID = WarehouseFiltered.warehouseID)  
+-- Unified warehouse list filtered by stock  
+LEFT JOIN (
+    SELECT warehouseID, warehouseName FROM warehouse
+) AS WarehouseFiltered ON 
+    (p.productVariation = 0 AND w.warehouseID = WarehouseFiltered.warehouseID) OR
+    (p.productVariation = 1 AND wv.warehouseID = WarehouseFiltered.warehouseID)  
 
-                GROUP BY  
-                    p.productID, p.productName, c.categoryName, sc.subcategoryName,  
-                    b.brandName, s.supplierName, p.productImage, p.productVariation  
+GROUP BY  
+    p.productID, p.productName, c.categoryName, sc.subcategoryName,  
+    b.brandName, s.supplierName, p.productImage, p.productVariation
 
-                ORDER BY p.productName;
+ORDER BY p.productName;
+
             "
                     conn.Open()
                     Dim adapter As New MySqlDataAdapter(query, conn)

@@ -2,10 +2,15 @@
 
 Namespace DPC.Views.Sales.POSSales
     Public Class ManagePOSInvoices
+        Public Property StartDate As New CalendarController.SingleCalendar()
         Public Sub New()
+            StartDate.SelectedDate = Date.Today
+
+            DataContext = Me
             ' This call is required by the designer.
             InitializeComponent()
         End Sub
+
 
 
         ' Open the calendar popup
@@ -22,6 +27,7 @@ Namespace DPC.Views.Sales.POSSales
                     calendarViewModel.SelectedDate = datePicker.SelectedDate
                 End If
             End If
+
         End Sub
     End Class
 End Namespace

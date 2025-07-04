@@ -200,6 +200,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                         ' New Quote Navigation
                     Case "navigatetoquotes"
                         Return New Sales.Quotes.NewQuote()
+                        ' Print Preview for Quotes
+                    Case "printpreviewquotes"
+                        Return New DPC.Components.Forms.PreviewPrintQuote()
                         ' New Subscription Navigation
                     Case "newsubscriptions"
                         Return New Sales.Subscriptions.NewSubscriptionInvoice()
@@ -380,6 +383,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "salesquote"
             ElseIf typeName = "salesnewquote" Then
                 Return "salesnewquote"
+            ElseIf typeName = "printpreviewquotes" Then
+                Return "printpreviewquotes"
             ElseIf typeName = "creditnote" Then
                 Return "creditnote"
             ElseIf typeName = "newsubscriptioninvoice" Then

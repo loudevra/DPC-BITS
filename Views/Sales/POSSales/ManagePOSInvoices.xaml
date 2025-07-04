@@ -201,6 +201,7 @@
                                     </ComboBox>
 
                                     <!-- DatePicker with TextBox -->
+
                                     <Border Style="{StaticResource RoundedBorderDateStyle}" Grid.Row="8" Height="40">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -220,6 +221,7 @@ IsHitTestVisible="False" />
                                             <Button x:Name="DateButton" Grid.Column="0" Style="{StaticResource DateButtonStyle}" Click="StartDate_Click" Width="Auto" Margin="28,0,25,0">
                                                 <TextBlock Text="{Binding FormattedDate}" Margin="0,-5,5,0" Foreground="#555555" FontWeight="SemiBold" Height="14"/>
                                             </Button>
+
                                         </Grid>
                                     </Border>
 
