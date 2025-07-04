@@ -57,6 +57,7 @@ Namespace DPC.Views.Sales.Quotes
             base64Image = CostEstimateDetails.CEImageCache
             tempImagePath = CostEstimateDetails.CEPathCache
             ClientNameBox.Text = CostEstimateDetails.CEClientName
+            CESubTotalCache = CostEstimateDetails.CETotalAmountCache
             AddressLineOne.Text = CostEstimateDetails.CEAddress & ", " & CostEstimateDetails.CECity    ' -- important when editing
             AddressLineTwo.Text = CostEstimateDetails.CERegion & ", " & CostEstimateDetails.CECountry    ' -- important when editing
             PhoneBox.Text = "Tel No.: +63 " & FormatPhoneWithSpaces(CostEstimateDetails.CEPhone)
@@ -287,7 +288,7 @@ Namespace DPC.Views.Sales.Quotes
             CostEstimateDetails.CEQuoteNumberCache = QuoteNumber.Text
             CostEstimateDetails.CEQuoteDateCache = QuoteDate.Text
             CostEstimateDetails.CEQuoteValidityDateCache = QuoteValidityDate.Text
-            CostEstimateDetails.CETotalAmountCache = Subtotal.Text
+            CostEstimateDetails.CETotalAmountCache = TotalCost.Text
             CostEstimateDetails.CEDeliveryCost = _deliveryCost
             CostEstimateDetails.CEInstallation = _installationCost
             CostEstimateDetails.CEQuoteItemsCache = itemOrder
