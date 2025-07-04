@@ -147,6 +147,10 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Sales.Subscriptions.NewSubscriptionInvoice()
                     Case "newquote"
                         Return New Sales.Quotes.NewQuote()
+                    Case "salesnewposinvoice"
+                        Return New Views.POS.SalesNewInvoice()
+                    Case "salesnewposinvoicemobile"
+                        Return New Views.POS.SalesNewInvoiceMobile()
 
 
                         ' Accounts Navigation
