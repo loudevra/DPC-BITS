@@ -220,7 +220,7 @@
                                         <ComboBoxItem Content="100"/>
                                     </ComboBox>
 
-                                    <!--Calendar Date Time-->
+                                    <!-- Calendar Date Time -->
                                     <Border Style="{StaticResource RoundedGridStyle}" HorizontalAlignment="Right" Margin="10" MinWidth="250" Height="30">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -230,55 +230,61 @@
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
 
+                                            <!-- Hidden DatePickers -->
                                             <DatePicker x:Name="StartDatePicker"
-    SelectedDate="{Binding StartDate, Mode=TwoWay}"
-    Visibility="Hidden"/>
+                    SelectedDate="{Binding StartDate, Mode=TwoWay}"
+                    Visibility="Hidden"
+                    SelectedDateChanged="StartDatePicker_SelectedDateChanged" />
 
-                                            <Button Grid.Column="0"
-Background="Transparent"
-BorderThickness="0"
-HorizontalAlignment="Stretch"
->
+                                            <DatePicker x:Name="DueDatePicker"
+                    SelectedDate="{Binding EndDate, Mode=TwoWay}"
+                    Visibility="Hidden"
+                    SelectedDateChanged="DueDatePicker_SelectedDateChanged" />
+
+                                            <!-- Start Date Button -->
+                                            <Button x:Name="StartDateButton" Grid.Column="0"
+                Background="Transparent"
+                BorderThickness="0"
+                HorizontalAlignment="Stretch"
+                Click="StartDateButton_Click">
                                                 <TextBlock Text="{Binding StartDate, StringFormat='MMM dd, yyyy'}"
-       FontFamily="Lexend"
-       FontSize="12"
-       VerticalAlignment="Center"
-       Margin="10,0,5,0"/>
+                       FontFamily="Lexend"
+                       FontSize="12"
+                       VerticalAlignment="Center"
+                       Margin="10,0,5,0"/>
                                             </Button>
 
                                             <TextBlock Text=" - "
-   FontFamily="Lexend"
-   FontSize="12"
-   VerticalAlignment="Center"
-   Grid.Column="1"/>
+                   FontFamily="Lexend"
+                   FontSize="12"
+                   VerticalAlignment="Center"
+                   Grid.Column="1" />
 
-                                            <DatePicker x:Name="EndDatePicker"
-    SelectedDate="{Binding EndDate, Mode=TwoWay}"
-    Visibility="Hidden"/>
-
-                                            <Button Grid.Column="2"
-Background="Transparent"
-BorderThickness="0"
-Padding="0"
-HorizontalAlignment="Stretch"
->
+                                            <!-- End Date Button -->
+                                            <Button x:Name="DueDateButton" Grid.Column="2"
+                Background="Transparent"
+                BorderThickness="0"
+                Padding="0"
+                HorizontalAlignment="Stretch"
+                Click="DueDateButton_Click">
                                                 <TextBlock Text="{Binding EndDate, StringFormat='MMM dd, yyyy'}"
-       FontFamily="Lexend"
-       FontSize="12"
-       VerticalAlignment="Center"
-       Margin="5,0,10,0"/>
+                       FontFamily="Lexend"
+                       FontSize="12"
+                       VerticalAlignment="Center"
+                       Margin="5,0,10,0"/>
                                             </Button>
 
                                             <materialDesign:PackIcon Kind="Calendar"
-                 Width="20"
-                 Height="20"
-                 Foreground="Black"
-                 HorizontalAlignment="Right"
-                 VerticalAlignment="Center"
-                 Grid.Column="3"
-                 Margin="0,0,5,0"/>
+                                 Width="20"
+                                 Height="20"
+                                 Foreground="Black"
+                                 HorizontalAlignment="Right"
+                                 VerticalAlignment="Center"
+                                 Grid.Column="3"
+                                 Margin="0,0,5,0"/>
                                         </Grid>
                                     </Border>
+
 
                                     <!--View Grid Button-->
                                     <Button x:Name="btnViewGrid" Style="{StaticResource IconButton}">

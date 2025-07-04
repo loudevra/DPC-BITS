@@ -1,10 +1,59 @@
 ﻿Imports System.Windows.Controls.Primitives
+Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Views.Sales.Quotes
     Public Class Quote
+        ' Add SingleCalendar ViewModels for both pickers
+        Private startDateViewModel As New CalendarController.SingleCalendar()
+        Private dueDateViewModel As New CalendarController.SingleCalendar()
         Public Sub New()
             InitializeComponent()
+            SetupDatePickers()
+        End Sub
+
+        ' Setup bindings between DatePickers, Buttons, and ViewModels
+        Public Sub SetupDatePickers()
+            startDateViewModel.SelectedDate = Nothing
+            dueDateViewModel.SelectedDate = Nothing
+
+            StartDatePicker.DataContext = startDateViewModel
+            StartDateButton.DataContext = startDateViewModel
+
+            DueDatePicker.DataContext = dueDateViewModel
+            DueDateButton.DataContext = dueDateViewModel
+        End Sub
+
+        ' Trigger dropdown open
+        Private Sub StartDateButton_Click(sender As Object, e As RoutedEventArgs) Handles StartDateButton.Click
+            StartDatePicker.IsDropDownOpen = True
+        End Sub
+
+        Private Sub DueDateButton_Click(sender As Object, e As RoutedEventArgs) Handles DueDateButton.Click
+            DueDatePicker.IsDropDownOpen = True
+        End Sub
+
+        ' Handle selected date change
+        Private Sub StartDatePicker_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs) Handles StartDatePicker.SelectedDateChanged
+            Dim dp = TryCast(sender, DatePicker)
+            If dp IsNot Nothing AndAlso dp.DataContext IsNot Nothing Then
+                Dim vm = TryCast(dp.DataContext, CalendarController.SingleCalendar)
+                If vm IsNot Nothing Then
+                    vm.SelectedDate = dp.SelectedDate
+                    BindingOperations.GetBindingExpression(StartDateButton, Button.DataContextProperty)?.UpdateTarget()
+                End If
+            End If
+        End Sub
+
+        Private Sub DueDatePicker_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs) Handles DueDatePicker.SelectedDateChanged
+            Dim dp = TryCast(sender, DatePicker)
+            If dp IsNot Nothing AndAlso dp.DataContext IsNot Nothing Then
+                Dim vm = TryCast(dp.DataContext, CalendarController.SingleCalendar)
+                If vm IsNot Nothing Then
+                    vm.SelectedDate = dp.SelectedDate
+                    BindingOperations.GetBindingExpression(DueDateButton, Button.DataContextProperty)?.UpdateTarget()
+                End If
+            End If
         End Sub
         Friend Sub ShowPopup(parent As UIElement, sender As Object)
             ' Ensure sender is a Button
