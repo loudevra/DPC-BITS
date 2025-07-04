@@ -193,27 +193,31 @@
                                     </ComboBox>
 
                                     <!-- DatePicker with TextBox -->
-                                    <Border Style="{StaticResource RoundedBorderStyle}" Margin="10,0,5,0" SnapsToDevicePixels="True" BorderBrush="#aeaeae" BorderThickness="1" Width="161">
+                                    <Border Style="{StaticResource RoundedBorderStyle}" Height="35" CornerRadius="18" Margin="10,0,5,0" SnapsToDevicePixels="True" BorderBrush="#aeaeae" BorderThickness="1" Width="161">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="73*"/>
-                                                <ColumnDefinition Width="20*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width=".15*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width=".15*"/>
                                             </Grid.ColumnDefinitions>
+                                            <!-- Start Date -->
+                                            <DatePicker x:Name="StartDatePicker"
+                                            Style="{StaticResource SingleDatePickerStyle}"
+                                            SelectedDate="{Binding StartDate.SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="35" Margin="20,0,42,0" VerticalAlignment="Center" />
 
-                                            <!-- Single Date Picker -->
-                                            <!--<DatePicker x:Name="SingleDatePicker"
-Style="{StaticResource SingleDatePickerStyle}"
-SelectedDate="{Binding SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-          
-SelectedDateChanged="SingleDatePicker_SelectedDateChanged"
-Opacity="0"
-IsHitTestVisible="False" />-->
-                                            <!-- Calendar Icon -->
-                                            <materialDesign:PackIcon Grid.Column="1" Kind="Calendar" Width="32" Height="24" Foreground="#474747" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                                            <!-- Date Display - Now uses FormattedDate property -->
-                                            <Button Style="{StaticResource DateButtonStyle}"  Width="Auto" Margin="10,0,1,0">
-                                                <TextBlock Text="{Binding FormattedDate}" Margin="0,0,5,0" Height="14" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold" />
+                                            <materialDesign:PackIcon Grid.Column="1" Kind="Calendar" Width="25" Height="25" Foreground="#555555" VerticalAlignment="Center" Margin="-30,0,15,0" HorizontalAlignment="Right"/>
+
+                                            <Button Grid.Column="0" Click="StartDate_Click"
+                                                    Style="{StaticResource DateButtonStyle}"
+                                                    Width="Auto"
+                                                    Margin="20,0,25,0">
+                                                <TextBlock Text="{Binding StartDate.SelectedDate, StringFormat='MMM dd, yyyy'}"
+                                                    Margin="0,0,5,0"
+                                                    Foreground="#474747"
+                                                    Height="18"/>
                                             </Button>
+
                                         </Grid>
                                     </Border>
 
