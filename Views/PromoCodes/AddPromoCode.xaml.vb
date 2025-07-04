@@ -4,9 +4,13 @@ Imports DPC.DPC.Data.Models
 
 Namespace DPC.Views.PromoCodes
     Public Class AddPromoCode
+        Public Property StartDate As New CalendarController.SingleCalendar()
         Public Sub New()
             InitializeComponent()
 
+            StartDate.SelectedDate = Date.Today
+
+            DataContext = Me
             ' Add Sidebar to SidebarContainer
             'Dim sidebar As New Sidebar()
             ' SidebarContainer.Child = sidebar
@@ -42,5 +46,8 @@ Namespace DPC.Views.PromoCodes
             End If
         End Sub
 
+        Private Sub StartDate_Click(sender As Object, e As RoutedEventArgs)
+            StartDatePicker.IsDropDownOpen = True
+        End Sub
     End Class
 End Namespace

@@ -28,6 +28,7 @@
         <!-- Main Menu Item Style -->
         <Style x:Key="MainMenuItemStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontFamily" Value="Lexend"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="Medium"/>
             <Setter Property="Margin" Value="10,0,0,0"/>
@@ -88,12 +89,12 @@
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToNewProject">
-                                    <TextBlock Text="New Project" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="New Project" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageProject">
-                                    <TextBlock Text="Manage Project" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Manage Project" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                         </StackPanel>

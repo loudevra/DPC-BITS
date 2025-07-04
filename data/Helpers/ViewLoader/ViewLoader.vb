@@ -132,7 +132,7 @@ Namespace DPC.Data.Helpers.ViewLoader
 
                          ' Sales Module Navigation
                     Case "salesnewinvoice"
-                        Return New POS.SalesNewInvoice()
+                        Return New Views.Sales.Saless.SalesNewInvoice()
                     Case "manageposinvoices"
                         Return New Sales.POSSales.ManagePOSInvoices()
                     Case "salesinvoices"
@@ -147,6 +147,10 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Sales.Subscriptions.NewSubscriptionInvoice()
                     Case "newquote"
                         Return New Sales.Quotes.NewQuote()
+                    Case "salesnewposinvoice"
+                        Return New Views.POS.SalesNewInvoice()
+                    Case "salesnewposinvoicemobile"
+                        Return New Views.POS.SalesNewInvoiceMobile()
 
 
                         ' Accounts Navigation

@@ -28,6 +28,7 @@
         <!-- Main Menu Item Style -->
         <Style x:Key="MainMenuItemStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontFamily" Value="Lexend"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="Medium"/>
             <Setter Property="Margin" Value="10,0,0,0"/>
@@ -88,17 +89,17 @@
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageAccounts">
-                                    <TextBlock Text="Manage Accounts" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Manage Accounts" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToBalanceSheets">
-                                    <TextBlock Text="Balance Sheets" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Balance Sheets" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToAccountStatement">
-                                    <TextBlock Text="Account Statement" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Account Statement" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                         </StackPanel>
@@ -134,22 +135,22 @@
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToViewTransactions">
-                                    <TextBlock Text="View Transactions" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="View Transactions" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToNewTransaction">
-                                    <TextBlock Text="New Transaction" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="New Transaction" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToNewTransfer">
-                                    <TextBlock Text="New Transfer" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="New Transfer" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToClientsTransaction">
-                                    <TextBlock Text="Clients Transaction" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Clients Transaction" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                         </StackPanel>

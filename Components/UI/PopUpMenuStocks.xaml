@@ -28,6 +28,7 @@
         <!-- Main Menu Item Style -->
         <Style x:Key="MainMenuItemStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontFamily" Value="Lexend"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="Medium"/>
             <Setter Property="Margin" Value="10,0,0,0"/>
@@ -88,12 +89,12 @@
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToNewProduct">
-                                    <TextBlock Text="New Product" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="New Product" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToProductManager">
-                                    <TextBlock Text="Product Manager" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Product Manager" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                         </StackPanel>
@@ -171,17 +172,17 @@
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToNewOrder">
-                                    <TextBlock Text="New Order" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="New Order" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageOrder">
-                                    <TextBlock Text="Manage Orders" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Manage Orders" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToWalkIn">
-                                 <TextBlock Text="Walk-In Client" Foreground="#d4d4d4" FontSize="13"/>
+                                 <TextBlock Text="Walk-In Client" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                         </StackPanel>
@@ -217,12 +218,12 @@
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToSupplierRecords">
-                                    <TextBlock Text="Suppliers Records" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Suppliers Records" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToCustomerRecords">
-                                    <TextBlock Text="Customers Records" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Customers Records" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                         </StackPanel>
@@ -258,12 +259,12 @@
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToNewSuppliers">
-                                    <TextBlock Text="New Suppliers" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="New Suppliers" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageSuppliers">
-                                    <TextBlock Text="Manage Suppliers" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Manage Suppliers" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                         </StackPanel>
@@ -299,12 +300,12 @@
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToCustomLabel">
-                                    <TextBlock Text="Custom Label" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Custom Label" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToStandardLabel">
-                                    <TextBlock Text="Standard Label" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Standard Label" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                         </StackPanel>

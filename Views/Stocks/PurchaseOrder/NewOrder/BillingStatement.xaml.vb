@@ -57,7 +57,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
             If StatementDetails.isCustomTerm = True Then
                 CustomTerms.Text = StatementDetails.paymentTerms
-                cmbTerms.SelectedIndex = 4
+                cmbTerms.SelectedIndex = 6
             Else
                 cmbTerms.Text = StatementDetails.paymentTerms
             End If
@@ -401,7 +401,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             _region = StatementDetails.Region
             _phone = StatementDetails.Phone
 
-            If cmbTerms.SelectedIndex = 4 Then
+            If cmbTerms.SelectedIndex = 6 Then
                 StatementDetails.isCustomTerm = True
                 StatementDetails.paymentTerms = CustomTerms.Text
             Else
