@@ -128,19 +128,19 @@
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                             <TextBlock Text="CE #:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
                                             <Border Background="White" BorderThickness="0.5,0.5,0.5,0.25"  BorderBrush="#090909" Padding="5,0" Width="130" Margin="10,0,0,0">
-                                                <TextBlock x:Name="QuoteNumber" FontSize="12"/>
+                                                <TextBlock x:Name="QuoteNumber" FontSize="12" FontFamily="{StaticResource Lexend}"/>
                                             </Border>
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                             <TextBlock Text="Quote Date:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
                                             <Border Background="White" BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="#090909" Padding="5,0" Width="130" Margin="10,0,0,0">
-                                                <TextBlock x:Name="QuoteDate" FontSize="9"/>
+                                                <TextBlock x:Name="QuoteDate" FontSize="9" FontFamily="{StaticResource Lexend}"/>
                                             </Border>
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                             <TextBlock Text="Quote Validity:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
                                             <Border Background="Red" BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="Red" Padding="5,0" Width="130" Margin="10,0,0,0">
-                                                <TextBlock x:Name="QuoteValidityDate" FontSize="9" FontWeight="Bold"  Foreground="White" FontFamily="{StaticResource Lexend}"/>
+                                                <TextBlock x:Name="QuoteValidityDate" FontSize="9" FontWeight="Bold"  Foreground="White" FontFamily="{StaticResource Lexend}" />
                                             </Border>
                                         </StackPanel>
                                     </StackPanel>
@@ -383,19 +383,19 @@
                                                         </StackPanel>
                                                         <StackPanel Grid.Column="1">
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBlock x:Name="Subtotal" Text="₱ 0.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                                <TextBlock x:Name="Subtotal" Text="₱ 0.00" FontWeight="SemiBold" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBox  x:Name="Delivery" TextChanged="Delivery_TextChanged" FontWeight="SemiBold" BorderThickness="0" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                                <TextBox  x:Name="Delivery" TextChanged="Delivery_TextChanged" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBox  x:Name="Installation" TextChanged="Installation_TextChanged" FontWeight="SemiBold" BorderThickness="0" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                                <TextBox  x:Name="Installation" TextChanged="Installation_TextChanged" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBox  x:Name="VAT12" Text="₱ 0.00" FontWeight="SemiBold" BorderThickness="0" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                                <TextBox  x:Name="VAT12" Text="₱ 0.00" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
-                                                                <TextBlock x:Name="TotalCost" Text="₱ 0.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                                <TextBlock x:Name="TotalCost" Text="₱ 0.00" FontWeight="SemiBold" FontSize="11" Foreground="Red" HorizontalAlignment="Left" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
                                                             </Border>
                                                         </StackPanel>
                                                     </Grid>
