@@ -58,6 +58,8 @@ Namespace DPC.Components.Forms
             isCustom = StatementDetails.isCustomTerm
             Approved.Text = StatementDetails.Approved
 
+            
+
             If StatementDetails.signature = False Then
                 BrowseFile.Child = Nothing
             Else

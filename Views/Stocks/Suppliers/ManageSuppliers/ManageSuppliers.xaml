@@ -207,8 +207,9 @@
                     <DataGridTemplateColumn Header="Settings" Width="80">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="⚙" Width="30" Height="30" Background="Transparent" Margin="0"
-                                        FontFamily="Lexend"/>
+                                <Button Width="30" Height="30" Background="Transparent" Margin="0" ToolTip="Delete" Cursor="Hand" Click="DeleteProduct">
+                                    <materialDesign:PackIcon Kind="DeleteOutline" Width="16" Height="16" Foreground="#E65E5E"/>
+                                </Button>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

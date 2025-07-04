@@ -193,31 +193,31 @@
                                     </ComboBox>
 
                                     <!-- DatePicker with TextBox -->
-                                    <Border Style="{StaticResource RoundedBorderStyle}" Margin="10,0,5,0" SnapsToDevicePixels="True" BorderBrush="#aeaeae" BorderThickness="1">
+                                    <Border Style="{StaticResource RoundedBorderStyle}" Height="35" CornerRadius="18" Margin="10,0,5,0" SnapsToDevicePixels="True" BorderBrush="#aeaeae" BorderThickness="1" Width="161">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="50*"/>
-                                                <ColumnDefinition Width="127*"/>
-                                                <ColumnDefinition Width="0*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width=".15*"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width=".15*"/>
                                             </Grid.ColumnDefinitions>
-
                                             <!-- Start Date -->
                                             <DatePicker x:Name="StartDatePicker"
                                             Style="{StaticResource SingleDatePickerStyle}"
-                                            SelectedDate="{Binding StartDate.SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2" Height="35" Margin="0,0,42,0" VerticalAlignment="Center" />
+                                            SelectedDate="{Binding StartDate.SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="35" Margin="20,0,42,0" VerticalAlignment="Center" />
 
-                                            <materialDesign:PackIcon Grid.Column="2" Kind="Calendar" Width="25" Height="25" Foreground="#474747" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                                            <materialDesign:PackIcon Grid.Column="1" Kind="Calendar" Width="25" Height="25" Foreground="#555555" VerticalAlignment="Center" Margin="-30,0,15,0" HorizontalAlignment="Right"/>
 
-                                            <Button Grid.Column="1"
-                                            Style="{StaticResource DateButtonStyle}"
-                   
-                                                Width="Auto"
-                                              Margin="10,0,25,0">
+                                            <Button Grid.Column="0" Click="StartDate_Click"
+                                                    Style="{StaticResource DateButtonStyle}"
+                                                    Width="Auto"
+                                                    Margin="20,0,25,0">
                                                 <TextBlock Text="{Binding StartDate.SelectedDate, StringFormat='MMM dd, yyyy'}"
                                                     Margin="0,0,5,0"
                                                     Foreground="#474747"
-                                                    Height="14"/>
+                                                    Height="18"/>
                                             </Button>
+
                                         </Grid>
                                     </Border>
 
@@ -235,11 +235,34 @@
                                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
                                     <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Width="211" Height="34">
                                         <Grid>
-                                            <TextBox BorderThickness="0" Background="Transparent" FontFamily="Lexend"  Name="txtSearch" Style="{StaticResource RoundedTextboxStyle}" Height="23" Margin="20,0,20,0" VerticalAlignment="Center"/>
-                                            <materialDesign:PackIcon Kind="Magnify" Width="25" Height="25" Foreground="Black" Margin="159,0,0,0" VerticalAlignment="Center"/>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Search TextBox -->
+                                            <TextBox Grid.Column="0"
+                     BorderThickness="0"
+                     Background="Transparent"
+                     FontFamily="Lexend"
+                     Name="txtSearch"
+                     Style="{StaticResource RoundedTextboxStyle}"
+                     Height="23"
+                     Margin="20,0,10,0"
+                     VerticalAlignment="Center"/>
+
+                                            <!-- Search Icon -->
+                                            <materialDesign:PackIcon Grid.Column="1"
+                                     Kind="Magnify"
+                                     Width="25"
+                                     Height="25"
+                                     Foreground="Black"
+                                     Margin="0"
+                                     VerticalAlignment="Center"/>
                                         </Grid>
                                     </Border>
                                 </StackPanel>
+
                             </Grid>
                         </Border>
 
@@ -257,7 +280,7 @@
                                           IsReadOnly="True"
                                           RowHeight="40"
                                           FontFamily="Lexend"
-                                          Foreground="#474747"> 
+                                          Foreground="#474747">
                                         <DataGrid.Columns>
                                             <DataGridTextColumn Header="No" Binding="{Binding Number}" Width="70" FontFamily="Lexend"/>
                                             <DataGridTextColumn Header="#" Binding="{Binding Index}" Width="70" FontFamily="Lexend"/>

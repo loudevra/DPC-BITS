@@ -1,6 +1,6 @@
 ﻿Namespace DPC.Views.POS
     Public Class POS
-        Private Sub New()
+        Public Sub New()
             InitializeComponent()
         End Sub
     End Class

@@ -202,20 +202,26 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-
                                 <!-- Left Controls -->
-                                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="10,0,5,5">
                                     <!-- Excel Button -->
-                                    <Button Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" Foreground="White" Width="75" Height="29" Margin="10,0,10,0">
+                                    <Button Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" Foreground="White" Width="75" Height="29" Margin="10,0,0,0">
                                         <materialDesign:PackIcon Kind="MicrosoftExcel" Width="25" Height="25"/>
                                     </Button>
-                                    <ComboBox Width="75" Style="{StaticResource RoundedComboBoxStyle}" Height="28" Foreground="#AEAEAE">
+
+                                    <!--Border as Straight Line-->
+                                    <Border Width="1.5" Height="Auto" Background="#D9D9D9" Margin="10,5,10,5"/>
+
+                                    <!--Combo Box-->
+                                    <ComboBox Width="75" Style="{StaticResource RoundedComboBoxStyle}" Height="30">
                                         <ComboBoxItem Content="10" IsSelected="True"/>
                                         <ComboBoxItem Content="25"/>
                                         <ComboBoxItem Content="50"/>
                                         <ComboBoxItem Content="100"/>
                                     </ComboBox>
-                                    <Border Style="{StaticResource RoundedGridStyle}" HorizontalAlignment="Right" Margin="10" MinWidth="250" Height="28">
+
+                                    <!--Calendar Date Time-->
+                                    <Border Style="{StaticResource RoundedGridStyle}" HorizontalAlignment="Right" Margin="10" MinWidth="250" Height="30">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*" />
@@ -225,69 +231,79 @@
                                             </Grid.ColumnDefinitions>
 
                                             <DatePicker x:Name="StartDatePicker"
-                SelectedDate="{Binding StartDate, Mode=TwoWay}"
-                Visibility="Hidden"/>
+    SelectedDate="{Binding StartDate, Mode=TwoWay}"
+    Visibility="Hidden"/>
 
                                             <Button Grid.Column="0"
-            Background="Transparent"
-            BorderThickness="0"
-            HorizontalAlignment="Stretch"
-            >
+Background="Transparent"
+BorderThickness="0"
+HorizontalAlignment="Stretch"
+>
                                                 <TextBlock Text="{Binding StartDate, StringFormat='MMM dd, yyyy'}"
-                   FontFamily="Lexend"
-                   FontSize="12"
-                   VerticalAlignment="Center"
-                   Margin="10,0,5,0"/>
+       FontFamily="Lexend"
+       FontSize="12"
+       VerticalAlignment="Center"
+       Margin="10,0,5,0"/>
                                             </Button>
 
                                             <TextBlock Text=" - "
-               FontFamily="Lexend"
-               FontSize="12"
-               VerticalAlignment="Center"
-               Grid.Column="1"/>
+   FontFamily="Lexend"
+   FontSize="12"
+   VerticalAlignment="Center"
+   Grid.Column="1"/>
 
                                             <DatePicker x:Name="EndDatePicker"
-                SelectedDate="{Binding EndDate, Mode=TwoWay}"
-                Visibility="Hidden"/>
+    SelectedDate="{Binding EndDate, Mode=TwoWay}"
+    Visibility="Hidden"/>
 
                                             <Button Grid.Column="2"
-            Background="Transparent"
-            BorderThickness="0"
-            Padding="0"
-            HorizontalAlignment="Stretch"
-            >
+Background="Transparent"
+BorderThickness="0"
+Padding="0"
+HorizontalAlignment="Stretch"
+>
                                                 <TextBlock Text="{Binding EndDate, StringFormat='MMM dd, yyyy'}"
-                   FontFamily="Lexend"
-                   FontSize="12"
-                   VerticalAlignment="Center"
-                   Margin="5,0,10,0"/>
+       FontFamily="Lexend"
+       FontSize="12"
+       VerticalAlignment="Center"
+       Margin="5,0,10,0"/>
                                             </Button>
 
                                             <materialDesign:PackIcon Kind="Calendar"
-                             Width="20"
-                             Height="20"
-                             Foreground="Black"
-                             HorizontalAlignment="Right"
-                             VerticalAlignment="Center"
-                             Grid.Column="3"
-                             Margin="0,0,5,0"/>
+                 Width="20"
+                 Height="20"
+                 Foreground="Black"
+                 HorizontalAlignment="Right"
+                 VerticalAlignment="Center"
+                 Grid.Column="3"
+                 Margin="0,0,5,0"/>
                                         </Grid>
                                     </Border>
-                                    <Button Style="{StaticResource RoundedButtonStyle}" Background="Transparent" Foreground="#474747" Width="29" Height="29" Margin="0,0,0,0">
-                                        <materialDesign:PackIcon Kind="ViewGridOutline" Width="25" Height="25"/>
+
+                                    <!--View Grid Button-->
+                                    <Button x:Name="btnViewGrid" Style="{StaticResource IconButton}">
+                                        <materialDesign:PackIcon Kind="ViewGridOutline" Width="24" Height="24" Margin="10" Foreground="#555555"/>
                                     </Button>
-                                    <Button Style="{StaticResource RoundedButtonStyle}" Background="Transparent" Foreground="#474747" Width="29" Height="29" Margin="0,0,0,0">
-                                        <materialDesign:PackIcon Kind="FormatListBulleted" Width="30" Height="30"/>
+
+                                    <!--Menu Button/Filter-->
+                                    <Button x:Name="btnMenuFilter" Style="{StaticResource IconButton}">
+                                        <materialDesign:PackIcon Kind="FormatListBulleted" Width="24" Height="24" Margin="10" Foreground="#555555"/>
                                     </Button>
                                 </StackPanel>
 
-                                <!-- Right Controls -->
+                                <!--Right Control/s-->
                                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Width="250" Height="34">
+                                    <!--Search Button-->
+                                    <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Width="211" Height="34">
                                         <Grid>
-                                            <TextBox BorderThickness="0" Background="Transparent" FontFamily="Lexend"  Name="txtSearch" Style="{StaticResource RoundedTextboxStyle}" Height="23" Margin="20,0,20,0" VerticalAlignment="Center"/>
-                                            <TextBlock Text="Search" Foreground="#AEAEAE" FontSize="13" VerticalAlignment="Center" Margin="7,0,0,0" FontWeight="SemiBold"/>
-                                            <materialDesign:PackIcon Kind="Magnify" Width="25" Height="26" Foreground="#AEAEAE" Margin="210,0,0,-2" VerticalAlignment="Bottom"/>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="3*"/>
+                                                <RowDefinition Height="19*"/>
+                                            </Grid.RowDefinitions>
+                                            <TextBox x:Name="txtSearch"
+                                    BorderThickness="0" Background="Transparent" FontFamily="Lexend"  Foreground="#AEAEAE" Style="{StaticResource RoundedTextboxStyle}"
+                                         Height="22" VerticalAlignment="Top" HorizontalAlignment="Center" Width="179" Grid.RowSpan="2" Text="Search" />
+                                            <materialDesign:PackIcon Kind="Magnify" Width="25" Height="26" Foreground="#AEAEAE" Margin="159,0,0,0" VerticalAlignment="Center" Grid.RowSpan="2"/>
                                         </Grid>
                                     </Border>
                                 </StackPanel>

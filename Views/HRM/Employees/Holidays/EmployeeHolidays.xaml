@@ -188,6 +188,7 @@
                            Foreground="#474747"
                            VerticalAlignment="Center"/>
                 <Button x:Name="BtnAddNew"
+                        Click="AddHolidayControl"
                         Style="{StaticResource AddNewButtonStyle}"
                         Margin="20,0,0,0">
                     <StackPanel Orientation="Horizontal">

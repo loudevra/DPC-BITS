@@ -251,9 +251,7 @@
     <Reference Include="System.Diagnostics.DiagnosticSource, Version=9.0.0.4, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Diagnostics.DiagnosticSource.9.0.4\lib\net462\System.Diagnostics.DiagnosticSource.dll</HintPath>
     </Reference>
-    <Reference Include="System.Drawing.Common, Version=9.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>packages\System.Drawing.Common.9.0.4\lib\net462\System.Drawing.Common.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Formats.Asn1, Version=9.0.0.4, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Formats.Asn1.9.0.4\lib\net462\System.Formats.Asn1.dll</HintPath>
     </Reference>
@@ -336,6 +334,7 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
@@ -349,6 +348,12 @@
     <Reference Include="PresentationCore" />
     <Reference Include="ZstdSharp, Version=0.8.5.0, Culture=neutral, PublicKeyToken=8d151af33a4ad5cf, processorArchitecture=MSIL">
       <HintPath>packages\ZstdSharp.Port.0.8.5\lib\net462\ZstdSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="zxing, Version=0.16.10.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
+      <HintPath>packages\ZXing.Net.0.16.10\lib\net48\zxing.dll</HintPath>
+    </Reference>
+    <Reference Include="zxing.presentation, Version=0.16.10.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
+      <HintPath>packages\ZXing.Net.0.16.10\lib\net48\zxing.presentation.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -403,6 +408,9 @@
     </Compile>
     <Compile Include="Components\Forms\AddDepartment.xaml.vb">
       <DependentUpon>AddDepartment.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\AddHoliday.xaml.vb">
+      <DependentUpon>AddHoliday.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\AddRowPopout.xaml.vb">
       <DependentUpon>AddRowPopout.xaml</DependentUpon>
@@ -467,6 +475,9 @@
     <Compile Include="Components\Forms\PayrollTrasactionControl.xaml.vb">
       <DependentUpon>PayrollTrasactionControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\PopOutQuoteTextEditor.xaml.vb">
+      <DependentUpon>PopOutQuoteTextEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\PopOutTextEditor.xaml.vb">
       <DependentUpon>PopOutTextEditor.xaml</DependentUpon>
     </Compile>
@@ -481,6 +492,9 @@
     </Compile>
     <Compile Include="Components\Forms\POSWalkInClient.xaml.vb">
       <DependentUpon>POSWalkInClient.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\PreviewPrintQuote.xaml.vb">
+      <DependentUpon>PreviewPrintQuote.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\PreviewPrintStatement.xaml.vb">
       <DependentUpon>PreviewPrintStatement.xaml</DependentUpon>
@@ -565,6 +579,7 @@
     <Compile Include="Data\Controllers\SessionManager.vb" />
     <Compile Include="Data\Controllers\StocksStatsController.vb" />
     <Compile Include="Data\Controllers\StocksTransferController.vb" />
+    <Compile Include="Data\Controllers\Stocks\StocksLabelController.vb" />
     <Compile Include="Data\Controllers\SupplierController.vb" />
     <Compile Include="Data\Controllers\WarehouseController.vb" />
     <Compile Include="Data\Converters\BooleanToVisibilityConverter.vb" />
@@ -576,6 +591,7 @@
     <Compile Include="Data\Converters\RetainCacheSupplier\CacheUserLoggedIn.vb" />
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
+    <Compile Include="Data\DataModules\CostEstimateDetails.vb" />
     <Compile Include="Data\DataModules\StatementDetails.vb" />
     <Compile Include="Data\Helpers\AutocompleteHelper.vb" />
     <Compile Include="Data\Helpers\Base64Utility.vb" />
@@ -604,7 +620,9 @@
     <Compile Include="Data\Models\Product.vb" />
     <Compile Include="Data\Models\ProductCategory.vb" />
     <Compile Include="Data\Models\PromoCode.vb" />
+    <Compile Include="Data\Models\PurchaseOrderModel.vb" />
     <Compile Include="Data\Models\Supplier.vb" />
+    <Compile Include="Data\Models\UpdatedClient.vb" />
     <Compile Include="Data\Models\Warehouses.vb" />
     <Compile Include="SplashScreen.xaml.vb">
       <DependentUpon>SplashScreen.xaml</DependentUpon>
@@ -689,6 +707,21 @@
     </Compile>
     <Compile Include="Views\Accounts\Income\IncomeTransactions.xaml.vb">
       <DependentUpon>IncomeTransactions.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Transactions\ClientAddTabs\AddClientBillingAddress.xaml.vb">
+      <DependentUpon>AddClientBillingAddress.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Transactions\ClientAddTabs\AddClientOtherSettings.xaml.vb">
+      <DependentUpon>AddClientOtherSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Transactions\ClientAddTabs\AddClientPersonalInfo.xaml.vb">
+      <DependentUpon>AddClientPersonalInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Transactions\ClientAddTabs\AddClientShippingAddress.xaml.vb">
+      <DependentUpon>AddClientShippingAddress.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\Transactions\ClientAddTabs\AddClientTabs.xaml.vb">
+      <DependentUpon>AddClientTabs.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Accounts\Transactions\ClientsTransactions.xaml.vb">
       <DependentUpon>ClientsTransactions.xaml</DependentUpon>
@@ -942,6 +975,9 @@
     <Compile Include="Views\Stocks\ProductCategories\AddNewCategory.xaml.vb">
       <DependentUpon>AddNewCategory.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Stocks\ProductsLabel\LabelPrintPreview.xaml.vb">
+      <DependentUpon>LabelPrintPreview.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stocks\PurchaseOrder\NewOrder\BillingStatement.xaml.vb">
       <DependentUpon>BillingStatement.xaml</DependentUpon>
     </Compile>
@@ -1020,6 +1056,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\AddDepartment.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\AddHoliday.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1112,6 +1152,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\Forms\PopOutQuoteTextEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\Forms\PopOutTextEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1129,6 +1173,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\POSWalkInClient.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\PreviewPrintQuote.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1423,6 +1471,26 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Accounts\Income\IncomeTransactions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Transactions\ClientAddTabs\AddClientBillingAddress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Transactions\ClientAddTabs\AddClientOtherSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Transactions\ClientAddTabs\AddClientPersonalInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Transactions\ClientAddTabs\AddClientShippingAddress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\Transactions\ClientAddTabs\AddClientTabs.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1750,6 +1818,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Stocks\ProductsLabel\LabelPrintPreview.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Stocks\PurchaseOrder\NewOrder\BillingStatement.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1927,9 +1999,16 @@
     <Resource Include="Assets\logo\BLACK WHOL.ico" />
     <Resource Include="Assets\images\logosidebarBlack.png" />
     <Resource Include="Assets\images\watermark.png" />
+    <Resource Include="Assets\images\DPC WATERMARK STRAIGHT COMPACT.png" />
+    <Resource Include="Assets\images\DPC WATERMARK STRAIGHT SPACED.png" />
+    <Resource Include="Assets\images\DREAMPCBUILD LOGO WATERMARK SLANTED SPACED.png" />
+    <Resource Include="Assets\images\DREAMPCBUILD LOGO WATERMARK STRAIGHT SPACED.png" />
+    <Resource Include="Assets\images\DREAMPCBUILD WATERMARK SLANTED SPACED.png" />
+    <Resource Include="Assets\images\DREAMPCBUILD WATERMARK STRAIGHT SPACED.png" />
     <Content Include="Assets\images\profile3.png" />
     <Content Include="Assets\images\profile1.png" />
     <Resource Include="Assets\images\profile2.png" />
+    <Resource Include="Assets\images\watermarkv2.png" />
     <Content Include="Assets\mails\password_reset_code.html" />
     <Content Include="Assets\mails\password_reset_success.html" />
   </ItemGroup>
