@@ -70,11 +70,7 @@ Namespace DPC.Components.Forms
                 cmbTerms.Text = CostEstimateDetails.CEpaymentTerms
             End If
 
-            If CostEstimateDetails.CEsignature = False Then
-                BrowseFile.Child = Nothing
-            Else
-                DisplayUploadedImage()
-            End If
+            DisplaySignaturePreview()
 
             ' Load the data in the datagrid
             For Each item In itemOrder
@@ -201,21 +197,23 @@ Namespace DPC.Components.Forms
 
         End Sub
 
-        Public Sub DisplayUploadedImage()
-            Try
-                'Dim tempImagePath As String = Path.Combine(Path.GetTempPath(), "decoded_image.png")
+        Public Sub DisplaySignaturePreview()
+            Dim grid As New Grid()
 
-                ' Clean up previous image file
+            ' Define rows: Row 0 for image, Row 1 for warning text
+            grid.RowDefinitions.Add(New RowDefinition With {.Height = New GridLength(1, GridUnitType.Star)})
+            grid.RowDefinitions.Add(New RowDefinition With {.Height = GridLength.Auto})
+
+            ' If signature exists, add the image
+            If CostEstimateDetails.CEsignature = True Then
                 If File.Exists(tempImagePath) Then
                     GC.Collect()
                     GC.WaitForPendingFinalizers()
                     File.Delete(tempImagePath)
                 End If
 
-                ' Decode and save new image
                 Base64Utility.DecodeBase64ToFile(base64Image, tempImagePath)
 
-                ' Load image safely
                 Dim imageSource As New BitmapImage()
                 Using stream As New FileStream(tempImagePath, FileMode.Open, FileAccess.Read, FileShare.Read)
                     imageSource.BeginInit()
@@ -223,22 +221,44 @@ Namespace DPC.Components.Forms
                     imageSource.StreamSource = stream
                     imageSource.EndInit()
                 End Using
-                imageSource.Freeze() ' Allow image to be accessed in different threads
+                imageSource.Freeze()
 
-                BrowseFile.Child = Nothing
+                Dim imagePreview As New Image With {
+                    .Source = imageSource,
+                    .MaxHeight = 70,
+                    .HorizontalAlignment = HorizontalAlignment.Center,
+                    .VerticalAlignment = VerticalAlignment.Center
+                }
 
-                Dim imagePreview As New Image()
-                imagePreview.Source = imageSource
-                imagePreview.MaxHeight = 70
+                Grid.SetRow(imagePreview, 0)
+                grid.Children.Add(imagePreview)
+            End If
 
-                BrowseFile.Child = imagePreview
+            ' Always add the warning text at the bottom
+            Dim warningText = CreateSignatureWarningText()
+            Grid.SetRow(warningText, 1)
+            grid.Children.Add(warningText)
 
-                '' Set the image source
-                'UploadedImage.Source = imageSource
-            Catch ex As Exception
-                MessageBox.Show("Error decoding image: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
-            End Try
+            ' Set as Border child
+            BrowseFile.Child = grid
         End Sub
+
+        Public Function CreateSignatureWarningText() As TextBlock
+            Return New TextBlock With {
+        .Text = "By signing the document, you confirm that the billing amount is" & vbLf &
+                "accurate and corresponds to your additional terms or services.",
+        .FontWeight = FontWeights.Bold,
+        .FontFamily = New FontFamily("Lexend"),
+        .FontSize = 6.5,
+        .TextAlignment = TextAlignment.Center,
+        .Foreground = Brushes.Red,
+        .TextWrapping = TextWrapping.Wrap,
+        .HorizontalAlignment = HorizontalAlignment.Center,
+        .Margin = New Thickness(0, 5, 0, 0),
+        .MaxWidth = 200
+    }
+        End Function
+
 
         Private Sub SaveToDb()
             Dim jsonItems As String = Newtonsoft.Json.JsonConvert.SerializeObject(CEQuoteItemsCache)
