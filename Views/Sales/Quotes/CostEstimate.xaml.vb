@@ -287,7 +287,7 @@ Namespace DPC.Views.Sales.Quotes
             CostEstimateDetails.CEQuoteNumberCache = QuoteNumber.Text
             CostEstimateDetails.CEQuoteDateCache = QuoteDate.Text
             CostEstimateDetails.CEQuoteValidityDateCache = QuoteValidityDate.Text
-            CostEstimateDetails.CETotalAmountCache = Subtotal.Text
+            CostEstimateDetails.CETotalAmountCache = TotalCost.Text
             CostEstimateDetails.CEDeliveryCost = _deliveryCost
             CostEstimateDetails.CEInstallation = _installationCost
             CostEstimateDetails.CEQuoteItemsCache = itemOrder
