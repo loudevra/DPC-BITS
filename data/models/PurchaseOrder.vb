@@ -127,4 +127,22 @@ Namespace DPC.DPC.Data.Model
             CalculateLineTotals()
         End Sub
     End Class
+
+    Public Class PurchaseOrderModel
+        Public Property InvoiceNumber As String
+        Public Property OrderData As String
+        Public Property DueDate As String
+        Public Property Tax As String
+        Public Property Discount As String
+        Public Property SupplierID As String
+        Public Property SupplierName As String
+        Public Property WarehouseID As String
+        Public Property WarehouseName As String
+        Public Property OrderItems As String
+        Public Property OrderNote As String
+        Public Property TotalTax As Decimal
+        Public Property TotalDiscount As Decimal
+        Public Property TotalPrice As Decimal
+
+    End Class
 End Namespace

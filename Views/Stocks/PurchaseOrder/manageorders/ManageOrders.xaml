@@ -177,7 +177,7 @@
 
                         <!-- Left Controls -->
                         <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                            <Button Style="{StaticResource RoundedButtonStyle}" Width="75" Height="30" Background="#456B2E" Foreground="White">
+                            <Button Style="{StaticResource RoundedButtonStyle}" Width="75" Height="30" Background="#456B2E" Foreground="White" Click="ExportToExcel">
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                     <materialDesign:PackIcon Kind="MicrosoftExcel" Foreground="White" Width="25" Height="25"/>
                                 </StackPanel>
@@ -185,7 +185,7 @@
 
                             <TextBlock Text="Show" FontFamily="Lexend" FontSize="14" VerticalAlignment="Center" Margin="10,0,5,0"/>
 
-                            <ComboBox Width="75" Height="30" VerticalAlignment="Center" Margin="0,0,10,0" Style="{StaticResource RoundedComboBoxStyle}">
+                            <ComboBox x:Name="cmbLimit" Width="75" Height="30" VerticalAlignment="Center" Margin="0,0,10,0" Style="{StaticResource RoundedComboBoxStyle}">
                                 <ComboBoxItem Content="10" IsSelected="True"/>
                                 <ComboBoxItem Content="25"/>
                                 <ComboBoxItem Content="50"/>
@@ -265,14 +265,194 @@
 
                             <Border Style="{StaticResource RoundedGridStyle}" HorizontalAlignment="Right" Margin="10" MinWidth="200">
                                 <Grid>
-                                    <TextBox Height="Auto" Margin="10,0,30,0" VerticalAlignment="Center" VerticalContentAlignment="Center" BorderThickness="0"
-                                         FontFamily="Lexend" Background="Transparent" HorizontalAlignment="Stretch" Focusable="True"/>
+                                    <TextBox x:Name="SearchText" Height="Auto" Margin="10,0,30,0" VerticalAlignment="Center" VerticalContentAlignment="Center" BorderThickness="0"
+                                         FontFamily="Lexend" Background="Transparent" HorizontalAlignment="Stretch" Focusable="True" TextChanged="TextBox_TextChanged"/>
                                     <materialDesign:PackIcon Kind="Magnify" Width="20" Height="20" Foreground="Black" HorizontalAlignment="Right" Margin="0,0,10,0"/>
                                 </Grid>
                             </Border>
                         </StackPanel>
                     </Grid>
                 </Border>
+                <!-- DataGrid Section - Scrollable Content -->
+                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="10,0">
+                    <DataGrid Name="dataGrid"
+              AutoGenerateColumns="False"
+              CanUserAddRows="False"
+              HeadersVisibility="Column"
+              GridLinesVisibility="None"
+              RowBackground="White"
+              AlternatingRowBackground="WhiteSmoke"
+              BorderThickness="0"
+              Height="400"
+              FontFamily="Lexend"
+              MouseLeftButtonUp="DataGrid_CellClick" 
+              IsReadOnly="True">
+
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Margin" Value="0,5,0,5"/>
+                                <Setter Property="Padding" Value="5"/>
+                                <Setter Property="Height" Value="30"/>
+                            </Style>
+                        </DataGrid.RowStyle>
+
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="FontFamily" Value="Lexend"/>
+                                <Setter Property="FontSize" Value="13"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="Foreground" Value="#474747"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                <Setter Property="Padding" Value="10,5"/>
+                                <Setter Property="Background" Value="White"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+
+                        <DataGrid.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="Padding" Value="10,5"/>
+                                <Setter Property="FontFamily" Value="Lexend"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="DataGridCell">
+                                            <Border Padding="{TemplateBinding Padding}" 
+                                    BorderBrush="{TemplateBinding BorderBrush}" 
+                                    BorderThickness="{TemplateBinding BorderThickness}" 
+                                    Background="{TemplateBinding Background}">
+                                                <ContentPresenter VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="TextBlock.TextWrapping" Value="NoWrap"/>
+                                <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis"/>
+                            </Style>
+                        </DataGrid.CellStyle>
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="#" Binding="{Binding InvoiceNumber}" Width="170">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontFamily" Value="Lexend"/>
+                                        <Setter Property="TextWrapping" Value="NoWrap"/>
+                                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Order Date" Binding="{Binding OrderDate}" Width="120">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontFamily" Value="Lexend"/>
+                                        <Setter Property="TextWrapping" Value="NoWrap"/>
+                                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Due Date" Binding="{Binding DueDate}" Width="120">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontFamily" Value="Lexend"/>
+                                        <Setter Property="TextWrapping" Value="NoWrap"/>
+                                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Tax" Binding="{Binding Tax}" Width="120">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontFamily" Value="Lexend"/>
+                                        <Setter Property="TextWrapping" Value="NoWrap"/>
+                                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Discount" Binding="{Binding Discount}" Width="120">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontFamily" Value="Lexend"/>
+                                        <Setter Property="TextWrapping" Value="NoWrap"/>
+                                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Supplier" Binding="{Binding SupplierName}" Width="120">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontFamily" Value="Lexend"/>
+                                        <Setter Property="TextWrapping" Value="NoWrap"/>
+                                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Warehouse" Binding="{Binding WarehouseName}" Width="120">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontFamily" Value="Lexend"/>
+                                        <Setter Property="TextWrapping" Value="NoWrap"/>
+                                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Items" Binding="{Binding OrderItems}" Width="120">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontFamily" Value="Lexend"/>
+                                        <Setter Property="TextWrapping" Value="NoWrap"/>
+                                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Total Tax" Binding="{Binding TotalTax}" Width="120">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontFamily" Value="Lexend"/>
+                                        <Setter Property="TextWrapping" Value="NoWrap"/>
+                                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Total Discount" Binding="{Binding TotalDiscount}" Width="120">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontFamily" Value="Lexend"/>
+                                        <Setter Property="TextWrapping" Value="NoWrap"/>
+                                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="Total Price" Binding="{Binding TotalPrice}" Width="120">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontFamily" Value="Lexend"/>
+                                        <Setter Property="TextWrapping" Value="NoWrap"/>
+                                        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                           
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </ScrollViewer>
+
+                <Popup x:Name="CellValuePopup"
+       Placement="Mouse"
+       AllowsTransparency="True"
+       StaysOpen="False">
+                    <Border Background="White" 
+            BorderBrush="Black" 
+            BorderThickness="1" 
+            Padding="10"
+            CornerRadius="8"
+            Effect="{DynamicResource MaterialDesignShadowDepth2}">
+                        <TextBlock x:Name="PopupText" 
+                   FontFamily="Lexend"
+                   FontSize="14"
+                   Foreground="Black"
+                   TextWrapping="Wrap"
+                   MaxWidth="300"/>
+                    </Border>
+                </Popup>
             </Grid>
         </ScrollViewer>
     </Grid>

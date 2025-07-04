@@ -419,16 +419,13 @@ Namespace DPC.Data.Helpers
         End Function
 
         Public Shared Sub ExportExcel(dataGrid As DataGrid, columnNumber As Integer, fileName As String)
-
             Dim limit As Integer = (dataGrid.Columns.Count - columnNumber) + 1
 
-            ' Check if DataGrid has data
             If dataGrid.Items.Count = 0 Then
                 MessageBox.Show("No data to export!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Exit Sub
             End If
 
-            ' Open SaveFileDialog
             Dim saveFileDialog As New SaveFileDialog() With {
                 .Filter = "Excel Files (*.xlsx)|*.xlsx",
                 .FileName = fileName + ".xlsx"
@@ -436,36 +433,46 @@ Namespace DPC.Data.Helpers
 
             If saveFileDialog.ShowDialog() = True Then
                 Try
-                    ' Create Excel workbook
                     Using workbook As New XLWorkbook()
                         Dim dt As New DataTable()
+                        Dim exportableColumns As New List(Of DataGridBoundColumn)
 
-                        ' Add DataGrid columns as table headers
+                        ' Filter and add non-image columns
                         For i As Integer = 0 To dataGrid.Columns.Count - limit
-                            Dim column As DataGridColumn = dataGrid.Columns(i)
+                            Dim column = TryCast(dataGrid.Columns(i), DataGridBoundColumn)
+                            If column IsNot Nothing Then
+                                Dim binding = TryCast(column.Binding, Binding)
+                                If binding IsNot Nothing Then
+                                    Dim bindingPath = binding.Path.Path
 
-                            dt.Columns.Add(column.Header.ToString())
+                                    If bindingPath.ToLower() <> "productimage" Then
+                                        dt.Columns.Add(column.Header.ToString())
+                                        exportableColumns.Add(column)
+                                    End If
+                                End If
+                            End If
                         Next
 
-                        ' Add rows from DataGrid items
+                        ' Fill data rows
                         For Each item In dataGrid.Items
-                            Dim row As DataRow = dt.NewRow()
-                            Dim dataRowView = CType(item, DataRowView)
+                            Dim rowView = TryCast(item, DataRowView)
+                            If rowView Is Nothing Then Continue For
 
-                            For i As Integer = 0 To dataGrid.Columns.Count - limit
-                                Dim column As DataGridColumn = dataGrid.Columns(i)
-
-                                row(column.Header.ToString()) = dataRowView(i).ToString()
+                            Dim row = dt.NewRow()
+                            For i As Integer = 0 To exportableColumns.Count - 1
+                                Dim column = exportableColumns(i)
+                                Dim binding = TryCast(column.Binding, Binding)
+                                If binding IsNot Nothing Then
+                                    Dim fieldName = binding.Path.Path
+                                    row(i) = rowView(fieldName)?.ToString()
+                                End If
                             Next
-
                             dt.Rows.Add(row)
                         Next
 
-                        ' Add table to Excel sheet
+                        ' Write to Excel
                         Dim worksheet = workbook.Worksheets.Add(dt, fileName)
                         worksheet.Columns().AdjustToContents()
-
-                        ' Save Excel file
                         workbook.SaveAs(saveFileDialog.FileName)
                         MessageBox.Show("Export Successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
                     End Using
@@ -474,5 +481,6 @@ Namespace DPC.Data.Helpers
                 End Try
             End If
         End Sub
+
     End Class
 End Namespace
