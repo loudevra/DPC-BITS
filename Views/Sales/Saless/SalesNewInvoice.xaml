@@ -238,21 +238,30 @@
                                             <!--Order Date-->
                                             <StackPanel Orientation="Vertical">
                                                 <TextBlock Grid.Column="0" Text="Order Date:" FontWeight="SemiBold" FontFamily="Lexend"
-                                                      FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,5"/>
+                                                        FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,5"/>
                                                 <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Margin="0,0,0,10"
                                                         Padding="5" Width="Auto" Height="34" BorderBrush="#474747">
                                                     <Grid>
-                                                        <Grid.RowDefinitions>
-                                                            <RowDefinition Height="3*"/>
-                                                            <RowDefinition Height="19*"/>
-                                                        </Grid.RowDefinitions>
-                                                        <DatePickerTextBox x:Name="OrderDate" BorderThickness="0" FontWeight="SemiBold"
-                                                                 Background="Transparent" FontFamily="Lexend" 
-                                                                 Text="DD-MM-YYYY"  Foreground="#AEAEAE"
-                                                                 TextWrapping="Wrap"
-                                                                 Style="{StaticResource RoundedTextboxStyle}"
-                                                                 Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Width="Auto" Grid.RowSpan="2"/>
-                                                        <materialDesign:PackIcon Kind="Calendar" Width="25" Height="26" Foreground="#555555" Margin="260,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.RowSpan="2"/>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width=".15*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <!-- Start Date -->
+                                                        <DatePicker x:Name="OrderDatePicker"
+                                                            Style="{StaticResource SingleDatePickerStyle}"
+                                                            SelectedDate="{Binding OrderDate.SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="35" Margin="20,0,42,0" VerticalAlignment="Center" />
+
+                                                        <materialDesign:PackIcon Grid.Column="1" Kind="Calendar" Width="25" Height="25" Foreground="#555555" VerticalAlignment="Center" Margin="-10,0,20,0" HorizontalAlignment="Right"/>
+
+                                                        <Button Grid.Column="0" Click="OrderDate_Click"
+                                                            Style="{StaticResource DateButtonStyle}"
+                                                            Width="Auto"
+                                                            Margin="20,0,25,0">
+                                                            <TextBlock Text="{Binding OrderDate.SelectedDate, StringFormat='MMM dd, yyyy'}"
+                                                                Margin="0,0,5,0"
+                                                                Foreground="#474747"
+                                                                Height="18"/>       
+                                                        </Button>
                                                     </Grid>
                                                 </Border>
                                             </StackPanel>
@@ -262,19 +271,28 @@
                                                 <TextBlock Grid.Column="0" Text="Order Due Date:" FontWeight="SemiBold" FontFamily="Lexend"
                                                         FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,5"/>
                                                 <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Margin="0,0,0,10"
-                                                           Padding="5" Width="Auto" Height="34" BorderBrush="#474747">
+                                                    Padding="5" Width="Auto" Height="34" BorderBrush="#474747">
                                                     <Grid>
-                                                        <Grid.RowDefinitions>
-                                                            <RowDefinition Height="3*"/>
-                                                            <RowDefinition Height="19*"/>
-                                                        </Grid.RowDefinitions>
-                                                        <DatePickerTextBox x:Name="OrderDueDate" BorderThickness="0" FontWeight="SemiBold"
-                                                                 Background="Transparent" FontFamily="Lexend" 
-                                                                 Text="DD-MM-YYYY"  Foreground="#AEAEAE"
-                                                                 TextWrapping="Wrap"
-                                                                 Style="{StaticResource RoundedTextboxStyle}"
-                                                                 Height="22" VerticalAlignment="Top" HorizontalAlignment="Left" Width="Auto" Grid.RowSpan="2"/>
-                                                        <materialDesign:PackIcon Kind="Calendar" Width="25" Height="26" Foreground="#555555" Margin="260,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.RowSpan="2"/>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width=".15*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <!-- Start Date -->
+                                                        <DatePicker x:Name="OrderDueDatePicker"
+                                                             Style="{StaticResource SingleDatePickerStyle}"
+                                                             SelectedDate="{Binding OrderDate.SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="35" Margin="20,0,42,0" VerticalAlignment="Center" />
+
+                                                        <materialDesign:PackIcon Grid.Column="1" Kind="Calendar" Width="25" Height="25" Foreground="#555555" VerticalAlignment="Center" Margin="-10,0,20,0" HorizontalAlignment="Right"/>
+
+                                                        <Button Grid.Column="0" Click="OrderDueDate_Click"
+                                                             Style="{StaticResource DateButtonStyle}"
+                                                             Width="Auto"
+                                                             Margin="20,0,25,0">
+                                                            <TextBlock Text="{Binding OrderDate.SelectedDate, StringFormat='MMM dd, yyyy'}"
+                                                             Margin="0,0,50,0"
+                                                             Foreground="#474747"
+                                                             Height="18 "/>                  
+                                                        </Button>
                                                     </Grid>
                                                 </Border>
                                             </StackPanel>
