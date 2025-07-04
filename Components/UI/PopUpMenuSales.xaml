@@ -28,6 +28,7 @@
         <!-- Main Menu Item Style -->
         <Style x:Key="MainMenuItemStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontFamily" Value="Lexend"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="Medium"/>
             <Setter Property="Margin" Value="10,0,0,0"/>
@@ -88,17 +89,17 @@
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToNewInvoice">
-                                    <TextBlock Text="New Invoice" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="New Invoice" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToNewInvoiceV2">
-                                    <TextBlock Text="New Invoice V2 - Mobile" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="New Invoice V2 - Mobile" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageInvoices" >
-                                    <TextBlock Text="Manage Invoices" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Manage Invoices" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                         </StackPanel>
@@ -134,12 +135,12 @@
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToNewInvoice">
-                                    <TextBlock Text="New Invoice" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="New Invoice" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageInvoices">
-                                    <TextBlock Text="Manage Invoices" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Manage Invoices" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                         </StackPanel>
@@ -175,12 +176,12 @@
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToNewQuote">
-                                    <TextBlock Text="New Quote" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="New Quote" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageQuote">
-                                    <TextBlock Text="Manage Quote" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Manage Quote" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                         </StackPanel>
@@ -216,12 +217,12 @@
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToNewSubscription">
-                                    <TextBlock Text="New Subscription" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="New Subscription" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToSubscriptions">
-                                    <TextBlock Text="Subscriptions" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Subscriptions" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                         </StackPanel>

@@ -28,6 +28,7 @@
         <!-- Main Menu Item Style -->
         <Style x:Key="MainMenuItemStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontFamily" Value="Lexend"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="Medium"/>
             <Setter Property="Margin" Value="10,0,0,0"/>
@@ -103,27 +104,27 @@
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToAccountStatements">
-                                    <TextBlock Text="Account Statements" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Account Statements" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToCustomerAccountStatements">
-                                    <TextBlock Text="Customer Account Statements" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Customer Account Statements" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToSupplierAccountStatements">
-                                    <TextBlock Text="Supplier Account Statements" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Supplier Account Statements" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToTaxStatements">
-                                    <TextBlock Text="TAX Statements" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="TAX Statements" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToProductSalesReports">
-                                    <TextBlock Text="Product Sales Reports" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Product Sales Reports" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                         </StackPanel>
@@ -159,37 +160,37 @@
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToProductCategoriesReport">
-                                    <TextBlock Text="Product Categories" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Product Categories" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToTrendingProductsReport">
-                                    <TextBlock Text="Trending Products" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Trending Products" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToProfitReport">
-                                    <TextBlock Text="Profit" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Profit" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToTopCustomersReport">
-                                    <TextBlock Text="Top Customers" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Top Customers" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToIncomeVsExpensesReport">
-                                    <TextBlock Text="Income vs Expenses" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Income vs Expenses" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToIncomeReport">
-                                    <TextBlock Text="Income" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Income" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToExpensesReport">
-                                    <TextBlock Text="Expenses" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Expenses" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                         </StackPanel>
@@ -225,37 +226,37 @@
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToStatisticsReport">
-                                    <TextBlock Text="Statistics" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Statistics" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToProfitReport">
-                                    <TextBlock Text="Profit" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Profit" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToCalculateIncomeReport">
-                                    <TextBlock Text="Calculate Income" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Calculate Income" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToCalculateExpensesReport">
-                                    <TextBlock Text="Calculate Expenses" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Calculate Expenses" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToSalesReport">
-                                    <TextBlock Text="Sales" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Sales" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToProductsReport">
-                                    <TextBlock Text="Products" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Products" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToEmployeeCommissionReport">
-                                    <TextBlock Text="Employee Commission" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Employee Commission" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                         </StackPanel>
