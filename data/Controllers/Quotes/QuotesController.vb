@@ -12,12 +12,12 @@ Namespace DPC.Data.Controllers
     Public Class QuotesController
         ' Search for the recent QuoteID then add 1 and check if it exists
         Public Shared Function GenerateQuoteID() As String
-            Dim prefix As String = "CE"
+            Dim prefix As String = "CE-"
             Dim datePart As String = DateTime.Now.ToString("MMddyyyy") ' MMDDYYYY format
             Dim counter As Integer = GetNextQuoteID(datePart)
 
             Dim counterPart As String = counter.ToString("D4") ' e.g., 0001
-            Return prefix & datePart & counterPart
+            Return prefix & datePart & "-" & counterPart
         End Function
 
         Public Shared Function GetNextQuoteID(datePart As String) As Integer
@@ -31,7 +31,7 @@ Namespace DPC.Data.Controllers
 
                     Using cmd As New MySqlCommand(query, conn)
                         ' Use parameter to safely insert prefix like 'QUO06182025%'
-                        cmd.Parameters.AddWithValue("@prefix", "CE" & datePart & "%")
+                        cmd.Parameters.AddWithValue("@prefix", "CE-" & datePart & "-%")
 
                         Dim result = cmd.ExecuteScalar()
                         If result IsNot DBNull.Value AndAlso result IsNot Nothing Then
@@ -192,12 +192,14 @@ Namespace DPC.Data.Controllers
                                    TotalTax As String,
                                    TotalDiscount As String,
                                    TotalPrice As String,
-                                   Username As String) As Boolean
+                                   Username As String,
+                                   ApprovedBy As String,
+                                   PaymentTerms As String) As Boolean
             Try
                 ' Query to check for duplicate QuoteNumber
                 Dim checkDuplicateQuery As String = "SELECT COUNT(*) FROM quotes WHERE QuoteNumber = @QuoteNumber"
                 ' Query to insert quote
-                Dim addQuery As String = "INSERT INTO quotes (QuoteNumber, ReferenceNo, QuoteDate, QuoteValidity, Tax, Discount, ClientID, ClientName, WarehouseID, WarehouseName, OrderItems, QuoteNote, TotalTax, TotalDiscount, TotalPrice, DateAdded, Username) VALUES (@QuoteNumber, @ReferenceNo, @QuoteDate, @QuoteValidity, @Tax, @Discount, @ClientID, @ClientName, @WarehouseID, @WarehouseName, @OrderItems, @QuoteNote, @TotalTax, @TotalDiscount, @TotalPrice, NOW(), @Username)"
+                Dim addQuery As String = "INSERT INTO quotes (QuoteNumber, ReferenceNo, QuoteDate, QuoteValidity, Tax, Discount, ClientID, ClientName, WarehouseID, WarehouseName, OrderItems, QuoteNote, TotalTax, TotalDiscount, TotalPrice, Username, ApprovedBy, PaymentTerms, DateAdded) VALUES (@QuoteNumber, @ReferenceNo, @QuoteDate, @QuoteValidity, @Tax, @Discount, @ClientID, @ClientName, @WarehouseID, @WarehouseName, @OrderItems, @QuoteNote, @TotalTax, @TotalDiscount, @TotalPrice, @Username, @ApprovedBy, @PaymentTerms, NOW())"
 
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
@@ -232,6 +234,8 @@ Namespace DPC.Data.Controllers
                                 addQuoteCmd.Parameters.AddWithValue("@TotalDiscount", TotalDiscount)
                                 addQuoteCmd.Parameters.AddWithValue("@TotalPrice", TotalPrice)
                                 addQuoteCmd.Parameters.AddWithValue("@Username", Username)
+                                addQuoteCmd.Parameters.AddWithValue("@ApprovedBy", ApprovedBy)
+                                addQuoteCmd.Parameters.AddWithValue("@PaymentTerms", PaymentTerms)
 
                                 addQuoteCmd.ExecuteNonQuery()
                                 transaction.Commit()
@@ -253,4 +257,3 @@ Namespace DPC.Data.Controllers
         End Function
     End Class
 End Namespace
-

@@ -160,32 +160,61 @@ Namespace DPC.Data.Controllers
             Return client
         End Function
 
-        Public Shared Function SearchClient(searchClientName As String) As ObservableCollection(Of Client)
-            Dim clients As New ObservableCollection(Of Client)
+        Public Shared Function SearchClient(searchClientName As String) As ObservableCollection(Of UpdatedClient)
+            Dim clients As New ObservableCollection(Of UpdatedClient)
             Dim SearchClientQuery As String = "SELECT * FROM client
-                                                WHERE Name LIKE @searchText 
-                                                   OR ClientID LIKE @searchText 
-                                                   OR Email LIKE @searchText
-                                                ORDER BY Name ASC
-                                                LIMIT 10"
+                                        WHERE Name LIKE @searchText 
+                                           OR ClientID LIKE @searchText 
+                                           OR Email LIKE @searchText
+                                        ORDER BY Name ASC
+                                        LIMIT 10"
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
                     conn.Open()
 
                     Using cmd As New MySqlCommand(SearchClientQuery, conn)
                         cmd.Parameters.AddWithValue("@searchText", "%" & searchClientName & "%")
-                        Using reader As MySqlDataReader = cmd.ExecuteReader
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
-                                Dim client As New Client With {
-                                .ClientID = reader("ClientID"),
-                                .ClientGroupID = If(IsDBNull(reader("ClientGroupID")), 0, Convert.ToInt32(reader("ClientGroupID"))),
-                                .Name = reader("Name").ToString(),
-                                .Company = reader("Company").ToString(),
-                                .Phone = reader("Phone").ToString(),
-                                .Email = reader("Email").ToString(),
-                                .CustomerGroup = reader("CustomerGroup").ToString(),
-                                .Language = reader("Language").ToString()
-                            }
+                                Dim client As New UpdatedClient With {
+                            .ClientID = Convert.ToInt64(reader("ClientID")),
+                            .ClientGroupID = If(IsDBNull(reader("ClientGroupID")), 0, Convert.ToInt32(reader("ClientGroupID"))),
+                            .Name = reader("Name").ToString(),
+                            .Company = If(IsDBNull(reader("Company")), String.Empty, reader("Company").ToString()),
+                            .Phone = If(IsDBNull(reader("Phone")), String.Empty, reader("Phone").ToString()),
+                            .Email = If(IsDBNull(reader("Email")), String.Empty, reader("Email").ToString()),
+                            .CustomerGroup = If(IsDBNull(reader("CustomerGroup")), String.Empty, reader("CustomerGroup").ToString()),
+                            .Language = If(IsDBNull(reader("Language")), String.Empty, reader("Language").ToString()),
+                            .BillingAddress = Nothing,
+                            .ShippingAddress = Nothing
+                        }
+
+                                ' Read and deserialize BillingAddress JSON
+                                If Not IsDBNull(reader("BillingAddress")) Then
+                                    Dim billingJson As String = reader("BillingAddress").ToString()
+                                    If Not String.IsNullOrWhiteSpace(billingJson) Then
+                                        Try
+                                            client.BillingAddress = JsonConvert.DeserializeObject(Of UpdatedClientBillingAddress)(billingJson)
+                                        Catch ex As Exception
+                                            ' Optionally log or handle error
+                                            client.BillingAddress = Nothing
+                                        End Try
+                                    End If
+                                End If
+
+                                ' Read and deserialize ShippingAddress JSON
+                                If Not IsDBNull(reader("ShippingAddress")) Then
+                                    Dim shippingJson As String = reader("ShippingAddress").ToString()
+                                    If Not String.IsNullOrWhiteSpace(shippingJson) Then
+                                        Try
+                                            client.ShippingAddress = JsonConvert.DeserializeObject(Of UpdatedClientBillingAddress)(shippingJson)
+                                        Catch ex As Exception
+                                            ' Optionally log or handle error
+                                            client.ShippingAddress = Nothing
+                                        End Try
+                                    End If
+                                End If
+
                                 clients.Add(client)
                             End While
                         End Using
@@ -194,7 +223,6 @@ Namespace DPC.Data.Controllers
                     MessageBox.Show($"Error searching ClientController: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 End Try
             End Using
-            'Return as observablecollection
             Return clients
         End Function
     End Class
