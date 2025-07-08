@@ -21,8 +21,8 @@ Namespace DPC.Views.Sales.Quotes
         Private MyDynamicGrid As Grid
         ' Autocomplete Popup for clients
         Private _typingTimer As DispatcherTimer
-        Private _clients As New ObservableCollection(Of UpdatedClient)
-        Private _selectedClient As UpdatedClient
+        Private _clients As New ObservableCollection(Of Client)
+        Private _selectedClient As Client
         ' Autocomplete Popup for products
         Private _products As New ObservableCollection(Of ProductDataModel)
         Private _selectedProduct As ProductDataModel
@@ -127,8 +127,8 @@ Namespace DPC.Views.Sales.Quotes
 
         Private Sub LstItems_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
             If LstItems.SelectedItem IsNot Nothing Then
-                Dim previousSupplier As UpdatedClient = _selectedClient
-                _selectedClient = CType(LstItems.SelectedItem, UpdatedClient)
+                Dim previousSupplier As Client = _selectedClient
+                _selectedClient = CType(LstItems.SelectedItem, Client)
                 txtSearchCustomer.Text = _selectedClient.Name
                 CEClientIDCache = _selectedClient.ClientID
                 UpdateSupplierDetails(_selectedClient)
@@ -138,38 +138,34 @@ Namespace DPC.Views.Sales.Quotes
                 If previousSupplier Is Nothing OrElse previousSupplier.ClientID <> _selectedClient.ClientID Then
                     ClearAllRows()
                 End If
+
+            
             End If
         End Sub
 
-        Private Sub UpdateSupplierDetails(client As UpdatedClient)
+        Private Sub UpdateSupplierDetails(client As Client)
             Dim txtClientDetails As TextBox = TryCast(FindName("TxtClientDetails"), TextBox)
             If txtClientDetails Is Nothing OrElse client Is Nothing Then Return
 
             Dim details As String = $"Name: {client.Name}{Environment.NewLine}" &
-                    $"Company: {client.Company}{Environment.NewLine}" &
+                    $"Company: {client.Name}{Environment.NewLine}" &
                     $"Contact: {client.Phone}{Environment.NewLine}" &
                     $"Email: {client.Email}{Environment.NewLine}" &
                     $"Customer Group: {client.CustomerGroup}{Environment.NewLine}" &
-                    $"Language: {client.Language}"
+                    $"Language: {client.ClientLanguage}"
 
             If client.BillingAddress Is Nothing Then
                 details &= $"{Environment.NewLine}{Environment.NewLine}Billing Address: (No data)"
             Else
                 Dim billing = client.BillingAddress
-                details &= $"{Environment.NewLine}{Environment.NewLine}Billing Address:{Environment.NewLine}" &
-                   $"  {billing.CompanyName}{Environment.NewLine}" &
-                   $"  {billing.Address}, {billing.City}{Environment.NewLine}" &
-                   $"  {billing.Region}, {billing.Country} {billing.ZipCode}"
+                details &= Environment.NewLine & Environment.NewLine & String.Join(Environment.NewLine, client.BillingAddress.Split(","c))
             End If
 
             If client.ShippingAddress Is Nothing Then
                 details &= $"{Environment.NewLine}{Environment.NewLine}Shipping Address: (No data)"
             Else
                 Dim shipping = client.ShippingAddress
-                details &= $"{Environment.NewLine}{Environment.NewLine}Shipping Address:{Environment.NewLine}" &
-                   $"  {shipping.CompanyName}{Environment.NewLine}" &
-                   $"  {shipping.Address}, {shipping.City}{Environment.NewLine}" &
-                   $"  {shipping.Region}, {shipping.Country} {shipping.ZipCode}"
+                details &= Environment.NewLine & Environment.NewLine & String.Join(Environment.NewLine, client.BillingAddress.Split(","c))
             End If
 
             txtClientDetails.Text = details
@@ -1062,7 +1058,7 @@ Namespace DPC.Views.Sales.Quotes
             End If
         End Sub
 
-        Private Function ValidateQuoteSubmission(client As UpdatedClient, productItemsJson As String) As Boolean
+        Private Function ValidateQuoteSubmission(client As Client, productItemsJson As String) As Boolean
             If client Is Nothing Then
                 MessageBox.Show("Client is required.")
                 Return False
@@ -1134,7 +1130,7 @@ Namespace DPC.Views.Sales.Quotes
                 Exit Sub
             End If
 
-            Dim client As UpdatedClient = _selectedClient
+            Dim client As Client = _selectedClient
 
             ' Optional: check if client is nothing
             If client Is Nothing Then
@@ -1287,7 +1283,7 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         ' Function for inserting the data into the quote table in the database
-        Private Sub GetAllDataInQuoteProperties(client As UpdatedClient, productItemsJson As String)
+        Private Sub GetAllDataInQuoteProperties(client As Client, productItemsJson As String)
             If Not ValidateQuoteSubmission(client, productItemsJson) Then Exit Sub
             Try
                 Dim selectedTax As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
@@ -1314,10 +1310,12 @@ Namespace DPC.Views.Sales.Quotes
                 CEPathCache = "" ' Assuming no path for now
                 'ils
                 CEClientName = client.Name
-                CostEstimateDetails.CEAddress = client.BillingAddress.Address
-                CostEstimateDetails.CECity = client.BillingAddress.City
-                CostEstimateDetails.CERegion = client.BillingAddress.Region
-                CostEstimateDetails.CECountry = client.BillingAddress.Country
+                Dim stringArray As List(Of String) = client.BillingAddress.Split(","c).Select(Function(s) s.Trim()).ToList()
+
+                CostEstimateDetails.CEAddress = stringArray(0)
+                CostEstimateDetails.CECity = stringArray(1)
+                CostEstimateDetails.CERegion = stringArray(2)
+                CostEstimateDetails.CECountry = stringArray(3)
                 CostEstimateDetails.CEClientDetailsCache = TxtClientDetails.Text
                 CEPhone = client.Phone
                 CEEmail = client.Email
