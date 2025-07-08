@@ -27,18 +27,88 @@
                 <!-- Company Name -->
                 <TextBlock Text="TIN ID:" Margin="0,5,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                 <Border Style="{StaticResource RoundedBorderStyle}" Width="800">
-                    <TextBox x:Name="txtCompanyName" Height="30" Margin="0,5,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="734"  FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
+                    <TextBox x:Name="txtTinID" Height="30" Margin="0,5,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="734"  FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
                 </Border>
 
                 <StackPanel Grid.Column="0">
                     <TextBlock Text="Customer Group:" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747" Margin="0,10,0,10" />
-                    <ComboBox x:Name="cmbCustomerGroup" Style="{StaticResource RoundedComboBoxStyle}"  Height="40" SelectedIndex="0" Margin="0"  FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747">
+                    <ComboBox x:Name="cmbCustomerGroup" FontFamily="Lexend" FontSize="14" FontWeight="SemiBold" Foreground="#474747"
+Padding="10" Width="Auto" Height="40" Background="White" BorderBrush="#474747"
+BorderThickness="2" HorizontalContentAlignment="Left" Margin="0,0,0,10">
+                        <ComboBox.Resources>
+                            <!-- Custom ComboBox Toggle Button -->
+                            <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+                                <Setter Property="Focusable" Value="False"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Border Background="Transparent" Padding="5">
+                                                <Grid>
+                                                    <Path x:Name="Arrow" Data="M 0 0 L 4 4 L 8 0 Z"
+          HorizontalAlignment="Right" VerticalAlignment="Center"
+          Fill="Black" Width="8" Height="8" 
+          Margin="0,5,10,0"/>
+                                                </Grid>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+
+                            <!-- Custom ComboBox Style -->
+                            <Style TargetType="ComboBox">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ComboBox">
+                                            <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="20" Padding="5">
+                                                <Grid>
+                                                    <!-- Toggle Button for Dropdown -->
+                                                    <ToggleButton Name="ToggleButton" 
+                                  Style="{StaticResource ComboBoxToggleButton}"
+                                  Grid.Column="2" Focusable="False"
+                                  IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" 
+                                  ClickMode="Press"/>
+
+                                                    <!-- Selected Content -->
+                                                    <ContentPresenter Name="ContentSite" IsHitTestVisible="False"
+              Content="{Binding SelectedItem.Value, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue='Select Warehouse'}"
+              Margin="10,0,40,0" VerticalAlignment="Center"/>
+
+                                                    <!-- Dropdown List -->
+                                                    <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" 
+                                   AllowsTransparency="True" Focusable="False"
+                                   PopupAnimation="Slide"
+                                   MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                                        <Border Background="White" BorderBrush="Gray" BorderThickness="1" 
+                                    CornerRadius="10"
+                                    Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                                            <ScrollViewer>
+                                                                <StackPanel>
+                                                                    <ItemsPresenter/>
+                                                                </StackPanel>
+                                                            </ScrollViewer>
+                                                        </Border>
+                                                    </Popup>
+                                                </Grid>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ComboBox.Resources>
                     </ComboBox>
                 </StackPanel>
 
                 <StackPanel Grid.Column="0">
                     <TextBlock Text="Language:" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747" Margin="0,10,0,10" />
                     <ComboBox x:Name="cmbLanguage" Style="{StaticResource RoundedComboBoxStyle}"  Height="40" SelectedIndex="0" Margin="0"  FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747">
+                        <ComboBoxItem Content="English" FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
+                        <ComboBoxItem Content="Spanish" FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
+                        <ComboBoxItem Content="French" FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
+                        <ComboBoxItem Content="Filipino" FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
                     </ComboBox>
                 </StackPanel>
 
@@ -46,7 +116,7 @@
 
             <!-- Submit Button -->
             <StackPanel Margin="20">
-                <Button x:Name="btnAdd" Background="Transparent" HorizontalAlignment="Right" BorderThickness="0" VerticalAlignment="Center">
+                <Button Click="AddClient" x:Name="btnAdd" Background="Transparent" HorizontalAlignment="Right" BorderThickness="0" VerticalAlignment="Center">
                     <Border CornerRadius="20" Background="#52C69D" Height="40" Width="150">
                         <TextBlock Text="Add" FontFamily="{StaticResource Lexend}" Foreground="White" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Border>
