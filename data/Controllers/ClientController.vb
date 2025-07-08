@@ -13,7 +13,7 @@ Namespace DPC.Data.Controllers
             ' Generate the custom Client ID
             client.ClientID = GenerateClientIDCorporational()
 
-            Dim query As String = "INSERT INTO clientcorporational (ClientID, ClientGroupID, Company, Representative, Phone, Landline, Email, BillingAddress, ShippingAddress, CustomerGroup, ClientLanguage, TinID, ClientType, CreatedAt, UpdatedAt) " &
+            Dim query As String = "INSERT INTO clientcorporational (ClientID, ClientGroupID, Company, Representative, Phone, Landline, Email, BillingAddress, ShippingAddress, CustomerGroup, Language, TinID, ClientType, CreatedAt, UpdatedAt) " &
                                   "VALUES (@ClientID, @ClientGroupID, @Company, @Representative, @Phone, @Landline, @Email, @BillingAddress, " &
                                   "@ShippingAddress, @CustomerGroup, @ClientLanguage, @TinID, @ClientType, @CreatedAt, @UpdatedAt)"
 
@@ -311,14 +311,44 @@ LIMIT 10;
             Return client
         End Function
 
-        Public Shared Function SearchClient(searchClientName As String) As ObservableCollection(Of UpdatedClient)
-            Dim clients As New ObservableCollection(Of UpdatedClient)
-            Dim SearchClientQuery As String = "SELECT * FROM client
-                                        WHERE Name LIKE @searchText 
-                                           OR ClientID LIKE @searchText 
-                                           OR Email LIKE @searchText
-                                        ORDER BY Name ASC
-                                        LIMIT 10"
+        Public Shared Function SearchClient(searchClientName As String) As ObservableCollection(Of Client)
+            Dim clients As New ObservableCollection(Of Client)
+            Dim SearchClientQuery As String = "SELECT 
+    ClientID,
+ClientGroupID,
+    BillingAddress,
+    Email,
+    Phone,
+    Name,
+    NULL AS Company,
+CustomerGroup,
+    Language,
+    ShippingAddress
+FROM client
+WHERE Name LIKE @searchText 
+   OR ClientID LIKE @searchText 
+   OR Email LIKE @searchText
+
+UNION
+
+SELECT 
+    ClientID,
+ClientGroupID,
+    BillingAddress,
+    Email,
+    Phone,
+    NULL AS Name,
+    Company,
+CustomerGroup,
+    Language,
+    ShippingAddress
+FROM clientcorporational
+WHERE Company LIKE @searchText 
+   OR ClientID LIKE @searchText 
+   OR Email LIKE @searchText
+
+ORDER BY Name ASC
+LIMIT 10;"
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
                     conn.Open()
@@ -327,44 +357,25 @@ LIMIT 10;
                         cmd.Parameters.AddWithValue("@searchText", "%" & searchClientName & "%")
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
-                                Dim client As New UpdatedClient With {
+                                Dim nameOrCompany As String = ""
+
+                                If Not IsDBNull(reader("Name")) AndAlso Not String.IsNullOrWhiteSpace(reader("Name").ToString()) Then
+                                    nameOrCompany = reader("Name").ToString()
+                                ElseIf Not IsDBNull(reader("Company")) AndAlso Not String.IsNullOrWhiteSpace(reader("Company").ToString()) Then
+                                    nameOrCompany = reader("Company").ToString()
+                                End If
+
+                                Dim client As New Client With {
                             .ClientID = Convert.ToInt64(reader("ClientID")),
                             .ClientGroupID = If(IsDBNull(reader("ClientGroupID")), 0, Convert.ToInt32(reader("ClientGroupID"))),
-                            .Name = reader("Name").ToString(),
-                            .Company = If(IsDBNull(reader("Company")), String.Empty, reader("Company").ToString()),
+                            .Name = nameOrCompany,
                             .Phone = If(IsDBNull(reader("Phone")), String.Empty, reader("Phone").ToString()),
                             .Email = If(IsDBNull(reader("Email")), String.Empty, reader("Email").ToString()),
                             .CustomerGroup = If(IsDBNull(reader("CustomerGroup")), String.Empty, reader("CustomerGroup").ToString()),
-                            .Language = If(IsDBNull(reader("Language")), String.Empty, reader("Language").ToString()),
-                            .BillingAddress = Nothing,
-                            .ShippingAddress = Nothing
+                            .ClientLanguage = If(IsDBNull(reader("Language")), String.Empty, reader("Language").ToString()),
+                            .BillingAddress = If(IsDBNull(reader("BillingAddress")), String.Empty, reader("BillingAddress").ToString()),
+                            .ShippingAddress = If(IsDBNull(reader("ShippingAddress")), String.Empty, reader("ShippingAddress").ToString())
                         }
-
-                                ' Read and deserialize BillingAddress JSON
-                                If Not IsDBNull(reader("BillingAddress")) Then
-                                    Dim billingJson As String = reader("BillingAddress").ToString()
-                                    If Not String.IsNullOrWhiteSpace(billingJson) Then
-                                        Try
-                                            client.BillingAddress = JsonConvert.DeserializeObject(Of UpdatedClientBillingAddress)(billingJson)
-                                        Catch ex As Exception
-                                            ' Optionally log or handle error
-                                            client.BillingAddress = Nothing
-                                        End Try
-                                    End If
-                                End If
-
-                                ' Read and deserialize ShippingAddress JSON
-                                If Not IsDBNull(reader("ShippingAddress")) Then
-                                    Dim shippingJson As String = reader("ShippingAddress").ToString()
-                                    If Not String.IsNullOrWhiteSpace(shippingJson) Then
-                                        Try
-                                            client.ShippingAddress = JsonConvert.DeserializeObject(Of UpdatedClientBillingAddress)(shippingJson)
-                                        Catch ex As Exception
-                                            ' Optionally log or handle error
-                                            client.ShippingAddress = Nothing
-                                        End Try
-                                    End If
-                                End If
 
                                 clients.Add(client)
                             End While
