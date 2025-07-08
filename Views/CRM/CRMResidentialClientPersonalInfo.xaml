@@ -33,7 +33,7 @@
                 <!-- Phone -->
                 <TextBlock Text="Phone:" Margin="0,5,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                 <Border Style="{StaticResource RoundedBorderStyle}" Width="772">
-                    <TextBox x:Name="txtPhone" Height="30" Margin="0,5,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="734"  FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
+                    <TextBox PreviewTextInput="txtInput_PreviewTextInput" x:Name="txtPhone" Height="30" Margin="0,5,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="734"  FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
                 </Border>
 
                 <!-- Email -->

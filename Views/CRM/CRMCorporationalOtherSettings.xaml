@@ -27,7 +27,7 @@
                 <!-- Company Name -->
                 <TextBlock Text="TIN ID:" Margin="0,5,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                 <Border Style="{StaticResource RoundedBorderStyle}" Width="800">
-                    <TextBox x:Name="txtTinID" Height="30" Margin="0,5,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="734"  FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
+                    <TextBox PreviewTextInput="txtInput_PreviewTextInput" x:Name="txtTinID" Height="30" Margin="0,5,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="734"  FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
                 </Border>
 
                 <StackPanel Grid.Column="0">
