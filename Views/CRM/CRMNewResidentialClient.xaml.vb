@@ -5,6 +5,7 @@
             InitializeComponent()
         End Sub
 
+
         Private Sub ResidentialTabs_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
             If Not IsLoaded Then Return
 
@@ -28,4 +29,24 @@
             ResidentialMainContent.Children.Add(New CRMResidentialClientPersonalInfo())
         End Sub
     End Class
+
+    Module ResidentialClientDetails
+        Public ClientName As String
+        Public Phone As String
+        Public Email As String
+        Public BillAddress As String
+        Public BillCity As String
+        Public BillRegion As String
+        Public BillCountry As String
+        Public BillZipCode As String
+        Public ClientGroupID As Integer
+        Public CustomerGroup As String
+        Public CustomerLanguage As String
+        Public Address As String
+        Public City As String
+        Public Region As String
+        Public Country As String
+        Public ZipCode As String
+        Public SameAsBilling As Boolean = False
+    End Module
 End Namespace

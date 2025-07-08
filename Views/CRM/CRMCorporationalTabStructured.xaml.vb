@@ -29,5 +29,29 @@
             CorporationalMainContent.Children.Add(New CRMCorporationalPersonalInfo())
         End Sub
     End Class
+
+    Module CorporationalClientDetails
+        Public ClientGroupID As Integer
+        Public CompanyName As String
+        Public Representative As String
+        Public Phone As String
+        Public Landline As String
+        Public Email As String
+        Public BillAddress As String
+        Public BillCity As String
+        Public BillRegion As String
+        Public BillCountry As String
+        Public BillZipCode As String
+        Public Address As String
+        Public City As String
+        Public Region As String
+        Public Country As String
+        Public ZipCode As String
+        Public TinID As String
+        Public CustomerGroup As String
+        Public CustomerLanguage As String
+        Public CustomerType As String
+        Public SameAsBilling As Boolean = False
+    End Module
 End Namespace
 
