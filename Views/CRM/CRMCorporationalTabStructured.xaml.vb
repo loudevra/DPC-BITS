@@ -3,6 +3,7 @@
 
         Public Sub New()
             InitializeComponent()
+            ClearCache()
         End Sub
 
         Private Sub CorporationalTabs_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
@@ -27,6 +28,29 @@
 
         Private Sub CorporationalTabStructured_Loaded(sender As Object, e As RoutedEventArgs)
             CorporationalMainContent.Children.Add(New CRMCorporationalPersonalInfo())
+        End Sub
+
+        Private Sub ClearCache()
+            CorporationalClientDetails.Representative = Nothing
+            CorporationalClientDetails.TinID = Nothing
+            CorporationalClientDetails.CompanyName = Nothing
+            CorporationalClientDetails.Phone = Nothing
+            CorporationalClientDetails.Landline = Nothing
+            CorporationalClientDetails.Email = Nothing
+            CorporationalClientDetails.BillAddress = Nothing
+            CorporationalClientDetails.BillCity = Nothing
+            CorporationalClientDetails.BillRegion = Nothing
+            CorporationalClientDetails.BillCountry = Nothing
+            CorporationalClientDetails.BillZipCode = Nothing
+            CorporationalClientDetails.ClientGroupID = Nothing
+            CorporationalClientDetails.CustomerGroup = Nothing
+            CorporationalClientDetails.CustomerLanguage = Nothing
+            CorporationalClientDetails.Address = Nothing
+            CorporationalClientDetails.City = Nothing
+            CorporationalClientDetails.Region = Nothing
+            CorporationalClientDetails.Country = Nothing
+            CorporationalClientDetails.ZipCode = Nothing
+            CorporationalClientDetails.SameAsBilling = Nothing
         End Sub
     End Class
 

@@ -3,6 +3,7 @@
 
         Public Sub New()
             InitializeComponent()
+            ClearCache()
         End Sub
 
 
@@ -27,6 +28,26 @@
 
         Private Sub CRMNewResidentialClient_Loaded(sender As Object, e As RoutedEventArgs)
             ResidentialMainContent.Children.Add(New CRMResidentialClientPersonalInfo())
+        End Sub
+
+        Private Sub ClearCache()
+            ResidentialClientDetails.ClientName = Nothing
+            ResidentialClientDetails.Phone = Nothing
+            ResidentialClientDetails.Email = Nothing
+            ResidentialClientDetails.BillAddress = Nothing
+            ResidentialClientDetails.BillCity = Nothing
+            ResidentialClientDetails.BillRegion = Nothing
+            ResidentialClientDetails.BillCountry = Nothing
+            ResidentialClientDetails.BillZipCode = Nothing
+            ResidentialClientDetails.ClientGroupID = Nothing
+            ResidentialClientDetails.CustomerGroup = Nothing
+            ResidentialClientDetails.CustomerLanguage = Nothing
+            ResidentialClientDetails.Address = Nothing
+            ResidentialClientDetails.City = Nothing
+            ResidentialClientDetails.Region = Nothing
+            ResidentialClientDetails.Country = Nothing
+            ResidentialClientDetails.ZipCode = Nothing
+            ResidentialClientDetails.SameAsBilling = Nothing
         End Sub
     End Class
 
