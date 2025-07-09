@@ -151,11 +151,23 @@
       <HintPath>packages\Microsoft.Bcl.TimeProvider.9.0.4\lib\net462\Microsoft.Bcl.TimeProvider.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=8.0.0.1, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.DependencyInjection.8.0.1\lib\net462\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=9.0.0.4, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Extensions.DependencyInjection.Abstractions.9.0.4\lib\net462\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Extensions.Logging, Version=8.0.0.1, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Logging.8.0.1\lib\net462\Microsoft.Extensions.Logging.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=9.0.0.4, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Extensions.Logging.Abstractions.9.0.4\lib\net462\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options, Version=8.0.0.2, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Options.8.0.2\lib\net462\Microsoft.Extensions.Options.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Primitives, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Primitives.8.0.0\lib\net462\Microsoft.Extensions.Primitives.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.IdentityModel.Abstractions, Version=8.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.IdentityModel.Abstractions.8.9.0\lib\net472\Microsoft.IdentityModel.Abstractions.dll</HintPath>
@@ -205,6 +217,33 @@
     <Reference Include="OpenTK, Version=3.3.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>packages\OpenTK.3.3.1\lib\net20\OpenTK.dll</HintPath>
     </Reference>
+    <Reference Include="PdfSharp, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.BarCodes, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.BarCodes.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Charting, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.Charting.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Cryptography, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.Cryptography.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Quality, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.Quality.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Shared, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.Shared.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Snippets, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.Snippets.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.System, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.System.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.WPFonts, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.WPFonts.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>packages\PresentationFramework.4.6.0\lib\PresentationFramework.dll</HintPath>
     </Reference>
@@ -228,6 +267,12 @@
     </Reference>
     <Reference Include="SkiaSharp.Views.WPF, Version=3.116.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>packages\SkiaSharp.Views.WPF.3.116.1\lib\net462\SkiaSharp.Views.WPF.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Compression.Base, Version=30.1462.39.0, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>packages\Syncfusion.Compression.Base.30.1.39\lib\net462\Syncfusion.Compression.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Licensing, Version=30.1462.39.0, Culture=neutral, PublicKeyToken=632609b4d040f6b4, processorArchitecture=MSIL">
+      <HintPath>packages\Syncfusion.Licensing.30.1.39\lib\net462\Syncfusion.Licensing.dll</HintPath>
     </Reference>
     <Reference Include="System.Buffers, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Buffers.4.6.1\lib\net462\System.Buffers.dll</HintPath>
@@ -286,6 +331,7 @@
     <Reference Include="System.Numerics.Vectors, Version=4.1.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\System.Numerics.Vectors.4.6.1\lib\net462\System.Numerics.Vectors.dll</HintPath>
     </Reference>
+    <Reference Include="System.Printing" />
     <Reference Include="System.Runtime, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\System.Runtime.4.3.0\lib\net462\System.Runtime.dll</HintPath>
       <Private>True</Private>
@@ -304,6 +350,9 @@
       <HintPath>packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
       <Private>True</Private>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Pkcs, Version=8.0.0.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Security.Cryptography.Pkcs.8.0.1\lib\net462\System.Security.Cryptography.Pkcs.dll</HintPath>
     </Reference>
     <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
@@ -481,6 +530,9 @@
     <Compile Include="Components\Forms\PopOutTextEditor.xaml.vb">
       <DependentUpon>PopOutTextEditor.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\PopoutWalkInTextEditor.xaml.vb">
+      <DependentUpon>PopoutWalkInTextEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\POSPayment.xaml.vb">
       <DependentUpon>POSPayment.xaml</DependentUpon>
     </Compile>
@@ -581,6 +633,7 @@
     <Compile Include="Data\Controllers\StocksTransferController.vb" />
     <Compile Include="Data\Controllers\Stocks\StocksLabelController.vb" />
     <Compile Include="Data\Controllers\SupplierController.vb" />
+    <Compile Include="Data\Controllers\WalkIn\WalkInController.vb" />
     <Compile Include="Data\Controllers\WarehouseController.vb" />
     <Compile Include="Data\Converters\BooleanToVisibilityConverter.vb" />
     <Compile Include="Data\Converters\InverseBooleanToVisibilityConverter.vb" />
@@ -593,6 +646,7 @@
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
     <Compile Include="Data\DataModules\CostEstimateDetails.vb" />
     <Compile Include="Data\DataModules\StatementDetails.vb" />
+    <Compile Include="Data\DataModules\WalkinBillingStatementDetails.vb" />
     <Compile Include="Data\Helpers\AutocompleteHelper.vb" />
     <Compile Include="Data\Helpers\Base64Utility.vb" />
     <Compile Include="Data\Helpers\ViewLoader\DynamicView.vb" />
@@ -1160,6 +1214,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\PopOutTextEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\PopoutWalkInTextEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
