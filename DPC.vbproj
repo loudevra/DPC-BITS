@@ -388,6 +388,9 @@
     <Compile Include="Components\ConfirmationModals\HRMDeleteDepartment.xaml.vb">
       <DependentUpon>HRMDeleteDepartment.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\ConfirmationModals\HRMDeleteEmployee.xaml.vb">
+      <DependentUpon>HRMDeleteEmployee.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\ConfirmationModals\HRMEmployerSalariesModal.xaml.vb">
       <DependentUpon>HRMEmployerSalariesModal.xaml</DependentUpon>
     </Compile>
@@ -823,6 +826,9 @@
     <Compile Include="Views\HRM\Employees\Employees\AddEmployee.xaml.vb">
       <DependentUpon>AddEmployee.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\HRM\Employees\Employees\EditEmployee.xaml.vb">
+      <DependentUpon>EditEmployee.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\HRM\Employees\Employees\EmployeesProfileControls\Invoices.xaml.vb">
       <DependentUpon>Invoices.xaml</DependentUpon>
     </Compile>
@@ -1035,6 +1041,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\ConfirmationModals\HRMDeleteDepartment.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ConfirmationModals\HRMDeleteEmployee.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1622,6 +1632,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HRM\Employees\Employees\AddEmployee.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HRM\Employees\Employees\EditEmployee.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HRM\Employees\Employees\EmployeesProfileControls\Invoices.xaml">

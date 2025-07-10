@@ -50,6 +50,7 @@ Namespace DPC.Data.Controllers
                                     CacheOnEmployeeID = employeeID
 
                                     EmployeeLoginHistoryController.AddLoginHistory(employeeID, Name, Email, DateTime.Now())
+                                    EmployeeLoginHistoryController.AddAuthUserStatus(CacheLogInHistoryID, CacheOnEmployeeID, CacheOnLoggedInName)
 
                                     Dim userRole As String = GetUserRole(roleID)
                                     Dim accessToken As String = GenerateJwtToken(employeeID, username, userRole, ACCESS_TOKEN_EXPIRY)
