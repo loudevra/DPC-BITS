@@ -293,7 +293,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             '    AddProductInputUI()
             'End If
 
-            rowCount += 1
             AddProductInputUI()
 
             If _typingTimer Is Nothing Then
