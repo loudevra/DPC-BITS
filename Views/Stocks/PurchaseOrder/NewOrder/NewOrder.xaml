@@ -112,7 +112,7 @@
                         <ComboBox SelectedIndex="0" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" x:Name="ComboBoxWarehouse" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold">
                         </ComboBox>
                     </StackPanel>
-                </StackPanel>
+                </StackPanel> 
 
                 <StackPanel Grid.Row="0" Grid.Column="1"  Margin="25,10,0,10" Orientation="Vertical">
                     <Border BorderThickness="2" BorderBrush="Gray" CornerRadius="20" Background="White"

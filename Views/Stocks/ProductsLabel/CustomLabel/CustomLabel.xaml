@@ -247,7 +247,7 @@
 
      
             <!-- Main Form Content -->
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Style="{StaticResource ModernScrollViewerStyle}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <!--Product Label-->
