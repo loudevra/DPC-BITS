@@ -11,6 +11,10 @@ Imports Newtonsoft.Json
 Imports System.Windows.Media.Imaging
 Imports PdfSharp.Pdf
 Imports PdfSharp.Drawing
+Imports MongoDB.Driver
+Imports MongoDB.Bson
+Imports MongoDB.Driver.GridFS
+Imports System.ServiceModel.Channels
 
 Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
     Public Class PreviewWalkinClientPrintStatement
@@ -352,7 +356,10 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
 
         Private Sub SaveToDb()
-            Dim jsonItems As String = Newtonsoft.Json.JsonConvert.SerializeObject(BLItemsCache)
+            Dim jsonItems As String = Newtonsoft.Json.JsonConvert.SerializeObject(BLItemsCache, Newtonsoft.Json.Formatting.Indented)
+
+            Dim docName As String = BLNumberCache
+            SaveToMongo(docName)
 
             Dim success As Boolean = WalkInController.InsertBilling(
                 BLNumberCache,
@@ -389,5 +396,85 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 MessageBox.Show("Failed to submit walk-in billing.")
             End If
         End Sub
+
+        Private Async Sub SaveToMongo(docName As String)
+            Dim dpi As Integer = 300
+
+            ' Prepare layout
+            Dim layoutWidth = PrintPreview.ActualWidth
+            Dim layoutHeight = PrintPreview.ActualHeight
+            Dim pixelWidth = CInt(layoutWidth * dpi / 96)
+            Dim pixelHeight = CInt(layoutHeight * dpi / 96)
+
+            ' Render to bitmap
+            Dim rtb As New RenderTargetBitmap(pixelWidth, pixelHeight, dpi, dpi, PixelFormats.Pbgra32)
+            PrintPreview.Measure(New Size(layoutWidth, layoutHeight))
+            PrintPreview.Arrange(New Rect(0, 0, layoutWidth, layoutHeight))
+            PrintPreview.UpdateLayout()
+            rtb.Render(PrintPreview)
+
+            ' Encode as PNG to memory stream
+            Dim encoder As New PngBitmapEncoder()
+            encoder.Frames.Add(BitmapFrame.Create(rtb))
+            Dim stream As New MemoryStream()
+            encoder.Save(stream)
+            stream.Position = 0
+
+            ' Paths
+            Dim appDir As String = AppDomain.CurrentDomain.BaseDirectory
+            Dim tempImagePath As String = System.IO.Path.Combine(appDir, Guid.NewGuid().ToString() & ".png")
+            Dim tempPdfPath As String = System.IO.Path.Combine(appDir, docName & ".pdf")
+
+            Try
+                ' Save temp image file
+                Using fs As New FileStream(tempImagePath, FileMode.Create, FileAccess.Write)
+                    stream.CopyTo(fs)
+                End Using
+
+                ' Create PDF
+                Dim pdf As New PdfDocument()
+                Dim page = pdf.AddPage()
+                page.Width = XUnit.FromInch(layoutWidth / 96)
+                page.Height = XUnit.FromInch(layoutHeight / 96)
+
+                Dim gfx = XGraphics.FromPdfPage(page)
+                Using image = XImage.FromFile(tempImagePath)
+                    gfx.DrawImage(image, 0, 0, page.Width, page.Height)
+                End Using
+
+                ' Save PDF to temp file
+                pdf.Save(tempPdfPath)
+
+                ' Upload PDF to MongoDB GridFS
+                Dim gridFS As GridFSBucket = SplashScreen.GetGridFSConnection()
+
+                Using FileStream As New FileStream(tempPdfPath, FileMode.Open, FileAccess.Read)
+                    Dim options As New GridFSUploadOptions() With {
+            .Metadata = New BsonDocument From {
+                {"uploadedBy", CacheOnLoggedInName},
+                {"uploadedAt", BsonDateTime.Create(DateTime.UtcNow)},
+                {"source", "cost-estimate/quote"},
+                {"billiingNumber", BillingNumber.Text},
+                {"pdfFilePath", tempPdfPath}
+            }
+        }
+
+                    gridFS.UploadFromStream(Path.GetFileName(tempPdfPath), FileStream, options)
+                End Using
+
+                'MessageBox.Show("PDF uploaded to MongoDB.")
+
+            Finally
+                ' Delete the temp files
+                If File.Exists(tempImagePath) Then
+                    Try : File.Delete(tempImagePath) : Catch : End Try
+                End If
+                If File.Exists(tempPdfPath) Then
+                    Try : File.Delete(tempPdfPath) : Catch : End Try
+                End If
+            End Try
+        End Sub
+
+
     End Class
 End Namespace
