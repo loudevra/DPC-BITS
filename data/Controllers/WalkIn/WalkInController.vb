@@ -203,19 +203,17 @@ Namespace DPC.Data.Controllers
             Try
                 ' Query to check for duplicate billingNumber
                 Dim findclientIDquery As String = "SELECT 
-    ClientID,
+    ClientID
 FROM client
 WHERE Name = @clientName
 
 UNION
 
 SELECT 
-    ClientID,
+    ClientID
 FROM clientcorporational
 WHERE Company = @clientName
-
-ORDER BY Name ASC
-LIMIT 10;"
+"
                 Dim findwarehouseIDquery As String = "SELECT warehouseID FROM warehouse WHERE warehouseName = @warehouseName"
                 Dim checkDuplicateQuery As String = "SELECT COUNT(*) FROM walkinbilling WHERE billingNumber = @billingNumber"
 
