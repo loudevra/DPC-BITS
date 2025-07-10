@@ -9,15 +9,88 @@ Imports Newtonsoft.Json
 Namespace DPC.Data.Controllers
     Public Class ClientController
 
+        Public Shared Function CreateClientCorporational(client As ClientCorporational) As Boolean
+            ' Generate the custom Client ID
+            client.ClientID = GenerateClientIDCorporational()
+
+            Dim query As String = "INSERT INTO clientcorporational (ClientID, ClientGroupID, Company, Representative, Phone, Landline, Email, BillingAddress, ShippingAddress, CustomerGroup, Language, TinID, ClientType, CreatedAt, UpdatedAt) " &
+                                  "VALUES (@ClientID, @ClientGroupID, @Company, @Representative, @Phone, @Landline, @Email, @BillingAddress, " &
+                                  "@ShippingAddress, @CustomerGroup, @ClientLanguage, @TinID, @ClientType, @CreatedAt, @UpdatedAt)"
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@ClientID", client.ClientID)
+                        cmd.Parameters.AddWithValue("@ClientGroupID", client.ClientGroupID)
+                        cmd.Parameters.AddWithValue("@Company", client.Company)
+                        cmd.Parameters.AddWithValue("@Representative", client.Representative)
+                        cmd.Parameters.AddWithValue("@Phone", client.Phone)
+                        cmd.Parameters.AddWithValue("@Landline", client.Landline)
+                        cmd.Parameters.AddWithValue("@Email", client.Email)
+                        cmd.Parameters.AddWithValue("@BillingAddress", client.BillingAddress)
+                        cmd.Parameters.AddWithValue("@ShippingAddress", client.ShippingAddress)
+                        cmd.Parameters.AddWithValue("@CustomerGroup", client.CustomerGroup)
+                        cmd.Parameters.AddWithValue("@ClientLanguage", client.ClientLanguage)
+                        cmd.Parameters.AddWithValue("@CreatedAt", DateTime.Now)
+                        cmd.Parameters.AddWithValue("@UpdatedAt", DateTime.Now)
+                        cmd.Parameters.AddWithValue("@TinID", client.TinID)
+                        cmd.Parameters.AddWithValue("@ClientType", client.ClientType)
+
+                        Dim result As Integer = cmd.ExecuteNonQuery()
+                        Return result > 0
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show("Error creating client: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return False
+                End Try
+            End Using
+        End Function
+
+        ' Function to generate ClientID in format 40MMDDYYYYXXXX
+        Private Shared Function GenerateClientIDCorporational() As String
+            Dim prefix As String = "50"
+            Dim datePart As String = DateTime.Now.ToString("MMddyyyy")
+            Dim counter As Integer = GetNextClientCounterCorporational(datePart)
+
+            ' Format counter to be 4 digits (e.g., 0001, 0025)
+            Dim counterPart As String = counter.ToString("D4")
+
+            Return prefix & datePart & counterPart
+        End Function
+
+        ' Function to get the next Client counter (last 4 digits)
+        Private Shared Function GetNextClientCounterCorporational(datePart As String) As Integer
+            Dim query As String = "SELECT MAX(CAST(SUBSTRING(ClientID, 11, 4) AS UNSIGNED)) FROM clientcorporational " &
+                                  "WHERE ClientID LIKE '50" & datePart & "%'"
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        Dim result As Object = cmd.ExecuteScalar()
+                        If result IsNot DBNull.Value AndAlso result IsNot Nothing Then
+                            Return Convert.ToInt32(result) + 1
+                        Else
+                            Return 1
+                        End If
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show("Error generating Client ID: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return 1
+                End Try
+            End Using
+        End Function
+
         ' Function to create a new client
         Public Shared Function CreateClient(client As Client) As Boolean
             ' Generate the custom Client ID
             client.ClientID = GenerateClientID()
 
-            Dim query As String = "INSERT INTO client (ClientID, ClientGroupID, Name, Company, Phone, Email, BillingAddress, ShippingAddress, " &
-                                  "CustomerGroup, Language, CreatedAt, UpdatedAt) " &
-                                  "VALUES (@ClientID, @ClientGroupID, @Name, @Company, @Phone, @Email, @BillingAddress, @ShippingAddress, " &
-                                  "@CustomerGroup, @Language, @CreatedAt, @UpdatedAt)"
+            Dim query As String = "INSERT INTO client (ClientID, ClientGroupID, Name, Phone, Email, BillingAddress, ShippingAddress, " &
+                                  "CustomerGroup, Language, CreatedAt, UpdatedAt, ClientType) " &
+                                  "VALUES (@ClientID, @ClientGroupID, @Name, @Phone, @Email, @BillingAddress, @ShippingAddress, " &
+                                  "@CustomerGroup, @Language, @CreatedAt, @UpdatedAt, @ClientType)"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
@@ -29,10 +102,10 @@ Namespace DPC.Data.Controllers
                         cmd.Parameters.AddWithValue("@Company", client.Company)
                         cmd.Parameters.AddWithValue("@Phone", client.Phone)
                         cmd.Parameters.AddWithValue("@Email", client.Email)
-                        cmd.Parameters.AddWithValue("@BillingAddress", String.Join(";", client.BillingAddress))
-                        cmd.Parameters.AddWithValue("@ShippingAddress", String.Join(";", client.ShippingAddress))
+                        cmd.Parameters.AddWithValue("@BillingAddress", client.BillingAddress)
+                        cmd.Parameters.AddWithValue("@ShippingAddress", client.ShippingAddress)
                         cmd.Parameters.AddWithValue("@CustomerGroup", client.CustomerGroup)
-                        cmd.Parameters.AddWithValue("@Language", client.Language)
+                        cmd.Parameters.AddWithValue("@Language", client.ClientLanguage)
                         cmd.Parameters.AddWithValue("@CreatedAt", DateTime.Now)
                         cmd.Parameters.AddWithValue("@UpdatedAt", DateTime.Now)
 
@@ -98,14 +171,10 @@ Namespace DPC.Data.Controllers
                             .Company = reader("Company").ToString(),
                             .Phone = reader("Phone").ToString(),
                             .Email = reader("Email").ToString(),
-                            .BillingAddress = If(String.IsNullOrEmpty(reader("BillingAddress").ToString()),
-                                                New String() {},
-                                                reader("BillingAddress").ToString().Split(";"c)),
-                            .ShippingAddress = If(String.IsNullOrEmpty(reader("ShippingAddress").ToString()),
-                                                 New String() {},
-                                                 reader("ShippingAddress").ToString().Split(";"c)),
+                            .BillingAddress = reader("BillingAddress").ToString(),
+                            .ShippingAddress = reader("ShippingAddress").ToString(),
                             .CustomerGroup = reader("CustomerGroup").ToString(),
-                            .Language = reader("Language").ToString(),
+                            .ClientLanguage = reader("Language").ToString(),
                             .CreatedAt = Convert.ToDateTime(reader("CreatedAt")),
                             .UpdatedAt = Convert.ToDateTime(reader("UpdatedAt"))
                         }
@@ -139,14 +208,10 @@ Namespace DPC.Data.Controllers
                                     .Company = reader("Company").ToString(),
                                     .Phone = reader("Phone").ToString(),
                                     .Email = reader("Email").ToString(),
-                                    .BillingAddress = If(String.IsNullOrEmpty(reader("BillingAddress").ToString()),
-                                                        New String() {},
-                                                        reader("BillingAddress").ToString().Split(";"c)),
-                                    .ShippingAddress = If(String.IsNullOrEmpty(reader("ShippingAddress").ToString()),
-                                                         New String() {},
-                                                         reader("ShippingAddress").ToString().Split(";"c)),
+                                    .BillingAddress = reader("BillingAddress").ToString(),
+                                    .ShippingAddress = reader("ShippingAddress").ToString(),
                                     .CustomerGroup = reader("CustomerGroup").ToString(),
-                                    .Language = reader("Language").ToString(),
+                                    .ClientLanguage = reader("Language").ToString(),
                                     .CreatedAt = Convert.ToDateTime(reader("CreatedAt")),
                                     .UpdatedAt = Convert.ToDateTime(reader("UpdatedAt"))
                                 }
@@ -160,60 +225,71 @@ Namespace DPC.Data.Controllers
             Return client
         End Function
 
-        Public Shared Function SearchClient(searchClientName As String) As ObservableCollection(Of UpdatedClient)
-            Dim clients As New ObservableCollection(Of UpdatedClient)
-            Dim SearchClientQuery As String = "SELECT * FROM client
-                                        WHERE Name LIKE @searchText 
-                                           OR ClientID LIKE @searchText 
-                                           OR Email LIKE @searchText
-                                        ORDER BY Name ASC
-                                        LIMIT 10"
+        Public Shared Function SearchClient(_searchText As String) As ObservableCollection(Of Client)
+            Dim clients As New ObservableCollection(Of Client)()
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
                     conn.Open()
+                    Dim SearchClientQuery As String = "SELECT 
+    ClientID,
+ClientGroupID,
+    BillingAddress,
+    Email,
+    Phone,
+    Name,
+    NULL AS Company,
+CustomerGroup,
+    Language,
+    ShippingAddress
+FROM client
+WHERE Name LIKE @searchText 
+   OR ClientID LIKE @searchText 
+   OR Email LIKE @searchText
+
+UNION
+
+SELECT 
+    ClientID,
+ClientGroupID,
+    BillingAddress,
+    Email,
+    Phone,
+    NULL AS Name,
+    Company,
+CustomerGroup,
+    Language,
+    ShippingAddress
+FROM clientcorporational
+WHERE Company LIKE @searchText 
+   OR ClientID LIKE @searchText 
+   OR Email LIKE @searchText
+
+ORDER BY Name ASC
+LIMIT 10;"
 
                     Using cmd As New MySqlCommand(SearchClientQuery, conn)
-                        cmd.Parameters.AddWithValue("@searchText", "%" & searchClientName & "%")
+                        cmd.Parameters.AddWithValue("@searchText", "%" & _searchText & "%")
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
-                                Dim client As New UpdatedClient With {
-                            .ClientID = Convert.ToInt64(reader("ClientID")),
-                            .ClientGroupID = If(IsDBNull(reader("ClientGroupID")), 0, Convert.ToInt32(reader("ClientGroupID"))),
-                            .Name = reader("Name").ToString(),
+                                Dim nameOrCompany As String = ""
+
+                                If Not IsDBNull(reader("Name")) AndAlso Not String.IsNullOrWhiteSpace(reader("Name").ToString()) Then
+                                    nameOrCompany = reader("Name").ToString()
+                                ElseIf Not IsDBNull(reader("Company")) AndAlso Not String.IsNullOrWhiteSpace(reader("Company").ToString()) Then
+                                    nameOrCompany = reader("Company").ToString()
+                                End If
+
+                                Dim client As New Client With {
+                            .ClientID = reader("ClientID"),
+                            .Name = nameOrCompany,
                             .Company = If(IsDBNull(reader("Company")), String.Empty, reader("Company").ToString()),
                             .Phone = If(IsDBNull(reader("Phone")), String.Empty, reader("Phone").ToString()),
                             .Email = If(IsDBNull(reader("Email")), String.Empty, reader("Email").ToString()),
                             .CustomerGroup = If(IsDBNull(reader("CustomerGroup")), String.Empty, reader("CustomerGroup").ToString()),
-                            .Language = If(IsDBNull(reader("Language")), String.Empty, reader("Language").ToString()),
-                            .BillingAddress = Nothing,
-                            .ShippingAddress = Nothing
+                            .ClientLanguage = If(IsDBNull(reader("Language")), String.Empty, reader("Language").ToString()),
+                            .BillingAddress = If(IsDBNull(reader("BillingAddress")), String.Empty, reader("BillingAddress").ToString()),
+                            .ShippingAddress = If(IsDBNull(reader("ShippingAddress")), String.Empty, reader("ShippingAddress").ToString())
                         }
-
-                                ' Read and deserialize BillingAddress JSON
-                                If Not IsDBNull(reader("BillingAddress")) Then
-                                    Dim billingJson As String = reader("BillingAddress").ToString()
-                                    If Not String.IsNullOrWhiteSpace(billingJson) Then
-                                        Try
-                                            client.BillingAddress = JsonConvert.DeserializeObject(Of UpdatedClientBillingAddress)(billingJson)
-                                        Catch ex As Exception
-                                            ' Optionally log or handle error
-                                            client.BillingAddress = Nothing
-                                        End Try
-                                    End If
-                                End If
-
-                                ' Read and deserialize ShippingAddress JSON
-                                If Not IsDBNull(reader("ShippingAddress")) Then
-                                    Dim shippingJson As String = reader("ShippingAddress").ToString()
-                                    If Not String.IsNullOrWhiteSpace(shippingJson) Then
-                                        Try
-                                            client.ShippingAddress = JsonConvert.DeserializeObject(Of UpdatedClientBillingAddress)(shippingJson)
-                                        Catch ex As Exception
-                                            ' Optionally log or handle error
-                                            client.ShippingAddress = Nothing
-                                        End Try
-                                    End If
-                                End If
 
                                 clients.Add(client)
                             End While
