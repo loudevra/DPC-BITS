@@ -228,10 +228,6 @@ Namespace DPC.Data.Helpers.ViewLoader
                     ' POS Navigation
                     Case "navigatetobillingstatement"
                         Return New Stocks.PurchaseOrder.WalkIn.WalkInBillingStatement()
-
-                    Case "previewwalkinclientprintstatement"
-                        Return New Stocks.PurchaseOrder.WalkIn.PreviewWalkinClientPrintStatement()
-
                     Case "navigatetocostestimate"
                         Return New Sales.Quotes.CostEstimate()
 
@@ -307,9 +303,6 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "suppliersrecord"
             ElseIf typeName = "editproduct" Then
                 Return "editproduct"
-
-            ElseIf typeName = "previewwalkinclientprintstatement" Then
-                Return "previewwalkinclientprintstatement"
 
 
                 ' Promo Codes Navigation
