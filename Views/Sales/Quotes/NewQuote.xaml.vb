@@ -138,8 +138,6 @@ Namespace DPC.Views.Sales.Quotes
                 If previousSupplier Is Nothing OrElse previousSupplier.ClientID <> _selectedClient.ClientID Then
                     ClearAllRows()
                 End If
-
-            
             End If
         End Sub
 
@@ -157,7 +155,6 @@ Namespace DPC.Views.Sales.Quotes
             If client.BillingAddress Is Nothing Then
                 details &= $"{Environment.NewLine}{Environment.NewLine}Billing Address: (No data)"
             Else
-                Dim billing = client.BillingAddress
                 details &= Environment.NewLine & Environment.NewLine & String.Join(Environment.NewLine, client.BillingAddress.Split(","c))
             End If
 

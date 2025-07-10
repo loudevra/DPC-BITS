@@ -9,41 +9,41 @@ Imports System.IO
 Imports DPC.DPC.Data.Controllers
 
 Namespace DPC.Data.Controllers
-    Public Class QuotesController
-        ' Search for the recent QuoteID then add 1 and check if it exists
-        Public Shared Function GenerateQuoteID() As String
-            Dim prefix As String = "CE-"
-            Dim datePart As String = DateTime.Now.ToString("MMddyyyy") ' MMDDYYYY format
-            Dim counter As Integer = GetNextQuoteID(datePart)
+    Public Class WalkInController
+        ' Search for the recent BillingID then add 1 and check if it exists
+        Public Shared Function GenerateBillingID() As String
+            Dim prefix As String = "BL-"
+            Dim datePart As String = DateTime.Now.ToString("MM-dd-yyyy") ' MMDDYYYY format
+            Dim counter As Integer = GetNextBillingID(datePart)
 
             Dim counterPart As String = counter.ToString("D4") ' e.g., 0001
             Return prefix & datePart & "-" & counterPart
         End Function
 
-        Public Shared Function GetNextQuoteID(datePart As String) As Integer
-            Dim nextQuoteID As Integer = 1
+        Public Shared Function GetNextBillingID(datePart As String) As Integer
+            Dim nextBillingID As Integer = 1
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
 
-                    Dim query As String = "SELECT MAX(CAST(RIGHT(QuoteNumber, 4) AS UNSIGNED)) FROM quotes " &
-                                  "WHERE QuoteNumber LIKE @prefix"
+                    Dim query As String = "SELECT MAX(CAST(RIGHT(billingNumber, 4) AS UNSIGNED)) FROM walkinbilling " &
+                                  "WHERE billingNumber LIKE @prefix"
 
                     Using cmd As New MySqlCommand(query, conn)
                         ' Use parameter to safely insert prefix like 'QUO06182025%'
-                        cmd.Parameters.AddWithValue("@prefix", "CE-" & datePart & "-%")
+                        cmd.Parameters.AddWithValue("@prefix", "BL-" & datePart & "-%")
 
                         Dim result = cmd.ExecuteScalar()
                         If result IsNot DBNull.Value AndAlso result IsNot Nothing Then
-                            nextQuoteID = Convert.ToInt32(result) + 1
+                            nextBillingID = Convert.ToInt32(result) + 1
                         End If
                     End Using
                 End Using
             Catch ex As Exception
-                Console.WriteLine("Error in GetNextQuoteID: " & ex.Message)
+                Console.WriteLine("Error in GetNextBillingID: " & ex.Message)
             End Try
 
-            Return nextQuoteID
+            Return nextBillingID
         End Function
 
         Public Shared Function SearchProductsByName(searchText As String, warehouseID As Integer) As ObservableCollection(Of ProductDataModel)
@@ -86,20 +86,20 @@ Namespace DPC.Data.Controllers
             Return products
         End Function
 
-        Public Shared Function QuoteNumberExists(quoteNumber As String) As Boolean
+        Public Shared Function BillingNumberExists(billingNumber As String) As Boolean
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
 
-                    Dim query As String = "SELECT COUNT(*) FROM quotes WHERE QuoteNumber = @quoteNumber"
+                    Dim query As String = "SELECT COUNT(*) FROM walkinbilling WHERE billingNumber = @billingNumber"
                     Using cmd As New MySqlCommand(query, conn)
-                        cmd.Parameters.AddWithValue("@quoteNumber", quoteNumber)
+                        cmd.Parameters.AddWithValue("@billingNumber", billingNumber)
                         Dim count As Integer = Convert.ToInt32(cmd.ExecuteScalar())
                         Return count > 0
                     End Using
                 End Using
             Catch ex As Exception
-                Console.WriteLine("Error in QuoteNumberExists: " & ex.Message)
+                Console.WriteLine("Error in BillingNumberExists: " & ex.Message)
                 Return False
             End Try
         End Function
@@ -177,69 +177,126 @@ Namespace DPC.Data.Controllers
             Return productDetails
         End Function
 
-        Public Shared Function InsertQuote(QuoteNumber As String,
-                                   ReferenceNo As String,
-                                   QuoteDate As DateTime,
-                                   QuoteValidity As DateTime,
-                                   Tax As String,
-                                   Discount As String,
-                                   ClientID As String,
-                                   ClientName As String,
-                                   WarehouseID As String,
-                                   WarehouseName As String,
-                                   OrderItems As String,
-                                   QuoteNote As String,
-                                   TotalTax As String,
-                                   TotalDiscount As String,
-                                   TotalPrice As String,
-                                   Username As String,
-                                   ApprovedBy As String,
-                                   PaymentTerms As String) As Boolean
+        Public Shared Function InsertBilling(
+                                            billingNumber As String,
+                                            billingDate As DateTime,
+                                            DRNo As String,
+                                            clientName As String,
+                                            companyRep As String,
+                                            salesRep As String,
+                                            preparedBy As String,
+                                            approvedBy As String,
+                                            paymentTerms As String,
+                                            OrderItems As String,
+                                            warehouseName As String,
+                                            base64Image As String,
+                                            tax As String,
+                                            discount As String,
+                                            totalTax As String,
+                                            totalDiscount As String,
+                                            totalAmount As String,
+                                            billingNote As String,
+                                            bankDetails As String,
+                                            accountName As String,
+                                            accountNumber As String,
+                                            remarks As String) As Boolean
             Try
-                ' Query to check for duplicate QuoteNumber
-                Dim checkDuplicateQuery As String = "SELECT COUNT(*) FROM quotes WHERE QuoteNumber = @QuoteNumber"
-                ' Query to insert quote
-                Dim addQuery As String = "INSERT INTO quotes (QuoteNumber, ReferenceNo, QuoteDate, QuoteValidity, Tax, Discount, ClientID, ClientName, WarehouseID, WarehouseName, OrderItems, QuoteNote, TotalTax, TotalDiscount, TotalPrice, Username, ApprovedBy, PaymentTerms, DateAdded) VALUES (@QuoteNumber, @ReferenceNo, @QuoteDate, @QuoteValidity, @Tax, @Discount, @ClientID, @ClientName, @WarehouseID, @WarehouseName, @OrderItems, @QuoteNote, @TotalTax, @TotalDiscount, @TotalPrice, @Username, @ApprovedBy, @PaymentTerms, NOW())"
+                ' Query to check for duplicate billingNumber
+                Dim findclientIDquery As String = "SELECT 
+    ClientID,
+FROM client
+WHERE Name = @clientName
 
+UNION
+
+SELECT 
+    ClientID,
+FROM clientcorporational
+WHERE Company = @clientName
+
+ORDER BY Name ASC
+LIMIT 10;"
+                Dim findwarehouseIDquery As String = "SELECT warehouseID FROM warehouse WHERE warehouseName = @warehouseName"
+                Dim checkDuplicateQuery As String = "SELECT COUNT(*) FROM walkinbilling WHERE billingNumber = @billingNumber"
+
+                ' Query to insert billing
+                Dim addQuery As String =
+                    "INSERT INTO walkinbilling (billingNumber, billingDate, DRNo, clientID, companyRep, salesRep, preparedBy, approvedBy, paymentTerms, orderItems, warehouseID, base64img, taxProperty, discountProperty, totalTax, totalDiscount, totalAmount, billingNote, bankDetails, accName, accNo, remarks, dateAdded) VALUES (@billnum, @billdate, @DRNo, @clientID ,@companyRep, @salesRep ,@preparedBy, @approvedBy, @paymentTerms, @orderItems, @warehouseID, @base64img, @taxProperty, @discountProperty, @totalTax, @totalDiscount, @totalAmount, @billingNote, @bankDetails, @accName, @accNo, @remarks, NOW())"
+
+                Dim clientID As String = ""
+                Dim warehouseID As String = ""
+
+                ' Find clientID based on clientName
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-
-                    ' Check for duplicate QuoteNumber
-                    Using checkCmd As New MySqlCommand(checkDuplicateQuery, conn)
-                        checkCmd.Parameters.AddWithValue("@QuoteNumber", QuoteNumber)
-                        Dim count As Integer = Convert.ToInt32(checkCmd.ExecuteScalar())
-                        If count > 0 Then
-                            MessageBox.Show("Quote Number already exists. Please use a different number.")
+                    Using findClientCmd As New MySqlCommand(findclientIDquery, conn)
+                        findClientCmd.Parameters.AddWithValue("@clientName", clientName)
+                        Dim result As Object = findClientCmd.ExecuteScalar()
+                        If result IsNot Nothing AndAlso Not IsDBNull(result) Then
+                            clientID = result.ToString()
+                        Else
+                            MessageBox.Show("Client not found. Please add the client first.")
                             Return False
                         End If
                     End Using
 
-                    ' Insert quote if no duplicate
+                    ' Find warehouseID based on warehouse name
+                    Using findWarehouseCmd As New MySqlCommand(findwarehouseIDquery, conn)
+                        findWarehouseCmd.Parameters.AddWithValue("@warehouseName", warehouseName)
+                        Dim result As Object = findWarehouseCmd.ExecuteScalar()
+                        If result IsNot Nothing AndAlso Not IsDBNull(result) Then
+                            warehouseID = result.ToString()
+                        Else
+                            MessageBox.Show("Warehouse not found. Please add the warehouse first.")
+                            Return False
+                        End If
+                    End Using
+                End Using
+
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+
+                    ' Check for duplicate billingNumber
+                    Using checkCmd As New MySqlCommand(checkDuplicateQuery, conn)
+                        checkCmd.Parameters.AddWithValue("@billingNumber", billingNumber)
+                        Dim count As Integer = Convert.ToInt32(checkCmd.ExecuteScalar())
+                        If count > 0 Then
+                            MessageBox.Show("Billing Number already exists. Please use a different number.")
+                            Return False
+                        End If
+                    End Using
+
+                    ' Insert billing if no duplicate
                     Using transaction As MySqlTransaction = conn.BeginTransaction()
                         Try
-                            Using addQuoteCmd As New MySqlCommand(addQuery, conn, transaction)
-                                addQuoteCmd.Parameters.AddWithValue("@QuoteNumber", QuoteNumber)
-                                addQuoteCmd.Parameters.AddWithValue("@ReferenceNo", ReferenceNo)
-                                addQuoteCmd.Parameters.AddWithValue("@QuoteDate", QuoteDate)
-                                addQuoteCmd.Parameters.AddWithValue("@QuoteValidity", QuoteValidity)
-                                addQuoteCmd.Parameters.AddWithValue("@Tax", Tax)
-                                addQuoteCmd.Parameters.AddWithValue("@Discount", Discount)
-                                addQuoteCmd.Parameters.AddWithValue("@ClientID", ClientID)
-                                addQuoteCmd.Parameters.AddWithValue("@ClientName", ClientName)
-                                addQuoteCmd.Parameters.AddWithValue("@WarehouseID", WarehouseID)
-                                addQuoteCmd.Parameters.AddWithValue("@WarehouseName", WarehouseName)
-                                addQuoteCmd.Parameters.AddWithValue("@OrderItems", OrderItems)
-                                addQuoteCmd.Parameters.AddWithValue("@QuoteNote", QuoteNote)
-                                addQuoteCmd.Parameters.AddWithValue("@TotalTax", TotalTax)
-                                addQuoteCmd.Parameters.AddWithValue("@TotalDiscount", TotalDiscount)
-                                addQuoteCmd.Parameters.AddWithValue("@TotalPrice", TotalPrice)
-                                addQuoteCmd.Parameters.AddWithValue("@Username", Username)
-                                addQuoteCmd.Parameters.AddWithValue("@ApprovedBy", ApprovedBy)
-                                addQuoteCmd.Parameters.AddWithValue("@PaymentTerms", PaymentTerms)
+                            Using addbillingCmd As New MySqlCommand(addQuery, conn, transaction)
+                                addbillingCmd.Parameters.AddWithValue("@billnum", billingNumber)
+                                addbillingCmd.Parameters.AddWithValue("@billdate", billingDate)
+                                addbillingCmd.Parameters.AddWithValue("@DRNo", DRNo)
+                                addbillingCmd.Parameters.AddWithValue("@clientID", clientID)
+                                addbillingCmd.Parameters.AddWithValue("@companyRep", companyRep)
+                                addbillingCmd.Parameters.AddWithValue("@salesRep", salesRep)
+                                addbillingCmd.Parameters.AddWithValue("@preparedBy", preparedBy)
+                                addbillingCmd.Parameters.AddWithValue("@approvedBy", approvedBy)
+                                addbillingCmd.Parameters.AddWithValue("@paymentTerms", paymentTerms)
+                                addbillingCmd.Parameters.AddWithValue("@orderItems", OrderItems)
+                                addbillingCmd.Parameters.AddWithValue("@base64img", base64Image)
+                                addbillingCmd.Parameters.AddWithValue("@warehouseID", warehouseID)
+                                addbillingCmd.Parameters.AddWithValue("@taxProperty", tax)
+                                addbillingCmd.Parameters.AddWithValue("@discountProperty", discount)
+                                addbillingCmd.Parameters.AddWithValue("@totalTax", totalTax)
+                                addbillingCmd.Parameters.AddWithValue("@totalDiscount", totalDiscount)
+                                addbillingCmd.Parameters.AddWithValue("@totalAmount", totalAmount)
+                                addbillingCmd.Parameters.AddWithValue("@billingNote", billingNote)
+                                addbillingCmd.Parameters.AddWithValue("@bankDetails", bankDetails)
+                                addbillingCmd.Parameters.AddWithValue("@accName", accountName)
+                                addbillingCmd.Parameters.AddWithValue("@accNo", accountNumber)
+                                addbillingCmd.Parameters.AddWithValue("@remarks", remarks)
 
-                                addQuoteCmd.ExecuteNonQuery()
+                                addbillingCmd.ExecuteNonQuery()
                                 transaction.Commit()
-                                MessageBox.Show($"Successfully Added the Quote With Number {QuoteNumber}")
+                                MessageBox.Show($"Successfully Added the Billing With Number {billingNumber}")
+                                Return True
                             End Using
                         Catch ex As Exception
                             transaction.Rollback()
@@ -249,7 +306,7 @@ Namespace DPC.Data.Controllers
                     End Using
                 End Using
 
-                Return True
+
             Catch ex As Exception
                 MessageBox.Show("Unexpected error - " & ex.Message)
                 Return False
