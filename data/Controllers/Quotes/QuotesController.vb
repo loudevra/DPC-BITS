@@ -7,9 +7,147 @@ Imports System.Data
 Imports DPC.DPC.Data.Models
 Imports System.IO
 Imports DPC.DPC.Data.Controllers
+Imports Newtonsoft.Json
 
 Namespace DPC.Data.Controllers
     Public Class QuotesController
+
+        Public Shared Function GetOrders(limit As Integer) As ObservableCollection(Of QuotesModel)
+            Dim quotes As New ObservableCollection(Of QuotesModel)
+
+            ' In a real implementation, this would query the database
+            ' Example implementation:
+            Try
+
+
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+
+                    conn.Open()
+
+                    ' Query only the product table and join with productnovariation to get buying price
+                    ' This ensures we only get unique products that belong to the selected supplier
+                    Dim query As String = "
+                    SELECT * FROM quotes 
+                    ORDER BY QuoteNumber ASC 
+                    LIMIT " & limit
+                    Using cmd As New MySqlCommand(query, conn)
+
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            While reader.Read()
+
+                                Dim list As List(Of Dictionary(Of String, Object)) =
+    JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, Object)))(reader("OrderItems"))
+
+                                Dim ItemList As String = Nothing
+
+                                For Each item In list
+                                    ItemList = ItemList & item("Quantity") & "pc/s " & item("ProductName") & ", "
+                                Next
+
+                                ItemList = ItemList.TrimEnd(", ".ToCharArray())
+
+                                quotes.Add(New QuotesModel() With {
+                                        .QuoteNumber = reader("QuoteNumber").ToString(),
+                                        .Reference = reader("ReferenceNo").ToString(),
+                                        .QuoteDate = reader.GetDateTime("QuoteDate").ToString("MMMM d, yyyy"),
+                                        .Validity = reader.GetDateTime("QuoteValidity").ToString("MMMM d, yyyy"),
+                                        .Tax = reader("Tax").ToString(),
+                                        .Discount = reader("Discount").ToString(),
+                                        .ClientID = reader("ClientID").ToString(),
+                                        .ClientName = reader("ClientName").ToString(),
+                                        .WarehouseID = reader("WarehouseID").ToString(),
+                                        .WarehouseName = reader("WarehouseName").ToString(),
+                                        .OrderItems = ItemList,
+                                        .QuoteNote = If(reader("QuoteNote") Is DBNull.Value, String.Empty, reader("QuoteNote").ToString()),
+                                        .TotalTax = reader("TotalTax"),
+                                        .TotalDiscount = reader("TotalDiscount"),
+                                        .TotalPrice = reader("TotalPrice")
+                                    })
+                            End While
+                        End Using
+                    End Using
+
+                End Using
+
+            Catch ex As Exception
+
+            End Try
+
+            Return quotes
+        End Function
+
+
+
+        Public Shared Function GetOrdersSearch(_searchText As String, limit As Integer) As ObservableCollection(Of QuotesModel)
+            Dim quotes As New ObservableCollection(Of QuotesModel)
+
+            ' In a real implementation, this would query the database
+            ' Example implementation:
+            Try
+
+
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+
+                    conn.Open()
+
+                    ' Query only the product table and join with productnovariation to get buying price
+                    ' This ensures we only get unique products that belong to the selected supplier
+                    Dim query As String = "
+        SELECT *
+        FROM quotes
+        WHERE QuoteNumber LIKE @searchText 
+            OR QuoteDate LIKE @searchText
+            Or QuoteValidity LIKE @searchText
+        ORDER BY QuoteNumber ASC
+        LIMIT " & limit
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@searchText", "%" & _searchText & "%")
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            While reader.Read()
+
+                                Dim list As List(Of Dictionary(Of String, Object)) =
+    JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, Object)))(reader("OrderItems"))
+
+                                Dim ItemList As String = Nothing
+
+                                For Each item In list
+                                    ItemList = ItemList & item("Quantity") & "pc/s " & item("ProductName") & ", "
+                                Next
+
+                                ItemList = ItemList.TrimEnd(", ".ToCharArray())
+
+                                quotes.Add(New QuotesModel() With {
+                                        .QuoteNumber = reader("QuoteNumber").ToString(),
+                                        .Reference = reader("ReferenceNo").ToString(),
+                                        .QuoteDate = reader.GetDateTime("QuoteDate").ToString("MMMM d, yyyy"),
+                                        .Validity = reader.GetDateTime("QuoteValidity").ToString("MMMM d, yyyy"),
+                                        .Tax = reader("Tax").ToString(),
+                                        .Discount = reader("Discount").ToString(),
+                                        .ClientID = reader("ClientID").ToString(),
+                                        .ClientName = reader("ClientName").ToString(),
+                                        .WarehouseID = reader("WarehouseID").ToString(),
+                                        .WarehouseName = reader("WarehouseName").ToString(),
+                                        .OrderItems = ItemList,
+                                        .QuoteNote = If(reader("QuoteNote") Is DBNull.Value, String.Empty, reader("QuoteNote").ToString()),
+                                        .TotalTax = reader("TotalTax"),
+                                        .TotalDiscount = reader("TotalDiscount"),
+                                        .TotalPrice = reader("TotalPrice")
+                                    })
+                            End While
+                        End Using
+                    End Using
+
+                End Using
+
+            Catch ex As Exception
+
+            End Try
+
+            Return quotes
+
+        End Function
+
+
         ' Search for the recent QuoteID then add 1 and check if it exists
         Public Shared Function GenerateQuoteID() As String
             Dim prefix As String = "CE-"
@@ -255,5 +393,7 @@ Namespace DPC.Data.Controllers
                 Return False
             End Try
         End Function
+
+
     End Class
 End Namespace
