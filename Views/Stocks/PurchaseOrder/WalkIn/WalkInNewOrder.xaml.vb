@@ -1316,6 +1316,10 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 MessageBox.Show("Please Fill up all of the Fields")
             End Try
         End Sub
+
+        Private Sub BtnAddClient_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddClient.Click
+            ViewLoader.DynamicView.NavigateToView("newwalkinclient", Me)
+        End Sub
 #End Region
     End Class
 End Namespace
