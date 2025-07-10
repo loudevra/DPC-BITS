@@ -1,0 +1,76 @@
+﻿<UserControl x:Class="DPC.Components.ConfirmationModals.HRMDeleteEmployee"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="namespace:DPC.Components.ConfirmationModals"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    Background="#80000000"
+    Width="671" Height="261">
+
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+        <!-- Modal Background -->
+        <Border Background="White" CornerRadius="20" BorderBrush="#E53935" BorderThickness="2" Padding="30"
+                Width="671" Height="261">
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Width="600">
+
+                <!-- Title -->
+                <TextBlock Text="Delete Employee Details?"
+                           FontSize="32"
+                           FontWeight="Bold"
+                           Foreground="#E53935"
+                           HorizontalAlignment="Left"/>
+
+                <!-- Message -->
+                <TextBlock Text="You will lose all the information entered for this employee."
+                           FontSize="20"
+                           Foreground="Gray"
+                           FontWeight="Medium"
+                           TextAlignment="Left"
+                           Margin="0,13,0,40"
+                           TextWrapping="Wrap"
+                           Width="543"
+                           HorizontalAlignment="Left"/>
+
+                <!-- Buttons Grid -->
+                <Grid Width="500">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1">
+
+                        <!-- Keep Editing Button (Outlined) -->
+                        <Button Content="Cancel"
+                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                materialDesign:ButtonAssist.CornerRadius="20"
+                                Foreground="Gray"
+                                BorderBrush="Gray"
+                                FontWeight="SemiBold"   
+                                FontSize="14"
+                                Padding="10,5"
+                                Width="150"
+                                Height="35"
+                                x:Name="Cancel"
+                                Click="Cancel_Click" Margin="1,7,9,0"/>
+
+                        <!-- Cancel Button (Raised) -->
+                        <Button Content="Yes"
+                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                materialDesign:ButtonAssist.CornerRadius="20"
+                                Foreground="White"
+                                FontWeight="SemiBold"   
+                                FontSize="14"
+                                Padding="10,5"
+                                Width="120"
+                                Height="35"
+                                Margin="0,35,-51,28"
+                                x:Name="Confirm"
+                                Click="Confirm_Click"
+                                Background="#E53935"/>
+                    </StackPanel>
+                </Grid>
+
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

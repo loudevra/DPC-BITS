@@ -129,6 +129,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New HRM.Employees.Employees.AddEmployee()
                     Case "viewemployee"
                         Return New HRM.Employees.Employees.EmployeesView()
+                    Case "hrmeditemployee"
+                        Return New HRM.Employees.Employees.EditEmployee()
 
                          ' Sales Module Navigation
                     Case "salesnewinvoice"
@@ -377,6 +379,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "payrolltransaction"
             ElseIf typeName = "addnewemployee" Then
                 Return "addnewemployee"
+            ElseIf typeName = "hrmeditemployee" Then
+                Return "hrmeditemployee"
             ElseIf typeName = "viewemployee" Then
                 Return "viewemployee"
                 ' Sales Module Navigation

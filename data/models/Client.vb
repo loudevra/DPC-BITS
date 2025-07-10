@@ -12,6 +12,7 @@
         Public Property ClientLanguage As String
         Public Property CreatedAt As DateTime
         Public Property UpdatedAt As DateTime
+        Public Property ClientType As String
     End Class
 
     Public Class ClientCorporational
