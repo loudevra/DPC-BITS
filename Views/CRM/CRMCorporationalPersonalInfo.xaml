@@ -58,7 +58,7 @@
 
             <!-- Submit Button -->
             <StackPanel Margin="20">
-                <Button Click="AddClient" x:Name="btnAdd" Background="Transparent" HorizontalAlignment="Right" BorderThickness="0" VerticalAlignment="Center">
+                <Button x:Name="btnAdd" Background="Transparent" HorizontalAlignment="Right" BorderThickness="0" VerticalAlignment="Center">
                     <Border CornerRadius="20" Background="#52C69D" Height="40" Width="150">
                         <TextBlock Text="Add" FontFamily="{StaticResource Lexend}" Foreground="White" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Border>

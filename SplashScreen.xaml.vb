@@ -1,9 +1,11 @@
-Imports MySql.Data.MySqlClient
 Imports System.Threading.Tasks
-Imports System.Windows.Media.Animation
 Imports System.Windows.Media
+Imports System.Windows.Media.Animation
 Imports System.Windows.Media.Effects
 Imports DPC.DPC.Data.Helpers
+Imports MongoDB.Driver
+Imports MongoDB.Driver.GridFS
+Imports MySql.Data.MySqlClient
 
 Namespace DPC
     Public Class SplashScreen
@@ -105,5 +107,20 @@ Namespace DPC
         Public Shared Function GetDatabaseConnection() As MySqlConnection
             Return New MySqlConnection(ConnectionString) ' Returns a pooled connection
         End Function
+
+        Public Shared Function GetMongoDatabaseConnection() As IMongoDatabase
+            Dim settings As New MongoClientSettings With {
+                .Server = New MongoServerAddress(EnvLoader.GetEnv("MDB_HOST"), EnvLoader.GetEnv("MDB_PORT")),
+                .Credential = MongoCredential.CreateCredential(EnvLoader.GetEnv("MDB_NAME"), EnvLoader.GetEnv("MDB_USER"), EnvLoader.GetEnv("MDB_PASS"))
+            }
+
+            Dim client As New MongoClient(settings)
+            Return client.GetDatabase("FileSystem")
+        End Function
+
+        Public Shared Function GetGridFSConnection() As GridFSBucket
+            Return New GridFSBucket(GetMongoDatabaseConnection())
+        End Function
+
     End Class
 End Namespace

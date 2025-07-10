@@ -8,6 +8,48 @@
         mc:Ignorable="d"
         Background="#D9D9D9">
 
+    <UserControl.Resources>
+        <!-- Modern ScrollBar Style for Vertical and Horizontal -->
+        <Style x:Key="ModernScrollBarStyle" TargetType="ScrollBar">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Width" Value="800"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollBar}">
+                        <Grid Background="{TemplateBinding Background}">
+                            <Track x:Name="PART_Track"
+                                   IsDirectionReversed="false"
+                                   Focusable="false"
+                                   Orientation="{TemplateBinding Orientation}">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Style="{x:Null}" IsTabStop="False" Opacity="0"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb>
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="{x:Type Thumb}">
+                                                <Border x:Name="ThumbBorder" CornerRadius="4" Background="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="ThumbBorder" Property="Background" Value="#222222"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Style="{x:Null}" IsTabStop="False" Opacity="0"/>
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
     <Grid x:Name="mainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -82,140 +124,145 @@
         </StackPanel>
 
         <!-- DataGrid Section - Scrollable Content -->
-        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="20,0">
-            <DataGrid Name="dataGrid"
-                      AutoGenerateColumns="False"
-                      CanUserAddRows="False"
-                      HeadersVisibility="Column"
-                      GridLinesVisibility="None"
-                      RowBackground="White"
-                      AlternatingRowBackground="WhiteSmoke"
-                      BorderThickness="0"
-                      FontFamily="Lexend">
+        <DataGrid Name="dataGrid"
+                  Grid.Row="2"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="None"
+                  RowBackground="White"
+                  AlternatingRowBackground="WhiteSmoke"
+                  BorderThickness="0"
+                  FontFamily="Lexend"
+                  Margin="20,0"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto">
+            <DataGrid.Resources>
+                <!-- Apply the modern ScrollBar style to all scrollbars within this DataGrid -->
+                <Style TargetType="ScrollBar" BasedOn="{StaticResource ModernScrollBarStyle}" />
+            </DataGrid.Resources>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Margin" Value="0,5,0,5"/>
+                    <Setter Property="Padding" Value="5"/>
+                    <Setter Property="Height" Value="Auto"/>
+                    <Setter Property="MinHeight" Value="40"/>
+                </Style>
+            </DataGrid.RowStyle>
 
-                <DataGrid.RowStyle>
-                    <Style TargetType="DataGridRow">
-                        <Setter Property="Margin" Value="0,5,0,5"/>
-                        <Setter Property="Padding" Value="5"/>
-                        <Setter Property="Height" Value="Auto"/>
-                        <Setter Property="MinHeight" Value="40"/>
-                    </Style>
-                </DataGrid.RowStyle>
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="FontFamily" Value="Lexend"/>
+                    <Setter Property="FontSize" Value="13"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="Foreground" Value="#474747"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    <Setter Property="Padding" Value="10,5"/>
+                    <Setter Property="Background" Value="White"/>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
 
-                <DataGrid.ColumnHeaderStyle>
-                    <Style TargetType="DataGridColumnHeader">
-                        <Setter Property="FontFamily" Value="Lexend"/>
-                        <Setter Property="FontSize" Value="13"/>
-                        <Setter Property="FontWeight" Value="SemiBold"/>
-                        <Setter Property="Foreground" Value="#474747"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                        <Setter Property="VerticalContentAlignment" Value="Center"/>
-                        <Setter Property="Padding" Value="10,5"/>
-                        <Setter Property="Background" Value="White"/>
-                    </Style>
-                </DataGrid.ColumnHeaderStyle>
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="Padding" Value="10,5"/>
+                    <Setter Property="FontFamily" Value="Lexend"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="DataGridCell">
+                                <Border Padding="{TemplateBinding Padding}" 
+                                        BorderBrush="{TemplateBinding BorderBrush}" 
+                                        BorderThickness="{TemplateBinding BorderThickness}" 
+                                        Background="{TemplateBinding Background}">
+                                    <ContentPresenter VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Setter Property="TextBlock.TextWrapping" Value="NoWrap"/>
+                    <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis"/>
+                </Style>
+            </DataGrid.CellStyle>
 
-                <DataGrid.CellStyle>
-                    <Style TargetType="DataGridCell">
-                        <Setter Property="Padding" Value="10,5"/>
-                        <Setter Property="FontFamily" Value="Lexend"/>
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="DataGridCell">
-                                    <Border Padding="{TemplateBinding Padding}" 
-                                            BorderBrush="{TemplateBinding BorderBrush}" 
-                                            BorderThickness="{TemplateBinding BorderThickness}" 
-                                            Background="{TemplateBinding Background}">
-                                        <ContentPresenter VerticalAlignment="Center"/>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                        <Setter Property="TextBlock.TextWrapping" Value="NoWrap"/>
-                        <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis"/>
-                    </Style>
-                </DataGrid.CellStyle>
-
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="#" Binding="{Binding SupplierID}" Width="120">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="FontFamily" Value="Lexend"/>
-                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="Name" Binding="{Binding SupplierName}" Width="120">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="FontFamily" Value="Lexend"/>
-                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                <Setter Property="ToolTip" Value="{Binding SupplierName}"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="Company" Binding="{Binding SupplierCompany}" Width="120">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="FontFamily" Value="Lexend"/>
-                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="Address" Binding="{Binding OfficeAddress}" Width="200">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="FontFamily" Value="Lexend"/>
-                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                <Setter Property="ToolTip" Value="{Binding OfficeAddress}"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="Email" Binding="{Binding SupplierEmail}" Width="150">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="FontFamily" Value="Lexend"/>
-                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                <Setter Property="ToolTip" Value="{Binding SupplierEmail}"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="Phone" Binding="{Binding SupplierPhone}" Width="120">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="FontFamily" Value="Lexend"/>
-                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="Brands" Binding="{Binding BrandNames}" Width="120">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="FontFamily" Value="Lexend"/>
-                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                <Setter Property="ToolTip" Value="{Binding BrandNames}"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTemplateColumn Header="Settings" Width="80">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Width="30" Height="30" Background="Transparent" Margin="0" ToolTip="Delete" Cursor="Hand" Click="DeleteProduct">
-                                    <materialDesign:PackIcon Kind="DeleteOutline" Width="16" Height="16" Foreground="#E65E5E"/>
-                                </Button>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
-        </ScrollViewer>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="#" Binding="{Binding SupplierID}" Width="120">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontFamily" Value="Lexend"/>
+                            <Setter Property="TextWrapping" Value="NoWrap"/>
+                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Name" Binding="{Binding SupplierName}" Width="120">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontFamily" Value="Lexend"/>
+                            <Setter Property="TextWrapping" Value="NoWrap"/>
+                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                            <Setter Property="ToolTip" Value="{Binding SupplierName}"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Company" Binding="{Binding SupplierCompany}" Width="120">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontFamily" Value="Lexend"/>
+                            <Setter Property="TextWrapping" Value="NoWrap"/>
+                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Address" Binding="{Binding OfficeAddress}" Width="200">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontFamily" Value="Lexend"/>
+                            <Setter Property="TextWrapping" Value="NoWrap"/>
+                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                            <Setter Property="ToolTip" Value="{Binding OfficeAddress}"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Email" Binding="{Binding SupplierEmail}" Width="150">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontFamily" Value="Lexend"/>
+                            <Setter Property="TextWrapping" Value="NoWrap"/>
+                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                            <Setter Property="ToolTip" Value="{Binding SupplierEmail}"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Phone" Binding="{Binding SupplierPhone}" Width="120">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontFamily" Value="Lexend"/>
+                            <Setter Property="TextWrapping" Value="NoWrap"/>
+                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Brands" Binding="{Binding BrandNames}" Width="120">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontFamily" Value="Lexend"/>
+                            <Setter Property="TextWrapping" Value="NoWrap"/>
+                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                            <Setter Property="ToolTip" Value="{Binding BrandNames}"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTemplateColumn Header="Settings" Width="80">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Width="30" Height="30" Background="Transparent" Margin="0" ToolTip="Delete" Cursor="Hand" Click="DeleteProduct">
+                                <materialDesign:PackIcon Kind="DeleteOutline" Width="16" Height="16" Foreground="#E65E5E"/>
+                            </Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
 
         <!-- Pagination Section - Fixed at bottom -->
         <StackPanel x:Name="paginationPanel" Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,20">

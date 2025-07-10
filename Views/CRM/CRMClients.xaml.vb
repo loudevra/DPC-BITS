@@ -1,79 +1,18 @@
-﻿Imports System.Windows
-Imports System.Windows.Controls.Primitives
-Imports System.Windows.Threading
+﻿Imports System.Windows.Controls.Primitives
 Imports DPC.DPC.Data.Controllers
+Imports System.Windows
 Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Views.CRM
 
 
     Public Class CRMClients
-
-        Private _typingTimer As DispatcherTimer
         Public Sub New()
 
             ' This call is required by the designer.
             InitializeComponent()
 
             ' Add any initialization after the InitializeComponent() call.
-            LoadClients()
-
-            _typingTimer = New DispatcherTimer With {
-               .Interval = TimeSpan.FromMilliseconds(250)
-           }
-
-            AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
-        End Sub
-
-        Private Sub LoadClients()
-            If String.IsNullOrWhiteSpace(SearchTxt.Text) Then
-                dataGrid.ItemsSource = Nothing
-                dataGrid.ItemsSource = ClientController.GetAllClients()
-            Else
-                dataGrid.ItemsSource = Nothing
-                dataGrid.ItemsSource = ClientController.SearchClients(SearchTxt.Text)
-            End If
-
-        End Sub
-
-        Private Sub DataGrid_CellClick(sender As Object, e As MouseButtonEventArgs)
-            Dim depObj As DependencyObject = TryCast(e.OriginalSource, DependencyObject)
-
-            Dim cell = TryCast(depObj, TextBlock)
-
-            If TypeOf cell Is TextBlock Then
-                ' Show popup near the clicked cell
-                PopupText.Text = cell.Text
-                CellValuePopup.PlacementTarget = sender
-                CellValuePopup.IsOpen = True
-            End If
-
-        End Sub
-
-        Private Sub SearchText_TextChanged(sender As Object, e As TextChangedEventArgs)
-            ' Reset the timer
-            _typingTimer.Stop()
-
-            ' Start the timer
-            _typingTimer.Start()
-        End Sub
-
-        Private Sub OnTypingTimerTick(sender As Object, e As EventArgs)
-            ' Stop the timer
-            _typingTimer.Stop()
-
-            LoadClients()
-        End Sub
-
-        Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
-            ' Check if DataGrid has data
-            If dataGrid.Items.Count = 0 Then
-                MessageBox.Show("No data to export!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning)
-                Exit Sub
-            End If
-
-            ' Use the ExcelExporter helper with column exclusions
-            ExcelExporter.ExportDataGridToExcel(dataGrid, "ClientsExport", "Clients List")
 
         End Sub
 

@@ -45,26 +45,5 @@ Namespace DPC.Data.Controllers
             End Try
             Return clientGroups
         End Function
-
-        Public Shared Function GetCustomerGroup() As List(Of KeyValuePair(Of Integer, String))
-            Dim customerGroup As New List(Of KeyValuePair(Of Integer, String))
-            Try
-                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                    conn.Open()
-                    Dim query As String = "SELECT * FROM clientgroup"
-                    Using cmd As New MySqlCommand(query, conn)
-                        Using reader As MySqlDataReader = cmd.ExecuteReader()
-                            While reader.Read()
-                                customerGroup.Add(New KeyValuePair(Of Integer, String)(reader.GetInt32("ClientGroupID"), reader.GetString("GroupName")))
-                            End While
-                        End Using
-                    End Using
-                End Using
-            Catch ex As Exception
-                Console.WriteLine("Error fetching ClientGroups: " & ex.Message)
-            End Try
-            Return customerGroup
-        End Function
-
     End Class
 End Namespace
