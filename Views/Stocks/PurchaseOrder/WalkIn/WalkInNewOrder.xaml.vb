@@ -1,4 +1,19 @@
+﻿Imports System.Collections.ObjectModel
+Imports System.IO
+Imports System.Windows.Controls.Primitives
+Imports System.Windows.Threading
+Imports DocumentFormat.OpenXml.Bibliography
+Imports DPC.DPC.Components.Forms
+Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
+Imports DPC.DPC.Data.Model
+Imports DPC.DPC.Data.Models
+Imports DPC.DPC.Views.Stocks
+Imports MySql.Data.MySqlClient
+Imports Newtonsoft.Json
+Imports System.Linq
+Imports DocumentFormat.OpenXml.Math
+Imports System.Web.UI.WebControls.Expressions
 
 Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
     Public Class WalkInNewOrder
@@ -27,6 +42,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         Dim _TaxSelection As Boolean
         Dim _SelectedTax As Decimal
 
+#Region "Initializiation once loaded the form"
         Public Sub New()
             InitializeComponent()
 
