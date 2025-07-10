@@ -707,6 +707,7 @@
     <Compile Include="Data\Models\ProductCategory.vb" />
     <Compile Include="Data\Models\PromoCode.vb" />
     <Compile Include="Data\Models\PurchaseOrderModel.vb" />
+    <Compile Include="Data\Models\QuotesModel.vb" />
     <Compile Include="Data\Models\Supplier.vb" />
     <Compile Include="Data\Models\UpdatedClient.vb" />
     <Compile Include="Data\Models\Warehouses.vb" />
