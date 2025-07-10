@@ -136,6 +136,46 @@
             <Setter Property="Padding" Value="5"/>
         </Style>
 
+        <!-- Modern ScrollBar Style -->
+        <Style x:Key="ModernScrollBarStyle" TargetType="ScrollBar">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Width" Value="800"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollBar}">
+                        <Grid Background="{TemplateBinding Background}">
+                            <Track x:Name="PART_Track"
+                                   IsDirectionReversed="false"
+                                   Focusable="false"
+                                   Orientation="{TemplateBinding Orientation}">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Style="{x:Null}" IsTabStop="False" Opacity="0"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb>
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="{x:Type Thumb}">
+                                                <Border x:Name="ThumbBorder" CornerRadius="4" Background="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="ThumbBorder" Property="Background" Value="#222222"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Style="{x:Null}" IsTabStop="False" Opacity="0"/>
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </UserControl.Resources>
 
     <Grid>
@@ -274,7 +314,7 @@
                     </Grid>
                 </Border>
                 <!-- DataGrid Section - Scrollable Content -->
-                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="10,0">
+                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="10,0" Style="{StaticResource ModernScrollViewerStyle}">
                     <DataGrid Name="dataGrid"
               AutoGenerateColumns="False"
               CanUserAddRows="False"
@@ -287,6 +327,10 @@
               FontFamily="Lexend"
               MouseLeftButtonUp="DataGrid_CellClick" 
               IsReadOnly="True">
+
+                        <DataGrid.Resources>
+                            <Style TargetType="ScrollBar" BasedOn="{StaticResource ModernScrollBarStyle}" />
+                        </DataGrid.Resources>
 
                         <DataGrid.RowStyle>
                             <Style TargetType="DataGridRow">
