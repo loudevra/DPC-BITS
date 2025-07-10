@@ -39,13 +39,13 @@
                 <!-- Phone -->
                 <TextBlock Text="Phone:" Margin="0,5,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                 <Border Style="{StaticResource RoundedBorderStyle}" Width="772">
-                    <TextBox PreviewTextInput="txtInput_PreviewTextInput" x:Name="txtPhone" Height="30" Margin="0,5,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="734"  FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
+                    <TextBox x:Name="txtPhone" Height="30" Margin="0,5,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="734"  FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
                 </Border>
 
                 <!-- Landline -->
                 <TextBlock Text="Landline:" Margin="0,5,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                 <Border Style="{StaticResource RoundedBorderStyle}" Width="772">
-                    <TextBox PreviewTextInput="txtInput_PreviewTextInput" x:Name="txtLandline" Height="30" Margin="0,5,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="734"  FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
+                    <TextBox x:Name="txtLandline" Height="30" Margin="0,5,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="734"  FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
                 </Border>
 
                 <!-- Email -->
@@ -58,7 +58,7 @@
 
             <!-- Submit Button -->
             <StackPanel Margin="20">
-                <Button Click="AddClient" x:Name="btnAdd" Background="Transparent" HorizontalAlignment="Right" BorderThickness="0" VerticalAlignment="Center">
+                <Button x:Name="btnAdd" Background="Transparent" HorizontalAlignment="Right" BorderThickness="0" VerticalAlignment="Center">
                     <Border CornerRadius="20" Background="#52C69D" Height="40" Width="150">
                         <TextBlock Text="Add" FontFamily="{StaticResource Lexend}" Foreground="White" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Border>

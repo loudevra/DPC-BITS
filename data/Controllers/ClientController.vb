@@ -99,6 +99,7 @@ Namespace DPC.Data.Controllers
                         cmd.Parameters.AddWithValue("@ClientID", client.ClientID)
                         cmd.Parameters.AddWithValue("@ClientGroupID", client.ClientGroupID)
                         cmd.Parameters.AddWithValue("@Name", client.Name)
+                        cmd.Parameters.AddWithValue("@Company", client.Company)
                         cmd.Parameters.AddWithValue("@Phone", client.Phone)
                         cmd.Parameters.AddWithValue("@Email", client.Email)
                         cmd.Parameters.AddWithValue("@BillingAddress", client.BillingAddress)
@@ -107,7 +108,6 @@ Namespace DPC.Data.Controllers
                         cmd.Parameters.AddWithValue("@Language", client.ClientLanguage)
                         cmd.Parameters.AddWithValue("@CreatedAt", DateTime.Now)
                         cmd.Parameters.AddWithValue("@UpdatedAt", DateTime.Now)
-                        cmd.Parameters.AddWithValue("@ClientType", client.ClientType)
 
                         Dim result As Integer = cmd.ExecuteNonQuery()
                         Return result > 0
@@ -134,7 +134,7 @@ Namespace DPC.Data.Controllers
         ' Function to get the next Client counter (last 4 digits)
         Private Shared Function GetNextClientCounter(datePart As String) As Integer
             Dim query As String = "SELECT MAX(CAST(SUBSTRING(ClientID, 11, 4) AS UNSIGNED)) FROM client " &
-                                  "WHERE ClientID LIKE '40" & datePart & "%'"
+                                  "WHERE ClientID LIKE '12" & datePart & "%'"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
@@ -160,105 +160,15 @@ Namespace DPC.Data.Controllers
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "SELECT 
-    ClientID,
-    BillingAddress,
-    Email,
-    Phone,
-    Name,
-    NULL AS Company
-FROM client
-
-UNION
-
-SELECT 
-    ClientID,
-    BillingAddress,
-    Email,
-    Phone,
-    NULL AS Name,
-    Company
-FROM clientcorporational;"
-
+                    Dim query As String = "SELECT * FROM client"
                     Using cmd As New MySqlCommand(query, conn)
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
-                                Dim nameOrCompany As String = ""
-
-                                If Not IsDBNull(reader("Name")) AndAlso Not String.IsNullOrWhiteSpace(reader("Name").ToString()) Then
-                                    nameOrCompany = reader("Name").ToString()
-                                ElseIf Not IsDBNull(reader("Company")) AndAlso Not String.IsNullOrWhiteSpace(reader("Company").ToString()) Then
-                                    nameOrCompany = reader("Company").ToString()
-                                End If
-
                                 Dim client As New Client With {
-                            .ClientID = reader("ClientID"),
-                            .Name = nameOrCompany,
-                            .Phone = reader("Phone").ToString(),
-                            .Email = reader("Email").ToString(),
-                            .BillingAddress = reader("BillingAddress").ToString()
-                        }
-                                clients.Add(client)
-                            End While
-                        End Using
-                    End Using
-                End Using
-            Catch ex As Exception
-                MessageBox.Show("Error fetching clients: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
-            End Try
-            Return clients
-        End Function
-
-        Public Shared Function SearchClients(_searchText As String) As ObservableCollection(Of Client)
-            Dim clients As New ObservableCollection(Of Client)()
-            Try
-                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                    conn.Open()
-                    Dim query As String = "SELECT 
-    ClientID,
-    BillingAddress,
-    Email,
-    Phone,
-    Name,
-    NULL AS Company
-FROM client
-WHERE Name LIKE @searchText 
-   OR ClientID LIKE @searchText 
-   OR Email LIKE @searchText
-
-UNION
-
-SELECT 
-    ClientID,
-    BillingAddress,
-    Email,
-    Phone,
-    NULL AS Name,
-    Company
-FROM clientcorporational
-WHERE Company LIKE @searchText 
-   OR ClientID LIKE @searchText 
-   OR Email LIKE @searchText
-
-ORDER BY Name ASC
-LIMIT 10;
-"
-
-                    Using cmd As New MySqlCommand(query, conn)
-                        cmd.Parameters.AddWithValue("@searchText", "%" & _searchText & "%")
-                        Using reader As MySqlDataReader = cmd.ExecuteReader()
-                            While reader.Read()
-                                Dim nameOrCompany As String = ""
-
-                                If Not IsDBNull(reader("Name")) AndAlso Not String.IsNullOrWhiteSpace(reader("Name").ToString()) Then
-                                    nameOrCompany = reader("Name").ToString()
-                                ElseIf Not IsDBNull(reader("Company")) AndAlso Not String.IsNullOrWhiteSpace(reader("Company").ToString()) Then
-                                    nameOrCompany = reader("Company").ToString()
-                                End If
-
-                                Dim client As New Client With {
-                            .ClientID = reader("ClientID"),
-                            .Name = nameOrCompany,
+                            .ClientID = Convert.ToInt32(reader("ClientID")),
+                            .ClientGroupID = Convert.ToInt32(reader("ClientGroupID")),
+                            .Name = reader("Name").ToString(),
+                            .Company = reader("Company").ToString(),
                             .Phone = reader("Phone").ToString(),
                             .Email = reader("Email").ToString(),
                             .BillingAddress = reader("BillingAddress").ToString(),
@@ -295,6 +205,7 @@ LIMIT 10;
                                     .ClientID = Convert.ToInt32(reader("ClientID")),
                                     .ClientGroupID = Convert.ToInt32(reader("ClientGroupID")),
                                     .Name = reader("Name").ToString(),
+                                    .Company = reader("Company").ToString(),
                                     .Phone = reader("Phone").ToString(),
                                     .Email = reader("Email").ToString(),
                                     .BillingAddress = reader("BillingAddress").ToString(),

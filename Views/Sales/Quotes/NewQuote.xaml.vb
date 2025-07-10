@@ -138,8 +138,6 @@ Namespace DPC.Views.Sales.Quotes
                 If previousSupplier Is Nothing OrElse previousSupplier.ClientID <> _selectedClient.ClientID Then
                     ClearAllRows()
                 End If
-
-            
             End If
         End Sub
 
