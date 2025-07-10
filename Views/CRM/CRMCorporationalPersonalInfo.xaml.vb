@@ -16,6 +16,14 @@ Namespace DPC.Views.CRM
             AddHandler txtEmail.TextChanged, AddressOf SetInfo
         End Sub
 
+        Private Sub txtInput_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
+            ' Regex allows digits, symbols, and space
+            Dim pattern As String = "^[0-9!@#$%^&*()_\-+=\.,:;?/ ]$"
+            If Not System.Text.RegularExpressions.Regex.IsMatch(e.Text, pattern) Then
+                e.Handled = True
+            End If
+        End Sub
+
         Private Sub SetInfo()
             CorporationalClientDetails.CompanyName = txtCompanyName.Text
             CorporationalClientDetails.Representative = txtRepresentative.Text
@@ -115,4 +123,3 @@ Namespace DPC.Views.CRM
     End Class
 
 End Namespace
-
