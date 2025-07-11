@@ -142,5 +142,8 @@ Namespace DPC.Components.UI
             ViewLoader.DynamicView.NavigateToView("editbrand", Me)
         End Sub
 
+        Private Sub FileCabinet(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("hrmefiles", Me)
+        End Sub
     End Class
 End Namespace

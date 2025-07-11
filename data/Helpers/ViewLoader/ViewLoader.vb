@@ -131,6 +131,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New HRM.Employees.Employees.EmployeesView()
                     Case "hrmeditemployee"
                         Return New HRM.Employees.Employees.EditEmployee()
+                    Case "hrmefiles"
+                        Return New HRM.Files.ManageFile()
 
                          ' Sales Module Navigation
                     Case "salesnewinvoice"
@@ -324,6 +326,10 @@ Namespace DPC.Data.Helpers.ViewLoader
                 ' Employees Navigation
             ElseIf typeName = "permissions" Then
                 Return "permissions"
+
+            ' HRM Files Navigation
+            ElseIf typeName = "hrmefiles" Then
+                Return "hrmefiles"
 
             ElseIf typeName = "holidays" Then
                 Return "holidays"

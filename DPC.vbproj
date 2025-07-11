@@ -645,6 +645,7 @@
     <Compile Include="Data\Controllers\EmployeeController.vb" />
     <Compile Include="Data\Controllers\CalendarController.vb" />
     <Compile Include="Data\Controllers\EmployeeLoginHistoryController.vb" />
+    <Compile Include="Data\Controllers\HRM\FilesContoller.vb" />
     <Compile Include="Data\Controllers\HRM\HRMController.vb" />
     <Compile Include="Data\Controllers\ManageProductsController.vb" />
     <Compile Include="Data\Controllers\Permissions\PermissionItem.vb" />
@@ -703,6 +704,7 @@
     <Compile Include="Data\Models\Document.vb" />
     <Compile Include="Data\Models\Employee.vb" />
     <Compile Include="Data\Helpers\ExcelExporter.vb" />
+    <Compile Include="Data\Models\Files.vb" />
     <Compile Include="Data\Models\ManageProducts.vb" />
     <Compile Include="Data\Models\Invoice.vb" />
     <Compile Include="Data\Models\PermissionItem.vb" />
@@ -947,6 +949,9 @@
     </Compile>
     <Compile Include="Views\HRM\Employees\Salaries\EmployeeSalaries.xaml.vb">
       <DependentUpon>EmployeeSalaries.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HRM\Files\ManageFile.xaml.vb">
+      <DependentUpon>ManageFile.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Misc\Documents\AddDocument.xaml.vb">
       <DependentUpon>AddDocument.xaml</DependentUpon>
@@ -1770,6 +1775,10 @@
     <Page Include="Views\HRM\Employees\Salaries\EmployeeSalaries.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\HRM\Files\ManageFile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Misc\Documents\AddDocument.xaml">
       <Generator>MSBuild:Compile</Generator>
