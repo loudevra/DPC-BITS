@@ -158,19 +158,6 @@
                         </Hyperlink>
                     </TextBlock>
                 </Grid>
-
-                <Grid Margin="0,8,0,8">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <materialDesign:PackIcon Kind="FileCabinet" Foreground="White" Width="20" Height="20" Margin="10,0,0,0"/>
-                    <TextBlock Grid.Column="1">
-                        <Hyperlink Click="FileCabinet">
-                            <TextBlock Text="Files" Style="{StaticResource MainMenuItemStyle}"/>
-                        </Hyperlink>
-                    </TextBlock>
-                </Grid>
             </StackPanel>
         </materialDesign:Card>
     </Grid>
