@@ -38,6 +38,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Stocks.ProductCategories.ProductCategories()
                     Case "manageproducts"
                         Return New Stocks.ItemManager.ProductManager.ManageProducts()
+                    Case "consumables"
+                        Return New Stocks.ItemManager.Consumables.Consumables()
                     Case "newproducts"
                         Return New Stocks.ItemManager.NewProduct.AddNewProducts()
                     Case "editproduct"
@@ -456,6 +458,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "pulloutreceipt"
             ElseIf typeName = "pulloutpreview" Then
                 Return "pulloutpreview"
+
+            ElseIf typeName = "consumables" Then
+                Return "consumables"
             Else
                 Return typeName
             End If
