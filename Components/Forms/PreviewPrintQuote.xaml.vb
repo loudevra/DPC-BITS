@@ -1,5 +1,6 @@
 ﻿Imports System.Collections.ObjectModel
 Imports System.IO
+Imports System.Text.Json
 Imports System.Windows.Markup
 Imports DocumentFormat.OpenXml.Bibliography
 Imports DPC.DPC.Data.Controllers
@@ -7,6 +8,11 @@ Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
 Imports DPC.DPC.Views.Sales.Quotes
 Imports Newtonsoft.Json
+Imports PdfSharp.Drawing
+Imports PdfSharp.Pdf
+Imports MongoDB.Driver
+Imports MongoDB.Bson
+Imports MongoDB.Driver.GridFS
 
 Namespace DPC.Components.Forms
     Public Class PreviewPrintQuote
@@ -90,8 +96,6 @@ Namespace DPC.Components.Forms
 
             ' Display the data in the DataGrid
             dataGrid.ItemsSource = itemDataSource
-
-            AddHandler SaveDb.Click, AddressOf SaveToDb
         End Sub
 
         Private Function FormatPhoneWithSpaces(raw As String) As String
@@ -117,84 +121,26 @@ Namespace DPC.Components.Forms
         End Sub
 
         Private Sub SavePrint(sender As Object, e As RoutedEventArgs)
-            Dim dlg As New PrintDialog()
-            Dim docName As String = "CostEstimate-" & DateTime.Now.ToString("yyyyMMdd-HHmmss")
+            ' Ask user: PDF or Print
+            Dim result As MessageBoxResult = MessageBox.Show("Do you want to save this as a PDF?", "Choose Output", MessageBoxButton.YesNoCancel, MessageBoxImage.Question)
 
-            If dlg.ShowDialog() = True Then
-                ' Save original parent and layout
-                Dim originalParent = VisualTreeHelper.GetParent(PrintPreview)
-                Dim originalIndex As Integer = -1
-                Dim originalMargin = PrintPreview.Margin
-                Dim originalTransform = PrintPreview.LayoutTransform
+            Dim docName As String = CEQuoteNumberCache
+            Dim savedPath As String = SaveAsPDF(docName) ' 🔒 Always generate PDF
 
-                ' Detach from parent if it's inside a Panel
-                If TypeOf originalParent Is Panel Then
-                    Dim panel = CType(originalParent, Panel)
-                    originalIndex = panel.Children.IndexOf(PrintPreview)
-                    panel.Children.Remove(PrintPreview)
-                End If
-
-                ' Remove margin and reset transform
-                PrintPreview.Margin = New Thickness(0)
-                PrintPreview.LayoutTransform = Transform.Identity
-
-                ' Ensure full layout and rendering
-                PrintPreview.UpdateLayout()
-                PrintPreview.Measure(New Size(Double.PositiveInfinity, Double.PositiveInfinity))
-                PrintPreview.Arrange(New Rect(PrintPreview.DesiredSize))
-                PrintPreview.UpdateLayout()
-
-                ' Define A4 size in device independent pixels (96 DPI)
-                Dim A4Width As Double = 8.3 * 96   ' ~794 pixels
-                Dim A4Height As Double = 11.69 * 96 ' ~1123 pixels
-
-                Dim borderWidth = PrintPreview.ActualWidth
-                Dim borderHeight = PrintPreview.ActualHeight
-
-                ' Calculate scale factor to fit PrintPreview inside A4
-                Dim scaleX = A4Width / borderWidth
-                Dim scaleY = A4Height / borderHeight
-                Dim scale = Math.Min(scaleX, scaleY)
-
-                ' Create container with fixed A4 size
-                Dim container As New Grid()
-                container.Width = A4Width
-                container.Height = A4Height
-                container.LayoutTransform = New ScaleTransform(scale, scale)
-                container.Children.Add(PrintPreview)
-
-                container.Measure(New Size(A4Width, A4Height))
-                container.Arrange(New Rect(New Point(0, 0), New Size(A4Width, A4Height)))
-                container.UpdateLayout()
-
-                ' Prepare fixed page with A4 dimensions
-                Dim fixedPage As New FixedPage()
-                fixedPage.Width = A4Width
-                fixedPage.Height = A4Height
-                fixedPage.Children.Add(container)
-
-                Dim pageContent As New PageContent()
-                CType(pageContent, IAddChild).AddChild(fixedPage)
-
-                Dim fixedDoc As New FixedDocument()
-                fixedDoc.Pages.Add(pageContent)
-
-                ' Print the document
-                dlg.PrintDocument(fixedDoc.DocumentPaginator, docName)
-
-                ' Restore original layout
-                container.Children.Clear()
-                PrintPreview.LayoutTransform = originalTransform
-                PrintPreview.Margin = originalMargin
-
-                If TypeOf originalParent Is Panel AndAlso originalIndex >= 0 Then
-                    Dim panel = CType(originalParent, Panel)
-                    panel.Children.Insert(originalIndex, PrintPreview)
-                End If
+            If result = MessageBoxResult.Yes Then
+                ' ➤ Save as PDF (already done above)
+                SavePdfPathToMongoDB(savedPath, CEQuoteNumberCache, CacheOnLoggedInName)
+                SaveToDb()
+            ElseIf result = MessageBoxResult.No Then
+                ' ➤ Print physically
+                PrintPhysically(docName)
+                SavePdfPathToMongoDB(savedPath, CEQuoteNumberCache, CacheOnLoggedInName)
+                SaveToDb()
+            Else
+                ' ➤ Cancelled
+                MessageBox.Show("Printing Cancelled")
+                Exit Sub
             End If
-
-            SaveToDb()
-
         End Sub
 
         Public Sub DisplaySignaturePreview()
@@ -259,6 +205,24 @@ Namespace DPC.Components.Forms
     }
         End Function
 
+        Private Sub SavePdfPathToMongoDB(filePath As String, quoteNumber As String, uploadedBy As String)
+            ' Get the MongoDB GridFS connection from SplashScreen
+            Dim gridFS As GridFSBucket = SplashScreen.GetGridFSConnection()
+
+            Using fileStream As New FileStream(filePath, FileMode.Open, FileAccess.Read)
+                Dim options As New GridFSUploadOptions() With {
+            .Metadata = New BsonDocument From {
+                {"uploadedBy", uploadedBy},
+                {"uploadedAt", BsonDateTime.Create(DateTime.UtcNow)},
+                {"source", "cost-estimate/quote"},
+                {"quoteNumber", quoteNumber},
+                {"pdfFilePath", filePath}
+            }
+        }
+
+                gridFS.UploadFromStream(Path.GetFileName(filePath), fileStream, options)
+            End Using
+        End Sub
 
         Private Sub SaveToDb()
             Dim jsonItems As String = Newtonsoft.Json.JsonConvert.SerializeObject(CEQuoteItemsCache)
@@ -291,5 +255,128 @@ Namespace DPC.Components.Forms
                 MessageBox.Show("Failed to submit quote.")
             End If
         End Sub
+
+        <Obsolete>
+        Private Function SaveAsPDF(docName As String) As String
+            Dim dpi As Integer = 300
+            Dim layoutWidth = PrintPreview.ActualWidth
+            Dim layoutHeight = PrintPreview.ActualHeight
+            Dim pixelWidth = CInt(layoutWidth * dpi / 96)
+            Dim pixelHeight = CInt(layoutHeight * dpi / 96)
+
+            Dim rtb As New RenderTargetBitmap(pixelWidth, pixelHeight, dpi, dpi, PixelFormats.Pbgra32)
+            PrintPreview.Measure(New Size(layoutWidth, layoutHeight))
+            PrintPreview.Arrange(New Rect(0, 0, layoutWidth, layoutHeight))
+            PrintPreview.UpdateLayout()
+            rtb.Render(PrintPreview)
+
+            Dim encoder As New PngBitmapEncoder()
+            encoder.Frames.Add(BitmapFrame.Create(rtb))
+            Dim stream As New MemoryStream()
+            encoder.Save(stream)
+            stream.Position = 0
+
+            Dim pdf As New PdfDocument()
+            Dim page = pdf.AddPage()
+            page.Width = XUnit.FromInch(layoutWidth / 96)
+            page.Height = XUnit.FromInch(layoutHeight / 96)
+
+            Dim gfx = XGraphics.FromPdfPage(page)
+            Dim image = XImage.FromStream(stream)
+            gfx.DrawImage(image, 0, 0, page.Width, page.Height)
+
+            Dim dlg As New Microsoft.Win32.SaveFileDialog() With {
+        .FileName = docName & ".pdf",
+        .Filter = "PDF Files (.pdf)|.pdf"
+    }
+
+            If dlg.ShowDialog() = True Then
+                pdf.Save(dlg.FileName)
+                MessageBox.Show("Saved to: " & dlg.FileName)
+                Return dlg.FileName
+            Else
+                Return Nothing
+            End If
+        End Function
+
+        Private Sub PrintPhysically(docName As String)
+            Dim dlg As New PrintDialog()
+            If dlg.ShowDialog() = True Then
+                ' Save original layout
+                Dim originalParent = VisualTreeHelper.GetParent(PrintPreview)
+                Dim originalIndex As Integer = -1
+                Dim originalMargin = PrintPreview.Margin
+                Dim originalTransform = PrintPreview.LayoutTransform
+
+                If TypeOf originalParent Is Panel Then
+                    Dim panel = CType(originalParent, Panel)
+                    originalIndex = panel.Children.IndexOf(PrintPreview)
+                    panel.Children.Remove(PrintPreview)
+                End If
+
+                ' Setup layout for printing
+                PrintPreview.Margin = New Thickness(0)
+                PrintPreview.LayoutTransform = Transform.Identity
+                PrintPreview.UpdateLayout()
+                PrintPreview.Measure(New Size(Double.PositiveInfinity, Double.PositiveInfinity))
+                PrintPreview.Arrange(New Rect(PrintPreview.DesiredSize))
+                PrintPreview.UpdateLayout()
+
+                ' A4 size (96 DPI)
+                Dim A4Width As Double = 8.3 * 96
+                Dim A4Height As Double = 11.69 * 96
+                Dim scaleX = A4Width / PrintPreview.ActualWidth
+                Dim scaleY = A4Height / PrintPreview.ActualHeight
+                Dim scale = Math.Min(scaleX, scaleY)
+
+                ' Container with scaling
+                Dim container As New Grid()
+                container.Width = A4Width
+                container.Height = A4Height
+                container.LayoutTransform = New ScaleTransform(scale, scale)
+                container.Children.Add(PrintPreview)
+
+                container.Measure(New Size(A4Width, A4Height))
+                container.Arrange(New Rect(New Point(0, 0), New Size(A4Width, A4Height)))
+                container.UpdateLayout()
+
+                ' Create print content
+                Dim fixedPage As New FixedPage()
+                fixedPage.Width = A4Width
+                fixedPage.Height = A4Height
+                fixedPage.Children.Add(container)
+
+                Dim pageContent As New PageContent()
+                CType(pageContent, IAddChild).AddChild(fixedPage)
+
+                Dim fixedDoc As New FixedDocument()
+                fixedDoc.Pages.Add(pageContent)
+
+                ' Print
+                dlg.PrintDocument(fixedDoc.DocumentPaginator, docName)
+
+                ' Restore layout
+                container.Children.Clear()
+                PrintPreview.LayoutTransform = originalTransform
+                PrintPreview.Margin = originalMargin
+
+                If TypeOf originalParent Is Panel AndAlso originalIndex >= 0 Then
+                    Dim panel = CType(originalParent, Panel)
+                    panel.Children.Insert(originalIndex, PrintPreview)
+                End If
+            End If
+        End Sub
+
+        Private Sub SaveDb_Click(sender As Object, e As RoutedEventArgs)
+            Dim docName As String = "CE-" & DateTime.Now.ToString("yyyyMMdd-HHmmss")
+            Dim savedPath As String = SaveAsPDF(docName)
+            SavePdfPathToMongoDB(savedPath, CEQuoteNumberCache, CacheOnLoggedInName)
+            If Not String.IsNullOrEmpty(savedPath) Then
+                SaveToDb()
+            Else
+                MessageBox.Show("PDF save cancelled. Data not saved.")
+            End If
+        End Sub
+
     End Class
 End Namespace

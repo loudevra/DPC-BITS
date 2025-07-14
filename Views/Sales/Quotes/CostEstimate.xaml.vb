@@ -62,7 +62,7 @@ Namespace DPC.Views.Sales.Quotes
             AddressLineTwo.Text = CostEstimateDetails.CERegion & ", " & CostEstimateDetails.CECountry    ' -- important when editing
             PhoneBox.Text = "Tel No.: +63 " & FormatPhoneWithSpaces(CostEstimateDetails.CEPhone)
             EmailBox.Text = CostEstimateDetails.CEEmail
-            noteBox.Text = CostEstimateDetails.CEnoteTxt
+            noteBox.Text = CostEstimateDetails.CEpaperNote
             remarksBox.Text = CostEstimateDetails.CEremarksTxt
             Term1.Text = CostEstimateDetails.CETerm1
             Term2.Text = CostEstimateDetails.CETerm2
@@ -116,10 +116,32 @@ Namespace DPC.Views.Sales.Quotes
 
 #Region "Computation Part"
         Private Sub Delivery_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim tb As TextBox = TryCast(sender, TextBox)
+            If tb Is Nothing Then Exit Sub
+
+            RemoveHandler tb.TextChanged, AddressOf Delivery_TextChanged
+
+            If Not tb.Text.StartsWith("₱ ") Then
+                tb.Text = "₱ " & tb.Text.Replace("₱", "").TrimStart()
+                tb.CaretIndex = tb.Text.Length
+            End If
+
+            AddHandler tb.TextChanged, AddressOf Delivery_TextChanged
             ComputeCost(sender, e)
         End Sub
 
         Private Sub Installation_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim tb As TextBox = TryCast(sender, TextBox)
+            If tb Is Nothing Then Exit Sub
+
+            RemoveHandler tb.TextChanged, AddressOf Installation_TextChanged
+
+            If Not tb.Text.StartsWith("₱ ") Then
+                tb.Text = "₱ " & tb.Text.Replace("₱", "").TrimStart()
+                tb.CaretIndex = tb.Text.Length
+            End If
+
+            AddHandler tb.TextChanged, AddressOf Installation_TextChanged
             ComputeCost(sender, e)
         End Sub
 
@@ -265,6 +287,7 @@ Namespace DPC.Views.Sales.Quotes
             If Decimal.TryParse(Delivery.Text.Replace("₱", "").Replace(",", "").Trim(), CEDeliveryCost) = False Then
                 CEDeliveryCost = 0D ' fallback value if conversion fails
             End If
+            CostEstimateDetails.CEpaperNote = noteBox.Text ' Changed 07/09/2025 to noteBox
             CostEstimateDetails.CEApproved = cmbApproved.Text
             CostEstimateDetails.CEpaymentTerms = cmbTerms.Text
             If CostEstimateDetails.CEisCustomTerm = True Then
@@ -342,6 +365,10 @@ Namespace DPC.Views.Sales.Quotes
             Else
                 CostEstimateDetails.CEisCustomTerm = False
             End If
+        End Sub
+
+        Private Sub VAT12_TextChanged(sender As Object, e As TextChangedEventArgs)
+
         End Sub
 #End Region
     End Class

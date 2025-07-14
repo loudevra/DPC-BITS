@@ -14,6 +14,9 @@
     Public CETotalDiscountValueCache As String
     Public CETaxValueCache As String
     Public CETotalAmountCache As String
+    Public CEpaperNote As String = "Bank Details : " & vbCrLf &
+                                    "Acc. Name: " & vbCrLf &
+                                    "Acc. No:"
     Public CEnoteTxt, CEremarksTxt, CEpaymentTerms As String ' Notes, remarks, and payment terms need to render when editing
     Public CEQuoteItemsCache As List(Of Dictionary(Of String, String)) ' Already Cached
     Public CEsignature, CEisCustomTerm As Boolean
