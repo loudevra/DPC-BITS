@@ -39,9 +39,9 @@
             </Grid>
 
             <Border  Grid.Row="1" Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10">
-                <TextBox Height="300" x:Name="txtEdited" TextWrapping="Wrap" Margin="15,10" BorderThickness="0" FontFamily="{StaticResource Lexend}" FontSize="15"/>
+                <TextBox Height="300" AcceptsReturn="True" x:Name="txtEdited" TextWrapping="Wrap" Margin="15,10" BorderThickness="0" FontFamily="{StaticResource Lexend}" FontSize="15"/>
             </Border>
-            <Button  IsDefault="True" Click="SaveEdit"  Grid.Row="2" Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#52C69D" >
+            <Button Click="SaveEdit"  Grid.Row="2" Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#52C69D" >
                 <TextBlock Text="Save" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="15"/>
             </Button>
         </Grid>
