@@ -1067,6 +1067,12 @@
     <Compile Include="Views\Sales\Subscriptions\Subscriptions.xaml.vb">
       <DependentUpon>Subscriptions.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Stocks\ItemManager\Consumables\AddConsumables.xaml.vb">
+      <DependentUpon>AddConsumables.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\ItemManager\Consumables\Consumables.xaml.vb">
+      <DependentUpon>Consumables.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stocks\ItemManager\NewProduct\ProductBatchEdit.xaml.vb">
       <DependentUpon>ProductBatchEdit.xaml</DependentUpon>
     </Compile>
@@ -1929,6 +1935,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Sales\Subscriptions\Subscriptions.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\ItemManager\Consumables\AddConsumables.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Stocks\ItemManager\Consumables\Consumables.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

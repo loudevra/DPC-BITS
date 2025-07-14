@@ -97,6 +97,11 @@
                                     <TextBlock Text="Product Manager" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
+                            <TextBlock Margin="10,3,0,3">
+                                <Hyperlink Click="NavigateToConsumables">
+                                    <TextBlock Text="Consumables" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
+                                </Hyperlink>
+                            </TextBlock>
                         </StackPanel>
                     </Grid>
                 </StackPanel>

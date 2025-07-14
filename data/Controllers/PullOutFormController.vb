@@ -1,6 +1,7 @@
 ﻿Imports System.Collections.ObjectModel
 Imports DocumentFormat.OpenXml.Bibliography
 Imports DPC.DPC.Data.Model
+Imports DPC.DPC.Views.Stocks.ItemManager.Consumables
 Imports MySql.Data.MySqlClient
 Imports Newtonsoft.Json
 
@@ -9,40 +10,16 @@ Namespace DPC.Data.Controllers.Stocks
         Public Shared Function SearchProducts(searchText As String, warehouseID As Integer) As ObservableCollection(Of ProductDataModel)
             Dim products As New ObservableCollection(Of ProductDataModel)
 
-           Dim query As String = "
-SELECT p.productID,
-       p.productName,
-       p.productCode,
-       pnv.sellingPrice,
-       pnv.stockUnit
-FROM product p
-INNER JOIN productnovariation pnv ON p.productID = pnv.productID
-WHERE pnv.warehouseID = @warehouseID
-  AND pnv.stockUnit > 0
+            Dim query As String = "
+SELECT *
+FROM consumables
+WHERE WarehouseID = @warehouseID
+  AND Stock > 0
   AND (
-       p.productName LIKE @searchText1 
-       OR p.productID LIKE @searchText1 
-       OR p.productCode LIKE @searchText1
+       ProductName LIKE @searchText1 
+       OR ProductID LIKE @searchText1 
   )
 
-UNION
-
-SELECT p.productID,
-       p.productName,
-       p.productCode,
-       pvs.sellingPrice,
-       pvs.stockUnit
-FROM product p
-INNER JOIN productvariationstock pvs ON p.productID = pvs.productID
-WHERE pvs.warehouseID = @warehouseID
-  AND pvs.stockUnit > 0
-  AND (
-       p.productName LIKE @searchText2 
-       OR p.productID LIKE @searchText2 
-       OR p.productCode LIKE @searchText2
-  )
-
-ORDER BY productName ASC
 LIMIT 10;"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
@@ -51,13 +28,12 @@ LIMIT 10;"
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@warehouseID", warehouseID)
                         cmd.Parameters.AddWithValue("@searchText1", "%" & searchText & "%")
-                        cmd.Parameters.AddWithValue("@searchText2", "%" & searchText & "%")
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
                                 Dim product As New ProductDataModel With {
-                                    .ProductName = reader("productName").ToString(),
-                                    .ProductID = reader("productID").ToString(),
-                                    .StockUnits = Convert.ToDecimal(reader("stockUnit"))
+                                    .ProductName = reader("ProductName").ToString(),
+                                    .ProductID = reader("ProductID").ToString(),
+                                    .StockUnits = Convert.ToDecimal(reader("Stock"))
                                 }
                                 products.Add(product)
                             End While
@@ -138,25 +114,34 @@ LIMIT 10;"
         End Function
 
         Public Shared Sub UpdateStock(productName As String, quantity As Integer, stock As Integer)
-            Dim query As String = "SELECT productVariation, productID
-FROM product
-WHERE productName = @productName
-ORDER BY productName ASC
-"
+            Dim updatedStock As Integer = stock - quantity
+            Dim _productID As String = ""
+
+            Dim queryID As String = "SELECT ProductID FROM consumables WHERE ProductName = @productName"
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
                     conn.Open()
-                    Using cmd As New MySqlCommand(query, conn)
+                    Using cmd As New MySqlCommand(queryID, conn)
                         cmd.Parameters.AddWithValue("@productName", productName)
-                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                        Using reader As MySqlDataReader = cmd.ExecuteReader
                             While reader.Read()
-                                If Not String.IsNullOrWhiteSpace(reader("productID").ToString()) Then
-
-                                    UpdateItems(reader("productID"), reader("productVariation"), quantity, stock)
-                                End If
+                                _productID = reader("ProductID").ToString()
                             End While
                         End Using
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show($"Error saving pull out: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                End Try
+            End Using
 
+            Dim query As String = "UPDATE consumables SET Stock = @updatedStock WHERE ProductID = @productID"
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@productID", _productID)
+                        cmd.Parameters.AddWithValue("@updatedStock", updatedStock)
+                        cmd.ExecuteNonQuery()
                     End Using
                 Catch ex As Exception
                     MessageBox.Show($"Error saving pull out: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
@@ -164,30 +149,100 @@ ORDER BY productName ASC
             End Using
         End Sub
 
-        Public Shared Sub UpdateItems(productID As String, productVariation As Integer, quantity As Integer, stock As Integer)
-            Dim query As String = ""
-            Dim updatedStock As Integer = stock - quantity
+        Public Shared Function GetConsumables() As ObservableCollection(Of ConsumableModels)
+            Dim _consumables As New ObservableCollection(Of ConsumableModels)
 
-            If productVariation Then
-                query = "UPDATE productvariationstock SET stockUnit = @updatedStock WHERE productID = @productID"
-            Else
-                query = "UPDATE productnovariation SET stockUnit = @updatedStock WHERE productID = @productID"
-            End If
+
+            Dim query As String = "SELECT * FROM consumables"
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        Using reader As MySqlDataReader = cmd.ExecuteReader
+                            While reader.Read()
+
+                                _consumables.Add(New ConsumableModels With {
+                                    .ProductID = reader("ProductID"),
+                                    .ProductName = reader("ProductName"),
+                                    .WarehouseName = reader("WarehouseName"),
+                                    .Stock = reader("Stock")
+                                })
+
+                            End While
+                        End Using
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show($"Error saving pull out: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                End Try
+            End Using
+
+            Return _consumables
+        End Function
+
+        Public Shared Function GenerateProductID() As String
+            Dim prefix As String = "60"
+            Dim datePart As String = DateTime.Now.ToString("MMddyyyy") ' MMDDYYYY format
+            Dim counter As Integer = GetNextIDCounter(datePart)
+
+            ' Format counter to be 4 digits (e.g., 0001, 0025, 0150)
+            Dim counterPart As String = counter.ToString("D4")
+
+            ' Concatenate to get full ProductCode
+            Return prefix & datePart & counterPart
+        End Function
+
+        Public Shared Function GetNextIDCounter(datePart As String) As Integer
+
+            'will be creating a new table soon
+            Dim query As String = "SELECT MAX(CAST(SUBSTRING(ProductID, 11, 4) AS UNSIGNED)) FROM consumables " &
+                  "WHERE ProductID LIKE '60" & datePart & "%'"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
                     conn.Open()
                     Using cmd As New MySqlCommand(query, conn)
-                        cmd.Parameters.AddWithValue("@productID", productID)
-                        cmd.Parameters.AddWithValue("@updatedStock", updatedStock)
-                        cmd.ExecuteNonQuery()
+                        Dim result As Object = cmd.ExecuteScalar()
 
+                        ' If no previous records exist for today, start with 0001
+                        If result IsNot DBNull.Value AndAlso result IsNot Nothing Then
+                            Return Convert.ToInt32(result) + 1
+                        Else
+                            Return 1
+                        End If
                     End Using
+                Catch ex As Exception
+                    MessageBox.Show("Error generating Product Code: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return 1
+                End Try
+            End Using
+        End Function
+
+        Public Shared Function InsertConsumable(_productName As String, _warehouseID As Integer, _warehouseName As String, _stock As Integer)
+
+            Dim _id As String = GenerateProductID()
+            Dim query As String = "INSERT INTO consumables (ProductID, ProductName, WarehouseID, WarehouseName, Stock, AddedBy, CreatedAt)" &
+                                "VALUES (@ProductID, @ProductName, @WarehouseID, @WarehouseName, @Stock, @AddedBy, @CreatedAt)"
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@ProductID", _id)
+                        cmd.Parameters.AddWithValue("@ProductName", _productName)
+                        cmd.Parameters.AddWithValue("@WarehouseID", _warehouseID)
+                        cmd.Parameters.AddWithValue("@WarehouseName", _warehouseName)
+                        cmd.Parameters.AddWithValue("@Stock", _stock)
+                        cmd.Parameters.AddWithValue("@AddedBy", CacheOnLoggedInName)
+                        cmd.Parameters.AddWithValue("@CreatedAt", DateTime.Now)
+                        cmd.ExecuteNonQuery()
+                    End Using
+
+                    Return True
                 Catch ex As Exception
                     MessageBox.Show($"Error saving pull out: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 End Try
             End Using
-        End Sub
 
+            Return False
+        End Function
     End Class
 End Namespace
