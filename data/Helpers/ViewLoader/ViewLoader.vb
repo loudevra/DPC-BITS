@@ -227,6 +227,11 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "addstandardlabel"
                         Return New Stocks.ProductsLabel.StandardLabel.StandardLabel()
 
+                    ' Pull Out Form Navigation
+                    Case "pulloutreceipt"
+                        Return New Misc.Documents.PullOutForm
+                    Case "pulloutpreview"
+                        Return New DPC.Components.Forms.PreviewPulloutReceipt()
 
 
                     ' POS Navigation
@@ -447,6 +452,10 @@ Namespace DPC.Data.Helpers.ViewLoader
             ElseIf typeName = "printpreview" Then
                 Return "printpreview"
 
+            ElseIf typeName = "pulloutreceipt" Then
+                Return "pulloutreceipt"
+            ElseIf typeName = "pulloutpreview" Then
+                Return "pulloutpreview"
             Else
                 Return typeName
             End If

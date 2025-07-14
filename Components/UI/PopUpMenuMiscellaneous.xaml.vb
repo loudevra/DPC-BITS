@@ -132,5 +132,10 @@ Namespace DPC.Components.UI
             ' Implementation for navigating to View Documents
             ViewLoader.DynamicView.NavigateToView("viewdocuments", Me)
         End Sub
+
+        Private Sub NavigateToViewPOR(sender As Object, e As RoutedEventArgs)
+            ' Implementation for navigating to View Documents
+            ViewLoader.DynamicView.NavigateToView("pulloutreceipt", Me)
+        End Sub
     End Class
 End Namespace
