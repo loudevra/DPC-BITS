@@ -131,6 +131,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New HRM.Employees.Employees.EmployeesView()
                     Case "hrmeditemployee"
                         Return New HRM.Employees.Employees.EditEmployee()
+                    Case "hrmeditfiles"
+                        Return New HRM.Files.ManageFile()
 
                          ' Sales Module Navigation
                     Case "salesnewinvoice"
@@ -312,6 +314,10 @@ Namespace DPC.Data.Helpers.ViewLoader
 
             ElseIf typeName = "previewwalkinclientprintstatement" Then
                 Return "previewwalkinclientprintstatement"
+
+            ElseIf typeName = "hrmeditfiles" Then
+                Return "hrmeditfiles"
+
 
 
                 ' Promo Codes Navigation
