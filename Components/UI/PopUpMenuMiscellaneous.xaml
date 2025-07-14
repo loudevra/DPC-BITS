@@ -178,6 +178,11 @@
                                     <TextBlock Text="View Documents" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
                             </TextBlock>
+                            <TextBlock Margin="10,3,0,3">
+                                <Hyperlink Click="NavigateToViewPOR">
+                                    <TextBlock Text="Pull Out Form" Foreground="#d4d4d4" FontSize="13"/>
+                                </Hyperlink>
+                            </TextBlock>
                         </StackPanel>
                     </Grid>
                 </StackPanel>

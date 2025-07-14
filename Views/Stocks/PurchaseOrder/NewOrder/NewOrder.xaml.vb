@@ -344,6 +344,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             Dim textBox As TextBox = CType(sender, TextBox)
             Dim parts As String() = textBox.Name.Split("_"c)
             If parts.Length < 3 Then Return
+            If parts.Length < 3 Then Return
 
             Dim row As Integer = parts(1)
             'If Not Integer.TryParse(parts(1), row) Then Return

@@ -586,6 +586,9 @@
     <Compile Include="Components\Forms\PreviewPrintStatement.xaml.vb">
       <DependentUpon>PreviewPrintStatement.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\PreviewPulloutReceipt.xaml.vb">
+      <DependentUpon>PreviewPulloutReceipt.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\QuotePopout.xaml.vb">
       <DependentUpon>QuotePopout.xaml</DependentUpon>
     </Compile>
@@ -660,6 +663,7 @@
     <Compile Include="Data\Controllers\Product\UpdateProduct.vb" />
     <Compile Include="Data\Controllers\Product\UploadProduct.vb" />
     <Compile Include="Data\Controllers\PromoCodeController.vb" />
+    <Compile Include="Data\Controllers\PullOutFormController.vb" />
     <Compile Include="Data\Controllers\PurchaseOrder\PurchaseOrderController.vb" />
     <Compile Include="Data\Controllers\Quotes\QuotesController.vb" />
     <Compile Include="Data\Controllers\ResetPassController.vb" />
@@ -680,6 +684,7 @@
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
     <Compile Include="Data\DataModules\CostEstimateDetails.vb" />
+    <Compile Include="Data\DataModules\PORDetails.vb" />
     <Compile Include="Data\DataModules\StatementDetails.vb" />
     <Compile Include="Data\DataModules\WalkinBillingStatementDetails.vb" />
     <Compile Include="Data\Helpers\AutocompleteHelper.vb" />
@@ -953,6 +958,9 @@
     </Compile>
     <Compile Include="Views\Misc\Documents\Documents.xaml.vb">
       <DependentUpon>Documents.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc\Documents\PullOutForm.xaml.vb">
+      <DependentUpon>PullOutForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\POS\CreditPayment.xaml.vb">
       <DependentUpon>CreditPayment.xaml</DependentUpon>
@@ -1285,6 +1293,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\PreviewPrintStatement.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\PreviewPulloutReceipt.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1775,6 +1787,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Misc\Documents\Documents.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Misc\Documents\PullOutForm.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\POS\CreditPayment.xaml">
