@@ -454,6 +454,9 @@
     <Compile Include="Components\ConfirmationModals\ConfirmPurchaseOrder.xaml.vb">
       <DependentUpon>ConfirmPurchaseOrder.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\ConfirmationModals\ConfirmClientGroupDeletion.xaml.vb">
+      <DependentUpon>ConfirmClientGroupDeletion.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\ConfirmationModals\ConfirmWarehouseDeletion.xaml.vb">
       <DependentUpon>ConfirmWarehouseDeletion.xaml</DependentUpon>
     </Compile>
@@ -1132,6 +1135,10 @@
     <Page Include="Components\ConfirmationModals\ConfirmPurchaseOrder.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ConfirmationModals\ConfirmClientGroupDeletion.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\ConfirmationModals\ConfirmWarehouseDeletion.xaml">
       <SubType>Designer</SubType>

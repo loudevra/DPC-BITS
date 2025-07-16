@@ -1,5 +1,7 @@
 ﻿
+Imports System.Collections.ObjectModel
 Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Models
 
 
 Namespace DPC.Views.Accounts.Accounts.ManageAccounts
@@ -9,8 +11,50 @@ Namespace DPC.Views.Accounts.Accounts.ManageAccounts
         Public Sub New()
             InitializeComponent()
             SetupControllerReferences() ' Ensures viewmodel is connected
+            LoadData()
         End Sub
 
+        Private Sub LoadData()
+            Dim _accountDetails = AccountController.GetAllAccountsAsKVP()
+
+            cmbAccounts.ItemsSource = _accountDetails
+            cmbAccounts.DisplayMemberPath = "Value"
+            cmbAccounts.SelectedValuePath = "Key"
+
+        End Sub
+
+
+        Private Sub InsertData()
+            Dim _transaction As New DPC.Data.Models.Transaction With {
+                .Code = Code.Text,
+                .Contact = Contact.Text,
+                .AccountID = cmbAccounts.SelectedValue.ToString(),
+                .Amount = Amount.Text,
+                .Category = cmbCategory.Text,
+                .Method = cmbMethod.Text,
+                .Note = Note.Text,
+                .TransactionDate = SingleDatePicker.SelectedDate.Value.ToString("yyyy-MM-dd"),
+                .TransactionTo = If(toggleCustomerSupplier.IsChecked, "Supplier", "Customer"),
+                .Type = cmbType.Text
+            }
+
+            If AccountController.InsertTransaction(_transaction) Then
+                MessageBox.Show("Transaction added successfully")
+                ClearFields()
+            End If
+        End Sub
+
+        Private Sub ClearFields()
+            Code.Text = Nothing
+            Contact.Text = Nothing
+            cmbAccounts.Text = Nothing
+            Amount.Text = Nothing
+            cmbCategory.Text = Nothing
+            cmbMethod.Text = Nothing
+            Note.Text = Nothing
+            SingleDatePicker.Text = Nothing
+            cmbType.Text = Nothing
+        End Sub
 
         ' Setup DataContext and ViewModel bindings
         Private Sub SetupControllerReferences()

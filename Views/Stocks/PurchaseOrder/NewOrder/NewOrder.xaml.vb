@@ -59,12 +59,24 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
 
         Private Sub TaxChange()
             For Each list In taxRateList
-                Dim taxBox As TextBox = GetTextBoxFromStackPanel($"{list}")
+                Dim parts As String() = list.Split("_"c)
+
+                Dim taxValueBox As TextBox = GetTextBoxFromStackPanel($"txt_{parts(1)}_4")
+                Dim taxBox As TextBox = GetTextBoxFromStackPanel($"txt_{parts(1)}_3")
+                Dim rateBox As TextBox = GetTextBoxFromStackPanel($"txt_{parts(1)}_2")
+
+                Dim value = Convert.ToDouble(rateBox.Text)
+                rateBox.Text = 0
 
                 If Tax.SelectedIndex = 0 Then
                     taxBox.Text = 12
+                    Dim vat = value * 0.12
+                    rateBox.Text = value + vat
+                    taxBox.IsReadOnly = True
                 Else
                     taxBox.Text = 0
+                    rateBox.Text = value / 1.12
+                    taxBox.IsReadOnly = False
                 End If
             Next
         End Sub
@@ -415,10 +427,17 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             Dim listBox As ListBox = _productListBoxes(listBoxKey)
             AddHandler listBox.SelectionChanged, Sub()
                                                      _selectedProduct = listBox.SelectedItem
+                                                     Dim taxRates
 
                                                      If _selectedProduct IsNot Nothing Then
+                                                         If Tax.SelectedIndex = 0 Then
+                                                             taxRates = _selectedProduct.BuyingPrice * 0.12
+                                                         Else
+                                                             taxRates = _selectedProduct.BuyingPrice * 0
+                                                         End If
+
                                                          textBox.Text = _selectedProduct.ProductName
-                                                         rate.Text = _selectedProduct.BuyingPrice
+                                                         rate.Text = _selectedProduct.BuyingPrice + taxRates
                                                      End If
                                                  End Sub
 
@@ -601,11 +620,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                     rateList.Add(txtName)
                 Case 3
                     taxRateList.Add(txtName)
-                    txt.IsReadOnly = True
                     If Tax.SelectedIndex = 0 Then
                         txt.Text = 12
+                        txt.IsReadOnly = True
                     Else
                         txt.Text = 0
+                        txt.IsReadOnly = False
                     End If
                 Case 4
                     taxList.Add(txtName)
@@ -950,7 +970,15 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             Dim subtotal As Single = quantity * rate
 
             ' Compute tax (Tax % of subtotal)
-            Dim taxAmount As Single = subtotal * (taxPercent / 100)
+            Dim taxAmount As Single
+
+            If Tax.SelectedIndex = 1 Then
+                taxAmount = subtotal * (taxPercent / 100)
+            Else
+                Dim inclusive = subtotal / 1.12
+
+                taxAmount = inclusive * (taxPercent / 100)
+            End If
 
             ' Update the Tax field dynamically
             If taxTxt IsNot Nothing Then
@@ -958,7 +986,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             End If
 
             ' Calculate total amount (Subtotal + Tax - Discount)
-            Dim totalAmount As Single = subtotal + taxAmount - discount
+            Dim totalAmount As Single
+
+            If Tax.SelectedIndex = 1 Then
+                totalAmount = subtotal + taxAmount - discount
+            Else
+                totalAmount = subtotal - discount
+            End If
 
             ' Ensure the total amount is not negative
             If totalAmount < 0 Then totalAmount = 0
