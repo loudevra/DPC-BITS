@@ -380,10 +380,10 @@ PRINTED NAME AND SIGNATURE
                                                             </Border>
 
                                                             <!-- Row 3 -->
-                                                            <Border Grid.Row="3" Grid.Column="0" BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
+                                                            <Border x:Name="VatText" Grid.Row="3" Grid.Column="0" BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
                                                                 <TextBlock Text="VAT 12%" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" Margin="5,0,5,0"/>
                                                             </Border>
-                                                            <Border Grid.Row="3" Grid.Column="1" BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                            <Border x:Name="VatValue" Grid.Row="3" Grid.Column="1" BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1" >
                                                                 <TextBox x:Name="VAT12" Text="₱ 0.00" IsReadOnly="True" BorderThickness="0" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" Margin="5,0,5,0"/>
                                                             </Border>
 
