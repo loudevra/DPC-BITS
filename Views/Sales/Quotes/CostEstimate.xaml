@@ -203,6 +203,7 @@
                                             </Border>
                                             <Border Grid.Row="1" Grid.Column="1" Height="20" VerticalAlignment="Center" >
                                                 <ComboBox x:Name="cmbApproved" FontSize="10" FontWeight="Bold">
+                                                    <ComboBoxItem Content=""/>
                                                     <ComboBoxItem Content="Alecksandra Balingit"/>
                                                     <ComboBoxItem Content="Parvit Kumar"/>
                                                 </ComboBox>
@@ -374,7 +375,7 @@
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
                                                                 <TextBlock Text="INSTALLATION FEE" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
                                                             </Border>
-                                                            <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
+                                                            <Border x:Name="VatText" BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
                                                                 <TextBlock Text="VAT 12%" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,1,0" Padding="1">
@@ -391,7 +392,7 @@
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
                                                                 <TextBox  x:Name="Installation" TextChanged="Installation_TextChanged" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
                                                             </Border>
-                                                            <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                            <Border x:Name="VatValue" BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
                                                                 <TextBox  x:Name="VAT12" TextChanged="VAT12_TextChanged" Text="₱ 0.00" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
