@@ -74,9 +74,23 @@
                         </Hyperlink>
                     </TextBlock>
                 </Grid>
+                
+                <!-- Files -->
+                <Grid Margin="0,8,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <materialDesign:PackIcon Kind="FileCabinet" Foreground="White" Width="20" Height="20" Margin="10,0,0,0"/>
+                    <TextBlock Grid.Column="1">
+                        <Hyperlink Click="NavigateToFiles" >
+                            <TextBlock Text="Manage Files" Style="{StaticResource MainMenuItemStyle}"/>
+                        </Hyperlink>
+                    </TextBlock>
+                </Grid>
 
                 <!-- Statements Section -->
-                <StackPanel>
+                <StackPanel Visibility="Collapsed">
                     <Grid Margin="0,8,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -132,7 +146,7 @@
                 </StackPanel>
 
                 <!-- Graphical Reports Section -->
-                <StackPanel>
+                <StackPanel Visibility="Collapsed">
                     <Grid Margin="0,8,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
@@ -198,7 +212,7 @@
                 </StackPanel>
 
                 <!-- Summary & Report Section -->
-                <StackPanel>
+                <StackPanel Visibility="Collapsed">
                     <Grid Margin="0,8,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
