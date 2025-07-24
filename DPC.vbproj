@@ -641,6 +641,7 @@
       <DependentUpon>TopNavBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Data.vb" />
+    <Compile Include="Data\Cache\EditCashAdvanceRequestCache.vb" />
     <Compile Include="Data\Controllers\Account\AccountController.vb" />
     <Compile Include="Data\Controllers\AuthController.vb" />
     <Compile Include="Data\Controllers\BrandController.vb" />
@@ -654,6 +655,9 @@
     <Compile Include="Data\Controllers\HRM\FilesController.vb" />
     <Compile Include="Data\Controllers\HRM\HRMController.vb" />
     <Compile Include="Data\Controllers\ManageProductsController.vb" />
+    <Compile Include="Data\Controllers\Misc\EditCashAdvanceRequestController.vb" />
+    <Compile Include="Data\Controllers\Misc\ManageCashAdvanceController.vb" />
+    <Compile Include="Data\Controllers\Misc\NewCashAdvanceController.vb" />
     <Compile Include="Data\Controllers\Permissions\PermissionItem.vb" />
     <Compile Include="Data\Controllers\ProductCategoryController.vb" />
     <Compile Include="Data\Controllers\Product\CreateProduct.vb" />
@@ -706,6 +710,7 @@
     <Compile Include="Data\Helpers\ViewLoader\ViewNavigation.vb" />
     <Compile Include="Data\Models\Account.vb" />
     <Compile Include="Data\Models\BusinessLocation.vb" />
+    <Compile Include="Data\Models\CashAdvanceRequestModel.vb" />
     <Compile Include="Data\Models\Client.vb" />
     <Compile Include="Data\Models\ClientGroup.vb" />
     <Compile Include="Data\Models\DepartmentsSection.vb" />
@@ -958,8 +963,19 @@
     <Compile Include="Views\HRM\Employees\Salaries\EmployeeSalaries.xaml.vb">
       <DependentUpon>EmployeeSalaries.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\HRM\Files\ManageFile.xaml.vb">
-      <DependentUpon>ManageFile.xaml</DependentUpon>
+
+    <Compile Include="Views\Misc\CashAdvance\CashAdvanceNewRequest.xaml.vb">
+      <DependentUpon>CashAdvanceNewRequest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc\CashAdvance\EditCashAdvanceRequest.xaml.vb">
+      <DependentUpon>EditCashAdvanceRequest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc\CashAdvance\ManageCashAdvanceRequests.xaml.vb">
+      <DependentUpon>ManageCashAdvanceRequests.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc\CashAdvance\PreviewPrintCashAdvanceRequestForm.xaml.vb">
+      <DependentUpon>PreviewPrintCashAdvanceRequestForm.xaml</DependentUpon>
+
     </Compile>
     <Compile Include="Views\Misc\Documents\AddDocument.xaml.vb">
       <DependentUpon>AddDocument.xaml</DependentUpon>
@@ -1801,7 +1817,21 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\HRM\Files\ManageFile.xaml">
+
+    <Page Include="Views\Misc\CashAdvance\CashAdvanceNewRequest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Misc\CashAdvance\EditCashAdvanceRequest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Misc\CashAdvance\ManageCashAdvanceRequests.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Misc\CashAdvance\PreviewPrintCashAdvanceRequestForm.xaml">
+
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

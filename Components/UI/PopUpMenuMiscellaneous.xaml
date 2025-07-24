@@ -186,6 +186,62 @@
                         </StackPanel>
                     </Grid>
                 </StackPanel>
+
+
+                <!-- Cash Advance Section -->
+                <StackPanel>
+                    <Grid Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <materialDesign:PackIcon Kind="CashFast" Foreground="White" Width="20" Height="20" Margin="10,0,0,0"/>
+                        <TextBlock Grid.Column="1">
+                            <Hyperlink>
+                                <TextBlock Text="Cash Advance" Style="{StaticResource MainMenuItemStyle}"/>
+                            </Hyperlink>
+                        </TextBlock>
+                    </Grid>
+
+                    <!-- Submenu items with vertical lines -->
+                    <Grid Margin="24,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Vertical line -->
+                        <Rectangle Width="1" Fill="#444444" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+
+                        <!-- Submenu items -->
+                        <StackPanel Grid.Column="1" Grid.Row="0">
+                            <TextBlock Margin="10,3,0,3">
+                                <Hyperlink Click="NavigateToCashAdvanceNewRequest">
+                                    <TextBlock Text="Cash Advance Request" Foreground="#d4d4d4" FontSize="13"/>
+                                </Hyperlink>
+                            </TextBlock>
+                        </StackPanel> 
+                        
+                        <!-- Vertical line -->
+                        <Rectangle Grid.Row="1" Width="1" Fill="#444444" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+
+                        <!-- Submenu items -->
+                        <StackPanel Grid.Column="1" Grid.Row="1">
+                            <TextBlock Margin="10,3,0,3">
+                                <Hyperlink Click="NavigateToManageCashAdvanceRequests">
+                                    <TextBlock Text="Manage Cash Advance Requests" Foreground="#d4d4d4" FontSize="13"/>
+                                </Hyperlink>
+                            </TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+                
+                
             </StackPanel>
         </materialDesign:Card>
     </Grid>

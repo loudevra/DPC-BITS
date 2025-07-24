@@ -1,0 +1,277 @@
+﻿<UserControl x:Class="DPC.Views.Misc.CashAdvance.ManageCashAdvanceRequests"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
+             xmlns:local="clr-namespace:DPC.DPC.Data.Controllers.Misc"
+             mc:Ignorable="d"
+        Background="#D9D9D9"
+             >
+
+    <Grid x:Name="mainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Header Section -->
+            <RowDefinition Height="Auto"/>
+            <!-- Options Bar -->
+            <RowDefinition Height="*"/>
+            <!-- DataGrid Section -->
+            <RowDefinition Height="Auto"/>
+            <!-- Pagination Section -->
+        </Grid.RowDefinitions>
+
+        <!-- Title and Add Button - Static at top -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20,20,20,10">
+            <TextBlock Text="Manage Cash Advance Requests"
+                       FontWeight="SemiBold"
+                       FontFamily="Lexend"
+                       FontSize="25"
+                       Foreground="#474747"
+                       VerticalAlignment="Center"/>
+            <Button x:Name="btnAddNew" Style="{StaticResource RoundedButtonStyle}" Margin="20,0,0,0" Background="Transparent">
+                <Grid Margin="15,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <materialDesign:PackIcon Kind="Plus" Width="20" Height="20" Grid.Column="0" VerticalAlignment="Center"/>
+                    <TextBlock Text="Add New" FontSize="14" FontWeight="SemiBold" Foreground="#474747" Grid.Column="1" Margin="5,0" VerticalAlignment="Center"/>
+                </Grid>
+            </Button>
+        </StackPanel>
+
+        <!-- Options Bar - Static with controls -->
+        <StackPanel VerticalAlignment="Center" Grid.Row="1" Margin="20,10">
+            <Border Style="{StaticResource RoundedBorderStyle}" BorderThickness="0" Background="white" Padding="10" CornerRadius="10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width=".20*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width=".5*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" BorderThickness="0" Margin="0">
+                            <materialDesign:PackIcon Kind="MicrosoftExcel" Width="25" Height="25" Foreground="White" Margin="25,0"/>
+                        </Button>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10,0">
+                        <TextBlock Text="Show" FontSize="14" FontWeight="SemiBold" Foreground="#474747" Grid.Column="1" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <ComboBox x:Name="cboPageSize" Style="{StaticResource RoundedComboBoxStyle}" Grid.Column="2" VerticalAlignment="Center" Margin="0">
+                        <ComboBoxItem Content="10" IsSelected="True"/>
+                        <ComboBoxItem Content="25"/>
+                        <ComboBoxItem Content="50"/>
+                        <ComboBoxItem Content="100"/>
+                    </ComboBox>
+                    <StackPanel Grid.Column="4">
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width=".25*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0" Style="{StaticResource RoundedTextboxStyle}" Margin="20,0,0,0" Name="txtSearch" />
+                                <materialDesign:PackIcon Kind="Magnify" Width="20" Height="20" Foreground="Black" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </StackPanel>
+
+        <!-- DataGrid Section - Scrollable Content -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="20,0">
+            <DataGrid Name="dataGrid"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      HeadersVisibility="Column"
+                      GridLinesVisibility="None"
+                      RowBackground="White"
+                      AlternatingRowBackground="WhiteSmoke"
+                      BorderThickness="0"
+                      FontFamily="Lexend" CanUserResizeRows="False" CanUserResizeColumns="False" CanUserReorderColumns="False" IsReadOnly="True"
+                      >
+
+
+                
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="Margin" Value="0,5,0,5"/>
+                        <Setter Property="Padding" Value="5"/>
+                        <Setter Property="Height" Value="Auto"/>
+                        <Setter Property="MinHeight" Value="40"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="Black"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
+
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="FontFamily" Value="Lexend"/>
+                        <Setter Property="FontSize" Value="13"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="Foreground" Value="#474747"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="Padding" Value="10,5"/>
+                        <Setter Property="Background" Value="White"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+
+                <DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Padding" Value="10,5"/>
+                        <Setter Property="FontFamily" Value="Lexend"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="DataGridCell">
+                                    <Border Padding="{TemplateBinding Padding}" 
+                                            BorderBrush="{TemplateBinding BorderBrush}" 
+                                            BorderThickness="{TemplateBinding BorderThickness}" 
+                                            Background="{TemplateBinding Background}">
+                                        <ContentPresenter VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="TextBlock.TextWrapping" Value="NoWrap"/>
+                        <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="Black"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.CellStyle>
+
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Ref #" Binding="{Binding CashAdvanceID}" Width="120">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="Lexend"/>
+                                <Setter Property="TextWrapping" Value="NoWrap"/>
+                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Employee" Binding="{Binding EmployeeName}" Width="120">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="Lexend"/>
+                                <Setter Property="TextWrapping" Value="NoWrap"/>
+                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                <Setter Property="ToolTip" Value="{Binding EmployeeName}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Job Title" Binding="{Binding JobTitle}" Width="120">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="Lexend"/>
+                                <Setter Property="TextWrapping" Value="NoWrap"/>
+                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Department" Binding="{Binding Department}" Width="200">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="Lexend"/>
+                                <Setter Property="TextWrapping" Value="NoWrap"/>
+                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                <Setter Property="ToolTip" Value="{Binding Department}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Total Amount" Binding="{Binding TotalAmount}" Width="150">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="Lexend"/>
+                                <Setter Property="TextWrapping" Value="NoWrap"/>
+                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                <Setter Property="ToolTip" Value="{Binding TotalAmount}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Request Date" Binding="{Binding CArequestDate}" Width="120">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="Lexend"/>
+                                <Setter Property="TextWrapping" Value="NoWrap"/>
+                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="120">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="{StaticResource Lexend}"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="TextWrapping" Value="NoWrap"/>
+                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Status}" Value="Approved">
+                                        <Setter Property="Foreground" Value="Green"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Status}" Value="Pending">
+                                        <Setter Property="Foreground" Value="Orange"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Status}" Value="Rejected">
+                                        <Setter Property="Foreground" Value="Red"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                                
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTemplateColumn Header="Settings" Width="Auto">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="Auto">
+                                    <Button Width="30" Height="30" Background="Transparent" Margin="0" ToolTip="Edit" Cursor="Hand" Click="NavigateToEdit" BorderThickness="0">
+                                        <materialDesign:PackIcon Kind="Pencil" Width="20" Height="20" Foreground="Orange"/>
+                                    </Button>
+                                    <Button Width="30" Height="30" Background="Transparent" Margin="2,0,0,0" ToolTip="Delete" Cursor="Hand"  BorderThickness="0">
+                                        <materialDesign:PackIcon Kind="DeleteOutline" Width="20" Height="20" Foreground="Red"/>
+                                    </Button>
+                                    <Button Width="30" Height="30" Background="Transparent" Margin="2,0,0,0"
+                                            ToolTip="Print" Cursor="Hand" Click="NavigateToPrintPreview"  BorderThickness="0">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Approved">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+
+                                        <materialDesign:PackIcon Kind="Printer" Width="20" Height="20" Foreground="Green"/>
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </ScrollViewer>
+
+        <!-- Pagination Section - Fixed at bottom -->
+        <StackPanel x:Name="paginationPanel" Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,20">
+            <!-- Pagination controls will be added here programmatically -->
+        </StackPanel>
+    </Grid>
+</UserControl>
