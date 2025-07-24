@@ -21,5 +21,10 @@
         ' 🔹 Add RoleName and LocationName
         Public Property RoleName As String
         Public Property LocationName As String
+        Public Property Status As String ' Added for active
+    End Class
+
+    Public Class EditEmployeeService
+        Public Shared Property SelectedEmployee As Employee
     End Class
 End Namespace

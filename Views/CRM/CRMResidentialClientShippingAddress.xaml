@@ -27,7 +27,7 @@
             <TextBlock Text="Please leave Shipping Address blank if you do not want to print it on the invoice"  FontFamily="Lexend" Foreground="#474747" TextWrapping="Wrap" Width="240" HorizontalAlignment="Left"/>
             <!-- Form Content -->
             <StackPanel>
-                
+
 
                 <TextBlock Text="Address:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                 <Border Style="{StaticResource RoundedBorderStyle}" Width="772">

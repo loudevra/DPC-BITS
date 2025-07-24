@@ -75,7 +75,7 @@
                                         FontSize="16px"
                                         Width="90"
                                         Height="39"/>
-                                <Button x:Name="SaveDb" Content="Save"
+                                <Button x:Name="SaveDb" Click="SaveDb_Click" Content="Save"
                                         Margin="0,0,5,0"
                                         Style="{StaticResource MaterialDesignOutlinedButton}"
                                         materialDesign:ButtonAssist.CornerRadius="20"
@@ -102,7 +102,7 @@
                         <StackPanel x:Name="PrintPreview" Grid.Row="1">
                             <Border Height="1123" Background="White" CornerRadius="0,0,10,10" BorderThickness="0" Padding="10">
                                 <Grid>
-                                    <Image Source="/Assets/images/DPC WATERMARK STRAIGHT COMPACT.png" 
+                                    <Image Source="/Assets/images/DREAMPCBUILD LOGO WATERMARK SLANTED SPACED.png" 
                                            Stretch="UniformToFill" 
                                            Opacity="0.1" 
                                            HorizontalAlignment="Stretch" 
@@ -380,10 +380,10 @@ PRINTED NAME AND SIGNATURE
                                                             </Border>
 
                                                             <!-- Row 3 -->
-                                                            <Border Grid.Row="3" Grid.Column="0" BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
+                                                            <Border x:Name="VatText" Grid.Row="3" Grid.Column="0" BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
                                                                 <TextBlock Text="VAT 12%" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" Margin="5,0,5,0"/>
                                                             </Border>
-                                                            <Border Grid.Row="3" Grid.Column="1" BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                            <Border x:Name="VatValue" Grid.Row="3" Grid.Column="1" BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1" >
                                                                 <TextBox x:Name="VAT12" Text="₱ 0.00" IsReadOnly="True" BorderThickness="0" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" Margin="5,0,5,0"/>
                                                             </Border>
 
@@ -404,8 +404,8 @@ PRINTED NAME AND SIGNATURE
                                             <Border BorderBrush="#090909" Height="50" BorderThickness="1,0,1,1" Margin="5,0,5,0" Padding="0,3">
                                                 <DockPanel>
                                                     <TextBlock Text="Notes:" Margin="2,0,5,0" FontWeight="SemiBold" FontFamily="Lexend" FontSize="8" Foreground="#090909" />
-                                                    <TextBlock Text="Bank Detail: Metrobank&#x0a;Acc. Name: Dream PC Build and IT Solutions INC&#x0a;Acc. No: 402-7-40255436-0" FontWeight="SemiBold" FontFamily="Lexend" FontSize="8" Foreground="Green" Width="178" />
-                                                    <TextBlock x:Name="noteBox"  FontSize="8" Foreground="Black" TextWrapping="Wrap" Width="549"/>
+
+                                                    <TextBlock x:Name="noteBox" Text="Bank Details:&#x0a;Acc. Name:&#x0a;Acc No.:" Foreground="Green" FontSize="8" TextWrapping="Wrap"/>
                                                 </DockPanel>
                                             </Border>
                                             <!--Remarks-->

@@ -1,6 +1,7 @@
 ﻿Imports MySql.Data.MySqlClient
 Imports System.Collections.ObjectModel
 Imports DPC.DPC.Data.Models
+Imports DPC.DPC.Views.Accounts.Accounts.ManageAccounts
 
 Namespace DPC.Data.Controllers
     Public Class AccountController
@@ -94,6 +95,30 @@ Namespace DPC.Data.Controllers
             Return accounts
         End Function
 
+        ' Function to fetch all accounts
+        Public Shared Function GetAllAccountsAsKVP() As List(Of KeyValuePair(Of String, String))
+            Dim _account As New List(Of KeyValuePair(Of String, String))
+            Dim query As String = "SELECT * FROM accounts"
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            While reader.Read()
+                                _account.Add(New KeyValuePair(Of String, String)(reader("AccountID"), reader("AccountName")))
+                            End While
+                        End Using
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show("Error fetching accounts: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Console.WriteLine($"Exception details: {ex}")
+                End Try
+            End Using
+
+            Return _account
+        End Function
+
         ' Function to generate AccountID in format 60MMDDYYYYXXXX
         Private Shared Function GenerateAccountID() As String
             Dim prefix As String = "60"
@@ -150,5 +175,38 @@ Namespace DPC.Data.Controllers
                 End Try
             End Using
         End Function
+
+        Public Shared Function InsertTransaction(_transaction As DPC.Data.Models.Transaction) As Boolean
+            Dim query As String = "
+        INSERT INTO transactions
+        (Code, Contact, AccountID, Amount, TransactionDate, Type, Category, Method, Note, TransactionTo)
+        VALUES
+        (@Code, @Contact, @AccountID, @Amount, @TransactionDate, @Type, @Category, @Method, @Note, @TransactionTo)"
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@Code", _transaction.Code)
+                        cmd.Parameters.AddWithValue("@Contact", _transaction.Contact)
+                        cmd.Parameters.AddWithValue("@AccountID", _transaction.AccountID)
+                        cmd.Parameters.AddWithValue("@Amount", _transaction.Amount)
+                        cmd.Parameters.AddWithValue("@TransactionDate", _transaction.TransactionDate)
+                        cmd.Parameters.AddWithValue("@Type", _transaction.Type)
+                        cmd.Parameters.AddWithValue("@Category", _transaction.Category)
+                        cmd.Parameters.AddWithValue("@Method", _transaction.Method)
+                        cmd.Parameters.AddWithValue("@Note", _transaction.Note)
+                        cmd.Parameters.AddWithValue("@TransactionTo", _transaction.TransactionTo)
+
+                        Dim rowsInserted = cmd.ExecuteNonQuery()
+                        Return rowsInserted > 0
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show("Error inserting transaction: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return False
+                End Try
+            End Using
+        End Function
+
     End Class
 End Namespace

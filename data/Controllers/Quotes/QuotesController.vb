@@ -253,7 +253,7 @@ Namespace DPC.Data.Controllers
                     ' Check productnovariation
                     Dim pnvQuery As String = "
             SELECT p.productID, p.productName, p.measurementUnit, 
-                   pnv.buyingPrice, pnv.defaultTax, pnv.stockUnit
+                   pnv.buyingPrice, pnv.sellingPrice, pnv.defaultTax, pnv.stockUnit
             FROM productnovariation pnv
             INNER JOIN product p ON p.productID = pnv.productID
             WHERE pnv.productID = @productID AND pnv.warehouseID = @warehouseID
@@ -270,6 +270,7 @@ Namespace DPC.Data.Controllers
                             .ProductName = reader("productName").ToString(),
                             .MeasurementUnit = reader("measurementUnit").ToString(),
                             .BuyingPrice = Convert.ToDecimal(reader("buyingPrice")),
+                            .SellingPrice = Convert.ToDecimal(reader("sellingPrice")),
                             .DefaultTax = Convert.ToDecimal(reader("defaultTax")),
                             .StockUnits = Convert.ToInt32(reader("stockUnit"))
                         })
@@ -281,7 +282,7 @@ Namespace DPC.Data.Controllers
                     ' Check productvariationstock if not found in productnovariation
                     Dim pvsQuery As String = "
             SELECT p.productID, p.productName, p.measurementUnit, 
-                   pvs.buyingPrice, pvs.defaultTax, pvs.stockUnit
+                   pvs.buyingPrice, pvs.sellingPrice, pvs.defaultTax, pvs.stockUnit
             FROM productvariationstock pvs
             INNER JOIN product p ON p.productID = pvs.productID
             WHERE pvs.productID = @productID AND pvs.warehouseID = @warehouseID
@@ -298,6 +299,7 @@ Namespace DPC.Data.Controllers
                             .ProductName = reader("productName").ToString(),
                             .MeasurementUnit = reader("measurementUnit").ToString(),
                             .BuyingPrice = Convert.ToDecimal(reader("buyingPrice")),
+                            .SellingPrice = Convert.ToDecimal(reader("sellingPrice")),
                             .DefaultTax = Convert.ToDecimal(reader("defaultTax")),
                             .StockUnits = Convert.ToInt32(reader("stockUnit"))
                         })

@@ -110,7 +110,7 @@
         <!-- Main Content Area -->
         <Grid>
             <!-- Main Content (ScrollViewer) -->
-            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="20,0" Style="{StaticResource ModernScrollViewerStyle}">
                 <!-- Main Content -->
                 <StackPanel Margin="10">
                     <StackPanel Background="Transparent">

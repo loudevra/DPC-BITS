@@ -133,12 +133,14 @@ Namespace DPC.Components.UI
             ViewLoader.DynamicView.NavigateToView("viewdocuments", Me)
         End Sub
 
+
         Private Sub NavigateToCashAdvanceNewRequest(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("cashadvancenewrequest", Me)
         End Sub
 
         Private Sub NavigateToManageCashAdvanceRequests(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("managecashadvancerequests", Me)
+
         End Sub
     End Class
 End Namespace

@@ -157,7 +157,7 @@
                         <materialDesign:PackIcon Kind="Phone" Foreground="White" Width="20" Height="20" Margin="10,0,0,0"/>
                         <TextBlock Grid.Column="1">
                             <Hyperlink>
-                                <TextBlock Text="Quotes" Style="{StaticResource MainMenuItemStyle}"/>
+                                <TextBlock Text="Cost Estimate" Style="{StaticResource MainMenuItemStyle}"/>
                             </Hyperlink>
                         </TextBlock>
                     </Grid>
@@ -176,12 +176,12 @@
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToNewQuote">
-                                    <TextBlock Text="New Quote" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
+                                    <TextBlock Text="New Cost Estimate" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageQuote">
-                                    <TextBlock Text="Manage Quote" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
+                                    <TextBlock Text="Manage Cost Estimate" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                         </StackPanel>

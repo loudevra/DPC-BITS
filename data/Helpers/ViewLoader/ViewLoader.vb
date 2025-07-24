@@ -38,6 +38,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Stocks.ProductCategories.ProductCategories()
                     Case "manageproducts"
                         Return New Stocks.ItemManager.ProductManager.ManageProducts()
+                    Case "consumables"
+                        Return New Stocks.ItemManager.Consumables.Consumables()
                     Case "newproducts"
                         Return New Stocks.ItemManager.NewProduct.AddNewProducts()
                     Case "editproduct"
@@ -129,6 +131,10 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New HRM.Employees.Employees.AddEmployee()
                     Case "viewemployee"
                         Return New HRM.Employees.Employees.EmployeesView()
+                    Case "hrmeditemployee"
+                        Return New HRM.Employees.Employees.EditEmployee()
+                    Case "hrmeditfiles"
+                        Return New HRM.Files.ManageFile()
 
                          ' Sales Module Navigation
                     Case "salesnewinvoice"
@@ -223,11 +229,20 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "addstandardlabel"
                         Return New Stocks.ProductsLabel.StandardLabel.StandardLabel()
 
+                    ' Pull Out Form Navigation
+                    Case "pulloutreceipt"
+                        Return New Misc.Documents.PullOutForm
+                    Case "pulloutpreview"
+                        Return New DPC.Components.Forms.PreviewPulloutReceipt()
 
 
                     ' POS Navigation
                     Case "navigatetobillingstatement"
                         Return New Stocks.PurchaseOrder.WalkIn.WalkInBillingStatement()
+
+                    Case "previewwalkinclientprintstatement"
+                        Return New Stocks.PurchaseOrder.WalkIn.PreviewWalkinClientPrintStatement()
+
                     Case "navigatetocostestimate"
                         Return New Sales.Quotes.CostEstimate()
 
@@ -316,6 +331,13 @@ Namespace DPC.Data.Helpers.ViewLoader
             ElseIf typeName = "editproduct" Then
                 Return "editproduct"
 
+            ElseIf typeName = "previewwalkinclientprintstatement" Then
+                Return "previewwalkinclientprintstatement"
+
+            ElseIf typeName = "hrmeditfiles" Then
+                Return "hrmeditfiles"
+
+
 
                 ' Promo Codes Navigation
             ElseIf typeName = "promocodes" Then
@@ -382,6 +404,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "payrolltransaction"
             ElseIf typeName = "addnewemployee" Then
                 Return "addnewemployee"
+            ElseIf typeName = "hrmeditemployee" Then
+                Return "hrmeditemployee"
             ElseIf typeName = "viewemployee" Then
                 Return "viewemployee"
                 ' Sales Module Navigation
@@ -450,6 +474,13 @@ Namespace DPC.Data.Helpers.ViewLoader
             ElseIf typeName = "previewprintcashadvancerequestform" Then
                 Return "previewprintcashadvancerequestform"
 
+            ElseIf typeName = "pulloutreceipt" Then
+                Return "pulloutreceipt"
+            ElseIf typeName = "pulloutpreview" Then
+                Return "pulloutpreview"
+
+            ElseIf typeName = "consumables" Then
+                Return "consumables"
             Else
                 Return typeName
             End If

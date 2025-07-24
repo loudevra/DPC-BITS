@@ -202,6 +202,7 @@
                                                 <ComboBox x:Name="cmbApproved" FontWeight="Bold" FontSize="10">
                                                     <ComboBoxItem Content="Alecksandra Balingit"/>
                                                     <ComboBoxItem Content="Parvit Kumar"/>
+                                                    <ComboBoxItem Content=""/>
                                                 </ComboBox>
                                             </Border>
                                         <Border Grid.Row="1" Grid.Column="2" Height="20" VerticalAlignment="Center" >

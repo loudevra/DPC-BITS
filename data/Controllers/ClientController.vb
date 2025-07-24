@@ -311,9 +311,12 @@ LIMIT 10;
             Return client
         End Function
 
-        Public Shared Function SearchClient(searchClientName As String) As ObservableCollection(Of Client)
-            Dim clients As New ObservableCollection(Of Client)
-            Dim SearchClientQuery As String = "SELECT 
+        Public Shared Function SearchClient(_searchText As String) As ObservableCollection(Of Client)
+            Dim clients As New ObservableCollection(Of Client)()
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Dim SearchClientQuery As String = "SELECT 
     ClientID,
 ClientGroupID,
     BillingAddress,
@@ -349,12 +352,9 @@ WHERE Company LIKE @searchText
 
 ORDER BY Name ASC
 LIMIT 10;"
-            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                Try
-                    conn.Open()
 
                     Using cmd As New MySqlCommand(SearchClientQuery, conn)
-                        cmd.Parameters.AddWithValue("@searchText", "%" & searchClientName & "%")
+                        cmd.Parameters.AddWithValue("@searchText", "%" & _searchText & "%")
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
                                 Dim nameOrCompany As String = ""
@@ -366,9 +366,9 @@ LIMIT 10;"
                                 End If
 
                                 Dim client As New Client With {
-                            .ClientID = Convert.ToInt64(reader("ClientID")),
-                            .ClientGroupID = If(IsDBNull(reader("ClientGroupID")), 0, Convert.ToInt32(reader("ClientGroupID"))),
+                            .ClientID = reader("ClientID"),
                             .Name = nameOrCompany,
+                            .Company = If(IsDBNull(reader("Company")), String.Empty, reader("Company").ToString()),
                             .Phone = If(IsDBNull(reader("Phone")), String.Empty, reader("Phone").ToString()),
                             .Email = If(IsDBNull(reader("Email")), String.Empty, reader("Email").ToString()),
                             .CustomerGroup = If(IsDBNull(reader("CustomerGroup")), String.Empty, reader("CustomerGroup").ToString()),

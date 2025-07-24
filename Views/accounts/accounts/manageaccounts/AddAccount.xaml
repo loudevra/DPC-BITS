@@ -66,7 +66,7 @@
                 <!-- Add Button -->
                 <Button Grid.Row="16" Content="Add" Width="768" Height="40" Background="#52C69D" 
                     Foreground="#FDFDFD" FontFamily="Lexend" FontWeight="SemiBold" HorizontalAlignment="Center"
-                    Margin="0,25,0,0" Click="Button_Click">
+                    Margin="0,25,0,0" Click="BtnAddAccount_Click">
                     <Button.Style>
                         <Style TargetType="Button">
                             <Setter Property="Template">

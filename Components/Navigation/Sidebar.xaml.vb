@@ -4,6 +4,7 @@ Imports System.Windows.Media.Animation
 Imports DPC.DPC.Components.UI
 Imports DPC.DPC.Data.Helpers
 Imports MySql.Data.MySqlClient
+Imports DPC.DPC.Data.Controllers
 
 Namespace DPC.Components.Navigation
     Public Class Sidebar
@@ -312,6 +313,7 @@ Namespace DPC.Components.Navigation
         ''' Logs out and navigates back to the MainWindow.
         ''' </summary>
         Private Sub Logout(sender As Object, e As RoutedEventArgs)
+            EmployeeLoginHistoryController.AddLogOutHistory(CacheLogInHistoryID)
             Dim mainWindow As New MainWindow()
             Application.Current.MainWindow = mainWindow
             mainWindow.Show()

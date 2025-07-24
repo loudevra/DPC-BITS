@@ -57,13 +57,13 @@ Namespace DPC.Views.Sales.Quotes
             base64Image = CostEstimateDetails.CEImageCache
             tempImagePath = CostEstimateDetails.CEPathCache
             ClientNameBox.Text = CostEstimateDetails.CEClientName
+            VAT12.Text = CostEstimateDetails.CETaxValueCache
             CESubTotalCache = CostEstimateDetails.CETotalAmountCache
             AddressLineOne.Text = CostEstimateDetails.CEAddress & ", " & CostEstimateDetails.CECity    ' -- important when editing
             AddressLineTwo.Text = CostEstimateDetails.CERegion & ", " & CostEstimateDetails.CECountry    ' -- important when editing
             PhoneBox.Text = "Tel No.: +63 " & FormatPhoneWithSpaces(CostEstimateDetails.CEPhone)
             EmailBox.Text = CostEstimateDetails.CEEmail
-            noteBox.Text = CostEstimateDetails.CEnoteTxt
-            remarksBox.Text = CostEstimateDetails.CEremarksTxt
+            noteBox.Text = CostEstimateDetails.CEpaperNote
             Term1.Text = CostEstimateDetails.CETerm1
             Term2.Text = CostEstimateDetails.CETerm2
             Term3.Text = CostEstimateDetails.CETerm3
@@ -86,6 +86,25 @@ Namespace DPC.Views.Sales.Quotes
             Else
                 cmbTerms.Text = CostEstimateDetails.CEpaymentTerms
             End If
+
+            If CEtaxSelection Then
+                VatText.Visibility = Visibility.Collapsed
+                VatValue.Visibility = Visibility.Collapsed
+
+                If String.IsNullOrWhiteSpace(CostEstimateDetails.CEremarksTxt) OrElse
+       remarksBox.Text = "Tax Inclusive." OrElse remarksBox.Text = "Tax Exclusive." Then
+                    remarksBox.Text = "Tax Exclusive."
+                End If
+            Else
+                VatText.Visibility = Visibility.Visible
+                VatValue.Visibility = Visibility.Visible
+
+                If String.IsNullOrWhiteSpace(CostEstimateDetails.CEremarksTxt) OrElse
+       remarksBox.Text = "Tax Inclusive." OrElse remarksBox.Text = "Tax Exclusive." Then
+                    remarksBox.Text = "Tax Inclusive."
+                End If
+            End If
+
 
             ' Check if the signature is enabled
             If Not String.IsNullOrWhiteSpace(base64Image) Then
@@ -116,10 +135,32 @@ Namespace DPC.Views.Sales.Quotes
 
 #Region "Computation Part"
         Private Sub Delivery_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim tb As TextBox = TryCast(sender, TextBox)
+            If tb Is Nothing Then Exit Sub
+
+            RemoveHandler tb.TextChanged, AddressOf Delivery_TextChanged
+
+            If Not tb.Text.StartsWith("₱ ") Then
+                tb.Text = "₱ " & tb.Text.Replace("₱", "").TrimStart()
+                tb.CaretIndex = tb.Text.Length
+            End If
+
+            AddHandler tb.TextChanged, AddressOf Delivery_TextChanged
             ComputeCost(sender, e)
         End Sub
 
         Private Sub Installation_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim tb As TextBox = TryCast(sender, TextBox)
+            If tb Is Nothing Then Exit Sub
+
+            RemoveHandler tb.TextChanged, AddressOf Installation_TextChanged
+
+            If Not tb.Text.StartsWith("₱ ") Then
+                tb.Text = "₱ " & tb.Text.Replace("₱", "").TrimStart()
+                tb.CaretIndex = tb.Text.Length
+            End If
+
+            AddHandler tb.TextChanged, AddressOf Installation_TextChanged
             ComputeCost(sender, e)
         End Sub
 
@@ -265,6 +306,7 @@ Namespace DPC.Views.Sales.Quotes
             If Decimal.TryParse(Delivery.Text.Replace("₱", "").Replace(",", "").Trim(), CEDeliveryCost) = False Then
                 CEDeliveryCost = 0D ' fallback value if conversion fails
             End If
+            CostEstimateDetails.CEpaperNote = noteBox.Text ' Changed 07/09/2025 to noteBox
             CostEstimateDetails.CEApproved = cmbApproved.Text
             CostEstimateDetails.CEpaymentTerms = cmbTerms.Text
             If CostEstimateDetails.CEisCustomTerm = True Then
@@ -291,6 +333,7 @@ Namespace DPC.Views.Sales.Quotes
             CostEstimateDetails.CETotalAmountCache = TotalCost.Text
             CostEstimateDetails.CEDeliveryCost = _deliveryCost
             CostEstimateDetails.CEInstallation = _installationCost
+            CostEstimateDetails.CETaxValueCache = VAT12.Text
             CostEstimateDetails.CEQuoteItemsCache = itemOrder
             CostEstimateDetails.CEImageCache = base64Image
             CostEstimateDetails.CEPathCache = tempImagePath
@@ -342,6 +385,10 @@ Namespace DPC.Views.Sales.Quotes
             Else
                 CostEstimateDetails.CEisCustomTerm = False
             End If
+        End Sub
+
+        Private Sub VAT12_TextChanged(sender As Object, e As TextChangedEventArgs)
+
         End Sub
 #End Region
     End Class
