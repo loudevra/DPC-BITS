@@ -57,13 +57,13 @@ Namespace DPC.Views.Sales.Quotes
             base64Image = CostEstimateDetails.CEImageCache
             tempImagePath = CostEstimateDetails.CEPathCache
             ClientNameBox.Text = CostEstimateDetails.CEClientName
+            VAT12.Text = CostEstimateDetails.CETaxValueCache
             CESubTotalCache = CostEstimateDetails.CETotalAmountCache
             AddressLineOne.Text = CostEstimateDetails.CEAddress & ", " & CostEstimateDetails.CECity    ' -- important when editing
             AddressLineTwo.Text = CostEstimateDetails.CERegion & ", " & CostEstimateDetails.CECountry    ' -- important when editing
             PhoneBox.Text = "Tel No.: +63 " & FormatPhoneWithSpaces(CostEstimateDetails.CEPhone)
             EmailBox.Text = CostEstimateDetails.CEEmail
             noteBox.Text = CostEstimateDetails.CEpaperNote
-            remarksBox.Text = CostEstimateDetails.CEremarksTxt
             Term1.Text = CostEstimateDetails.CETerm1
             Term2.Text = CostEstimateDetails.CETerm2
             Term3.Text = CostEstimateDetails.CETerm3
@@ -86,6 +86,25 @@ Namespace DPC.Views.Sales.Quotes
             Else
                 cmbTerms.Text = CostEstimateDetails.CEpaymentTerms
             End If
+
+            If CEtaxSelection Then
+                VatText.Visibility = Visibility.Collapsed
+                VatValue.Visibility = Visibility.Collapsed
+
+                If String.IsNullOrWhiteSpace(CostEstimateDetails.CEremarksTxt) OrElse
+       remarksBox.Text = "Tax Inclusive." OrElse remarksBox.Text = "Tax Exclusive." Then
+                    remarksBox.Text = "Tax Exclusive."
+                End If
+            Else
+                VatText.Visibility = Visibility.Visible
+                VatValue.Visibility = Visibility.Visible
+
+                If String.IsNullOrWhiteSpace(CostEstimateDetails.CEremarksTxt) OrElse
+       remarksBox.Text = "Tax Inclusive." OrElse remarksBox.Text = "Tax Exclusive." Then
+                    remarksBox.Text = "Tax Inclusive."
+                End If
+            End If
+
 
             ' Check if the signature is enabled
             If Not String.IsNullOrWhiteSpace(base64Image) Then
@@ -314,6 +333,7 @@ Namespace DPC.Views.Sales.Quotes
             CostEstimateDetails.CETotalAmountCache = TotalCost.Text
             CostEstimateDetails.CEDeliveryCost = _deliveryCost
             CostEstimateDetails.CEInstallation = _installationCost
+            CostEstimateDetails.CETaxValueCache = VAT12.Text
             CostEstimateDetails.CEQuoteItemsCache = itemOrder
             CostEstimateDetails.CEImageCache = base64Image
             CostEstimateDetails.CEPathCache = tempImagePath

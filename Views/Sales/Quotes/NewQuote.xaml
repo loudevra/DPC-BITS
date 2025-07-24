@@ -237,7 +237,7 @@
 
                                             <!--Quote Number-->
                                             <StackPanel Orientation="Vertical">
-                                                <TextBlock Grid.Column="0" Text="Quote Number:" FontWeight="SemiBold" FontFamily="Lexend"
+                                                <TextBlock Grid.Column="0" Text="Cost Estimate Number:" FontWeight="SemiBold" FontFamily="Lexend"
                                                                FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,10,20,5"/>
                                                 <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Margin="0,0,0,10"
                                                         Padding="5" Width="Auto" Height="34" BorderBrush="#474747">
@@ -251,7 +251,7 @@
                                             </StackPanel>
 
                                             <!--Reference-->
-                                            <StackPanel Orientation="Vertical">
+                                            <StackPanel Orientation="Vertical" Visibility="Collapsed">
                                                 <TextBlock Grid.Column="0" Text="Reference:" FontWeight="SemiBold" FontFamily="Lexend"
                                                         FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,5"/>
                                                 <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Margin="0,0,0,10"
@@ -268,7 +268,7 @@
 
                                             <!--Quote Date-->
                                             <StackPanel Orientation="Vertical">
-                                                <TextBlock Grid.Column="0" Text="Quote Date:" FontWeight="SemiBold" FontFamily="Lexend"
+                                                <TextBlock Grid.Column="0" Text="Cost Estimate Date:" FontWeight="SemiBold" FontFamily="Lexend"
                                                           FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,5"/>
                                                 <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Margin="0,0,0,10"
                                                             Padding="5" Width="Auto" Height="34" BorderBrush="#474747">
@@ -295,7 +295,7 @@
 
                                             <!--Quote Validity-->
                                             <StackPanel Orientation="Vertical">
-                                                <TextBlock Grid.Column="0" Text="Quote Validity:" FontWeight="SemiBold" FontFamily="Lexend"
+                                                <TextBlock Grid.Column="0" Text="Cost Estimate Validity:" FontWeight="SemiBold" FontFamily="Lexend"
                                                             FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,5"/>
                                                 <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Margin="0,0,0,10"
                                                                Padding="5" Width="Auto" Height="34" BorderBrush="#474747">
@@ -353,7 +353,7 @@
                                             </StackPanel>
                                             <!-- Order Note -->
                                             <StackPanel Orientation="Vertical">
-                                                <TextBlock Text="Quote Note:" FontFamily="Lexend" FontSize="16" FontWeight="SemiBold" Foreground="#474747" Margin="0,0,20,5"/>
+                                                <TextBlock Text="Cost Estimate Note:" FontFamily="Lexend" FontSize="16" FontWeight="SemiBold" Foreground="#474747" Margin="0,0,20,5"/>
                                                 <Border Style="{StaticResource RoundedGridStyle}" BorderBrush="#474747" Width="Auto" Margin="0,0,0,10" Padding="0,1" HorizontalAlignment="Stretch">
                                                     <TextBox x:Name="txtQuoteNote" Style="{StaticResource RoundedTextboxStyle}" Foreground="Black" Height="130" VerticalContentAlignment="Top" Width="Auto" TextWrapping="Wrap"/>
                                                 </Border>

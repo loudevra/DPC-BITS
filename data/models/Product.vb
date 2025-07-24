@@ -113,6 +113,7 @@ Namespace DPC.Data.Model
         Public Property ProductID As String
         Public Property ProductName As String
         Public Property BuyingPrice As Decimal
+        Public Property SellingPrice As Decimal
         Public Property DefaultTax As Decimal
         Public Property StockUnits As Integer
         Public Property MeasurementUnit As String

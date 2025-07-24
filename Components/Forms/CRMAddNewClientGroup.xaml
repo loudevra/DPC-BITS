@@ -36,20 +36,20 @@
                         <StackPanel Margin="0,0,0,10">
                             <TextBlock Text="Group Name:" FontSize="14" FontWeight="SemiBold" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,0,5"/>
                             <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10" Width="Auto" BorderBrush="#555555" BorderThickness="3" Height="52" CornerRadius="30">
-                                <TextBox Style="{StaticResource RoundedTextboxStyle}" FontSize="20px" Foreground="#AEAEAE" VerticalAlignment="Center"/>
+                                <TextBox x:Name="ClientGroupName" Style="{StaticResource RoundedTextboxStyle}" FontSize="20px" Foreground="#AEAEAE" VerticalAlignment="Center"/>
                             </Border>
                         </StackPanel>
                         <StackPanel Orientation="Vertical">
                             <TextBlock Text="Description:" FontSize="14" FontWeight="SemiBold" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,0,5"/>
                             <Border Style="{StaticResource RoundedBorderStyle}" Width="Auto" BorderBrush="#555555" BorderThickness="3" Height="52" CornerRadius="30">
-                                <TextBox Style="{StaticResource RoundedTextboxStyle}" FontSize="20px" Foreground="#AEAEAE" VerticalAlignment="Center"/>
+                                <TextBox x:Name="ClientGroupDescription" Style="{StaticResource RoundedTextboxStyle}" FontSize="20px" Foreground="#AEAEAE" VerticalAlignment="Center"/>
                             </Border>
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
             </StackPanel>
             <StackPanel Grid.Row="2">
-                <Button Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#52C69D" Margin="0,10,0,10"  Width="159" HorizontalAlignment="Right" Height="42">
+                <Button Click="AddClientGroup" Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#52C69D" Margin="0,10,0,10"  Width="159" HorizontalAlignment="Right" Height="42">
                     <TextBlock Text="Add Group" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="16px" />
                 </Button>
             </StackPanel>

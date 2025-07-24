@@ -27,6 +27,7 @@
     Public CETotalCostDelivery, CEDeliveryCost As Decimal
     Public CEApproved As String
     Public CEInstallation As String
+    Public CEtaxSelection As Boolean
 
     Public Sub ClearAllCECache()
         CEQuoteNumberCache = ""

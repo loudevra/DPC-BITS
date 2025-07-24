@@ -42,6 +42,7 @@ Namespace DPC.Components.Forms
             QuoteValidityDate.Text = CostEstimateDetails.CEQuoteValidityDateCache
             Subtotal.Text = CostEstimateDetails.CESubTotalCache
             TotalCost.Text = CostEstimateDetails.CETotalAmountCache
+            VAT12.Text = CostEstimateDetails.CETotalTaxValueCache
             Delivery.Text = "₱ " & CostEstimateDetails.CEDeliveryCost.ToString("N2")
             itemOrder = CostEstimateDetails.CEQuoteItemsCache
             base64Image = CostEstimateDetails.CEImageCache
@@ -71,9 +72,18 @@ Namespace DPC.Components.Forms
             ' Check if the terms is enabled
             If CostEstimateDetails.CEisCustomTerm = True Then
                 cmbTerms.Text = CostEstimateDetails.CEpaymentTerms
-                cmbTerms.Foreground = Brushes.Red
+                cmbTerms.Foreground = Brushes.White
+
             Else
                 cmbTerms.Text = CostEstimateDetails.CEpaymentTerms
+            End If
+
+            If CEtaxSelection Then
+                VatText.Visibility = Visibility.Collapsed
+                VatValue.Visibility = Visibility.Collapsed
+            Else
+                VatText.Visibility = Visibility.Visible
+                VatValue.Visibility = Visibility.Visible
             End If
 
             DisplaySignaturePreview()
@@ -121,26 +131,30 @@ Namespace DPC.Components.Forms
         End Sub
 
         Private Sub SavePrint(sender As Object, e As RoutedEventArgs)
-            ' Ask user: PDF or Print
-            Dim result As MessageBoxResult = MessageBox.Show("Do you want to save this as a PDF?", "Choose Output", MessageBoxButton.YesNoCancel, MessageBoxImage.Question)
+            Try
+                ' Ask user: PDF or Print
+                Dim result As MessageBoxResult = MessageBox.Show("Do you want to save this as a PDF?", "Choose Output", MessageBoxButton.YesNoCancel, MessageBoxImage.Question)
 
-            Dim docName As String = CEQuoteNumberCache
-            Dim savedPath As String = SaveAsPDF(docName) ' 🔒 Always generate PDF
+                Dim docName As String = CEQuoteNumberCache
+                Dim savedPath As String = SaveAsPDF(docName) ' Always generate PDF
 
-            If result = MessageBoxResult.Yes Then
-                ' ➤ Save as PDF (already done above)
-                SavePdfPathToMongoDB(savedPath, CEQuoteNumberCache, CacheOnLoggedInName)
-                SaveToDb()
-            ElseIf result = MessageBoxResult.No Then
-                ' ➤ Print physically
-                PrintPhysically(docName)
-                SavePdfPathToMongoDB(savedPath, CEQuoteNumberCache, CacheOnLoggedInName)
-                SaveToDb()
-            Else
-                ' ➤ Cancelled
-                MessageBox.Show("Printing Cancelled")
-                Exit Sub
-            End If
+                If result = MessageBoxResult.Yes Then
+                    ' Save as PDF (already done above)
+                    If Not SavePdfPathToMongoDB(savedPath, CEQuoteNumberCache, CacheOnLoggedInName) Then Exit Sub
+                    SaveToDb()
+                ElseIf result = MessageBoxResult.No Then
+                    ' Print physically
+                    PrintPhysically(docName)
+                    If Not SavePdfPathToMongoDB(savedPath, CEQuoteNumberCache, CacheOnLoggedInName) Then Exit Sub
+                    SaveToDb()
+                Else
+                    ' Cancelled
+                    MessageBox.Show("Printing Cancelled")
+                    Exit Sub
+                End If
+            Catch ex As Exception
+                MessageBox.Show("Error during save/print: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
         End Sub
 
         Public Sub DisplaySignaturePreview()
@@ -205,24 +219,30 @@ Namespace DPC.Components.Forms
     }
         End Function
 
-        Private Sub SavePdfPathToMongoDB(filePath As String, quoteNumber As String, uploadedBy As String)
-            ' Get the MongoDB GridFS connection from SplashScreen
-            Dim gridFS As GridFSBucket = SplashScreen.GetGridFSConnection()
+        Private Shared Function SavePdfPathToMongoDB(filePath As String, quoteNumber As String, uploadedBy As String) As Boolean
+            Try
+                ' Get the MongoDB GridFS connection from SplashScreen
+                Dim gridFS As GridFSBucket = SplashScreen.GetGridFSConnection()
 
-            Using fileStream As New FileStream(filePath, FileMode.Open, FileAccess.Read)
-                Dim options As New GridFSUploadOptions() With {
-            .Metadata = New BsonDocument From {
-                {"uploadedBy", uploadedBy},
-                {"uploadedAt", BsonDateTime.Create(DateTime.UtcNow)},
-                {"source", "cost-estimate/quote"},
-                {"quoteNumber", quoteNumber},
-                {"pdfFilePath", filePath}
-            }
-        }
+                Using fileStream As New FileStream(filePath, FileMode.Open, FileAccess.Read)
+                    Dim options As New GridFSUploadOptions() With {
+                        .Metadata = New BsonDocument From {
+                            {"uploadedBy", uploadedBy},
+                            {"uploadedAt", BsonDateTime.Create(DateTime.UtcNow)},
+                            {"source", "cost-estimate/quote"},
+                            {"quoteNumber", quoteNumber},
+                            {"pdfFilePath", filePath}
+                        }
+                    }
 
-                gridFS.UploadFromStream(Path.GetFileName(filePath), fileStream, options)
-            End Using
-        End Sub
+                    gridFS.UploadFromStream(Path.GetFileName(filePath), fileStream, options)
+                End Using
+                Return True
+            Catch ex As Exception
+                MessageBox.Show("(Tips: You can go back to the newquote without lossing data) Error saving PDF path to MongoDB: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                Return False
+            End Try
+        End Function
 
         Private Sub SaveToDb()
             Dim jsonItems As String = Newtonsoft.Json.JsonConvert.SerializeObject(CEQuoteItemsCache)
@@ -368,14 +388,18 @@ Namespace DPC.Components.Forms
         End Sub
 
         Private Sub SaveDb_Click(sender As Object, e As RoutedEventArgs)
-            Dim docName As String = "CE-" & DateTime.Now.ToString("yyyyMMdd-HHmmss")
-            Dim savedPath As String = SaveAsPDF(docName)
-            SavePdfPathToMongoDB(savedPath, CEQuoteNumberCache, CacheOnLoggedInName)
-            If Not String.IsNullOrEmpty(savedPath) Then
-                SaveToDb()
-            Else
-                MessageBox.Show("PDF save cancelled. Data not saved.")
-            End If
+            Try
+                Dim docName As String = CEQuoteNumberCache
+                Dim savedPath As String = SaveAsPDF(docName)
+                If Not SavePdfPathToMongoDB(savedPath, CEQuoteNumberCache, CacheOnLoggedInName) Then Exit Sub
+                If Not String.IsNullOrEmpty(savedPath) Then
+                    SaveToDb()
+                Else
+                    MessageBox.Show("PDF save cancelled. Data not saved.")
+                End If
+            Catch ex As Exception
+                MessageBox.Show("Error saving to database: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
         End Sub
 
     End Class

@@ -64,8 +64,22 @@ Namespace DPC.Views.Sales.Quotes
             }
 
             ' For Tax Selection
-            _TaxSelection = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString() = "Inclusive"
-            _SelectedTax = If(_TaxSelection, 0.12D, Nothing)
+            If String.IsNullOrWhiteSpace(CEtaxSelection) Then
+                _TaxSelection = False
+            Else
+                _TaxSelection = CBool(CEtaxSelection)
+            End If
+            CEtaxSelection = _TaxSelection
+
+            ' Set the ComboBox selection to match _TaxSelection
+            If _TaxSelection Then
+                txtTaxSelection.SelectedItem = txtTaxSelection.Items.Cast(Of ComboBoxItem)().FirstOrDefault(Function(i) i.Content.ToString() = "Exclusive")
+            Else
+                txtTaxSelection.SelectedItem = txtTaxSelection.Items.Cast(Of ComboBoxItem)().FirstOrDefault(Function(i) i.Content.ToString() = "Inclusive")
+            End If
+
+            ' Run the selection changed logic to update all rates/tax fields
+            txtTaxSelection_SelectionChanged(txtTaxSelection, Nothing)
 
             AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
             AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
@@ -256,7 +270,7 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Sub txtTaxSelection_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
-            _TaxSelection = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString() = "Inclusive"
+            _TaxSelection = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString() = "Exclusive"
             _SelectedTax = If(_TaxSelection, 0.12D, Nothing)
             Debug.WriteLine($"Tax Selection - {_TaxSelection}")
             Debug.WriteLine($"Tax Value In Quote Properties - {_SelectedTax}")
@@ -266,10 +280,12 @@ Namespace DPC.Views.Sales.Quotes
                 If kvp.Key.StartsWith("txtTaxPercent_") Then
                     If _TaxSelection Then
                         kvp.Value.Text = (_SelectedTax * 100).ToString()
-                        kvp.Value.IsReadOnly = True
-                    Else
                         kvp.Value.IsReadOnly = False
-                        kvp.Value.Text = "" ' Optionally clear the value for user input
+                        CEtaxSelection = True
+                    Else
+                        kvp.Value.IsReadOnly = True
+                        kvp.Value.Text = ""
+                        CEtaxSelection = False
                     End If
                 End If
             Next
@@ -817,11 +833,14 @@ Namespace DPC.Views.Sales.Quotes
             Dim taxValueBox = TryCast(FindTextBoxByName($"txtTaxValue_{rowIndex}"), TextBox)
 
             If rateBox IsNot Nothing Then
-                Dim buyingPrice As Decimal = product.BuyingPrice
+                Dim buyingPrice As Decimal
+
+                buyingPrice = product.SellingPrice
+
                 rateBox.Text = buyingPrice.ToString("F2")
 
                 If taxPercentBox IsNot Nothing Then
-                    If _TaxSelection Then
+                    If Not _TaxSelection Then
                         ' Inclusive: set to default and lock
                         taxPercentBox.Text = (_SelectedTax * 100).ToString()
                         taxPercentBox.IsReadOnly = True
@@ -877,16 +896,23 @@ Namespace DPC.Views.Sales.Quotes
             If taxPercentBox IsNot Nothing Then Decimal.TryParse(taxPercentBox.Text, taxPercent)
             If discountPercentBox IsNot Nothing Then Decimal.TryParse(discountPercentBox.Text, discountPercent)
 
-            ' Base + tax 
             Dim baseAmount = quantity * rate
-            Dim taxValue = baseAmount * (taxPercent / 100)
-            Dim amountBeforeDiscount = baseAmount + taxValue
+            Dim taxValue As Decimal = 0
+            Dim amountBeforeDiscount As Decimal = baseAmount
 
-            ' Discount based on taxed amount
+            If _TaxSelection Then
+                ' Tax is included in amount
+                taxValue = baseAmount * (taxPercent / 100)
+                amountBeforeDiscount = baseAmount + taxValue
+            Else
+                ' Tax is shown but not added to amount (12% of rate per item)
+                taxValue = rate * 0.12D
+                ' amountBeforeDiscount remains baseAmount (no tax added)
+            End If
+
             Dim discountValue = amountBeforeDiscount * (discountPercent / 100)
             Dim finalAmount = amountBeforeDiscount - discountValue
 
-            ' Output values
             If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("F2")
             If discountBox IsNot Nothing Then discountBox.Text = discountValue.ToString("F2")
             amountBox.Text = "₱" & finalAmount.ToString("F2")
@@ -1026,7 +1052,7 @@ Namespace DPC.Views.Sales.Quotes
             Dim tb = DirectCast(sender, TextBox)
 
             ' Block if input is not a digit or if new text would be longer than 3 chars
-            If Not Char.IsDigit(e.Text, 0) OrElse tb.Text.Length >= 3 Then
+            If Not Char.IsDigit(e.Text, 0) OrElse tb.Text.Length >= 6 Then
                 e.Handled = True
             End If
         End Sub
@@ -1066,10 +1092,10 @@ Namespace DPC.Views.Sales.Quotes
                 Return False
             End If
 
-            If String.IsNullOrWhiteSpace(txtReferenceNumber.Text) Then
-                MessageBox.Show("Reference Number is required.")
-                Return False
-            End If
+            'If String.IsNullOrWhiteSpace(txtReferenceNumber.Text) Then
+            '    MessageBox.Show("Reference Number is required.")
+            '    Return False
+            'End If
 
             If Not QuoteDate.SelectedDate.HasValue Then
                 MessageBox.Show("Quote Date is required.")
