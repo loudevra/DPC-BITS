@@ -151,11 +151,23 @@
       <HintPath>packages\Microsoft.Bcl.TimeProvider.9.0.4\lib\net462\Microsoft.Bcl.TimeProvider.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=8.0.0.1, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.DependencyInjection.8.0.1\lib\net462\Microsoft.Extensions.DependencyInjection.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=9.0.0.4, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Extensions.DependencyInjection.Abstractions.9.0.4\lib\net462\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Extensions.Logging, Version=8.0.0.1, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Logging.8.0.1\lib\net462\Microsoft.Extensions.Logging.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=9.0.0.4, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Extensions.Logging.Abstractions.9.0.4\lib\net462\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Options, Version=8.0.0.2, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Options.8.0.2\lib\net462\Microsoft.Extensions.Options.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Primitives, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Extensions.Primitives.8.0.0\lib\net462\Microsoft.Extensions.Primitives.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.IdentityModel.Abstractions, Version=8.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.IdentityModel.Abstractions.8.9.0\lib\net472\Microsoft.IdentityModel.Abstractions.dll</HintPath>
@@ -204,6 +216,33 @@
     </Reference>
     <Reference Include="OpenTK, Version=3.3.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>packages\OpenTK.3.3.1\lib\net20\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.BarCodes, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.BarCodes.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Charting, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.Charting.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Cryptography, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.Cryptography.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Quality, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.Quality.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Shared, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.Shared.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.Snippets, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.Snippets.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.System, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.System.dll</HintPath>
+    </Reference>
+    <Reference Include="PdfSharp.WPFonts, Version=6.2.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>packages\PDFsharp.6.2.0\lib\netstandard2.0\PdfSharp.WPFonts.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>packages\PresentationFramework.4.6.0\lib\PresentationFramework.dll</HintPath>
@@ -304,6 +343,9 @@
       <HintPath>packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
       <Private>True</Private>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Pkcs, Version=8.0.0.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Security.Cryptography.Pkcs.8.0.1\lib\net462\System.Security.Cryptography.Pkcs.dll</HintPath>
     </Reference>
     <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
@@ -548,6 +590,7 @@
       <DependentUpon>TopNavBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Data.vb" />
+    <Compile Include="Data\Cache\EditCashAdvanceRequestCache.vb" />
     <Compile Include="Data\Controllers\Account\AccountController.vb" />
     <Compile Include="Data\Controllers\AuthController.vb" />
     <Compile Include="Data\Controllers\BrandController.vb" />
@@ -560,6 +603,9 @@
     <Compile Include="Data\Controllers\EmployeeLoginHistoryController.vb" />
     <Compile Include="Data\Controllers\HRM\HRMController.vb" />
     <Compile Include="Data\Controllers\ManageProductsController.vb" />
+    <Compile Include="Data\Controllers\Misc\EditCashAdvanceRequestController.vb" />
+    <Compile Include="Data\Controllers\Misc\ManageCashAdvanceController.vb" />
+    <Compile Include="Data\Controllers\Misc\NewCashAdvanceController.vb" />
     <Compile Include="Data\Controllers\Permissions\PermissionItem.vb" />
     <Compile Include="Data\Controllers\ProductCategoryController.vb" />
     <Compile Include="Data\Controllers\Product\CreateProduct.vb" />
@@ -608,6 +654,7 @@
     <Compile Include="Data\Helpers\ViewLoader\ViewNavigation.vb" />
     <Compile Include="Data\Models\Account.vb" />
     <Compile Include="Data\Models\BusinessLocation.vb" />
+    <Compile Include="Data\Models\CashAdvanceRequestModel.vb" />
     <Compile Include="Data\Models\Client.vb" />
     <Compile Include="Data\Models\ClientGroup.vb" />
     <Compile Include="Data\Models\DepartmentsSection.vb" />
@@ -855,6 +902,18 @@
     </Compile>
     <Compile Include="Views\HRM\Employees\Salaries\EmployeeSalaries.xaml.vb">
       <DependentUpon>EmployeeSalaries.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc\CashAdvance\CashAdvanceNewRequest.xaml.vb">
+      <DependentUpon>CashAdvanceNewRequest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc\CashAdvance\EditCashAdvanceRequest.xaml.vb">
+      <DependentUpon>EditCashAdvanceRequest.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc\CashAdvance\ManageCashAdvanceRequests.xaml.vb">
+      <DependentUpon>ManageCashAdvanceRequests.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc\CashAdvance\PreviewPrintCashAdvanceRequestForm.xaml.vb">
+      <DependentUpon>PreviewPrintCashAdvanceRequestForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Misc\Documents\AddDocument.xaml.vb">
       <DependentUpon>AddDocument.xaml</DependentUpon>
@@ -1666,6 +1725,22 @@
     <Page Include="Views\HRM\Employees\Salaries\EmployeeSalaries.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Misc\CashAdvance\CashAdvanceNewRequest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Misc\CashAdvance\EditCashAdvanceRequest.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Misc\CashAdvance\ManageCashAdvanceRequests.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Misc\CashAdvance\PreviewPrintCashAdvanceRequestForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Misc\Documents\AddDocument.xaml">
       <Generator>MSBuild:Compile</Generator>
