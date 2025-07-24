@@ -1,0 +1,579 @@
+﻿<UserControl x:Class="DPC.Views.Misc.CashAdvance.EditCashAdvanceRequest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="namespace:DPC.Views.Stocks.ItemManager" 
+        xmlns:local1="namespace:DPC.Components.Forms"
+        mc:Ignorable="d"
+        Background="#D9D9D9"
+        FontFamily="{StaticResource Lexend}"
+        Foreground="#474747"
+             Loaded="CashAdvanceNewRequest_Loaded"
+             >
+
+
+    <!--Main Content-->
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--Sticky Header-->
+        <StackPanel Grid.Row="0" Background="{Binding Background, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}" Margin="25,10,25,0">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10" VerticalAlignment="Center">
+                <materialDesign:PackIcon Kind="CashEdit" Width="40" Height="40" Margin="0,0,15,0"/>
+                <TextBlock Text="Edit Cash Advance Request" FontSize="25" FontWeight="DemiBold" VerticalAlignment="Center" TextAlignment="Left" Width="700" Margin="0,0,0,-3"/>
+                <Button Margin="0,0,15,0" Cursor="Hand" Width="30" Height="30" BorderThickness="0" Background="#D9D9D9" Click="NavigateBackToManage">
+                    <materialDesign:PackIcon Kind="ArrowULeftTop" Width="25" Height="25"  VerticalAlignment="Center" HorizontalAlignment="Right" />
+                </Button>
+            </StackPanel>
+        </StackPanel>
+
+        <!--Main Form Content-->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Style="{StaticResource ModernScrollViewerStyle}">
+
+            <StackPanel Orientation="Vertical" Margin="0,20,0,0">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Column="0" Grid.Row="0" Margin="10">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="EMPLOYEE NAME" 
+                                       FontFamily="{StaticResource Lexend}" 
+                                       FontWeight="Bold"
+                                       FontSize="16"
+                                       TextAlignment="Center"
+                                       Margin="10,0,0,5"
+                                       />
+                            <TextBlock Text=" *" Foreground  ="Red" FontSize="16" FontWeight="UltraBold"/>
+                        </StackPanel>
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <Grid>
+                                <TextBox x:Name="AutoCompleteTextBox"
+                                         FontFamily="{StaticResource Lexend}"
+                                         Height="35"
+                                         Style="{StaticResource RoundedTextboxStyle}"
+                                         FontSize="14"
+                                         TextAlignment="Center"
+                                         VerticalAlignment="Top"
+                                         TextChanged="AutoCompleteTextBox_TextChanged"
+                                         PreviewKeyDown="AutoCompleteTextBox_PreviewKeyDown"/>
+
+                                <!-- Popup for suggestions -->
+                                <Popup x:Name="AutoCompletePopup"
+                                       Placement="Bottom"
+                                       PlacementTarget="{Binding ElementName=AutoCompleteTextBox}"
+                                       StaysOpen="False"
+                                       AllowsTransparency="True"
+                                       Focusable="False"
+                                       IsOpen="False">
+                                    <Border Background="White"
+                                            BorderBrush="Gray"
+                                            BorderThickness="1"
+                                            CornerRadius="5"
+                                            >
+                                        <ListBox x:Name="SuggestionListBox"
+                                                 PreviewMouseLeftButtonUp="SuggestionListBox_PreviewMouseLeftButtonDown"
+                                                 FontFamily="{StaticResource Lexend}"
+                                                 FontSize="14"
+                                                 Width="{Binding ActualWidth, ElementName=AutoCompleteTextBox}"
+                                                 MaxHeight="150"
+                                                 Padding="3"
+                                                 BorderThickness="0" />
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Grid.Row="0" Margin="10">
+                        <TextBlock Text="JOB TITLE" 
+                                    FontFamily="{StaticResource Lexend}" 
+                                    FontWeight="Bold"
+                                    FontSize="16"
+                                   TextAlignment="Left"
+                                   Margin="10,0,0,5"
+                                    />
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <TextBox FontFamily="{StaticResource Lexend}"
+                                     x:Name="JobTitle"
+                                      Height="35"
+                                      Style="{StaticResource RoundedTextboxStyle}"
+                                      FontSize="14"
+                                   TextAlignment="Center"
+                                     IsReadOnly="True"
+                                      >
+                            </TextBox>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="0" Grid.Row="1" Margin="10">
+                        <TextBlock Text="EMPLOYEE ID" 
+                                    FontFamily="{StaticResource Lexend}" 
+                                    FontWeight="Bold"
+                                    FontSize="16"
+                                   TextAlignment="Left"
+                                   Margin="10,0,0,5"
+                                    />
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <TextBox FontFamily="{StaticResource Lexend}"
+                                     x:Name="EmployeeID"
+                                      Height="35"
+                                      Style="{StaticResource RoundedTextboxStyle}"
+                                      FontSize="14"
+                                   TextAlignment="Center"
+                                     IsReadOnly="True"
+                                      >
+                            </TextBox>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Grid.Row="1" Margin="10">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="DATE" 
+                                        FontFamily="{StaticResource Lexend}" 
+                                        FontWeight="Bold"
+                                        FontSize="16"
+                                       TextAlignment="Left"
+                                       Margin="10,0,0,5"
+                                        />
+                            <TextBlock Text=" *" Foreground  ="Red" FontSize="16" FontWeight="UltraBold"/>
+                        </StackPanel>
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width=".15*"/>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+
+                                <DatePicker x:Name="CashAdvanceDatePicker"
+                                            Style="{StaticResource SingleDatePickerStyle}"
+                                            SelectedDate="{Binding CashAdvanceDate.SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"/>
+
+                                <materialDesign:PackIcon Grid.Column="0" Kind="Calendar" Width="25" Height="25" Foreground="#474747" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,0,0,0"/>
+
+                                <Button Grid.Column="1"
+                                        Style="{StaticResource DateButtonStyle}"
+                                        Width="Auto"
+                                        Click="CashAdvanceDate_Click"
+                                        Cursor="Hand"
+                                        Margin="10,0,25,0"
+                                        HorizontalContentAlignment="Center">
+                                    <TextBlock Text="{Binding CashAdvanceDate.SelectedDate, StringFormat='MMM dd, yyyy'}"
+                                       Margin="0,0,5,0"
+                                       Foreground="#474747"
+                                       Height="14"
+                                               FontFamily="{StaticResource Lexend}"
+                                               FontSize="12"
+                                       />
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+
+                <Grid Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Column="0" Grid.Row="0" Margin="10">
+                        <TextBlock Text="SUPERVISOR (If Applicable)" 
+                                   FontFamily="{StaticResource Lexend}" 
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   TextAlignment="Left"
+                                   Margin="10,0,0,5"
+                                   />
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <TextBox FontFamily="{StaticResource Lexend}"
+                                     x:Name="SupervisorName"
+                                     Height="35"
+                                     Style="{StaticResource RoundedTextboxStyle}"
+                                     FontSize="14"
+                                   TextAlignment="Center"
+                                     >
+                            </TextBox>
+                        </Border>
+                    </StackPanel>
+
+
+                    <StackPanel Grid.Column="1" Grid.Row="0" Margin="10">
+                        <TextBlock Text="HOURLY RATE OF PAY" 
+                                       FontFamily="{StaticResource Lexend}" 
+                                       FontWeight="Bold"
+                                       FontSize="16"
+                                       TextAlignment="Left"
+                                       Margin="10,0,0,5"
+                                       />
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <TextBox FontFamily="{StaticResource Lexend}"
+                                     x:Name="hourlyRate"
+                                     Height="35"
+                                     Style="{StaticResource RoundedTextboxStyle}"
+                                     FontSize="14"
+                                   TextAlignment="Center"
+                                     >
+                            </TextBox>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"  Margin="10">
+                        <TextBlock Text="DEPARTMENT" 
+                                   FontFamily="{StaticResource Lexend}" 
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   TextAlignment="Center"
+                                   Margin="0,0,0,5"
+                                   />
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <TextBox FontFamily="{StaticResource Lexend}"
+                                     x:Name="Department"
+                                     Height="35"
+                                     Style="{StaticResource RoundedTextboxStyle}"
+                                     FontSize="14"
+                                   TextAlignment="Center"
+                                     IsReadOnly="True"
+                                     >
+                            </TextBox>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+
+                <Grid Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Background="#474747" Padding="5,10,5,10" CornerRadius="20,0,0,0" Grid.Column="0" Grid.Row="0" Margin="0,0,-1,0">
+                        <TextBlock Text="REQUEST AMOUNT" 
+                                     FontFamily="{StaticResource Lexend}" 
+                                     FontWeight="Bold"
+                                     FontSize="16"
+                                     TextAlignment="Center"
+                                   Foreground="#d9d9d9"
+                                     />
+                    </Border>
+
+                    <Border Background="#474747" Padding="5,10,5,10" Grid.Column="1" Grid.Row="0">
+                        <TextBlock Text="DATE NEED" 
+                               FontFamily="{StaticResource Lexend}" 
+                               FontWeight="Bold"
+                               FontSize="16"
+                               TextAlignment="Center"
+                               Foreground="#d9d9d9"
+                               />
+                    </Border>
+
+                    <Border Background="#474747" Padding="5,10,5,10" 
+                            Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="2" 
+                            CornerRadius="0,20,0,0"
+                                   Margin="-1,0,0,0"
+                            >
+                        <TextBlock Text="REASON FOR CASH ADVANCE" 
+                                   FontFamily="{StaticResource Lexend}" 
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   TextAlignment="Center"
+                                   Foreground="#d9d9d9"
+                                   />
+                    </Border>
+
+                    <StackPanel Orientation="Vertical" x:Name="SPRequestAmount" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="1">
+                        <!--Request Amount Content-->
+
+                    </StackPanel>
+
+                    <Grid Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Background="#474747" CornerRadius="0,0,0,20" Grid.Column="0" Grid.ColumnSpan="2" Padding="10" Grid.Row="0">
+                            <StackPanel Orientation="Vertical">
+                                <Button x:Name="BtnAddRow" Style="{StaticResource RoundedButtonStyle}" Width="150" HorizontalAlignment="Left" Background="Green" Foreground="White" Cursor="Hand">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <materialDesign:PackIcon Kind="PlaylistPlus" Width="30" Height="30" Margin="0,0,15,0"/>
+                                        <TextBlock Text="Add Row" TextAlignment="Center" VerticalAlignment="Center" FontFamily="{StaticResource Lexend}" FontWeight="SemiBold" FontSize="16"/>
+                                    </StackPanel>
+                                </Button>
+                                <TextBlock Foreground="#d9d9d9" TextWrapping="Wrap"
+                                                FontSize="14" FontWeight="SemiBold">
+                                        Note: Keyboard Shortcuts
+                                        <LineBreak/>
+                                        <LineBreak/>
+                                            - Tab key in 'Reason for Cash Advance' Column = Add Row
+                                        <LineBreak/>
+                                            - BackSpace key in 'Request Amount' Column = Delete Row
+                                </TextBlock>
+
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#474747" Grid.Column="2" Padding="10" Margin="-1,0,0,0">
+                            <TextBlock Text="TOTAL AMOUNT :"
+                                       TextAlignment="Right"
+                                       Foreground="#D9D9D9"
+                                       FontWeight="Bold"
+                                       FontSize="16"
+                                       VerticalAlignment="Center"
+                                       />
+                        </Border>
+
+                        <Border Background="#474747" Grid.Column="3" Padding="10" CornerRadius="0,0,20,0" Margin="-1,0,0,0">
+                            <TextBlock x:Name="TbTotalRequestAmount"
+                                       Text="₱ 0.00"
+                                       TextAlignment="Center"
+                                       Foreground="#D9D9D9"
+                                       FontWeight="SemiBold"
+                                       FontSize="16"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Left"
+                                       TextWrapping="Wrap"
+                                       />
+                        </Border>
+                    </Grid>
+
+
+                    <StackPanel Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="4" Margin="0,40,0,0">
+                        <TextBlock Text="REMARKS: (APPROVER)" 
+                                   FontFamily="{StaticResource Lexend}" 
+                                   FontWeight="SemiBold"
+                                   FontSize="16"
+                                   TextAlignment="Left"
+                                   Margin="10,0,0,5"
+                                   />
+                        <Border Style="{StaticResource RoundedBorderStyle}" Padding="0,5,0,5">
+                            <TextBox FontFamily="{StaticResource Lexend}"
+                                     x:Name="approverRemarks"
+                                     MinHeight="30"
+                                 Height="Auto"
+                                 Style="{StaticResource RoundedTextboxStyle}"
+                                 FontSize="14"
+                               TextAlignment="Left"
+                                     AcceptsReturn="True"
+                                     TextWrapping="Wrap"
+                                 >
+                            </TextBox>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2" Margin="0,40,0,0">
+                        <TextBlock Text="REQUESTED BY:" 
+                                   FontFamily="{StaticResource Lexend}" 
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   TextAlignment="Left"
+                                   Margin="10,0,0,5"
+                                   />
+                        <Border  CornerRadius="20,0,0,20" Background="White" BorderThickness="2" BorderBrush="#474747">
+                            <TextBox FontFamily="{StaticResource Lexend}"
+                                     x:Name="TxtRequestedBy"
+                                     MinHeight="35"
+                                 Height="Auto"
+                                 Style="{StaticResource RoundedTextboxStyle}"
+                                 FontSize="14"
+                               TextAlignment="Left"
+                                     AcceptsReturn="True"
+                                 >
+                            </TextBox>
+                        </Border>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Grid.Row="4" Grid.ColumnSpan="2" Margin="0,40,0,0">
+                        <TextBlock Text="DATE" 
+                                   FontFamily="{StaticResource Lexend}" 
+                                   FontWeight="Bold"
+                                   FontSize="16"
+                                   TextAlignment="Center"
+                                   Margin="10,0,0,5"
+                                   />
+                        <Border  CornerRadius="0,20,20,0" Background="White" BorderThickness="2" BorderBrush="#474747" Margin="-2,0,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width=".15*"/>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Order Date -->
+                                <DatePicker x:Name="RequestDatePicker"
+                                            Style="{StaticResource SingleDatePickerStyle}"
+                                            SelectedDate="{Binding RequestDate.SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"/>
+
+                                <materialDesign:PackIcon Grid.Column="0" Kind="Calendar" Width="25" Height="25" Foreground="#474747" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,0,0,0"/>
+
+                                <Button Grid.Column="1"
+                                        Style="{StaticResource DateButtonStyle}"
+                                        Width="Auto"
+                                        Click="RequestDate_Click"
+                                        Cursor="Hand"
+                                        Margin="10,0,25,0"
+                                        HorizontalContentAlignment="Center">
+                                    <TextBlock Text="{Binding RequestDate.SelectedDate, StringFormat='MMM dd, yyyy'}"
+                                       Margin="0,0,5,0"
+                                       Foreground="#474747"
+                                       Height="14"
+                                               FontFamily="{StaticResource Lexend}"
+                                               FontSize="12"
+                                       />
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+
+
+                    <StackPanel Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" Margin="0,20,0,0">
+                        <TextBlock Text="APPROVED BY:" 
+                                       FontFamily="{StaticResource Lexend}" 
+                                       FontWeight="Bold"
+                                       FontSize="16"
+                                       TextAlignment="Left"
+                                       Margin="10,0,0,5"
+                                       />
+                        <Border  CornerRadius="20,0,0,20" Background="White" BorderThickness="2" BorderBrush="#474747" Height="39">
+
+                            <ComboBox Style="{StaticResource RoundedComboBoxStyle}" BorderThickness="0" Margin="15,0,0,0" x:Name="CbApprover">
+                                <ComboBoxItem Content="None"/>
+                                <ComboBoxItem Content="Parvit Kumar"/>
+                                <ComboBoxItem Content="Alecksandra Balingit"/>
+                            </ComboBox>
+                        </Border>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Grid.Row="5" Grid.ColumnSpan="2" Margin="0,20,0,0">
+                        <TextBlock Text="DATE OF APPROVAL" 
+                                       FontFamily="{StaticResource Lexend}" 
+                                       FontWeight="Bold"
+                                       FontSize="16"
+                                       TextAlignment="Center"
+                                       Margin="10,0,0,5"
+                                       />
+                        <Border  CornerRadius="0,20,20,0" Background="White" BorderThickness="2" BorderBrush="#474747" Margin="-2,0,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width=".15*"/>
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <DatePicker x:Name="ApprovalDatePicker"
+                                            Style="{StaticResource SingleDatePickerStyle}"
+                                            SelectedDate="{Binding ApprovalDate.SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"/>
+
+                                <materialDesign:PackIcon Grid.Column="0" Kind="Calendar" Width="25" Height="25" Foreground="#474747" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,0,0,0"/>
+
+                                <Button Grid.Column="1"
+                                        Style="{StaticResource DateButtonStyle}"
+                                        Width="Auto"
+                                        Click="ApprovalDate_Click"
+                                        Cursor="Hand"
+                                        Margin="10,0,25,0"
+                                        HorizontalContentAlignment="Center">
+                                    <TextBlock Text="{Binding ApprovalDate.SelectedDate, StringFormat='MMM dd, yyyy'}"
+                                       Margin="0,0,5,0"
+                                       Foreground="#474747"
+                                       Height="14"
+                                               FontFamily="{StaticResource Lexend}"
+                                               FontSize="12"
+                                       />
+                                </Button>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+
+
+                    <Button Style="{StaticResource RoundedButtonStyle}"
+                            x:Name="BtnReject"
+                            BorderThickness="0"
+                            FontSize="16"
+                            FontFamily="{StaticResource Lexend}" 
+                            Width="150"
+                            Grid.Row="6"
+                            Grid.Column="1"
+                            Margin="0,40,-150,0"
+                            Cursor="Hand"
+                            Background="Red"
+                            Click="RejectRequest"
+                         
+                            >
+                        <TextBlock Text="REJECT" TextAlignment="Center" FontWeight="SemiBold" Foreground="White"/>
+                    </Button>
+
+                    <Button Style="{StaticResource RoundedButtonStyle}"
+                            x:Name="BtnApprove"
+                            BorderThickness="0"
+                            FontSize="16"
+                            FontFamily="{StaticResource Lexend}" 
+                            Width="150"
+                            Grid.Row="6"
+                            Grid.Column="2"
+                            Margin="0,40,-75,0"
+                            Cursor="Hand"
+                            Background="Green"
+                            Click="ApproveRequest"
+                            
+                            >
+                        <TextBlock Text="APPROVE" TextAlignment="Center" FontWeight="SemiBold" Foreground="White"/>
+                    </Button>
+
+                    <Button Style="{StaticResource RoundedButtonStyle}"
+                            x:Name="BtnSave"
+                            BorderThickness="0"
+                            FontSize="16"
+                            FontFamily="{StaticResource Lexend}" 
+                            Width="150"
+                            Grid.Row="6"
+                            Grid.Column="3"
+                            Margin="0,40,0,0"
+                            Cursor="Hand"
+                            Background="#52C69D"
+                            Click="SaveRequest"
+                            >
+                        <TextBlock Text="SAVE" TextAlignment="Center" FontWeight="SemiBold" Foreground="White"/>
+                    </Button>
+
+
+                </Grid>
+
+
+
+
+
+
+
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

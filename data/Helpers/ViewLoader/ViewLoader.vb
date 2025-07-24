@@ -133,8 +133,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New HRM.Employees.Employees.EmployeesView()
                     Case "hrmeditemployee"
                         Return New HRM.Employees.Employees.EditEmployee()
-                    Case "hrmeditfiles"
-                        Return New HRM.Files.ManageFile()
+                   'Case "hrmeditfiles"
+                        'Return New HRM.Files.ManageFile()
 
                          ' Sales Module Navigation
                     Case "salesnewinvoice"
@@ -246,10 +246,22 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "navigatetocostestimate"
                         Return New Sales.Quotes.CostEstimate()
 
+
+                        'Misc - Cash Advance Navigation
+                    Case "cashadvancenewrequest"
+                        Return New Views.Misc.CashAdvance.CashAdvanceNewRequest()
+
+                    Case "managecashadvancerequests"
+                        Return New Views.Misc.CashAdvance.ManageCashAdvanceRequests()
+                    Case "editcashadvancerequest"
+                        Return New Views.Misc.CashAdvance.EditCashAdvanceRequest()
+                    Case "previewprintcashadvancerequestform"
+                        Return New Views.Misc.CashAdvance.PreviewPrintCashAdvanceRequestForm()
+
                     Case Else
                         ' Return a placeholder UserControl with error text
                         Dim errorContent As New TextBlock With {
-                            .Text = $"View not found: {viewName}",
+                            .Text = $"View Not found: {viewName}",
                             .FontSize = 20,
                             .HorizontalAlignment = HorizontalAlignment.Center,
                             .VerticalAlignment = VerticalAlignment.Center
@@ -453,6 +465,14 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "purchaseorderstatement"
             ElseIf typeName = "printpreview" Then
                 Return "printpreview"
+            ElseIf typeName = "cashadvancenewrequest" Then
+                Return "cashadvancenewrequest"
+            ElseIf typeName = "managecashadvancerequests" Then
+                Return "managecashadvancerequests"
+            ElseIf typeName = "editcashadvancerequest" Then
+                Return "editcashadvancerequest"
+            ElseIf typeName = "previewprintcashadvancerequestform" Then
+                Return "previewprintcashadvancerequestform"
 
             ElseIf typeName = "pulloutreceipt" Then
                 Return "pulloutreceipt"
