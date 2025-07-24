@@ -133,8 +133,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New HRM.Employees.Employees.EmployeesView()
                     Case "hrmeditemployee"
                         Return New HRM.Employees.Employees.EditEmployee()
-                    Case "hrmeditfiles"
-                        Return New HRM.Files.ManageFile()
+                   'Case "hrmeditfiles"
+                        'Return New HRM.Files.ManageFile()
 
                          ' Sales Module Navigation
                     Case "salesnewinvoice"
