@@ -168,5 +168,13 @@ Namespace DPC.Components.UI
             ViewLoader.DynamicView.NavigateToView("standardlabel", Me)
         End Sub
 
+        Private Sub NavigateToWalkIn(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
+        End Sub
+
+        Private Sub NavigateToConsumables(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("consumables", Me)
+        End Sub
+
     End Class
 End Namespace

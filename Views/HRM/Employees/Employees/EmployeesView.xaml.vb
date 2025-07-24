@@ -1,14 +1,19 @@
 ﻿Imports System.Collections.ObjectModel
-Imports DPC.DPC.Data.Model
-Imports DPC.DPC.Data.Controllers
-Imports MySql.Data.MySqlClient
 Imports System.Data
+Imports System.Windows.Controls.Primitives
+Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
+Imports DPC.DPC.Data.Model
+Imports DPC.DPC.Data.Models
+Imports MySql.Data.MySqlClient
 
 Namespace DPC.Views.HRM.Employees.Employees
     Partial Public Class EmployeesView
         Inherits UserControl
 
+        ' UI elements for direct access
+        Private popup As Popup
+        Private recentlyClosed As Boolean = False
         Private Employees As New ObservableCollection(Of Employee)()
 
         ' Declare Pagination Variables
@@ -43,6 +48,8 @@ Namespace DPC.Views.HRM.Employees.Employees
                                 Employees.Add(New Employee() With {
                                     .EmployeeID = reader("EmployeeID").ToString(),
                                     .Username = reader("Username").ToString(),
+                                    .Department = reader("Department").ToString(),
+                                    .Status = reader("Status").ToString(),
                                     .Email = reader("Email").ToString(),
                                     .Name = reader("Name").ToString(),
                                     .RoleName = reader("RoleName").ToString(),
@@ -130,7 +137,13 @@ Namespace DPC.Views.HRM.Employees.Employees
             Dim conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
             Try
                 conn.Open()
-                Dim sql As String = "SELECT * FROM employee WHERE EmployeeID LIKE @query OR Name LIKE @query"
+                Dim sql As String = "SELECT e.*, r.RoleName, l.LocationName " &
+                      "FROM employee e " &
+                      "JOIN userroles r ON e.UserRoleID = r.RoleID " &
+                      "JOIN businesslocation l ON e.BusinessLocationID = l.LocationID " &
+                      "WHERE e.EmployeeID LIKE @query OR e.Name LIKE @query " &
+                      "ORDER BY e.CreatedAt DESC"
+
                 Dim cmd As New MySqlCommand(sql, conn)
                 cmd.Parameters.AddWithValue("@query", "%" & query & "%")
 
@@ -159,7 +172,65 @@ Namespace DPC.Views.HRM.Employees.Employees
             Dim columnsToExclude As New List(Of String) From {"Actions", "Status"}
             ' Use the ExcelExporter helper with column exclusions
             ExcelExporter.ExportDataGridToExcel(EmployeesDataGrid, columnsToExclude, "EmployeesExport", "Employees List")
+        End Sub
 
+        Private Sub EditEmployee_Click(sender As Object, e As RoutedEventArgs)
+            Dim selectedEmployee As Employee = CType(EmployeesDataGrid.SelectedItem, Employee)
+
+            If selectedEmployee IsNot Nothing Then
+                ' Grab the full employee details from the database using their ID
+                EditEmployeeService.SelectedEmployee = EmployeeController.GetEmployeeInfo(selectedEmployee.EmployeeID)
+                ViewLoader.DynamicView.NavigateToView("hrmeditemployee", Me)
+            Else
+                MessageBox.Show("Please select an employee first.", "No Selection", MessageBoxButton.OK, MessageBoxImage.Information)
+            End If
+        End Sub
+
+        Private Sub DeleteEmployee_Click(sender As Object, e As RoutedEventArgs)
+            Dim selectedEmployee As Employee = CType(EmployeesDataGrid.SelectedItem, Employee)
+
+            Dim clickedButton As Button = TryCast(sender, Button)
+            If clickedButton Is Nothing Then Return
+
+            If recentlyClosed Then
+                recentlyClosed = False
+                Return
+            End If
+
+            If popup IsNot Nothing AndAlso popup.IsOpen Then
+                popup.IsOpen = False
+                recentlyClosed = True
+                Return
+            End If
+
+            ' Create the user control
+            Dim deleteModal As New DPC.Components.ConfirmationModals.HRMDeleteEmployee(selectedEmployee)
+
+            ' Handle event
+            AddHandler deleteModal.DeletedEmployee, AddressOf LoadEmployees
+
+            ' Set popup manually in the center
+            popup = New Popup With {
+                .Child = deleteModal,
+                .StaysOpen = False,
+                .AllowsTransparency = True,
+                .Placement = PlacementMode.Absolute
+            }
+
+            ' Size of the modal
+            Dim modalWidth As Double = 400 ' or actual width of your UserControl
+            Dim modalHeight As Double = 300 ' or actual height of your UserControl
+
+            popup.HorizontalOffset = (SystemParameters.PrimaryScreenWidth - modalWidth) / 2
+            popup.VerticalOffset = (SystemParameters.PrimaryScreenHeight - modalHeight) / 2
+
+            ' Close logic
+            AddHandler popup.Closed, Sub()
+                                         recentlyClosed = True
+                                         Task.Delay(100).ContinueWith(Sub() recentlyClosed = False, TaskScheduler.FromCurrentSynchronizationContext())
+                                     End Sub
+
+            popup.IsOpen = True
         End Sub
     End Class
 End Namespace

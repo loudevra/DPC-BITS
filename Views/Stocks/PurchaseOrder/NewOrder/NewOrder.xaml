@@ -112,7 +112,7 @@
                         <ComboBox SelectedIndex="0" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" x:Name="ComboBoxWarehouse" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold">
                         </ComboBox>
                     </StackPanel>
-                </StackPanel>
+                </StackPanel> 
 
                 <StackPanel Grid.Row="0" Grid.Column="1"  Margin="25,10,0,10" Orientation="Vertical">
                     <Border BorderThickness="2" BorderBrush="Gray" CornerRadius="20" Background="White"
@@ -260,13 +260,17 @@
                 </StackPanel>
 
                 <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Vertical"  Margin="25,10,0,10">
-                    <TextBlock Text="Payment Terms:"  FontFamily="Lexend" FontSize="14" Foreground="#474747" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                    <StackPanel HorizontalAlignment="Stretch" Width="Auto">
-                        <ComboBox x:Name="cmbPaymentTerms" SelectedIndex="0" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold">
-                            <ComboBoxItem Content="Payment on Receipt"/>
-                        </ComboBox>
+                    <!-- Payment Terms Section -->
+                    <StackPanel Visibility="Collapsed">
+                        <TextBlock Text="Payment Terms:"  FontFamily="Lexend" FontSize="14" Foreground="#474747" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <StackPanel HorizontalAlignment="Stretch" Width="Auto">
+                            <ComboBox x:Name="cmbPaymentTerms" SelectedIndex="0" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold">
+                                <ComboBoxItem Content="Payment on Receipt"/>
+                            </ComboBox>
+                        </StackPanel>
                     </StackPanel>
 
+                    <!-- Update Stock Section -->
                     <TextBlock Text="Update Stock:" FontFamily="Lexend" FontSize="14" Foreground="#474747" FontWeight="SemiBold"  Margin="0,0,0,5"/>
                     <StackPanel Orientation="Horizontal">
                         <RadioButton Content="Yes" IsChecked="True" GroupName="Choices" FontFamily="Lexend" FontSize="14" Foreground="#474747" Margin="0,0,5,0"/>
@@ -293,22 +297,24 @@
                             <!-- For Input Field -->
                         </Grid.ColumnDefinitions>
 
-                        <!-- Shipping Label -->
-                        <TextBlock Text="Shipping: " FontFamily="Lexend" FontSize="14" FontWeight="SemiBold"
-                   Foreground="#474747" Margin="0,0,5,0"
-                   VerticalAlignment="Top" Grid.Column="0"/>
+                        <StackPanel Visibility="Collapsed">
+                            <!-- Shipping Label -->
+                            <TextBlock Text="Shipping: " FontFamily="Lexend" FontSize="14" FontWeight="SemiBold"
+Foreground="#474747" Margin="0,0,5,0"
+VerticalAlignment="Top" Grid.Column="0"/>
 
-                        <!-- Input Field with Border -->
-                        <StackPanel Grid.Column="1">
-                            <Border Style="{StaticResource RoundedBorderStyle}"
-                                    Margin="0,0,10,5" Padding="0,1"
-                                    HorizontalAlignment="Stretch">
-                                <TextBox Style="{StaticResource RoundedTextboxStyle}"
-                                         Height="14" Width="Auto"
-                                         HorizontalAlignment="Stretch"/>
-                            </Border>
-                            <TextBlock Text="( Tax: 0 )" FontFamily="Lexend" FontSize="10"
-                                       Foreground="#474747"/>
+                            <!-- Input Field with Border -->
+                            <StackPanel  Grid.Column="1">
+                                <Border Style="{StaticResource RoundedBorderStyle}"
+                 Margin="0,0,10,5" Padding="0,1"
+                 HorizontalAlignment="Stretch">
+                                    <TextBox Style="{StaticResource RoundedTextboxStyle}"
+                      Height="14" Width="Auto"
+                      HorizontalAlignment="Stretch"/>
+                                </Border>
+                                <TextBlock Text="( Tax: 0 )" FontFamily="Lexend" FontSize="10"
+                    Foreground="#474747"/>
+                            </StackPanel>
                         </StackPanel>
                     </Grid>
 

@@ -244,59 +244,105 @@
                         <Border Background="White" CornerRadius="8" Padding="15">
                             <StackPanel>
                                 <!-- Data Grid -->
-                                <DataGrid x:Name="ClientGroupsDataGrid"
-                                  AutoGenerateColumns="False"
-                                  CanUserAddRows="False"
-                                  CanUserResizeRows="False"
-                                  CanUserResizeColumns="False"
-                                  IsReadOnly="True"
-                                  RowHeight="40"
-                                  FontFamily="Lexend"
-                                  Foreground="#555555"
-                                  FontSize="13"
-                                  FontWeight="SemiBold">
-                                    <DataGrid.Resources>
-                                        <Style TargetType="DataGridCell">
-                                            <Setter Property="FontFamily" Value="Lexend"/>
-                                            <Setter Property="FontSize" Value="13"/>
-                                            <Setter Property="FontWeight" Value="SemiBold"/>
-                                            <Setter Property="Foreground" Value="#555555"/>
+                                                                <DataGrid Name="dataGrid"
+AutoGenerateColumns="False"
+CanUserAddRows="False"
+HeadersVisibility="Column"
+GridLinesVisibility="None"
+RowBackground="White"
+AlternatingRowBackground="WhiteSmoke"
+BorderThickness="0"
+Height="425"
+Background="Transparent"
+FontFamily="Lexend"                                      
+IsReadOnly="True">
+
+                                    <DataGrid.RowStyle>
+                                        <Style TargetType="DataGridRow">
+                                            <Setter Property="Margin" Value="0,5,0,5"/>
+                                            <Setter Property="Padding" Value="5"/>
+                                            <Setter Property="Height" Value="30"/>
                                         </Style>
+                                    </DataGrid.RowStyle>
+
+                                    <DataGrid.ColumnHeaderStyle>
                                         <Style TargetType="DataGridColumnHeader">
                                             <Setter Property="FontFamily" Value="Lexend"/>
                                             <Setter Property="FontSize" Value="13"/>
                                             <Setter Property="FontWeight" Value="SemiBold"/>
-                                            <Setter Property="Foreground" Value="#555555"/>
+                                            <Setter Property="Foreground" Value="#474747"/>
+                                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                            <Setter Property="Padding" Value="10,5"/>
+                                            <Setter Property="Background" Value="White"/>
                                         </Style>
-                                    </DataGrid.Resources>
+                                    </DataGrid.ColumnHeaderStyle>
+
+                                    <DataGrid.CellStyle>
+                                        <Style TargetType="DataGridCell">
+                                            <Setter Property="Padding" Value="10,5"/>
+                                            <Setter Property="FontFamily" Value="Lexend"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="DataGridCell">
+                                                        <Border Padding="{TemplateBinding Padding}" 
+                      BorderBrush="{TemplateBinding BorderBrush}" 
+                      BorderThickness="{TemplateBinding BorderThickness}" 
+                      Background="{TemplateBinding Background}">
+                                                            <ContentPresenter VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="TextBlock.TextWrapping" Value="NoWrap"/>
+                                            <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis"/>
+                                        </Style>
+                                    </DataGrid.CellStyle>
+
                                     <DataGrid.Columns>
-                                        <DataGridTextColumn Header="#" Binding="{Binding EmployeeID}" Width="50"/>
-                                        <DataGridTemplateColumn Header="Name" Width="200">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <Ellipse Width="30" Height="30" Fill="Gray" Margin="0,0,10,0"/>
-                                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                        </DataGridTemplateColumn>
-                                        <DataGridTextColumn Header="Total Clients" Binding="{Binding RoleName}" Width="200"/>
+                                        <DataGridTextColumn Header="#" Binding="{Binding ClientGroupID}" Width="80">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="FontFamily" Value="Lexend"/>
+                                                    <Setter Property="TextWrapping" Value="NoWrap"/>
+                                                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="Name" Binding="{Binding GroupName}" Width="*">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="FontFamily" Value="Lexend"/>
+                                                    <Setter Property="TextWrapping" Value="NoWrap"/>
+                                                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="Total Clients" Binding="{Binding ClientCount}" Width="120">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="FontFamily" Value="Lexend"/>
+                                                    <Setter Property="TextWrapping" Value="NoWrap"/>
+                                                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
                                         <DataGridTemplateColumn Header="Actions" Width="150">
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <StackPanel Orientation="Horizontal">
-                                                        <Button Content="👁" Margin="2"/>
-                                                        <Button Content="🖋" Command="{Binding EditCommand}" Margin="2"/>
-                                                        <Button Content="🗑" Command="{Binding DeleteCommand}" Margin="2"/>
+                                                        <Button Width="16" Height="16" Background="Transparent" Margin="0,0,5,0" ToolTip="Edit" Cursor="Hand">
+                                                            <materialDesign:PackIcon Kind="CircleEditOutline" Width="13" Height="13" Foreground="#52C69D"/>
+                                                        </Button>
+                                                        <Button Click="DeleteProduct" Width="16" Height="16" Background="Transparent" Margin="0" ToolTip="Delete" Cursor="Hand" >
+                                                            <materialDesign:PackIcon Kind="DeleteOutline" Width="13" Height="13" Foreground="#E65E5E"/>
+                                                        </Button>
                                                     </StackPanel>
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>
                                     </DataGrid.Columns>
                                 </DataGrid>
-
-
                             </StackPanel>
                         </Border>
                     </StackPanel>

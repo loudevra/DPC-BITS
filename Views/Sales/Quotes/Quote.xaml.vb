@@ -1,10 +1,107 @@
 ﻿Imports System.Windows.Controls.Primitives
+Imports System.Windows.Threading
+Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Views.Sales.Quotes
     Public Class Quote
+        ' Add SingleCalendar ViewModels for both pickers
+        Private startDateViewModel As New CalendarController.SingleCalendar()
+        Private dueDateViewModel As New CalendarController.SingleCalendar()
+        Private _typingTimer As DispatcherTimer
+
         Public Sub New()
             InitializeComponent()
+            SetupDatePickers()
+            GetDataFromDB()
+
+            _typingTimer = New DispatcherTimer With {
+                .Interval = TimeSpan.FromMilliseconds(250)
+            }
+
+            AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
+            AddHandler cmbLimit.SelectionChanged, AddressOf GetDataFromDB
+        End Sub
+
+        Private Sub GetDataFromDB()
+            If String.IsNullOrWhiteSpace(SearchText.Text) Then
+                dataGrid.ItemsSource = Nothing
+                dataGrid.ItemsSource = QuotesController.GetOrders(CInt(cmbLimit.Text))
+            Else
+                dataGrid.ItemsSource = Nothing
+                dataGrid.ItemsSource = QuotesController.GetOrdersSearch(SearchText.Text, CInt(cmbLimit.Text))
+            End If
+        End Sub
+
+        Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
+            ' Check if DataGrid has data
+            If dataGrid.Items.Count = 0 Then
+                MessageBox.Show("No data to export!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Exit Sub
+            End If
+
+            ' Use the ExcelExporter helper with column exclusions
+            ExcelExporter.ExportDataGridToExcel(dataGrid, "QuotesExport", "Quotes List")
+
+        End Sub
+
+        ' Setup bindings between DatePickers, Buttons, and ViewModels
+        Public Sub SetupDatePickers()
+            startDateViewModel.SelectedDate = Nothing
+            dueDateViewModel.SelectedDate = Nothing
+
+            StartDatePicker.DataContext = startDateViewModel
+            StartDateButton.DataContext = startDateViewModel
+
+            DueDatePicker.DataContext = dueDateViewModel
+            DueDateButton.DataContext = dueDateViewModel
+        End Sub
+
+        ' Trigger dropdown open
+        Private Sub StartDateButton_Click(sender As Object, e As RoutedEventArgs) Handles StartDateButton.Click
+            StartDatePicker.IsDropDownOpen = True
+        End Sub
+
+        Private Sub DueDateButton_Click(sender As Object, e As RoutedEventArgs) Handles DueDateButton.Click
+            DueDatePicker.IsDropDownOpen = True
+        End Sub
+
+        Private Sub DataGrid_CellClick(sender As Object, e As MouseButtonEventArgs)
+            Dim depObj As DependencyObject = TryCast(e.OriginalSource, DependencyObject)
+
+            Dim cell = TryCast(depObj, TextBlock)
+
+            If TypeOf cell Is TextBlock Then
+                ' Show popup near the clicked cell
+                PopupText.Text = cell.Text
+                CellValuePopup.PlacementTarget = sender
+                CellValuePopup.IsOpen = True
+            End If
+
+        End Sub
+
+
+        ' Handle selected date change
+        Private Sub StartDatePicker_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs) Handles StartDatePicker.SelectedDateChanged
+            Dim dp = TryCast(sender, DatePicker)
+            If dp IsNot Nothing AndAlso dp.DataContext IsNot Nothing Then
+                Dim vm = TryCast(dp.DataContext, CalendarController.SingleCalendar)
+                If vm IsNot Nothing Then
+                    vm.SelectedDate = dp.SelectedDate
+                    BindingOperations.GetBindingExpression(StartDateButton, Button.DataContextProperty)?.UpdateTarget()
+                End If
+            End If
+        End Sub
+
+        Private Sub DueDatePicker_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs) Handles DueDatePicker.SelectedDateChanged
+            Dim dp = TryCast(sender, DatePicker)
+            If dp IsNot Nothing AndAlso dp.DataContext IsNot Nothing Then
+                Dim vm = TryCast(dp.DataContext, CalendarController.SingleCalendar)
+                If vm IsNot Nothing Then
+                    vm.SelectedDate = dp.SelectedDate
+                    BindingOperations.GetBindingExpression(DueDateButton, Button.DataContextProperty)?.UpdateTarget()
+                End If
+            End If
         End Sub
         Friend Sub ShowPopup(parent As UIElement, sender As Object)
             ' Ensure sender is a Button
@@ -101,6 +198,21 @@ Namespace DPC.Views.Sales.Quotes
 
         Private Sub NavigateToQuotes(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("navigatetoquotes", Me)
+        End Sub
+
+        Private Sub SearchText_TextChanged(sender As Object, e As TextChangedEventArgs)
+            ' Reset the timer
+            _typingTimer.Stop()
+
+            ' Start the timer
+            _typingTimer.Start()
+        End Sub
+
+        Private Sub OnTypingTimerTick(sender As Object, e As EventArgs)
+            ' Stop the timer
+            _typingTimer.Stop()
+
+            GetDataFromDB()
         End Sub
 
     End Class

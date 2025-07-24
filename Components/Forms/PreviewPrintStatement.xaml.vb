@@ -5,7 +5,11 @@ Imports DocumentFormat.OpenXml.Bibliography
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
+Imports MongoDB.Bson
+Imports MongoDB.Driver.GridFS
 Imports Newtonsoft.Json
+Imports PdfSharp.Drawing
+Imports PdfSharp.Pdf
 
 Namespace DPC.Components.Forms
     Public Class PreviewPrintStatement
@@ -57,6 +61,8 @@ Namespace DPC.Components.Forms
             PaymentTerms.Text = StatementDetails.paymentTerms
             isCustom = StatementDetails.isCustomTerm
             Approved.Text = StatementDetails.Approved
+
+
 
             If StatementDetails.signature = False Then
                 BrowseFile.Child = Nothing
@@ -137,58 +143,123 @@ Namespace DPC.Components.Forms
         End Sub
 
         Private Sub SavePrint(sender As Object, e As RoutedEventArgs)
-            Dim dlg As New PrintDialog()
-            Dim docName As String = "PurchaseOrder-" & DateTime.Now.ToString("yyyyMMdd-HHmmss")
+            ' Ask user: PDF or Print
+            Dim result As MessageBoxResult = MessageBox.Show("Do you want to save this as a PDF?", "Choose Output", MessageBoxButton.YesNoCancel, MessageBoxImage.Question)
+
+            Dim docName As String = InvoiceNumberCache ' You can replace this with any string
+
+            If result = MessageBoxResult.Yes Then
+                ' ➤ Save as PDF
+                SaveAsPDF(docName)
+                SaveToDB()
+            ElseIf result = MessageBoxResult.No Then
+                ' ➤ Print physically
+                PrintPhysically(docName)
+                SaveToDB()
+            Else
+                ' ➤ Cancelled
+                MessageBox.Show("Printing Cancelled")
+                Exit Sub
+            End If
+        End Sub
+
+        Private Sub SaveAsPDF(docName As String)
+            Dim dpi As Integer = 300
+
+            ' Keep WPF layout size as-is (in DIPs)
+            Dim layoutWidth = PrintPreview.ActualWidth
+            Dim layoutHeight = PrintPreview.ActualHeight
+
+            ' Convert DIP size to pixel size for high DPI rendering
+            Dim pixelWidth = CInt(layoutWidth * dpi / 96)
+            Dim pixelHeight = CInt(layoutHeight * dpi / 96)
+
+            ' Render to high-DPI bitmap
+            Dim rtb As New RenderTargetBitmap(pixelWidth, pixelHeight, dpi, dpi, PixelFormats.Pbgra32)
+
+            ' Temporarily layout the control for rendering
+            PrintPreview.Measure(New Size(layoutWidth, layoutHeight))
+            PrintPreview.Arrange(New Rect(0, 0, layoutWidth, layoutHeight))
+            PrintPreview.UpdateLayout()
+
+            ' Render it
+            rtb.Render(PrintPreview)
+
+            ' Encode as PNG
+            Dim encoder As New PngBitmapEncoder()
+            encoder.Frames.Add(BitmapFrame.Create(rtb))
+            Dim stream As New MemoryStream()
+            encoder.Save(stream)
+            stream.Position = 0
+
+            ' Create PDF using PDFSharp
+            Dim pdf As New PdfDocument()
+            Dim page = pdf.AddPage()
+
+            ' Set the page size in points (1 inch = 72 points)
+            page.Width = XUnit.FromInch(layoutWidth / 96)
+            page.Height = XUnit.FromInch(layoutHeight / 96)
+
+            Dim gfx = XGraphics.FromPdfPage(page)
+            Dim image = XImage.FromStream(stream)
+            gfx.DrawImage(image, 0, 0, page.Width, page.Height)
+
+            ' Save dialog
+            Dim dlg As New Microsoft.Win32.SaveFileDialog()
+            dlg.FileName = docName & ".pdf"
+            dlg.Filter = "PDF Files (*.pdf)|*.pdf"
 
             If dlg.ShowDialog() = True Then
-                ' Save original parent and layout
+                pdf.Save(dlg.FileName)
+                'MessageBox.Show("Saved to: " & dlg.FileName)
+            End If
+        End Sub
+
+        Private Sub PrintPhysically(docName As String)
+            Dim dlg As New PrintDialog()
+            If dlg.ShowDialog() = True Then
+                ' Save original layout
                 Dim originalParent = VisualTreeHelper.GetParent(PrintPreview)
                 Dim originalIndex As Integer = -1
                 Dim originalMargin = PrintPreview.Margin
                 Dim originalTransform = PrintPreview.LayoutTransform
 
-                ' Detach from parent if it's inside a Panel
                 If TypeOf originalParent Is Panel Then
                     Dim panel = CType(originalParent, Panel)
                     originalIndex = panel.Children.IndexOf(PrintPreview)
                     panel.Children.Remove(PrintPreview)
                 End If
 
-                ' Remove margin and reset transform
+                ' Setup layout for printing
                 PrintPreview.Margin = New Thickness(0)
                 PrintPreview.LayoutTransform = Transform.Identity
-
-                ' Ensure full layout and rendering
                 PrintPreview.UpdateLayout()
                 PrintPreview.Measure(New Size(Double.PositiveInfinity, Double.PositiveInfinity))
                 PrintPreview.Arrange(New Rect(PrintPreview.DesiredSize))
                 PrintPreview.UpdateLayout()
 
-                Dim borderWidth = PrintPreview.ActualWidth
-                Dim borderHeight = PrintPreview.ActualHeight
-
-                ' Get printable area
-                Dim printableWidth = dlg.PrintableAreaWidth
-                Dim printableHeight = dlg.PrintableAreaHeight
-
-                ' Calculate scale factor
-                Dim scaleX = printableWidth / borderWidth
-                Dim scaleY = printableHeight / borderHeight
+                ' A4 size (96 DPI)
+                Dim A4Width As Double = 8.3 * 96
+                Dim A4Height As Double = 11.69 * 96
+                Dim scaleX = A4Width / PrintPreview.ActualWidth
+                Dim scaleY = A4Height / PrintPreview.ActualHeight
                 Dim scale = Math.Min(scaleX, scaleY)
 
-                ' Use your existing "container" Grid name
+                ' Container with scaling
                 Dim container As New Grid()
+                container.Width = A4Width
+                container.Height = A4Height
                 container.LayoutTransform = New ScaleTransform(scale, scale)
                 container.Children.Add(PrintPreview)
 
-                container.Measure(New Size(printableWidth, printableHeight))
-                container.Arrange(New Rect(New Point(0, 0), New Size(printableWidth, printableHeight)))
+                container.Measure(New Size(A4Width, A4Height))
+                container.Arrange(New Rect(New Point(0, 0), New Size(A4Width, A4Height)))
                 container.UpdateLayout()
 
-                ' Wrap in a FixedDocument to ensure full fidelity
+                ' Create print content
                 Dim fixedPage As New FixedPage()
-                fixedPage.Width = printableWidth
-                fixedPage.Height = printableHeight
+                fixedPage.Width = A4Width
+                fixedPage.Height = A4Height
                 fixedPage.Children.Add(container)
 
                 Dim pageContent As New PageContent()
@@ -197,10 +268,10 @@ Namespace DPC.Components.Forms
                 Dim fixedDoc As New FixedDocument()
                 fixedDoc.Pages.Add(pageContent)
 
-                ' Print using DocumentPaginator (works for printer and PDF)
+                ' Print
                 dlg.PrintDocument(fixedDoc.DocumentPaginator, docName)
 
-                ' Restore original layout
+                ' Restore layout
                 container.Children.Clear()
                 PrintPreview.LayoutTransform = originalTransform
                 PrintPreview.Margin = originalMargin
@@ -210,8 +281,6 @@ Namespace DPC.Components.Forms
                     panel.Children.Insert(originalIndex, PrintPreview)
                 End If
             End If
-
-            SaveToDB()
         End Sub
 
         Private Sub ClearCache()
@@ -268,11 +337,90 @@ Namespace DPC.Components.Forms
             Dim success As Boolean = PurchaseOrderController.InsertInvoicePurchaseOrder(InvoiceNumber.Text, InvoiceDate, DueDateFormatted, Address, itemsJSON, DeliveryString, TaxString, TotalCostString, base64Image, Approved.Text, PaymentTerms.Text, noteBox.Text)
 
             If success Then
+                SaveToMongo(InvoiceNumberCache)
                 MessageBox.Show("Added to database")
             End If
 
             ClearCache()
             ViewLoader.DynamicView.NavigateToView("neworder", Me)
+        End Sub
+
+        Private Async Sub SaveToMongo(docName As String)
+            Dim dpi As Integer = 300
+
+            ' Prepare layout
+            Dim layoutWidth = PrintPreview.ActualWidth
+            Dim layoutHeight = PrintPreview.ActualHeight
+            Dim pixelWidth = CInt(layoutWidth * dpi / 96)
+            Dim pixelHeight = CInt(layoutHeight * dpi / 96)
+
+            ' Render to bitmap
+            Dim rtb As New RenderTargetBitmap(pixelWidth, pixelHeight, dpi, dpi, PixelFormats.Pbgra32)
+            PrintPreview.Measure(New Size(layoutWidth, layoutHeight))
+            PrintPreview.Arrange(New Rect(0, 0, layoutWidth, layoutHeight))
+            PrintPreview.UpdateLayout()
+            rtb.Render(PrintPreview)
+
+            ' Encode as PNG to memory stream
+            Dim encoder As New PngBitmapEncoder()
+            encoder.Frames.Add(BitmapFrame.Create(rtb))
+            Dim stream As New MemoryStream()
+            encoder.Save(stream)
+            stream.Position = 0
+
+            ' Paths
+            Dim appDir As String = AppDomain.CurrentDomain.BaseDirectory
+            Dim tempImagePath As String = System.IO.Path.Combine(appDir, Guid.NewGuid().ToString() & ".png")
+            Dim tempPdfPath As String = System.IO.Path.Combine(appDir, docName & ".pdf")
+
+            Try
+                ' Save temp image file
+                Using fs As New FileStream(tempImagePath, FileMode.Create, FileAccess.Write)
+                    stream.CopyTo(fs)
+                End Using
+
+                ' Create PDF
+                Dim pdf As New PdfDocument()
+                Dim page = pdf.AddPage()
+                page.Width = XUnit.FromInch(layoutWidth / 96)
+                page.Height = XUnit.FromInch(layoutHeight / 96)
+
+                Dim gfx = XGraphics.FromPdfPage(page)
+                Using image = XImage.FromFile(tempImagePath)
+                    gfx.DrawImage(image, 0, 0, page.Width, page.Height)
+                End Using
+
+                ' Save PDF to temp file
+                pdf.Save(tempPdfPath)
+
+                ' Upload PDF to MongoDB GridFS
+                Dim gridFS As GridFSBucket = SplashScreen.GetGridFSConnection()
+
+                Using FileStream As New FileStream(tempPdfPath, FileMode.Open, FileAccess.Read)
+                    Dim options As New GridFSUploadOptions() With {
+            .Metadata = New BsonDocument From {
+                {"uploadedBy", CacheOnLoggedInName},
+                {"uploadedAt", BsonDateTime.Create(DateTime.UtcNow)},
+                {"source", "purchase-order/neworder"},
+                {"billiingNumber", InvoiceNumberCache},
+                {"pdfFilePath", tempPdfPath}
+            }
+        }
+
+                    gridFS.UploadFromStream(Path.GetFileName(tempPdfPath), FileStream, options)
+                End Using
+
+                'MessageBox.Show("PDF uploaded to MongoDB.")
+
+            Finally
+                ' Delete the temp files
+                If File.Exists(tempImagePath) Then
+                    Try : File.Delete(tempImagePath) : Catch : End Try
+                End If
+                If File.Exists(tempPdfPath) Then
+                    Try : File.Delete(tempPdfPath) : Catch : End Try
+                End If
+            End Try
         End Sub
 
         Public Sub DisplayUploadedImage()

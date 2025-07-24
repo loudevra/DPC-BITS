@@ -24,44 +24,75 @@
 
         <!-- Client Types -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,0" >
-            <!-- Residential -->
-            <Border Width="230" Height="230" CornerRadius="12" Background="White"
-                    BorderBrush="#AEAEAE" BorderThickness="2" Margin="0,0,20,0">
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" >
-                    <Viewbox Width="70" Height="70" Margin="0,32,0,0">
-                        <materialDesign:PackIcon Kind="Home" Width="64" Height="64" Foreground="#AEAEAE"/>
-                    </Viewbox>
-                    <TextBlock Text="Residential" FontSize="20" Foreground="#AEAEAE" FontWeight="SemiBold" Margin="0,5,0,0" HorizontalAlignment="Center"/>
-                </StackPanel>
-            </Border>
+            <!-- Residential as Button -->
+            <Button x:Name="ResidentialButton" Width="230" Height="230" Margin="0,0,20,0"
+                    Background="White"
+                    BorderBrush="#AEAEAE"
+                    BorderThickness="2"
+                    Cursor="Hand"
+                    Padding="0"
+                    Style="{x:Null}"
+                    Click="ResidentialCard_Click">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="12">
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <Viewbox Width="70" Height="70" Margin="0,32,0,0">
+                                    <materialDesign:PackIcon Kind="Home" Width="64" Height="64" Foreground="#AEAEAE"/>
+                                </Viewbox>
+                                <TextBlock Text="Residential" FontSize="20" Foreground="#AEAEAE" FontWeight="SemiBold" Margin="0,5,0,0" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
 
-            <!-- Corporational (Selected) -->
-            <Grid>
-                <Border Width="230" Height="230" CornerRadius="12" Background="White"
-                        BorderBrush="#333" BorderThickness="3">
-                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <Viewbox Width="70" Height="70" Margin="0,32,0,0">
-                            <materialDesign:PackIcon Kind="OfficeBuilding" Width="64" Height="64" Foreground="#555555"/>
-                        </Viewbox>
-                        <TextBlock Text="Corporational" FontSize="20" Foreground="#555555" FontWeight="SemiBold" Margin="0,5,0,0" HorizontalAlignment="Center"/>
-                    </StackPanel>
-                </Border>
-                <!-- Checkmark -->
-                <Ellipse Width="54" Height="54" Fill="#444" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,-15"/>
-                <Path Width="40" Height="40"
-                      Stroke="White"
-                      StrokeThickness="5"
-                      StrokeEndLineCap="Round"
-                      StrokeStartLineCap="Round"
-                      Data="M10,22 L18,30 L30,12"
-                      VerticalAlignment="Bottom"
-                      HorizontalAlignment="Center"
-                      Margin="0,0,0,-10"/>
-            </Grid>
+            <!-- Corporational as Button (Selected) -->
+            <Button x:Name="CorporationalButton" Width="230" Height="230" Margin="0"
+                    Background="White"
+                    BorderBrush="#333"
+                    BorderThickness="3"
+                    Cursor="Hand"
+                    Padding="0"
+                    Style="{x:Null}"
+                    Click="CorporationalCard_Click">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="12">
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <Viewbox Width="70" Height="70" Margin="0,32,0,0">
+                                        <materialDesign:PackIcon Kind="OfficeBuilding" Width="64" Height="64" Foreground="#555555"/>
+                                    </Viewbox>
+                                    <TextBlock Text="Corporational" FontSize="20" Foreground="#555555" FontWeight="SemiBold" Margin="0,5,0,0" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                            <!-- Checkmark -->
+                            <Ellipse Width="53" Height="54" Fill="#444" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,-15"/>
+                            <Path Width="40" Height="40"
+                                  Stroke="White"
+                                  StrokeThickness="5"
+                                  StrokeEndLineCap="Round"
+                                  StrokeStartLineCap="Round"
+                                  Data="M10,22 L18,30 L30,12"
+                                  VerticalAlignment="Bottom"
+                                  HorizontalAlignment="Center"
+                                  Margin="0,0,0,-10"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
         </StackPanel>
 
         <!-- Continue Button -->
         <Button Grid.Row="3"
+        Click="ContinueButton_Click"
         Content="Continue"
         Width="140" Height="38" Margin="0,24,0,0"
         HorizontalAlignment="Center"
@@ -88,7 +119,7 @@
         <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,14,0,16">
             <TextBlock Text="Want to add a walk-in Client? " VerticalAlignment="Center" Foreground="#474747" FontWeight="SemiBold" FontSize="13"/>
             <TextBlock VerticalAlignment="Center" FontSize="13">
-                <Hyperlink NavigateUri="http://your-pos-url" Foreground="#2B96CF" FontWeight="SemiBold">
+                <Hyperlink Foreground="#2B96CF" FontWeight="SemiBold" Click="NavigateToWalkInNewOrder">
                     Go to POS
                 </Hyperlink>
             </TextBlock>

@@ -5,11 +5,144 @@ Imports System.Web
 Imports System.Windows.Controls.Primitives
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Model
-Imports DPC.DPC.Data.Models
+Imports MailKit.Search
 Imports MySql.Data.MySqlClient
+Imports Newtonsoft.Json
 
 Namespace DPC.Data.Controllers
     Public Class PurchaseOrderController
+
+        Public Shared Function GetOrders(limit As Integer) As ObservableCollection(Of PurchaseOrderModel)
+            Dim purchaseOrders As New ObservableCollection(Of PurchaseOrderModel)
+
+            ' In a real implementation, this would query the database
+            ' Example implementation:
+            Try
+
+
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+
+                    conn.Open()
+
+                    ' Query only the product table and join with productnovariation to get buying price
+                    ' This ensures we only get unique products that belong to the selected supplier
+                    Dim query As String = "
+                    SELECT * FROM purchaseorders 
+                    ORDER BY InvoiceNumber ASC 
+                    LIMIT " & limit
+                    Using cmd As New MySqlCommand(query, conn)
+
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            While reader.Read()
+
+                                Dim list As List(Of Dictionary(Of String, Object)) =
+    JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, Object)))(reader("OrderItems"))
+
+                                Dim ItemList As String = Nothing
+
+                                For Each item In list
+                                    ItemList = ItemList & item("Quantity") & "pc/s " & item("ItemName") & ", "
+                                Next
+
+                                ItemList = ItemList.TrimEnd(", ".ToCharArray())
+
+                                purchaseOrders.Add(New PurchaseOrderModel() With {
+                                        .InvoiceNumber = reader("InvoiceNumber").ToString(),
+                                        .OrderDate = reader.GetDateTime("OrderDate").ToString("MMMM d, yyyy"),
+                                        .DueDate = reader.GetDateTime("DueDate").ToString("MMMM d, yyyy"),
+                                        .Tax = reader("Tax").ToString(),
+                                        .Discount = reader("Discount").ToString(),
+                                        .SupplierID = reader("SupplierID").ToString(),
+                                        .SupplierName = reader("SupplierName").ToString(),
+                                        .WarehouseID = reader("WarehouseID").ToString(),
+                                        .WarehouseName = reader("WarehouseName").ToString(),
+                                        .OrderItems = ItemList,
+                                        .OrderNote = If(reader("OrderNote") Is DBNull.Value, String.Empty, reader("OrderNote").ToString()),
+                                        .TotalTax = reader.GetDecimal("TotalTax").ToString("N2"),
+                                        .TotalDiscount = reader.GetDecimal("TotalDiscount").ToString("N2"),
+                                        .TotalPrice = reader.GetDecimal("TotalPrice").ToString("N2")
+                                    })
+                            End While
+                        End Using
+                    End Using
+
+                End Using
+
+            Catch ex As Exception
+
+            End Try
+
+            Return purchaseOrders
+        End Function
+
+
+
+        Public Shared Function GetOrdersSearch(_searchText As String, limit As Integer) As ObservableCollection(Of PurchaseOrderModel)
+            Dim purchaseOrders As New ObservableCollection(Of PurchaseOrderModel)
+
+            ' In a real implementation, this would query the database
+            ' Example implementation:
+            Try
+
+
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+
+                    conn.Open()
+
+                    ' Query only the product table and join with productnovariation to get buying price
+                    ' This ensures we only get unique products that belong to the selected supplier
+                    Dim query As String = "
+        SELECT *
+        FROM purchaseorders
+        WHERE InvoiceNumber LIKE @searchText 
+            OR DueDate LIKE @searchText
+            Or OrderDate LIKE @searchText
+        ORDER BY InvoiceNumber ASC
+        LIMIT " & limit
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@searchText", "%" & _searchText & "%")
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            While reader.Read()
+
+                                Dim list As List(Of Dictionary(Of String, Object)) =
+    JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, Object)))(reader("OrderItems"))
+
+                                Dim ItemList As String = Nothing
+
+                                For Each item In list
+                                    ItemList = ItemList & item("Quantity") & "pc/s " & item("ItemName") & ", "
+                                Next
+
+                                ItemList = ItemList.TrimEnd(", ".ToCharArray())
+
+                                purchaseOrders.Add(New PurchaseOrderModel() With {
+                                        .InvoiceNumber = reader("InvoiceNumber").ToString(),
+                                        .OrderDate = reader.GetDateTime("OrderDate").ToString("MMMM d, yyyy"),
+                                        .DueDate = reader.GetDateTime("DueDate").ToString("MMMM d, yyyy"),
+                                        .Tax = reader("Tax").ToString(),
+                                        .Discount = reader("Discount").ToString(),
+                                        .SupplierID = reader("SupplierID").ToString(),
+                                        .SupplierName = reader("SupplierName").ToString(),
+                                        .WarehouseID = reader("WarehouseID").ToString(),
+                                        .WarehouseName = reader("WarehouseName").ToString(),
+                                        .OrderItems = ItemList,
+                                        .OrderNote = If(reader("OrderNote") Is DBNull.Value, String.Empty, reader("OrderNote").ToString()),
+                                        .TotalTax = reader.GetDecimal("TotalTax").ToString("N2"),
+                                        .TotalDiscount = reader.GetDecimal("TotalDiscount").ToString("N2"),
+                                        .TotalPrice = reader.GetDecimal("TotalPrice").ToString("N2")
+                                    })
+                            End While
+                        End Using
+                    End Using
+
+                End Using
+
+            Catch ex As Exception
+
+            End Try
+
+            Return purchaseOrders
+        End Function
 
         Public Shared Function SearchProductsBySupplier(supplierID As String, searchText As String) As ObservableCollection(Of ProductDataModel)
             Dim products As New ObservableCollection(Of ProductDataModel)
@@ -64,22 +197,22 @@ Namespace DPC.Data.Controllers
         End Function
 
         Public Shared Function GenerateInvoice() As String
-            Dim prefix As String = "30"
-            Dim datePart As String = DateTime.Now.ToString("MMddyyyy") ' MMDDYYYY format
+            Dim prefix As String = "PO-30"
+            Dim datePart As String = DateTime.Now.ToString("MM-ddyyyy") ' MMDDYYYY format
             Dim counter As Integer = GetNextINvoiceCounter(datePart)
 
             ' Format counter to be 4 digits (e.g., 0001, 0025, 0150)
             Dim counterPart As String = counter.ToString("D4")
 
             ' Concatenate to get full ProductCode
-            Return prefix & datePart & counterPart
+            Return prefix & datePart & "-" & counterPart
         End Function
 
         Public Shared Function GetNextINvoiceCounter(datePart As String) As Integer
 
             'will be creating a new table soon
-            Dim query As String = "SELECT MAX(CAST(SUBSTRING(InvoiceNumber, 11, 4) AS UNSIGNED)) FROM purchaseorders " &
-                  "WHERE InvoiceNumber LIKE '30" & datePart & "%'"
+            Dim query As String = "SELECT MAX(CAST(SUBSTRING(InvoiceNumber, 18, 4) AS UNSIGNED)) FROM purchaseorders " &
+                  "WHERE InvoiceNumber LIKE 'PO-30" & datePart & "%'"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
@@ -120,7 +253,7 @@ Namespace DPC.Data.Controllers
                                               OrderItems As String, TotalPrice As String, TotalTax As String, TotalDiscount As String, OrderNote As String) As Boolean
 
             Dim query As String = "INSERT INTO purchaseorders (InvoiceNumber, OrderDate, DueDate, Tax, Discount, SupplierID, SupplierName, WarehouseID, WarehouseName,
-                                    OrderItems, TotalTax, TotalDiscount, TotalPrice, OrderNote, DateAdded, Username) VALUES (" & InvoiceNumber & ", '" & OrderDate & "', '" & DueDate & "', '" & Tax & "', '" & Discount & "', " & SupplierID & ", '" &
+                                    OrderItems, TotalTax, TotalDiscount, TotalPrice, OrderNote, DateAdded, Username) VALUES ('" & InvoiceNumber & "', '" & OrderDate & "', '" & DueDate & "', '" & Tax & "', '" & Discount & "', " & SupplierID & ", '" &
                                     SupplierName & "', " & WarehouseID & ", '" & WarehouseName & "', '" & OrderItems & "', " & TotalTax & ", " & TotalDiscount & ", " & TotalPrice & ", '" & OrderNote & "', '" & DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") & "', '" & CacheOnLoggedInName & "')"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
@@ -152,7 +285,7 @@ Namespace DPC.Data.Controllers
             Dim invoiceExist As Boolean = False
 
             Dim query As String = "INSERT INTO invoice (InvoiceNumber, InvoiceDate, DueDate, BillAddress, OrderItems, SubVat,
-                                                          TotalCost,  Delivery, SignatureImage, SalesRep, ApprovedBy, PaymentTerms, Note) VALUES (" & InvoiceNumber & ", '" & InvoiceDate & "', '" & DueDate & "', '" & BillAddress & "', '" & OrderItems & "', '" & Vat & "', '" & TotalCost & "', '" & Delivery & "', '" & SignatureImage & "', '" & CacheOnLoggedInName & "', '" & ApprovedBy & "', '" & PaymentTerms & "', '" & Note & "' )"
+                                                          TotalCost,  Delivery, SignatureImage, SalesRep, ApprovedBy, PaymentTerms, Note) VALUES ('" & InvoiceNumber & "', '" & InvoiceDate & "', '" & DueDate & "', '" & BillAddress & "', '" & OrderItems & "', '" & Vat & "', '" & TotalCost & "', '" & Delivery & "', '" & SignatureImage & "', '" & CacheOnLoggedInName & "', '" & ApprovedBy & "', '" & PaymentTerms & "', '" & Note & "' )"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
 

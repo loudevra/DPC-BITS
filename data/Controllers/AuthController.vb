@@ -49,8 +49,6 @@ Namespace DPC.Data.Controllers
                                     CacheOnLoggedInName = Name
                                     CacheOnEmployeeID = employeeID
 
-                                    EmployeeLoginHistoryController.AddLoginHistory(employeeID, Name, Email, DateTime.Now())
-
                                     Dim userRole As String = GetUserRole(roleID)
                                     Dim accessToken As String = GenerateJwtToken(employeeID, username, userRole, ACCESS_TOKEN_EXPIRY)
                                     Dim refreshToken As String = GenerateJwtToken(employeeID, username, userRole, REFRESH_TOKEN_EXPIRY, True)

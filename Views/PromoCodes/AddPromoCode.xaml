@@ -29,7 +29,7 @@
             </Border>
 
             <!-- Main Content - Scrollable -->
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Style="{StaticResource ModernScrollViewerStyle}">
                 <Grid Margin="25,0,25,20">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -46,7 +46,7 @@
                                 <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
                             </StackPanel>
                             <Border Style="{StaticResource RoundedBorderStyle}">
-                                <TextBox x:Name="txtCode" Style="{StaticResource RoundedTextboxStyle}"/>
+                                <TextBox x:Name="txtCode" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"/>
                             </Border>
                         </StackPanel>
 
@@ -67,7 +67,7 @@
                                     <materialDesign:PackIcon Kind="CurrencyPhp" Width="25" Height="20" Margin="10,0,0,0" VerticalAlignment="Center" Grid.Column="0"/>
 
                                     <!-- Amount TextBox -->
-                                    <TextBox x:Name="txtAmount" Style="{StaticResource RoundedTextboxStyle}" Margin="0,0,25,0" Grid.Column="1"/>
+                                    <TextBox x:Name="txtAmount" Style="{StaticResource RoundedTextboxStyle}" Margin="0,0,25,0" Grid.Column="1" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"/>
                                 </Grid>
                             </Border>
                         </StackPanel>
@@ -79,7 +79,7 @@
                                 <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
                             </StackPanel>
                             <Border Style="{StaticResource RoundedBorderStyle}">
-                                <TextBox x:Name="txtQuantity" Style="{StaticResource RoundedTextboxStyle}"/>
+                                <TextBox x:Name="txtQuantity" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"/>
                             </Border>
                         </StackPanel>
 
@@ -89,11 +89,34 @@
                                 <TextBlock Text="Valid Until:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                                 <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
                             </StackPanel>
-                            <Border Style="{StaticResource RoundedBorderStyle}">
-                                <DatePicker x:Name="dpValidUntil" 
-                                            Style="{StaticResource SingleDatePickerStyle}" 
-                                            DisplayDateStart="{x:Static sys:DateTime.Today}"
-                                            xmlns:sys="clr-namespace:System;assembly=mscorlib"/>
+                            
+                            
+                            
+                            
+                            <!-- DatePicker with TextBox -->
+                            <Border Style="{StaticResource RoundedBorderStyle}" SnapsToDevicePixels="True" BorderBrush="#aeaeae" BorderThickness="1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width=".15*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <!-- Start Date -->
+                                    <DatePicker x:Name="StartDatePicker"
+                                        Style="{StaticResource SingleDatePickerStyle}"
+                                        SelectedDate="{Binding StartDate.SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="35" Margin="20,0,42,0" VerticalAlignment="Center" />
+
+                                    <materialDesign:PackIcon Grid.Column="1" Kind="Calendar" Width="25" Height="25" Foreground="#474747" VerticalAlignment="Center" Margin="10,0,20,0" HorizontalAlignment="Right"/>
+
+                                    <Button Grid.Column="0" Click="StartDate_Click"
+                                        Style="{StaticResource DateButtonStyle}"
+                                        Width="Auto"
+                                        Margin="20,0,25,0">
+                                        <TextBlock Text="{Binding StartDate.SelectedDate, StringFormat='MMM dd, yyyy'}"
+                                            Margin="0,0,5,0"
+                                            Foreground="#474747"
+                                            Height="14"/>
+                                    </Button>
+                                </Grid>
                             </Border>
                         </StackPanel>
 
@@ -113,7 +136,7 @@
                             <StackPanel Margin="0,5,0,0">
                                 <ComboBox x:Name="cmbAccount" 
                                           Style="{StaticResource RoundedComboBoxStyle}" 
-                                          Width="Auto" 
+                                          Width="Auto" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"
                                           Height="40" 
                                           SelectedIndex="0" 
                                           Margin="0"
@@ -126,10 +149,10 @@
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Text="Note:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                             </StackPanel>
-                            <Border Style="{StaticResource RoundedBorderStyle}">
-                                <TextBox x:Name="txtNote" 
+                            <Border Style="{StaticResource RoundedBorderStyle}" Height="100">
+                                <TextBox x:Name="txtNote" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"
                                          Style="{StaticResource RoundedTextboxStyle}" 
-                                         Height="100" 
+                                         Height="Auto" Padding="0,10,0,10" 
                                          VerticalContentAlignment="Top" 
                                          Margin="20,2,20,1" 
                                          TextWrapping="Wrap"

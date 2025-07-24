@@ -5,8 +5,13 @@ Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Views.Sales.Subscriptions
     Public Class Subscriptions
+        Public Property StartDate As New CalendarController.SingleCalendar()
+        Public Property EndDate As New CalendarController.SingleCalendar()
         Public Sub New()
+            StartDate.SelectedDate = Date.Today
+            EndDate.SelectedDate = Date.Today.AddDays(1)
 
+            DataContext = Me
             ' This call is required by the designer.
             InitializeComponent()
 
@@ -111,5 +116,11 @@ Namespace DPC.Views.Sales.Subscriptions
             ViewLoader.DynamicView.NavigateToView("newsubscriptioninvoice", Me)
         End Sub
 
+        Private Sub StartDate_Click(sender As Object, e As RoutedEventArgs)
+            StartDatePicker.IsDropDownOpen = True
+        End Sub
+        Private Sub EndDate_Click(sender As Object, e As RoutedEventArgs)
+            EndDatePicker.IsDropDownOpen = True
+        End Sub
     End Class
 End Namespace

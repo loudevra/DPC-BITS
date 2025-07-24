@@ -1,12 +1,13 @@
 ﻿Imports System.ComponentModel
-Imports System.Windows
-Imports System.Windows.Media.Animation
-Imports System.Windows.Controls
-Imports System.Reflection
 Imports System.Diagnostics
+Imports System.Reflection
+Imports System.Windows
+Imports System.Windows.Controls
+Imports System.Windows.Media.Animation
 Imports DPC.DPC.Components.Navigation
 Imports DPC.DPC.Data.Helpers ' Required for DynamicView
 Imports DPC.DPC.Views.POS ' Added for POSForm
+Imports DPC.DPC.Data.Controllers
 
 Namespace DPC
     Public Class Base
@@ -68,6 +69,9 @@ Namespace DPC
             ' Handle navigation events
             AddHandler topNavBar.NavigateToPOS, AddressOf LoadPOSForm
             AddHandler topNavBar.RestoreDefaultSidebar, AddressOf RestoreDefaultSidebar
+
+            EmployeeLoginHistoryController.AddLoginHistory(CacheOnEmployeeID, CacheOnLoggedInName, CacheOnLoggedInEmail, DateTime.Now())
+            EmployeeLoginHistoryController.AddAuthUserStatus(CacheLogInHistoryID, CacheOnEmployeeID, CacheOnLoggedInName)
         End Sub
 
         ' Load POS Form into the sidebar and ensure sidebar is expanded

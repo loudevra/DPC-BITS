@@ -23,6 +23,7 @@ Namespace DPC.Data.Controllers
 
                         Dim cacheLoginHistory As Integer = LogTimeCmd.LastInsertedId
                         CacheLogInHistoryID = cacheLoginHistory
+
                         Console.WriteLine($"Employee ID = {CacheLogInHistoryID}")
                     End Using
                 End Using
@@ -31,7 +32,7 @@ Namespace DPC.Data.Controllers
             End Try
         End Sub
 
-        Public Shared Sub AddLogOutHistory(loginHistoryID As Integer)
+        Public Shared Sub AddLogOutHistory(loginHistoryID As String)
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
@@ -44,10 +45,46 @@ Namespace DPC.Data.Controllers
 
                         LogTimeCmd.ExecuteNonQuery()
                         'Console.WriteLine("Login history inserted successfully.")
+                        DeleteAuthUserStatus(CacheLogInHistoryID)
                     End Using
                 End Using
             Catch ex As Exception
                 MessageBox.Show("Error inserting login history: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+        End Sub
+
+        Public Shared Sub AddAuthUserStatus(loginHistoryID As String, employeeID As Long, employeeName As String)
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim AuthUserStatusQuery As String = "INSERT INTO auth_users (id, employee_id, full_name) VALUES (@LoginHistoryID, @EmployeeID, @EmployeeName)"
+                    Using LogTimeCmd As New MySqlCommand(AuthUserStatusQuery, conn)
+                        LogTimeCmd.Parameters.AddWithValue("@loginHistoryID", loginHistoryID)
+                        LogTimeCmd.Parameters.AddWithValue("@EmployeeID", employeeID)
+                        LogTimeCmd.Parameters.AddWithValue("@EmployeeName", employeeName)
+
+                        LogTimeCmd.ExecuteNonQuery()
+                        'Console.WriteLine("Login history inserted successfully.")
+                    End Using
+                End Using
+            Catch ex As Exception
+
+            End Try
+        End Sub
+
+        Public Shared Sub DeleteAuthUserStatus(loginHistoryID As String)
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim AuthUserStatusQuery As String = "DELETE FROM auth_users WHERE id = @LoginHistoryID"
+                    Using LogTimeCmd As New MySqlCommand(AuthUserStatusQuery, conn)
+                        LogTimeCmd.Parameters.AddWithValue("@LoginHistoryID", loginHistoryID)
+                        LogTimeCmd.ExecuteNonQuery()
+                        'Console.WriteLine("Login history inserted successfully.")
+                    End Using
+                End Using
+            Catch ex As Exception
+
             End Try
         End Sub
     End Class

@@ -230,6 +230,7 @@
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>
                                         <DataGridTextColumn Header="Role" Binding="{Binding RoleName}" Width="200"/>
+                                        <DataGridTextColumn Header="Department" Binding="{Binding Department}" Width="200"/>
                                         <DataGridTextColumn Header="Location" Binding="{Binding LocationName}" Width="200"/>
                                         <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
                                         <DataGridTemplateColumn Header="Actions" Width="150">
@@ -237,8 +238,8 @@
                                                 <DataTemplate>
                                                     <StackPanel Orientation="Horizontal">
                                                         <Button Content="👁" Click="ViewEmployee" Margin="2"/>
-                                                        <Button Content="🖋" Command="{Binding EditCommand}" Margin="2"/>
-                                                        <Button Content="🗑" Command="{Binding DeleteCommand}" Margin="2"/>
+                                                        <Button Content="🖋" Click="EditEmployee_Click" Margin="2"/>
+                                                        <Button Content="🗑" Click="DeleteEmployee_Click" Margin="2"/>
                                                     </StackPanel>
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>

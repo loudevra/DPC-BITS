@@ -28,6 +28,7 @@
         <!-- Main Menu Item Style -->
         <Style x:Key="MainMenuItemStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontFamily" Value="Lexend"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="FontWeight" Value="Medium"/>
             <Setter Property="Margin" Value="10,0,0,0"/>
@@ -88,17 +89,17 @@
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToResidentialClient">
-                                    <TextBlock Text="New Residential Client" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="New Residential Client" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
-    <Hyperlink Click="NavigateToCorporationalClient">
-        <TextBlock Text="New Corporational Client" Foreground="#d4d4d4" FontSize="13"/>
-    </Hyperlink>
-</TextBlock>
+                                <Hyperlink Click="NavigateToCorporationalClient">
+                                    <TextBlock Text="New Corporational Client" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
+                                </Hyperlink>
+                            </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageClients">
-                                    <TextBlock Text="Manage Clients" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Manage Clients" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                         </StackPanel>
@@ -148,12 +149,12 @@
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToUnsolvedTickets">
-                                    <TextBlock Text="Unsolved" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Unsolved" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageTickets">
-                                    <TextBlock Text="Manage Tickets" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Manage Tickets" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                             </TextBlock>
                         </StackPanel>

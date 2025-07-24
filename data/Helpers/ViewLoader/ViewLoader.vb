@@ -38,6 +38,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Stocks.ProductCategories.ProductCategories()
                     Case "manageproducts"
                         Return New Stocks.ItemManager.ProductManager.ManageProducts()
+                    Case "consumables"
+                        Return New Stocks.ItemManager.Consumables.Consumables()
                     Case "newproducts"
                         Return New Stocks.ItemManager.NewProduct.AddNewProducts()
                     Case "editproduct"
@@ -64,6 +66,12 @@ Namespace DPC.Data.Helpers.ViewLoader
 
                     Case "addpromocode"
                         Return New PromoCodes.AddPromoCode()
+
+                    Case "newwalkinclient"
+                        Return New Stocks.PurchaseOrder.WalkIn.AddNewWalkInClient()
+
+                    Case "walkinorder"
+                        Return New Stocks.PurchaseOrder.WalkIn.WalkInNewOrder()
 
                          ' CRM Navigation
                     Case "clientgroups"
@@ -107,6 +115,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         'Salaries Navigation
                     Case "salaries"
                         Return New HRM.Employees.Salaries.EmployeeSalaries()
+                    Case "addnewsalaries"
+                        Return New HRM.Employees.Employees.AddEmployee()
                     Case "addpromocode"
                         Return New DPC.Views.PromoCodes.AddPromoCode()
                     Case "editbrand"
@@ -121,14 +131,18 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New HRM.Employees.Employees.AddEmployee()
                     Case "viewemployee"
                         Return New HRM.Employees.Employees.EmployeesView()
+                    Case "hrmeditemployee"
+                        Return New HRM.Employees.Employees.EditEmployee()
+                   'Case "hrmeditfiles"
+                        'Return New HRM.Files.ManageFile()
 
                          ' Sales Module Navigation
                     Case "salesnewinvoice"
-                        Return New Sales.Saless.SalesNewInvoice()
+                        Return New Views.Sales.Saless.SalesNewInvoice()
                     Case "manageposinvoices"
                         Return New Sales.POSSales.ManagePOSInvoices()
                     Case "salesinvoices"
-                        Return New Sales.Saless.SalesInvoices()
+                        Return New POS.POS()
                     Case "salesquote"
                         Return New Sales.Quotes.Quote()
                     Case "salesnewquote"
@@ -139,6 +153,10 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Sales.Subscriptions.NewSubscriptionInvoice()
                     Case "newquote"
                         Return New Sales.Quotes.NewQuote()
+                    Case "salesnewposinvoice"
+                        Return New Views.POS.SalesNewInvoice()
+                    Case "salesnewposinvoicemobile"
+                        Return New Views.POS.SalesNewInvoiceMobile()
 
 
                         ' Accounts Navigation
@@ -163,6 +181,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "navaddaccount"
                         'path of the design you want to see
                         Return New Accounts.Accounts.ManageAccounts.AddAccount()
+                    Case "addclienttabs"
+                        'path of the design you want to see
+                        Return New Accounts.Transactions.ClientAddTabs.AddClientTabs()
 
                         ' Project Navigation
                     Case "newproject"
@@ -185,6 +206,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                         ' New Quote Navigation
                     Case "navigatetoquotes"
                         Return New Sales.Quotes.NewQuote()
+                        ' Print Preview for Quotes
+                    Case "printpreviewquotes"
+                        Return New DPC.Components.Forms.PreviewPrintQuote()
                         ' New Subscription Navigation
                     Case "newsubscriptions"
                         Return New Sales.Subscriptions.NewSubscriptionInvoice()
@@ -200,10 +224,44 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "purchaseorderstatement"
                         Return New Stocks.PurchaseOrder.NewOrder.BillingStatement()
 
+                    Case "addcustomlabel"
+                        Return New Stocks.ProductsLabel.CustomLabel.CustomLabel()
+                    Case "addstandardlabel"
+                        Return New Stocks.ProductsLabel.StandardLabel.StandardLabel()
+
+                    ' Pull Out Form Navigation
+                    Case "pulloutreceipt"
+                        Return New Misc.Documents.PullOutForm
+                    Case "pulloutpreview"
+                        Return New DPC.Components.Forms.PreviewPulloutReceipt()
+
+
+                    ' POS Navigation
+                    Case "navigatetobillingstatement"
+                        Return New Stocks.PurchaseOrder.WalkIn.WalkInBillingStatement()
+
+                    Case "previewwalkinclientprintstatement"
+                        Return New Stocks.PurchaseOrder.WalkIn.PreviewWalkinClientPrintStatement()
+
+                    Case "navigatetocostestimate"
+                        Return New Sales.Quotes.CostEstimate()
+
+
+                        'Misc - Cash Advance Navigation
+                    Case "cashadvancenewrequest"
+                        Return New Views.Misc.CashAdvance.CashAdvanceNewRequest()
+
+                    Case "managecashadvancerequests"
+                        Return New Views.Misc.CashAdvance.ManageCashAdvanceRequests()
+                    Case "editcashadvancerequest"
+                        Return New Views.Misc.CashAdvance.EditCashAdvanceRequest()
+                    Case "previewprintcashadvancerequestform"
+                        Return New Views.Misc.CashAdvance.PreviewPrintCashAdvanceRequestForm()
+
                     Case Else
                         ' Return a placeholder UserControl with error text
                         Dim errorContent As New TextBlock With {
-                            .Text = $"View not found: {viewName}",
+                            .Text = $"View Not found: {viewName}",
                             .FontSize = 20,
                             .HorizontalAlignment = HorizontalAlignment.Center,
                             .VerticalAlignment = VerticalAlignment.Center
@@ -273,6 +331,13 @@ Namespace DPC.Data.Helpers.ViewLoader
             ElseIf typeName = "editproduct" Then
                 Return "editproduct"
 
+            ElseIf typeName = "previewwalkinclientprintstatement" Then
+                Return "previewwalkinclientprintstatement"
+
+            ElseIf typeName = "hrmeditfiles" Then
+                Return "hrmeditfiles"
+
+
 
                 ' Promo Codes Navigation
             ElseIf typeName = "promocodes" Then
@@ -339,6 +404,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "payrolltransaction"
             ElseIf typeName = "addnewemployee" Then
                 Return "addnewemployee"
+            ElseIf typeName = "hrmeditemployee" Then
+                Return "hrmeditemployee"
             ElseIf typeName = "viewemployee" Then
                 Return "viewemployee"
                 ' Sales Module Navigation
@@ -352,6 +419,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "salesquote"
             ElseIf typeName = "salesnewquote" Then
                 Return "salesnewquote"
+            ElseIf typeName = "printpreviewquotes" Then
+                Return "printpreviewquotes"
             ElseIf typeName = "creditnote" Then
                 Return "creditnote"
             ElseIf typeName = "newsubscriptioninvoice" Then
@@ -396,7 +465,22 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "purchaseorderstatement"
             ElseIf typeName = "printpreview" Then
                 Return "printpreview"
+            ElseIf typeName = "cashadvancenewrequest" Then
+                Return "cashadvancenewrequest"
+            ElseIf typeName = "managecashadvancerequests" Then
+                Return "managecashadvancerequests"
+            ElseIf typeName = "editcashadvancerequest" Then
+                Return "editcashadvancerequest"
+            ElseIf typeName = "previewprintcashadvancerequestform" Then
+                Return "previewprintcashadvancerequestform"
 
+            ElseIf typeName = "pulloutreceipt" Then
+                Return "pulloutreceipt"
+            ElseIf typeName = "pulloutpreview" Then
+                Return "pulloutpreview"
+
+            ElseIf typeName = "consumables" Then
+                Return "consumables"
             Else
                 Return typeName
             End If

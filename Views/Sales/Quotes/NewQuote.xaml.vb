@@ -2,6 +2,7 @@
 Imports System.IO
 Imports System.Windows.Controls.Primitives
 Imports System.Windows.Threading
+Imports DocumentFormat.OpenXml.Bibliography
 Imports DPC.DPC.Components.Forms
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
@@ -10,6 +11,8 @@ Imports DPC.DPC.Data.Models
 Imports DPC.DPC.Views.Stocks
 Imports MySql.Data.MySqlClient
 Imports Newtonsoft.Json
+Imports System.Linq
+Imports DocumentFormat.OpenXml.Math
 
 Namespace DPC.Views.Sales.Quotes
     Public Class NewQuote
@@ -31,15 +34,18 @@ Namespace DPC.Views.Sales.Quotes
         Private OrderDateVM As New CalendarController.SingleCalendar()
         Private OrderDueDateVM As New CalendarController.SingleCalendar()
         ' Variable to store the data from warehouse
-        Dim WarehouseID As Integer
-        Dim WarehouseName As String
+        Public WarehouseID As Integer
+        Public WarehouseName As String
         Dim QuantityTotal
+        ' Tax Combobox Variables
+        Dim _TaxSelection As Boolean
+        Dim _SelectedTax As Decimal
 
 #Region "Initializiation once loaded the form"
         Public Sub New()
             InitializeComponent()
 
-            AddProductInputUI()
+            InitializeProductUI()
             rowCount += 1
 
             ' Set a default date today and tomorrow
@@ -54,8 +60,27 @@ Namespace DPC.Views.Sales.Quotes
 
             ' Autocomplete part
             _typingTimer = New DispatcherTimer With {
-        .Interval = TimeSpan.FromMilliseconds(300)
-    }
+                .Interval = TimeSpan.FromMilliseconds(300)
+            }
+
+            ' For Tax Selection
+            If String.IsNullOrWhiteSpace(CEtaxSelection) Then
+                _TaxSelection = False
+            Else
+                _TaxSelection = CBool(CEtaxSelection)
+            End If
+            CEtaxSelection = _TaxSelection
+
+            ' Set the ComboBox selection to match _TaxSelection
+            If _TaxSelection Then
+                txtTaxSelection.SelectedItem = txtTaxSelection.Items.Cast(Of ComboBoxItem)().FirstOrDefault(Function(i) i.Content.ToString() = "Exclusive")
+            Else
+                txtTaxSelection.SelectedItem = txtTaxSelection.Items.Cast(Of ComboBoxItem)().FirstOrDefault(Function(i) i.Content.ToString() = "Inclusive")
+            End If
+
+            ' Run the selection changed logic to update all rates/tax fields
+            txtTaxSelection_SelectionChanged(txtTaxSelection, Nothing)
+
             AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
             AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
             AddHandler LstItems.SelectionChanged, AddressOf LstItems_SelectionChanged
@@ -68,76 +93,17 @@ Namespace DPC.Views.Sales.Quotes
 
             Dim selectedWarehouse As ComboBoxItem = TryCast(ComboBoxWarehouse.SelectedItem, ComboBoxItem)
             If selectedWarehouse IsNot Nothing Then
-                WarehouseID = Convert.ToInt32(selectedWarehouse.Tag)
-                WarehouseName = selectedWarehouse.Content.ToString()
+                CEWarehouseIDCache = Convert.ToInt32(selectedWarehouse.Tag)
+                CEWarehouseNameCache = selectedWarehouse.Content.ToString()
             End If
 
             ' Generate Quote ID
             Dim quoteID As String = QuotesController.GenerateQuoteID()
             txtQuoteNumber.Text = quoteID
+
+            Debug.WriteLine($"Tax Selection - {_TaxSelection}")
+            Debug.WriteLine($"Tax Value In Quote Properties - {_SelectedTax}")
         End Sub
-#End Region
-
-#Region "Getting All of the Data and Insert of this Quote"
-        ' Whenever there is a change in WarehosueCombobox will also update the data
-        Private Sub ComboBoxWarehouse_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
-            Dim selectedItem As ComboBoxItem = TryCast(ComboBoxWarehouse.SelectedItem, ComboBoxItem)
-
-            If selectedItem IsNot Nothing Then
-                WarehouseID = Convert.ToInt32(selectedItem.Tag)
-                WarehouseName = selectedItem.Content.ToString()
-            End If
-        End Sub
-
-        ' Function for inserting the data into the quote table in the database
-        Private Sub GetAllDataInQuoteProperties(client As Client, productItemsJson As String)
-            If Not ValidateQuoteSubmission(client, productItemsJson) Then Exit Sub
-            Try
-                Dim success As Boolean = QuotesController.InsertQuote(txtQuoteNumber.Text, txtReferenceNumber.Text,
-                                                          QuoteDate.SelectedDate.Value, QuoteValidityDate.SelectedDate.Value,
-                                                          txtTaxSelection.Text, txtDiscountSelection.Text, client.ClientID,
-                                                          client.Name, WarehouseID, WarehouseName, productItemsJson, txtQuoteNote.Text, txtTotalTax.Text, txtTotalDiscount.Text,
-                                                          txtGrandTotal.Text, CacheOnLoggedInName)
-                If success Then
-                    ' 🔌 Unregister all textbox names before clearing UI to avoid duplicate name errors
-                    For Each child As UIElement In MainContainer.Children
-                        Dim allTextBoxes = FindVisualChildren(Of TextBox)(child)
-                        For Each txt In allTextBoxes
-                            If Not String.IsNullOrWhiteSpace(txt.Name) Then
-                                Try
-                                    UnregisterName(txt.Name)
-                                Catch ex As ArgumentException
-                                    ' Already unregistered or not found, skip
-                                End Try
-
-                                If _productTextBoxes.ContainsKey(txt.Name) Then
-                                    _productTextBoxes.Remove(txt.Name)
-                                End If
-                            End If
-                        Next
-                    Next
-
-                    ' Optionally clear other related dictionaries if needed
-                    _productTypingTimers.Clear()
-                    _productPopups.Clear()
-                    _productListBoxes.Clear()
-
-                    ' ✅ Clear all current product input UIs
-                    MainContainer.Children.Clear()
-
-                    ' ✅ Add one fresh new product input UI
-                    AddProductInputUI()
-
-                    ' ✅ Clear all other fields after successful submission
-                    ClearAllFields()
-                Else
-                    MessageBox.Show("Failed to submit quote.")
-                End If
-            Catch ex As Exception
-                MessageBox.Show("Please Fill up all of the Fields")
-            End Try
-        End Sub
-
 #End Region
 
 #Region "Autocomplete for Clients"
@@ -178,6 +144,7 @@ Namespace DPC.Views.Sales.Quotes
                 Dim previousSupplier As Client = _selectedClient
                 _selectedClient = CType(LstItems.SelectedItem, Client)
                 txtSearchCustomer.Text = _selectedClient.Name
+                CEClientIDCache = _selectedClient.ClientID
                 UpdateSupplierDetails(_selectedClient)
                 AutoCompletePopup.IsOpen = False
 
@@ -189,19 +156,32 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Sub UpdateSupplierDetails(client As Client)
-            ' Find the readonly TextBox for supplier details
             Dim txtClientDetails As TextBox = TryCast(FindName("TxtClientDetails"), TextBox)
-            If txtClientDetails IsNot Nothing AndAlso client IsNot Nothing Then
-                ' Format supplier details
-                Dim details As String = $"Name: {client.Name}{Environment.NewLine}" &
-                                     $"Company: {client.Company}{Environment.NewLine}" &
-                                     $"Contact: {client.Phone}{Environment.NewLine}" &
-                                     $"Email: {client.Email}{Environment.NewLine}" &
-                                     $"Customer Group: {client.CustomerGroup}{Environment.NewLine}" &
-                                     $"Language: {client.Language}"
-                txtClientDetails.Text = details
+            If txtClientDetails Is Nothing OrElse client Is Nothing Then Return
+
+            Dim details As String = $"Name: {client.Name}{Environment.NewLine}" &
+                    $"Company: {client.Name}{Environment.NewLine}" &
+                    $"Contact: {client.Phone}{Environment.NewLine}" &
+                    $"Email: {client.Email}{Environment.NewLine}" &
+                    $"Customer Group: {client.CustomerGroup}{Environment.NewLine}" &
+                    $"Language: {client.ClientLanguage}"
+
+            If client.BillingAddress Is Nothing Then
+                details &= $"{Environment.NewLine}{Environment.NewLine}Billing Address: (No data)"
+            Else
+                details &= Environment.NewLine & Environment.NewLine & String.Join(Environment.NewLine, client.BillingAddress.Split(","c))
             End If
+
+            If client.ShippingAddress Is Nothing Then
+                details &= $"{Environment.NewLine}{Environment.NewLine}Shipping Address: (No data)"
+            Else
+                Dim shipping = client.ShippingAddress
+                details &= Environment.NewLine & Environment.NewLine & String.Join(Environment.NewLine, client.BillingAddress.Split(","c))
+            End If
+
+            txtClientDetails.Text = details
         End Sub
+
 
         Private Sub ClearAllRows()
             ' Create a list of row indices to remove
@@ -274,7 +254,7 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 #End Region
 
-#Region "Calendar Date Selection Inside of the Quote Properties"
+#Region "Validation and Other Function of the Quote Properties"
         Private Sub QuoteDateButton_Click(sender As Object, e As RoutedEventArgs)
             QuoteDate.IsDropDownOpen = True
         End Sub
@@ -282,6 +262,153 @@ Namespace DPC.Views.Sales.Quotes
         Private Sub QuoteValidityButton_Click(sender As Object, e As RoutedEventArgs)
             QuoteValidityDate.IsDropDownOpen = True
         End Sub
+
+        Private Sub txtReferenceNumber_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
+            If Not e.Text.All(AddressOf Char.IsDigit) Then
+                e.Handled = True ' block the input
+            End If
+        End Sub
+
+        Private Sub txtTaxSelection_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+            _TaxSelection = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString() = "Exclusive"
+            _SelectedTax = If(_TaxSelection, 0.12D, Nothing)
+            Debug.WriteLine($"Tax Selection - {_TaxSelection}")
+            Debug.WriteLine($"Tax Value In Quote Properties - {_SelectedTax}")
+
+            ' Update all tax percent fields to be editable or readonly
+            For Each kvp In _productTextBoxes
+                If kvp.Key.StartsWith("txtTaxPercent_") Then
+                    If _TaxSelection Then
+                        kvp.Value.Text = (_SelectedTax * 100).ToString()
+                        kvp.Value.IsReadOnly = False
+                        CEtaxSelection = True
+                    Else
+                        kvp.Value.IsReadOnly = True
+                        kvp.Value.Text = ""
+                        CEtaxSelection = False
+                    End If
+                End If
+            Next
+        End Sub
+#End Region
+
+#Region "This Loads every data if its available for updating"
+        Private Sub InitializeProductUI()
+            If HasCachedItems() Then
+                If _typingTimer Is Nothing Then
+                    _typingTimer = New DispatcherTimer()
+                    _typingTimer.Interval = TimeSpan.FromMilliseconds(300)
+                    AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
+                End If
+
+                FillClientsField()
+                LoadCachedQuoteItems()
+            Else
+                AddProductInputUI()
+            End If
+        End Sub
+
+        Private Function HasCachedItems() As Boolean
+            Return CEQuoteItemsCache IsNot Nothing AndAlso CEQuoteItemsCache.Count > 0
+        End Function
+
+        Private Sub LoadCachedQuoteItems()
+            For Each item In CEQuoteItemsCache
+                rowCount += 1
+                AddProductInputUI()
+
+                Dim inputPanel = GetLatestInputPanel()
+                If inputPanel Is Nothing Then Continue For
+
+                FillClientsField()
+                FillProductFields(item, rowCount)
+                FillDescriptionField(inputPanel, item)
+            Next
+        End Sub
+
+        Private Function GetLatestInputPanel() As StackPanel
+            If MainContainer.Children.Count = 0 Then Return Nothing
+
+            Dim lastBorder = TryCast(MainContainer.Children(MainContainer.Children.Count - 1), Border)
+            If lastBorder Is Nothing Then Return Nothing
+
+            Dim outerStack = TryCast(lastBorder.Child, StackPanel)
+            If outerStack Is Nothing OrElse outerStack.Children.Count = 0 Then Return Nothing
+
+            Return TryCast(outerStack.Children(0), StackPanel)
+        End Function
+
+        Private Sub FillClientsField()
+            RemoveHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
+
+            ' Fill client name first
+            If Not String.IsNullOrWhiteSpace(CEClientName) Then
+                txtSearchCustomer.Text = CEClientName
+            End If
+
+            ' Load clients manually before trying to match
+            If _clients Is Nothing OrElse _clients.Count = 0 Then
+                _clients = ClientController.SearchClient(txtSearchCustomer.Text)
+            End If
+
+            ' Now we can match safely
+            If _clients IsNot Nothing AndAlso _clients.Count > 0 Then
+                Dim match = _clients.FirstOrDefault(Function(c) c.Name = txtSearchCustomer.Text)
+                If match IsNot Nothing Then
+                    _selectedClient = match
+                    UpdateSupplierDetails(_selectedClient)
+                End If
+            End If
+
+            ' Continue setting other fields
+            If Not String.IsNullOrWhiteSpace(CEClientDetailsCache) Then TxtClientDetails.Text = CEClientDetailsCache
+            If Not String.IsNullOrWhiteSpace(CEQuoteNumberCache) Then txtQuoteNumber.Text = CEQuoteNumberCache
+            If Not String.IsNullOrWhiteSpace(CEReferenceNumber) Then txtReferenceNumber.Text = CEReferenceNumber
+            If Not String.IsNullOrWhiteSpace(CEnoteTxt) Then txtQuoteNote.Text = CEnoteTxt
+
+            Dim parsedDate As DateTime
+            If DateTime.TryParse(CEQuoteDateCache, parsedDate) Then QuoteDate.SelectedDate = parsedDate
+            If DateTime.TryParse(CEQuoteValidityDateCache, parsedDate) Then QuoteValidityDate.SelectedDate = parsedDate
+
+            AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
+        End Sub
+
+        Private Sub FillProductFields(item As Dictionary(Of String, String), row As Integer)
+            Dim productFields = New Dictionary(Of String, String) From {
+        {"txtProductName_", "ProductName"},
+        {"txtQuantity_", "Quantity"},
+        {"txtRate_", "Rate"},
+        {"txtTaxPercent_", "TaxPercent"},
+        {"txtTaxValue_", "Tax"},
+        {"txtDiscountPercent_", "Discount"},
+        {"txtDiscount_", "DiscountAmount"},
+        {"txtAmount_", "Amount"}
+    }
+
+            For Each field In productFields
+                Dim controlName = field.Key & row
+                If _productTextBoxes.ContainsKey(controlName) AndAlso item.ContainsKey(field.Value) Then
+                    _productTextBoxes(controlName).Text = item(field.Value)
+                End If
+            Next
+        End Sub
+
+        Private Sub FillDescriptionField(productPanel As StackPanel, item As Dictionary(Of String, String))
+            Dim parentStack = TryCast(productPanel.Parent, StackPanel)
+            If parentStack Is Nothing OrElse parentStack.Children.Count < 2 Then Return
+
+            Dim descPanel = TryCast(parentStack.Children(1), StackPanel)
+            If descPanel Is Nothing OrElse descPanel.Children.Count = 0 Then Return
+
+            Dim descBorder = TryCast(descPanel.Children(0), Border)
+            If descBorder Is Nothing Then Return
+
+            Dim descTextBox = TryCast(descBorder.Child, TextBox)
+            If descTextBox IsNot Nothing AndAlso item.ContainsKey("Description") Then
+                descTextBox.Text = item("Description")
+            End If
+        End Sub
+
 #End Region
 
 #Region "Product Autocomplete"
@@ -557,9 +684,11 @@ Namespace DPC.Views.Sales.Quotes
                 ' 🔌 Attach Quantity_TextChanged if this is a Quantity TextBox
                 If name.StartsWith("txtQuantity_") Then
                     AddHandler txt.TextChanged, AddressOf Quantity_TextChanged
+                    AddHandler txt.PreviewTextInput, AddressOf Quantity_PreviewTextInput
                 End If
                 If name.StartsWith("txtDiscountPercent_") Then
                     AddHandler txt.TextChanged, AddressOf DiscountPercent_TextChanged
+                    AddHandler txt.PreviewTextInput, AddressOf DiscountPercent_PreviewTextInput
                 End If
             End If
 
@@ -587,6 +716,7 @@ Namespace DPC.Views.Sales.Quotes
             Dim txt = TryCast(box.Child, TextBox)
             If txt IsNot Nothing Then
                 AddHandler txt.TextChanged, AddressOf Quantity_TextChanged
+                AddHandler txt.PreviewTextInput, AddressOf Quantity_PreviewTextInput
             End If
             Return box
         End Function
@@ -597,6 +727,7 @@ Namespace DPC.Views.Sales.Quotes
             Dim txt = TryCast(box.Child, TextBox)
             If txt IsNot Nothing Then
                 AddHandler txt.TextChanged, AddressOf TaxPercent_TextChanged
+                AddHandler txt.PreviewTextInput, AddressOf TaxPercent_PreviewTextInput
             End If
             Return box
         End Function
@@ -612,6 +743,7 @@ Namespace DPC.Views.Sales.Quotes
             Dim txt = TryCast(box.Child, TextBox)
             If txt IsNot Nothing Then
                 AddHandler txt.TextChanged, AddressOf DiscountPercent_TextChanged
+                AddHandler txt.PreviewTextInput, AddressOf DiscountPercent_PreviewTextInput
             End If
             Return box
         End Function
@@ -693,13 +825,34 @@ Namespace DPC.Views.Sales.Quotes
         End Function
 #End Region
 
-#Region "Calculation Per Row and Validation"
+#Region "Calculation Per Row"
         ' This will set the Rate based on buyingPrice of the product and set a value to the Rate TextBox
         Private Sub SetProductDetails(rowIndex As Integer, product As ProductDataModel)
-            ' Set Rate
             Dim rateBox = TryCast(FindTextBoxByName($"txtRate_{rowIndex}"), TextBox)
+            Dim taxPercentBox = TryCast(FindTextBoxByName($"txtTaxPercent_{rowIndex}"), TextBox)
+            Dim taxValueBox = TryCast(FindTextBoxByName($"txtTaxValue_{rowIndex}"), TextBox)
+
             If rateBox IsNot Nothing Then
-                rateBox.Text = product.BuyingPrice.ToString("F2")
+                Dim buyingPrice As Decimal
+
+                buyingPrice = product.SellingPrice
+
+                rateBox.Text = buyingPrice.ToString("F2")
+
+                If taxPercentBox IsNot Nothing Then
+                    If Not _TaxSelection Then
+                        ' Inclusive: set to default and lock
+                        taxPercentBox.Text = (_SelectedTax * 100).ToString()
+                        taxPercentBox.IsReadOnly = True
+                    Else
+                        ' Exclusive: let user type
+                        taxPercentBox.Text = ""
+                        taxPercentBox.IsReadOnly = False
+                    End If
+                End If
+
+                ' Always recalculate using CalculateAmount so all logic is consistent
+                CalculateAmount(rowIndex)
             End If
         End Sub
 
@@ -743,16 +896,23 @@ Namespace DPC.Views.Sales.Quotes
             If taxPercentBox IsNot Nothing Then Decimal.TryParse(taxPercentBox.Text, taxPercent)
             If discountPercentBox IsNot Nothing Then Decimal.TryParse(discountPercentBox.Text, discountPercent)
 
-            ' Base + tax
             Dim baseAmount = quantity * rate
-            Dim taxValue = baseAmount * (taxPercent / 100)
-            Dim amountBeforeDiscount = baseAmount + taxValue
+            Dim taxValue As Decimal = 0
+            Dim amountBeforeDiscount As Decimal = baseAmount
 
-            ' Discount based on taxed amount
+            If _TaxSelection Then
+                ' Tax is included in amount
+                taxValue = baseAmount * (taxPercent / 100)
+                amountBeforeDiscount = baseAmount + taxValue
+            Else
+                ' Tax is shown but not added to amount (12% of rate per item)
+                taxValue = rate * 0.12D
+                ' amountBeforeDiscount remains baseAmount (no tax added)
+            End If
+
             Dim discountValue = amountBeforeDiscount * (discountPercent / 100)
             Dim finalAmount = amountBeforeDiscount - discountValue
 
-            ' Output values
             If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("F2")
             If discountBox IsNot Nothing Then discountBox.Text = discountValue.ToString("F2")
             amountBox.Text = "₱" & finalAmount.ToString("F2")
@@ -866,6 +1026,12 @@ Namespace DPC.Views.Sales.Quotes
                                            End Sub, DispatcherPriority.Background)
         End Sub
 
+        Private Sub Quantity_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
+            If Not e.Text.All(AddressOf Char.IsDigit) Then
+                e.Handled = True
+            End If
+        End Sub
+
         ' Tax Percent Textbox for Dynamic Product Input UI
         Private Sub TaxPercent_TextChanged(sender As Object, e As TextChangedEventArgs)
             Dim textBox = TryCast(sender, TextBox)
@@ -880,6 +1046,15 @@ Namespace DPC.Views.Sales.Quotes
 
                                                CalculateAmount(rowIndex)
                                            End Sub, DispatcherPriority.Background)
+        End Sub
+
+        Private Sub TaxPercent_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
+            Dim tb = DirectCast(sender, TextBox)
+
+            ' Block if input is not a digit or if new text would be longer than 3 chars
+            If Not Char.IsDigit(e.Text, 0) OrElse tb.Text.Length >= 6 Then
+                e.Handled = True
+            End If
         End Sub
 
         Private Sub DiscountPercent_TextChanged(sender As Object, e As TextChangedEventArgs)
@@ -897,6 +1072,15 @@ Namespace DPC.Views.Sales.Quotes
                                            End Sub, DispatcherPriority.Background)
         End Sub
 
+        Private Sub DiscountPercent_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
+            Dim tb = DirectCast(sender, TextBox)
+
+            ' Block if input is not a digit or if new text would be longer than 3 chars
+            If Not Char.IsDigit(e.Text, 0) OrElse tb.Text.Length >= 3 Then
+                e.Handled = True
+            End If
+        End Sub
+
         Private Function ValidateQuoteSubmission(client As Client, productItemsJson As String) As Boolean
             If client Is Nothing Then
                 MessageBox.Show("Client is required.")
@@ -908,10 +1092,10 @@ Namespace DPC.Views.Sales.Quotes
                 Return False
             End If
 
-            If String.IsNullOrWhiteSpace(txtReferenceNumber.Text) Then
-                MessageBox.Show("Reference Number is required.")
-                Return False
-            End If
+            'If String.IsNullOrWhiteSpace(txtReferenceNumber.Text) Then
+            '    MessageBox.Show("Reference Number is required.")
+            '    Return False
+            'End If
 
             If Not QuoteDate.SelectedDate.HasValue Then
                 MessageBox.Show("Quote Date is required.")
@@ -923,12 +1107,12 @@ Namespace DPC.Views.Sales.Quotes
                 Return False
             End If
 
-            If String.IsNullOrWhiteSpace(txtTaxSelection.Text) Then
+            If txtTaxSelection.SelectedItem Is Nothing Then
                 MessageBox.Show("Tax selection is required.")
                 Return False
             End If
 
-            If String.IsNullOrWhiteSpace(txtDiscountSelection.Text) Then
+            If txtDiscountSelection.SelectedItem Is Nothing Then
                 MessageBox.Show("Discount selection is required.")
                 Return False
             End If
@@ -960,21 +1144,33 @@ Namespace DPC.Views.Sales.Quotes
 #End Region
 
 #Region "Generate the Quote Before saving"
-
         ' Once Done All of the Data Will Be pass to another form for generating invoice
         Private Sub GenerateCostEstimate_Click(sender As Object, e As RoutedEventArgs)
-            ' Step 1: Get the product items as JSON
             Dim productItemsJson As String = SubmitAllProductInputs()
 
-            ' Step 2: Get the client info (make sure you already have a selected client object)
+            If productItemsJson Is Nothing Then
+                ' Validation failed inside SubmitAllProductInputs
+                Exit Sub
+            End If
+
             Dim client As Client = _selectedClient
 
-            ' Step 3: Pass the data to save the quote
+            ' Optional: check if client is nothing
+            If client Is Nothing Then
+                MessageBox.Show("Please select a client.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Exit Sub
+            End If
+
             GetAllDataInQuoteProperties(client, productItemsJson)
         End Sub
 
         ' Function for converting all of the product inputs to JSON Format before saving it and print it
         Private Function SubmitAllProductInputs() As String
+            ' Ensure all amounts are up-to-date
+            For i As Integer = 0 To MainContainer.Children.Count - 1
+                CalculateAmount(i)
+            Next
+
             Dim productArray As New List(Of Dictionary(Of String, Object))()
 
             For i As Integer = 0 To MainContainer.Children.Count - 1
@@ -982,40 +1178,67 @@ Namespace DPC.Views.Sales.Quotes
                 If border Is Nothing Then Continue For
 
                 Dim stack = TryCast(border.Child, StackPanel)
-                If stack Is Nothing Then Continue For
+                If stack Is Nothing OrElse stack.Children.Count < 1 Then Continue For
 
                 Dim productPanel = TryCast(stack.Children(0), StackPanel)
-                If productPanel Is Nothing Then Continue For
+                If productPanel Is Nothing OrElse productPanel.Children.Count < 8 Then Continue For
 
                 Dim productData As New Dictionary(Of String, Object)
                 Dim fieldNames = {"ProductName", "Quantity", "Rate", "TaxPercent", "Tax", "Discount"}
 
                 For j As Integer = 0 To 5
+                    If j >= productPanel.Children.Count Then Exit For
+
                     Dim borderInput = TryCast(productPanel.Children(j), Border)
                     If borderInput Is Nothing Then Continue For
-                    Dim txtBox = TryCast(borderInput.Child, TextBox)
-                    If txtBox IsNot Nothing Then
-                        productData(fieldNames(j)) = txtBox.Text
+
+                    Dim value As String = ""
+
+                    If j = 0 Then
+                        ' ProductName: might be inside a Grid
+                        Dim grid = TryCast(borderInput.Child, Grid)
+                        If grid IsNot Nothing AndAlso grid.Children.Count > 0 Then
+                            Dim txtBox = TryCast(grid.Children(0), TextBox)
+                            If txtBox IsNot Nothing Then value = txtBox.Text.Trim()
+                        End If
+                    Else
+                        ' Other fields: Border -> TextBox
+                        Dim txtBox = TryCast(borderInput.Child, TextBox)
+                        If txtBox IsNot Nothing Then value = txtBox.Text.Trim()
                     End If
+
+                    If (fieldNames(j) = "ProductName" OrElse fieldNames(j) = "Quantity" OrElse fieldNames(j) = "Rate") AndAlso
+               String.IsNullOrWhiteSpace(value) Then
+
+                        MessageBox.Show($"Please fill in all required fields in row {i + 1}.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
+                        Return Nothing
+                    End If
+
+                    productData(fieldNames(j)) = value
                 Next
 
-                ' Amount
-                Dim amountBorder = TryCast(productPanel.Children(6), Border)
-                If amountBorder IsNot Nothing Then
-                    Dim amountText = TryCast(amountBorder.Child, TextBlock)
-                    If amountText IsNot Nothing Then
-                        productData("Amount") = amountText.Text
+                ' Amount (child index 7)
+                If productPanel.Children.Count > 7 Then
+                    Dim amountBorder = TryCast(productPanel.Children(7), Border)
+                    If amountBorder IsNot Nothing Then
+                        Dim amountTextBox = TryCast(amountBorder.Child, TextBox)
+                        If amountTextBox IsNot Nothing Then
+                            Dim amountValue = amountTextBox.Text.Replace("₱", "").Trim()
+                            productData("Amount") = amountValue
+                        End If
                     End If
                 End If
 
-                ' Description
-                Dim descriptionPanel = TryCast(stack.Children(1), StackPanel)
-                If descriptionPanel IsNot Nothing AndAlso descriptionPanel.Children.Count > 0 Then
-                    Dim descBorder = TryCast(descriptionPanel.Children(0), Border)
-                    If descBorder IsNot Nothing Then
-                        Dim descTextBox = TryCast(descBorder.Child, TextBox)
-                        If descTextBox IsNot Nothing Then
-                            productData("Description") = descTextBox.Text
+                ' Description field
+                If stack.Children.Count > 1 Then
+                    Dim descriptionPanel = TryCast(stack.Children(1), StackPanel)
+                    If descriptionPanel IsNot Nothing AndAlso descriptionPanel.Children.Count > 0 Then
+                        Dim descBorder = TryCast(descriptionPanel.Children(0), Border)
+                        If descBorder IsNot Nothing Then
+                            Dim descTextBox = TryCast(descBorder.Child, TextBox)
+                            If descTextBox IsNot Nothing Then
+                                productData("Description") = descTextBox.Text
+                            End If
                         End If
                     End If
                 End If
@@ -1028,7 +1251,7 @@ Namespace DPC.Views.Sales.Quotes
 #End Region
 
 #Region "Clearing all of the fields"
-        Private Sub ClearAllFields()
+        Public Sub ClearAllFields()
             Me.UnregisterName(txtDiscountSelection.Name)
             ' Clear all fields in the quote form
             txtQuoteNumber.Clear()
@@ -1037,11 +1260,12 @@ Namespace DPC.Views.Sales.Quotes
             txtReferenceNumber.Text = "Reference #"
             txtSearchCustomer.Clear()
             txtQuoteNote.Text = "None"
-            txtTaxSelection.Text = "Off"
-            txtDiscountSelection.Text = "Discount"
+            txtTaxSelection.SelectedIndex = 0
+            txtDiscountSelection.SelectedIndex = 0
             txtTotalTax.Text = "₱0.00"
             txtTotalDiscount.Text = "₱0.00"
             txtGrandTotal.Text = ""
+            TxtClientDetails.Clear()
             ' Clear the client details
             _selectedClient = Nothing
             UpdateSupplierDetails(Nothing)
@@ -1050,6 +1274,81 @@ Namespace DPC.Views.Sales.Quotes
             ' Reset date pickers
             OrderDateVM.SelectedDate = DateTime.Today
             OrderDueDateVM.SelectedDate = DateTime.Today.AddDays(1)
+
+            For Each child As UIElement In MainContainer.Children
+                Dim allTextBoxes = FindVisualChildren(Of TextBox)(child)
+                For Each txt In allTextBoxes
+                    If Not String.IsNullOrWhiteSpace(txt.Name) Then
+                        Try
+                            UnregisterName(txt.Name)
+                        Catch ex As ArgumentException
+                            ' Already unregistered or not found, skip
+                        End Try
+
+                        If _productTextBoxes.ContainsKey(txt.Name) Then
+                            _productTextBoxes.Remove(txt.Name)
+                        End If
+                    End If
+                Next
+            Next
+        End Sub
+#End Region
+
+#Region "Getting All of the Data and Insert of this Quote"
+        ' Whenever there is a change in WarehosueCombobox will also update the data
+        Private Sub ComboBoxWarehouse_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+            Dim selectedItem As ComboBoxItem = TryCast(ComboBoxWarehouse.SelectedItem, ComboBoxItem)
+
+            If selectedItem IsNot Nothing Then
+                WarehouseID = Convert.ToInt32(selectedItem.Tag)
+                WarehouseName = selectedItem.Content.ToString()
+            End If
+        End Sub
+
+        ' Function for inserting the data into the quote table in the database
+        Private Sub GetAllDataInQuoteProperties(client As Client, productItemsJson As String)
+            If Not ValidateQuoteSubmission(client, productItemsJson) Then Exit Sub
+            Try
+                Dim selectedTax As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
+                Dim selectedDiscount As String = CType(txtDiscountSelection.SelectedItem, ComboBoxItem).Content.ToString()
+
+                ' 07 - 04 - 2025 -- Moved the insert at the save and print button in previewprintquote.xaml.vb
+
+
+                CEQuoteNumberCache = txtQuoteNumber.Text
+                CEDiscountProperty = txtDiscountSelection.Text
+                CETaxProperty = txtTaxSelection.Text
+                CEQuoteDateCache = QuoteDate.SelectedDate.Value.ToString("yyyy-MM-dd")
+                CEQuoteValidityDateCache = QuoteValidityDate.SelectedDate.Value.ToString("yyyy-MM-dd")
+                CETotalTaxValueCache = txtTotalTax.Text
+                CETaxValueCache = txtTotalTax.Text
+                CETotalDiscountValueCache = txtTotalDiscount.Text
+                CETotalAmountCache = txtGrandTotal.Text
+                CEnoteTxt = txtQuoteNote.Text
+                CEReferenceNumber = txtReferenceNumber.Text
+                'CEpaymentTerms = "None"
+                CEQuoteItemsCache = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(productItemsJson)
+                CEsignature = False ' Assuming no signature for now
+                CEImageCache = "" ' Assuming no image for now
+                CEPathCache = "" ' Assuming no path for now
+                'ils
+                CEClientName = client.Name
+                Dim stringArray As List(Of String) = client.BillingAddress.Split(","c).Select(Function(s) s.Trim()).ToList()
+
+                CostEstimateDetails.CEAddress = stringArray(0)
+                CostEstimateDetails.CECity = stringArray(1)
+                CostEstimateDetails.CERegion = stringArray(2)
+                CostEstimateDetails.CECountry = stringArray(3)
+                CostEstimateDetails.CEClientDetailsCache = TxtClientDetails.Text
+                CEPhone = client.Phone
+                CEEmail = client.Email
+
+                ' Debugging 
+                Debug.WriteLine($"QuoteNumber: {CEQuoteNumberCache}, QuoteDate: {CEQuoteDateCache}, ValidityDate: {CEQuoteValidityDateCache}, Tax: {CETaxValueCache}, TotalAmount: {CETotalAmountCache}, Note: {CEnoteTxt}, Remarks: {CEremarksTxt}, Items: {JsonConvert.SerializeObject(CEQuoteItemsCache)}, Signature: {CEsignature}, Image: {CEImageCache}, Path: {CEPathCache}, ClientName: {CEClientName}, Phone: {CEPhone}, Email: {CEEmail}, Term1: {CETerm1}, Term2: {CETerm2}, Term3: {CETerm3}, Term4: {CETerm4}, Term5: {CETerm5}, Term6: {CETerm6}, Term7: {CETerm7}, Term8: {CETerm8}, Term9: {CETerm9}, Term10: {CETerm10}, Term11: {CETerm11}, Term12: {CETerm12}")
+                ViewLoader.DynamicView.NavigateToView("costestimate", Me)
+            Catch ex As Exception
+                MessageBox.Show("Please Fill up all of the Fields")
+            End Try
         End Sub
 #End Region
     End Class

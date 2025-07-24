@@ -20,4 +20,17 @@
         Public Property CreatedAt As DateTime
         Public Property UpdatedAt As DateTime
     End Class
+
+    Public Class Transaction
+        Public Property Code As String
+        Public Property Contact As String
+        Public Property AccountID As String
+        Public Property Amount As Decimal
+        Public Property TransactionDate As String
+        Public Property Type As String
+        Public Property Category As String
+        Public Property Method As String
+        Public Property Note As String
+        Public Property TransactionTo As String
+    End Class
 End Namespace

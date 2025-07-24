@@ -22,51 +22,51 @@
         </Border>
 
         <!-- Main Content - Scrollable -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Style="{StaticResource ModernScrollViewerStyle}">
             <StackPanel Margin="20,10,20,20" Width="800">
                 <!-- Form Content -->
                 <StackPanel>
                     
                     <!-- Account Number -->
                     <TextBlock Text="Account No:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
-                    <Border Style="{StaticResource RoundedBorderStyle}" Width="755">
-                        <TextBox x:Name="txtAccountNo" Height="30" Margin="18,0,19,0" Style="{StaticResource RoundedTextboxStyle}"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Width="768">
+                        <TextBox x:Name="txtAccountNo" Height="30" Margin="18,5,19,5" Style="{StaticResource RoundedTextboxStyle}" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                     </Border>
 
                     <!-- Name -->
                     <TextBlock Text="Name:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                     <Border Style="{StaticResource RoundedBorderStyle}" Width="768">
-                        <TextBox x:Name="txtName" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="735"/>
+                        <TextBox x:Name="txtName" Height="30" Margin="0,5,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="735" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                     </Border>
 
                     <!-- Initial Balance -->
                     <TextBlock Text="Initial Balance:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
-                    <Border Style="{StaticResource RoundedBorderStyle}" Width="755">
-                        <TextBox x:Name="txtInitialBalance" Height="30" Margin="18,0,19,0" Style="{StaticResource RoundedTextboxStyle}"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Width="768">
+                        <TextBox x:Name="txtInitialBalance" Height="30" Margin="18,5,19,5" Style="{StaticResource RoundedTextboxStyle}" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                     </Border>
 
                     <!-- Note -->
                     <TextBlock Text="Note:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
-                    <Border Style="{StaticResource RoundedBorderStyle}" Width="755">
-                        <TextBox x:Name="txtNote" Height="30" Margin="18,0,19,0" Style="{StaticResource RoundedTextboxStyle}"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Width="768">
+                        <TextBox x:Name="txtNote" Height="30" Margin="18,5,19,5" Style="{StaticResource RoundedTextboxStyle}" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                     </Border>
 
                     <!-- Business Location -->
                     <TextBlock Text="Business Locations:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
-                    <ComboBox x:Name="cmbBusinessLocation" Style="{StaticResource RoundedComboBoxStyle}" Width="773" Height="40" SelectedIndex="0" Margin="0">
+                    <ComboBox x:Name="cmbBusinessLocation" Style="{StaticResource RoundedComboBoxStyle}" Width="768" Height="40" SelectedIndex="0" Margin="0" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747">
                     </ComboBox>
 
                     <!-- Account Type -->
                     <TextBlock Text="Account Type:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
-                    <ComboBox x:Name="cmbAccountType" Style="{StaticResource RoundedComboBoxStyle}" Width="774" Height="40" SelectedIndex="0" Margin="0">
+                    <ComboBox x:Name="cmbAccountType" Style="{StaticResource RoundedComboBoxStyle}" Width="768" Height="40" SelectedIndex="0" Margin="0" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747">
                     </ComboBox>
                
                 </StackPanel>
 
                 <!-- Add Button -->
-                <Button Grid.Row="16" Content="Add" Width="774" Height="35" Background="#52C69D" 
- Foreground="#FDFDFD" FontWeight="SemiBold" HorizontalAlignment="Center"
-        Margin="0,10,0,0" Click="Button_Click">
+                <Button Grid.Row="16" Content="Add" Width="768" Height="40" Background="#52C69D" 
+                    Foreground="#FDFDFD" FontFamily="Lexend" FontWeight="SemiBold" HorizontalAlignment="Center"
+                    Margin="0,25,0,0" Click="BtnAddAccount_Click">
                     <Button.Style>
                         <Style TargetType="Button">
                             <Setter Property="Template">

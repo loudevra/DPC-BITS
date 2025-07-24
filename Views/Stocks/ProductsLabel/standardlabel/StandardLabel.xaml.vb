@@ -1,4 +1,5 @@
-﻿Imports Microsoft.VisualBasic.ApplicationServices
+﻿Imports DPC.DPC.Data.Helpers
+Imports Microsoft.VisualBasic.ApplicationServices
 
 Namespace DPC.Views.Stocks.ProductsLabel.StandardLabel
     ''' <summary>
@@ -11,6 +12,13 @@ Namespace DPC.Views.Stocks.ProductsLabel.StandardLabel
         Public Sub New()
             InitializeComponent()
 
+        End Sub
+
+        Private Sub CustomLabel(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("addcustomlabel", Me)
+        End Sub
+        Private Sub StandardLabel(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("addstandardlabel", Me)
         End Sub
     End Class
 End Namespace
