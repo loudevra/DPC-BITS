@@ -77,12 +77,6 @@
             <Button Style="{StaticResource IconButton}" Click="ToggleClockInOut">
                 <materialDesign:PackIcon x:Name="ClockIcon" Kind="ClockOutline" Width="24" Height="24" Margin="10,0,0,0"/>
             </Button>
-            <Button Style="{StaticResource IconButton}" Click="MinimizeWindow">
-                <materialDesign:PackIcon x:Name="Minimizebtn" Kind="WindowMinimize" Width="24" Height="24" Margin="10,0,0,0"/>
-            </Button>
-            <Button Style="{StaticResource IconButton}" Click="MaximizeRestoreWindow">
-                <materialDesign:PackIcon x:Name="Maximizebtn" Kind="WindowMaximize" Width="24" Height="24" Margin="10,0,0,0"/>
-            </Button>
         </StackPanel>
     </Grid>
 </UserControl>

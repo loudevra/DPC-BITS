@@ -115,12 +115,6 @@
                             <TextBlock Text="HRM" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
                         </StackPanel>
                     </Button>
-                    <Button  x:Name="BtnUpdate" Style="{StaticResource SidebarButton}" Click="BtnUpdate">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="MonitorArrowDownVariant" Width="24" Height="24"/>
-                            <TextBlock Text="SOFTWARE UPDATES" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
-                        </StackPanel>
-                    </Button>
                 </StackPanel>
             </ScrollViewer>
 
@@ -132,7 +126,7 @@
                 <Ellipse Width="35" Height="35" Fill="White"/>
                 <StackPanel Margin="10,0,0,0">
                     <TextBlock x:Name="UserName" Text="Username" Foreground="White" FontWeight="Bold" FontFamily="Lexend" />
-                    <TextBlock x:Name="UserEmail" Text="name@mail.com" Foreground="#4CAF50" FontSize="12" FontFamily="Lexend" />
+                    <TextBlock x:Name="UserEmail" Text="name@mail.com" Foreground="Gray" FontSize="12" FontFamily="Lexend" />
                 </StackPanel>
                 <materialDesign:PackIcon Kind="Cog" Width="24" Height="24" Foreground="White" Margin="50,5,0,0" FontFamily="Lexend"/>
             </StackPanel>
@@ -140,8 +134,8 @@
             <!-- Logout Button -->
             <Button x:Name="BtnLogout" Style="{StaticResource SidebarButton}" Click="Logout">
                 <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Logout" Width="24" Height="24"  Foreground="Red" Margin="3,0,0,0"/>
-                    <TextBlock Text="Logout"  FontWeight="Bold" Foreground="Red" Margin="10,4,0,0" FontFamily="Lexend"/>
+                    <materialDesign:PackIcon Kind="Logout" Width="24" Height="24" Foreground="Red" Margin="3,0,0,0"/>
+                    <TextBlock Text="Logout" Foreground="Red" Margin="10,4,0,0" FontFamily="Lexend"/>
                 </StackPanel>
             </Button>
 
