@@ -3,6 +3,7 @@ Imports System.Windows.Controls
 Imports System.Windows.Data
 Imports DPC.DPC.Data.Converters.ValueConverter
 Imports DPC.DPC.Data.Helpers
+Imports MaterialDesignThemes.Wpf
 
 Namespace DPC.Components.Navigation
     Partial Public Class TopNavBar
@@ -69,6 +70,27 @@ Namespace DPC.Components.Navigation
             Else
                 ClockIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.ClockOutline
                 MessageBox.Show("Clocked Out!")
+            End If
+        End Sub
+        Private Sub MinimizeWindow(sender As Object, e As RoutedEventArgs)
+            Dim parentWindow As Window = Window.GetWindow(Me)
+            If parentWindow IsNot Nothing Then
+                parentWindow.WindowState = WindowState.Minimized
+            End If
+        End Sub
+
+        Private Sub MaximizeRestoreWindow(sender As Object, e As RoutedEventArgs)
+            Dim parentWindow As Window = Window.GetWindow(Me)
+            If parentWindow IsNot Nothing Then
+                If parentWindow.WindowState = WindowState.Maximized Then
+                    parentWindow.WindowState = WindowState.Normal
+                    ' Optional: Change icon to maximize when restored
+                    Maximizebtn.Kind = PackIconKind.WindowMaximize
+                Else
+                    parentWindow.WindowState = WindowState.Maximized
+                    ' Optional: Change icon to restore when maximized
+                    Maximizebtn.Kind = PackIconKind.WindowRestore
+                End If
             End If
         End Sub
     End Class
