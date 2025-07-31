@@ -56,60 +56,110 @@
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel x:Name="SidebarMenu">
                     <Button x:Name="BtnDashboard" Style="{StaticResource SidebarButton}" Click="OpenDashboard">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Speedometer" Width="24" Height="24"/>
-                            <TextBlock Text="Dashboard" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
-                        </StackPanel>
-                    </Button>
+    <Button.ToolTip>
+        <ToolTip Content="Navigate to main dashboard" 
+                 Style="{StaticResource SpeechBubbleToolTipLight}"
+                 Placement="Right"/>
+    </Button.ToolTip>
+    <StackPanel Orientation="Horizontal">
+        <materialDesign:PackIcon Kind="Speedometer" Width="24" Height="24"/>
+        <TextBlock Text="Dashboard" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
+    </StackPanel>
+</Button>
                     <Button  x:Name="BtnSales" Style="{StaticResource SidebarButton}" Click="OpenSales">
+                        <Button.ToolTip>
+                            <ToolTip Content="Manage sales transactions and customer orders" 
+              Style="{StaticResource SpeechBubbleToolTipLight}"
+              Placement="Right"/>
+                        </Button.ToolTip>
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Cart" Width="24" Height="24"/>
                             <TextBlock Text="Sales" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
                         </StackPanel>
                     </Button>
                     <Button  x:Name="BtnStocks" Style="{StaticResource SidebarButton}" Click="OpenStocksPopup">
+                        <Button.ToolTip>
+                            <ToolTip Content="Monitor inventory levels and stock management" 
+Style="{StaticResource SpeechBubbleToolTipLight}"
+Placement="Right"/>
+                        </Button.ToolTip>
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Layers" Width="24" Height="24"/>
                             <TextBlock Text="Stocks" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
                         </StackPanel>
                     </Button>
                     <Button  x:Name="BtnCRM" Style="{StaticResource SidebarButton}" Click="OpenCRM">
+                        <Button.ToolTip>
+                            <ToolTip Content="Customer relationship management and contacts" 
+Style="{StaticResource SpeechBubbleToolTipLight}"
+Placement="Right"/>
+                        </Button.ToolTip>
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="AccountMultiple" Width="24" Height="24"/>
                             <TextBlock Text="CRM" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
                         </StackPanel>
                     </Button>
                     <Button  x:Name="BtnProjects" Style="{StaticResource SidebarButton}" Click="OpenProject">
+                        <Button.ToolTip>
+                            <ToolTip Content="Manage projects, tasks and team collaboration" 
+Style="{StaticResource SpeechBubbleToolTipLight}"
+Placement="Right"/>
+                        </Button.ToolTip>
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Briefcase" Width="24" Height="24"/>
                             <TextBlock Text="Project" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
                         </StackPanel>
                     </Button>
                     <Button  x:Name="BtnAccounts" Style="{StaticResource SidebarButton}" Click="OpenAccounts">
+                        <Button.ToolTip>
+                            <ToolTip Content="Financial accounts and transaction records" 
+Style="{StaticResource SpeechBubbleToolTipLight}"
+Placement="Right"/>
+                        </Button.ToolTip>
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Account" Width="24" Height="24"/>
                             <TextBlock Text="Accounts" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
                         </StackPanel>
                     </Button>
                     <Button  x:Name="BtnPromoCodes" Style="{StaticResource SidebarButton}" Click="OpenPromoCodes">
+                        <Button.ToolTip>
+                            <ToolTip Content="Create and manage promotional discount codes" 
+Style="{StaticResource SpeechBubbleToolTipLight}"
+Placement="Right"/>
+                        </Button.ToolTip>
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="TicketPercent" Width="24" Height="24"/>
                             <TextBlock Text="Promo Codes" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
                         </StackPanel>
                     </Button>
                     <Button  x:Name="BtnDataReports" Style="{StaticResource SidebarButton}" Click="OpenDataReports">
+                        <Button.ToolTip>
+                            <ToolTip Content="Generate analytical reports and business insights" 
+Style="{StaticResource SpeechBubbleToolTipLight}"
+Placement="Right"/>
+                        </Button.ToolTip>
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="ChartBar" Width="24" Height="24"/>
                             <TextBlock Text="Data &amp; Reports" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend" />
                         </StackPanel>
                     </Button>
                     <Button  x:Name="BtnMiscellaneous" Style="{StaticResource SidebarButton}" Click="OpenMiscellaneous">
+                        <Button.ToolTip>
+                            <ToolTip Content="Additional tools and utility functions" 
+Style="{StaticResource SpeechBubbleToolTipLight}"
+Placement="Right"/>
+                        </Button.ToolTip>
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="DotsGrid" Width="24" Height="24"/>
                             <TextBlock Text="Miscellaneous" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
                         </StackPanel>
                     </Button>
                     <Button  x:Name="BtnHRM" Style="{StaticResource SidebarButton}" Click="OpenHRM">
+                        <Button.ToolTip>
+                            <ToolTip Content="Human resource management and employee records" 
+Style="{StaticResource SpeechBubbleToolTipLight}"
+Placement="Right"/>
+                        </Button.ToolTip>
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="AccountTie" Width="24" Height="24"/>
                             <TextBlock Text="HRM" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
@@ -134,6 +184,11 @@
 
             <!-- Logout Button -->
             <Button x:Name="BtnLogout" Style="{StaticResource SidebarButton}" Click="Logout">
+                <Button.ToolTip>
+                    <ToolTip Content="Click to Logut" 
+Style="{StaticResource SpeechBubbleToolTipLight}"
+Placement="Right"/>
+                </Button.ToolTip>
                 <StackPanel Orientation="Horizontal">
                     <materialDesign:PackIcon Kind="Logout" Width="24" Height="24" Foreground="Red" Margin="3,0,0,0"/>
                     <TextBlock Text="Logout" Foreground="Red" FontWeight="Bold" Margin="10,4,0,0" FontFamily="Lexend"/>
