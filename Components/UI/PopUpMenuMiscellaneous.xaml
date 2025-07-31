@@ -90,11 +90,21 @@
                                 <Hyperlink Click="NavigateToCreateNote">
                                     <TextBlock Text="Create Note" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageNotes">
                                     <TextBlock Text="Manage Notes" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
@@ -131,11 +141,21 @@
                                 <Hyperlink Click="NavigateToViewCalendar">
                                     <TextBlock Text="View Calendar" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToAddEvent">
                                     <TextBlock Text="Add Event" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
@@ -172,16 +192,31 @@
                                 <Hyperlink Click="NavigateToUploadDocument">
                                     <TextBlock Text="Upload Document" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToViewDocuments">
                                     <TextBlock Text="View Documents" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToViewPOR">
                                     <TextBlock Text="Pull Out Form" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
@@ -224,6 +259,11 @@
                                 <Hyperlink Click="NavigateToCashAdvanceNewRequest">
                                     <TextBlock Text="Cash Advance Request" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel> 
                         
@@ -236,6 +276,11 @@
                                 <Hyperlink Click="NavigateToManageCashAdvanceRequests">
                                     <TextBlock Text="Manage Cash Advance Requests" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>

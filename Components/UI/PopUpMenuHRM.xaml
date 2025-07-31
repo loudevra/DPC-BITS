@@ -71,6 +71,11 @@
                             <Hyperlink Click="NavigateToEmployees">
                                 <TextBlock Text="Employees" Style="{StaticResource MainMenuItemStyle}"/>
                             </Hyperlink>
+                                                                                        <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                         </TextBlock>
                     </Grid>
                 </StackPanel>
@@ -86,6 +91,11 @@
                         <Hyperlink Click="NavigateToPermissions">
                             <TextBlock Text="Permissions" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
+                                                                                    <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                     </TextBlock>
                 </Grid>
 
@@ -100,6 +110,11 @@
                         <Hyperlink Click="NavigateToSalaries">
                             <TextBlock Text="Salaries" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
+                                                                                    <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                     </TextBlock>
                 </Grid>
 
@@ -114,6 +129,11 @@
                         <Hyperlink Click="NavigateToAttendance">
                             <TextBlock Text="Attendance" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
+                                                                                    <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                     </TextBlock>
                 </Grid>
 
@@ -128,6 +148,11 @@
                         <Hyperlink Click="NavigateToHolidays">
                             <TextBlock Text="Holidays" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
+                                                                                    <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                     </TextBlock>
                 </Grid>
 
@@ -142,6 +167,11 @@
                         <Hyperlink Click="NavigateToDepartments">
                             <TextBlock Text="Departments" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
+                                                                                    <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                     </TextBlock>
                 </Grid>
 
@@ -156,6 +186,11 @@
                         <Hyperlink Click="NavigateToPayroll">
                             <TextBlock Text="Payroll" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
+                                                                                    <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                     </TextBlock>
                 </Grid>
             </StackPanel>

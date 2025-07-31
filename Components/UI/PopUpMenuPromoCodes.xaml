@@ -55,6 +55,11 @@
                         <Hyperlink Click="NavigateToAddPromoCode">
                             <TextBlock Text="New Promo Code" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
+                                                                                    <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                     </TextBlock>
                 </Grid>
 
@@ -69,6 +74,11 @@
                         <Hyperlink Click="NavigateToManagePromoCodes">
                             <TextBlock Text="Manage Promo Codes" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
+                                                                                    <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                     </TextBlock>
                 </Grid>
             </StackPanel>
