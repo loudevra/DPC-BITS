@@ -91,7 +91,7 @@
                                     <TextBlock Text="Create Note" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
                                                                                             <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Write and save a new quick note." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -101,7 +101,7 @@
                                     <TextBlock Text="Manage Notes" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
                                                                                             <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content=" Edit, categorize, or delete saved notes." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -142,7 +142,9 @@
                                     <TextBlock Text="View Calendar" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
                                                                                             <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="See upcoming schedules, deadlines, and events.
+
+" 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -152,7 +154,7 @@
                                     <TextBlock Text="Add Event" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
                                                                                             <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Schedule and add new events to the calendar." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -193,7 +195,7 @@
                                     <TextBlock Text="Upload Document" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
                                                                                             <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Upload files and company documents." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -203,7 +205,7 @@
                                     <TextBlock Text="View Documents" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
                                                                                             <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Access and view uploaded documents." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -213,7 +215,7 @@
                                     <TextBlock Text="Pull Out Form" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
                                                                                             <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content=" Generate a form to withdraw or request documents." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -260,7 +262,7 @@
                                     <TextBlock Text="Cash Advance Request" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
                                                                                             <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Submit a new cash advance request." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -277,7 +279,7 @@
                                     <TextBlock Text="Manage Cash Advance Requests" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
                                                                                             <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Approve, reject, or track cash advance requests." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>

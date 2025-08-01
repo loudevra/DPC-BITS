@@ -73,7 +73,7 @@
                             <TextBlock Text="Business Registers" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
                                                                                     <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Maintain and review official business records." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -92,7 +92,7 @@
                             <TextBlock Text="Manage Files" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
                                                                                     <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Upload, view, and organize all company files." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
