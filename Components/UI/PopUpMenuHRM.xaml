@@ -72,7 +72,7 @@
                                 <TextBlock Text="Employees" Style="{StaticResource MainMenuItemStyle}"/>
                             </Hyperlink>
                                                                                         <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="View and manage employee profiles and details." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -92,7 +92,7 @@
                             <TextBlock Text="Permissions" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
                                                                                     <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Configure access levels and user permissions." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -111,7 +111,9 @@
                             <TextBlock Text="Salaries" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
                                                                                     <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="View and process employee salary details.
+
+" 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -130,7 +132,7 @@
                             <TextBlock Text="Attendance" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
                                                                                     <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Track employee attendance and working hours." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -149,7 +151,7 @@
                             <TextBlock Text="Holidays" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
                                                                                     <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Manage official holidays and time-off schedules." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -168,7 +170,7 @@
                             <TextBlock Text="Departments" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
                                                                                     <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Organize and manage company departments." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -187,7 +189,7 @@
                             <TextBlock Text="Payroll" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
                                                                                     <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Process and generate employee payroll records." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>

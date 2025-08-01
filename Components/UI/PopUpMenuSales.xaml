@@ -92,7 +92,7 @@
                                     <TextBlock Text="New Invoice" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                                                                                             <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Create a new invoice for clients." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -102,7 +102,7 @@
                                     <TextBlock Text="New Invoice V2 - Mobile" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                                                                                             <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Generate invoices optimized for mobile." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -112,7 +112,9 @@
                                     <TextBlock Text="Manage Invoices" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                                                                                             <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Edit, send, and track all invoices.
+
+" 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -153,7 +155,7 @@
                                     <TextBlock Text="New Invoice" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                                                                                             <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Create a new invoice for clients." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -163,7 +165,7 @@
                                     <TextBlock Text="Manage Invoices" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                                                                                             <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Edit, send, and track all invoices." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -204,7 +206,7 @@
                                     <TextBlock Text="New Cost Estimate" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                                                                                             <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Create a new cost estimate for projects or services." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -214,7 +216,7 @@
                                     <TextBlock Text="Manage Cost Estimate" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                                                                                             <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Review and manage existing cost estimates." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -255,7 +257,7 @@
                                     <TextBlock Text="New Subscription" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                                                                                             <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content=" Add a new client subscription plan." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -265,7 +267,7 @@
                                     <TextBlock Text="Subscriptions" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                                                                                             <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="View and manage all active subscriptions." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -286,7 +288,7 @@
                             <TextBlock Text="Credit Notes" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
                                                                                     <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Issue credit notes for refunds or adjustments." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>

@@ -56,7 +56,7 @@
                             <TextBlock Text="New Promo Code" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
                                                                                     <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Create and set up new discount codes." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -75,7 +75,7 @@
                             <TextBlock Text="Manage Promo Codes" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
                                                                                     <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Edit, disable, or track existing promo codes." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>

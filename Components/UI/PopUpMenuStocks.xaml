@@ -72,6 +72,11 @@
                             <Hyperlink>
                                 <TextBlock Text="Items Manager" Style="{StaticResource MainMenuItemStyle}"/>
                             </Hyperlink>
+                            <TextBlock.ToolTip>
+                                <ToolTip Content="Manage your product inventory and item information" 
+                                         Style="{StaticResource SpeechBubbleToolTip}"
+                                         Placement="Top"/>
+                            </TextBlock.ToolTip>
                         </TextBlock>
                     </Grid>
 
@@ -91,31 +96,31 @@
                                 <Hyperlink Click="NavigateToNewProduct">
                                     <TextBlock Text="New Product" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
-                                                                                            <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="Add new products to your inventory system" 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToProductManager">
                                     <TextBlock Text="Product Manager" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
-                                                                                            <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="View, edit, and organize existing products" 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToConsumables">
                                     <TextBlock Text="Consumables" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
-                                                                                            <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="Manage consumable items and supplies" 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
@@ -132,11 +137,11 @@
                         <Hyperlink Click="NavigateToProductCategories">
                             <TextBlock Text="Product Categories" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
-                                                                                    <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                        <TextBlock.ToolTip>
+                            <ToolTip Content="Organize products into categories for better management" 
+                                     Style="{StaticResource SpeechBubbleToolTip}"
+                                     Placement="Top"/>
+                        </TextBlock.ToolTip>
                     </TextBlock>
                 </Grid>
 
@@ -151,11 +156,11 @@
                         <Hyperlink Click="NavigateToWarehouses">
                             <TextBlock Text="Warehouses" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
-                                                                                    <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                        <TextBlock.ToolTip>
+                            <ToolTip Content="Manage warehouse locations and storage facilities" 
+                                     Style="{StaticResource SpeechBubbleToolTip}"
+                                     Placement="Top"/>
+                        </TextBlock.ToolTip>
                     </TextBlock>
                 </Grid>
 
@@ -170,11 +175,11 @@
                         <Hyperlink Click="NavigateToStocksTransfer">
                             <TextBlock Text="Stocks Transfer" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
-                                                                                    <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                        <TextBlock.ToolTip>
+                            <ToolTip Content="Transfer inventory between different warehouse locations" 
+                                     Style="{StaticResource SpeechBubbleToolTip}"
+                                     Placement="Top"/>
+                        </TextBlock.ToolTip>
                     </TextBlock>
                 </Grid>
 
@@ -190,6 +195,11 @@
                             <Hyperlink>
                                 <TextBlock Text="Purchase Order" Style="{StaticResource MainMenuItemStyle}"/>
                             </Hyperlink>
+                            <TextBlock.ToolTip>
+                                <ToolTip Content="Handle purchase orders and procurement processes" 
+                                         Style="{StaticResource SpeechBubbleToolTip}"
+                                         Placement="Top"/>
+                            </TextBlock.ToolTip>
                         </TextBlock>
                     </Grid>
 
@@ -209,31 +219,31 @@
                                 <Hyperlink Click="NavigateToNewOrder">
                                     <TextBlock Text="New Order" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
-                                                                                            <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="Create new purchase orders for suppliers" 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageOrder">
                                     <TextBlock Text="Manage Orders" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
-                                                                                            <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="View and manage existing purchase orders" 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToWalkIn">
                                  <TextBlock Text="Walk-In Client" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
-                                                                                            <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="Process immediate purchases from walk-in customers" 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
@@ -251,6 +261,11 @@
                             <Hyperlink>
                                 <TextBlock Text="Stocks Return" Style="{StaticResource MainMenuItemStyle}"/>
                             </Hyperlink>
+                            <TextBlock.ToolTip>
+                                <ToolTip Content="Process returns and exchanges for stock items" 
+                                         Style="{StaticResource SpeechBubbleToolTip}"
+                                         Placement="Top"/>
+                            </TextBlock.ToolTip>
                         </TextBlock>
                     </Grid>
 
@@ -270,21 +285,21 @@
                                 <Hyperlink Click="NavigateToSupplierRecords">
                                     <TextBlock Text="Suppliers Records" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
-                                                                                            <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="View return history and records with suppliers" 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToCustomerRecords">
                                     <TextBlock Text="Customers Records" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
-                                                                                            <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="Track customer returns and exchange history" 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
@@ -302,6 +317,11 @@
                             <Hyperlink>
                                 <TextBlock Text="Suppliers" Style="{StaticResource MainMenuItemStyle}"/>
                             </Hyperlink>
+                            <TextBlock.ToolTip>
+                                <ToolTip Content="Manage supplier information and relationships" 
+                                         Style="{StaticResource SpeechBubbleToolTip}"
+                                         Placement="Top"/>
+                            </TextBlock.ToolTip>
                         </TextBlock>
                     </Grid>
 
@@ -321,21 +341,21 @@
                                 <Hyperlink Click="NavigateToNewSuppliers">
                                     <TextBlock Text="New Suppliers" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
-                                                                                            <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="Add new suppliers to your vendor database" 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageSuppliers">
                                     <TextBlock Text="Manage Suppliers" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
-                                                                                            <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="Edit supplier details and contact information" 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
@@ -353,6 +373,11 @@
                             <Hyperlink>
                                 <TextBlock Text="Products Label" Style="{StaticResource MainMenuItemStyle}"/>
                             </Hyperlink>
+                            <TextBlock.ToolTip>
+                                <ToolTip Content="Generate and manage product labels and barcodes" 
+                                         Style="{StaticResource SpeechBubbleToolTip}"
+                                         Placement="Top"/>
+                            </TextBlock.ToolTip>
                         </TextBlock>
                     </Grid>
 
@@ -372,22 +397,21 @@
                                 <Hyperlink Click="NavigateToCustomLabel">
                                     <TextBlock Text="Custom Label" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
-                                                                                            <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
-
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="Create customized labels with specific formatting" 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToStandardLabel">
                                     <TextBlock Text="Standard Label" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
-                                                                                            <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="Generate standard product labels and barcodes" 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
@@ -404,11 +428,11 @@
                         <Hyperlink Click="NavigateToManageBrands">
                             <TextBlock Text="Brands" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
-                                                                                    <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                        <TextBlock.ToolTip>
+                            <ToolTip Content="Manage product brands and manufacturer information" 
+                                     Style="{StaticResource SpeechBubbleToolTip}"
+                                     Placement="Top"/>
+                        </TextBlock.ToolTip>
                     </TextBlock>
                 </Grid>
             </StackPanel>

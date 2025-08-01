@@ -92,7 +92,7 @@
                                     <TextBlock Text="Manage Accounts" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                                     <TextBlock.ToolTip>
-                                <ToolTip Content=" View and edit account information and settings." 
+                                <ToolTip Content=" View, edit, and organize all account records." 
                                  Style="{StaticResource SpeechBubbleToolTip}"
                                  Placement="Top"/>
                                     </TextBlock.ToolTip>
@@ -102,7 +102,7 @@
                                     <TextBlock Text="Balance Sheets" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                                     <TextBlock.ToolTip>
-        <ToolTip Content=" View the financial position of your business over time." 
+        <ToolTip Content=" Check your company’s assets, liabilities, and equity overview." 
                         Style="{StaticResource SpeechBubbleToolTip}"
                             Placement="Top"/>
                          </TextBlock.ToolTip>
@@ -112,7 +112,7 @@
                                     <TextBlock Text="Account Statement" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>                
                                 </Hyperlink>
                                     <TextBlock.ToolTip>
-<ToolTip Content=" Generate detailed statements for specific accounts." 
+<ToolTip Content=" Review detailed statements for selected accounts." 
  Style="{StaticResource SpeechBubbleToolTip}"
  Placement="Top"/>
     </TextBlock.ToolTip>
@@ -153,7 +153,7 @@
                                     <TextBlock Text="View Transactions" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                                                             <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="View all recent and past financial transactions." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -163,7 +163,7 @@
                                     <TextBlock Text="New Transaction" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                                                                                             <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content=" Record a new income or expense entry." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -173,7 +173,7 @@
                                     <TextBlock Text="New Transfer" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                                                                                             <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Transfer funds between accounts securely." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -183,7 +183,7 @@
                                     <TextBlock Text="Clients Transaction" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                                                                                             <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Track transactions made by specific clients." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -204,7 +204,7 @@
                             <TextBlock Text="Income" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
                                                                                     <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Monitor all revenue and income entries." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
@@ -223,7 +223,7 @@
                             <TextBlock Text="Expense" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
                                                                                     <TextBlock.ToolTip>
-<ToolTip Content=" View the financial position of your business over time." 
+<ToolTip Content="Track all company expenses and spending details." 
                 Style="{StaticResource SpeechBubbleToolTip}"
                     Placement="Top"/>
                  </TextBlock.ToolTip>
