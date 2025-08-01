@@ -72,6 +72,11 @@
                         <Hyperlink Click="NavigateToBusinessregister" >
                             <TextBlock Text="Business Registers" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
+                                                                                    <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                     </TextBlock>
                 </Grid>
                 
@@ -86,6 +91,11 @@
                         <Hyperlink Click="NavigateToFiles" >
                             <TextBlock Text="Manage Files" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
+                                                                                    <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                     </TextBlock>
                 </Grid>
 

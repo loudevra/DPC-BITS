@@ -91,16 +91,31 @@
                                 <Hyperlink Click="NavigateToNewPOSInvoice">
                                     <TextBlock Text="New Invoice" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToNewInvoiceV2">
                                     <TextBlock Text="New Invoice V2 - Mobile" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageInvoices" >
                                     <TextBlock Text="Manage Invoices" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
@@ -137,11 +152,21 @@
                                 <Hyperlink Click="NavigateToNewInvoice">
                                     <TextBlock Text="New Invoice" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageInvoices">
                                     <TextBlock Text="Manage Invoices" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
@@ -178,11 +203,21 @@
                                 <Hyperlink Click="NavigateToNewQuote">
                                     <TextBlock Text="New Cost Estimate" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageQuote">
                                     <TextBlock Text="Manage Cost Estimate" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
@@ -219,11 +254,21 @@
                                 <Hyperlink Click="NavigateToNewSubscription">
                                     <TextBlock Text="New Subscription" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToSubscriptions">
                                     <TextBlock Text="Subscriptions" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
@@ -240,6 +285,11 @@
                         <Hyperlink Click="NavigateToCreditNotes">
                             <TextBlock Text="Credit Notes" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
+                                                                                    <TextBlock.ToolTip>
+<ToolTip Content=" View the financial position of your business over time." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                     </TextBlock>
                 </Grid>
             </StackPanel>
