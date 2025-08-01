@@ -49,7 +49,7 @@ Namespace DPC.Views.Sales.Quotes
 
             QuoteNumber.Text = CostEstimateDetails.CEQuoteNumberCache
             QuoteDate.Text = CostEstimateDetails.CEQuoteDateCache
-            QuoteValidityDate.Text = CostEstimateDetails.CEQuoteValidityDateCache
+            QuoteValidityDate.Text = CostEstimateDetails.CEValidUntilDate
             Subtotal.Text = CostEstimateDetails.CETotalAmountCache
             TotalCost.Text = CostEstimateDetails.CETotalAmountCache
             Delivery.Text = "₱ " & CostEstimateDetails.CEDeliveryCost.ToString("N2")
@@ -62,7 +62,7 @@ Namespace DPC.Views.Sales.Quotes
             AddressLineOne.Text = CostEstimateDetails.CEAddress & ", " & CostEstimateDetails.CECity    ' -- important when editing
             AddressLineTwo.Text = CostEstimateDetails.CERegion & ", " & CostEstimateDetails.CECountry    ' -- important when editing
             PhoneBox.Text = "Tel No.: +63 " & FormatPhoneWithSpaces(CostEstimateDetails.CEPhone)
-            EmailBox.Text = CostEstimateDetails.CEEmail
+            RepresentativeBox.Text = CostEstimateDetails.CERepresentative
             noteBox.Text = CostEstimateDetails.CEpaperNote
             Term1.Text = CostEstimateDetails.CETerm1
             Term2.Text = CostEstimateDetails.CETerm2
@@ -76,8 +76,15 @@ Namespace DPC.Views.Sales.Quotes
             Term10.Text = CostEstimateDetails.CETerm10
             Term11.Text = CostEstimateDetails.CETerm11
             Term12.Text = CostEstimateDetails.CETerm12
+            Term13.Text = CostEstimateDetails.CETerm13
+            Term14.Text = CostEstimateDetails.CETerm14
+            Term15.Text = CostEstimateDetails.CETerm15
             SalesRep.Text = CacheOnLoggedInName
             cmbApproved.Text = CostEstimateDetails.CEApproved
+            cmbSubtotalTax.Text = CostEstimateDetails.CESubtotalExInc ' Added in the combobox when editing if exist
+            Warranty.Text = CostEstimateDetails.CEWarranty ' If there is changed the value will be rendered if not the default value will be rendered
+            cmbDeliveryMobilization.Text = CostEstimateDetails.CEDeliveryMobilization
+            CNIdentifier.Text = CostEstimateDetails.CECNIndetifier
 
             ' Check if the terms is enabled
             If CostEstimateDetails.CEisCustomTerm = True Then
@@ -309,6 +316,9 @@ Namespace DPC.Views.Sales.Quotes
             CostEstimateDetails.CEpaperNote = noteBox.Text ' Changed 07/09/2025 to noteBox
             CostEstimateDetails.CEApproved = cmbApproved.Text
             CostEstimateDetails.CEpaymentTerms = cmbTerms.Text
+            CostEstimateDetails.CESubtotalExInc = cmbSubtotalTax.Text
+            CostEstimateDetails.CEWarranty = Warranty.Text
+            CostEstimateDetails.CEDeliveryMobilization = cmbDeliveryMobilization.Text
             If CostEstimateDetails.CEisCustomTerm = True Then
                 CostEstimateDetails.CEpaymentTerms = CustomTerms.Text
             Else
@@ -329,7 +339,7 @@ Namespace DPC.Views.Sales.Quotes
 
             CostEstimateDetails.CEQuoteNumberCache = QuoteNumber.Text
             CostEstimateDetails.CEQuoteDateCache = QuoteDate.Text
-            CostEstimateDetails.CEQuoteValidityDateCache = QuoteValidityDate.Text
+            CostEstimateDetails.CEValidUntilDate = QuoteValidityDate.Text
             CostEstimateDetails.CETotalAmountCache = TotalCost.Text
             CostEstimateDetails.CEDeliveryCost = _deliveryCost
             CostEstimateDetails.CEInstallation = _installationCost
@@ -352,8 +362,14 @@ Namespace DPC.Views.Sales.Quotes
             CostEstimateDetails.CETerm10 = Term10.Text
             CostEstimateDetails.CETerm11 = Term11.Text
             CostEstimateDetails.CETerm12 = Term12.Text
+            CostEstimateDetails.CETerm13 = Term13.Text
+            CostEstimateDetails.CETerm14 = Term14.Text
+            CostEstimateDetails.CETerm15 = Term15.Text
             CostEstimateDetails.CEApproved = cmbApproved.Text
-
+            CostEstimateDetails.CESubtotalExInc = cmbSubtotalTax.Text
+            CostEstimateDetails.CEWarranty = Warranty.Text
+            CostEstimateDetails.CEDeliveryMobilization = cmbDeliveryMobilization.Text
+            CostEstimateDetails.CECNIndetifier = CNIdentifier.Text
 
             CostEstimateDetails.CEpaymentTerms = cmbTerms.Text
             If CostEstimateDetails.CEisCustomTerm = True Then

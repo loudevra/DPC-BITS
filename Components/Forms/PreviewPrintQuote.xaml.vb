@@ -39,7 +39,7 @@ Namespace DPC.Components.Forms
             ' Add any initialization after the InitializeComponent() call.
             QuoteNumber.Text = CostEstimateDetails.CEQuoteNumberCache
             QuoteDate.Text = CostEstimateDetails.CEQuoteDateCache
-            QuoteValidityDate.Text = CostEstimateDetails.CEQuoteValidityDateCache
+            QuoteValidityDate.Text = CostEstimateDetails.CEValidUntilDate ' Changed the Cache name while the previous cache variable would be stay
             Subtotal.Text = CostEstimateDetails.CESubTotalCache
             TotalCost.Text = CostEstimateDetails.CETotalAmountCache
             VAT12.Text = CostEstimateDetails.CETotalTaxValueCache
@@ -51,7 +51,7 @@ Namespace DPC.Components.Forms
             AddressLineOne.Text = CostEstimateDetails.CEAddress & ", " & CostEstimateDetails.CECity    ' -- important when editing
             AddressLineTwo.Text = CostEstimateDetails.CERegion & ", " & CostEstimateDetails.CECountry    ' -- important when editing
             PhoneBox.Text = "Tel No.: +63 " & FormatPhoneWithSpaces(CostEstimateDetails.CEPhone)
-            EmailBox.Text = CostEstimateDetails.CEEmail
+            RepresentativeBox.Text = CostEstimateDetails.CERepresentative
             noteBox.Text = CostEstimateDetails.CEnoteTxt
             remarksBox.Text = CostEstimateDetails.CEremarksTxt
             Term1.Text = CostEstimateDetails.CETerm1
@@ -66,8 +66,15 @@ Namespace DPC.Components.Forms
             Term10.Text = CostEstimateDetails.CETerm10
             Term11.Text = CostEstimateDetails.CETerm11
             Term12.Text = CostEstimateDetails.CETerm12
+            Term13.Text = CostEstimateDetails.CETerm13
+            Term14.Text = CostEstimateDetails.CETerm14
+            Term15.Text = CostEstimateDetails.CETerm15
             SalesRep.Text = CacheOnLoggedInName
             cmbApproved.Text = CostEstimateDetails.CEApproved
+            SubtotalTax.Text = CostEstimateDetails.CESubtotalExInc
+            Warranty.Text = CostEstimateDetails.CEWarranty
+            DeliveryMobilization.Text = CostEstimateDetails.CEDeliveryMobilization
+            CNIdentifier.Text = CostEstimateDetails.CECNIndetifier
 
             ' Check if the terms is enabled
             If CostEstimateDetails.CEisCustomTerm = True Then

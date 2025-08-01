@@ -32,7 +32,7 @@ Namespace DPC.Views.Sales.Quotes
         Private _productTextBoxes As New Dictionary(Of String, TextBox)
         ' Controllers for calendar to shows the date by binding
         Private OrderDateVM As New CalendarController.SingleCalendar()
-        Private OrderDueDateVM As New CalendarController.SingleCalendar()
+        'Private OrderDueDateVM As New CalendarController.SingleCalendar()
         ' Variable to store the data from warehouse
         Public WarehouseID As Integer
         Public WarehouseName As String
@@ -40,6 +40,11 @@ Namespace DPC.Views.Sales.Quotes
         ' Tax Combobox Variables
         Dim _TaxSelection As Boolean
         Dim _SelectedTax As Decimal
+        ' Avoid runnng the code of Cost Estimate Type Combobox while loadng the page
+        Dim LoadingCEType As Boolean = True
+        ' Set a fixed length for Cost Estimate
+        Dim _FixedPrefixLength As Integer = 14
+
 
 #Region "Initializiation once loaded the form"
         Public Sub New()
@@ -50,13 +55,13 @@ Namespace DPC.Views.Sales.Quotes
 
             ' Set a default date today and tomorrow
             OrderDateVM.SelectedDate = DateTime.Today
-            OrderDueDateVM.SelectedDate = DateTime.Today.AddDays(1)
+            'OrderDueDateVM.SelectedDate = DateTime.Today.AddDays(1)
 
             ' Set Date to bind
             QuoteDate.DataContext = OrderDateVM
             QuoteDateButton.DataContext = OrderDateVM
-            QuoteValidityDate.DataContext = OrderDueDateVM
-            QuoteValidityButton.DataContext = OrderDueDateVM
+            'QuoteValidityDate.DataContext = OrderDueDateVM
+            'QuoteValidityButton.DataContext = OrderDueDateVM
 
             ' Autocomplete part
             _typingTimer = New DispatcherTimer With {
@@ -97,12 +102,105 @@ Namespace DPC.Views.Sales.Quotes
                 CEWarehouseNameCache = selectedWarehouse.Content.ToString()
             End If
 
-            ' Generate Quote ID
-            Dim quoteID As String = QuotesController.GenerateQuoteID()
-            txtQuoteNumber.Text = quoteID
+            Console.WriteLine($"Selected Cost Estimate Type : {cmbCostEstimateType.SelectedIndex}")
+            ' Checks the value of CEType
+            If CostEstimateDetails.CEType > 4 Then
+                cmbCostEstimateType.SelectedIndex = 0
+                CEType = 0
+                ' Generate Quote ID
+                Dim quoteID As String = QuotesController.GenerateQuoteID(CEType)
+                txtQuoteNumber.Text = quoteID
+
+                Dim _prefix As String
+
+                Select Case CEType
+                    Case 0
+                        _prefix = "GPCE #:"
+                    Case 1
+                        _prefix = "BCCE #:"
+                    Case 2
+                        _prefix = "HHCE #:"
+                    Case 3
+                        _prefix = "WICE #:"
+                    Case Else
+                        _prefix = "CE #:" ' Fail Safe if doesnt work
+                End Select
+
+                CostEstimateDetails.CECNIndetifier = _prefix
+
+                ' Make the loading CEtype false so it can now run smoothly
+                LoadingCEType = False
+            Else
+                cmbCostEstimateType.SelectedIndex = CostEstimateDetails.CEType
+                CEType = CostEstimateDetails.CEType
+                ' Generate Quote ID
+                Dim quoteID As String = QuotesController.GenerateQuoteID(CEType)
+                txtQuoteNumber.Text = quoteID
+
+                Dim _prefix As String
+
+                Select Case CEType
+                    Case 0
+                        _prefix = "GPCE #:"
+                    Case 1
+                        _prefix = "BCCE #:"
+                    Case 2
+                        _prefix = "HHCE #:"
+                    Case 3
+                        _prefix = "WICE #:"
+                    Case Else
+                        _prefix = "CE #:" ' Fail Safe if doesnt work
+                End Select
+
+                CostEstimateDetails.CECNIndetifier = _prefix
+
+                ' Make the loading CEtype false so it can now run smoothly
+                LoadingCEType = False
+            End If
+
+            cmbCostEstimateValidty.Text = CostEstimateDetails.CEValidUntilDate
 
             Debug.WriteLine($"Tax Selection - {_TaxSelection}")
             Debug.WriteLine($"Tax Value In Quote Properties - {_SelectedTax}")
+        End Sub
+#End Region
+
+#Region "Quote Number Validation & Cost Estimate Validity"
+        Private Sub cmbCostEstimateType_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+            ' Failsafe for loading
+            If LoadingCEType Then Exit Sub
+
+            CostEstimateDetails.CEType = cmbCostEstimateType.SelectedIndex
+            Dim _prefix As String
+
+            Select Case CEType
+                Case 0
+                    _prefix = "GPCE #:"
+                Case 1
+                    _prefix = "BCCE #:"
+                Case 2
+                    _prefix = "HHCE #:"
+                Case 3
+                    _prefix = "WICE #:"
+                Case Else
+                    _prefix = "CE #:" ' Fail Safe if doesnt work
+            End Select
+
+            CostEstimateDetails.CECNIndetifier = _prefix
+
+            ' Generate Quote ID
+            Dim quoteID As String = QuotesController.GenerateQuoteID(CEType)
+            txtQuoteNumber.Text = quoteID
+        End Sub
+
+        Private Sub cmbCostEstimateValidty_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+            If LoadingCEType Then Exit Sub
+
+            CostEstimateDetails.CEValidUntilDate = cmbCostEstimateValidty.SelectedIndex
+
+            'CostEstimateDetails.CEQuoteValidityDateCache = cmbCostEstimateValidty.Text ' Fail Safe 
+            'Console.WriteLine($"Newly Selected Index in Valid Until Date - {CostEstimateDetails.CEValidUntilDate}")
+            'Console.WriteLine($"Newly Text in Valid Until Date - {CostEstimateDetails.CEQuoteValidityDateCache}")
         End Sub
 #End Region
 
@@ -159,24 +257,16 @@ Namespace DPC.Views.Sales.Quotes
             Dim txtClientDetails As TextBox = TryCast(FindName("TxtClientDetails"), TextBox)
             If txtClientDetails Is Nothing OrElse client Is Nothing Then Return
 
-            Dim details As String = $"Name: {client.Name}{Environment.NewLine}" &
-                    $"Company: {client.Name}{Environment.NewLine}" &
+            Dim details As String =
+                    $"Representative Name: {client.Representative}{Environment.NewLine}" &
+                    $"Company: {client.Company}{Environment.NewLine}" &
                     $"Contact: {client.Phone}{Environment.NewLine}" &
-                    $"Email: {client.Email}{Environment.NewLine}" &
-                    $"Customer Group: {client.CustomerGroup}{Environment.NewLine}" &
-                    $"Language: {client.ClientLanguage}"
+                    $"Email: {client.Email}{Environment.NewLine}"
 
             If client.BillingAddress Is Nothing Then
                 details &= $"{Environment.NewLine}{Environment.NewLine}Billing Address: (No data)"
             Else
-                details &= Environment.NewLine & Environment.NewLine & String.Join(Environment.NewLine, client.BillingAddress.Split(","c))
-            End If
-
-            If client.ShippingAddress Is Nothing Then
-                details &= $"{Environment.NewLine}{Environment.NewLine}Shipping Address: (No data)"
-            Else
-                Dim shipping = client.ShippingAddress
-                details &= Environment.NewLine & Environment.NewLine & String.Join(Environment.NewLine, client.BillingAddress.Split(","c))
+                details &= String.Join(Environment.NewLine, $"Billing Address : {client.BillingAddress}")
             End If
 
             txtClientDetails.Text = details
@@ -259,9 +349,9 @@ Namespace DPC.Views.Sales.Quotes
             QuoteDate.IsDropDownOpen = True
         End Sub
 
-        Private Sub QuoteValidityButton_Click(sender As Object, e As RoutedEventArgs)
-            QuoteValidityDate.IsDropDownOpen = True
-        End Sub
+        'Private Sub QuoteValidityButton_Click(sender As Object, e As RoutedEventArgs)
+        '    QuoteValidityDate.IsDropDownOpen = True
+        'End Sub
 
         Private Sub txtReferenceNumber_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
             If Not e.Text.All(AddressOf Char.IsDigit) Then
@@ -368,7 +458,9 @@ Namespace DPC.Views.Sales.Quotes
 
             Dim parsedDate As DateTime
             If DateTime.TryParse(CEQuoteDateCache, parsedDate) Then QuoteDate.SelectedDate = parsedDate
-            If DateTime.TryParse(CEQuoteValidityDateCache, parsedDate) Then QuoteValidityDate.SelectedDate = parsedDate
+            'If DateTime.TryParse(CEQuoteValidityDateCache, parsedDate) Then QuoteValidityDate.SelectedDate = parsedDate
+
+            cmbCostEstimateValidty.Text = CEValidUntilDate
 
             AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
         End Sub
@@ -1097,15 +1189,20 @@ Namespace DPC.Views.Sales.Quotes
             '    Return False
             'End If
 
+            If String.IsNullOrWhiteSpace(cmbCostEstimateValidty.Text) Then
+                MessageBox.Show("Select an Cost Estimate Validity Date.")
+                Return False
+            End If
+
             If Not QuoteDate.SelectedDate.HasValue Then
                 MessageBox.Show("Quote Date is required.")
                 Return False
             End If
 
-            If Not QuoteValidityDate.SelectedDate.HasValue Then
-                MessageBox.Show("Validity Date is required.")
-                Return False
-            End If
+            'If Not QuoteValidityDate.SelectedDate.HasValue Then
+            'MessageBox.Show("Validity Date is required.")
+            'Return False
+            'End If
 
             If txtTaxSelection.SelectedItem Is Nothing Then
                 MessageBox.Show("Tax selection is required.")
@@ -1273,7 +1370,7 @@ Namespace DPC.Views.Sales.Quotes
             ClearAllRows()
             ' Reset date pickers
             OrderDateVM.SelectedDate = DateTime.Today
-            OrderDueDateVM.SelectedDate = DateTime.Today.AddDays(1)
+            'OrderDueDateVM.SelectedDate = DateTime.Today.AddDays(1)
 
             For Each child As UIElement In MainContainer.Children
                 Dim allTextBoxes = FindVisualChildren(Of TextBox)(child)
@@ -1319,7 +1416,7 @@ Namespace DPC.Views.Sales.Quotes
                 CEDiscountProperty = txtDiscountSelection.Text
                 CETaxProperty = txtTaxSelection.Text
                 CEQuoteDateCache = QuoteDate.SelectedDate.Value.ToString("yyyy-MM-dd")
-                CEQuoteValidityDateCache = QuoteValidityDate.SelectedDate.Value.ToString("yyyy-MM-dd")
+                CEValidUntilDate = cmbCostEstimateValidty.Text ' Changed the value of the text instead
                 CETotalTaxValueCache = txtTotalTax.Text
                 CETaxValueCache = txtTotalTax.Text
                 CETotalDiscountValueCache = txtTotalDiscount.Text
@@ -1332,7 +1429,7 @@ Namespace DPC.Views.Sales.Quotes
                 CEImageCache = "" ' Assuming no image for now
                 CEPathCache = "" ' Assuming no path for now
                 'ils
-                CEClientName = client.Name
+                CECompanyName = client.Company ' Changed from Client Name to Company Name
                 Dim stringArray As List(Of String) = client.BillingAddress.Split(","c).Select(Function(s) s.Trim()).ToList()
 
                 CostEstimateDetails.CEAddress = stringArray(0)
@@ -1341,13 +1438,14 @@ Namespace DPC.Views.Sales.Quotes
                 CostEstimateDetails.CECountry = stringArray(3)
                 CostEstimateDetails.CEClientDetailsCache = TxtClientDetails.Text
                 CEPhone = client.Phone
-                CEEmail = client.Email
+                CEClientName = client.Name
+                CostEstimateDetails.CERepresentative = client.Representative
 
                 ' Debugging 
                 Debug.WriteLine($"QuoteNumber: {CEQuoteNumberCache}, QuoteDate: {CEQuoteDateCache}, ValidityDate: {CEQuoteValidityDateCache}, Tax: {CETaxValueCache}, TotalAmount: {CETotalAmountCache}, Note: {CEnoteTxt}, Remarks: {CEremarksTxt}, Items: {JsonConvert.SerializeObject(CEQuoteItemsCache)}, Signature: {CEsignature}, Image: {CEImageCache}, Path: {CEPathCache}, ClientName: {CEClientName}, Phone: {CEPhone}, Email: {CEEmail}, Term1: {CETerm1}, Term2: {CETerm2}, Term3: {CETerm3}, Term4: {CETerm4}, Term5: {CETerm5}, Term6: {CETerm6}, Term7: {CETerm7}, Term8: {CETerm8}, Term9: {CETerm9}, Term10: {CETerm10}, Term11: {CETerm11}, Term12: {CETerm12}")
                 ViewLoader.DynamicView.NavigateToView("costestimate", Me)
             Catch ex As Exception
-                MessageBox.Show("Please Fill up all of the Fields")
+                MessageBox.Show("Please Fill up all of the Fields: " & ex.Message)
             End Try
         End Sub
 #End Region
