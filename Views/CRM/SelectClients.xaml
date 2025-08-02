@@ -70,7 +70,7 @@
                                     <Viewbox Width="70" Height="70" Margin="0,32,0,0">
                                         <materialDesign:PackIcon Kind="OfficeBuilding" Width="64" Height="64" Foreground="#555555"/>
                                     </Viewbox>
-                                    <TextBlock Text="Corporational" FontSize="20" Foreground="#555555" FontWeight="SemiBold" Margin="0,5,0,0" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="Corporate" FontSize="20" Foreground="#555555" FontWeight="SemiBold" Margin="0,5,0,0" HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </Border>
                             <!-- Checkmark -->

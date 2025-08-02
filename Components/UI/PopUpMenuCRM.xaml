@@ -99,7 +99,7 @@
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToCorporationalClient">
-                                    <TextBlock Text="New Corporational Client" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
+                                    <TextBlock Text="New Corporate Client" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                                                                                             <TextBlock.ToolTip>
 <ToolTip Content="Add a new business or corporate client." 
