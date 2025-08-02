@@ -91,16 +91,31 @@
                                 <Hyperlink Click="NavigateToResidentialClient">
                                     <TextBlock Text="New Residential Client" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content="Register a new individual or household client." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToCorporationalClient">
-                                    <TextBlock Text="New Corporational Client" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
+                                    <TextBlock Text="New Corporate Client" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content="Add a new business or corporate client." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageClients">
                                     <TextBlock Text="Manage Clients" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content="Edit, view, and manage all client information." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
@@ -117,6 +132,11 @@
                         <Hyperlink Click="NavigateToClientGroups">
                             <TextBlock Text="Client Groups" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
+                                                                                    <TextBlock.ToolTip>
+<ToolTip Content="Organize clients into groups for easier management." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                     </TextBlock>
                 </Grid>
 
@@ -151,11 +171,21 @@
                                 <Hyperlink Click="NavigateToUnsolvedTickets">
                                     <TextBlock Text="Unsolved" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content="View unresolved or pending support tickets." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageTickets">
                                     <TextBlock Text="Manage Tickets" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content="Assign, resolve, and track all support tickets." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>

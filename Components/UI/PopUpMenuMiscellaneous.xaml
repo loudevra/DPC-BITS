@@ -90,11 +90,21 @@
                                 <Hyperlink Click="NavigateToCreateNote">
                                     <TextBlock Text="Create Note" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content="Write and save a new quick note." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageNotes">
                                     <TextBlock Text="Manage Notes" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content=" Edit, categorize, or delete saved notes." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
@@ -131,11 +141,23 @@
                                 <Hyperlink Click="NavigateToViewCalendar">
                                     <TextBlock Text="View Calendar" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content="See upcoming schedules, deadlines, and events.
+
+" 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToAddEvent">
                                     <TextBlock Text="Add Event" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content="Schedule and add new events to the calendar." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
@@ -172,16 +194,31 @@
                                 <Hyperlink Click="NavigateToUploadDocument">
                                     <TextBlock Text="Upload Document" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content="Upload files and company documents." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToViewDocuments">
                                     <TextBlock Text="View Documents" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content="Access and view uploaded documents." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToViewPOR">
                                     <TextBlock Text="Pull Out Form" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content=" Generate a form to withdraw or request documents." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
@@ -224,6 +261,11 @@
                                 <Hyperlink Click="NavigateToCashAdvanceNewRequest">
                                     <TextBlock Text="Cash Advance Request" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content="Submit a new cash advance request." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel> 
                         
@@ -236,6 +278,11 @@
                                 <Hyperlink Click="NavigateToManageCashAdvanceRequests">
                                     <TextBlock Text="Manage Cash Advance Requests" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content="Approve, reject, or track cash advance requests." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>

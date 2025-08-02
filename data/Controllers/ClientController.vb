@@ -326,8 +326,10 @@ ClientGroupID,
     NULL AS Company,
 CustomerGroup,
     Language,
-    ShippingAddress
-FROM client
+    ShippingAddress,
+NULL AS Representative,
+'client' AS Source
+FROM client 
 WHERE Name LIKE @searchText 
    OR ClientID LIKE @searchText 
    OR Email LIKE @searchText
@@ -344,8 +346,10 @@ ClientGroupID,
     Company,
 CustomerGroup,
     Language,
-    ShippingAddress
-FROM clientcorporational
+    ShippingAddress,
+    Representative,
+'clientcorporational' AS Source
+FROM clientcorporational AS Source
 WHERE Company LIKE @searchText 
    OR ClientID LIKE @searchText 
    OR Email LIKE @searchText
@@ -374,8 +378,12 @@ LIMIT 10;"
                             .CustomerGroup = If(IsDBNull(reader("CustomerGroup")), String.Empty, reader("CustomerGroup").ToString()),
                             .ClientLanguage = If(IsDBNull(reader("Language")), String.Empty, reader("Language").ToString()),
                             .BillingAddress = If(IsDBNull(reader("BillingAddress")), String.Empty, reader("BillingAddress").ToString()),
-                            .ShippingAddress = If(IsDBNull(reader("ShippingAddress")), String.Empty, reader("ShippingAddress").ToString())
-                        }
+                            .ShippingAddress = If(IsDBNull(reader("ShippingAddress")), String.Empty, reader("ShippingAddress").ToString()),
+                            .Representative = If(Not IsDBNull(reader("Representative")) AndAlso Not String.IsNullOrWhiteSpace(reader("Representative").ToString()),
+                                             reader("Representative").ToString(),
+                                             reader("Name").ToString()),
+                            .Source = reader("Source").ToString()
+                            }
 
                                 clients.Add(client)
                             End While

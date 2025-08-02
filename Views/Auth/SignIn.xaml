@@ -7,6 +7,198 @@
              xmlns:modals="namespace:DPC.Components.ConfirmationModals"
              mc:Ignorable="d" 
              Width="450">
+    <UserControl.Resources>
+        <!-- Custom Style for Animated Floating Hint TextBox -->
+        <Style x:Key="AnimatedFloatingHintTextBox" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid>
+                            <Border x:Name="Border"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="4"
+                                    Padding="12,16,12,8">
+                                <Grid>
+                                    <ScrollViewer x:Name="PART_ContentHost"
+                                                  VerticalAlignment="Center"
+                                                  HorizontalScrollBarVisibility="Hidden"
+                                                  VerticalScrollBarVisibility="Hidden"/>
+
+                                    <!-- Animated Floating Label -->
+                                    <TextBlock x:Name="FloatingHint"
+                                               Text="{Binding Path=(md:HintAssist.Hint), RelativeSource={RelativeSource TemplatedParent}}"
+                                               FontFamily="{TemplateBinding FontFamily}"
+                                               Foreground="Gray"
+                                               IsHitTestVisible="False"
+                                               RenderTransformOrigin="0,0.5">
+                                        <TextBlock.RenderTransform>
+                                            <TransformGroup>
+                                                <ScaleTransform x:Name="HintScale"/>
+                                                <TranslateTransform x:Name="HintTranslate"/>
+                                            </TransformGroup>
+                                        </TextBlock.RenderTransform>
+                                    </TextBlock>
+                                </Grid>
+                            </Border>
+
+                            <!-- Underline for Material Design effect -->
+                            <Rectangle x:Name="Underline"
+                                       Height="2"
+                                       VerticalAlignment="Bottom"
+                                       Fill="#474747"
+                                       Opacity="0"
+                                       RenderTransformOrigin="0.5,0.5">
+                                <Rectangle.RenderTransform>
+                                    <ScaleTransform x:Name="UnderlineScale" ScaleX="0"/>
+                                </Rectangle.RenderTransform>
+                            </Rectangle>
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <!-- When TextBox has text or is focused -->
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsFocused" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <MultiTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="HintScale"
+                                                           Storyboard.TargetProperty="ScaleX"
+                                                           To="0.75"
+                                                           Duration="0:0:0.2">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="HintScale"
+                                                           Storyboard.TargetProperty="ScaleY"
+                                                           To="0.75"
+                                                           Duration="0:0:0.2">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="HintTranslate"
+                                                           Storyboard.TargetProperty="Y"
+                                                           To="-20"
+                                                           Duration="0:0:0.2">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <ColorAnimation Storyboard.TargetName="FloatingHint" 
+                                                          Storyboard.TargetProperty="Foreground.Color"
+                                                          To="#474747"
+                                                          Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="Underline"
+                                                           Storyboard.TargetProperty="Opacity"
+                                                           To="1"
+                                                           Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="UnderlineScale"
+                                                           Storyboard.TargetProperty="ScaleX"
+                                                           To="1"
+                                                           Duration="0:0:0.3">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </MultiTrigger.EnterActions>
+                                <MultiTrigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Underline"
+                                                           Storyboard.TargetProperty="Opacity"
+                                                           To="0"
+                                                           Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="UnderlineScale"
+                                                           Storyboard.TargetProperty="ScaleX"
+                                                           To="0"
+                                                           Duration="0:0:0.2"/>
+                                            <ColorAnimation Storyboard.TargetName="FloatingHint"
+                                                          Storyboard.TargetProperty="Foreground.Color"
+                                                          To="Gray"
+                                                          Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </MultiTrigger.ExitActions>
+                            </MultiTrigger>
+
+                            <!-- When TextBox has text (not empty) -->
+                            <Trigger Property="Text" Value="">
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="HintScale"
+                                                           Storyboard.TargetProperty="ScaleX"
+                                                           To="0.75"
+                                                           Duration="0:0:0.2">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="HintScale"
+                                                           Storyboard.TargetProperty="ScaleY"
+                                                           To="0.75"
+                                                           Duration="0:0:0.2">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="HintTranslate"
+                                                           Storyboard.TargetProperty="Y"
+                                                           To="-20"
+                                                           Duration="0:0:0.2">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="HintScale"
+                                                           Storyboard.TargetProperty="ScaleX"
+                                                           To="1"
+                                                           Duration="0:0:0.2">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="HintScale"
+                                                           Storyboard.TargetProperty="ScaleY"
+                                                           To="1"
+                                                           Duration="0:0:0.2">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="HintTranslate"
+                                                           Storyboard.TargetProperty="Y"
+                                                           To="0"
+                                                           Duration="0:0:0.2">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+    </UserControl.Resources>
+
     <Grid x:Name="MainGrid">
         <Grid Grid.Column="1" Margin="40">
             <Grid.RowDefinitions>
@@ -16,55 +208,75 @@
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="350" Grid.Row="1">
                 <TextBlock Text="Sign In" FontSize="26" FontWeight="Bold" FontFamily="Lexend"
                            TextAlignment="Center" Margin="0,0,0,15"/>
-                <!-- Username Input -->
+
+                <!-- Username Input with Animated Floating Label -->
                 <TextBox x:Name="txtUsername"
                          md:HintAssist.Hint="Username"
-                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         Margin="0,10"
-                         FontFamily="Lexend"/>
+                         Style="{StaticResource AnimatedFloatingHintTextBox}"
+                         Margin="0,10,0,20"
+                         FontFamily="Lexend"
+                         BorderBrush="LightGray"
+                         BorderThickness="0,0,0,1"
+                         Background="Transparent"/>
+
                 <StackPanel>
-                    <!-- Password Input with Eye Icon -->
+                    <!-- Password Input with Eye Icon and Animated Floating Label -->
                     <Grid>
                         <TextBox x:Name="txtPassword"
-                         md:HintAssist.Hint="Password"
-                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         Margin="0,10"
+                                 md:HintAssist.Hint="Password"
+                                 Style="{StaticResource AnimatedFloatingHintTextBox}"
+                                 Margin="0,10,0,20"
                                  FontFamily="Lexend"
-                         VerticalContentAlignment="Center"
-                         PreviewTextInput="TxtPassword_PreviewTextInput"
-                         KeyDown="TxtPassword_KeyDown"
-                         TextChanged="TxtPassword_TextChanged"/>
+                                 BorderBrush="LightGray"
+                                 BorderThickness="0,0,0,1"
+                                 Background="Transparent"
+                                 VerticalContentAlignment="Center"
+                                 PreviewTextInput="TxtPassword_PreviewTextInput"
+                                 KeyDown="TxtPassword_KeyDown"
+                                 TextChanged="TxtPassword_TextChanged"/>
                         <Button x:Name="btnTogglePassword"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Foreground="Gray"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            Padding="0"
-                            Margin="0,0,10,0"
-                            Click="BtnTogglePassword_Click"
-                            Width="Auto"
-                            Height="Auto"
-                            Focusable="False">
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Foreground="Gray"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Padding="0"
+                                Margin="0,0,10,-10"
+                                Click="BtnTogglePassword_Click"
+                                Width="Auto"
+                                Height="Auto"
+                                Focusable="False">
                             <md:PackIcon x:Name="iconPasswordToggle" Kind="EyeOffOutline" Width="20" Height="20"/>
+                            
                         </Button>
                     </Grid>
                 </StackPanel>
+
                 <!-- Forgot Password -->
                 <TextBlock Text="Forgot Password?" 
-               Foreground="Gray"
-               FontFamily="Lexend"
-               FontSize="12" 
-               HorizontalAlignment="Right"
-               Cursor="Hand" 
-               Margin="0,5,0,0"
-               MouseLeftButtonDown="ForgotPassword_Click"/>
+           Foreground="Gray"
+           FontFamily="Lexend"
+           FontSize="12" 
+           HorizontalAlignment="Right"
+           Cursor="Hand" 
+           Margin="0,5,0,0"
+           MouseLeftButtonDown="ForgotPassword_Click">
+                    <TextBlock.ToolTip>
+                        <ToolTip Content="Click to reset your password" 
+                 Style="{StaticResource SpeechBubbleToolTip}"
+                 Placement="Top"/>
+                    </TextBlock.ToolTip>
+                </TextBlock>
+
                 <!-- Sign In Button -->
                 <Button Content="Sign In"
                         FontFamily="Lexend"
+                        ToolTip="Input Username and Password to Sign-In"
                         FontWeight="Bold"
-                        Background="#090909" Foreground="White"
-                        Height="45" Margin="0,20,0,0"
+                        Background="#090909" 
+                        Foreground="White"
+                        Height="45" 
+                        Margin="0,20,0,0"
                         Click="BtnSignIn_Click">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
@@ -75,6 +287,7 @@
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
+                
             </StackPanel>
         </Grid>
 

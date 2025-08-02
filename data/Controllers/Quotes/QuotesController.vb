@@ -149,16 +149,33 @@ Namespace DPC.Data.Controllers
 
 
         ' Search for the recent QuoteID then add 1 and check if it exists
-        Public Shared Function GenerateQuoteID() As String
-            Dim prefix As String = "CE-"
+        Public Shared Function GenerateQuoteID(Optional CeType As Integer = 0) As String
+            Dim prefix As String
+
+            ' Add switch case what is stored in cache CECostEstimate
+            Select Case CeType
+                Case 0
+                    prefix = "GPCE-"
+                Case 1
+                    prefix = "BCCE-"
+                Case 2
+                    prefix = "HHCE-"
+                Case 3
+                    prefix = "WICE-"
+                Case Else
+                    ' default value of everything is wrong
+                    prefix = "CE-"
+            End Select
+
             Dim datePart As String = DateTime.Now.ToString("MMddyyyy") ' MMDDYYYY format
-            Dim counter As Integer = GetNextQuoteID(datePart)
+            Dim counter As Integer = GetNextQuoteID(datePart, prefix)
 
             Dim counterPart As String = counter.ToString("D4") ' e.g., 0001
             Return prefix & datePart & "-" & counterPart
         End Function
 
-        Public Shared Function GetNextQuoteID(datePart As String) As Integer
+
+        Public Shared Function GetNextQuoteID(datePart As String, CEPrefix As String) As Integer
             Dim nextQuoteID As Integer = 1
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
@@ -169,7 +186,7 @@ Namespace DPC.Data.Controllers
 
                     Using cmd As New MySqlCommand(query, conn)
                         ' Use parameter to safely insert prefix like 'QUO06182025%'
-                        cmd.Parameters.AddWithValue("@prefix", "CE-" & datePart & "-%")
+                        cmd.Parameters.AddWithValue("@prefix", CEPrefix & datePart & "-%")
 
                         Dim result = cmd.ExecuteScalar()
                         If result IsNot DBNull.Value AndAlso result IsNot Nothing Then
@@ -320,7 +337,7 @@ Namespace DPC.Data.Controllers
         Public Shared Function InsertQuote(QuoteNumber As String,
                                    ReferenceNo As String,
                                    QuoteDate As DateTime,
-                                   QuoteValidity As DateTime,
+                                   QuoteValidity As String,
                                    Tax As String,
                                    Discount As String,
                                    ClientID As String,

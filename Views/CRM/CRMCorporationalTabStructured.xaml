@@ -24,7 +24,7 @@
         <!-- Title and Add Button - Static at top -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20,20,20,10">
             <materialDesign:PackIcon Kind="AccountPlus" Width="40" Height="40" Margin="0,0,15,0" VerticalAlignment="Center" Foreground="#555555"/>
-            <TextBlock Text="Add New Corporational Client"
+            <TextBlock Text="Add New Corporate Client"
                        FontWeight="SemiBold"
                        FontFamily="Lexend"
                        FontSize="25"

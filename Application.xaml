@@ -13,6 +13,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/Generic.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBox.xaml"/>
+                
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Value Converters -->
@@ -21,7 +22,7 @@
 
             <!-- Font Definitions -->
             <FontFamily x:Key="Lexend">pack://application:,,,/Assets/fonts/Lexend/Lexend-Regular.ttf</FontFamily>
-            
+
             <!-- Styles -->
             <Style x:Key="TextBlockStyle" TargetType="TextBlock">
                 <Setter Property="FontFamily" Value="{StaticResource Lexend}" />
@@ -292,7 +293,7 @@
                                             <Binding ElementName="ToggleGrid" Path="ActualWidth">
                                                 <Binding.Converter>
                                                     <local2:HalfWidthConverter/>
-                                                </Binding.Converter>    
+                                                </Binding.Converter>
                                             </Binding>
                                         </Border.Width>
                                         <TextBlock x:Name="ThumbText" Text="No" FontSize="14"
@@ -643,6 +644,220 @@
                 <Setter Property="Width" Value="40" />
                 <Setter Property="Background" Value="Transparent" />
                 <Setter Property="BorderBrush" Value="#CCCCCC" />
+            </Style>
+
+            <!-- Reusable Speech Bubble ToolTip Style -->
+            <Style x:Key="SpeechBubbleToolTip" TargetType="ToolTip">
+                <Setter Property="Background" Value="#2D2D30"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="FontFamily" Value="Lexend"/>
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="MaxWidth" Value="280"/>
+                <Setter Property="Padding" Value="16,12"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="HasDropShadow" Value="False"/>
+                <Setter Property="Placement" Value="Bottom"/>
+                <Setter Property="HorizontalOffset" Value="0"/>
+                <Setter Property="VerticalOffset" Value="8"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ToolTip">
+                            <Grid>
+                                <!-- Main tooltip body with speech bubble tail -->
+                                <Border x:Name="MainBorder"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="12"
+                                Padding="{TemplateBinding Padding}"
+                                Margin="0,8,0,0">
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="Black" 
+                                                Opacity="0.3" 
+                                                ShadowDepth="3" 
+                                                BlurRadius="10"
+                                                Direction="270"/>
+                                    </Border.Effect>
+                                    <TextBlock Text="{TemplateBinding Content}"
+                                     Foreground="{TemplateBinding Foreground}"
+                                     FontFamily="{TemplateBinding FontFamily}"
+                                     FontSize="{TemplateBinding FontSize}"
+                                     TextWrapping="Wrap"
+                                     LineHeight="18"/>
+                                </Border>
+
+                                <!-- Speech bubble tail/arrow pointing up -->
+                                <Path x:Name="TailPath"
+                              Fill="{TemplateBinding Background}"
+                              Data="M0,8 L8,0 L16,8 Z"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Top"
+                              Margin="24,0,0,0">
+                                    <Path.Effect>
+                                        <DropShadowEffect Color="Black" 
+                                                Opacity="0.2" 
+                                                ShadowDepth="2" 
+                                                BlurRadius="6"
+                                                Direction="270"/>
+                                    </Path.Effect>
+                                </Path>
+                            </Grid>
+
+                            <ControlTemplate.Triggers>
+                                <!-- Fade in animation -->
+                                <EventTrigger RoutedEvent="ToolTip.Loaded">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                   From="0" To="1" Duration="0:0:0.25">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Y"
+                                                   From="8" To="0" Duration="0:0:0.25">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+
+                                <!-- Dynamic tail positioning based on placement -->
+                                <Trigger Property="Placement" Value="Top">
+                                    <Setter TargetName="MainBorder" Property="Margin" Value="0,0,0,8"/>
+                                    <Setter TargetName="TailPath" Property="Data" Value="M0,0 L8,8 L16,0 Z"/>
+                                    <Setter TargetName="TailPath" Property="VerticalAlignment" Value="Bottom"/>
+                                    <Setter TargetName="TailPath" Property="Margin" Value="24,0,0,0"/>
+                                </Trigger>
+
+                                <Trigger Property="Placement" Value="Left">
+                                    <Setter TargetName="MainBorder" Property="Margin" Value="0,0,8,0"/>
+                                    <Setter TargetName="TailPath" Property="Data" Value="M0,0 L8,8 L0,16 Z"/>
+                                    <Setter TargetName="TailPath" Property="HorizontalAlignment" Value="Right"/>
+                                    <Setter TargetName="TailPath" Property="VerticalAlignment" Value="Center"/>
+                                    <Setter TargetName="TailPath" Property="Margin" Value="0,0,0,0"/>
+                                </Trigger>
+
+                                <Trigger Property="Placement" Value="Right">
+                                    <Setter TargetName="MainBorder" Property="Margin" Value="8,0,0,0"/>
+                                    <Setter TargetName="TailPath" Property="Data" Value="M8,0 L0,8 L8,16 Z"/>
+                                    <Setter TargetName="TailPath" Property="HorizontalAlignment" Value="Left"/>
+                                    <Setter TargetName="TailPath" Property="VerticalAlignment" Value="Center"/>
+                                    <Setter TargetName="TailPath" Property="Margin" Value="0,0,0,0"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="RenderTransform">
+                    <Setter.Value>
+                        <TranslateTransform Y="0"/>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Alternative: Light Theme Speech Bubble -->
+            <Style x:Key="SpeechBubbleToolTipLight" TargetType="ToolTip" BasedOn="{StaticResource SpeechBubbleToolTip}">
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="Foreground" Value="#333333"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ToolTip">
+                            <Grid>
+                                <Border x:Name="MainBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="#E0E0E0"
+                                BorderThickness="1"
+                                CornerRadius="12"
+                                Padding="{TemplateBinding Padding}"
+                                Margin="0,8,0,0">
+                                    <Border.Effect>
+                                        <DropShadowEffect Color="Black" 
+                                                Opacity="0.15" 
+                                                ShadowDepth="2" 
+                                                BlurRadius="8"
+                                                Direction="270"/>
+                                    </Border.Effect>
+                                    <TextBlock Text="{TemplateBinding Content}"
+                                     Foreground="{TemplateBinding Foreground}"
+                                     FontFamily="{TemplateBinding FontFamily}"
+                                     FontSize="{TemplateBinding FontSize}"
+                                     TextWrapping="Wrap"
+                                     LineHeight="18"/>
+                                </Border>
+
+                                <Path x:Name="TailPath"
+                              Fill="{TemplateBinding Background}"
+                              Stroke="#E0E0E0"
+                              StrokeThickness="1"
+                              Data="M0,8 L8,0 L16,8 Z"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Top"
+                              Margin="24,0,0,0">
+                                    <Path.Effect>
+                                        <DropShadowEffect Color="Black" 
+                                                Opacity="0.1" 
+                                                ShadowDepth="1" 
+                                                BlurRadius="4"
+                                                Direction="270"/>
+                                    </Path.Effect>
+                                </Path>
+                            </Grid>
+
+                            <!-- Same triggers as dark version... -->
+                            <ControlTemplate.Triggers>
+                                <EventTrigger RoutedEvent="ToolTip.Loaded">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                   From="0" To="1" Duration="0:0:0.25">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetProperty="RenderTransform.Y"
+                                                   From="8" To="0" Duration="0:0:0.25">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+
+                                <Trigger Property="Placement" Value="Top">
+                                    <Setter TargetName="MainBorder" Property="Margin" Value="0,0,0,8"/>
+                                    <Setter TargetName="TailPath" Property="Data" Value="M0,0 L8,8 L16,0 Z"/>
+                                    <Setter TargetName="TailPath" Property="VerticalAlignment" Value="Bottom"/>
+                                    <Setter TargetName="TailPath" Property="Margin" Value="24,0,0,0"/>
+                                </Trigger>
+
+                                <Trigger Property="Placement" Value="Left">
+                                    <Setter TargetName="MainBorder" Property="Margin" Value="0,0,8,0"/>
+                                    <Setter TargetName="TailPath" Property="Data" Value="M0,0 L8,8 L0,16 Z"/>
+                                    <Setter TargetName="TailPath" Property="HorizontalAlignment" Value="Right"/>
+                                    <Setter TargetName="TailPath" Property="VerticalAlignment" Value="Center"/>
+                                    <Setter TargetName="TailPath" Property="Margin" Value="0,0,0,0"/>
+                                </Trigger>
+
+                                <Trigger Property="Placement" Value="Right">
+                                    <Setter TargetName="MainBorder" Property="Margin" Value="8,0,0,0"/>
+                                    <Setter TargetName="TailPath" Property="Data" Value="M8,0 L0,8 L8,16 Z"/>
+                                    <Setter TargetName="TailPath" Property="HorizontalAlignment" Value="Left"/>
+                                    <Setter TargetName="TailPath" Property="VerticalAlignment" Value="Center"/>
+                                    <Setter TargetName="TailPath" Property="Margin" Value="0,0,0,0"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Custom ToolTip Helper for Easy Usage -->
+            <Style x:Key="CustomToolTipText" TargetType="TextBlock">
+                <Style.Resources>
+                    <Style TargetType="ToolTip" BasedOn="{StaticResource SpeechBubbleToolTip}"/>
+                </Style.Resources>
             </Style>
 
         </ResourceDictionary>

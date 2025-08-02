@@ -91,16 +91,31 @@
                                 <Hyperlink Click="NavigateToManageAccounts">
                                     <TextBlock Text="Manage Accounts" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
+                                    <TextBlock.ToolTip>
+                                <ToolTip Content=" View, edit, and organize all account records." 
+                                 Style="{StaticResource SpeechBubbleToolTip}"
+                                 Placement="Top"/>
+                                    </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToBalanceSheets">
                                     <TextBlock Text="Balance Sheets" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
+                                    <TextBlock.ToolTip>
+        <ToolTip Content=" Check your company’s assets, liabilities, and equity overview." 
+                        Style="{StaticResource SpeechBubbleToolTip}"
+                            Placement="Top"/>
+                         </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToAccountStatement">
-                                    <TextBlock Text="Account Statement" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
+                                    <TextBlock Text="Account Statement" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>                
                                 </Hyperlink>
+                                    <TextBlock.ToolTip>
+<ToolTip Content=" Review detailed statements for selected accounts." 
+ Style="{StaticResource SpeechBubbleToolTip}"
+ Placement="Top"/>
+    </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
@@ -137,21 +152,41 @@
                                 <Hyperlink Click="NavigateToViewTransactions">
                                     <TextBlock Text="View Transactions" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
+                                                            <TextBlock.ToolTip>
+<ToolTip Content="View all recent and past financial transactions." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToNewTransaction">
                                     <TextBlock Text="New Transaction" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content=" Record a new income or expense entry." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToNewTransfer">
                                     <TextBlock Text="New Transfer" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content="Transfer funds between accounts securely." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToClientsTransaction">
                                     <TextBlock Text="Clients Transaction" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content="Track transactions made by specific clients." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
@@ -168,6 +203,11 @@
                         <Hyperlink Click="NavigateToIncome">
                             <TextBlock Text="Income" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
+                                                                                    <TextBlock.ToolTip>
+<ToolTip Content="Monitor all revenue and income entries." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                     </TextBlock>
                 </Grid>
 
@@ -182,6 +222,11 @@
                         <Hyperlink Click="NavigateToExpense">
                             <TextBlock Text="Expense" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
+                                                                                    <TextBlock.ToolTip>
+<ToolTip Content="Track all company expenses and spending details." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                     </TextBlock>
                 </Grid>
             </StackPanel>
