@@ -165,7 +165,7 @@ Placement="Right"/>
                             <TextBlock Text="HRM" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
                         </StackPanel>
                     </Button>
-                    <Button  x:Name="BtnSoftwareUpdates" Style="{StaticResource SidebarButton}" >
+                    <Button  x:Name="BtnSoftwareUpdates" Click="BtnSoftwareUpdates_Click" Style="{StaticResource SidebarButton}" >
                         <Button.ToolTip>
                             <ToolTip Content="Install latest version and security fixes" 
                             Style="{StaticResource SpeechBubbleToolTipLight}"

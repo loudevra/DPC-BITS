@@ -5,6 +5,7 @@ Imports DPC.DPC.Components.UI
 Imports DPC.DPC.Data.Helpers
 Imports MySql.Data.MySqlClient
 Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Helpers.SoftwareUpdate
 
 Namespace DPC.Components.Navigation
     Public Class Sidebar
@@ -125,6 +126,10 @@ Namespace DPC.Components.Navigation
 
             ' 🔥 Trigger the event so Base.xaml knows about the toggle
             RaiseEvent SidebarToggled(IsExpanded)
+        End Sub
+
+        Private Async Sub BtnSoftwareUpdates_Click(sender As Object, e As RoutedEventArgs)
+            Await SoftwareUpdateHelper.CheckForUpdate()
         End Sub
 
         ''' <summary>

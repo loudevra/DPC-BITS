@@ -697,6 +697,7 @@
     <Compile Include="Data\DataModules\WalkinBillingStatementDetails.vb" />
     <Compile Include="Data\Helpers\AutocompleteHelper.vb" />
     <Compile Include="Data\Helpers\Base64Utility.vb" />
+    <Compile Include="Data\Helpers\SoftwareUpdate\SoftwareUpdateHelper.vb" />
     <Compile Include="Data\Helpers\ViewLoader\DynamicView.vb" />
     <Compile Include="Data\Helpers\EmailService.vb" />
     <Compile Include="Data\Helpers\EnvLoader.vb" />
@@ -726,6 +727,7 @@
     <Compile Include="Data\Models\PromoCode.vb" />
     <Compile Include="Data\Models\PurchaseOrderModel.vb" />
     <Compile Include="Data\Models\QuotesModel.vb" />
+    <Compile Include="Data\Models\SoftwareUpdate\GithubRelease.vb" />
     <Compile Include="Data\Models\Supplier.vb" />
     <Compile Include="Data\Models\UpdatedClient.vb" />
     <Compile Include="Data\Models\Warehouses.vb" />
@@ -963,7 +965,6 @@
     <Compile Include="Views\HRM\Employees\Salaries\EmployeeSalaries.xaml.vb">
       <DependentUpon>EmployeeSalaries.xaml</DependentUpon>
     </Compile>
-
     <Compile Include="Views\Misc\CashAdvance\CashAdvanceNewRequest.xaml.vb">
       <DependentUpon>CashAdvanceNewRequest.xaml</DependentUpon>
     </Compile>
@@ -975,7 +976,6 @@
     </Compile>
     <Compile Include="Views\Misc\CashAdvance\PreviewPrintCashAdvanceRequestForm.xaml.vb">
       <DependentUpon>PreviewPrintCashAdvanceRequestForm.xaml</DependentUpon>
-
     </Compile>
     <Compile Include="Views\Misc\Documents\AddDocument.xaml.vb">
       <DependentUpon>AddDocument.xaml</DependentUpon>
@@ -1817,7 +1817,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-
     <Page Include="Views\Misc\CashAdvance\CashAdvanceNewRequest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1831,7 +1830,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Misc\CashAdvance\PreviewPrintCashAdvanceRequestForm.xaml">
-
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
