@@ -169,9 +169,7 @@
                                     <!--Customers' Info-->
                                     <!-- 08/01/2025 - Changed the the Bill To to Client Details -->
                                     <StackPanel Grid.Row="3" Orientation="Vertical" HorizontalAlignment="Left" Margin="5">
-                                        <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,5">
-                                            <TextBlock Text="Client Details" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                        </StackPanel>
+                                        
                                         <!--Info-->
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                             <Grid>
