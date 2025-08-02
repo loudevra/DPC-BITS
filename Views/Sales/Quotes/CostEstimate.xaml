@@ -144,7 +144,7 @@
                                                 <TextBlock x:Name="QuoteValidityDate"  FontSize="9" FontWeight="Bold"  Foreground="Red" FontFamily="Lexend" />
                                             </Border>
                                         </StackPanel>
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,0">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
                                             <TextBlock Text="NOT VALID WITHOUT DREAM PC VERIFIED STAMP"  FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="Red" VerticalAlignment="Center" TextWrapping="Wrap"/>
                                         </StackPanel>
                                     </StackPanel>
@@ -182,9 +182,9 @@
 
                                                 <StackPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Right">
                                                     <TextBlock Text="Client Name/Company Name:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                                    <TextBlock Text="Client Address" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,15"/>
-                                                    <TextBlock Text="Contact Number" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                                    <TextBlock Text="Company Representative" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                    <TextBlock Text="Client Address                         :" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,15"/>
+                                                    <TextBlock Text="Contact Number                     :" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                    <TextBlock Text="Company Representative       :" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
                                                 </StackPanel>
 
                                                 <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Right">
@@ -209,7 +209,7 @@
 
                                             <!-- Column Header-->
                                             <Border Grid.Row="0" Grid.Column="0" Height="20" VerticalAlignment="Center" Background="Black" Padding="10,0,0,0">
-                                                <TextBlock Height="10" Text="DPCBITS Representative" Foreground="#FDFDFD" FontSize="10" FontWeight="SemiBold" FontFamily="{StaticResource Lexend}"/>
+                                                <TextBlock Height="10" Text="DPCBITS Representative:" Foreground="#FDFDFD" FontSize="10" FontWeight="SemiBold" FontFamily="{StaticResource Lexend}"/>
                                             </Border>
                                             <Border Grid.Row="0" Grid.Column="1" Height="20" VerticalAlignment="Center" Background="Black" Padding="10,0,0,0">
                                                 <TextBlock Height="10" Text="Approved by:" Foreground="#FDFDFD" FontSize="10" FontWeight="SemiBold" FontFamily="{StaticResource Lexend}"/>
@@ -309,7 +309,7 @@
                                                             <Setter Property="FontSize" Value="10"/>
                                                             <Setter Property="FontWeight" Value="SemiBold"/>
                                                             <Setter Property="Foreground" Value="#FDFDFD"/>
-                                                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
                                                             <Setter Property="VerticalContentAlignment" Value="Center"/>
                                                             <Setter Property="Padding" Value="10,5"/>
                                                             <Setter Property="Background" Value="#090909"/>
@@ -429,8 +429,8 @@
                                                         <StackPanel Grid.Column="0">
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
                                                                 <ComboBox x:Name="cmbSubtotalTax" FontSize="10" FontWeight="Bold" Height="15" Padding="4,2">
-                                                                    <ComboBoxItem Content="SUBTOTAL TAX INC"/>
-                                                                    <ComboBoxItem Content="SUBTOTAL TAX EX"/>
+                                                                    <ComboBoxItem Content="SUBTOTAL"/>
+                                                                    
                                                                 </ComboBox>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">

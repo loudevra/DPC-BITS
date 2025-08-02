@@ -61,7 +61,7 @@ Namespace DPC.Views.Sales.Quotes
             CESubTotalCache = CostEstimateDetails.CETotalAmountCache
             AddressLineOne.Text = CostEstimateDetails.CEAddress & ", " & CostEstimateDetails.CECity    ' -- important when editing
             AddressLineTwo.Text = CostEstimateDetails.CERegion & ", " & CostEstimateDetails.CECountry    ' -- important when editing
-            PhoneBox.Text = "Tel No.: +63 " & FormatPhoneWithSpaces(CostEstimateDetails.CEPhone)
+            PhoneBox.Text = "+63" & FormatPhoneWithSpaces(CostEstimateDetails.CEPhone)
             RepresentativeBox.Text = CostEstimateDetails.CERepresentative
             noteBox.Text = CostEstimateDetails.CEpaperNote
             Term1.Text = CostEstimateDetails.CETerm1
