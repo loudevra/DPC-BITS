@@ -125,7 +125,7 @@
                                         </StackPanel>
                                         <!--Billing Statement Label-->
                                         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,10">
-                                            <TextBlock Text="COST ESTIMATE" FontWeight="SemiBold" FontFamily="Lexend" FontSize="15" Foreground="#090909" VerticalAlignment="Center"/>
+                                            <TextBlock Text="COST ESTIMATE" FontWeight="Bold" FontFamily="Lexend" FontSize="20" Foreground="#090909" VerticalAlignment="Center"/>
                                         </StackPanel>
                                         <!--Invoice and Date-->
                                         <StackPanel Grid.Row="3" Orientation="Vertical" HorizontalAlignment="Right" Margin="5">
@@ -148,7 +148,7 @@
                                                 </Border>
                                             </StackPanel>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,0">
-                                                <TextBlock Text="NOT VALID WITHOUT DREAM PC VERIFIED STAMP"  FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#090909" VerticalAlignment="Center" TextWrapping="Wrap"/>
+                                                <TextBlock Text="NOT VALID WITHOUT DREAM PC VERIFIED STAMP"  FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="Red" VerticalAlignment="Center" TextWrapping="Wrap"/>
                                             </StackPanel>
                                         </StackPanel>
 
@@ -560,8 +560,8 @@ PRINTED NAME AND SIGNATURE
                                             <Border BorderBrush="#090909" BorderThickness="1,0,1,1" Margin="5,0,5,0" Padding="0,3">
                                                 <StackPanel>
                                                     <TextBlock Text="Unit 2A &amp; 2B LEGENDA BUILDING CIRCUMFERENCIAL RD. | ANTIPOLO CITY, RIZAL 1870 | PHONE: +639171873722 | TEL: 02-8801-4252 | EMAIL: information@dreampcbuild.com" TextAlignment="Center" FontFamily="Lexend" FontSize="7" Foreground="#090909"/>
-                                                    <TextBlock Text="MAKE ALL CHECKS PAYABLE TO DREAM PC BUILD AND IT SOLUTIONS INC" FontWeight="Bold" Margin="0,3,0,0" TextAlignment="Center" FontFamily="Lexend" FontSize="11" Foreground="#090909"/>
-                                                    <TextBlock Text="Thank you for your business!" TextAlignment="Center" FontFamily="Lexend" FontSize="8" Foreground="#090909"/>
+                                                    <TextBlock Text="MAKE ALL CHECKS PAYABLE TO DREAM PC BUILD AND I.T SOLUTIONS INC." FontWeight="Bold" Margin="0,3,0,0" TextAlignment="Center" FontFamily="Lexend" FontSize="11" Foreground="#090909"/>
+                                                    <TextBlock Text="" TextAlignment="Center" FontFamily="Lexend" FontSize="8" Foreground="#090909"/>
                                                 </StackPanel>
                                             </Border>
                                         </StackPanel>

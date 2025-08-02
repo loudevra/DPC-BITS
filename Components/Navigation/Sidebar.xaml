@@ -165,7 +165,18 @@ Placement="Right"/>
                             <TextBlock Text="HRM" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
                         </StackPanel>
                     </Button>
-                    
+                    <Button  x:Name="BtnSoftwareUpdates" Style="{StaticResource SidebarButton}" >
+                        <Button.ToolTip>
+                            <ToolTip Content="Install latest version and security fixes" 
+                            Style="{StaticResource SpeechBubbleToolTipLight}"
+                            Placement="Right"/>
+                        </Button.ToolTip>
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="MonitorArrowDownVariant" Width="24" Height="24"/>
+                            <TextBlock Text="Software Updates" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
+                        </StackPanel>
+                    </Button>
+
                 </StackPanel>
             </ScrollViewer>
 
