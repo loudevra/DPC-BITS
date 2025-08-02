@@ -31,7 +31,7 @@
                 </Border>
 
                 <StackPanel Grid.Column="0">
-                    <TextBlock Text="Customer Group:" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747" Margin="0,10,0,10" />
+                    <TextBlock Text="Classification:" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747" Margin="0,10,0,10" />
                     <ComboBox x:Name="cmbCustomerGroup" FontFamily="Lexend" FontSize="14" FontWeight="SemiBold" Foreground="#474747"
 Padding="10" Width="Auto" Height="40" Background="White" BorderBrush="#474747"
 BorderThickness="2" HorizontalContentAlignment="Left" Margin="0,0,0,10">

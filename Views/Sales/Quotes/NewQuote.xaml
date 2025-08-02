@@ -248,7 +248,7 @@
                                                           MinWidth="200" Margin="0,0,0,5"
                                                           Padding="5" Height="34">
                                                     <ComboBoxItem Content="Government Project CE (Government)" IsSelected="True"/>
-                                                    <ComboBoxItem Content="Business CE (Corporational)"/>
+                                                    <ComboBoxItem Content="Business CE (Corporate)"/>
                                                     <ComboBoxItem Content="Household CE (Residential)"/>
                                                     <ComboBoxItem Content="Walk-In CE (Walk In)"/>
                                                 </ComboBox>
