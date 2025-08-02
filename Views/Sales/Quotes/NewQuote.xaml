@@ -209,7 +209,7 @@
                                     <TextBlock Text="Client Details:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,10"/>
                                     <Border Width="Auto" Height="200" Padding="10" CornerRadius="10" Background="#FDFDFD" BorderBrush="#474747" BorderThickness="1"  Margin="0,0,0,10">
                                         <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
-                                            <TextBox x:Name="TxtClientDetails" Style="{StaticResource RoundedTextboxStyle}" Width="Auto" Height="170" Margin="10,5" VerticalContentAlignment="Top" IsReadOnly="True"/>
+                                            <TextBox x:Name="TxtClientDetails" Style="{StaticResource RoundedTextboxStyle}" Width="Auto" Height="170" Margin="10,5" VerticalContentAlignment="Top" IsReadOnly="True" TextWrapping="Wrap"/>
                                         </StackPanel>
                                     </Border>
                                 </StackPanel>
@@ -234,6 +234,26 @@
                                         <StackPanel Orientation="Vertical" Margin="5" >
                                             <!--Header Label: Credit Note-->
                                             <TextBlock Grid.Column="0" Text="Quote Properties" FontWeight="SemiBold" FontFamily="Lexend" FontSize="20" Foreground="#AEAEAE" VerticalAlignment="Center" Margin="0,0,20,0"/>
+
+                                            <!-- Cost Estimate Type -->
+                                            <StackPanel Orientation="Vertical">
+                                                <TextBlock Grid.Column="0" Text="Cost Estimate Type:" FontWeight="SemiBold" FontFamily="Lexend"
+                                                           FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,5,0,5"/>
+
+                                                <ComboBox x:Name="cmbCostEstimateType"
+                                                          SelectionChanged="cmbCostEstimateType_SelectionChanged"
+                                                          Style="{StaticResource RoundedComboBoxStyle}"
+                                                          HorizontalAlignment="Stretch"
+                                                          VerticalAlignment="Stretch"
+                                                          MinWidth="200" Margin="0,0,0,5"
+                                                          Padding="5" Height="34">
+                                                    <ComboBoxItem Content="Government Project CE (Government)" IsSelected="True"/>
+                                                    <ComboBoxItem Content="Business CE (Corporational)"/>
+                                                    <ComboBoxItem Content="Household CE (Residential)"/>
+                                                    <ComboBoxItem Content="Walk-In CE (Walk In)"/>
+                                                </ComboBox>
+                                            </StackPanel>
+
 
                                             <!--Quote Number-->
                                             <StackPanel Orientation="Vertical">
@@ -294,7 +314,7 @@
                                             </StackPanel>
 
                                             <!--Quote Validity-->
-                                            <StackPanel Orientation="Vertical">
+                                            <!--<StackPanel Orientation="Vertical" Visibility="Collapsed">
                                                 <TextBlock Grid.Column="0" Text="Cost Estimate Validity:" FontWeight="SemiBold" FontFamily="Lexend"
                                                             FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,5"/>
                                                 <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Margin="0,0,0,10"
@@ -317,6 +337,29 @@
                                                         </Button>
                                                     </Grid>
                                                 </Border>
+                                            </StackPanel>-->
+
+                                            <!-- New Quote Validity Dropdown -->
+                                            <StackPanel Orientation="Vertical">
+                                                <TextBlock Grid.Column="0" Text="Valid Until:" FontWeight="SemiBold" FontFamily="Lexend"
+                                                           FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,5"/>
+
+                                                <ComboBox x:Name="cmbCostEstimateValidty"
+                                                              SelectionChanged="cmbCostEstimateValidty_SelectionChanged"
+                                                              Style="{StaticResource RoundedComboBoxStyle}"
+                                                              HorizontalAlignment="Stretch"
+                                                              VerticalAlignment="Stretch"
+                                                              MinWidth="200" Margin="0,0,0,10"
+                                                              Padding="5" Height="34">
+                                                    <ComboBoxItem Content="48 Hours" IsSelected="True"/>
+                                                    <ComboBoxItem Content="1 Week"/>
+                                                    <ComboBoxItem Content="2 Weeks"/>
+                                                    <ComboBoxItem Content="3 Weeks"/>
+                                                    <ComboBoxItem Content="1 Month"/>
+                                                    <ComboBoxItem Content="2 Months"/>
+                                                    <ComboBoxItem Content="6 Months"/>
+                                                    <ComboBoxItem Content="1 Year"/>
+                                                </ComboBox>
                                             </StackPanel>
 
                                             <!--Tax-->
@@ -489,13 +532,13 @@
                                     </StackPanel>
 
                                     <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Visibility="Collapsed">
                                             <TextBlock Text="Shipping:" FontSize="16" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#474747" Margin="0,10,0,0"/>
                                             <Border BorderBrush="#474747" BorderThickness="1" Padding="1" Width="200" CornerRadius="20" Margin="20,10,0,0" Height="40">
                                                 <TextBlock x:Name="txtShipping" Text="" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#474747" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                         </StackPanel>
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Visibility="Collapsed">
                                             <TextBlock Text="Extra Discount:" FontSize="16" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#474747" Margin="0,10,0,0"/>
                                             <Border BorderBrush="#474747" BorderThickness="1" Padding="1" Width="200" CornerRadius="20" Margin="20,10,0,0" Height="40">
                                                 <TextBlock x:Name="txtExtraDiscount" Text="" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#474747" HorizontalAlignment="Center" VerticalAlignment="Center"/>
