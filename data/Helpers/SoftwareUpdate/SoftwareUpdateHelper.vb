@@ -12,7 +12,6 @@ Imports System.Version
 Namespace DPC.Data.Helpers.SoftwareUpdate
     Public Class SoftwareUpdateHelper
         ' Variable to hold the GitHub token and repository details
-        Private Shared ReadOnly GitHubToken As String = EnvLoader.GetEnv("GIT_TOKEN")
         Private Shared ReadOnly OrgName As String = "loudevra"
         Private Shared ReadOnly RepoName As String = "DPC-BITS"
         Private Shared ReadOnly GitHubApiUrl As String = $"https://api.github.com/repos/{OrgName}/{RepoName}/releases/latest"
@@ -20,7 +19,6 @@ Namespace DPC.Data.Helpers.SoftwareUpdate
         ' Class to represent the GitHub release structure
         Public Shared Async Function GetLatestPrivatePreReleaseVersion() As Task(Of String)
             Using client As New HttpClient()
-                client.DefaultRequestHeaders.Authorization = New AuthenticationHeaderValue("token", GitHubToken)
                 client.DefaultRequestHeaders.UserAgent.ParseAdd("MyAppUpdater")
 
                 Try
@@ -60,7 +58,6 @@ Namespace DPC.Data.Helpers.SoftwareUpdate
 
                     If latestVersion > currentVersion Then
                         Using client As New HttpClient()
-                            client.DefaultRequestHeaders.Authorization = New AuthenticationHeaderValue("token", GitHubToken)
                             client.DefaultRequestHeaders.UserAgent.ParseAdd("MyAppUpdater")
 
                             Dim response = Await client.GetAsync(GitHubApiUrl)
