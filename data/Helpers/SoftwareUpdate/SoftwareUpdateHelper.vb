@@ -27,7 +27,7 @@ Namespace DPC.Data.Helpers.SoftwareUpdate
                     Dim json = Await response.Content.ReadAsStringAsync()
                     Dim release = JsonSerializer.Deserialize(Of GithubRelease)(json)
 
-                    If release IsNot Nothing AndAlso release.prerelease Then
+                    If release IsNot Nothing Then
                         Return release.tag_name
                     End If
                 Catch ex As Exception
@@ -68,9 +68,13 @@ Namespace DPC.Data.Helpers.SoftwareUpdate
                             End If
                         End If
                     End Using
+                ElseIf latestVersion Is Nothing Then
+                    MessageBox.Show("No latest version information available.")
+                Else
+                    MessageBox.Show("You are running the latest version (" & currentVersion & ").")
                 End If
             Catch ex As Exception
-                ' Optional: log or ignore
+                MessageBox.Show("Error checking for updates: " & ex.Message)
             End Try
         End Function
     End Class
