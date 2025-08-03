@@ -201,8 +201,8 @@ Style="{StaticResource SpeechBubbleToolTipLight}"
 Placement="Right"/>
                 </Button.ToolTip>
                 <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="Logout" Width="24" Height="24" Foreground="Purple" Margin="3,0,0,0"/>
-                    <TextBlock Text="Logout" Foreground="Purple" FontWeight="Bold" Margin="10,4,0,0" FontFamily="Lexend"/>
+                    <materialDesign:PackIcon Kind="Logout" Width="24" Height="24" Foreground="Red" Margin="3,0,0,0"/>
+                    <TextBlock Text="Logout" Foreground="Red" FontWeight="Bold" Margin="10,4,0,0" FontFamily="Lexend"/>
                 </StackPanel>
             </Button>
 
