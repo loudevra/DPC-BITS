@@ -205,6 +205,10 @@ Placement="Right"/>
                     <TextBlock Text="Logout" Foreground="Purple" FontWeight="Bold" Margin="10,4,0,0" FontFamily="Lexend"/>
                 </StackPanel>
             </Button>
+            <StackPanel Orientation="Horizontal">
+                <materialDesign:PackIcon Kind="Dropbox" Width="24" Height="24" Foreground="White" Margin="3,0,0,0"/>
+                <TextBlock x:Name="VerNum" Foreground="White" FontWeight="Bold" Margin="10,4,0,0" FontFamily="Lexend"/>
+            </StackPanel>
 
         </StackPanel>
     </materialDesign:Card>
