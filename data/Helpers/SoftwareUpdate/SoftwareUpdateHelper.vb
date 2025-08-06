@@ -12,7 +12,6 @@ Imports System.Version
 Namespace DPC.Data.Helpers.SoftwareUpdate
     Public Class SoftwareUpdateHelper
         ' Variable to hold the GitHub token and repository details
-        Private Shared ReadOnly GitHubToken As String = EnvLoader.GetEnv("GIT_TOKEN")
         Private Shared ReadOnly OrgName As String = "loudevra"
         Private Shared ReadOnly RepoName As String = "DPC-BITS"
         Private Shared ReadOnly GitHubApiUrl As String = $"https://api.github.com/repos/{OrgName}/{RepoName}/releases/latest"
@@ -20,12 +19,10 @@ Namespace DPC.Data.Helpers.SoftwareUpdate
         ' Class to represent the GitHub release structure
         Public Shared Async Function GetLatestPrivatePreReleaseVersion() As Task(Of String)
             Using client As New HttpClient()
-                client.DefaultRequestHeaders.Authorization = New AuthenticationHeaderValue("token", GitHubToken)
                 client.DefaultRequestHeaders.UserAgent.ParseAdd("MyAppUpdater")
 
                 Try
                     Dim response = Await client.GetAsync(GitHubApiUrl)
-                    ' Ensure the response is successful
                     response.EnsureSuccessStatusCode()
 
                     Dim json = Await response.Content.ReadAsStringAsync()
@@ -33,7 +30,7 @@ Namespace DPC.Data.Helpers.SoftwareUpdate
 
                     If release IsNot Nothing Then
                         Dim normalizedTag = release.tag_name.Replace("v", "").Trim() ' Remove 'v' and extra spaces
-                        MessageBox.Show($"Debug: Latest tag from GitHub: {normalizedTag}") ' Debug output
+                        ' MessageBox.Show($"Debug: Latest tag from GitHub: {normalizedTag}") ' Debug output
                         Return normalizedTag
                     End If
                 Catch ex As Exception
@@ -43,24 +40,34 @@ Namespace DPC.Data.Helpers.SoftwareUpdate
             End Using
         End Function
 
+        ' Check if an update is available
+        Public Shared Async Function IsUpdateAvailable() As Task(Of Boolean)
+            Try
+                Dim latestVersionStr = Await GetLatestPrivatePreReleaseVersion()
+                If latestVersionStr IsNot Nothing Then
+                    Dim latestVersion = New Version(latestVersionStr)
+                    Dim currentVersion = New Version(My.Application.Info.Version.ToString())
+                    Return latestVersion > currentVersion
+                End If
+                Return False
+            Catch ex As Exception
+                MessageBox.Show("Error checking for update availability: " & ex.Message)
+                Return False
+            End Try
+        End Function
+
         ' Check for updates against the latest version on GitHub
         Public Shared Async Function CheckForUpdate() As Task
             Try
-                ' Fetch the latest version from GitHub
-                Dim latestVersionStr = Await SoftwareUpdateHelper.GetLatestPrivatePreReleaseVersion()
-                ' Takes the Current version from the application info
+                Dim latestVersionStr = Await GetLatestPrivatePreReleaseVersion()
                 Dim currentVersionStr = My.Application.Info.Version.ToString()
-                MessageBox.Show($"Debug: Current Version: {currentVersionStr}, Latest Version: {latestVersionStr}") ' Debug output
 
                 If latestVersionStr IsNot Nothing Then
                     Dim latestVersion = New Version(latestVersionStr)
                     Dim currentVersion = New Version(currentVersionStr)
 
-                    MessageBox.Show($"Debug: Comparing - Current: {currentVersion}, Latest: {latestVersion}") ' Debug output
-
                     If latestVersion > currentVersion Then
                         Using client As New HttpClient()
-                            client.DefaultRequestHeaders.Authorization = New AuthenticationHeaderValue("token", GitHubToken)
                             client.DefaultRequestHeaders.UserAgent.ParseAdd("MyAppUpdater")
 
                             Dim response = Await client.GetAsync(GitHubApiUrl)

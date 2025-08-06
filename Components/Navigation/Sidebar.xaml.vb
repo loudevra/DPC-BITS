@@ -49,6 +49,8 @@ Namespace DPC.Components.Navigation
                 End Try
             End Using
 
+            CheckUpdateVisibility()
+
             ' Attach event handlers dynamically
             AddHandler SidebarLogoButton.Click, AddressOf SidebarLogoButton_Click
         End Sub
@@ -128,8 +130,15 @@ Namespace DPC.Components.Navigation
             RaiseEvent SidebarToggled(IsExpanded)
         End Sub
 
+        ' Handles the Software Updates button click event
         Private Async Sub BtnSoftwareUpdates_Click(sender As Object, e As RoutedEventArgs)
             Await SoftwareUpdateHelper.CheckForUpdate()
+        End Sub
+
+        ' Visibility of the Software Updates button based on update availability
+        Private Async Sub CheckUpdateVisibility()
+            Dim isUpdateAvailable = Await SoftwareUpdateHelper.IsUpdateAvailable()
+            BtnSoftwareUpdates.Visibility = If(isUpdateAvailable, Visibility.Visible, Visibility.Collapsed)
         End Sub
 
         ''' <summary>
