@@ -41,7 +41,7 @@ Namespace DPC.Components.Forms
             QuoteDate.Text = CostEstimateDetails.CEQuoteDateCache
             QuoteValidityDate.Text = CostEstimateDetails.CEValidUntilDate ' Changed the Cache name while the previous cache variable would be stay
             Subtotal.Text = CostEstimateDetails.CESubTotalCache
-            TotalCost.Text = CostEstimateDetails.CETotalAmountCache
+            TotalCost.Text = CostEstimateDetails.CEGrandTotalCost
             VAT12.Text = CostEstimateDetails.CETotalTaxValueCache
             Delivery.Text = "₱ " & CostEstimateDetails.CEDeliveryCost.ToString("N2")
             itemOrder = CostEstimateDetails.CEQuoteItemsCache
@@ -86,6 +86,7 @@ Namespace DPC.Components.Forms
             End If
 
             If CEtaxSelection Then
+                ' Visibility of the Vat Text
                 VatText.Visibility = Visibility.Collapsed
                 VatValue.Visibility = Visibility.Collapsed
             Else
