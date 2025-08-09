@@ -257,7 +257,7 @@ Namespace DPC.Views.Sales.Quotes
             ' Calculate base amount
             Dim baseAmount As Decimal = subtotalAmount + installationAmount + deliveryAmount
 
-<<<<<<< HEAD
+
             ' Calculate VAT12 based on CEtaxSelection
             Dim vatAmount As Decimal = 0
             If CEtaxSelection Then
@@ -276,23 +276,7 @@ Namespace DPC.Views.Sales.Quotes
 
             ' Calculate total cost
             Dim totalCostVal As Decimal = baseAmount + vatAmount
-=======
-            ' Calculate VAT12 for display only
-            Dim vatAmount As Decimal = baseAmount * 0.12D
-            VAT12.Text = "₱ " & vatAmount.ToString("F2")
-            CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
-            Debug.WriteLine($"Computed VAT: {vatAmount}")
 
-            ' Calculate total cost
-            Dim totalCostVal As Decimal
-            If CEtaxSelection Then
-                ' Tax Exclusive: Add VAT to total cost
-                totalCostVal = baseAmount + vatAmount
-            Else
-                ' Tax Inclusive: Do NOT add VAT to total cost
-                totalCostVal = baseAmount
-            End If
->>>>>>> 49e0661310295aee6d5437d292b1fd1cd6c51fd6
             Debug.WriteLine($"Computed Total: {totalCostVal}")
 
             ' Update the TotalCost display
