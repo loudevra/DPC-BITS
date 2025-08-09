@@ -108,7 +108,7 @@ Namespace DPC.Views.Sales.Quotes
                 VatValue.Visibility = Visibility.Collapsed
                 VAT12.Text = "₱ 0.00"
                 If String.IsNullOrWhiteSpace(CostEstimateDetails.CEremarksTxt) OrElse remarksBox.Text = "Tax Inclusive." OrElse remarksBox.Text = "Tax Exclusive." Then
-                    remarksBox.Text = "Tax Excluded."
+                    remarksBox.Text = "Tax Exclusive."
                 End If
                 ' Compute total without VAT for tax exclusive case
                 Dim totalAmount As Decimal = 0
@@ -131,7 +131,7 @@ Namespace DPC.Views.Sales.Quotes
                 VatText.Visibility = Visibility.Visible
                 VatValue.Visibility = Visibility.Visible
                 If String.IsNullOrWhiteSpace(CostEstimateDetails.CEremarksTxt) OrElse remarksBox.Text = "Tax Inclusive." OrElse remarksBox.Text = "Tax Exclusive." Then
-                    remarksBox.Text = "Tax Included."
+                    remarksBox.Text = "Tax Inclusive."
                 End If
                 If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CETaxValueCache) Then
                     Debug.WriteLine($"CETaxValueCache: '{CostEstimateDetails.CETaxValueCache}'")
@@ -267,10 +267,10 @@ Namespace DPC.Views.Sales.Quotes
             Dim vatAmount As Decimal = 0
             If CEtaxSelection Then
                 ' Tax Exclusive
-                vatAmount = baseAmount
+                vatAmount = baseAmount * 0.12D
                 VAT12.Text = "₱ " & vatAmount.ToString("F2")
                 CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
-                Debug.WriteLine($"Computed VAT (Exclusive): ")
+                Debug.WriteLine($"Computed VAT (Exclusive): {vatAmount}")
             Else
                 ' Tax Inclusive
                 vatAmount = baseAmount * 0.12D
@@ -280,7 +280,7 @@ Namespace DPC.Views.Sales.Quotes
             End If
 
             ' Calculate total cost
-            Dim totalCostVal As Decimal = baseAmount
+            Dim totalCostVal As Decimal = baseAmount + vatAmount
             Debug.WriteLine($"Computed Total: {totalCostVal}")
 
             ' Update the TotalCost display (TotalCost should be a TextBox/TextBlock)
