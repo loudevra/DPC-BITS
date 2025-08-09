@@ -372,25 +372,27 @@ Namespace DPC.Views.Sales.Quotes
 
         Private Sub txtTaxSelection_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
             _TaxSelection = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString() = "Exclusive"
-            _SelectedTax = If(_TaxSelection, 0D, Nothing)
             Debug.WriteLine($"Tax Selection - {_TaxSelection}")
-            Debug.WriteLine($"Tax Value In Quote Properties - {_SelectedTax}")
 
-            ' Update all tax percent fields to be editable or readonly
             For Each kvp In _productTextBoxes
                 If kvp.Key.StartsWith("txtTaxPercent_") Then
                     If _TaxSelection Then
                         ' Exclusive: Allow user to edit and clear the value
-                        kvp.Value.Text = (_SelectedTax * 100).ToString()
+                        kvp.Value.Text = "" ' Let user type any percent
                         kvp.Value.IsReadOnly = False
                         CEtaxSelection = True
                     Else
                         ' Inclusive: Set to 12 and make it readonly
-                        kvp.Value.Text = "12"
                         kvp.Value.IsReadOnly = True
                         CEtaxSelection = False
+                        kvp.Value.Text = "0"
                     End If
                 End If
+            Next
+
+            ' Call CalculateAmount method for each row
+            For i As Integer = 0 To rowCount - 1
+                CalculateAmount(i)
             Next
         End Sub
 #End Region
@@ -1015,14 +1017,19 @@ Namespace DPC.Views.Sales.Quotes
             Dim amountBeforeDiscount As Decimal = baseAmount
 
             If _TaxSelection Then
-                ' Tax is included in amount
+                ' Tax Exclusive: add tax to amount
                 taxValue = baseAmount * (taxPercent / 100)
                 amountBeforeDiscount = baseAmount + taxValue
             Else
-                ' Tax is shown but not added to amount (12% of rate per item)
-                ' Added the quantity so that it updates everytime the amount changes
-                taxValue = (rate * 0.12D) * quantity
-                ' amountBeforeDiscount remains baseAmount (no tax added)
+                ' Tax Inclusive: always use 12% for display, do NOT add to amount
+                taxValue = baseAmount * 0.12D
+                amountBeforeDiscount = baseAmount
+
+                ' Update txtTaxValueBox and amount value
+                Dim taxValueBoxVal = FindTextBoxByName($"txtTaxValue_{rowIndex}")
+                taxValueBox.Text = taxValue.ToString("F2")
+                Dim amountBoxVal = FindTextBoxByName($"txtAmount_{rowIndex}")
+                amountBox.Text = "₱" & amountBeforeDiscount.ToString("F2")
             End If
 
             Dim discountValue = amountBeforeDiscount * (discountPercent / 100)
