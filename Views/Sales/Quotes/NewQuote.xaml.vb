@@ -15,6 +15,7 @@ Imports System.Linq
 Imports DocumentFormat.OpenXml.Math
 
 Namespace DPC.Views.Sales.Quotes
+    ' Note - The value of defau
     Public Class NewQuote
         ' Autocomplete
         Private rowCount As Integer = 0
@@ -50,6 +51,24 @@ Namespace DPC.Views.Sales.Quotes
         Public Sub New()
             InitializeComponent()
 
+            ' For Tax Selection
+            If String.IsNullOrWhiteSpace(CEtaxSelection) Then
+                _TaxSelection = False
+            Else
+                _TaxSelection = CBool(CEtaxSelection)
+            End If
+            CEtaxSelection = _TaxSelection
+
+            ' Set the ComboBox selection to match _TaxSelection
+            If _TaxSelection Then
+                txtTaxSelection.SelectedItem = txtTaxSelection.Items.Cast(Of ComboBoxItem)().FirstOrDefault(Function(i) i.Content.ToString() = "Exclusive")
+            Else
+                txtTaxSelection.SelectedItem = txtTaxSelection.Items.Cast(Of ComboBoxItem)().FirstOrDefault(Function(i) i.Content.ToString() = "Inclusive")
+            End If
+
+            ' Run the selection changed logic to update all rates/tax fields
+            txtTaxSelection_SelectionChanged(txtTaxSelection, Nothing)
+
             InitializeProductUI()
             rowCount += 1
 
@@ -68,23 +87,15 @@ Namespace DPC.Views.Sales.Quotes
                 .Interval = TimeSpan.FromMilliseconds(300)
             }
 
-            ' For Tax Selection
-            If String.IsNullOrWhiteSpace(CEtaxSelection) Then
-                _TaxSelection = False
-            Else
-                _TaxSelection = CBool(CEtaxSelection)
-            End If
-            CEtaxSelection = _TaxSelection
 
-            ' Set the ComboBox selection to match _TaxSelection
-            If _TaxSelection Then
-                txtTaxSelection.SelectedItem = txtTaxSelection.Items.Cast(Of ComboBoxItem)().FirstOrDefault(Function(i) i.Content.ToString() = "Exclusive")
-            Else
-                txtTaxSelection.SelectedItem = txtTaxSelection.Items.Cast(Of ComboBoxItem)().FirstOrDefault(Function(i) i.Content.ToString() = "Inclusive")
-            End If
+            ' Hide/Show the button for vat12% if exclusive
+            ' Visibility of the Vat Text
+            'If CEVatShow Then
+            '    ChangeVATColumn.Text = "Hide Vat 12%"
+            'Else
+            '    ChangeVATColumn.Text = "Show Vat 12%"
+            'End If
 
-            ' Run the selection changed logic to update all rates/tax fields
-            txtTaxSelection_SelectionChanged(txtTaxSelection, Nothing)
 
             AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
             AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
@@ -361,7 +372,7 @@ Namespace DPC.Views.Sales.Quotes
 
         Private Sub txtTaxSelection_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
             _TaxSelection = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString() = "Exclusive"
-            _SelectedTax = If(_TaxSelection, 0.12D, Nothing)
+            _SelectedTax = If(_TaxSelection, 0D, Nothing)
             Debug.WriteLine($"Tax Selection - {_TaxSelection}")
             Debug.WriteLine($"Tax Value In Quote Properties - {_SelectedTax}")
 
@@ -369,12 +380,14 @@ Namespace DPC.Views.Sales.Quotes
             For Each kvp In _productTextBoxes
                 If kvp.Key.StartsWith("txtTaxPercent_") Then
                     If _TaxSelection Then
+                        ' Exclusive: Allow user to edit and clear the value
                         kvp.Value.Text = (_SelectedTax * 100).ToString()
                         kvp.Value.IsReadOnly = False
                         CEtaxSelection = True
                     Else
+                        ' Inclusive: Set to 12 and make it readonly
+                        kvp.Value.Text = "12"
                         kvp.Value.IsReadOnly = True
-                        kvp.Value.Text = ""
                         CEtaxSelection = False
                     End If
                 End If
@@ -815,12 +828,21 @@ Namespace DPC.Views.Sales.Quotes
 
         ' Tax Percent Textbox
         Private Function CreateTaxPercentBox(rowIndex As Integer) As Border
-            Dim box = CreateInputBox("", 60, False, $"txtTaxPercent_{rowIndex}")
+            ' Set the default value to "12" if the tax is inclusive
+            Dim defaultTaxPercent As String = If(Not _TaxSelection, "12", "")
+
+            ' Create the textbox with the default value and readonly behavior
+            Dim box = CreateInputBox(defaultTaxPercent, 60, Not _TaxSelection, $"txtTaxPercent_{rowIndex}")
             Dim txt = TryCast(box.Child, TextBox)
             If txt IsNot Nothing Then
                 AddHandler txt.TextChanged, AddressOf TaxPercent_TextChanged
                 AddHandler txt.PreviewTextInput, AddressOf TaxPercent_PreviewTextInput
             End If
+
+            ' Ensure the border is always visible
+            box.BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush)
+            box.BorderThickness = New Thickness(2)
+
             Return box
         End Function
 
@@ -998,7 +1020,8 @@ Namespace DPC.Views.Sales.Quotes
                 amountBeforeDiscount = baseAmount + taxValue
             Else
                 ' Tax is shown but not added to amount (12% of rate per item)
-                taxValue = rate * 0.12D
+                ' Added the quantity so that it updates everytime the amount changes
+                taxValue = (rate * 0.12D) * quantity
                 ' amountBeforeDiscount remains baseAmount (no tax added)
             End If
 
@@ -1015,7 +1038,6 @@ Namespace DPC.Views.Sales.Quotes
             UpdateTotalTax()
             UpdateTotalDiscount()
         End Sub
-
 
         ' This function is a helper to find all visual children of amount textboxes in the MainContainer (Don't touch this)
         Private Iterator Function FindVisualChildren(Of T As DependencyObject)(depObj As DependencyObject) As IEnumerable(Of T)
@@ -1363,12 +1385,9 @@ Namespace DPC.Views.Sales.Quotes
             txtTotalDiscount.Text = "₱0.00"
             txtGrandTotal.Text = ""
             TxtClientDetails.Clear()
-            ' Clear the client details
-            _selectedClient = Nothing
-            UpdateSupplierDetails(Nothing)
-            ' Clear all product input UIs
+            ' Do NOT clear _selectedClient, so autocomplete will not show the message
+            ' Do NOT call UpdateSupplierDetails(Nothing)
             ClearAllRows()
-            ' Reset date pickers
             OrderDateVM.SelectedDate = DateTime.Today
             'OrderDueDateVM.SelectedDate = DateTime.Today.AddDays(1)
 
@@ -1417,7 +1436,7 @@ Namespace DPC.Views.Sales.Quotes
                 CETaxProperty = txtTaxSelection.Text
                 CEQuoteDateCache = QuoteDate.SelectedDate.Value.ToString("yyyy-MM-dd")
                 CEValidUntilDate = cmbCostEstimateValidty.Text ' Changed the value of the text instead
-                CETotalTaxValueCache = txtTotalTax.Text
+                'CETotalTaxValueCache = txtTotalTax.Text ' Doesnt need since im calculating it in the preview
                 CETaxValueCache = txtTotalTax.Text
                 CETotalDiscountValueCache = txtTotalDiscount.Text
                 CETotalAmountCache = txtGrandTotal.Text
@@ -1448,6 +1467,18 @@ Namespace DPC.Views.Sales.Quotes
                 MessageBox.Show("Please Fill up all of the Fields: " & ex.Message)
             End Try
         End Sub
+
+        'Private Sub btnExclusiveVatShow_Click(sender As Object, e As RoutedEventArgs)
+        '    If ChangeVATColumn.Text = "Show Vat 12%" Then
+        '        CEVatShow = True
+        '        ChangeVATColumn.Text = "Hide Vat 12%"
+        '        MessageBox.Show($"Vat Show - {CEVatShow}")
+        '    Else
+        '        CEVatShow = False
+        '        ChangeVATColumn.Text = "Show Vat 12%"
+        '        MessageBox.Show($"Vat Show - {CEVatShow}")
+        '    End If
+        'End Sub
 #End Region
     End Class
 End Namespace

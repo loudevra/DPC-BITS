@@ -51,6 +51,7 @@
     Public CEDeliveryMobilization = "Not Selected" ' Default Value if doesnt work
     Public CERepresentative As String = "" ' Representative for the cost estimate
     Public CECNIndetifier As String ' Client Identifier for the cost estimate
+    Public CEGrandTotalCost As String ' Grand Total Cost for the cost estimate
 
     Public Sub ClearAllCECache()
         CEQuoteNumberCache = ""
@@ -93,18 +94,21 @@
         CEWarehouseIDCache = ""
         CEWarehouseNameCache = ""
 
-        CETerm1 = ""
-        CETerm2 = ""
-        CETerm3 = ""
-        CETerm4 = ""
-        CETerm5 = ""
-        CETerm6 = ""
-        CETerm7 = ""
+        CETerm1 = "50% upon ordering"
+        CETerm2 = "30% upon delivery"
+        CETerm3 = "20% upon completion"
+        CETerm4 = "Progress billing remaining balance (for bulk orders)"
+        CETerm5 = "Order will process upon clearance of cheque"
+        CETerm6 = "Any additional orders will be charged seperately"
+        CETerm7 = "No return after installation"
         CETerm8 = ""
-        CETerm9 = ""
-        CETerm10 = ""
-        CETerm11 = ""
+        CETerm9 = "Additional delivery charges"
+        CETerm10 = "Please indicate lead time for installation"
+        CETerm11 = "We will have a site inscpetions prior to installation"
         CETerm12 = ""
+        CETerm13 = "" ' Before Terms
+        CETerm14 = "" ' During Terms
+        CETerm15 = "" ' After Terms
 
         CETotalCostDelivery = 0D
         CEDeliveryCost = 0D

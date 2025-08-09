@@ -1,4 +1,5 @@
 ﻿Imports System.Collections.ObjectModel
+Imports System.Globalization
 Imports System.IO
 Imports System.Windows
 Imports System.Windows.Controls.Primitives
@@ -45,6 +46,15 @@ Namespace DPC.Views.Sales.Quotes
                 Installation.Text = "₱ " & installationFee.ToString("N2")
             Else
                 Installation.Text = "₱ 0.00" ' fallback value if parsing fails
+                installationFee = 0D
+            End If
+
+            Dim deliveryCost As Decimal
+            If Decimal.TryParse(CostEstimateDetails.CEDeliveryCost, deliveryCost) Then
+                Delivery.Text = "₱ " & deliveryCost.ToString("N2")
+            Else
+                Delivery.Text = "₱ 0.00" ' fallback value if parsing fails
+                deliveryCost = 0D
             End If
 
             QuoteNumber.Text = CostEstimateDetails.CEQuoteNumberCache
@@ -52,12 +62,11 @@ Namespace DPC.Views.Sales.Quotes
             QuoteValidityDate.Text = CostEstimateDetails.CEValidUntilDate
             Subtotal.Text = CostEstimateDetails.CETotalAmountCache
             TotalCost.Text = CostEstimateDetails.CETotalAmountCache
-            Delivery.Text = "₱ " & CostEstimateDetails.CEDeliveryCost.ToString("N2")
             itemOrder = CostEstimateDetails.CEQuoteItemsCache
             base64Image = CostEstimateDetails.CEImageCache
             tempImagePath = CostEstimateDetails.CEPathCache
             ClientNameBox.Text = CostEstimateDetails.CEClientName
-            VAT12.Text = CostEstimateDetails.CETaxValueCache
+            ' moved the vat12% to 
             CESubTotalCache = CostEstimateDetails.CETotalAmountCache
             AddressLineOne.Text = CostEstimateDetails.CEAddress & ", " & CostEstimateDetails.CECity    ' -- important when editing
             AddressLineTwo.Text = CostEstimateDetails.CERegion & ", " & CostEstimateDetails.CECountry    ' -- important when editing
@@ -97,18 +106,64 @@ Namespace DPC.Views.Sales.Quotes
             If CEtaxSelection Then
                 VatText.Visibility = Visibility.Collapsed
                 VatValue.Visibility = Visibility.Collapsed
-
-                If String.IsNullOrWhiteSpace(CostEstimateDetails.CEremarksTxt) OrElse
-       remarksBox.Text = "Tax Inclusive." OrElse remarksBox.Text = "Tax Exclusive." Then
+                VAT12.Text = "₱ 0.00"
+                If String.IsNullOrWhiteSpace(CostEstimateDetails.CEremarksTxt) OrElse remarksBox.Text = "Tax Inclusive." OrElse remarksBox.Text = "Tax Exclusive." Then
                     remarksBox.Text = "Tax Exclusive."
+                End If
+                ' Compute total without VAT for tax exclusive case
+                Dim totalAmount As Decimal = 0
+                Dim rawTotal = CostEstimateDetails.CETotalAmountCache.Trim().Replace("₱", "").Replace(",", "").Trim()
+                If Decimal.TryParse(rawTotal, totalAmount) Then
+                    Dim totalCostValue As Decimal = totalAmount + installationFee + deliveryCost
+                    If TotalCost IsNot Nothing Then
+                        TotalCost.Text = "₱ " & totalCostValue.ToString("F2")
+                        CostEstimateDetails.CETotalAmountCache = "₱ " & totalAmount.ToString("F2") ' Preserve pre-additional-cost subtotal
+                    Else
+                        Debug.WriteLine("TotalCost is Nothing")
+                    End If
+                Else
+                    Debug.WriteLine("Failed to parse CETotalAmountCache: '{rawTotal}'")
+                    If TotalCost IsNot Nothing Then
+                        TotalCost.Text = "₱ 0.00"
+                    End If
                 End If
             Else
                 VatText.Visibility = Visibility.Visible
                 VatValue.Visibility = Visibility.Visible
-
-                If String.IsNullOrWhiteSpace(CostEstimateDetails.CEremarksTxt) OrElse
-       remarksBox.Text = "Tax Inclusive." OrElse remarksBox.Text = "Tax Exclusive." Then
+                If String.IsNullOrWhiteSpace(CostEstimateDetails.CEremarksTxt) OrElse remarksBox.Text = "Tax Inclusive." OrElse remarksBox.Text = "Tax Exclusive." Then
                     remarksBox.Text = "Tax Inclusive."
+                End If
+                If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CETaxValueCache) Then
+                    Debug.WriteLine($"CETaxValueCache: '{CostEstimateDetails.CETaxValueCache}'")
+                    Debug.WriteLine($"CETotalAmountCache: '{CostEstimateDetails.CETotalAmountCache}'")
+                    Dim newVat12Value As Decimal
+                    Dim totalAmount As Decimal
+                    Dim rawTotal = CostEstimateDetails.CETotalAmountCache.Trim().Replace("₱", "").Replace(",", "").Trim()
+                    If Decimal.TryParse(rawTotal, totalAmount) Then
+                        ' Compute base amount including installation and delivery
+                        Dim baseAmount As Decimal = totalAmount + installationFee + deliveryCost
+                        newVat12Value = baseAmount * 0.12D
+                        Debug.WriteLine($"NewVat12Value - {newVat12Value}")
+                        If VAT12 IsNot Nothing Then
+                            VAT12.Text = "₱ " & newVat12Value.ToString("F2")
+                            CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
+                            Dim totalCostValue As Decimal = baseAmount + newVat12Value
+                            If TotalCost IsNot Nothing Then
+                                TotalCost.Text = "₱ " & totalCostValue.ToString("F2")
+                                CostEstimateDetails.CETotalAmountCache = "₱ " & baseAmount.ToString("F2") ' Store pre-VAT total
+                            Else
+                                Debug.WriteLine("TotalCost is Nothing")
+                            End If
+                        Else
+                            Debug.WriteLine("VAT12 is Nothing")
+                        End If
+                    Else
+                        Debug.WriteLine("Failed to parse CETotalAmountCache: '{rawTotal}'")
+                        newVat12Value = 0D
+                        If VAT12 IsNot Nothing Then
+                            VAT12.Text = "₱ 0.00"
+                        End If
+                    End If
                 End If
             End If
 
@@ -147,10 +202,13 @@ Namespace DPC.Views.Sales.Quotes
 
             RemoveHandler tb.TextChanged, AddressOf Delivery_TextChanged
 
-            If Not tb.Text.StartsWith("₱ ") Then
-                tb.Text = "₱ " & tb.Text.Replace("₱", "").TrimStart()
-                tb.CaretIndex = tb.Text.Length
+            Dim raw As String = tb.Text.Replace("₱", "").TrimStart()
+            If raw = "" Then
+                tb.Text = "₱ "
+            ElseIf Not tb.Text.StartsWith("₱ ") Then
+                tb.Text = "₱ " & raw
             End If
+            tb.CaretIndex = tb.Text.Length
 
             AddHandler tb.TextChanged, AddressOf Delivery_TextChanged
             ComputeCost(sender, e)
@@ -162,36 +220,73 @@ Namespace DPC.Views.Sales.Quotes
 
             RemoveHandler tb.TextChanged, AddressOf Installation_TextChanged
 
-            If Not tb.Text.StartsWith("₱ ") Then
-                tb.Text = "₱ " & tb.Text.Replace("₱", "").TrimStart()
-                tb.CaretIndex = tb.Text.Length
+            Dim raw As String = tb.Text.Replace("₱", "").TrimStart()
+            If raw = "" Then
+                tb.Text = "₱ "
+            ElseIf Not tb.Text.StartsWith("₱ ") Then
+                tb.Text = "₱ " & raw
             End If
+            tb.CaretIndex = tb.Text.Length
 
             AddHandler tb.TextChanged, AddressOf Installation_TextChanged
             ComputeCost(sender, e)
         End Sub
 
         Private Sub ComputeCost(s As Object, e As TextChangedEventArgs)
-            ' Only clean and compute — don't reset textbox text
+            ' Parse Delivery
             Dim deliveryAmount As Decimal = 0
-            Decimal.TryParse(Delivery.Text.Replace("₱", "").Trim(), deliveryAmount)
+            Dim rawDelivery = Delivery.Text.Replace("₱", "").Trim().Replace(",", "").Trim()
+            Debug.WriteLine($"Raw Delivery: '{rawDelivery}'")
+            If Not Decimal.TryParse(rawDelivery, NumberStyles.Any, CultureInfo.InvariantCulture, deliveryAmount) Then
+                Debug.WriteLine($"Failed to parse Delivery.Text, input: '{rawDelivery}'")
+                deliveryAmount = 0D
+            End If
 
+            ' Parse Installation
             Dim installationAmount As Decimal = 0
-            Decimal.TryParse(Installation.Text.Replace("₱", "").Trim(), installationAmount)
+            Dim rawInstallation = Installation.Text.Replace("₱", "").Trim().Replace(",", "").Trim()
+            Debug.WriteLine($"Raw Installation: '{rawInstallation}'")
+            If Not Decimal.TryParse(rawInstallation, NumberStyles.Any, CultureInfo.InvariantCulture, installationAmount) Then
+                Debug.WriteLine($"Failed to parse Installation.Text, input: '{rawInstallation}'")
+                installationAmount = 0D
+            End If
 
+            ' Parse Subtotal
             Dim subtotalAmount As Decimal = 0
-            Decimal.TryParse(CostEstimateDetails.CETotalAmountCache.Replace("₱", "").Trim(), subtotalAmount)
+            Dim rawSubtotal = Subtotal.Text.Replace("₱", "").Trim().Replace(",", "").Trim()
+            Debug.WriteLine($"Raw Subtotal: '{rawSubtotal}'")
+            If Not Decimal.TryParse(rawSubtotal, NumberStyles.Any, CultureInfo.InvariantCulture, subtotalAmount) Then
+                Debug.WriteLine($"Failed to parse Subtotal.Text, input: '{rawSubtotal}'")
+                subtotalAmount = 0D
+            End If
 
+            ' Calculate base amount
+            Dim baseAmount As Decimal = subtotalAmount + installationAmount + deliveryAmount
 
-            ' Update the Subtotal text display
-            Subtotal.Text = "₱ " & subtotalAmount.ToString("N2")
+            ' Calculate VAT12 based on CEtaxSelection
+            Dim vatAmount As Decimal = 0
+            If CEtaxSelection Then
+                ' Tax Exclusive
+                vatAmount = baseAmount * 0.12D
+                VAT12.Text = "₱ " & vatAmount.ToString("F2")
+                CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
+                Debug.WriteLine($"Computed VAT (Exclusive): {vatAmount}")
+            Else
+                ' Tax Inclusive
+                vatAmount = baseAmount * 0.12D
+                VAT12.Text = "₱ " & vatAmount.ToString("F2")
+                CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
+                Debug.WriteLine($"Computed VAT (Inclusive): {vatAmount}")
+            End If
 
-            ' Total = subtotal + delivery + installation
-            Dim total = subtotalAmount + deliveryAmount + installationAmount
+            ' Calculate total cost
+            Dim totalCostVal As Decimal = baseAmount + vatAmount
+            Debug.WriteLine($"Computed Total: {totalCostVal}")
 
-            ' Update the TotalCost display
-            TotalCost.Text = "₱ " & total.ToString("N2")
+            ' Update the TotalCost display (TotalCost should be a TextBox/TextBlock)
+            TotalCost.Text = "₱ " & totalCostVal.ToString("N2")
         End Sub
+
 #End Region
 
 #Region "Signature Upload"
@@ -307,26 +402,44 @@ Namespace DPC.Views.Sales.Quotes
 #Region "Navigation"
         ' Going back to the NewQuote View
         Private Sub BackToUI_Click(sender As Object, e As MouseButtonEventArgs)
-            If Decimal.TryParse(Installation.Text.Replace("₱", "").Trim(), CEInstallation) = False Then
-                CEInstallation = 0D ' fallback value
-            End If
-            If Decimal.TryParse(Delivery.Text.Replace("₱", "").Replace(",", "").Trim(), CEDeliveryCost) = False Then
-                CEDeliveryCost = 0D ' fallback value if conversion fails
-            End If
-            CostEstimateDetails.CEpaperNote = noteBox.Text ' Changed 07/09/2025 to noteBox
-            CostEstimateDetails.CEApproved = cmbApproved.Text
-            CostEstimateDetails.CEpaymentTerms = cmbTerms.Text
-            CostEstimateDetails.CESubtotalExInc = cmbSubtotalTax.Text
-            CostEstimateDetails.CEWarranty = Warranty.Text
-            CostEstimateDetails.CEDeliveryMobilization = cmbDeliveryMobilization.Text
-            If CostEstimateDetails.CEisCustomTerm = True Then
-                CostEstimateDetails.CEpaymentTerms = CustomTerms.Text
-            Else
-                CostEstimateDetails.CEpaymentTerms = cmbTerms.Text
-            End If
-            Debug.WriteLine($"Approved - {CostEstimateDetails.CEApproved}")
-            ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
+            Try
+                ' Helper function to clean and parse currency text
+
+                ' Safely parse Installation and Delivery
+                CEInstallation = ParseCurrency(If(Installation?.Text, "0"))
+                CEDeliveryCost = ParseCurrency(If(Delivery?.Text, "0"))
+
+                ' Assign other fields (null-safe)
+                CostEstimateDetails.CEpaperNote = If(noteBox?.Text, "")
+                CostEstimateDetails.CEApproved = If(cmbApproved?.Text, "")
+                CostEstimateDetails.CEpaymentTerms = If(CostEstimateDetails.CEisCustomTerm, If(CustomTerms?.Text, ""), If(cmbTerms?.Text, ""))
+                CostEstimateDetails.CESubtotalExInc = If(cmbSubtotalTax?.Text, "")
+                CostEstimateDetails.CEWarranty = If(Warranty?.Text, "")
+                CostEstimateDetails.CEDeliveryMobilization = If(cmbDeliveryMobilization?.Text, "")
+                CostEstimateDetails.CETotalTaxValueCache = ""
+                CostEstimateDetails.CETotalAmountCache = If(TotalCost?.Text, "₱ 0.00")
+
+                Debug.WriteLine($"Approved - {CostEstimateDetails.CEApproved}")
+
+                ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
+
+            Catch ex As Exception
+                MessageBox.Show("Occurred when the installation or delivery fields were empty or invalid. Treated as 0.")
+                ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
+            End Try
         End Sub
+
+        Private Function ParseCurrency(txt As String) As Decimal
+            If String.IsNullOrWhiteSpace(txt) Then Return 0D
+            Dim cleaned As String = txt.Replace("₱", "").Replace(",", "").Trim()
+            If cleaned = "" Then Return 0D
+            Dim value As Decimal
+            If Decimal.TryParse(cleaned, NumberStyles.Any, CultureInfo.InvariantCulture, value) Then
+                Return value
+            Else
+                Return 0D
+            End If
+        End Function
 
         Private Sub PrintPreview(sender As Object, e As RoutedEventArgs)
 
@@ -340,7 +453,7 @@ Namespace DPC.Views.Sales.Quotes
             CostEstimateDetails.CEQuoteNumberCache = QuoteNumber.Text
             CostEstimateDetails.CEQuoteDateCache = QuoteDate.Text
             CostEstimateDetails.CEValidUntilDate = QuoteValidityDate.Text
-            CostEstimateDetails.CETotalAmountCache = TotalCost.Text
+            CostEstimateDetails.CEGrandTotalCost = TotalCost.Text
             CostEstimateDetails.CEDeliveryCost = _deliveryCost
             CostEstimateDetails.CEInstallation = _installationCost
             CostEstimateDetails.CETaxValueCache = VAT12.Text
