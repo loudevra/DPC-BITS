@@ -171,6 +171,8 @@ Namespace DPC.Views.Sales.Quotes
 
             cmbCostEstimateValidty.Text = CostEstimateDetails.CEValidUntilDate
 
+            TaxHeader.Header = If(_TaxSelection, "Tax(%)", "Tax(12%)")
+
             Debug.WriteLine($"Tax Selection - {_TaxSelection}")
             Debug.WriteLine($"Tax Value In Quote Properties - {_SelectedTax}")
         End Sub
@@ -378,14 +380,16 @@ Namespace DPC.Views.Sales.Quotes
                 If kvp.Key.StartsWith("txtTaxPercent_") Then
                     If _TaxSelection Then
                         ' Exclusive: Allow user to edit and clear the value
-                        kvp.Value.Text = "" ' Let user type any percent
+                        kvp.Value.Text = "0" ' Let user type any percent
                         kvp.Value.IsReadOnly = False
                         CEtaxSelection = True
+                        TaxHeader.Header = "Tax(%)"
                     Else
                         ' Inclusive: Set to 12 and make it readonly
+                        kvp.Value.Text = ""
                         kvp.Value.IsReadOnly = True
                         CEtaxSelection = False
-                        kvp.Value.Text = "0"
+                        TaxHeader.Header = "Tax(12%)"
                     End If
                 End If
             Next
@@ -831,7 +835,7 @@ Namespace DPC.Views.Sales.Quotes
         ' Tax Percent Textbox
         Private Function CreateTaxPercentBox(rowIndex As Integer) As Border
             ' Set the default value to "12" if the tax is inclusive
-            Dim defaultTaxPercent As String = If(Not _TaxSelection, "12", "")
+            Dim defaultTaxPercent As String = If(Not CEtaxSelection, "", "0")
 
             ' Create the textbox with the default value and readonly behavior
             Dim box = CreateInputBox(defaultTaxPercent, 60, Not _TaxSelection, $"txtTaxPercent_{rowIndex}")
@@ -958,7 +962,7 @@ Namespace DPC.Views.Sales.Quotes
                 If taxPercentBox IsNot Nothing Then
                     If Not _TaxSelection Then
                         ' Inclusive: set to default and lock
-                        taxPercentBox.Text = (_SelectedTax * 100).ToString()
+                        ' taxPercentBox.Text = 12 ' Removed for testing 
                         taxPercentBox.IsReadOnly = True
                     Else
                         ' Exclusive: let user type

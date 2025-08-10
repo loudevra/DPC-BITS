@@ -103,61 +103,58 @@ Namespace DPC.Views.Sales.Quotes
                 cmbTerms.Text = CostEstimateDetails.CEpaymentTerms
             End If
 
-            If CEtaxSelection Then
-                ' Tax Exclusive: Add VAT to total cost
-                VatText.Visibility = Visibility.Collapsed
-                VatValue.Visibility = Visibility.Collapsed
-                VAT12.Text = "₱ 0.00"
-                If String.IsNullOrWhiteSpace(CostEstimateDetails.CEremarksTxt) OrElse remarksBox.Text = "Tax Inclusive." OrElse remarksBox.Text = "Tax Exclusive." Then
-                    remarksBox.Text = "Tax Exclusive."
-                End If
-                Dim totalAmount As Decimal = 0
-                Dim rawTotal = CostEstimateDetails.CETotalAmountCache.Trim().Replace("₱", "").Replace(",", "").Trim()
-                If Decimal.TryParse(rawTotal, totalAmount) Then
-                    Dim totalCostValue As Decimal = totalAmount + installationFee + deliveryCost
-                    If TotalCost IsNot Nothing Then
-                        TotalCost.Text = "₱ " & totalCostValue.ToString("F2")
-                        CostEstimateDetails.CETotalAmountCache = "₱ " & totalAmount.ToString("F2")
-                    Else
-                        Debug.WriteLine("TotalCost is Nothing")
-                    End If
-                Else
-                    Debug.WriteLine("Failed to parse CETotalAmountCache: '{rawTotal}'")
-                    If TotalCost IsNot Nothing Then
-                        TotalCost.Text = "₱ 0.00"
-                    End If
-                End If
-            Else
-                ' Tax Inclusive: Do NOT add VAT to total cost
+            If Not CEtaxSelection Then
+                ' Tax Inclusive
                 VatText.Visibility = Visibility.Visible
                 VatValue.Visibility = Visibility.Visible
                 If String.IsNullOrWhiteSpace(CostEstimateDetails.CEremarksTxt) OrElse remarksBox.Text = "Tax Inclusive." OrElse remarksBox.Text = "Tax Exclusive." Then
                     remarksBox.Text = "Tax Inclusive."
                 End If
-                Dim totalAmount As Decimal = 0
-                Dim rawTotal = CostEstimateDetails.CETotalAmountCache.Trim().Replace("₱", "").Replace(",", "").Trim()
-                If Decimal.TryParse(rawTotal, totalAmount) Then
-                    Dim totalCostValue As Decimal = totalAmount + installationFee + deliveryCost
-                    If TotalCost IsNot Nothing Then
-                        TotalCost.Text = "₱ " & totalCostValue.ToString("F2")
-                        CostEstimateDetails.CETotalAmountCache = "₱ " & totalCostValue.ToString("F2")
-                    Else
-                        Debug.WriteLine("TotalCost is Nothing")
-                    End If
-                    ' Show VAT for display only, do not add to total cost
-                    Dim vatDisplayValue As Decimal = totalAmount * 0.12D
-                    If VAT12 IsNot Nothing Then
-                        VAT12.Text = "₱ " & vatDisplayValue.ToString("F2")
-                        CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
-                    End If
+
+                ' Calculate Total Amount Before VAT
+                Dim totalAmountBeforeVAT As Decimal = 0
+                Dim rawSubtotal = Subtotal.Text.Replace("₱", "").Trim().Replace(",", "").Trim()
+                If Decimal.TryParse(rawSubtotal, totalAmountBeforeVAT) Then
+                    totalAmountBeforeVAT += installationFee + deliveryCost
+
+                    ' Calculate VAT
+                    Dim vatAmount As Decimal = totalAmountBeforeVAT * 0.12D
+                    VAT12.Text = "₱ " & vatAmount.ToString("F2")
+                    CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
+
+                    ' Calculate Total Cost
+                    Dim totalCostValue As Decimal = totalAmountBeforeVAT + vatAmount
+                    TotalCost.Text = "₱ " & totalCostValue.ToString("F2")
+                    CostEstimateDetails.CETotalAmountCache = "₱ " & totalCostValue.ToString("F2")
                 Else
-                    Debug.WriteLine("Failed to parse CETotalAmountCache: '{rawTotal}'")
-                    If TotalCost IsNot Nothing Then
-                        TotalCost.Text = "₱ 0.00"
-                    End If
-                    If VAT12 IsNot Nothing Then
-                        VAT12.Text = "₱ 0.00"
-                    End If
+                    Debug.WriteLine("Failed to parse Subtotal.Text: '{rawSubtotal}'")
+                    TotalCost.Text = "₱ 0.00"
+                    VAT12.Text = "₱ 0.00"
+                End If
+            Else
+                ' Tax Exclusive
+                VatText.Visibility = Visibility.Collapsed
+                VatValue.Visibility = Visibility.Collapsed
+                If String.IsNullOrWhiteSpace(CostEstimateDetails.CEremarksTxt) OrElse remarksBox.Text = "Tax Inclusive." OrElse remarksBox.Text = "Tax Exclusive." Then
+                    remarksBox.Text = "Tax Exclusive."
+                End If
+
+                ' Calculate Total Cost
+                Dim totalCostValue As Decimal = 0
+                Dim rawSubtotal = Subtotal.Text.Replace("₱", "").Trim().Replace(",", "").Trim()
+                If Decimal.TryParse(rawSubtotal, totalCostValue) Then
+                    totalCostValue += installationFee + deliveryCost
+
+                    ' VAT is 0 for exclusive
+                    VAT12.Text = "₱ 0.00"
+                    CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
+
+                    TotalCost.Text = "₱ " & totalCostValue.ToString("F2")
+                    CostEstimateDetails.CETotalAmountCache = "₱ " & totalCostValue.ToString("F2")
+                Else
+                    Debug.WriteLine("Failed to parse Subtotal.Text: '{rawSubtotal}'")
+                    TotalCost.Text = "₱ 0.00"
+                    VAT12.Text = "₱ 0.00"
                 End If
             End If
 
@@ -266,11 +263,12 @@ Namespace DPC.Views.Sales.Quotes
             ' Calculate total cost
             Dim totalCostVal As Decimal
             If CEtaxSelection Then
-                ' Tax Exclusive: Add VAT to total cost
-                totalCostVal = baseAmount + vatAmount
-            Else
+
                 ' Tax Inclusive: Do NOT add VAT to total cost
                 totalCostVal = baseAmount
+            Else
+                ' Tax Exclusive: Add VAT to total cost
+                totalCostVal = baseAmount + vatAmount
             End If
             Debug.WriteLine($"Computed Total: {totalCostVal}")
 
