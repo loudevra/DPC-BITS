@@ -966,7 +966,7 @@ Namespace DPC.Views.Sales.Quotes
                         taxPercentBox.IsReadOnly = True
                     Else
                         ' Exclusive: let user type
-                        taxPercentBox.Text = ""
+                        taxPercentBox.Text = "0"
                         taxPercentBox.IsReadOnly = False
                     End If
                 End If
@@ -1031,17 +1031,17 @@ Namespace DPC.Views.Sales.Quotes
 
                 ' Update txtTaxValueBox and amount value
                 Dim taxValueBoxVal = FindTextBoxByName($"txtTaxValue_{rowIndex}")
-                taxValueBox.Text = taxValue.ToString("F2")
+                taxValueBox.Text = taxValue.ToString("N2")
                 Dim amountBoxVal = FindTextBoxByName($"txtAmount_{rowIndex}")
-                amountBox.Text = "₱" & amountBeforeDiscount.ToString("F2")
+                amountBox.Text = "₱" & amountBeforeDiscount.ToString("N2")
             End If
 
             Dim discountValue = amountBeforeDiscount * (discountPercent / 100)
             Dim finalAmount = amountBeforeDiscount - discountValue
 
-            If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("F2")
-            If discountBox IsNot Nothing Then discountBox.Text = discountValue.ToString("F2")
-            amountBox.Text = "₱" & finalAmount.ToString("F2")
+            If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
+            If discountBox IsNot Nothing Then discountBox.Text = discountValue.ToString("N2")
+            amountBox.Text = "₱" & finalAmount.ToString("N2")
 
             Debug.WriteLine($"[Row {rowIndex}] Base: {baseAmount}, Tax: {taxValue}, Discount: {discountValue}, Total: {finalAmount}")
 
@@ -1086,7 +1086,7 @@ Namespace DPC.Views.Sales.Quotes
             Next
 
             ' Update the grand total display
-            txtGrandTotal.Text = "₱" & grandTotal.ToString("F2")
+            txtGrandTotal.Text = "₱" & grandTotal.ToString("N2")
         End Sub
 
         ' This function is for updating the value of tax whenever there is changes
@@ -1110,7 +1110,7 @@ Namespace DPC.Views.Sales.Quotes
             Next
 
             ' Example output target: you should declare this in your XAML like you did with txtGrandTotal
-            txtTotalTax.Text = "₱" & totalTax.ToString("F2")
+            txtTotalTax.Text = "₱" & totalTax.ToString("N2")
         End Sub
 
         Public Sub UpdateTotalDiscount()
@@ -1131,7 +1131,7 @@ Namespace DPC.Views.Sales.Quotes
                 End If
             Next
 
-            txtTotalDiscount.Text = "₱" & totalDiscount.ToString("F2")
+            txtTotalDiscount.Text = "₱" & totalDiscount.ToString("N2")
         End Sub
 
 

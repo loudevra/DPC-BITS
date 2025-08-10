@@ -45,7 +45,7 @@ Namespace DPC.Views.Sales.Quotes
             If Decimal.TryParse(CostEstimateDetails.CEInstallation, installationFee) Then
                 Installation.Text = "₱ " & installationFee.ToString("N2")
             Else
-                Installation.Text = "₱ 0.00" ' fallback value if parsing fails
+                Installation.Text = "₱ 0.00"
                 installationFee = 0D
             End If
 
@@ -53,7 +53,7 @@ Namespace DPC.Views.Sales.Quotes
             If Decimal.TryParse(CostEstimateDetails.CEDeliveryCost, deliveryCost) Then
                 Delivery.Text = "₱ " & deliveryCost.ToString("N2")
             Else
-                Delivery.Text = "₱ 0.00" ' fallback value if parsing fails
+                Delivery.Text = "₱ 0.00"
                 deliveryCost = 0D
             End If
 
@@ -119,13 +119,13 @@ Namespace DPC.Views.Sales.Quotes
 
                     ' Calculate VAT
                     Dim vatAmount As Decimal = totalAmountBeforeVAT * 0.12D
-                    VAT12.Text = "₱ " & vatAmount.ToString("F2")
+                    VAT12.Text = "₱ " & vatAmount.ToString("N2")
                     CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
 
                     ' Calculate Total Cost
                     Dim totalCostValue As Decimal = totalAmountBeforeVAT + vatAmount
-                    TotalCost.Text = "₱ " & totalCostValue.ToString("F2")
-                    CostEstimateDetails.CETotalAmountCache = "₱ " & totalCostValue.ToString("F2")
+                    TotalCost.Text = "₱ " & totalCostValue.ToString("N2")
+                    CostEstimateDetails.CETotalAmountCache = "₱ " & totalCostValue.ToString("N2")
                 Else
                     Debug.WriteLine("Failed to parse Subtotal.Text: '{rawSubtotal}'")
                     TotalCost.Text = "₱ 0.00"
@@ -149,8 +149,8 @@ Namespace DPC.Views.Sales.Quotes
                     VAT12.Text = "₱ 0.00"
                     CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
 
-                    TotalCost.Text = "₱ " & totalCostValue.ToString("F2")
-                    CostEstimateDetails.CETotalAmountCache = "₱ " & totalCostValue.ToString("F2")
+                    TotalCost.Text = "₱ " & totalCostValue.ToString("N2")
+                    CostEstimateDetails.CETotalAmountCache = "₱ " & totalCostValue.ToString("N2")
                 Else
                     Debug.WriteLine("Failed to parse Subtotal.Text: '{rawSubtotal}'")
                     TotalCost.Text = "₱ 0.00"
@@ -173,11 +173,11 @@ Namespace DPC.Views.Sales.Quotes
                 Dim linePriceFormatted As String = linePrice.ToString("N2")
 
                 itemDataSource.Add(New OrderItems With {
-                    .Quantity = item("Quantity"),
-                    .Description = item("ProductName"),
-                    .UnitPrice = $"₱ {rateFormatted}",
-                    .LinePrice = $"₱ {linePriceFormatted}"
-                })
+        .Quantity = item("Quantity"),
+        .Description = item("ProductName"),
+        .UnitPrice = $"₱ {rateFormatted}",
+        .LinePrice = $"₱ {linePriceFormatted}"
+    })
             Next
 
             ' Display the data in the DataGrid
@@ -256,7 +256,7 @@ Namespace DPC.Views.Sales.Quotes
 
             ' Calculate VAT12 for display only
             Dim vatAmount As Decimal = baseAmount * 0.12D
-            VAT12.Text = "₱ " & vatAmount.ToString("F2")
+            VAT12.Text = "₱ " & vatAmount.ToString("N2")
             CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
             Debug.WriteLine($"Computed VAT: {vatAmount}")
 
