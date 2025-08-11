@@ -171,6 +171,8 @@ Namespace DPC.Views.Sales.Quotes
 
             cmbCostEstimateValidty.Text = CostEstimateDetails.CEValidUntilDate
 
+            TaxHeader.Header = If(_TaxSelection, "Tax(%)", "Tax(12%)")
+
             Debug.WriteLine($"Tax Selection - {_TaxSelection}")
             Debug.WriteLine($"Tax Value In Quote Properties - {_SelectedTax}")
         End Sub
@@ -378,14 +380,16 @@ Namespace DPC.Views.Sales.Quotes
                 If kvp.Key.StartsWith("txtTaxPercent_") Then
                     If _TaxSelection Then
                         ' Exclusive: Allow user to edit and clear the value
-                        kvp.Value.Text = "" ' Let user type any percent
+                        kvp.Value.Text = "0" ' Let user type any percent
                         kvp.Value.IsReadOnly = False
                         CEtaxSelection = True
+                        TaxHeader.Header = "Tax(%)"
                     Else
                         ' Inclusive: Set to 12 and make it readonly
+                        kvp.Value.Text = ""
                         kvp.Value.IsReadOnly = True
                         CEtaxSelection = False
-                        kvp.Value.Text = "0"
+                        TaxHeader.Header = "Tax(12%)"
                     End If
                 End If
             Next
@@ -831,7 +835,7 @@ Namespace DPC.Views.Sales.Quotes
         ' Tax Percent Textbox
         Private Function CreateTaxPercentBox(rowIndex As Integer) As Border
             ' Set the default value to "12" if the tax is inclusive
-            Dim defaultTaxPercent As String = If(Not _TaxSelection, "12", "")
+            Dim defaultTaxPercent As String = If(Not CEtaxSelection, "", "0")
 
             ' Create the textbox with the default value and readonly behavior
             Dim box = CreateInputBox(defaultTaxPercent, 60, Not _TaxSelection, $"txtTaxPercent_{rowIndex}")
@@ -958,11 +962,11 @@ Namespace DPC.Views.Sales.Quotes
                 If taxPercentBox IsNot Nothing Then
                     If Not _TaxSelection Then
                         ' Inclusive: set to default and lock
-                        taxPercentBox.Text = (_SelectedTax * 100).ToString()
+                        ' taxPercentBox.Text = 12 ' Removed for testing 
                         taxPercentBox.IsReadOnly = True
                     Else
                         ' Exclusive: let user type
-                        taxPercentBox.Text = ""
+                        taxPercentBox.Text = "0"
                         taxPercentBox.IsReadOnly = False
                     End If
                 End If
@@ -1027,17 +1031,17 @@ Namespace DPC.Views.Sales.Quotes
 
                 ' Update txtTaxValueBox and amount value
                 Dim taxValueBoxVal = FindTextBoxByName($"txtTaxValue_{rowIndex}")
-                taxValueBox.Text = taxValue.ToString("F2")
+                taxValueBox.Text = taxValue.ToString("N2")
                 Dim amountBoxVal = FindTextBoxByName($"txtAmount_{rowIndex}")
-                amountBox.Text = "₱" & amountBeforeDiscount.ToString("F2")
+                amountBox.Text = "₱" & amountBeforeDiscount.ToString("N2")
             End If
 
             Dim discountValue = amountBeforeDiscount * (discountPercent / 100)
             Dim finalAmount = amountBeforeDiscount - discountValue
 
-            If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("F2")
-            If discountBox IsNot Nothing Then discountBox.Text = discountValue.ToString("F2")
-            amountBox.Text = "₱" & finalAmount.ToString("F2")
+            If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
+            If discountBox IsNot Nothing Then discountBox.Text = discountValue.ToString("N2")
+            amountBox.Text = "₱" & finalAmount.ToString("N2")
 
             Debug.WriteLine($"[Row {rowIndex}] Base: {baseAmount}, Tax: {taxValue}, Discount: {discountValue}, Total: {finalAmount}")
 
@@ -1082,7 +1086,7 @@ Namespace DPC.Views.Sales.Quotes
             Next
 
             ' Update the grand total display
-            txtGrandTotal.Text = "₱" & grandTotal.ToString("F2")
+            txtGrandTotal.Text = "₱" & grandTotal.ToString("N2")
         End Sub
 
         ' This function is for updating the value of tax whenever there is changes
@@ -1106,7 +1110,7 @@ Namespace DPC.Views.Sales.Quotes
             Next
 
             ' Example output target: you should declare this in your XAML like you did with txtGrandTotal
-            txtTotalTax.Text = "₱" & totalTax.ToString("F2")
+            txtTotalTax.Text = "₱" & totalTax.ToString("N2")
         End Sub
 
         Public Sub UpdateTotalDiscount()
@@ -1127,7 +1131,7 @@ Namespace DPC.Views.Sales.Quotes
                 End If
             Next
 
-            txtTotalDiscount.Text = "₱" & totalDiscount.ToString("F2")
+            txtTotalDiscount.Text = "₱" & totalDiscount.ToString("N2")
         End Sub
 
 
