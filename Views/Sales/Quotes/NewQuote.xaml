@@ -428,8 +428,10 @@
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="Item Name" Binding="{Binding ItemName}" Width="150"/>
                                     <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="80"/>
+
                                     <DataGridTextColumn Header="Unit Price" Binding="{Binding Rate}" Width="90"/>
                                     <DataGridTextColumn Header="Tax (%)" x:Name="TaxHeader" Binding="{Binding TaxtPercent}" Width="93"/>
+
                                     <DataGridTextColumn Header="Tax" Binding="{Binding TaxValue}" Width="50"/>
                                     <DataGridTextColumn Header="Discount (%)" Binding="{Binding DiscountPercent}" Width="120"/>
                                     <DataGridTextColumn Header="Discount" Binding="{Binding Discount}" Width="75"/>
