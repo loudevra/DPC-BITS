@@ -169,6 +169,15 @@ Namespace DPC.Views.Sales.Quotes
                 LoadingCEType = False
             End If
 
+            If txtTaxSelection.Text = "Inclusive" Then
+                ShowVatExBtn.Visibility = Visibility.Collapsed
+            Else
+                ShowVatExBtn.Visibility = Visibility.Visible
+            End If
+
+            ' Visibility for the Show/Hide VAT 12% button
+            VatExShowVat.Text = If(CEisVatExInclude, "Hide VAT 12%", "Show VAT 12%")
+
             cmbCostEstimateValidty.Text = CostEstimateDetails.CEValidUntilDate
 
             TaxHeader.Header = If(_TaxSelection, "Tax(%)", "Tax(12%)")
@@ -384,12 +393,15 @@ Namespace DPC.Views.Sales.Quotes
                         kvp.Value.IsReadOnly = False
                         CEtaxSelection = True
                         TaxHeader.Header = "Tax(%)"
+                        ShowVatExBtn.Visibility = Visibility.Visible
                     Else
                         ' Inclusive: Set to 12 and make it readonly
                         kvp.Value.Text = ""
                         kvp.Value.IsReadOnly = True
                         CEtaxSelection = False
                         TaxHeader.Header = "Tax(12%)"
+                        ShowVatExBtn.Visibility = Visibility.Collapsed
+                        CEisVatExInclude = False
                     End If
                 End If
             Next
@@ -1477,6 +1489,21 @@ Namespace DPC.Views.Sales.Quotes
             Catch ex As Exception
                 MessageBox.Show("Please Fill up all of the Fields: " & ex.Message)
             End Try
+        End Sub
+
+        ' If the user clicks the button to show or hide VAT in exclusive mode
+        ' If the Show VAT button is clicked, toggle the VAT display
+        ' If the Hide VAT button is clicked, toggle the collapsed VAT display
+        Private Sub IncExVatinExclusive_Click(sender As Object, e As RoutedEventArgs)
+            If VatExShowVat.Text = "Show VAT 12%" Then
+                CEisVatExInclude = True
+                VatExShowVat.Text = "Hide VAT 12%"
+                MessageBox.Show($"Vat Selection - {CEisVatExInclude}")
+            Else
+                CEisVatExInclude = False
+                VatExShowVat.Text = "Show VAT 12%"
+                MessageBox.Show($"Vat Selection - {CEisVatExInclude}")
+            End If
         End Sub
 
         'Private Sub btnExclusiveVatShow_Click(sender As Object, e As RoutedEventArgs)

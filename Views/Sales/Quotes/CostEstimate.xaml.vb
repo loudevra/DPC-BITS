@@ -142,8 +142,15 @@ Namespace DPC.Views.Sales.Quotes
                 Dim totalCostValue As Decimal = 0
                 Dim rawSubtotal = Subtotal.Text.Replace("₱", "").Trim().Replace(",", "").Trim()
                 If Decimal.TryParse(rawSubtotal, totalCostValue) Then
+                    Dim vatAmount As Decimal
                     ' Calculate VAT (from subtotal only)
-                    Dim vatAmount As Decimal = totalCostValue * 0.12D
+                    If CEisVatExInclude Then
+                        vatAmount = totalCostValue * 0.12D
+                    Else
+                        vatAmount = 0D
+                        VatText.Visibility = Visibility.Collapsed
+                        VatValue.Visibility = Visibility.Collapsed
+                    End If
                     VAT12.Text = "₱ " & vatAmount.ToString("N2")
                     CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
 
@@ -265,7 +272,14 @@ Namespace DPC.Views.Sales.Quotes
             If CEtaxSelection Then
                 ' Tax Exclusive: Add VAT to total cost
 
-                vatAmount = subtotalAmount * 0.12D
+                ' Checks if the user choose to show hide the vat
+                If CEisVatExInclude Then
+                    vatAmount = subtotalAmount * 0.12D
+                Else
+                    vatAmount = 0D
+                End If
+
+                ' Display the value result
                 VAT12.Text = "₱ " & vatAmount.ToString("N2")
                 CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
                 Debug.WriteLine($"Computed VAT: {vatAmount}")
