@@ -52,6 +52,7 @@
     Public CERepresentative As String = "" ' Representative for the cost estimate
     Public CECNIndetifier As String ' Client Identifier for the cost estimate
     Public CEGrandTotalCost As String ' Grand Total Cost for the cost estimate
+    Public CEisVatExInclude As Boolean = False ' Default Value for extra safety
 
     Public Sub ClearAllCECache()
         CEQuoteNumberCache = ""
