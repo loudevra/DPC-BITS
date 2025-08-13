@@ -50,6 +50,7 @@ Namespace DPC.Components.Navigation
             End Using
 
             CheckUpdateVisibility()
+            VerNum.Text = My.Application.Info.Version.ToString()
 
             ' Attach event handlers dynamically
             AddHandler SidebarLogoButton.Click, AddressOf SidebarLogoButton_Click
