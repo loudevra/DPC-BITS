@@ -73,7 +73,7 @@ Namespace DPC.Data.Controllers
             Dim query As String = "
         SELECT DISTINCT b.brandID, b.brandName
         FROM brand b
-        INNER JOIN supplierbrand sb ON b.brandID = sb.brandID
+        INNER JOIN brand sb ON b.brandID = sb.brandID
         ORDER BY b.brandName ASC;
         "
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
