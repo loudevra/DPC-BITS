@@ -2116,6 +2116,7 @@
     <Content Include=".env">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Filter.vbs" />
     <Resource Include="Assets\payments\Amex.png" />
     <Resource Include="Assets\payments\Authorize.net.png" />
     <Resource Include="Assets\payments\Discover.png" />
