@@ -374,5 +374,31 @@ Namespace DPC.Data.Controllers
         End Sub
 
 
+        ' ADD THIS NEW METHOD
+        Public Shared Function GetProductImageBase64(productName As String) As String
+            Try
+                Dim query As String = "SELECT productImage FROM product WHERE productName = @productName LIMIT 1"
+
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@productName", productName)
+
+                        Dim result = cmd.ExecuteScalar()
+
+                        If result IsNot Nothing AndAlso result IsNot DBNull.Value Then
+                            Return result.ToString()
+                        End If
+                    End Using
+                End Using
+
+            Catch ex As Exception
+                Debug.WriteLine($"Error retrieving product image: {ex.Message}")
+            End Try
+
+            Return Nothing
+        End Function
+
+
     End Class
 End Namespace

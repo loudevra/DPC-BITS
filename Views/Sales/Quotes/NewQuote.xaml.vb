@@ -1350,7 +1350,7 @@ Namespace DPC.Views.Sales.Quotes
                     End If
 
                     If (fieldNames(j) = "ProductName" OrElse fieldNames(j) = "Quantity" OrElse fieldNames(j) = "Rate") AndAlso
-               String.IsNullOrWhiteSpace(value) Then
+       String.IsNullOrWhiteSpace(value) Then
 
                         MessageBox.Show($"Please fill in all required fields in row {i + 1}.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                         Return Nothing
@@ -1384,6 +1384,21 @@ Namespace DPC.Views.Sales.Quotes
                         End If
                     End If
                 End If
+
+                ' ========== ADD THIS NEW SECTION ==========
+                ' Get product image from database
+                Dim productName As String = productData("ProductName").ToString()
+                Dim imageBase64 As String = Nothing
+
+                Try
+                    ' Use GetProduct controller to retrieve image
+                    imageBase64 = GetProduct.GetProductImageBase64(productName)
+                Catch ex As Exception
+                    Debug.WriteLine($"Error getting image for {productName}: {ex.Message}")
+                End Try
+
+                productData("ProductImageBase64") = If(String.IsNullOrEmpty(imageBase64), "", imageBase64)
+                ' ========== END OF NEW SECTION ==========
 
                 productArray.Add(productData)
             Next
