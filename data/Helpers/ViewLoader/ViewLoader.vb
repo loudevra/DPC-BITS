@@ -10,6 +10,10 @@ Namespace DPC.Data.Helpers.ViewLoader
     ''' Responsible for loading view components by name
     ''' </summary>
     Public Class ViewLoader
+        Public Sub New()
+
+        End Sub
+
         ''' <summary>
         ''' Loads the requested view by name
         ''' </summary>

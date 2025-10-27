@@ -24,32 +24,52 @@ Namespace DPC.Components.Forms
         Private Address As String
         Private isCustom As Boolean
 
+        ' Add pagination variables
+        Private itemsPerPage As Integer = 14
+        Private paginationTriggerThreshold As Integer = 7
+        Private currentPageIndex As Integer = 0
+        Private totalPages As Integer = 1
+        Private allItems As New List(Of Dictionary(Of String, String))
+        Private allPages As New List(Of List(Of OrderItems))
         Public Sub New()
-
-            ' This call is required by the designer.
             InitializeComponent()
+
+            ' Check if CEQuoteItemsCache is Nothing
+            If CostEstimateDetails.CEQuoteItemsCache Is Nothing Then
+                MessageBox.Show("Quote items are not loaded.")
+                Return
+            End If
+
+            ' Initialize allItems
+            allItems = CostEstimateDetails.CEQuoteItemsCache
+            itemOrder = CostEstimateDetails.CEQuoteItemsCache
+
+            ' Calculate total pages
+            If allItems IsNot Nothing AndAlso allItems.Count > 0 Then
+                totalPages = Math.Ceiling(allItems.Count / itemsPerPage)
+            Else
+                totalPages = 1
+            End If
 
             Dim installationFee As Decimal
             If Decimal.TryParse(CostEstimateDetails.CEInstallation, installationFee) Then
                 Installation.Text = "₱ " & installationFee.ToString("N2")
             Else
-                Installation.Text = "₱ 0.00" ' fallback value if parsing fails
+                Installation.Text = "₱ 0.00"
             End If
 
-            ' Add any initialization after the InitializeComponent() call.
             QuoteNumber.Text = CostEstimateDetails.CEQuoteNumberCache
             QuoteDate.Text = CostEstimateDetails.CEQuoteDateCache
-            QuoteValidityDate.Text = CostEstimateDetails.CEValidUntilDate ' Changed the Cache name while the previous cache variable would be stay
+            QuoteValidityDate.Text = CostEstimateDetails.CEValidUntilDate
             Subtotal.Text = CostEstimateDetails.CESubTotalCache
             TotalCost.Text = CostEstimateDetails.CEGrandTotalCost
             VAT12.Text = CostEstimateDetails.CETotalTaxValueCache
             Delivery.Text = "₱ " & CostEstimateDetails.CEDeliveryCost.ToString("N2")
-            itemOrder = CostEstimateDetails.CEQuoteItemsCache
             base64Image = CostEstimateDetails.CEImageCache
             tempImagePath = CostEstimateDetails.CEPathCache
             ClientNameBox.Text = CostEstimateDetails.CEClientName
-            AddressLineOne.Text = CostEstimateDetails.CEAddress & ", " & CostEstimateDetails.CECity    ' -- important when editing
-            AddressLineTwo.Text = CostEstimateDetails.CERegion & ", " & CostEstimateDetails.CECountry    ' -- important when editing
+            AddressLineOne.Text = CostEstimateDetails.CEAddress & ", " & CostEstimateDetails.CECity
+            AddressLineTwo.Text = CostEstimateDetails.CERegion & ", " & CostEstimateDetails.CECountry
             PhoneBox.Text = "+63 " & FormatPhoneWithSpaces(CostEstimateDetails.CEPhone)
             RepresentativeBox.Text = CostEstimateDetails.CERepresentative
             noteBox.Text = CostEstimateDetails.CEnoteTxt
@@ -76,17 +96,24 @@ Namespace DPC.Components.Forms
             DeliveryMobilization.Text = CostEstimateDetails.CEDeliveryMobilization
             CNIdentifier.Text = CostEstimateDetails.CECNIndetifier
 
+            ' Other Services
+            If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CEOtherServices) AndAlso
+               CostEstimateDetails.CEOtherServices <> "Services:" Then
+                OtherServicesText.Text = CostEstimateDetails.CEOtherServices.Replace("Services:", "").Trim()
+                OtherServicesText.Visibility = Visibility.Visible
+            Else
+                OtherServicesText.Visibility = Visibility.Collapsed
+            End If
+
             ' Check if the terms is enabled
             If CostEstimateDetails.CEisCustomTerm = True Then
                 cmbTerms.Text = CostEstimateDetails.CEpaymentTerms
                 cmbTerms.Foreground = Brushes.White
-
             Else
                 cmbTerms.Text = CostEstimateDetails.CEpaymentTerms
             End If
 
             If CEtaxSelection Then
-                ' Visibility of the Vat Text
                 VatText.Visibility = Visibility.Collapsed
                 VatValue.Visibility = Visibility.Collapsed
             Else
@@ -96,33 +123,140 @@ Namespace DPC.Components.Forms
 
             DisplaySignaturePreview()
 
-            ' Load the data in the datagrid
-            For Each item In itemOrder
-                Dim rate As Decimal = Decimal.Parse(item("Rate"))
-                Dim rateFormatted As String = rate.ToString("N2")
+            txtPageInfo = TryCast(Me.FindName("txtPageInfo"), TextBlock)
 
-                Dim linePrice As Decimal = Decimal.Parse(item("Amount"))
-                Dim linePriceFormatted As String = linePrice.ToString("N2")
+            ' Split items into pages and load first page
+            SplitItemsIntoPages()
+            LoadPrintPage(0)
 
-                itemDataSource.Add(New OrderItems With {
-                    .Quantity = item("Quantity"),
-                    .Description = item("ProductName"),
-                    .UnitPrice = $"₱ {rateFormatted}",
-                    .LinePrice = $"₱ {linePriceFormatted}"
-                })
+            UpdatePageInfo()
+            UpdateNavigationButtons()
+
+        End Sub
+
+        ' Split items into pages
+        ' Update SplitItemsIntoPages method:
+        Private Sub SplitItemsIntoPages()
+            allPages.Clear()
+
+            If allItems Is Nothing OrElse allItems.Count = 0 Then
+                Return
+            End If
+
+            ' Special case: 8-14 items - all on first page, second page empty
+            If allItems.Count > paginationTriggerThreshold AndAlso allItems.Count <= itemsPerPage Then
+                Dim firstPageItems As New List(Of OrderItems)
+
+                For Each item In allItems
+                    firstPageItems.Add(CreateOrderItem(item))
+                Next
+
+                allPages.Add(firstPageItems)
+                allPages.Add(New List(Of OrderItems)()) ' Empty second page for sections
+                Return
+            End If
+
+            ' Normal pagination
+            Dim currentPageItems As New List(Of OrderItems)
+
+            For Each item In allItems
+                currentPageItems.Add(CreateOrderItem(item))
+
+                If currentPageItems.Count = itemsPerPage Then
+                    allPages.Add(New List(Of OrderItems)(currentPageItems))
+                    currentPageItems.Clear()
+                End If
             Next
 
-            ' Display the data in the DataGrid
+            If currentPageItems.Count > 0 Then
+                allPages.Add(currentPageItems)
+            End If
+        End Sub
+
+        ' Helper method to create OrderItem (extract repeated code)
+        Private Function CreateOrderItem(item As Dictionary(Of String, String)) As OrderItems
+            Dim rate As Decimal = Decimal.Parse(item("Rate"))
+            Dim rateFormatted As String = rate.ToString("N2")
+
+            Dim linePrice As Decimal = Decimal.Parse(item("Amount"))
+            Dim linePriceFormatted As String = linePrice.ToString("N2")
+
+            Dim productImage As BitmapImage = Nothing
+            If item.ContainsKey("ProductImageBase64") AndAlso Not String.IsNullOrEmpty(item("ProductImageBase64").ToString()) Then
+                productImage = Base64ToBitmapImage(item("ProductImageBase64").ToString())
+            Else
+                productImage = GetProductImageFromDatabase(item("ProductName").ToString())
+            End If
+
+            Return New OrderItems With {
+        .Quantity = item("Quantity"),
+        .Description = item("ProductName"),
+        .UnitPrice = $"₱ {rateFormatted}",
+        .LinePrice = $"₱ {linePriceFormatted}",
+        .ProductImage = productImage
+    }
+        End Function
+
+        ' Load specific page
+        Private Sub LoadPrintPage(pageIndex As Integer)
+            If pageIndex < 0 OrElse pageIndex >= allPages.Count Then Return
+
+            currentPageIndex = pageIndex
+            itemDataSource.Clear()
+
+            For Each item In allPages(pageIndex)
+                itemDataSource.Add(item)
+            Next
+
             dataGrid.ItemsSource = itemDataSource
+
+            ' Update page info after loading
+            UpdatePageInfo()
+            UpdateNavigationButtons()
+            UpdateTotalCostVisibility()
+            UpdateServicesVisibility()
+            UpdateWarrantyAndBottomSectionVisibility()
+            UpdatePrintPageIndicator()
+        End Sub
+
+        Private Sub UpdatePageInfo()
+            If txtPageInfo IsNot Nothing Then
+                txtPageInfo.Text = $"Page {currentPageIndex + 1} of {allPages.Count}"
+            End If
+        End Sub
+
+        ' Add method to enable/disable navigation buttons
+        Private Sub UpdateNavigationButtons()
+            Dim btnPrev = TryCast(Me.FindName("btnPrevPage"), Button)
+            Dim btnNext = TryCast(Me.FindName("btnNextPage"), Button)
+
+            If btnPrev IsNot Nothing Then
+                btnPrev.IsEnabled = currentPageIndex > 0
+            End If
+
+            If btnNext IsNot Nothing Then
+                btnNext.IsEnabled = currentPageIndex < allPages.Count - 1
+            End If
+        End Sub
+
+        ' Add navigation button click handlers
+        Private Sub PreviousPage_Click(sender As Object, e As RoutedEventArgs)
+            If currentPageIndex > 0 Then
+                LoadPrintPage(currentPageIndex - 1)
+            End If
+        End Sub
+
+        Private Sub NextPage_Click(sender As Object, e As RoutedEventArgs)
+            If currentPageIndex < allPages.Count - 1 Then
+                LoadPrintPage(currentPageIndex + 1)
+            End If
         End Sub
 
         Private Function FormatPhoneWithSpaces(raw As String) As String
             If String.IsNullOrWhiteSpace(raw) OrElse raw.Length < 2 Then Return raw
 
-            ' Remove the first character
             Dim number = raw.Substring(1)
 
-            ' Apply formatting
             If number.Length >= 10 Then
                 Return $"{number.Substring(0, 3)} {number.Substring(3, 3)} {number.Substring(6)}"
             ElseIf number.Length >= 7 Then
@@ -140,23 +274,19 @@ Namespace DPC.Components.Forms
 
         Private Sub SavePrint(sender As Object, e As RoutedEventArgs)
             Try
-                ' Ask user: PDF or Print
                 Dim result As MessageBoxResult = MessageBox.Show("Do you want to save this as a PDF?", "Choose Output", MessageBoxButton.YesNoCancel, MessageBoxImage.Question)
 
                 Dim docName As String = CEQuoteNumberCache
-                Dim savedPath As String = SaveAsPDF(docName) ' Always generate PDF
+                Dim savedPath As String = SaveAsPDF(docName)
 
                 If result = MessageBoxResult.Yes Then
-                    ' Save as PDF (already done above)
                     If Not SavePdfPathToMongoDB(savedPath, CEQuoteNumberCache, CacheOnLoggedInName) Then Exit Sub
                     SaveToDb()
                 ElseIf result = MessageBoxResult.No Then
-                    ' Print physically
                     PrintPhysically(docName)
                     If Not SavePdfPathToMongoDB(savedPath, CEQuoteNumberCache, CacheOnLoggedInName) Then Exit Sub
                     SaveToDb()
                 Else
-                    ' Cancelled
                     MessageBox.Show("Printing Cancelled")
                     Exit Sub
                 End If
@@ -168,11 +298,9 @@ Namespace DPC.Components.Forms
         Public Sub DisplaySignaturePreview()
             Dim grid As New Grid()
 
-            ' Define rows: Row 0 for image, Row 1 for warning text
             grid.RowDefinitions.Add(New RowDefinition With {.Height = New GridLength(1, GridUnitType.Star)})
             grid.RowDefinitions.Add(New RowDefinition With {.Height = GridLength.Auto})
 
-            ' If signature exists, add the image
             If CostEstimateDetails.CEsignature = True Then
                 If File.Exists(tempImagePath) Then
                     GC.Collect()
@@ -202,34 +330,31 @@ Namespace DPC.Components.Forms
                 grid.Children.Add(imagePreview)
             End If
 
-            ' Always add the warning text at the bottom
             Dim warningText = CreateSignatureWarningText()
             Grid.SetRow(warningText, 1)
             grid.Children.Add(warningText)
 
-            ' Set as Border child
             BrowseFile.Child = grid
         End Sub
 
         Public Function CreateSignatureWarningText() As TextBlock
             Return New TextBlock With {
-        .Text = "By signing the document, you confirm that the billing amount is" & vbLf &
-                "accurate and corresponds to your additional terms or services.",
-        .FontWeight = FontWeights.Bold,
-        .FontFamily = New FontFamily("Lexend"),
-        .FontSize = 6.5,
-        .TextAlignment = TextAlignment.Center,
-        .Foreground = Brushes.Red,
-        .TextWrapping = TextWrapping.Wrap,
-        .HorizontalAlignment = HorizontalAlignment.Center,
-        .Margin = New Thickness(0, 5, 0, 0),
-        .MaxWidth = 200
-    }
+                .Text = "By signing the document, you confirm that the billing amount is" & vbLf &
+                        "accurate and corresponds to your additional terms or services.",
+                .FontWeight = FontWeights.Bold,
+                .FontFamily = New FontFamily("Lexend"),
+                .FontSize = 6.5,
+                .TextAlignment = TextAlignment.Center,
+                .Foreground = Brushes.Red,
+                .TextWrapping = TextWrapping.Wrap,
+                .HorizontalAlignment = HorizontalAlignment.Center,
+                .Margin = New Thickness(0, 5, 0, 0),
+                .MaxWidth = 200
+            }
         End Function
 
         Private Shared Function SavePdfPathToMongoDB(filePath As String, quoteNumber As String, uploadedBy As String) As Boolean
             Try
-                ' Get the MongoDB GridFS connection from SplashScreen
                 Dim gridFS As GridFSBucket = SplashScreen.GetGridFSConnection()
 
                 Using fileStream As New FileStream(filePath, FileMode.Open, FileAccess.Read)
@@ -247,7 +372,7 @@ Namespace DPC.Components.Forms
                 End Using
                 Return True
             Catch ex As Exception
-                MessageBox.Show("(Tips: You can go back to the newquote without lossing data) Error saving PDF path to MongoDB: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                MessageBox.Show("(Tips: You can go back to the newquote without losing data) Error saving PDF path to MongoDB: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 Return False
             End Try
         End Function
@@ -257,24 +382,23 @@ Namespace DPC.Components.Forms
 
             Dim success As Boolean = QuotesController.InsertQuote(CEQuoteNumberCache,
                                                                   CEReferenceNumber,
-            CEQuoteDateCache,
-            CEQuoteValidityDateCache,
-            CETaxProperty,
-            CEDiscountProperty,
-            CEClientIDCache,
-            CEClientName,
-            CEWarehouseIDCache,
-            CEWarehouseNameCache,
-            jsonItems,
-            CEQuoteNumberCache,
-            CETotalTaxValueCache,
-            CETotalDiscountValueCache,
-            CETotalAmountCache,
-            CacheOnLoggedInName,
-            CEApproved,
-            CEpaymentTerms)
+                CEQuoteDateCache,
+                CEQuoteValidityDateCache,
+                CETaxProperty,
+                CEDiscountProperty,
+                CEClientIDCache,
+                CEClientName,
+                CEWarehouseIDCache,
+                CEWarehouseNameCache,
+                jsonItems,
+                CEQuoteNumberCache,
+                CETotalTaxValueCache,
+                CETotalDiscountValueCache,
+                CETotalAmountCache,
+                CacheOnLoggedInName,
+                CEApproved,
+                CEpaymentTerms)
             If success Then
-                ' Unregister all textbox names before clearing UI to avoid duplicate name errors
                 Dim quoteForm As New DPC.Views.Sales.Quotes.NewQuote()
                 quoteForm.ClearAllFields()
                 CostEstimateDetails.ClearAllCECache()
@@ -286,112 +410,165 @@ Namespace DPC.Components.Forms
 
         <Obsolete>
         Private Function SaveAsPDF(docName As String) As String
-            Dim dpi As Integer = 300
-            Dim layoutWidth = PrintPreview.ActualWidth
-            Dim layoutHeight = PrintPreview.ActualHeight
-            Dim pixelWidth = CInt(layoutWidth * dpi / 96)
-            Dim pixelHeight = CInt(layoutHeight * dpi / 96)
-
-            Dim rtb As New RenderTargetBitmap(pixelWidth, pixelHeight, dpi, dpi, PixelFormats.Pbgra32)
-            PrintPreview.Measure(New Size(layoutWidth, layoutHeight))
-            PrintPreview.Arrange(New Rect(0, 0, layoutWidth, layoutHeight))
-            PrintPreview.UpdateLayout()
-            rtb.Render(PrintPreview)
-
-            Dim encoder As New PngBitmapEncoder()
-            encoder.Frames.Add(BitmapFrame.Create(rtb))
-            Dim stream As New MemoryStream()
-            encoder.Save(stream)
-            stream.Position = 0
-
-            Dim pdf As New PdfDocument()
-            Dim page = pdf.AddPage()
-            page.Width = XUnit.FromInch(layoutWidth / 96)
-            page.Height = XUnit.FromInch(layoutHeight / 96)
-
-            Dim gfx = XGraphics.FromPdfPage(page)
-            Dim image = XImage.FromStream(stream)
-            gfx.DrawImage(image, 0, 0, page.Width, page.Height)
-
             Dim dlg As New Microsoft.Win32.SaveFileDialog() With {
         .FileName = docName & ".pdf",
         .Filter = "PDF Files (.pdf)|.pdf"
     }
 
             If dlg.ShowDialog() = True Then
-                pdf.Save(dlg.FileName)
-                MessageBox.Show("Saved to: " & dlg.FileName)
-                Return dlg.FileName
+                Try
+                    Dim pdf As New PdfDocument()
+
+                    For i As Integer = 0 To allPages.Count - 1
+                        LoadPrintPage(i)
+
+                        ' Force UI update
+                        Application.Current.Dispatcher.Invoke(Sub()
+                                                                  PrintPreview.UpdateLayout()
+                                                              End Sub, System.Windows.Threading.DispatcherPriority.Render)
+
+                        ' Increase delay to ensure rendering is complete
+                        System.Threading.Thread.Sleep(300)
+
+                        ' Create PDF page - FIXED: Add page to document first
+                        Dim page As PdfPage = pdf.AddPage()
+
+                        ' Set page size
+                        Dim layoutWidth = PrintPreview.ActualWidth
+                        Dim layoutHeight = PrintPreview.ActualHeight
+                        page.Width = XUnit.FromInch(layoutWidth / 96)
+                        page.Height = XUnit.FromInch(layoutHeight / 96)
+
+                        ' Render to page
+                        RenderToPdfPage(PrintPreview, page)
+                    Next
+
+                    pdf.Save(dlg.FileName)
+                    MessageBox.Show($"Saved {allPages.Count} page(s) to: {dlg.FileName}")
+
+                    ' Load first page back for display
+                    LoadPrintPage(0)
+
+                    Return dlg.FileName
+
+                Catch ex As Exception
+                    MessageBox.Show($"Error creating PDF: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return Nothing
+                End Try
             Else
                 Return Nothing
             End If
         End Function
 
+        ' Helper method to render element to PDF page
+        Private Sub RenderToPdfPage(element As FrameworkElement, page As PdfPage)
+            Try
+                Dim dpi As Integer = 300
+                Dim layoutWidth = element.ActualWidth
+                Dim layoutHeight = element.ActualHeight
+
+                If layoutWidth = 0 OrElse layoutHeight = 0 Then
+                    Throw New InvalidOperationException("Element has invalid dimensions")
+                End If
+
+                Dim pixelWidth = CInt(layoutWidth * dpi / 96)
+                Dim pixelHeight = CInt(layoutHeight * dpi / 96)
+
+                Dim rtb As New RenderTargetBitmap(pixelWidth, pixelHeight, dpi, dpi, PixelFormats.Pbgra32)
+                element.Measure(New Size(layoutWidth, layoutHeight))
+                element.Arrange(New Rect(0, 0, layoutWidth, layoutHeight))
+                element.UpdateLayout()
+                rtb.Render(element)
+
+                Dim encoder As New PngBitmapEncoder()
+                encoder.Frames.Add(BitmapFrame.Create(rtb))
+
+                Using stream As New MemoryStream()
+                    encoder.Save(stream)
+                    stream.Position = 0
+
+                    ' Now create graphics from the page that's already in the document
+                    Using gfx As XGraphics = XGraphics.FromPdfPage(page)
+                        Dim image = XImage.FromStream(stream)
+                        gfx.DrawImage(image, 0, 0, page.Width, page.Height)
+                    End Using
+                End Using
+
+            Catch ex As Exception
+                Throw New Exception($"Error rendering to PDF page: {ex.Message}", ex)
+            End Try
+        End Sub
+
         Private Sub PrintPhysically(docName As String)
             Dim dlg As New PrintDialog()
             If dlg.ShowDialog() = True Then
-                ' Save original layout
-                Dim originalParent = VisualTreeHelper.GetParent(PrintPreview)
-                Dim originalIndex As Integer = -1
-                Dim originalMargin = PrintPreview.Margin
-                Dim originalTransform = PrintPreview.LayoutTransform
+                ' Print each page
+                For i As Integer = 0 To allPages.Count - 1
+                    LoadPrintPage(i)
 
-                If TypeOf originalParent Is Panel Then
-                    Dim panel = CType(originalParent, Panel)
-                    originalIndex = panel.Children.IndexOf(PrintPreview)
-                    panel.Children.Remove(PrintPreview)
-                End If
+                    Application.Current.Dispatcher.Invoke(Sub()
+                                                              PrintPreview.UpdateLayout()
+                                                          End Sub, System.Windows.Threading.DispatcherPriority.Render)
 
-                ' Setup layout for printing
-                PrintPreview.Margin = New Thickness(0)
-                PrintPreview.LayoutTransform = Transform.Identity
-                PrintPreview.UpdateLayout()
-                PrintPreview.Measure(New Size(Double.PositiveInfinity, Double.PositiveInfinity))
-                PrintPreview.Arrange(New Rect(PrintPreview.DesiredSize))
-                PrintPreview.UpdateLayout()
+                    Dim originalParent = VisualTreeHelper.GetParent(PrintPreview)
+                    Dim originalIndex As Integer = -1
+                    Dim originalMargin = PrintPreview.Margin
+                    Dim originalTransform = PrintPreview.LayoutTransform
 
-                ' A4 size (96 DPI)
-                Dim A4Width As Double = 8.3 * 96
-                Dim A4Height As Double = 11.69 * 96
-                Dim scaleX = A4Width / PrintPreview.ActualWidth
-                Dim scaleY = A4Height / PrintPreview.ActualHeight
-                Dim scale = Math.Min(scaleX, scaleY)
+                    If TypeOf originalParent Is Panel Then
+                        Dim panel = CType(originalParent, Panel)
+                        originalIndex = panel.Children.IndexOf(PrintPreview)
+                        panel.Children.Remove(PrintPreview)
+                    End If
 
-                ' Container with scaling
-                Dim container As New Grid()
-                container.Width = A4Width
-                container.Height = A4Height
-                container.LayoutTransform = New ScaleTransform(scale, scale)
-                container.Children.Add(PrintPreview)
+                    PrintPreview.Margin = New Thickness(0)
+                    PrintPreview.LayoutTransform = Transform.Identity
+                    PrintPreview.UpdateLayout()
+                    PrintPreview.Measure(New Size(Double.PositiveInfinity, Double.PositiveInfinity))
+                    PrintPreview.Arrange(New Rect(PrintPreview.DesiredSize))
+                    PrintPreview.UpdateLayout()
 
-                container.Measure(New Size(A4Width, A4Height))
-                container.Arrange(New Rect(New Point(0, 0), New Size(A4Width, A4Height)))
-                container.UpdateLayout()
+                    Dim A4Width As Double = 8.3 * 96
+                    Dim A4Height As Double = 11.69 * 96
+                    Dim scaleX = A4Width / PrintPreview.ActualWidth
+                    Dim scaleY = A4Height / PrintPreview.ActualHeight
+                    Dim scale = Math.Min(scaleX, scaleY)
 
-                ' Create print content
-                Dim fixedPage As New FixedPage()
-                fixedPage.Width = A4Width
-                fixedPage.Height = A4Height
-                fixedPage.Children.Add(container)
+                    Dim container As New Grid()
+                    container.Width = A4Width
+                    container.Height = A4Height
+                    container.LayoutTransform = New ScaleTransform(scale, scale)
+                    container.Children.Add(PrintPreview)
 
-                Dim pageContent As New PageContent()
-                CType(pageContent, IAddChild).AddChild(fixedPage)
+                    container.Measure(New Size(A4Width, A4Height))
+                    container.Arrange(New Rect(New Point(0, 0), New Size(A4Width, A4Height)))
+                    container.UpdateLayout()
 
-                Dim fixedDoc As New FixedDocument()
-                fixedDoc.Pages.Add(pageContent)
+                    Dim fixedPage As New FixedPage()
+                    fixedPage.Width = A4Width
+                    fixedPage.Height = A4Height
+                    fixedPage.Children.Add(container)
 
-                ' Print
-                dlg.PrintDocument(fixedDoc.DocumentPaginator, docName)
+                    Dim pageContent As New PageContent()
+                    CType(pageContent, IAddChild).AddChild(fixedPage)
 
-                ' Restore layout
-                container.Children.Clear()
-                PrintPreview.LayoutTransform = originalTransform
-                PrintPreview.Margin = originalMargin
+                    Dim fixedDoc As New FixedDocument()
+                    fixedDoc.Pages.Add(pageContent)
 
-                If TypeOf originalParent Is Panel AndAlso originalIndex >= 0 Then
-                    Dim panel = CType(originalParent, Panel)
-                    panel.Children.Insert(originalIndex, PrintPreview)
-                End If
+                    dlg.PrintDocument(fixedDoc.DocumentPaginator, $"{docName} - Page {i + 1}")
+
+                    container.Children.Clear()
+                    PrintPreview.LayoutTransform = originalTransform
+                    PrintPreview.Margin = originalMargin
+
+                    If TypeOf originalParent Is Panel AndAlso originalIndex >= 0 Then
+                        Dim panel = CType(originalParent, Panel)
+                        panel.Children.Insert(originalIndex, PrintPreview)
+                    End If
+                Next
+
+                MessageBox.Show($"Printed {allPages.Count} page(s) successfully!")
+                LoadPrintPage(0)
             End If
         End Sub
 
@@ -408,6 +585,124 @@ Namespace DPC.Components.Forms
             Catch ex As Exception
                 MessageBox.Show("Error saving to database: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
+        End Sub
+
+        Private Function GetProductImageFromDatabase(productName As String) As BitmapImage
+            Try
+                Dim imageBase64 As String = GetProduct.GetProductImageBase64(productName)
+
+                If Not String.IsNullOrEmpty(imageBase64) Then
+                    Return Base64ToBitmapImage(imageBase64)
+                End If
+
+                Return Nothing
+
+            Catch ex As Exception
+                Debug.WriteLine($"Error loading product image for {productName}: {ex.Message}")
+                Return Nothing
+            End Try
+        End Function
+
+        Private Function Base64ToBitmapImage(base64String As String) As BitmapImage
+            Try
+                If base64String.Contains(",") Then
+                    base64String = base64String.Split(","c)(1)
+                End If
+
+                Dim imageBytes As Byte() = Convert.FromBase64String(base64String)
+
+                Using ms As New MemoryStream(imageBytes)
+                    Dim bitmap As New BitmapImage()
+                    bitmap.BeginInit()
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad
+                    bitmap.StreamSource = ms
+                    bitmap.EndInit()
+                    bitmap.Freeze()
+                    Return bitmap
+                End Using
+
+            Catch ex As Exception
+                Debug.WriteLine($"Error converting Base64 to BitmapImage: {ex.Message}")
+                Return Nothing
+            End Try
+        End Function
+
+        Private Sub ProductImageControl_MouseLeftButtonDown(sender As Object, e As MouseButtonEventArgs)
+            Dim img As Image = TryCast(sender, Image)
+            If img IsNot Nothing AndAlso img.Source IsNot Nothing Then
+                Dim enlargeWindow As New Window()
+                enlargeWindow.Title = "Product Image"
+                enlargeWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen
+                enlargeWindow.SizeToContent = SizeToContent.WidthAndHeight
+                enlargeWindow.ResizeMode = ResizeMode.NoResize
+                enlargeWindow.Background = Brushes.Black
+
+                Dim enlargedImage As New Image()
+                enlargedImage.Source = img.Source
+                enlargedImage.MaxWidth = 800
+                enlargedImage.MaxHeight = 600
+                enlargedImage.Stretch = Stretch.Uniform
+                enlargedImage.Margin = New Thickness(10)
+                enlargedImage.Cursor = Cursors.Hand
+
+                AddHandler enlargedImage.MouseLeftButtonDown, Sub()
+                                                                  enlargeWindow.Close()
+                                                              End Sub
+
+                enlargeWindow.Content = enlargedImage
+                enlargeWindow.ShowDialog()
+            End If
+        End Sub
+
+        Private Sub UpdateServicesVisibility()
+            Dim nothingToFollowSection = TryCast(Me.FindName("NothingToFollowSection"), StackPanel)
+            Dim otherServicesSection = TryCast(Me.FindName("OtherServicesSection"), StackPanel)
+
+            Dim isLastPage = (currentPageIndex = allPages.Count - 1)
+
+            If nothingToFollowSection IsNot Nothing Then
+                nothingToFollowSection.Visibility = If(isLastPage, Visibility.Visible, Visibility.Collapsed)
+            End If
+
+            If otherServicesSection IsNot Nothing Then
+                otherServicesSection.Visibility = If(isLastPage, Visibility.Visible, Visibility.Collapsed)
+            End If
+        End Sub
+
+        Private Sub UpdateTotalCostVisibility()
+            Dim totalCostSection = TryCast(Me.FindName("TotalCostSection"), Border)
+
+            ' Only show on the last page
+            Dim isLastPage = (currentPageIndex = allPages.Count - 1)
+
+            If totalCostSection IsNot Nothing Then
+                totalCostSection.Visibility = If(isLastPage, Visibility.Visible, Visibility.Collapsed)
+            End If
+        End Sub
+
+        Private Sub UpdateWarrantyAndBottomSectionVisibility()
+            ' Find the warranty and bottom sections
+            Dim warrantySection = TryCast(Me.FindName("WarrantySection"), StackPanel)
+            Dim bottomSection = TryCast(Me.FindName("BottomSection"), StackPanel)
+
+            ' Only show on the last page
+            Dim isLastPage = (currentPageIndex = allPages.Count - 1)
+
+            If warrantySection IsNot Nothing Then
+                warrantySection.Visibility = If(isLastPage, Visibility.Visible, Visibility.Collapsed)
+            End If
+
+            If bottomSection IsNot Nothing Then
+                bottomSection.Visibility = If(isLastPage, Visibility.Visible, Visibility.Collapsed)
+            End If
+        End Sub
+
+        Private Sub UpdatePrintPageIndicator()
+            Dim pageIndicator = TryCast(Me.FindName("PageIndicatorText"), TextBlock)
+
+            If pageIndicator IsNot Nothing Then
+                pageIndicator.Text = $"Page {currentPageIndex + 1} of {allPages.Count}"
+            End If
         End Sub
 
     End Class

@@ -20,25 +20,57 @@ Namespace DPC.Views.Sales.Quotes
         Private itemOrder As New List(Of Dictionary(Of String, String))
         ' Text Editor PopOut
         Private Shared element As FrameworkElement
+        Private itemsPerPage As Integer = 14
+        Private paginationTriggerThreshold As Integer = 7
+        Private currentPageIndex As Integer = 0
+        Private totalPages As Integer = 1
+        Private allItems As List(Of Dictionary(Of String, String))
+
         Public Sub New()
 
-            ' This call is required by the designer.
             InitializeComponent()
-
-            ' Add any initialization after the InitializeComponent() call.
 
         End Sub
 
         Private Sub CostEstimate_Loaded(sender As Object, e As RoutedEventArgs)
+
+            txtPageInfo = TryCast(Me.FindName("txtPageInfo"), TextBlock)
+
+
+            UpdatePageInfo()
+            UpdateNavigationButtons()
+
             ' Check if important fields are initialized
             If String.IsNullOrEmpty(CostEstimateDetails.CEQuoteNumberCache) Then
                 MessageBox.Show("Quote Number is missing.")
                 Return
             End If
 
+            ' Check if CEQuoteItemsCache is Nothing before using it
             If CostEstimateDetails.CEQuoteItemsCache Is Nothing Then
                 MessageBox.Show("Quote items are not loaded.")
                 Return
+            End If
+
+            ' Initialize allItems FIRST
+            allItems = CostEstimateDetails.CEQuoteItemsCache
+            itemOrder = CostEstimateDetails.CEQuoteItemsCache
+
+            If allItems IsNot Nothing AndAlso allItems.Count > 0 Then
+                ' Trigger pagination when items exceed 7, but first page can hold up to 14
+                If allItems.Count > paginationTriggerThreshold Then
+                    ' Calculate pages based on 14 items per page
+                    If allItems.Count <= itemsPerPage Then
+                        totalPages = 2 ' First page has all items (up to 14), second page has sections only
+                    Else
+                        ' Items exceed 14, so calculate normally
+                        totalPages = Math.Ceiling(allItems.Count / itemsPerPage)
+                    End If
+                Else
+                    totalPages = 1 ' 7 or fewer items, single page
+                End If
+            Else
+                totalPages = 1
             End If
 
             Dim installationFee As Decimal
@@ -62,14 +94,12 @@ Namespace DPC.Views.Sales.Quotes
             QuoteValidityDate.Text = CostEstimateDetails.CEValidUntilDate
             Subtotal.Text = CostEstimateDetails.CETotalAmountCache
             TotalCost.Text = CostEstimateDetails.CETotalAmountCache
-            itemOrder = CostEstimateDetails.CEQuoteItemsCache
             base64Image = CostEstimateDetails.CEImageCache
             tempImagePath = CostEstimateDetails.CEPathCache
             ClientNameBox.Text = CostEstimateDetails.CEClientName
-            ' moved the vat12% to 
             CESubTotalCache = CostEstimateDetails.CETotalAmountCache
-            AddressLineOne.Text = CostEstimateDetails.CEAddress & ", " & CostEstimateDetails.CECity    ' -- important when editing
-            AddressLineTwo.Text = CostEstimateDetails.CERegion & ", " & CostEstimateDetails.CECountry    ' -- important when editing
+            AddressLineOne.Text = CostEstimateDetails.CEAddress & ", " & CostEstimateDetails.CECity
+            AddressLineTwo.Text = CostEstimateDetails.CERegion & ", " & CostEstimateDetails.CECountry
             PhoneBox.Text = "+63" & FormatPhoneWithSpaces(CostEstimateDetails.CEPhone)
             RepresentativeBox.Text = CostEstimateDetails.CERepresentative
             noteBox.Text = CostEstimateDetails.CEpaperNote
@@ -90,8 +120,8 @@ Namespace DPC.Views.Sales.Quotes
             Term15.Text = CostEstimateDetails.CETerm15
             SalesRep.Text = CacheOnLoggedInName
             cmbApproved.Text = CostEstimateDetails.CEApproved
-            cmbSubtotalTax.Text = CostEstimateDetails.CESubtotalExInc ' Added in the combobox when editing if exist
-            Warranty.Text = CostEstimateDetails.CEWarranty ' If there is changed the value will be rendered if not the default value will be rendered
+            cmbSubtotalTax.Text = CostEstimateDetails.CESubtotalExInc
+            Warranty.Text = CostEstimateDetails.CEWarranty
             cmbDeliveryMobilization.Text = CostEstimateDetails.CEDeliveryMobilization
             CNIdentifier.Text = CostEstimateDetails.CECNIndetifier
 
@@ -103,6 +133,10 @@ Namespace DPC.Views.Sales.Quotes
                 cmbTerms.Text = CostEstimateDetails.CEpaymentTerms
             End If
 
+            ' Load items with pagination
+            LoadPage(0)
+
+            ' Tax calculation logic
             If Not CEtaxSelection Then
                 ' Tax Inclusive
                 VatText.Visibility = Visibility.Visible
@@ -111,16 +145,13 @@ Namespace DPC.Views.Sales.Quotes
                     remarksBox.Text = "Tax Inclusive."
                 End If
 
-                ' Calculate Total Amount Before VAT
                 Dim totalAmountBeforeVAT As Decimal = 0
                 Dim rawSubtotal = Subtotal.Text.Replace("₱", "").Trim().Replace(",", "").Trim()
                 If Decimal.TryParse(rawSubtotal, totalAmountBeforeVAT) Then
-                    ' Calculate VAT (from subtotal only)
                     Dim vatAmount As Decimal = totalAmountBeforeVAT * 0.12D
                     VAT12.Text = "₱ " & vatAmount.ToString("N2")
                     CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
 
-                    ' Calculate Total Cost (subtotal already includes VAT)
                     Dim totalCostValue As Decimal = totalAmountBeforeVAT + installationFee + deliveryCost
                     TotalCost.Text = "₱ " & totalCostValue.ToString("N2")
                     CostEstimateDetails.CETotalAmountCache = "₱ " & totalCostValue.ToString("N2")
@@ -129,7 +160,6 @@ Namespace DPC.Views.Sales.Quotes
                     TotalCost.Text = "₱ 0.00"
                     VAT12.Text = "₱ 0.00"
                 End If
-
             Else
                 ' Tax Exclusive
                 VatText.Visibility = Visibility.Visible
@@ -138,12 +168,10 @@ Namespace DPC.Views.Sales.Quotes
                     remarksBox.Text = "Tax Exclusive."
                 End If
 
-                ' Calculate Total Cost
                 Dim totalCostValue As Decimal = 0
                 Dim rawSubtotal = Subtotal.Text.Replace("₱", "").Trim().Replace(",", "").Trim()
                 If Decimal.TryParse(rawSubtotal, totalCostValue) Then
                     Dim vatAmount As Decimal
-                    ' Calculate VAT (from subtotal only)
                     If CEisVatExInclude Then
                         vatAmount = totalCostValue * 0.12D
                     Else
@@ -154,7 +182,6 @@ Namespace DPC.Views.Sales.Quotes
                     VAT12.Text = "₱ " & vatAmount.ToString("N2")
                     CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
 
-                    ' Add Installation, Delivery, and VAT
                     totalCostValue += installationFee + deliveryCost + vatAmount
                     TotalCost.Text = "₱ " & totalCostValue.ToString("N2")
                     CostEstimateDetails.CETotalAmountCache = "₱ " & totalCostValue.ToString("N2")
@@ -165,32 +192,135 @@ Namespace DPC.Views.Sales.Quotes
                 End If
             End If
 
-
             ' Check if the signature is enabled
             If Not String.IsNullOrWhiteSpace(base64Image) Then
                 DisplayUploadedImage()
             End If
 
-            ' Load the data in the datagrid
-            For Each item In itemOrder
+            AddHandler BrowseFile.MouseLeftButtonUp, AddressOf OpenFiles
+        End Sub
+
+        ' Update LoadPage method:
+        Private Sub LoadPage(pageIndex As Integer)
+            If allItems Is Nothing OrElse allItems.Count = 0 Then
+                Return
+            End If
+
+            currentPageIndex = pageIndex
+            itemDataSource.Clear()
+
+            Dim startIndex As Integer
+            Dim endIndex As Integer
+
+            ' Special handling for items between 8-14
+            If allItems.Count > paginationTriggerThreshold AndAlso allItems.Count <= itemsPerPage Then
+                ' All items fit on first page, second page is sections only
+                If pageIndex = 0 Then
+                    startIndex = 0
+                    endIndex = allItems.Count
+                Else
+                    ' Second page - no items, just sections
+                    dataGrid.ItemsSource = itemDataSource
+                    UpdatePageInfo()
+                    UpdateNavigationButtons()
+                    UpdateNothingToFollowVisibility()
+                    UpdateServicesVisibility()
+                    UpdateTotalCostVisibility()
+                    UpdateWarrantyAndBottomSectionVisibility()
+                    UpdatePrintPageIndicator()
+                    Return
+                End If
+            Else
+                ' Normal pagination for items > 14 or <= 7
+                startIndex = pageIndex * itemsPerPage
+                endIndex = Math.Min(startIndex + itemsPerPage, allItems.Count)
+            End If
+
+            For i As Integer = startIndex To endIndex - 1
+                Dim item = allItems(i)
+
                 Dim rate As Decimal = Decimal.Parse(item("Rate"))
                 Dim rateFormatted As String = rate.ToString("N2")
 
                 Dim linePrice As Decimal = Decimal.Parse(item("Amount"))
                 Dim linePriceFormatted As String = linePrice.ToString("N2")
 
+                Dim productImage As BitmapImage = Nothing
+                If item.ContainsKey("ProductImageBase64") AndAlso Not String.IsNullOrEmpty(item("ProductImageBase64").ToString()) Then
+                    productImage = Base64ToBitmapImage(item("ProductImageBase64").ToString())
+                Else
+                    productImage = GetProductImageFromDatabase(item("ProductName").ToString())
+                End If
+
                 itemDataSource.Add(New OrderItems With {
-        .Quantity = item("Quantity"),
-        .Description = item("ProductName"),
-        .UnitPrice = $"₱ {rateFormatted}",
-        .LinePrice = $"₱ {linePriceFormatted}"
-    })
+            .Quantity = item("Quantity"),
+            .Description = item("ProductName"),
+            .UnitPrice = $"₱ {rateFormatted}",
+            .LinePrice = $"₱ {linePriceFormatted}",
+            .ProductImage = productImage
+        })
             Next
 
-            ' Display the data in the DataGrid
             dataGrid.ItemsSource = itemDataSource
 
-            AddHandler BrowseFile.MouseLeftButtonUp, AddressOf OpenFiles
+            ' Update UI
+            UpdatePageInfo()
+            UpdateNavigationButtons()
+            UpdateNothingToFollowVisibility()
+            UpdateServicesVisibility()
+            UpdateTotalCostVisibility()
+            UpdateWarrantyAndBottomSectionVisibility()
+            UpdatePrintPageIndicator()
+        End Sub
+
+        Private Sub UpdatePageInfo()
+            If txtPageInfo IsNot Nothing Then
+                txtPageInfo.Text = $"Page {currentPageIndex + 1} of {totalPages}"
+            End If
+        End Sub
+
+        Private Sub UpdateNavigationButtons()
+            Dim btnPrev = TryCast(Me.FindName("btnPrevPage"), Button)
+            Dim btnNext = TryCast(Me.FindName("btnNextPage"), Button)
+
+            If btnPrev IsNot Nothing Then
+                btnPrev.IsEnabled = currentPageIndex > 0
+            End If
+
+            If btnNext IsNot Nothing Then
+                btnNext.IsEnabled = currentPageIndex < totalPages - 1
+            End If
+        End Sub
+
+        Private Sub PreviousPage_Clicker(sender As Object, e As RoutedEventArgs)
+            If currentPageIndex > 0 Then
+                LoadPage(currentPageIndex - 1)
+            End If
+        End Sub
+
+        Private Sub NextPage_Clicker(sender As Object, e As RoutedEventArgs)
+            If currentPageIndex < totalPages - 1 Then
+                LoadPage(currentPageIndex + 1)
+            End If
+        End Sub
+
+
+        Private Sub UpdatePageIndicator()
+            ' You can add a TextBlock to show "Page 1 of 3" etc.
+            ' This is optional but helpful
+        End Sub
+
+        ' Add navigation methods (if you want manual navigation)
+        Private Sub NextPage_Click(sender As Object, e As RoutedEventArgs)
+            If currentPageIndex < totalPages - 1 Then
+                LoadPage(currentPageIndex + 1)
+            End If
+        End Sub
+
+        Private Sub PreviousPage_Click(sender As Object, e As RoutedEventArgs)
+            If currentPageIndex > 0 Then
+                LoadPage(currentPageIndex - 1)
+            End If
         End Sub
 
 #Region "Computation Part"
@@ -496,7 +626,7 @@ Namespace DPC.Views.Sales.Quotes
             CostEstimateDetails.CEWarranty = Warranty.Text
             CostEstimateDetails.CEDeliveryMobilization = cmbDeliveryMobilization.Text
             CostEstimateDetails.CECNIndetifier = CNIdentifier.Text
-
+            CostEstimateDetails.CEOtherServices = OtherServices.Text ' Add this line
             CostEstimateDetails.CEpaymentTerms = cmbTerms.Text
             If CostEstimateDetails.CEisCustomTerm = True Then
                 CostEstimateDetails.CEpaymentTerms = CustomTerms.Text
@@ -533,5 +663,210 @@ Namespace DPC.Views.Sales.Quotes
 
         End Sub
 #End Region
+
+        ' CHANGES START HERE
+        Private Function GetProductImageFromDatabase(productName As String) As BitmapImage
+            Try
+                ' Get Base64 image from database using GetProduct controller
+                Dim imageBase64 As String = GetProduct.GetProductImageBase64(productName)
+
+                If Not String.IsNullOrEmpty(imageBase64) Then
+                    Return Base64ToBitmapImage(imageBase64)
+                End If
+
+                Return Nothing
+
+            Catch ex As Exception
+                Debug.WriteLine($"Error loading product image for {productName}: {ex.Message}")
+                Return Nothing
+            End Try
+        End Function
+
+        Private Function Base64ToBitmapImage(base64String As String) As BitmapImage
+            Try
+                ' Remove data URI prefix if present (e.g., "data:image/png;base64,")
+                If base64String.Contains(",") Then
+                    base64String = base64String.Split(","c)(1)
+                End If
+
+                Dim imageBytes As Byte() = Convert.FromBase64String(base64String)
+
+                Using ms As New MemoryStream(imageBytes)
+                    Dim bitmap As New BitmapImage()
+                    bitmap.BeginInit()
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad
+                    bitmap.StreamSource = ms
+                    bitmap.EndInit()
+                    bitmap.Freeze()
+                    Return bitmap
+                End Using
+
+            Catch ex As Exception
+                Debug.WriteLine($"Error converting Base64 to BitmapImage: {ex.Message}")
+                Return Nothing
+            End Try
+        End Function
+
+        ' Image Enlarge 
+
+        Private Sub ProductImageControl_MouseLeftButtonDown(sender As Object, e As MouseButtonEventArgs)
+            Dim img As Image = TryCast(sender, Image)
+            If img IsNot Nothing AndAlso img.Source IsNot Nothing Then
+                ' Create a new window to display the enlarged image
+                Dim enlargeWindow As New Window()
+                enlargeWindow.Title = "Product Image"
+                enlargeWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen
+                enlargeWindow.SizeToContent = SizeToContent.WidthAndHeight
+                enlargeWindow.ResizeMode = ResizeMode.NoResize
+                enlargeWindow.Background = Brushes.Black
+
+                ' Create an image control for the enlarged view
+                Dim enlargedImage As New Image()
+                enlargedImage.Source = img.Source
+                enlargedImage.MaxWidth = 800
+                enlargedImage.MaxHeight = 600
+                enlargedImage.Stretch = Stretch.Uniform
+                enlargedImage.Margin = New Thickness(10)
+                enlargedImage.Cursor = Cursors.Hand
+
+                ' Close window when clicking the image
+                AddHandler enlargedImage.MouseLeftButtonDown,
+                Sub()
+                    enlargeWindow.Close()
+                End Sub
+
+                ' Set the image as window content
+                enlargeWindow.Content = enlargedImage
+
+                ' Show the window
+                enlargeWindow.ShowDialog()
+            End If
+        End Sub
+
+        ' Nothing To follow Visisbility
+
+        Private Sub UpdateNothingToFollowVisibility()
+            ' Find the "Nothing to follow" StackPanel
+            Dim nothingToFollowPanel As StackPanel = Nothing
+            Dim otherServicesPanel As StackPanel = Nothing
+
+            ' Search through the visual tree to find these elements
+            For Each child As UIElement In FindVisualChildren(Of StackPanel)(Me)
+                Dim stackPanel = TryCast(child, StackPanel)
+                If stackPanel IsNot Nothing Then
+                    ' Find the panel containing "Nothing to follow" text
+                    For Each element In stackPanel.Children
+                        If TypeOf element Is Border Then
+                            Dim border = TryCast(element, Border)
+                            If border.Child IsNot Nothing AndAlso TypeOf border.Child Is TextBlock Then
+                                Dim textBlock = TryCast(border.Child, TextBlock)
+                                If textBlock.Text.Contains("Nothing to follow") Then
+                                    nothingToFollowPanel = stackPanel
+                                    Exit For
+                                End If
+                            End If
+                        End If
+                    Next
+
+                    ' Find the OtherServices panel
+                    For Each element In stackPanel.Children
+                        If TypeOf element Is Border Then
+                            Dim border = TryCast(element, Border)
+                            If border.Child IsNot Nothing AndAlso TypeOf border.Child Is StackPanel Then
+                                Dim innerStack = TryCast(border.Child, StackPanel)
+                                For Each innerElement In innerStack.Children
+                                    If TypeOf innerElement Is TextBlock Then
+                                        Dim tb = TryCast(innerElement, TextBlock)
+                                        If tb.Name = "OtherServicesText" Then
+                                            otherServicesPanel = stackPanel
+                                            Exit For
+                                        End If
+                                    End If
+                                Next
+                            End If
+                        End If
+                    Next
+                End If
+            Next
+
+            ' Show on last page only, hide on other pages
+            If nothingToFollowPanel IsNot Nothing Then
+                nothingToFollowPanel.Visibility = If(currentPageIndex = totalPages - 1, Visibility.Visible, Visibility.Collapsed)
+            End If
+
+            If otherServicesPanel IsNot Nothing Then
+                otherServicesPanel.Visibility = If(currentPageIndex = totalPages - 1, Visibility.Visible, Visibility.Collapsed)
+            End If
+        End Sub
+
+        Private Iterator Function FindVisualChildren(Of T As DependencyObject)(depObj As DependencyObject) As IEnumerable(Of T)
+            If depObj IsNot Nothing Then
+                For i As Integer = 0 To VisualTreeHelper.GetChildrenCount(depObj) - 1
+                    Dim child As DependencyObject = VisualTreeHelper.GetChild(depObj, i)
+                    If child IsNot Nothing AndAlso TypeOf child Is T Then
+                        Yield CType(child, T)
+                    End If
+
+                    For Each childOfChild In FindVisualChildren(Of T)(child)
+                        Yield childOfChild
+                    Next
+                Next
+            End If
+        End Function
+
+        Private Sub UpdateServicesVisibility()
+            ' Using FindName to locate the named elements
+            Dim nothingToFollowSection = TryCast(Me.FindName("NothingToFollowSection"), StackPanel)
+            Dim otherServicesSection = TryCast(Me.FindName("OtherServicesSection"), StackPanel)
+
+            ' Only show on the last page
+            Dim isLastPage = (currentPageIndex = totalPages - 1)
+
+            If nothingToFollowSection IsNot Nothing Then
+                nothingToFollowSection.Visibility = If(isLastPage, Visibility.Visible, Visibility.Collapsed)
+            End If
+
+            If otherServicesSection IsNot Nothing Then
+                otherServicesSection.Visibility = If(isLastPage, Visibility.Visible, Visibility.Collapsed)
+            End If
+        End Sub
+
+        'Total Cost Section 
+        Private Sub UpdateTotalCostVisibility()
+            Dim totalCostSection = TryCast(Me.FindName("TotalCostSection"), Border)
+
+            ' Only show on the last page
+            Dim isLastPage = (currentPageIndex = totalPages - 1)
+
+            If totalCostSection IsNot Nothing Then
+                totalCostSection.Visibility = If(isLastPage, Visibility.Visible, Visibility.Collapsed)
+            End If
+        End Sub
+
+        Private Sub UpdateWarrantyAndBottomSectionVisibility()
+            ' Find the warranty and bottom sections
+            Dim warrantySection = TryCast(Me.FindName("WarrantySection"), StackPanel)
+            Dim bottomSection = TryCast(Me.FindName("BottomSection"), StackPanel)
+
+            ' Only show on the last page
+            Dim isLastPage = (currentPageIndex = totalPages - 1)
+
+            If warrantySection IsNot Nothing Then
+                warrantySection.Visibility = If(isLastPage, Visibility.Visible, Visibility.Collapsed)
+            End If
+
+            If bottomSection IsNot Nothing Then
+                bottomSection.Visibility = If(isLastPage, Visibility.Visible, Visibility.Collapsed)
+            End If
+        End Sub
+
+        Private Sub UpdatePrintPageIndicator()
+            Dim pageIndicator = TryCast(Me.FindName("PageIndicatorText"), TextBlock)
+
+            If pageIndicator IsNot Nothing Then
+                pageIndicator.Text = $"Page {currentPageIndex + 1} of {totalPages}"
+            End If
+        End Sub
+
     End Class
 End Namespace
