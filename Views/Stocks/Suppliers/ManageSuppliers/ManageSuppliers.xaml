@@ -9,19 +9,17 @@
         Background="#D9D9D9">
 
     <UserControl.Resources>
-        <!-- Modern ScrollBar Style for Vertical and Horizontal -->
+        <!-- Modern ScrollBar Style for Both Horizontal and Vertical -->
         <Style x:Key="ModernScrollBarStyle" TargetType="ScrollBar">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Width" Value="800"/>
-            <Setter Property="Height" Value="20"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ScrollBar}">
                         <Grid Background="{TemplateBinding Background}">
                             <Track x:Name="PART_Track"
-                                   IsDirectionReversed="false"
-                                   Focusable="false"
-                                   Orientation="{TemplateBinding Orientation}">
+                               IsDirectionReversed="True"
+                               Focusable="false"
+                               Orientation="{TemplateBinding Orientation}">
                                 <Track.DecreaseRepeatButton>
                                     <RepeatButton Style="{x:Null}" IsTabStop="False" Opacity="0"/>
                                 </Track.DecreaseRepeatButton>
@@ -29,7 +27,9 @@
                                     <Thumb>
                                         <Thumb.Template>
                                             <ControlTemplate TargetType="{x:Type Thumb}">
-                                                <Border x:Name="ThumbBorder" CornerRadius="4" Background="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+                                                <Border x:Name="ThumbBorder" 
+                                                    CornerRadius="4" 
+                                                    Background="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
                                                 <ControlTemplate.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
                                                         <Setter TargetName="ThumbBorder" Property="Background" Value="#222222"/>
@@ -44,11 +44,36 @@
                                 </Track.IncreaseRepeatButton>
                             </Track>
                         </Grid>
+                        <ControlTemplate.Triggers>
+                            <!-- Trigger for Vertical ScrollBar -->
+                            <Trigger Property="Orientation" Value="Vertical">
+                                <Setter TargetName="PART_Track" Property="IsDirectionReversed" Value="True"/>
+                            </Trigger>
+                            <!-- Trigger for Horizontal ScrollBar -->
+                            <Trigger Property="Orientation" Value="Horizontal">
+                                <Setter TargetName="PART_Track" Property="IsDirectionReversed" Value="False"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <!-- Style Triggers for sizing based on orientation -->
+            <Style.Triggers>
+                <!-- Horizontal ScrollBar: 10px height -->
+                <Trigger Property="Orientation" Value="Horizontal">
+                    <Setter Property="Height" Value="10"/>
+                    <Setter Property="Width" Value="Auto"/>
+                </Trigger>
+                <!-- Vertical ScrollBar: 10px width -->
+                <Trigger Property="Orientation" Value="Vertical">
+                    <Setter Property="Width" Value="10"/>
+                    <Setter Property="Height" Value="Auto"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
     </UserControl.Resources>
+
+
 
     <Grid x:Name="mainGrid">
         <Grid.RowDefinitions>
@@ -255,9 +280,17 @@
                 <DataGridTemplateColumn Header="Settings" Width="80">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Width="30" Height="30" Background="Transparent" Margin="0" ToolTip="Delete" Cursor="Hand" Click="DeleteProduct">
-                                <materialDesign:PackIcon Kind="DeleteOutline" Width="16" Height="16" Foreground="#E65E5E"/>
-                            </Button>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+
+                                <Button Width="30" Height="30" Background="Transparent" Margin="0" ToolTip="Edit" Cursor="Hand" Click="OpenEditSupplier">
+                                    <materialDesign:PackIcon Kind="SquareEditOutline" Width="16" Height="16" Foreground="#52C69D"/>
+                                </Button>
+
+                                <Button Width="30" Height="30" Background="Transparent" Margin="0" ToolTip="Delete" Cursor="Hand" Click="DeleteProduct">
+                                    <materialDesign:PackIcon Kind="DeleteOutline" Width="16" Height="16" Foreground="#E65E5E"/>
+                                </Button>
+
+                            </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

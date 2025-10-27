@@ -1,10 +1,11 @@
-﻿Imports System.Windows.Controls
+﻿Imports System.Collections.ObjectModel
 Imports System.ComponentModel
-Imports System.Collections.ObjectModel
+Imports System.Data
+Imports System.Windows.Controls
 Imports System.Windows.Controls.Primitives
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
-Imports System.Data
+Imports DPC.DPC.Data.Model
 Imports MySql.Data.MySqlClient
 
 Namespace DPC.Views.Stocks.Suppliers.ManageSuppliers
@@ -62,6 +63,39 @@ Namespace DPC.Views.Stocks.Suppliers.ManageSuppliers
             LoadData()
         End Sub
 
+        ' OpenEditSupplier part
+        Private Sub OpenEditSupplier(sender As Object, e As RoutedEventArgs)
+            ' Get the selected supplier from the DataGrid
+            Dim editSupplierWindow As New DPC.Views.Stocks.Suppliers.NewSupplier.EditSuppliers()
+            Dim supplier As SupplierDataModel = TryCast(dataGrid.SelectedItem, SupplierDataModel)
+
+            If supplier IsNot Nothing Then
+                ' Get full supplier details from database
+                Dim fullSupplier As SupplierDataModel = SupplierController.GetSupplierById(supplier.SupplierID)
+
+                If fullSupplier IsNot Nothing Then
+                    ' Populate cache with supplier data
+                    cacheSupplierID = fullSupplier.SupplierID
+                    CacheCompanyRepresentative = fullSupplier.SupplierName
+                    CacheCompanyName = fullSupplier.SupplierCompany
+                    CachePhone = fullSupplier.SupplierPhone
+                    CacheEmail = fullSupplier.SupplierEmail
+                    CacheCompanyAddress = fullSupplier.OfficeAddress
+                    CacheCompanyCity = fullSupplier.City
+                    CacheCompanyRegion = fullSupplier.Region
+                    CacheCompanyCountry = fullSupplier.Country
+                    CacheCompanyPostalCode = fullSupplier.PostalCode
+                    CacheCompanyTINID = fullSupplier.TinId
+
+                    ' Navigate to EditSuppliers view
+                    ViewLoader.DynamicView.NavigateToView("editsuppliers", Me)
+                Else
+                    MessageBox.Show("Unable to load supplier details.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                End If
+            Else
+                MessageBox.Show("Please select a supplier to edit.", "No Selection", MessageBoxButton.OK, MessageBoxImage.Warning)
+            End If
+        End Sub
 
         Private Sub DeleteProduct(sender As Object, e As RoutedEventArgs)
             Dim deleteSupplier As New DPC.Components.ConfirmationModals.DeleteProductConfirmation()
