@@ -128,8 +128,8 @@ Namespace DPC.Components.Forms
 
             If _useAdditionalField Then
                 filteredItems = itemsSource.
-                    Where(Function(i) _getItemName(i).ToLower().Contains(searchText) OrElse
-                                  _getAdditionalSearchField(i).ToLower().Contains(searchText) AndAlso
+                    Where(Function(i) (_getItemName(i).ToLower().Contains(searchText) OrElse
+                                  _getAdditionalSearchField(i).ToLower().Contains(searchText)) AndAlso
                                   Not _selectedItems.Any(Function(si) Object.Equals(_getItemId(si), _getItemId(i)))).
                     ToList()
             Else
