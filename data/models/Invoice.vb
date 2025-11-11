@@ -11,6 +11,8 @@
         Public Property UnitPrice As String
         Public Property LinePrice As String
         Public Property ProductImage As BitmapImage
+        Public Property ProductDescription As String  ' Add this
+        Public Property ProductDescriptionVisibility As Visibility  ' Add this
     End Class
 
 End Namespace

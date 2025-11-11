@@ -177,19 +177,19 @@
                                         <StackPanel Grid.Row="3" Orientation="Vertical" HorizontalAlignment="Right" Margin="5">
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                                 <TextBlock x:Name="CNIdentifier" Text="CE #:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                <Border Background="White" BorderThickness="0.5,0.5,0.5,0.25"  BorderBrush="#090909" Padding="3,0" Width="250" Margin="8,0,0,0" Height="20">
+                                                <Border Background="White" BorderThickness="0.5,0.5,0.5,0.25"  BorderBrush="#090909" Padding="3,0" Width="220" Margin="3,0,0,0" Height="20">
                                                     <TextBlock x:Name="QuoteNumber" FontSize="12" FontFamily="Lexend" FontWeight="Bold" HorizontalAlignment="Center"  VerticalAlignment="Center"/>
                                                 </Border>
                                             </StackPanel>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                                 <TextBlock Text="Date:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                <Border Background="White" BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="#090909" Padding="3,0" Width="250" Margin="8,0,0,0" Height="20">
+                                                <Border Background="White" BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="#090909" Padding="3,0" Width="220" Margin="3,0,0,0" Height="20">
                                                     <TextBlock x:Name="QuoteDate" FontSize="9" FontFamily="Lexend"  HorizontalAlignment="Center"  VerticalAlignment="Center"/>
                                                 </Border>
                                             </StackPanel>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                                 <TextBlock Text="Valid Until:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                <Border BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="Black" Padding="3,0" Width="250" Margin="8,0,0,0" Height="20">
+                                                <Border BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="Black" Padding="3,0" Width="220" Margin="3,0,0,0" Height="20">
                                                     <TextBlock x:Name="QuoteValidityDate"  FontSize="9" FontWeight="Bold"  Foreground="Red" FontFamily="Lexend" HorizontalAlignment="Center"  VerticalAlignment="Center" />
                                                 </Border>
                                             </StackPanel>
@@ -227,15 +227,15 @@
                                                     </Grid.ColumnDefinitions>
 
                                                     <StackPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Right">
-                                                        <TextBlock Text="Client Name/Company Name:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                                        <TextBlock Text="Client Address" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,15"/>
-                                                        <TextBlock Text="Contact Number" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                                        <TextBlock Text="Company Representative" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                        <TextBlock Text="Client Name/Company Name:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="0,0,5,0"/>
+                                                        <TextBlock Text="Client Address" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="0,0,5,13" />
+                                                        <TextBlock Text="Contact Number" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="0,0,5,0"/>
+                                                        <TextBlock Text="Company Representative" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="0,0,5,0"/>
                                                     </StackPanel>
 
                                                     <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Right">
                                                         <TextBlock x:Name="ClientNameBox" Text="Eli Clark" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                        <TextBlock x:Name="AddressLineOne" Text="Wales, Swansea" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                                        <TextBlock x:Name="AddressLineOne" Text="Wales, Swansea" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center" HorizontalAlignment="Left" TextWrapping="Wrap" Width="250"/>
                                                         <TextBlock x:Name="AddressLineTwo" Text="United Kingdom" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
                                                         <TextBlock x:Name="PhoneBox" Text="+63966634982" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
                                                         <TextBlock x:Name="RepresentativeBox" Text="brookerose@gmail.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
@@ -403,6 +403,7 @@
                                                             <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="70">
                                                                 <DataGridTextColumn.ElementStyle>
                                                                     <Style TargetType="TextBlock">
+                                                                        <Setter Property="Margin" Value="8"/>
                                                                         <Setter Property="HorizontalAlignment" Value="Center"/>
                                                                         <Setter Property="VerticalAlignment" Value="Center"/>
                                                                         <Setter Property="TextAlignment" Value="Center"/>
@@ -414,24 +415,34 @@
                                                             </DataGridTextColumn>
 
                                                             <!-- Description Column - Centered -->
-                                                            <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*">
-                                                                <DataGridTextColumn.ElementStyle>
-                                                                    <Style TargetType="TextBlock">
-                                                                        <Setter Property="HorizontalAlignment" Value="Center"/>
-                                                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                                                        <Setter Property="TextAlignment" Value="Center"/>
-                                                                        <Setter Property="FontSize" Value="12"/>
-                                                                        <Setter Property="FontFamily" Value="Lexend"/>
-                                                                        <Setter Property="TextWrapping" Value="Wrap"/>
-                                                                        <Setter Property="Padding" Value="5,2"/>
-                                                                    </Style>
-                                                                </DataGridTextColumn.ElementStyle>
-                                                            </DataGridTextColumn>
+                                                            <DataGridTemplateColumn Header="Description" Width="*">
+                                                                <DataGridTemplateColumn.CellTemplate>
+                                                                    <DataTemplate>
+                                                                        <StackPanel Margin="8" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                                            <TextBlock Text="{Binding Description}" 
+                                                                              FontSize="12" 
+                                                                              FontFamily="Lexend"
+                                                                              FontWeight="SemiBold"
+                                                                              MaxWidth="400"
+                                                                              TextWrapping="Wrap"/>
+                                                                            <TextBlock Text="{Binding ProductDescription}" 
+                                                                              FontSize="12" 
+                                                                              FontFamily="Lexend"
+                                                                              Foreground="black"
+                                                                              TextWrapping="Wrap"
+                                                                              Margin="0,3,0,0"
+                                                                              MaxWidth="400"         
+                                                                              Visibility="{Binding ProductDescriptionVisibility}"/>
+                                                                        </StackPanel>
+                                                                    </DataTemplate>
+                                                                </DataGridTemplateColumn.CellTemplate>
+                                                            </DataGridTemplateColumn>
 
                                                             <!-- Unit Price Column - Centered -->
-                                                            <DataGridTextColumn Header="Unit Price" Binding="{Binding UnitPrice}" Width="75">
+                                                            <DataGridTextColumn Header="Unit Price" Binding="{Binding UnitPrice}" Width="85">
                                                                 <DataGridTextColumn.ElementStyle>
                                                                     <Style TargetType="TextBlock">
+                                                                        <Setter Property="Margin" Value="8"/>
                                                                         <Setter Property="HorizontalAlignment" Value="Center"/>
                                                                         <Setter Property="VerticalAlignment" Value="Center"/>
                                                                         <Setter Property="TextAlignment" Value="Center"/>
@@ -443,9 +454,10 @@
                                                             </DataGridTextColumn>
 
                                                             <!-- Line Price Column - Centered -->
-                                                            <DataGridTextColumn Header="Line Price" Binding="{Binding LinePrice}" Width="75">
+                                                            <DataGridTextColumn Header="Line Price" Binding="{Binding LinePrice}" Width="85">
                                                                 <DataGridTextColumn.ElementStyle>
                                                                     <Style TargetType="TextBlock">
+                                                                        <Setter Property="Margin" Value="8"/>
                                                                         <Setter Property="HorizontalAlignment" Value="Center"/>
                                                                         <Setter Property="VerticalAlignment" Value="Center"/>
                                                                         <Setter Property="TextAlignment" Value="Center"/>
@@ -465,7 +477,6 @@
                                                                 <Setter Property="FontSize" Value="12"/>
                                                                 <Setter Property="Margin" Value="0"/>
                                                                 <Setter Property="Padding" Value="0"/>
-                                                                <Setter Property="Height" Value="55"/>
                                                                 <Setter Property="MinHeight" Value="55"/>
                                                             </Style>
                                                         </DataGrid.RowStyle>
@@ -500,7 +511,7 @@
                                                                         <ControlTemplate TargetType="DataGridCell">
                                                                             <Border Padding="{TemplateBinding Padding}"                                                                          
                                                                                     Background="{TemplateBinding Background}">
-                                                                                <ContentPresenter VerticalAlignment="Center"/>
+                                                                                <ContentPresenter VerticalAlignment="Top"/>
                                                                             </Border>
                                                                         </ControlTemplate>
                                                                     </Setter.Value>
@@ -510,7 +521,7 @@
                                                     </DataGrid>
 
                                                     <!-- "Nothing to follow" text -->
-                                                    <StackPanel x:Name="NothingToFollowSection" Margin="5,0,5,0" Orientation="Vertical" HorizontalAlignment="Center">
+                                                    <StackPanel x:Name="NothingToFollowSection" Margin="0,0,5,0" Orientation="Vertical" HorizontalAlignment="Center">
                                                         <Border Background="Transparent" Padding="5" CornerRadius="5">
                                                             <TextBlock Text="*............................................... Nothing to follow ...............................................*"
                                                                    FontFamily="Lexend"
@@ -528,6 +539,8 @@
                                                                 <TextBlock x:Name="OtherServicesText"
                                                                    HorizontalAlignment="Center"          
                                                                    Text=""
+                                                                   Width="400"
+                                                                   TextAlignment="Center"
                                                                    FontFamily="Lexend"
                                                                    FontSize="12"
                                                                    Foreground="Black"

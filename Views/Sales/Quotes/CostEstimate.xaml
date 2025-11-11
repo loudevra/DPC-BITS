@@ -119,6 +119,28 @@
                                     </Button>
                                 </Border>
 
+                                <!-- Toggle Image Button - Simple Version -->
+                                <Border HorizontalAlignment="Right" Margin="0,0,55,0" CornerRadius="10,10,10,0" Background="White">
+                                    <Button x:Name="btnToggleImage" 
+                                        Click="ToggleImage_Click"
+                                        Style="{StaticResource IconButton}"
+                                        ToolTip="Toggle Product Images">
+                                        <StackPanel>
+                                            <materialDesign:PackIcon x:Name="iconToggleImage" 
+                                                 Kind="Image" 
+                                                 Width="27" 
+                                                 Height="27" 
+                                                 Margin="10,13,10,0" 
+                                                 Foreground="#555555"/>
+                                            <TextBlock x:Name="txtToggleImage" 
+                                                 Text="Hide Images" 
+                                                 FontSize="8" 
+                                                 HorizontalAlignment="Center" 
+                                                 Foreground="#555555"/>
+                                        </StackPanel>
+                                    </Button>
+                                </Border>
+
                             </Grid>
                         </Border>
                         <StackPanel Grid.Row="1" Margin="0,0,0,0" >
@@ -425,6 +447,7 @@
                                                         <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="70">
                                                             <DataGridTextColumn.ElementStyle>
                                                                 <Style TargetType="TextBlock">
+                                                                    <Setter Property="Margin" Value="0,8"/>
                                                                     <Setter Property="HorizontalAlignment" Value="Center"/>
                                                                     <Setter Property="VerticalAlignment" Value="Center"/>
                                                                     <Setter Property="TextAlignment" Value="Center"/>
@@ -436,24 +459,34 @@
                                                         </DataGridTextColumn>
 
                                                         <!-- Description Column - Centered -->
-                                                        <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*">
-                                                            <DataGridTextColumn.ElementStyle>
-                                                                <Style TargetType="TextBlock">
-                                                                    <Setter Property="HorizontalAlignment" Value="Center"/>
-                                                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                                                    <Setter Property="TextAlignment" Value="Center"/>
-                                                                    <Setter Property="FontSize" Value="12"/>
-                                                                    <Setter Property="FontFamily" Value="Lexend"/>
-                                                                    <Setter Property="TextWrapping" Value="Wrap"/>
-                                                                    <Setter Property="Padding" Value="5,2"/>
-                                                                </Style>
-                                                            </DataGridTextColumn.ElementStyle>
-                                                        </DataGridTextColumn>
+                                                        <DataGridTemplateColumn Header="Description" Width="*">
+                                                            <DataGridTemplateColumn.CellTemplate>
+                                                                <DataTemplate>
+                                                                    <StackPanel Margin="8" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                                        <TextBlock Text="{Binding Description}" 
+                                                                          FontSize="12" 
+                                                                          FontFamily="Lexend"
+                                                                          FontWeight="SemiBold"
+                                                                          MaxWidth="400"
+                                                                          TextWrapping="Wrap"/>
+                                                                        <TextBlock Text="{Binding ProductDescription}" 
+                                                                          FontSize="12" 
+                                                                          FontFamily="Lexend"
+                                                                          Foreground="Black"
+                                                                          TextWrapping="Wrap"
+                                                                          Margin="0,3,0,0"
+                                                                          MaxWidth="400"       
+                                                                          Visibility="{Binding ProductDescriptionVisibility}"/>
+                                                                    </StackPanel>
+                                                                </DataTemplate>
+                                                            </DataGridTemplateColumn.CellTemplate>
+                                                        </DataGridTemplateColumn>
 
                                                         <!-- Unit Price Column - Centered -->
-                                                        <DataGridTextColumn Header="Unit Price" Binding="{Binding UnitPrice}" Width="75">
+                                                        <DataGridTextColumn Header="Unit Price" Binding="{Binding UnitPrice}" Width="80">
                                                             <DataGridTextColumn.ElementStyle>
                                                                 <Style TargetType="TextBlock">
+                                                                    <Setter Property="Margin" Value="0,8"/>
                                                                     <Setter Property="HorizontalAlignment" Value="Center"/>
                                                                     <Setter Property="VerticalAlignment" Value="Center"/>
                                                                     <Setter Property="TextAlignment" Value="Center"/>
@@ -465,9 +498,10 @@
                                                         </DataGridTextColumn>
 
                                                         <!-- Line Price Column - Centered -->
-                                                        <DataGridTextColumn Header="Line Price" Binding="{Binding LinePrice}" Width="75">
+                                                        <DataGridTextColumn Header="Line Price" Binding="{Binding LinePrice}" Width="80">
                                                             <DataGridTextColumn.ElementStyle>
                                                                 <Style TargetType="TextBlock">
+                                                                    <Setter Property="Margin" Value="0,8"/>
                                                                     <Setter Property="HorizontalAlignment" Value="Center"/>
                                                                     <Setter Property="VerticalAlignment" Value="Center"/>
                                                                     <Setter Property="TextAlignment" Value="Center"/>
@@ -487,7 +521,6 @@
                                                             <Setter Property="FontSize" Value="12"/>
                                                             <Setter Property="Margin" Value="0"/>
                                                             <Setter Property="Padding" Value="0"/>
-                                                            <Setter Property="Height" Value="55"/>
                                                             <Setter Property="MinHeight" Value="55"/>
                                                         </Style>
                                                     </DataGrid.RowStyle>
@@ -522,7 +555,7 @@
                                                                     <ControlTemplate TargetType="DataGridCell">
                                                                         <Border Padding="{TemplateBinding Padding}"                                                                             
                                                                             Background="{TemplateBinding Background}">
-                                                                            <ContentPresenter VerticalAlignment="Center"/>
+                                                                            <ContentPresenter VerticalAlignment="Top"/>
                                                                         </Border>
                                                                     </ControlTemplate>
                                                                 </Setter.Value>
@@ -532,7 +565,7 @@
                                                 </DataGrid>
 
                                                 <!-- "Nothing to follow" text -->
-                                                <StackPanel x:Name="NothingToFollowSection" Margin="5,0,5,0" Orientation="Vertical" HorizontalAlignment="Center">
+                                                <StackPanel x:Name="NothingToFollowSection" Margin="0,0,5,0" Orientation="Vertical" HorizontalAlignment="Center">
                                                     <Border Background="Transparent" Padding="5" CornerRadius="5">
                                                         <TextBlock Text="*............................................... Nothing to follow ...............................................*"
                                                            FontFamily="Lexend"
@@ -555,8 +588,10 @@
                                                            FontWeight="SemiBold"
                                                            Foreground="black"
                                                            TextWrapping="Wrap"
+                                                           Width="400"        
                                                            MinHeight="20"
                                                            Padding="3"
+                                                           TextAlignment="Center"
                                                            Background="Transparent"
                                                            VerticalAlignment="Center"
                                                            Cursor="Hand"

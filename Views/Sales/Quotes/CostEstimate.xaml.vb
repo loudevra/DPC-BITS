@@ -7,6 +7,7 @@ Imports DPC.DPC.Components.Forms
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
+Imports MaterialDesignThemes.Wpf
 Imports Microsoft.Win32
 Imports SkiaSharp.Views.WPF
 
@@ -20,11 +21,15 @@ Namespace DPC.Views.Sales.Quotes
         Private itemOrder As New List(Of Dictionary(Of String, String))
         ' Text Editor PopOut
         Private Shared element As FrameworkElement
-        Private itemsPerPage As Integer = 14
-        Private paginationTriggerThreshold As Integer = 7
+
+        ' Add these new class-level variables:
+        Private maxPageHeight As Double = 1670 ' Adjust based on your layout
+        Private servicesWarrantyGap As Double = 50 ' Minimum gap before triggering new page
+        Private currentPageHeight As Double = 0
         Private currentPageIndex As Integer = 0
         Private totalPages As Integer = 1
         Private allItems As List(Of Dictionary(Of String, String))
+        Private showProductImages As Boolean = True
 
         Public Sub New()
 
@@ -56,19 +61,9 @@ Namespace DPC.Views.Sales.Quotes
             allItems = CostEstimateDetails.CEQuoteItemsCache
             itemOrder = CostEstimateDetails.CEQuoteItemsCache
 
+            ' Calculate pages based on space instead of item count
             If allItems IsNot Nothing AndAlso allItems.Count > 0 Then
-                ' Trigger pagination when items exceed 7, but first page can hold up to 14
-                If allItems.Count > paginationTriggerThreshold Then
-                    ' Calculate pages based on 14 items per page
-                    If allItems.Count <= itemsPerPage Then
-                        totalPages = 2 ' First page has all items (up to 14), second page has sections only
-                    Else
-                        ' Items exceed 14, so calculate normally
-                        totalPages = Math.Ceiling(allItems.Count / itemsPerPage)
-                    End If
-                Else
-                    totalPages = 1 ' 7 or fewer items, single page
-                End If
+                CalculatePagesBasedOnSpace()
             Else
                 totalPages = 1
             End If
@@ -136,6 +131,20 @@ Namespace DPC.Views.Sales.Quotes
             ' Load items with pagination
             LoadPage(0)
 
+            ' Initialize toggle state from cache
+            showProductImages = CostEstimateDetails.CEShowProductImages
+
+            ' Update button appearance to match current state
+            If showProductImages Then
+                txtToggleImage.Text = "Hide Images"
+                iconToggleImage.Kind = PackIconKind.Image
+                btnToggleImage.Opacity = 1.0
+            Else
+                txtToggleImage.Text = "Show Images"
+                iconToggleImage.Kind = PackIconKind.ImageOff
+                btnToggleImage.Opacity = 0.6
+            End If
+
             ' Tax calculation logic
             If Not CEtaxSelection Then
                 ' Tax Inclusive
@@ -200,6 +209,37 @@ Namespace DPC.Views.Sales.Quotes
             AddHandler BrowseFile.MouseLeftButtonUp, AddressOf OpenFiles
         End Sub
 
+        Private Sub CalculatePagesBasedOnSpace()
+            totalPages = 1
+            currentPageHeight = 0
+            Dim estimatedItemHeight As Double = 100 ' Estimated height per item with description
+            Dim servicesAndWarrantySectionHeight As Double = 900 ' Estimated combined height
+
+            For Each item In allItems
+                ' Estimate item height (includes description if present)
+                Dim itemHeight As Double = estimatedItemHeight
+                If item.ContainsKey("Description") AndAlso Not String.IsNullOrWhiteSpace(item("Description")) Then
+                    ' Add extra height for description
+                    itemHeight += 60
+                End If
+
+                currentPageHeight += itemHeight
+
+                ' Check if adding services/warranty section would exceed page limit
+                If currentPageHeight + servicesAndWarrantySectionHeight > maxPageHeight Then
+                    totalPages += 1
+                    currentPageHeight = 0 ' Reset for next page
+                End If
+            Next
+
+            ' Ensure at least one page for services/warranty section
+            If totalPages = 1 AndAlso currentPageHeight > 0 Then
+                If currentPageHeight + servicesAndWarrantySectionHeight > maxPageHeight Then
+                    totalPages = 2
+                End If
+            End If
+        End Sub
+
         ' Update LoadPage method:
         Private Sub LoadPage(pageIndex As Integer)
             If allItems Is Nothing OrElse allItems.Count = 0 Then
@@ -209,61 +249,22 @@ Namespace DPC.Views.Sales.Quotes
             currentPageIndex = pageIndex
             itemDataSource.Clear()
 
-            Dim startIndex As Integer
-            Dim endIndex As Integer
+            Dim itemsToShow As Integer = CalculateItemsForPage(pageIndex)
+            Dim startIndex As Integer = GetStartIndexForPage(pageIndex)
+            Dim endIndex As Integer = Math.Min(startIndex + itemsToShow, allItems.Count)
 
-            ' Special handling for items between 8-14
-            If allItems.Count > paginationTriggerThreshold AndAlso allItems.Count <= itemsPerPage Then
-                ' All items fit on first page, second page is sections only
-                If pageIndex = 0 Then
-                    startIndex = 0
-                    endIndex = allItems.Count
-                Else
-                    ' Second page - no items, just sections
-                    dataGrid.ItemsSource = itemDataSource
-                    UpdatePageInfo()
-                    UpdateNavigationButtons()
-                    UpdateNothingToFollowVisibility()
-                    UpdateServicesVisibility()
-                    UpdateTotalCostVisibility()
-                    UpdateWarrantyAndBottomSectionVisibility()
-                    UpdatePrintPageIndicator()
-                    Return
-                End If
-            Else
-                ' Normal pagination for items > 14 or <= 7
-                startIndex = pageIndex * itemsPerPage
-                endIndex = Math.Min(startIndex + itemsPerPage, allItems.Count)
+            ' Special case: if this is the last page and we have remaining items
+            If pageIndex = totalPages - 1 Then
+                endIndex = allItems.Count
             End If
 
             For i As Integer = startIndex To endIndex - 1
                 Dim item = allItems(i)
-
-                Dim rate As Decimal = Decimal.Parse(item("Rate"))
-                Dim rateFormatted As String = rate.ToString("N2")
-
-                Dim linePrice As Decimal = Decimal.Parse(item("Amount"))
-                Dim linePriceFormatted As String = linePrice.ToString("N2")
-
-                Dim productImage As BitmapImage = Nothing
-                If item.ContainsKey("ProductImageBase64") AndAlso Not String.IsNullOrEmpty(item("ProductImageBase64").ToString()) Then
-                    productImage = Base64ToBitmapImage(item("ProductImageBase64").ToString())
-                Else
-                    productImage = GetProductImageFromDatabase(item("ProductName").ToString())
-                End If
-
-                itemDataSource.Add(New OrderItems With {
-            .Quantity = item("Quantity"),
-            .Description = item("ProductName"),
-            .UnitPrice = $"₱ {rateFormatted}",
-            .LinePrice = $"₱ {linePriceFormatted}",
-            .ProductImage = productImage
-        })
+                itemDataSource.Add(CreateOrderItemWithDescription(item))
             Next
 
             dataGrid.ItemsSource = itemDataSource
 
-            ' Update UI
             UpdatePageInfo()
             UpdateNavigationButtons()
             UpdateNothingToFollowVisibility()
@@ -271,6 +272,116 @@ Namespace DPC.Views.Sales.Quotes
             UpdateTotalCostVisibility()
             UpdateWarrantyAndBottomSectionVisibility()
             UpdatePrintPageIndicator()
+            UpdateImageColumnVisibility()
+        End Sub
+
+        ' Add helper method to calculate items per page based on space:
+        Private Function CalculateItemsForPage(pageIndex As Integer) As Integer
+            Dim availableHeight As Double = maxPageHeight
+            Dim currentHeight As Double = 0
+            Dim itemCount As Integer = 0
+            Dim startIndex As Integer = GetStartIndexForPage(pageIndex)
+
+            ' If last page, reserve space for services/warranty section
+            Dim reservedHeight As Double = 0
+            If pageIndex = totalPages - 1 Then
+                reservedHeight = 400 ' Height for services, warranty, and bottom sections
+            End If
+
+            For i As Integer = startIndex To allItems.Count - 1
+                Dim item = allItems(i)
+                Dim estimatedItemHeight As Double = 100
+
+                If item.ContainsKey("Description") AndAlso Not String.IsNullOrWhiteSpace(item("Description")) Then
+                    estimatedItemHeight += 60
+                End If
+
+                If currentHeight + estimatedItemHeight + reservedHeight > availableHeight Then
+                    Exit For
+                End If
+
+                currentHeight += estimatedItemHeight
+                itemCount += 1
+            Next
+
+            Return itemCount
+        End Function
+
+        ' Add helper method to get start index for page:
+        Private Function GetStartIndexForPage(pageIndex As Integer) As Integer
+            Dim startIndex As Integer = 0
+
+            For p As Integer = 0 To pageIndex - 1
+                startIndex += CalculateItemsForPage(p)
+            Next
+
+            Return startIndex
+        End Function
+
+        ' New helper method
+        Private Function CreateOrderItemWithDescription(item As Dictionary(Of String, String)) As OrderItems
+            Dim rate As Decimal = Decimal.Parse(item("Rate"))
+            Dim rateFormatted As String = rate.ToString("N2")
+
+            Dim linePrice As Decimal = Decimal.Parse(item("Amount"))
+            Dim linePriceFormatted As String = linePrice.ToString("N2")
+
+            Dim productImage As BitmapImage = Nothing
+            If showProductImages Then
+                If item.ContainsKey("ProductImageBase64") AndAlso Not String.IsNullOrEmpty(item("ProductImageBase64").ToString()) Then
+                    productImage = Base64ToBitmapImage(item("ProductImageBase64").ToString())
+                Else
+                    productImage = GetProductImageFromDatabase(item("ProductName").ToString())
+                End If
+            End If
+
+            ' Get description and set visibility
+            Dim productDesc As String = ""
+            Dim descVisibility As Visibility = Visibility.Collapsed
+
+            If item.ContainsKey("Description") AndAlso Not String.IsNullOrWhiteSpace(item("Description")) Then
+                productDesc = item("Description")
+                descVisibility = Visibility.Visible
+            End If
+
+            Return New OrderItems With {
+        .Quantity = item("Quantity"),
+        .Description = item("ProductName"),
+        .ProductDescription = productDesc,
+        .ProductDescriptionVisibility = descVisibility,
+        .UnitPrice = $"₱ {rateFormatted}",
+        .LinePrice = $"₱ {linePriceFormatted}",
+        .ProductImage = productImage
+    }
+        End Function
+
+        Private Sub UpdateImageColumnVisibility()
+            ' Find the image column in the DataGrid
+            For Each column As DataGridColumn In dataGrid.Columns
+                If TypeOf column Is DataGridTemplateColumn AndAlso column.Header IsNot Nothing AndAlso column.Header.ToString() = "Image" Then
+                    column.Visibility = If(showProductImages, Visibility.Visible, Visibility.Collapsed)
+                    Exit For
+                End If
+            Next
+        End Sub
+
+        Private Sub ToggleImage_Click(sender As Object, e As RoutedEventArgs)
+            showProductImages = Not showProductImages
+            CostEstimateDetails.CEShowProductImages = showProductImages
+
+            ' Update button appearance
+            If showProductImages Then
+                txtToggleImage.Text = "Hide Images"
+                iconToggleImage.Kind = PackIconKind.Image
+                btnToggleImage.Opacity = 1.0
+            Else
+                txtToggleImage.Text = "Show Images"
+                iconToggleImage.Kind = PackIconKind.ImageOff
+                btnToggleImage.Opacity = 0.6
+            End If
+
+            ' Reload current page to reflect changes
+            LoadPage(currentPageIndex)
         End Sub
 
         Private Sub UpdatePageInfo()
