@@ -207,9 +207,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Sales.Quotes.CostEstimate()
 
                     Case "editquote"
-                        Return New Sales.Quotes.EditQuotess()
+                        Return New Sales.Quotes.EditQuoteFixing()
                     Case "previewprintquoteeditedquote"
-                        Return New DPC.Components.Forms.PreviewPrintEditedQuote()
+                        Return New DPC.Components.Forms.PreviewPrintEditedQuoteFixing()
 
                          ' Sales Billing Estimate Navigation
                     Case "billingestimate"
