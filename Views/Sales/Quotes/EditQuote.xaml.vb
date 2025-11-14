@@ -11,6 +11,7 @@ Imports DPC.DPC.Data.Models
 Imports DPC.DPC.Views.Sales.Quotes.Quote
 Imports MySql.Data.MySqlClient
 Imports Newtonsoft.Json
+Imports SharpCompress.Readers.Tar
 
 Namespace DPC.Views.Sales.Quotes
     Public Class EditQuote

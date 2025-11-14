@@ -390,7 +390,7 @@
                             </StackPanel>
                         </Grid>
 
-                         <!--Rectangle as line-->
+                        <!--Rectangle as line-->
                         <Rectangle
                             Width="auto"
                             Height="1" 

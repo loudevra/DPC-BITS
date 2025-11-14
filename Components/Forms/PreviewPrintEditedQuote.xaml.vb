@@ -25,59 +25,9 @@ Namespace DPC.Components.Forms
         Private itemOrder As New List(Of Dictionary(Of String, String))
         Private Address As String
         Private isCustom As Boolean
-        Private txtPageInfo As TextBlock
-
-        ' Add pagination variables
-        Private maxPageHeight As Double = 1770
-        Private servicesWarrantyGap As Double = 50
-        Private currentPageHeight As Double = 0
-        Private currentPageIndex As Integer = 0
-        Private totalPages As Integer = 1
-        Private allItems As New List(Of Dictionary(Of String, String))
-        Private allPages As New List(Of List(Of OrderItems))
-        Private showProductImages As Boolean = True
-
-        Private ReadOnly Property QuoteValidity As Integer
-            Get
-                ' Example: If you have a ComboBox named 'ValidityDaysComboBox' in XAML
-                Dim validityControl = TryCast(Me.FindName("ValidityDaysComboBox"), ComboBox)
-                If validityControl IsNot Nothing AndAlso validityControl.SelectedValue IsNot Nothing Then
-                    Dim validityDays As Integer
-                    If Integer.TryParse(validityControl.SelectedValue.ToString(), validityDays) AndAlso validityDays > 0 Then
-                        Return validityDays
-                    End If
-                End If
-                ' Fallback: Retrieve from cache if form control isn't available
-                If CostEstimateDetails.CEValidUntilDate IsNot Nothing Then
-                    Dim validityDays As Integer
-                    If Integer.TryParse(CostEstimateDetails.CEValidUntilDate.ToString(), validityDays) AndAlso validityDays > 0 Then
-                        Return validityDays
-                    End If
-                End If
-            End Get
-        End Property
 
         Public Sub New()
             InitializeComponent()
-
-            showProductImages = CostEstimateDetails.CEShowProductImages
-
-            ' Check if CEQuoteItemsCache is Nothing
-            If CostEstimateDetails.CEQuoteItemsCache Is Nothing Then
-                MessageBox.Show("Quote items are not loaded.")
-                Return
-            End If
-
-            ' Initialize allItems
-            allItems = CostEstimateDetails.CEQuoteItemsCache
-            itemOrder = CostEstimateDetails.CEQuoteItemsCache
-
-            ' Calculate total pages based on space
-            If allItems IsNot Nothing AndAlso allItems.Count > 0 Then
-                CalculatePagesBasedOnSpace()
-            Else
-                totalPages = 1
-            End If
 
             Dim installationFee As Decimal
             If Decimal.TryParse(CostEstimateDetails.CEInstallation, installationFee) Then
@@ -126,16 +76,6 @@ Namespace DPC.Components.Forms
             DeliveryMobilization.Text = CostEstimateDetails.CEDeliveryMobilization
             CNIdentifier.Text = CostEstimateDetails.CECNIndetifier
 
-            ' Other Services
-
-            If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CEOtherServices) AndAlso
-               CostEstimateDetails.CEOtherServices <> "Services:" Then
-                OtherServicesText.Text = CostEstimateDetails.CEOtherServices.Replace("Services:", "").Trim()
-                OtherServicesText.Visibility = Visibility.Visible
-            Else
-                OtherServicesText.Visibility = Visibility.Collapsed
-            End If
-
             ' Check if the terms is enabled
             If CostEstimateDetails.CEisCustomTerm = True Then
                 cmbTerms.Text = CostEstimateDetails.CEpaymentTerms
@@ -174,193 +114,10 @@ Namespace DPC.Components.Forms
 
             ' Display the data in the DataGrid
             dataGrid.ItemsSource = itemDataSource
-
-            txtPageInfo = TryCast(Me.FindName("txtPageInfo"), TextBlock)
-
-            ' Split items into pages and load first page
-            SplitItemsIntoPages()
-            LoadPrintPage(0)
-
-            UpdatePageInfo()
-            UpdateNavigationButtons()
-        End Sub
-
-        ' Add new method:
-        Private Sub CalculatePagesBasedOnSpace()
-            totalPages = 1
-            currentPageHeight = 0
-            Dim estimatedItemHeight As Double = 100
-            Dim servicesAndWarrantySectionHeight As Double = 900
-
-            For Each item In allItems
-                Dim itemHeight As Double = estimatedItemHeight
-                If item.ContainsKey("Description") AndAlso Not String.IsNullOrWhiteSpace(item("Description")) Then
-                    itemHeight += 60
-                End If
-
-                currentPageHeight += itemHeight
-                If currentPageHeight + servicesAndWarrantySectionHeight > maxPageHeight Then
-                    totalPages += 1
-                    currentPageHeight = 0
-                End If
-            Next
-
-            If totalPages = 1 AndAlso currentPageHeight > 0 Then
-                If currentPageHeight + servicesAndWarrantySectionHeight > maxPageHeight Then
-                    totalPages = 2
-                End If
-            End If
-        End Sub
-
-        ' Split items into pages
-        Private Sub SplitItemsIntoPages()
-            allPages.Clear()
-
-            If allItems Is Nothing OrElse allItems.Count = 0 Then
-                Return
-            End If
-
-            Dim currentPageItems As New List(Of OrderItems)
-            Dim currentHeight As Double = 0
-            Dim reservedHeightForLastPage As Double = 400
-
-            For i As Integer = 0 To allItems.Count - 1
-                Dim item = allItems(i)
-                Dim orderItem = CreateOrderItem(item)
-
-                ' Estimate item height
-                Dim estimatedItemHeight As Double = 100
-                If item.ContainsKey("Description") AndAlso Not String.IsNullOrWhiteSpace(item("Description")) Then
-                    estimatedItemHeight += 60
-                End If
-
-                ' Check if we're approaching the last items
-                Dim isNearEnd As Boolean = (i >= allItems.Count - 3)
-                Dim heightLimit As Double = If(isNearEnd, maxPageHeight - reservedHeightForLastPage, maxPageHeight)
-                ' Check if adding this item would exceed page height
-                If currentHeight + estimatedItemHeight > heightLimit AndAlso currentPageItems.Count > 0 Then
-                    ' Save current page and start new page
-                    allPages.Add(New List(Of OrderItems)(currentPageItems))
-                    currentPageItems.Clear()
-                    currentHeight = 0
-                End If
-
-                currentPageItems.Add(orderItem)
-                currentHeight += estimatedItemHeight
-
-            Next
-
-            ' Add remaining items to last page
-            If currentPageItems.Count > 0 Then
-                allPages.Add(currentPageItems)
-            End If
-
-            ' Ensure we have the calculated number of pages
-            totalPages = allPages.Count
-        End Sub
-
-        ' Helper method to create OrderItem (extract repeated code)
-        Private Function CreateOrderItem(item As Dictionary(Of String, String)) As OrderItems
-            Dim rate As Decimal = Decimal.Parse(item("Rate"))
-            Dim rateFormatted As String = rate.ToString("N2")
-            Dim linePrice As Decimal = Decimal.Parse(item("Amount"))
-            Dim linePriceFormatted As String = linePrice.ToString("N2")
-            Dim productImage As BitmapImage = Nothing
-            If showProductImages Then
-                If item.ContainsKey("ProductImageBase64") AndAlso Not String.IsNullOrEmpty(item("ProductImageBase64").ToString()) Then
-                    productImage = Base64ToBitmapImage(item("ProductImageBase64").ToString())
-                Else
-                    productImage = GetProductImageFromDatabase(item("ProductName").ToString())
-                End If
-            End If
-
-            ' Get description and set visibility
-            Dim productDesc As String = ""
-            Dim descVisibility As Visibility = Visibility.Collapsed
-
-            If item.ContainsKey("Description") AndAlso Not String.IsNullOrWhiteSpace(item("Description")) Then
-                productDesc = item("Description")
-                descVisibility = Visibility.Visible
-            End If
-
-            Return New OrderItems With {
-        .Quantity = item("Quantity"),
-        .Description = item("ProductName"),
-        .ProductDescription = productDesc,
-        .ProductDescriptionVisibility = descVisibility,
-        .UnitPrice = $"₱ {rateFormatted}",
-        .LinePrice = $"₱ {linePriceFormatted}",
-        .ProductImage = productImage
-    }
-        End Function
-
-        ' Load specific page
-        Private Sub LoadPrintPage(pageIndex As Integer)
-
-            If pageIndex < 0 OrElse pageIndex >= allPages.Count Then Return
-            currentPageIndex = pageIndex
-            itemDataSource.Clear()
-
-            For Each item In allPages(pageIndex)
-                itemDataSource.Add(item)
-            Next
-
-            dataGrid.ItemsSource = itemDataSource
-
-            ' Update page info after loading
-            UpdatePageInfo()
-            UpdateNavigationButtons()
-            UpdateTotalCostVisibility()
-            UpdateServicesVisibility()
-            UpdateWarrantyAndBottomSectionVisibility()
-            UpdatePrintPageIndicator()
-            UpdateImageColumnVisibility() ' Add this line
-        End Sub
-
-        Private Sub UpdateImageColumnVisibility()
-            For Each column As DataGridColumn In dataGrid.Columns
-                If TypeOf column Is DataGridTemplateColumn AndAlso column.Header IsNot Nothing AndAlso column.Header.ToString() = "Image" Then
-                    column.Visibility = If(showProductImages, Visibility.Visible, Visibility.Collapsed)
-                    Exit For
-                End If
-            Next
-        End Sub
-
-        Private Sub UpdatePageInfo()
-            If txtPageInfo IsNot Nothing Then
-                txtPageInfo.Text = $"Page {currentPageIndex + 1} of {allPages.Count}"
-            End If
-        End Sub
-
-        ' Add method to enable/disable navigation buttons
-        Private Sub UpdateNavigationButtons()
-            Dim btnPrev = TryCast(Me.FindName("btnPrevPage"), Button)
-            Dim btnNext = TryCast(Me.FindName("btnNextPage"), Button)
-
-            If btnPrev IsNot Nothing Then
-                btnPrev.IsEnabled = currentPageIndex > 0
-            End If
-
-            If btnNext IsNot Nothing Then
-                btnNext.IsEnabled = currentPageIndex < allPages.Count - 1
-            End If
-        End Sub
-
-        ' Add navigation button click handlers
-        Private Sub PreviousPage_Click(sender As Object, e As RoutedEventArgs)
-            If currentPageIndex > 0 Then
-                LoadPrintPage(currentPageIndex - 1)
-            End If
-        End Sub
-
-        Private Sub NextPage_Click(sender As Object, e As RoutedEventArgs)
-            If currentPageIndex < allPages.Count - 1 Then
-                LoadPrintPage(currentPageIndex + 1)
-            End If
         End Sub
 
         Private Function FormatPhoneWithSpaces(raw As String) As String
-            If String.IsNullOrWhiteSpace(raw) OrElse raw.Length <2 Then Return raw
+            If String.IsNullOrWhiteSpace(raw) OrElse raw.Length < 2 Then Return raw
             Dim number = raw.Substring(1)
             If number.Length >= 10 Then
                 Return $"{number.Substring(0, 3)} {number.Substring(3, 3)} {number.Substring(6)}"
@@ -528,7 +285,7 @@ Namespace DPC.Components.Forms
                 MessageBox.Show("Saved to: " & filePath)
                 Return filePath
 
-                ViewLoader.DynamicView.NavigateToView("quote", Me)
+                ViewLoader.DynamicView.NavigateToView("salesquote", Me)
 
             Catch ex As Exception
                 MessageBox.Show("Error generating PDF: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
@@ -786,16 +543,11 @@ Namespace DPC.Components.Forms
                 End Try
 
                 ' Call UpdateQuote
-                ' ✓ KEY FIX: Calculate validity date properly
-                Dim validityDate As String = GetProperValidityDateForDatabase()
-                Debug.WriteLine($"Final Validity Date for DB: {validityDate}")
-
-                ' Call UpdateQuote
                 Dim success As Boolean = QuotesController.UpdateQuote(
             quoteNumber,
             If(String.IsNullOrEmpty(CEReferenceNumber), "", CEReferenceNumber),
             quoteDate,
-            validityDate,  ' ← Use properly calculated validity date
+            If(String.IsNullOrEmpty(CEQuoteValidityDateCache), DateTime.Now.AddDays(30).ToString("yyyy-MM-dd"), CEQuoteValidityDateCache),
             If(String.IsNullOrEmpty(CETaxProperty), "Inclusive", CETaxProperty),
             If(String.IsNullOrEmpty(CEDiscountProperty), "None", CEDiscountProperty),
             If(String.IsNullOrEmpty(CEClientIDCache), "", CEClientIDCache),
@@ -810,7 +562,6 @@ Namespace DPC.Components.Forms
             If(String.IsNullOrEmpty(CacheOnLoggedInName), "", CacheOnLoggedInName),
             If(String.IsNullOrEmpty(CEApproved), "", CEApproved),
             If(String.IsNullOrEmpty(CEpaymentTerms), "", CEpaymentTerms))
-
 
                 Debug.WriteLine("===============================================")
                 Debug.WriteLine($"7. UpdateQuote returned: {success}")
@@ -837,187 +588,6 @@ Namespace DPC.Components.Forms
                 Debug.WriteLine("")
                 MessageBox.Show("Error updating quote: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
-        End Sub
-
-        Private Function GetProperValidityDateForDatabase() As String
-            Try
-                ' Get the base date (when quote was created)
-                Dim baseDate As DateTime = DateTime.Now
-                If Not String.IsNullOrEmpty(CEQuoteDateCache) Then
-                    If DateTime.TryParse(CEQuoteDateCache, baseDate) Then
-                        ' Successfully parsed
-                    End If
-                End If
-
-                Dim validitySelection = CEValidUntilDate.Trim().ToLower()
-                Dim validityDate As DateTime
-
-                ' Direct mapping - normalize text to match ComboBox values
-                Select Case validitySelection
-                    Case "48 hours"
-                        validityDate = baseDate.AddHours(48)
-                        Debug.WriteLine($"Validity: 48 hours from {baseDate:yyyy-MM-dd} -> {validityDate:yyyy-MM-dd}")
-
-                    Case "1 week"
-                        validityDate = baseDate.AddDays(7)
-                        Debug.WriteLine($"Validity: 1 week from {baseDate:yyyy-MM-dd} -> {validityDate:yyyy-MM-dd}")
-
-                    Case "2 weeks"
-                        validityDate = baseDate.AddDays(14)
-                        Debug.WriteLine($"Validity: 2 weeks from {baseDate:yyyy-MM-dd} -> {validityDate:yyyy-MM-dd}")
-
-                    Case "3 weeks"
-                        validityDate = baseDate.AddDays(21)
-                        Debug.WriteLine($"Validity: 3 weeks from {baseDate:yyyy-MM-dd} -> {validityDate:yyyy-MM-dd}")
-
-                    Case "1 month"
-                        validityDate = baseDate.AddMonths(1)
-                        Debug.WriteLine($"Validity: 1 month from {baseDate:yyyy-MM-dd} -> {validityDate:yyyy-MM-dd}")
-
-                    Case "2 months"
-                        validityDate = baseDate.AddMonths(2)
-                        Debug.WriteLine($"Validity: 2 months from {baseDate:yyyy-MM-dd} -> {validityDate:yyyy-MM-dd}")
-
-                    Case "6 months"
-                        validityDate = baseDate.AddMonths(6)
-                        Debug.WriteLine($"Validity: 6 months from {baseDate:yyyy-MM-dd} -> {validityDate:yyyy-MM-dd}")
-
-                    Case "1 year"
-                        validityDate = baseDate.AddYears(1)
-                        Debug.WriteLine($"Validity: 1 year from {baseDate:yyyy-MM-dd} -> {validityDate:yyyy-MM-dd}")
-
-                    Case Else
-                        ' Try to parse as date string, otherwise fallback to 30 days
-                        If DateTime.TryParse(CEValidUntilDate, validityDate) Then
-                            Debug.WriteLine($"Validity: Parsed as date -> {validityDate:yyyy-MM-dd}")
-                        Else
-                            validityDate = baseDate.AddMonths(1)
-                            Debug.WriteLine($"Validity: Unrecognized option '{validitySelection}', defaulting to 1 month -> {validityDate:yyyy-MM-dd}")
-                        End If
-                End Select
-
-                ' Return in database format: yyyy-MM-dd
-                Return validityDate.ToString("yyyy-MM-dd")
-
-            Catch ex As Exception
-                Debug.WriteLine($"Error in GetProperValidityDateForDatabase: {ex.Message}")
-                ' Fallback: 30 days from today
-                Return DateTime.Now.AddMonths(1).ToString("yyyy-MM-dd")
-            End Try
-        End Function
-
-
-        Private Function GetProductImageFromDatabase(productName As String) As BitmapImage
-            Try
-                Dim imageBase64 As String = GetProduct.GetProductImageBase64(productName)
-
-                If Not String.IsNullOrEmpty(imageBase64) Then
-                    Return Base64ToBitmapImage(imageBase64)
-                End If
-                Return Nothing
-
-            Catch ex As Exception
-                Debug.WriteLine($"Error loading product image for {productName}: {ex.Message}")
-                Return Nothing
-            End Try
-        End Function
-        Private Function Base64ToBitmapImage(base64String As String) As BitmapImage
-            Try
-                If base64String.Contains(",") Then
-                    base64String = base64String.Split(","c)(1)
-                End If
-
-                Dim imageBytes As Byte() = Convert.FromBase64String(base64String)
-
-                Using ms As New MemoryStream(imageBytes)
-                    Dim bitmap As New BitmapImage()
-                    bitmap.BeginInit()
-                    bitmap.CacheOption = BitmapCacheOption.OnLoad
-                    bitmap.StreamSource = ms
-                    bitmap.EndInit()
-                    bitmap.Freeze()
-                    Return bitmap
-                End Using
-
-            Catch ex As Exception
-                Debug.WriteLine($"Error converting Base64 to BitmapImage: {ex.Message}")
-                Return Nothing
-            End Try
-        End Function
-
-        Private Sub ProductImageControl_MouseLeftButtonDown(sender As Object, e As MouseButtonEventArgs)
-            Dim img As Image = TryCast(sender, Image)
-            If img IsNot Nothing AndAlso img.Source IsNot Nothing Then
-                Dim enlargeWindow As New Window()
-                enlargeWindow.Title = "Product Image"
-                enlargeWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen
-                enlargeWindow.SizeToContent = SizeToContent.WidthAndHeight
-                enlargeWindow.ResizeMode = ResizeMode.NoResize
-                enlargeWindow.Background = Brushes.Black
-
-                Dim enlargedImage As New Image()
-                enlargedImage.Source = img.Source
-                enlargedImage.MaxWidth = 800
-                enlargedImage.MaxHeight = 600
-                enlargedImage.Stretch = Stretch.Uniform
-                enlargedImage.Margin = New Thickness(10)
-                enlargedImage.Cursor = Cursors.Hand
-
-                AddHandler enlargedImage.MouseLeftButtonDown, Sub()
-                                                                  enlargeWindow.Close()
-                                                              End Sub
-                enlargeWindow.Content = enlargedImage
-                enlargeWindow.ShowDialog()
-            End If
-        End Sub
-
-        Private Sub UpdateServicesVisibility()
-            Dim nothingToFollowSection = TryCast(Me.FindName("NothingToFollowSection"), StackPanel)
-            Dim otherServicesSection = TryCast(Me.FindName("OtherServicesSection"), StackPanel)
-
-            Dim isLastPage = (currentPageIndex = allPages.Count - 1)
-
-            If nothingToFollowSection IsNot Nothing Then
-                nothingToFollowSection.Visibility = If(isLastPage, Visibility.Visible, Visibility.Collapsed)
-            End If
-
-            If otherServicesSection IsNot Nothing Then
-                otherServicesSection.Visibility = If(isLastPage, Visibility.Visible, Visibility.Collapsed)
-            End If
-        End Sub
-        Private Sub UpdateTotalCostVisibility()
-            Dim totalCostSection = TryCast(Me.FindName("TotalCostSection"), Border)
-
-            ' Only show on the last page
-            Dim isLastPage = (currentPageIndex = allPages.Count - 1)
-
-            If totalCostSection IsNot Nothing Then
-                totalCostSection.Visibility = If(isLastPage, Visibility.Visible, Visibility.Collapsed)
-            End If
-        End Sub
-
-        Private Sub UpdateWarrantyAndBottomSectionVisibility()
-            ' Find the warranty and bottom sections
-            Dim warrantySection = TryCast(Me.FindName("WarrantySection"), StackPanel)
-            Dim bottomSection = TryCast(Me.FindName("BottomSection"), StackPanel)
-
-            ' Only show on the last page
-            Dim isLastPage = (currentPageIndex = allPages.Count - 1)
-
-            If warrantySection IsNot Nothing Then
-                warrantySection.Visibility = If(isLastPage, Visibility.Visible, Visibility.Collapsed)
-            End If
-
-            If bottomSection IsNot Nothing Then
-                bottomSection.Visibility = If(isLastPage, Visibility.Visible, Visibility.Collapsed)
-            End If
-        End Sub
-
-        Private Sub UpdatePrintPageIndicator()
-            Dim pageIndicator = TryCast(Me.FindName("PageIndicatorText"), TextBlock)
-            If pageIndicator IsNot Nothing Then
-                pageIndicator.Text = $"Page {currentPageIndex + 1} of {allPages.Count}"
-            End If
         End Sub
 
     End Class
