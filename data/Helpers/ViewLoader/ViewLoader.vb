@@ -207,7 +207,7 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Sales.Quotes.CostEstimate()
 
                     Case "editquote"
-                        Return New Sales.Quotes.EditQuote()
+                        Return New Sales.Quotes.EditQuotess()
                     Case "previewprintquoteeditedquote"
                         Return New DPC.Components.Forms.PreviewPrintEditedQuote()
 
