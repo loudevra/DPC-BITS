@@ -44,7 +44,7 @@
     Public CEInstallation As String
     Public CEtaxSelection As Boolean
     Public CEType As Integer = 0 ' default value for extra safety
-    Public CEValidUntilDate As String ' default value of extra safety
+    Public CEValidUntilDate As String = "" ' default value of extra safety
     Public CECompanyName As String = "" ' Company name for the cost estimate
     Public CESubtotalExInc As String = "Subtotal Vat Ex." ' Default Value if doesnt work
     Public CEWarranty As String = "Dream PC Build and IT Solutions Inc. offers 1 year warranty for this cost estimate.&#x0a;This warranty covers manufacturer defects and hardware malfunctions under normal usage. Terms and conditions apply."

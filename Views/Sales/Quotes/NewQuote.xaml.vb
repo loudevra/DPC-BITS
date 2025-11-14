@@ -1431,7 +1431,7 @@ Namespace DPC.Views.Sales.Quotes
 #Region "Clearing all of the fields"
         Public Sub ClearAllFields()
             Me.UnregisterName(txtDiscountSelection.Name)
-            ' Clear all fields in the quote form
+            'Clear all fields in the quote form
             txtQuoteNumber.Clear()
             Dim quoteID As String = QuotesController.GenerateQuoteID()
             txtQuoteNumber.Text = quoteID
@@ -1444,8 +1444,8 @@ Namespace DPC.Views.Sales.Quotes
             txtTotalDiscount.Text = "₱0.00"
             txtGrandTotal.Text = ""
             TxtClientDetails.Clear()
-            ' Do NOT clear _selectedClient, so autocomplete will not show the message
-            ' Do NOT call UpdateSupplierDetails(Nothing)
+            'Do NOT clear _selectedClient, so autocomplete will not show the message
+            'Do NOT call UpdateSupplierDetails(Nothing)
             ClearAllRows()
             OrderDateVM.SelectedDate = DateTime.Today
             'OrderDueDateVM.SelectedDate = DateTime.Today.AddDays(1)
@@ -1480,16 +1480,52 @@ Namespace DPC.Views.Sales.Quotes
             End If
         End Sub
 
+        Private Function GetValidityDate(validitySelection As String, baseDate As DateTime) As DateTime
+            Try
+                ' Normalize input
+                Dim selection = validitySelection.Trim().ToLower()
+
+                ' Direct mapping to AddMonths/AddDays
+                Select Case selection
+                    Case "48 hours"
+                        Return baseDate.AddHours(48)
+                    Case "1 week"
+                        Return baseDate.AddDays(7)
+                    Case "2 weeks"
+                        Return baseDate.AddDays(14)
+                    Case "3 weeks"
+                        Return baseDate.AddDays(21)
+                    Case "1 month"
+                        Return baseDate.AddMonths(1)
+                    Case "2 months"
+                        Return baseDate.AddMonths(2)
+                    Case "6 months"
+                        Return baseDate.AddMonths(6)
+                    Case "1 year"
+                        Return baseDate.AddYears(1)
+                    Case Else
+                        Return baseDate.AddHours(48) ' Default
+                End Select
+
+            Catch ex As Exception
+                Debug.WriteLine($"Error calculating validity date: {ex.Message}")
+                Return baseDate.AddHours(48)
+            End Try
+        End Function
+
         ' Function for inserting the data into the quote table in the database
         Private Sub GetAllDataInQuoteProperties(client As Client, productItemsJson As String)
             If Not ValidateQuoteSubmission(client, productItemsJson) Then Exit Sub
             Try
                 Dim selectedTax As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
                 Dim selectedDiscount As String = CType(txtDiscountSelection.SelectedItem, ComboBoxItem).Content.ToString()
+                ' Calculate actual validity date from selected option
+                Dim selectedValidityOption = DirectCast(cmbCostEstimateValidty.SelectedItem, ComboBoxItem).Content.ToString()
+                Dim actualValidityDate = GetValidityDate(selectedValidityOption, OrderDateVM.SelectedDate)
+                CEValidUntilDate = selectedValidityOption
+                CEQuoteValidityDateCache = actualValidityDate.ToString("yyyy-MM-dd")
 
                 ' 07 - 04 - 2025 -- Moved the insert at the save and print button in previewprintquote.xaml.vb
-
-
                 CEQuoteNumberCache = txtQuoteNumber.Text
                 CEDiscountProperty = txtDiscountSelection.Text
                 CETaxProperty = txtTaxSelection.Text

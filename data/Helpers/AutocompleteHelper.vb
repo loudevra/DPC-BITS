@@ -98,6 +98,33 @@ Namespace DPC.Components.Forms
             AddHandler listBox.SelectionChanged, Sub(sender, e) HandleSelectionChanged(sender, e, listBox, textBox, chipPanel)
         End Sub
 
+
+        ''' Initialize with dynamic items source that can be updated
+        Public Sub InitializeWithDynamicSource(textBox As TextBox, listBox As ListBox, chipPanel As Panel, popup As Popup)
+            _autoCompletePopup = popup
+
+            If _autoCompletePopup.PlacementTarget Is Nothing Then
+
+                _autoCompletePopup.PlacementTarget = textBox
+
+                _autoCompletePopup.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom
+
+                _autoCompletePopup.StaysOpen = False
+
+                _autoCompletePopup.AllowsTransparency = True
+            End If
+
+            AddHandler textBox.KeyDown, Sub(sender, e) HandleKeyDown(sender, e, listBox, textBox, chipPanel)
+            AddHandler listBox.SelectionChanged, Sub(sender, e) HandleSelectionChanged(sender, e, listBox, textBox, chipPanel)
+        End Sub
+
+        ''' Update items source dynamically
+        Public Sub UpdateItemsSource(itemsSource As IEnumerable(Of T), textBox As TextBox, listBox As ListBox)
+            If textBox IsNot Nothing Then
+                AddHandler textBox.TextChanged, Sub(sender, e) HandleTextChanged(sender, e, itemsSource, listBox)
+            End If
+        End Sub
+
         ' Clear all selected items
         Public Sub ClearSelection(chipPanel As Panel)
             _selectedItems.Clear()
@@ -113,6 +140,24 @@ Namespace DPC.Components.Forms
                 End If
             Next
         End Sub
+
+
+        ''' Get selected item by ID
+        Public Function GetSelectedItemById(itemId As Object) As T
+            Return _selectedItems.FirstOrDefault(Function(i) Object.Equals(_getItemId(i), itemId))
+        End Function
+
+        ''' Check if item is already selected
+        Public Function IsItemSelected(itemId As Object) As Boolean
+            Return _selectedItems.Any(Function(i) Object.Equals(_getItemId(i), itemId))
+        End Function
+
+
+        ''' Get count of selected items
+        Public Function GetSelectionCount() As Integer
+            Return _selectedItems.Count
+        End Function
+
 
         ' Method to handle TextChanged event for filtering items
         Public Sub HandleTextChanged(sender As Object, e As TextChangedEventArgs, itemsSource As IEnumerable(Of T), listBox As ListBox)
@@ -203,5 +248,31 @@ Namespace DPC.Components.Forms
                 RaiseEvent SelectedItemsChanged(Me, _selectedItems)
             End If
         End Sub
+
+
+        ''' Remove specific item by ID
+        Public Sub RemoveItemById(itemId As Object, chipPanel As Panel)
+            Dim itemToRemove = _selectedItems.FirstOrDefault(Function(i) Object.Equals(_getItemId(i), itemId))
+            If itemToRemove IsNot Nothing Then
+                _selectedItems.Remove(itemToRemove)
+                If chipPanel IsNot Nothing AndAlso chipPanel.Children.Count > 0 Then
+
+                    Dim chipToRemove = chipPanel.Children.Cast(Of UIElement)().FirstOrDefault()
+
+                    If chipToRemove IsNot Nothing Then
+
+                        chipPanel.Children.Remove(chipToRemove)
+                    End If
+                End If
+                RaiseEvent SelectedItemsChanged(Me, _selectedItems)
+            End If
+        End Sub
+
+
+        ''' Get all selected items as a list
+        Public Function GetAllSelectedItems() As List(Of T)
+            Return _selectedItems.ToList()
+        End Function
+
     End Class
 End Namespace
