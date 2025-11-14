@@ -1,16 +1,63 @@
-﻿Imports MySql.Data.MySqlClient
-Imports System.Collections.ObjectModel
-Imports DPC.DPC.Data.Model
+﻿Imports System.Collections.ObjectModel
+Imports System.Data
+Imports System.IO
+Imports System.ServiceModel
 Imports System.Web
 Imports System.Windows.Controls.Primitives
-Imports System.Data
-Imports DPC.DPC.Data.Models
-Imports System.IO
+Imports System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel
 Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Model
+Imports DPC.DPC.Data.Models
+Imports MySql.Data.MySqlClient
 Imports Newtonsoft.Json
 
 Namespace DPC.Data.Controllers
     Public Class QuotesController
+
+        ''' Gets all quotes from the database with a limit
+        Public Shared Function GetQuotes(limit As Integer) As ObservableCollection(Of QuotesModel)
+            Dim quotes As New ObservableCollection(Of QuotesModel)
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "
+                        SELECT * FROM quotes 
+                        ORDER BY QuoteNumber DESC
+                        LIMIT @limit"
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@limit", limit)
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            While reader.Read()
+                                Dim itemList = ParseOrderItems(reader("OrderItems").ToString())
+                                quotes.Add(New QuotesModel() With {
+                                    .QuoteNumber = reader("QuoteNumber").ToString(),
+                                    .Reference = If(reader("ReferenceNo") Is DBNull.Value, "-", reader("ReferenceNo").ToString()),
+                                    .QuoteDate = If(reader("QuoteDate") Is DBNull.Value, "-", reader.GetDateTime("QuoteDate").ToString("MMM d, yyyy")),
+                                    .Validity = If(reader("QuoteValidity") Is DBNull.Value, "-", reader.GetDateTime("QuoteValidity").ToString("MMM d, yyyy")),
+                                    .Tax = reader("Tax").ToString(),
+                                    .Discount = reader("Discount").ToString(),
+                                    .ClientID = reader("ClientID").ToString(),
+                                    .ClientName = reader("ClientName").ToString(),
+                                    .WarehouseID = reader("WarehouseID").ToString(),
+                                    .WarehouseName = reader("WarehouseName").ToString(),
+                                    .OrderItems = itemList,
+                                    .QuoteNote = If(reader("QuoteNote") Is DBNull.Value, String.Empty, reader("QuoteNote").ToString()),
+                                    .TotalTax = If(reader("TotalTax") Is DBNull.Value, 0, reader("TotalTax")),
+                                    .TotalDiscount = If(reader("TotalDiscount") Is DBNull.Value, 0, reader("TotalDiscount")),
+                                    .TotalPrice = If(reader("TotalPrice") Is DBNull.Value, 0, reader("TotalPrice"))
+                                })
+                            End While
+                        End Using
+                    End Using
+                End Using
+
+            Catch ex As Exception
+                Debug.WriteLine("Error in GetQuotes: " & ex.Message)
+            End Try
+
+            Return quotes
+        End Function
+
 
         Public Shared Function GetOrders(limit As Integer) As ObservableCollection(Of QuotesModel)
             Dim quotes As New ObservableCollection(Of QuotesModel)
@@ -77,6 +124,55 @@ Namespace DPC.Data.Controllers
         End Function
 
 
+        ''' Searches quotes based on search criteria
+        Public Shared Function SearchQuotes(searchText As String, limit As Integer) As ObservableCollection(Of QuotesModel)
+            Dim quotes As New ObservableCollection(Of QuotesModel)
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "
+                        SELECT * FROM quotes
+                        WHERE QuoteNumber LIKE @searchText 
+                            OR ReferenceNo LIKE @searchText
+                            OR ClientName LIKE @searchText
+                            OR WarehouseName LIKE @searchText
+                        ORDER BY QuoteNumber DESC
+                        LIMIT @limit"
+
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@searchText", "%" & searchText & "%")
+                        cmd.Parameters.AddWithValue("@limit", limit)
+
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            While reader.Read()
+                                Dim itemList = ParseOrderItems(reader("OrderItems").ToString())
+                                quotes.Add(New QuotesModel() With {
+                                    .QuoteNumber = reader("QuoteNumber").ToString(),
+                                    .Reference = If(reader("ReferenceNo") Is DBNull.Value, "-", reader("ReferenceNo").ToString()),
+                                    .QuoteDate = If(reader("QuoteDate") Is DBNull.Value, "-", reader.GetDateTime("QuoteDate").ToString("MMM d, yyyy")),
+                                    .Validity = If(reader("QuoteValidity") Is DBNull.Value, "-", reader.GetDateTime("QuoteValidity").ToString("MMM d, yyyy")),
+                                    .Tax = reader("Tax").ToString(),
+                                    .Discount = ("Discount").ToString(),
+                                    .ClientID = reader("ClientID").ToString(),
+                                    .ClientName = reader("ClientName").ToString(),
+                                    .WarehouseID = reader("WarehouseID").ToString(),
+                                    .WarehouseName = reader("WarehouseName").ToString(),
+                                    .OrderItems = itemList,
+                                    .QuoteNote = If(reader("QuoteNote") Is DBNull.Value, String.Empty, reader("QuoteNote").ToString()),
+                                    .TotalTax = If(reader("TotalTax") Is DBNull.Value, 0, reader("TotalTax")),
+                                    .TotalDiscount = If(reader("TotalDiscount") Is DBNull.Value, 0, reader("TotalDiscount")),
+                                    .TotalPrice = If(reader("TotalPrice") Is DBNull.Value, 0, reader("TotalPrice"))
+                                })
+                            End While
+                        End Using
+                    End Using
+                End Using
+            Catch ex As Exception
+                Debug.WriteLine("Error in SearchQuotes: " & ex.Message)
+            End Try
+
+            Return quotes
+        End Function
 
         Public Shared Function GetOrdersSearch(_searchText As String, limit As Integer) As ObservableCollection(Of QuotesModel)
             Dim quotes As New ObservableCollection(Of QuotesModel)
@@ -147,6 +243,22 @@ Namespace DPC.Data.Controllers
 
         End Function
 
+
+        ''' Helper function to parse order items from JSON
+        Private Shared Function ParseOrderItems(jsonItems As String) As String
+            Try
+                If String.IsNullOrWhiteSpace(jsonItems) Then Return "-"
+                Dim list As List(Of Dictionary(Of String, Object)) =
+                    JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, Object)))(jsonItems)
+                Dim itemList As String = ""
+                For Each item In list
+                    itemList &= item("Quantity") & "pc/s " & item("ProductName") & ", "
+                Next
+                Return If(String.IsNullOrWhiteSpace(itemList), "-", itemList.TrimEnd(", ".ToCharArray()))
+            Catch
+                Return "-"
+            End Try
+        End Function
 
         ' Search for the recent QuoteID then add 1 and check if it exists
         Public Shared Function GenerateQuoteID(Optional CeType As Integer = 0) As String
@@ -413,6 +525,151 @@ Namespace DPC.Data.Controllers
             End Try
         End Function
 
+
+        Public Shared Function GetQuoteByNumber(quoteNumber As String) As QuotesModel
+            Dim quote As New QuotesModel()
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "SELECT * FROM quotes WHERE QuoteNumber = @quoteNumber LIMIT 1"
+
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@quoteNumber", quoteNumber)
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            If reader.Read() Then
+                                quote.QuoteNumber = reader("QuoteNumber").ToString()
+                                quote.Reference = If(reader("ReferenceNo") Is DBNull.Value, "", reader("ReferenceNo").ToString())
+                                quote.QuoteDate = If(reader("QuoteDate") Is DBNull.Value, "", reader.GetDateTime("QuoteDate").ToString("yyyy-MM-dd"))
+                                quote.Validity = If(reader("QuoteValidity") Is DBNull.Value, "", reader.GetDateTime("QuoteValidity").ToString("yyyy-MM-dd"))
+                                quote.Tax = If(reader("Tax") Is DBNull.Value, "", reader("Tax").ToString())
+                                quote.Discount = If(reader("Discount") Is DBNull.Value, "", reader("Discount").ToString())
+                                quote.ClientID = If(reader("ClientID") Is DBNull.Value, "", reader("ClientID").ToString())
+                                quote.ClientName = If(reader("ClientName") Is DBNull.Value, "", reader("ClientName").ToString())
+                                quote.WarehouseID = If(reader("WarehouseID") Is DBNull.Value, "", reader("WarehouseID").ToString())
+                                quote.WarehouseName = If(reader("WarehouseName") Is DBNull.Value, "", reader("WarehouseName").ToString())
+                                quote.OrderItems = If(reader("OrderItems") Is DBNull.Value, "", reader("OrderItems").ToString())
+                                quote.QuoteNote = If(reader("QuoteNote") Is DBNull.Value, "", reader("QuoteNote").ToString())
+                                quote.TotalTax = If(reader("TotalTax") Is DBNull.Value, 0, reader("TotalTax"))
+                                quote.TotalDiscount = If(reader("TotalDiscount") Is DBNull.Value, 0, reader("TotalDiscount"))
+                                quote.TotalPrice = If(reader("TotalPrice") Is DBNull.Value, 0, reader("TotalPrice"))
+                            End If
+                        End Using
+                    End Using
+                End Using
+
+            Catch ex As Exception
+                Debug.WriteLine("Error in GetQuoteByNumber: " & ex.Message)
+            End Try
+            Return quote
+        End Function
+
+
+        ''' Updates an existing quote in the database
+        Public Shared Function UpdateQuote(QuoteNumber As String,
+                           ReferenceNo As String,
+                           QuoteDate As DateTime,
+                           QuoteValidity As String,
+                           Tax As String,
+                           Discount As String,
+                           ClientID As String,
+                           ClientName As String,
+                           WarehouseID As String,
+                           WarehouseName As String,
+                           OrderItems As String,
+                           QuoteNote As String,
+                           TotalTax As String,
+                           TotalDiscount As String,
+                           TotalPrice As String,
+                           Username As String,
+                           ApprovedBy As String,
+                           paymentTerms As String) As Boolean
+
+            Try
+                ' Step 1: Verify quote exists BEFORE attempting update
+                If Not QuoteNumberExists(QuoteNumber) Then
+                    MessageBox.Show("Quote Number '" & QuoteNumber & "' does not exist. Cannot update.", "Update Failed", MessageBoxButton.OK, MessageBoxImage.Warning)
+                    Return False
+                End If
+
+                ' Step 2: Build UPDATE query - REMOVED DateUpdated = NOW()
+                Dim updateQuery As String = "UPDATE quotes SET " &
+                                            "ReferenceNo = @ReferenceNo, " &
+                                            "QuoteDate = @QuoteDate, " &
+                                            "QuoteValidity = @QuoteValidity, " &
+                                            "Tax = @Tax, " &
+                                            "Discount = @Discount, " &
+                                            "ClientID = @ClientID, " &
+                                            "ClientName = @ClientName, " &
+                                            "WarehouseID = @WarehouseID, " &
+                                            "WarehouseName = @WarehouseName, " &
+                                            "OrderItems = @OrderItems, " &
+                                            "QuoteNote = @QuoteNote, " &
+                                            "TotalTax = @TotalTax, " &
+                                            "TotalDiscount = @TotalDiscount, " &
+                                            "TotalPrice = @TotalPrice, " &
+                                            "Username = @Username, " &
+                                            "ApprovedBy = @ApprovedBy, " &
+                                            "PaymentTerms = @PaymentTerms " &
+                                            "WHERE QuoteNumber = @QuoteNumber"
+
+                ' Step 3: Execute update with transaction
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Using transaction As MySqlTransaction = conn.BeginTransaction()
+
+                        Try
+                            Using updateCmd As New MySqlCommand(updateQuery, conn, transaction)
+                                ' Add all parameters
+                                updateCmd.Parameters.AddWithValue("@QuoteNumber", QuoteNumber)
+                                updateCmd.Parameters.AddWithValue("@ReferenceNo", If(String.IsNullOrEmpty(ReferenceNo), "", ReferenceNo))
+                                updateCmd.Parameters.AddWithValue("@QuoteDate", QuoteDate)
+                                updateCmd.Parameters.AddWithValue("@QuoteValidity", QuoteValidity)
+                                updateCmd.Parameters.AddWithValue("@Tax", If(String.IsNullOrEmpty(Tax), "0", Tax))
+                                updateCmd.Parameters.AddWithValue("@Discount", If(String.IsNullOrEmpty(Discount), "0", Discount))
+                                updateCmd.Parameters.AddWithValue("@ClientID", ClientID)
+                                updateCmd.Parameters.AddWithValue("@ClientName", ClientName)
+                                updateCmd.Parameters.AddWithValue("@WarehouseID", WarehouseID)
+                                updateCmd.Parameters.AddWithValue("@WarehouseName", WarehouseName)
+                                updateCmd.Parameters.AddWithValue("@OrderItems", OrderItems)
+                                updateCmd.Parameters.AddWithValue("@QuoteNote", If(String.IsNullOrEmpty(QuoteNote), "", QuoteNote))
+                                updateCmd.Parameters.AddWithValue("@TotalTax", TotalTax)
+                                updateCmd.Parameters.AddWithValue("@TotalDiscount", TotalDiscount)
+                                updateCmd.Parameters.AddWithValue("@TotalPrice", TotalPrice)
+                                updateCmd.Parameters.AddWithValue("@Username", Username)
+                                updateCmd.Parameters.AddWithValue("@ApprovedBy", If(String.IsNullOrEmpty(ApprovedBy), "", ApprovedBy))
+                                updateCmd.Parameters.AddWithValue("@PaymentTerms", If(String.IsNullOrEmpty(paymentTerms), "", paymentTerms))
+
+                                ' Execute and get rows affected
+                                Dim rowsAffected As Integer = updateCmd.ExecuteNonQuery()
+                                If rowsAffected > 0 Then
+                                    transaction.Commit()
+                                    Debug.WriteLine($"UpdateQuote: Successfully updated {rowsAffected} row(s) for QuoteNumber {QuoteNumber}")
+                                    MessageBox.Show($"Quote {QuoteNumber} has been successfully updated.", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                                    Return True
+                                Else
+                                    transaction.Rollback()
+                                    MessageBox.Show("No rows were updated. Quote number may have changed.", "Update Failed", MessageBoxButton.OK, MessageBoxImage.Warning)
+                                    Return False
+                                End If
+                            End Using
+
+                        Catch ex As Exception
+                            transaction.Rollback()
+                            Debug.WriteLine("UpdateQuote Error: " & ex.Message & vbCrLf & ex.StackTrace)
+                            MessageBox.Show("Failed to update the quote: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                            Return False
+                        End Try
+
+                    End Using
+                End Using
+
+            Catch ex As Exception
+                Debug.WriteLine("UpdateQuote Unexpected Error: " & ex.Message & vbCrLf & ex.StackTrace)
+                MessageBox.Show("Unexpected error during update: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                Return False
+            End Try
+
+        End Function
 
     End Class
 End Namespace

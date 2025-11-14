@@ -19,6 +19,8 @@ Namespace DPC.Views.Sales.Quotes
         Private base64Image As String
         Private itemDataSource As New ObservableCollection(Of OrderItems)
         Private itemOrder As New List(Of Dictionary(Of String, String))
+        ' ✓ NEW: Track whether this is a NEW quote or EDITED quote
+        Private _isEditingExistingQuote As Boolean = False
         ' Text Editor PopOut
         Private Shared element As FrameworkElement
 
@@ -38,9 +40,10 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Sub CostEstimate_Loaded(sender As Object, e As RoutedEventArgs)
+            ' ✓ NEW: Detect if we're editing an existing quote
+            DetectQuoteMode()
 
             txtPageInfo = TryCast(Me.FindName("txtPageInfo"), TextBlock)
-
 
             UpdatePageInfo()
             UpdateNavigationButtons()
@@ -206,6 +209,23 @@ Namespace DPC.Views.Sales.Quotes
                 DisplayUploadedImage()
             End If
 
+            ' Load the data in the datagrid
+            For Each item In itemOrder
+                Dim rate As Decimal = Decimal.Parse(item("Rate"))
+                Dim rateFormatted As String = rate.ToString("N2")
+                Dim linePrice As Decimal = Decimal.Parse(item("Amount"))
+                Dim linePriceFormatted As String = linePrice.ToString("N2")
+
+                itemDataSource.Add(New OrderItems With {
+        .Quantity = item("Quantity"),
+        .Description = item("ProductName"),
+        .UnitPrice = $"₱ {rateFormatted}",
+        .LinePrice = $"₱ {linePriceFormatted}"
+    })
+            Next
+
+            ' Display the data in the DataGrid
+            dataGrid.ItemsSource = itemDataSource
             AddHandler BrowseFile.MouseLeftButtonUp, AddressOf OpenFiles
         End Sub
 
@@ -432,6 +452,45 @@ Namespace DPC.Views.Sales.Quotes
             If currentPageIndex > 0 Then
                 LoadPage(currentPageIndex - 1)
             End If
+        End Sub
+
+
+        ''' ✓ NEW FUNCTION: Detect if quote is new or existing
+        ''' This determines which preview form to navigate to
+        Private Sub DetectQuoteMode()
+            Try
+                Dim quoteNumber As String = CEQuoteNumberCache
+                Debug.WriteLine("")
+                Debug.WriteLine("═══════════════════════════════════════")
+                Debug.WriteLine("DETECTING QUOTE MODE")
+                Debug.WriteLine("═══════════════════════════════════════")
+                Debug.WriteLine($"Quote Number: {quoteNumber}")
+
+                If String.IsNullOrWhiteSpace(quoteNumber) Then
+                    Debug.WriteLine("→ MODE: NEW QUOTE (No quote number)")
+                    _isEditingExistingQuote = False
+                    Return
+                End If
+
+                ' Check if quote exists in database
+                Dim quoteExists As Boolean = QuotesController.QuoteNumberExists(quoteNumber)
+                Debug.WriteLine($"Quote exists in DB: {quoteExists}")
+
+                If quoteExists Then
+                    Debug.WriteLine("→ MODE: EDITING EXISTING QUOTE")
+                    _isEditingExistingQuote = True
+                Else
+                    Debug.WriteLine("→ MODE: NEW QUOTE")
+                    _isEditingExistingQuote = False
+                End If
+
+                Debug.WriteLine("═══════════════════════════════════════")
+                Debug.WriteLine("")
+
+            Catch ex As Exception
+                Debug.WriteLine($"Error in DetectQuoteMode: {ex.Message}")
+                _isEditingExistingQuote = False
+            End Try
         End Sub
 
 #Region "Computation Part"
@@ -675,11 +734,25 @@ Namespace DPC.Views.Sales.Quotes
 
                 Debug.WriteLine($"Approved - {CostEstimateDetails.CEApproved}")
 
-                ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
+
+                ' ✓ EDIT: Add smart routing (REPLACE old ViewLoader line)
+                If _isEditingExistingQuote Then
+                    Debug.WriteLine("→ Back to: EditQuote")
+                    ViewLoader.DynamicView.NavigateToView("editquote", Me)
+                Else
+                    Debug.WriteLine("→ Back to: NewQuote")
+                    ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
+                End If
 
             Catch ex As Exception
                 MessageBox.Show("Occurred when the installation or delivery fields were empty or invalid. Treated as 0.")
-                ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
+
+                ' ✓ EDIT: Add smart routing here too
+                If _isEditingExistingQuote Then
+                    ViewLoader.DynamicView.NavigateToView("editquote", Me)
+                Else
+                    ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
+                End If
             End Try
         End Sub
 
@@ -745,7 +818,14 @@ Namespace DPC.Views.Sales.Quotes
                 CostEstimateDetails.CEpaymentTerms = cmbTerms.Text
             End If
 
-            ViewLoader.DynamicView.NavigateToView("printpreviewquotes", Me)
+            ' ✓ EDIT: Add smart routing here (REPLACE old ViewLoader line)
+            If _isEditingExistingQuote Then
+                Debug.WriteLine("→ Routing to: PreviewPrintEditedQuote")
+                ViewLoader.DynamicView.NavigateToView("previewprintquoteeditedquote", Me)
+            Else
+                Debug.WriteLine("→ Routing to: PreviewPrintQuote")
+                ViewLoader.DynamicView.NavigateToView("printpreviewquotes", Me)
+            End If
         End Sub
 #End Region
 
@@ -773,6 +853,14 @@ Namespace DPC.Views.Sales.Quotes
         Private Sub VAT12_TextChanged(sender As Object, e As TextChangedEventArgs)
 
         End Sub
+
+
+        ''' ✓ NEW PROPERTY: Public property to check if currently editing an existing quote
+        Public ReadOnly Property IsEditingExistingQuote As Boolean
+            Get
+                Return _isEditingExistingQuote
+            End Get
+        End Property
 #End Region
 
         ' CHANGES START HERE

@@ -205,6 +205,12 @@ Namespace DPC.Data.Helpers.ViewLoader
                          ' Sales Cost Estimate Navigation
                     Case "costestimate"
                         Return New Sales.Quotes.CostEstimate()
+
+                    Case "editquote"
+                        Return New Sales.Quotes.EditQuote()
+                    Case "previewprintquoteeditedquote"
+                        Return New DPC.Components.Forms.PreviewPrintEditedQuote()
+
                          ' Sales Billing Estimate Navigation
                     Case "billingestimate"
                         Return New Sales.Quotes.BillingStatement()
@@ -433,7 +439,12 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "creditnote"
             ElseIf typeName = "newsubscriptioninvoice" Then
                 Return "newsubscriptioninvoice"
-
+            ElseIf typeName = "editquote" Then
+                Return "editquote"
+            ElseIf typeName = "previewprintquoteeditedquote" Then
+                Return "previewprintquoteeditedquote"
+            ElseIf typeName = "quote" Then
+                Return "quote"
 
 
                 ' Accounts Navigation
