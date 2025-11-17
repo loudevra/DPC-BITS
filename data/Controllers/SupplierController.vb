@@ -254,6 +254,100 @@ Namespace DPC.Data.Controllers
             End Using
             Return products
         End Function
+
+        ' Update Supplier Data
+        Public Shared Sub UpdateSupplier(supplierID As String, supplierName As String, companyName As String,
+                                        phone As String, email As String, address As String, city As String,
+                                        region As String, country As String, postalCode As String, tinID As String,
+                                        brandIDs As List(Of String))
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+
+                    ' Update Supplier table
+                    Dim supplierQuery As String = "UPDATE supplier SET 
+                                          supplierName = @SupplierName, 
+                                          supplierCompany = @CompanyName, 
+                                          officeAddress = @OfficeAddress, 
+                                          city = @City, 
+                                          region = @Region, 
+                                          country = @Country, 
+                                          postalCode = @PostalCode, 
+                                          supplierEmail = @Email, 
+                                          supplierPhone = @PhoneNumber, 
+                                          tinID = @TINID 
+                                          WHERE supplierID = @SupplierID;"
+
+                    Using cmd As New MySqlCommand(supplierQuery, conn)
+                        cmd.Parameters.AddWithValue("@SupplierID", supplierID)
+                        cmd.Parameters.AddWithValue("@SupplierName", supplierName)
+                        cmd.Parameters.AddWithValue("@CompanyName", companyName)
+                        cmd.Parameters.AddWithValue("@OfficeAddress", address)
+                        cmd.Parameters.AddWithValue("@City", city)
+                        cmd.Parameters.AddWithValue("@Region", region)
+                        cmd.Parameters.AddWithValue("@Country", country)
+                        cmd.Parameters.AddWithValue("@PostalCode", postalCode)
+                        cmd.Parameters.AddWithValue("@Email", email)
+                        cmd.Parameters.AddWithValue("@PhoneNumber", phone)
+                        cmd.Parameters.AddWithValue("@TINID", tinID)
+                        cmd.ExecuteNonQuery()
+                    End Using
+
+                    ' Delete existing brand associations
+                    Dim deleteBrandQuery As String = "DELETE FROM supplierbrand WHERE SupplierID = @SupplierID;"
+                    Using cmdDelete As New MySqlCommand(deleteBrandQuery, conn)
+                        cmdDelete.Parameters.AddWithValue("@SupplierID", supplierID)
+                        cmdDelete.ExecuteNonQuery()
+                    End Using
+
+                    ' Insert new brand associations
+                    Dim brandQuery As String = "INSERT INTO supplierbrand (SupplierID, BrandID) VALUES (@SupplierID, @BrandID);"
+                    For Each brandID As String In brandIDs
+                        Using cmdBrand As New MySqlCommand(brandQuery, conn)
+                            cmdBrand.Parameters.AddWithValue("@SupplierID", supplierID)
+                            cmdBrand.Parameters.AddWithValue("@BrandID", brandID)
+                            cmdBrand.ExecuteNonQuery()
+                        End Using
+                    Next
+
+                    MessageBox.Show("Supplier updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+
+                Catch ex As Exception
+                    MessageBox.Show("Error updating supplier: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                End Try
+            End Using
+        End Sub
+
+        ' Get Brands for a specific Supplier
+        Public Shared Function GetBrandsForSupplier(supplierID As String) As List(Of Brand)
+            Dim brands As New List(Of Brand)()
+            Dim query As String = "SELECT b.brandID, b.brandName 
+                          FROM brand b
+                          INNER JOIN supplierbrand sb ON b.brandID = sb.brandID
+                          WHERE sb.supplierID = @SupplierID;"
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@SupplierID", supplierID)
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            While reader.Read()
+                                brands.Add(New Brand With {
+                                    .ID = reader.GetInt32("brandID"),
+                                    .Name = reader.GetString("brandName")
+                                })
+                            End While
+                        End Using
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show("Error loading supplier brands: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                End Try
+            End Using
+
+            Return brands
+        End Function
+
     End Class
 End Namespace
 

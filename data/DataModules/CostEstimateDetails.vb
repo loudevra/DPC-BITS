@@ -53,6 +53,8 @@
     Public CECNIndetifier As String ' Client Identifier for the cost estimate
     Public CEGrandTotalCost As String ' Grand Total Cost for the cost estimate
     Public CEisVatExInclude As Boolean = False ' Default Value for extra safety
+    Public CEOtherServices As String = "" ' ADD THIS LINE - Other services text
+    Public CEShowProductImages As Boolean = True
 
     Public Sub ClearAllCECache()
         CEQuoteNumberCache = ""
@@ -117,5 +119,12 @@
         CEApproved = ""
         CEInstallation = ""
         CEValidUntilDate = ""
+        CEOtherServices = "" ' ADD THIS LINE - Clear other services
+        CEShowProductImages = True
+
     End Sub
+
+
+
 End Module
+

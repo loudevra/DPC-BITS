@@ -582,35 +582,41 @@ Namespace DPC.Views.Sales.Quotes
 
             ' Description remains the same
             Dim descriptionTextBox As New TextBox With {
-        .Text = "Enter product description (Optional)",
-        .BorderThickness = New Thickness(0),
-        .Background = Brushes.Transparent,
-        .FontFamily = New FontFamily("Lexend"),
-        .FontSize = 12,
-        .Foreground = Brushes.Black,
-        .FontWeight = FontWeights.SemiBold,
-        .Height = Double.NaN,
-        .VerticalAlignment = VerticalAlignment.Top,
-        .HorizontalAlignment = HorizontalAlignment.Left,
-        .Width = Double.NaN,
-        .TextWrapping = TextWrapping.Wrap
-    }
+            .Text = "Enter product description (Optional)",
+            .BorderThickness = New Thickness(0),
+            .Background = Brushes.Transparent,
+            .FontFamily = New FontFamily("Lexend"),
+            .FontSize = 12,
+            .Foreground = Brushes.Black,
+            .FontWeight = FontWeights.SemiBold,
+            .Height = Double.NaN,
+            .MinHeight = 120,
+            .MaxHeight = 300,
+            .VerticalAlignment = VerticalAlignment.Top,
+            .HorizontalAlignment = HorizontalAlignment.Left,
+            .Width = Double.NaN,
+            .TextWrapping = TextWrapping.Wrap,
+            .AcceptsReturn = True,
+            .VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            .MaxLength = 2000
+             }
 
             Dim descriptionBorder As New Border With {
-        .Margin = New Thickness(10),
-        .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
-        .BorderThickness = New Thickness(2),
-        .CornerRadius = New CornerRadius(5),
-        .Padding = New Thickness(10),
-        .Width = Double.NaN,
-        .Height = 120,
-        .Background = Brushes.Transparent,
-        .Child = descriptionTextBox
-    }
+            .Margin = New Thickness(10),
+            .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
+            .BorderThickness = New Thickness(2),
+            .CornerRadius = New CornerRadius(5),
+            .Padding = New Thickness(10),
+            .Width = Double.NaN,
+            .MinHeight = 120,
+            .MaxHeight = 300,
+            .Background = Brushes.Transparent,
+            .Child = descriptionTextBox
+             }
 
             Dim descriptionStack As New StackPanel With {
         .Width = Double.NaN
-    }
+             }
             descriptionStack.Children.Add(descriptionBorder)
 
             mainStack.Children.Add(descriptionStack)
@@ -635,7 +641,17 @@ Namespace DPC.Views.Sales.Quotes
             .TextWrapping = TextWrapping.Wrap,
             .Padding = New Thickness(5),
             .BorderThickness = New Thickness(0),
-            .Width = width
+            .MinWidth = width,
+            .MaxWidth = 150,
+            .Width = Double.NaN,
+            .Height = Double.NaN,
+            .MinHeight = 30,
+            .MaxHeight = 150,
+            .AcceptsReturn = True,
+            .VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            .HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+            .MaxLength = 1000,
+            .VerticalAlignment = VerticalAlignment.Top
         }
 
             ' ListBox for suggestions
@@ -1350,7 +1366,7 @@ Namespace DPC.Views.Sales.Quotes
                     End If
 
                     If (fieldNames(j) = "ProductName" OrElse fieldNames(j) = "Quantity" OrElse fieldNames(j) = "Rate") AndAlso
-               String.IsNullOrWhiteSpace(value) Then
+       String.IsNullOrWhiteSpace(value) Then
 
                         MessageBox.Show($"Please fill in all required fields in row {i + 1}.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                         Return Nothing
@@ -1379,11 +1395,31 @@ Namespace DPC.Views.Sales.Quotes
                         If descBorder IsNot Nothing Then
                             Dim descTextBox = TryCast(descBorder.Child, TextBox)
                             If descTextBox IsNot Nothing Then
-                                productData("Description") = descTextBox.Text
+                                ' Store the description, filtering out placeholder text
+                                Dim descText = descTextBox.Text.Trim()
+                                If descText = "Enter product description (Optional)" Then
+                                    descText = ""
+                                End If
+                                productData("Description") = descText
                             End If
                         End If
                     End If
                 End If
+
+                ' ========== ADD THIS NEW SECTION ==========
+                ' Get product image from database
+                Dim productName As String = productData("ProductName").ToString()
+                Dim imageBase64 As String = Nothing
+
+                Try
+                    ' Use GetProduct controller to retrieve image
+                    imageBase64 = GetProduct.GetProductImageBase64(productName)
+                Catch ex As Exception
+                    Debug.WriteLine($"Error getting image for {productName}: {ex.Message}")
+                End Try
+
+                productData("ProductImageBase64") = If(String.IsNullOrEmpty(imageBase64), "", imageBase64)
+                ' ========== END OF NEW SECTION ==========
 
                 productArray.Add(productData)
             Next

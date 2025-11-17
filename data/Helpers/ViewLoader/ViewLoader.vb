@@ -1,14 +1,19 @@
-﻿Imports DPC.DPC.Views
-Imports DPC.DPC.Views.Accounts.Accounts.ManageAccounts
-Imports System.Windows
+﻿Imports System.Windows
 Imports System.Windows.Controls
 Imports System.Windows.Media
+Imports DPC.DPC.Views
+Imports DPC.DPC.Views.Accounts.Accounts.ManageAccounts
+Imports DPC.DPC.Views.Stocks.Suppliers.NewSupplier
 
 Namespace DPC.Data.Helpers.ViewLoader
     ''' <summary>
     ''' Responsible for loading view components by name
     ''' </summary>
     Public Class ViewLoader
+        Public Sub New()
+
+        End Sub
+
         ''' <summary>
         ''' Loads the requested view by name
         ''' </summary>
@@ -228,6 +233,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Stocks.ProductsLabel.CustomLabel.CustomLabel()
                     Case "addstandardlabel"
                         Return New Stocks.ProductsLabel.StandardLabel.StandardLabel()
+
+                    Case "editsuppliers"
+                        Return New Stocks.Suppliers.NewSupplier.EditSuppliers()
 
                     ' Pull Out Form Navigation
                     Case "pulloutreceipt"
@@ -450,9 +458,13 @@ Namespace DPC.Data.Helpers.ViewLoader
             ElseIf typeName = "navaddaccount" Then
                 Return "navaddaccount"
 
+
+
                 ' Projects Navigation
             ElseIf typeName = "newproject" Then
                 Return "newproject"
+            ElseIf typeName = "editsuppliers" Then
+                Return "editsuppliers"
             ElseIf typeName = "addproject2" Then
                 Return "addproject2"
             ElseIf typeName = "addproject3" Then

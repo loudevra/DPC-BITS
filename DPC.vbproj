@@ -70,7 +70,7 @@
     <ApplicationIcon>Assets\logo\BLACK WHOL.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
@@ -1155,6 +1155,9 @@
     <Compile Include="Views\Stocks\Suppliers\ManageBrands\ManageBrands.xaml.vb">
       <DependentUpon>ManageBrands.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Stocks\Suppliers\NewSupplier\EditSuppliers.xaml.vb">
+      <DependentUpon>EditSuppliers.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stocks\Warehouses\AddWarehouse.xaml.vb">
       <DependentUpon>AddWarehouse.xaml</DependentUpon>
     </Compile>
@@ -2056,6 +2059,10 @@
     </Page>
     <Page Include="Views\Stocks\Suppliers\ManageBrands\ManageBrands.xaml">
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\Suppliers\NewSupplier\EditSuppliers.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Stocks\Warehouses\AddWarehouse.xaml">
       <Generator>MSBuild:Compile</Generator>
