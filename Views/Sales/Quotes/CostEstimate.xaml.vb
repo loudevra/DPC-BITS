@@ -23,15 +23,19 @@ Namespace DPC.Views.Sales.Quotes
         Private _isEditingExistingQuote As Boolean = False
         ' Text Editor PopOut
         Private Shared element As FrameworkElement
-
-        ' Add these new class-level variables:
-        Private maxPageHeight As Double = 1670 ' Adjust based on your layout
-        Private servicesWarrantyGap As Double = 50 ' Minimum gap before triggering new page
-        Private currentPageHeight As Double = 0
+        Private itemsPerPage As Integer = 14
+        Private paginationTriggerThreshold As Integer = 7
         Private currentPageIndex As Integer = 0
         Private totalPages As Integer = 1
         Private allItems As List(Of Dictionary(Of String, String))
         Private showProductImages As Boolean = True
+        ' Add new variables for height-based pagination
+        Private Const BaseItemHeight As Double = 55 ' Base height for items without description
+        Private Const DescriptionLineHeight As Double = 15 ' Additional height per line of description
+        Private Const PaginationTriggerHeight As Double = 412 ' Height threshold to trigger pagination 
+        Private Const PageMaxHeight As Double = 770 ' Maximum height available per page
+        Private Const ReservedSpaceForDescription As Double = 30 ' Extra space when item has description
+
 
         Public Sub New()
 
@@ -64,9 +68,9 @@ Namespace DPC.Views.Sales.Quotes
             allItems = CostEstimateDetails.CEQuoteItemsCache
             itemOrder = CostEstimateDetails.CEQuoteItemsCache
 
-            ' Calculate pages based on space instead of item count
             If allItems IsNot Nothing AndAlso allItems.Count > 0 Then
-                CalculatePagesBasedOnSpace()
+                ' Calculate pages dynamically based on height
+                totalPages = CalculateTotalPagesByHeight()
             Else
                 totalPages = 1
             End If
@@ -229,38 +233,79 @@ Namespace DPC.Views.Sales.Quotes
             AddHandler BrowseFile.MouseLeftButtonUp, AddressOf OpenFiles
         End Sub
 
-        Private Sub CalculatePagesBasedOnSpace()
-            totalPages = 1
-            currentPageHeight = 0
-            Dim estimatedItemHeight As Double = 100 ' Estimated height per item with description
-            Dim servicesAndWarrantySectionHeight As Double = 900 ' Estimated combined height
+        ' New method to calculate total pages based on trigger height and max heights
+        Private Function CalculateTotalPagesByHeight() As Integer
+            If allItems Is Nothing OrElse allItems.Count = 0 Then
+                Return 1
+            End If
 
+            ' Calculate total height of all items
+            Dim totalHeight As Double = 0
             For Each item In allItems
-                ' Estimate item height (includes description if present)
-                Dim itemHeight As Double = estimatedItemHeight
-                If item.ContainsKey("Description") AndAlso Not String.IsNullOrWhiteSpace(item("Description")) Then
-                    ' Add extra height for description
-                    itemHeight += 60
-                End If
+                totalHeight += CalculateItemHeight(item)
+            Next
 
-                currentPageHeight += itemHeight
+            ' Below trigger height - single page
+            If totalHeight <= PaginationTriggerHeight Then
+                Return 1
+            End If
 
-                ' Check if adding services/warranty section would exceed page limit
-                If currentPageHeight + servicesAndWarrantySectionHeight > maxPageHeight Then
-                    totalPages += 1
-                    currentPageHeight = 0 ' Reset for next page
+            ' Above trigger but below max height - 2 pages (items + visibility sections)
+            If totalHeight <= PageMaxHeight Then
+                Return 2
+            End If
+
+            ' Above max height - calculate pages with visibility sections at the end
+            Return CalculatePagesFromHeightWithVisibility()
+        End Function
+
+        ' Calculate pages based on height accumulation - same logic for all pages
+        Private Function CalculatePagesFromHeightWithVisibility() As Integer
+            Dim pageCount As Integer = 1
+            Dim currentPageHeight As Double = 0
+
+            For i As Integer = 0 To allItems.Count - 1
+                Dim itemHeight As Double = CalculateItemHeight(allItems(i))
+
+                ' Check if adding this item exceeds page max height
+                If currentPageHeight + itemHeight > PageMaxHeight Then
+                    ' Start new page
+                    pageCount += 1
+                    currentPageHeight = itemHeight
+                Else
+                    currentPageHeight += itemHeight
                 End If
             Next
 
-            ' Ensure at least one page for services/warranty section
-            If totalPages = 1 AndAlso currentPageHeight > 0 Then
-                If currentPageHeight + servicesAndWarrantySectionHeight > maxPageHeight Then
-                    totalPages = 2
-                End If
+            ' Check if last page is below trigger height
+            If currentPageHeight <= PaginationTriggerHeight Then
+                ' Don't add extra page for visibility sections
+                Return pageCount
+            Else
+                ' Add page for visibility sections only
+                Return pageCount + 1
             End If
-        End Sub
+        End Function
 
-        ' Update LoadPage method:
+        ' Calculate individual item height including description space
+        Private Function CalculateItemHeight(item As Dictionary(Of String, String)) As Double
+            Dim baseHeight As Double = BaseItemHeight
+
+            ' Check if item has product description
+            If item.ContainsKey("Description") AndAlso Not String.IsNullOrWhiteSpace(item("Description")) Then
+                Dim descriptionText As String = item("Description")
+                ' Estimate lines based on character count (approximately 50 characters per line at width 400)
+                Dim estimatedLines As Integer = Math.Ceiling(descriptionText.Length / 50.0)
+                baseHeight += (estimatedLines * DescriptionLineHeight)
+
+                ' Add reserved space for items with descriptions
+                baseHeight += ReservedSpaceForDescription
+            End If
+
+            Return baseHeight
+        End Function
+
+        ' LoadPage method:
         Private Sub LoadPage(pageIndex As Integer)
             If allItems Is Nothing OrElse allItems.Count = 0 Then
                 Return
@@ -269,19 +314,36 @@ Namespace DPC.Views.Sales.Quotes
             currentPageIndex = pageIndex
             itemDataSource.Clear()
 
-            Dim itemsToShow As Integer = CalculateItemsForPage(pageIndex)
-            Dim startIndex As Integer = GetStartIndexForPage(pageIndex)
-            Dim endIndex As Integer = Math.Min(startIndex + itemsToShow, allItems.Count)
-
-            ' Special case: if this is the last page and we have remaining items
-            If pageIndex = totalPages - 1 Then
-                endIndex = allItems.Count
-            End If
-
-            For i As Integer = startIndex To endIndex - 1
-                Dim item = allItems(i)
-                itemDataSource.Add(CreateOrderItemWithDescription(item))
+            ' Calculate total height
+            Dim totalHeight As Double = 0
+            For Each item In allItems
+                totalHeight += CalculateItemHeight(item)
             Next
+
+            ' Below trigger height - single page with all items
+            If totalHeight <= PaginationTriggerHeight Then
+                If pageIndex = 0 Then
+                    For Each item In allItems
+                        itemDataSource.Add(CreateOrderItemWithDescription(item))
+                    Next
+                End If
+                ' Above trigger but below max - items on page 1, visibility on page 2
+            ElseIf totalHeight <= PageMaxHeight Then
+                If pageIndex = 0 Then
+                    For Each item In allItems
+                        itemDataSource.Add(CreateOrderItemWithDescription(item))
+                    Next
+                End If
+                ' Page 2 has no items, just visibility sections
+            Else
+                ' Multiple pages with visibility sections at the end
+                Dim itemIndices = GetItemsForPageByHeightWithVisibility(pageIndex)
+                For Each index In itemIndices
+                    If index < allItems.Count Then
+                        itemDataSource.Add(CreateOrderItemWithDescription(allItems(index)))
+                    End If
+                Next
+            End If
 
             dataGrid.ItemsSource = itemDataSource
 
@@ -293,49 +355,52 @@ Namespace DPC.Views.Sales.Quotes
             UpdateWarrantyAndBottomSectionVisibility()
             UpdatePrintPageIndicator()
             UpdateImageColumnVisibility()
+
         End Sub
 
-        ' Add helper method to calculate items per page based on space:
-        Private Function CalculateItemsForPage(pageIndex As Integer) As Integer
-            Dim availableHeight As Double = maxPageHeight
-            Dim currentHeight As Double = 0
-            Dim itemCount As Integer = 0
-            Dim startIndex As Integer = GetStartIndexForPage(pageIndex)
+        ' Get item indices for a specific page based on height - same logic for all pages
+        Private Function GetItemsForPageByHeightWithVisibility(pageIndex As Integer) As List(Of Integer)
+            Dim allPagesIndices As New List(Of List(Of Integer))
+            Dim currentPageIndices As New List(Of Integer)
+            Dim currentPageHeight As Double = 0
 
-            ' If last page, reserve space for services/warranty section
-            Dim reservedHeight As Double = 0
-            If pageIndex = totalPages - 1 Then
-                reservedHeight = 400 ' Height for services, warranty, and bottom sections
+            For i As Integer = 0 To allItems.Count - 1
+                Dim itemHeight As Double = CalculateItemHeight(allItems(i))
+
+                ' Check if adding this item exceeds page max height
+                If currentPageHeight + itemHeight > PageMaxHeight Then
+                    ' Save current page
+                    If currentPageIndices.Count > 0 Then
+                        allPagesIndices.Add(New List(Of Integer)(currentPageIndices))
+                        currentPageIndices.Clear()
+                    End If
+
+                    ' Start new page
+                    currentPageHeight = itemHeight
+                    currentPageIndices.Add(i)
+                Else
+                    currentPageHeight += itemHeight
+                    currentPageIndices.Add(i)
+                End If
+            Next
+
+            ' Add remaining items
+            If currentPageIndices.Count > 0 Then
+                allPagesIndices.Add(currentPageIndices)
+
+                ' Check if last page is below trigger - don't add visibility page
+                If currentPageHeight > PaginationTriggerHeight Then
+                    ' Add empty page for visibility sections
+                    allPagesIndices.Add(New List(Of Integer))
+                End If
             End If
 
-            For i As Integer = startIndex To allItems.Count - 1
-                Dim item = allItems(i)
-                Dim estimatedItemHeight As Double = 100
+            ' Return indices for requested page
+            If pageIndex >= 0 AndAlso pageIndex < allPagesIndices.Count Then
+                Return allPagesIndices(pageIndex)
+            End If
 
-                If item.ContainsKey("Description") AndAlso Not String.IsNullOrWhiteSpace(item("Description")) Then
-                    estimatedItemHeight += 60
-                End If
-
-                If currentHeight + estimatedItemHeight + reservedHeight > availableHeight Then
-                    Exit For
-                End If
-
-                currentHeight += estimatedItemHeight
-                itemCount += 1
-            Next
-
-            Return itemCount
-        End Function
-
-        ' Add helper method to get start index for page:
-        Private Function GetStartIndexForPage(pageIndex As Integer) As Integer
-            Dim startIndex As Integer = 0
-
-            For p As Integer = 0 To pageIndex - 1
-                startIndex += CalculateItemsForPage(p)
-            Next
-
-            Return startIndex
+            Return New List(Of Integer)
         End Function
 
         ' New helper method
@@ -400,7 +465,14 @@ Namespace DPC.Views.Sales.Quotes
                 btnToggleImage.Opacity = 0.6
             End If
 
-            ' Reload current page to reflect changes
+            ' Recalculate pagination based on height
+            totalPages = CalculateTotalPagesByHeight()
+
+            ' Ensure current page index is valid
+            If currentPageIndex >= totalPages Then
+                currentPageIndex = totalPages - 1
+            End If
+
             LoadPage(currentPageIndex)
         End Sub
 
@@ -437,11 +509,9 @@ Namespace DPC.Views.Sales.Quotes
 
 
         Private Sub UpdatePageIndicator()
-            ' You can add a TextBlock to show "Page 1 of 3" etc.
-            ' This is optional but helpful
+
         End Sub
 
-        ' Add navigation methods (if you want manual navigation)
         Private Sub NextPage_Click(sender As Object, e As RoutedEventArgs)
             If currentPageIndex < totalPages - 1 Then
                 LoadPage(currentPageIndex + 1)
@@ -596,7 +666,7 @@ Namespace DPC.Views.Sales.Quotes
             End If
             Debug.WriteLine($"Computed Total: {totalCostVal}")
 
-            ' Update the TotalCost display
+            ' TotalCost display
             TotalCost.Text = "₱ " & totalCostVal.ToString("N2")
         End Sub
 
@@ -620,18 +690,10 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Sub StartFileUpload(filePath As String)
-            '' Reset upload progress
-            'UploadProgressBar.Value = 0
-            'UploadStatus.Text = "Uploading..."
 
-            ' Update file info
             Dim fileInfo As New FileInfo(filePath)
             Dim fileSizeText As String = Base64Utility.GetReadableFileSize(fileInfo.Length)
 
-            'ImgName.Text = Path.GetFileName(filePath)
-            'ImgSize.Text = fileSizeText
-
-            ' Convert image to Base64 using Base64Utility
             Try
                 base64Image = Base64Utility.EncodeFileToBase64(filePath)
                 ImageCache = base64Image
@@ -640,16 +702,6 @@ Namespace DPC.Views.Sales.Quotes
                 Exit Sub
             End Try
 
-            '' Show the panel with image info
-            'ImageInfoPanel.Visibility = Visibility.Visible
-
-            '' Disable browse button and drag-drop functionality
-            'BtnBrowse.IsEnabled = False
-            'DropBorder.AllowDrop = False
-            'isUploadLocked = True
-
-            '' Configure and start the timer
-            'ConfigureUploadTimer()
             CostEstimateDetails.CEsignature = True
             DisplayUploadedImage()
         End Sub
@@ -694,7 +746,7 @@ Namespace DPC.Views.Sales.Quotes
                     imageSource.StreamSource = stream
                     imageSource.EndInit()
                 End Using
-                imageSource.Freeze() ' Allow image to be accessed in different threads
+                imageSource.Freeze()
 
                 BrowseFile.Child = Nothing
 
@@ -704,8 +756,6 @@ Namespace DPC.Views.Sales.Quotes
 
                 BrowseFile.Child = imagePreview
 
-                '' Set the image source
-                'UploadedImage.Source = imageSource
             Catch ex As Exception
                 MessageBox.Show("Error decoding image: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
@@ -907,7 +957,6 @@ Namespace DPC.Views.Sales.Quotes
         End Function
 
         ' Image Enlarge 
-
         Private Sub ProductImageControl_MouseLeftButtonDown(sender As Object, e As MouseButtonEventArgs)
             Dim img As Image = TryCast(sender, Image)
             If img IsNot Nothing AndAlso img.Source IsNot Nothing Then
@@ -943,7 +992,6 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         ' Nothing To follow Visisbility
-
         Private Sub UpdateNothingToFollowVisibility()
             ' Find the "Nothing to follow" StackPanel
             Dim nothingToFollowPanel As StackPanel = Nothing

@@ -463,13 +463,15 @@
                                                             <DataGridTemplateColumn.CellTemplate>
                                                                 <DataTemplate>
                                                                     <StackPanel Margin="8" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                                        <TextBlock Text="{Binding Description}" 
+                                                                        <TextBlock 
+                                                                          Text="{Binding Description}" 
                                                                           FontSize="12" 
                                                                           FontFamily="Lexend"
                                                                           FontWeight="SemiBold"
                                                                           MaxWidth="400"
                                                                           TextWrapping="Wrap"/>
-                                                                        <TextBlock Text="{Binding ProductDescription}" 
+                                                                        <TextBlock 
+                                                                          Text="{Binding ProductDescription}" 
                                                                           FontSize="12" 
                                                                           FontFamily="Lexend"
                                                                           Foreground="Black"
@@ -567,7 +569,8 @@
                                                 <!-- "Nothing to follow" text -->
                                                 <StackPanel x:Name="NothingToFollowSection" Margin="0,0,5,0" Orientation="Vertical" HorizontalAlignment="Center">
                                                     <Border Background="Transparent" Padding="5" CornerRadius="5">
-                                                        <TextBlock Text="*............................................... Nothing to follow ...............................................*"
+                                                        <TextBlock 
+                                                           Text="*............................................... Nothing to follow ...............................................*"
                                                            FontFamily="Lexend"
                                                            FontSize="10"
                                                            FontWeight="Bold"
@@ -579,8 +582,8 @@
                                                 <!-- Editable TextBlock that triggers popup on click -->
                                                 <StackPanel x:Name="OtherServicesSection" Margin="5,0,5,0">
                                                     <Border BorderBrush="Transparent" BorderThickness="0" Padding="1">
-
-                                                        <TextBlock x:Name="OtherServices"
+                                                        <TextBlock 
+                                                           x:Name="OtherServices"
                                                            Text="Services:"
                                                            HorizontalAlignment="Center"
                                                            FontFamily="Lexend"
@@ -604,28 +607,30 @@
                                             <StackPanel x:Name="WarrantySection" Grid.Row="1" Margin="0,10,0,7">
                                                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                                                     <Border Background="Transparent" Padding="2" CornerRadius="5">
-                                                        <TextBlock Text="Warranty:"
-                                                                   FontFamily="Lexend"
-                                                                   FontSize="10"
-                                                                   FontWeight="Bold"
-                                                                   Foreground="Red"
-                                                                   HorizontalAlignment="Left"/>
+                                                        <TextBlock 
+                                                            Text="Warranty:"
+                                                            FontFamily="Lexend"
+                                                            FontSize="10"
+                                                            FontWeight="Bold"
+                                                            Foreground="Red"
+                                                            HorizontalAlignment="Left"/>
                                                     </Border>
                                                 </StackPanel>
 
                                                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                                                     <Border Background="Transparent" CornerRadius="5">
-                                                        <TextBlock x:Name="Warranty"
-                                                                   Text="Dream PC Build and IT Solutions Inc. offers 1 year warranty for this cost estimate. This warranty covers &#x0a;manufacturer defects and hardware malfunctions under normal usage. Terms and conditions apply."
-                                                                   FontFamily="Lexend"
-                                                                   MouseLeftButtonUp="TextEditorPopOut"
-                                                                   FontSize="10"
-                                                                   Width="450"
-                                                                   TextWrapping="Wrap"
-                                                                   FontWeight="Light"
-                                                                   Foreground="Red"
-                                                                   HorizontalAlignment="Center"
-                                                                   TextAlignment="Center"/>
+                                                        <TextBlock
+                                                            x:Name="Warranty"
+                                                            Text="Dream PC Build and IT Solutions Inc. offers 1 year warranty for this cost estimate. This warranty covers &#x0a;manufacturer defects and hardware malfunctions under normal usage. Terms and conditions apply."
+                                                            FontFamily="Lexend"
+                                                            MouseLeftButtonUp="TextEditorPopOut"
+                                                            FontSize="10"
+                                                            Width="450"
+                                                            TextWrapping="Wrap"
+                                                            FontWeight="Light"
+                                                            Foreground="Red"
+                                                            HorizontalAlignment="Center"
+                                                            TextAlignment="Center"/>
                                                             </Border>
                                                         </StackPanel>
                                                     </StackPanel>
