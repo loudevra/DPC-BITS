@@ -737,8 +737,8 @@ Namespace DPC.Views.Sales.Quotes
 
                 ' ✓ EDIT: Add smart routing (REPLACE old ViewLoader line)
                 If _isEditingExistingQuote Then
-                    Debug.WriteLine("→ Back to: EditQuotess")
-                    ViewLoader.DynamicView.NavigateToView("editquotess", Me)
+                    Debug.WriteLine("→ Back to: EditQuote")
+                    ViewLoader.DynamicView.NavigateToView("editquote", Me)
                 Else
                     Debug.WriteLine("→ Back to: NewQuote")
                     ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
@@ -749,7 +749,7 @@ Namespace DPC.Views.Sales.Quotes
 
                 ' ✓ EDIT: Add smart routing here too
                 If _isEditingExistingQuote Then
-                    ViewLoader.DynamicView.NavigateToView("editquotess", Me)
+                    ViewLoader.DynamicView.NavigateToView("editquote", Me)
                 Else
                     ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
                 End If

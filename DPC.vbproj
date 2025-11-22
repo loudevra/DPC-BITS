@@ -1095,8 +1095,14 @@
     <Compile Include="Views\Sales\Quotes\CostEstimate.xaml.vb">
       <DependentUpon>CostEstimate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Sales\Quotes\EditQuote.xaml.vb">
+      <DependentUpon>EditQuote.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Sales\Quotes\NewQuote.xaml.vb">
       <DependentUpon>NewQuote.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\Quotes\PreviewPrintEditedQuote.xaml.vb">
+      <DependentUpon>PreviewPrintEditedQuote.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Sales\Quotes\Quote.xaml.vb">
       <DependentUpon>Quote.xaml</DependentUpon>
@@ -1983,7 +1989,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Sales\Quotes\EditQuote.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Sales\Quotes\NewQuote.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Quotes\PreviewPrintEditedQuote.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
