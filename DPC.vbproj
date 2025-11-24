@@ -605,6 +605,9 @@
     <Compile Include="Components\Forms\POSWalkInClient.xaml.vb">
       <DependentUpon>POSWalkInClient.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\PreviewPrintEditedQuote.xaml.vb">
+      <DependentUpon>PreviewPrintEditedQuote.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\PreviewPrintQuote.xaml.vb">
       <DependentUpon>PreviewPrintQuote.xaml</DependentUpon>
     </Compile>
@@ -1095,6 +1098,9 @@
     <Compile Include="Views\Sales\Quotes\CostEstimate.xaml.vb">
       <DependentUpon>CostEstimate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Sales\Quotes\EditQuote.xaml.vb">
+      <DependentUpon>EditQuote.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Sales\Quotes\NewQuote.xaml.vb">
       <DependentUpon>NewQuote.xaml</DependentUpon>
     </Compile>
@@ -1344,6 +1350,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\POSWalkInClient.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\PreviewPrintEditedQuote.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1980,6 +1990,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Sales\Quotes\CostEstimate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Quotes\EditQuote.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

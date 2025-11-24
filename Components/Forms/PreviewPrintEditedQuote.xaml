@@ -131,26 +131,28 @@
                                         <StackPanel Grid.Row="3" Orientation="Vertical" HorizontalAlignment="Right" Margin="5">
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                                 <TextBlock x:Name="CNIdentifier" Text="CE #:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                <Border Background="White" BorderThickness="0.5,0.5,0.5,0.25"  BorderBrush="#090909" Padding="5,0" Width="135" Margin="10,0,0,0">
-                                                    <TextBlock x:Name="QuoteNumber" FontSize="12" FontFamily="Lexend" FontWeight="Bold"/>
+                                                <Border Background="White" BorderThickness="0.5,0.5,0.5,0.25"  BorderBrush="#090909" Padding="3,0" Width="220" Margin="3,0,0,0" Height="20">
+                                                    <TextBlock x:Name="QuoteNumber" FontSize="12" FontFamily="Lexend" FontWeight="Bold" HorizontalAlignment="Center"  VerticalAlignment="Center"/>
                                                 </Border>
                                             </StackPanel>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                                 <TextBlock Text="Date:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                <Border Background="White" BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="#090909" Padding="5,0" Width="135" Margin="10,0,0,0">
-                                                    <TextBlock x:Name="QuoteDate" FontSize="9" FontFamily="Lexend"/>
+                                                <Border Background="White" BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="#090909" Padding="3,0" Width="220" Margin="3,0,0,0" Height="20">
+                                                    <TextBlock x:Name="QuoteDate" FontSize="9" FontFamily="Lexend"  HorizontalAlignment="Center"  VerticalAlignment="Center"/>
                                                 </Border>
                                             </StackPanel>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                                 <TextBlock Text="Valid Until:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                <Border BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="Black" Padding="5,0" Width="135" Margin="10,0,0,0">
-                                                    <TextBlock x:Name="QuoteValidityDate"  FontSize="9" FontWeight="Bold"  Foreground="Red" FontFamily="Lexend" />
+                                                <Border BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="Black" Padding="3,0" Width="220" Margin="3,0,0,0" Height="20">
+                                                    <TextBlock x:Name="QuoteValidityDate"  FontSize="9" FontWeight="Bold"  Foreground="Red" FontFamily="Lexend" HorizontalAlignment="Center"  VerticalAlignment="Center" />
                                                 </Border>
                                             </StackPanel>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
                                                 <TextBlock Text="NOT VALID WITHOUT DREAM PC VERIFIED STAMP"  FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="Red" VerticalAlignment="Center" TextWrapping="Wrap"/>
                                             </StackPanel>
                                         </StackPanel>
+
+
 
                                         <!--DreamPC's Info-->
                                         <StackPanel Grid.Row="2" Orientation="Vertical" HorizontalAlignment="Left" Margin="5" Visibility="Collapsed">
