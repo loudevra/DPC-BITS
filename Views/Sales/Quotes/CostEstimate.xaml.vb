@@ -152,62 +152,6 @@ Namespace DPC.Views.Sales.Quotes
                 btnToggleImage.Opacity = 0.6
             End If
 
-            ' Tax calculation logic
-            If Not CEtaxSelection Then
-                ' Tax Inclusive
-                VatText.Visibility = Visibility.Visible
-                VatValue.Visibility = Visibility.Visible
-                If String.IsNullOrWhiteSpace(CostEstimateDetails.CEremarksTxt) OrElse remarksBox.Text = "Tax Inclusive." OrElse remarksBox.Text = "Tax Exclusive." Then
-                    remarksBox.Text = "Tax Inclusive."
-                End If
-
-                Dim totalAmountBeforeVAT As Decimal = 0
-                Dim rawSubtotal = Subtotal.Text.Replace("₱", "").Trim().Replace(",", "").Trim()
-                If Decimal.TryParse(rawSubtotal, totalAmountBeforeVAT) Then
-                    Dim vatAmount As Decimal = totalAmountBeforeVAT * 0.12D
-                    VAT12.Text = "₱ " & vatAmount.ToString("N2")
-                    CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
-
-                    Dim totalCostValue As Decimal = totalAmountBeforeVAT + installationFee + deliveryCost
-                    TotalCost.Text = "₱ " & totalCostValue.ToString("N2")
-                    CostEstimateDetails.CETotalAmountCache = "₱ " & totalCostValue.ToString("N2")
-                Else
-                    Debug.WriteLine($"Failed to parse Subtotal.Text: '{rawSubtotal}'")
-                    TotalCost.Text = "₱ 0.00"
-                    VAT12.Text = "₱ 0.00"
-                End If
-            Else
-                ' Tax Exclusive
-                VatText.Visibility = Visibility.Visible
-                VatValue.Visibility = Visibility.Visible
-                If String.IsNullOrWhiteSpace(CostEstimateDetails.CEremarksTxt) OrElse remarksBox.Text = "Tax Inclusive." OrElse remarksBox.Text = "Tax Exclusive." Then
-                    remarksBox.Text = "Tax Exclusive."
-                End If
-
-                Dim totalCostValue As Decimal = 0
-                Dim rawSubtotal = Subtotal.Text.Replace("₱", "").Trim().Replace(",", "").Trim()
-                If Decimal.TryParse(rawSubtotal, totalCostValue) Then
-                    Dim vatAmount As Decimal
-                    If CEisVatExInclude Then
-                        vatAmount = totalCostValue * 0.12D
-                    Else
-                        vatAmount = 0D
-                        VatText.Visibility = Visibility.Collapsed
-                        VatValue.Visibility = Visibility.Collapsed
-                    End If
-                    VAT12.Text = "₱ " & vatAmount.ToString("N2")
-                    CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
-
-                    totalCostValue += installationFee + deliveryCost + vatAmount
-                    TotalCost.Text = "₱ " & totalCostValue.ToString("N2")
-                    CostEstimateDetails.CETotalAmountCache = "₱ " & totalCostValue.ToString("N2")
-                Else
-                    Debug.WriteLine($"Failed to parse Subtotal.Text: '{rawSubtotal}'")
-                    TotalCost.Text = "₱ 0.00"
-                    VAT12.Text = "₱ 0.00"
-                End If
-            End If
-
             ' Check if the signature is enabled
             If Not String.IsNullOrWhiteSpace(base64Image) Then
                 DisplayUploadedImage()
@@ -628,42 +572,15 @@ Namespace DPC.Views.Sales.Quotes
                 subtotalAmount = 0D
             End If
 
-            ' Calculate base amount
-            Dim baseAmount As Decimal
+            ' ✓ FIXED: Calculate baseAmount first
+            Dim baseAmount As Decimal = subtotalAmount + installationAmount + deliveryAmount
+            Debug.WriteLine($"Base Amount: {baseAmount}")
 
-            ' Calculate VAT12 for display only
-            Dim vatAmount As Decimal = baseAmount * 0.12D
-            VAT12.Text = "₱ " & vatAmount.ToString("N2")
-            CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
-            Debug.WriteLine($"Computed VAT: {vatAmount}")
-
+            ' Calculate VAT12 for display
+            Dim vatAmount As Decimal = 0
             ' Calculate total cost
             Dim totalCostVal As Decimal
-            If CEtaxSelection Then
-                ' Tax Exclusive: Add VAT to total cost
 
-                ' Checks if the user choose to show hide the vat
-                If CEisVatExInclude Then
-                    vatAmount = subtotalAmount * 0.12D
-                Else
-                    vatAmount = 0D
-                End If
-
-                ' Display the value result
-                VAT12.Text = "₱ " & vatAmount.ToString("N2")
-                CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
-                Debug.WriteLine($"Computed VAT: {vatAmount}")
-
-                totalCostVal = subtotalAmount + installationAmount + deliveryAmount + vatAmount
-            Else
-                ' Tax Inclusive: Do NOT add VAT to total cost
-                vatAmount = subtotalAmount * 0.12D
-                VAT12.Text = "₱ " & vatAmount.ToString("N2")
-                CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
-
-                baseAmount = subtotalAmount + installationAmount + deliveryAmount
-                totalCostVal = baseAmount
-            End If
             Debug.WriteLine($"Computed Total: {totalCostVal}")
 
             ' TotalCost display
@@ -787,8 +704,8 @@ Namespace DPC.Views.Sales.Quotes
 
                 ' ✓ EDIT: Add smart routing (REPLACE old ViewLoader line)
                 If _isEditingExistingQuote Then
-                    Debug.WriteLine("→ Back to: EditQuotess")
-                    ViewLoader.DynamicView.NavigateToView("editquotess", Me)
+                    Debug.WriteLine("→ Back to: EditQuote")
+                    ViewLoader.DynamicView.NavigateToView("editquote", Me)
                 Else
                     Debug.WriteLine("→ Back to: NewQuote")
                     ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
@@ -799,7 +716,7 @@ Namespace DPC.Views.Sales.Quotes
 
                 ' ✓ EDIT: Add smart routing here too
                 If _isEditingExistingQuote Then
-                    ViewLoader.DynamicView.NavigateToView("editquotess", Me)
+                    ViewLoader.DynamicView.NavigateToView("editquote", Me)
                 Else
                     ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
                 End If

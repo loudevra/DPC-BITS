@@ -1053,20 +1053,18 @@ Namespace DPC.Views.Sales.Quotes
                 taxValue = baseAmount * (taxPercent / 100)
                 amountBeforeDiscount = baseAmount + taxValue
             Else
-                ' Tax Inclusive: always use 12% for display, do NOT add to amount
+                ' Tax Inclusive: 12% is already in the base amount, calculate for display only
                 taxValue = baseAmount * 0.12D
-                amountBeforeDiscount = baseAmount
+                amountBeforeDiscount = baseAmount + taxValue ' Base amount already includes tax conceptually
 
-                ' Update txtTaxValueBox and amount value
-                Dim taxValueBoxVal = FindTextBoxByName($"txtTaxValue_{rowIndex}")
-                taxValueBox.Text = taxValue.ToString("N2")
-                Dim amountBoxVal = FindTextBoxByName($"txtAmount_{rowIndex}")
-                amountBox.Text = "₱" & amountBeforeDiscount.ToString("N2")
+                ' Update tax value display
+                If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
             End If
 
             Dim discountValue = amountBeforeDiscount * (discountPercent / 100)
             Dim finalAmount = amountBeforeDiscount - discountValue
 
+            ' Update all display boxes
             If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
             If discountBox IsNot Nothing Then discountBox.Text = discountValue.ToString("N2")
             amountBox.Text = "₱" & finalAmount.ToString("N2")
@@ -1342,9 +1340,9 @@ Namespace DPC.Views.Sales.Quotes
                 If productPanel Is Nothing OrElse productPanel.Children.Count < 8 Then Continue For
 
                 Dim productData As New Dictionary(Of String, Object)
-                Dim fieldNames = {"ProductName", "Quantity", "Rate", "TaxPercent", "Tax", "Discount"}
+                Dim fieldNames = {"ProductName", "Quantity", "Rate", "TaxPercent", "TaxValue", "DiscountPercent", "Discount", "Amount"}
 
-                For j As Integer = 0 To 5
+                For j As Integer = 0 To 7
                     If j >= productPanel.Children.Count Then Exit For
 
                     Dim borderInput = TryCast(productPanel.Children(j), Border)
@@ -1367,7 +1365,6 @@ Namespace DPC.Views.Sales.Quotes
 
                     If (fieldNames(j) = "ProductName" OrElse fieldNames(j) = "Quantity" OrElse fieldNames(j) = "Rate") AndAlso
        String.IsNullOrWhiteSpace(value) Then
-
                         MessageBox.Show($"Please fill in all required fields in row {i + 1}.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                         Return Nothing
                     End If
@@ -1516,11 +1513,16 @@ Namespace DPC.Views.Sales.Quotes
         ' Function for inserting the data into the quote table in the database
         Private Sub GetAllDataInQuoteProperties(client As Client, productItemsJson As String)
             If Not ValidateQuoteSubmission(client, productItemsJson) Then Exit Sub
+            If cmbCostEstimateValidty.SelectedItem Is Nothing Then
+                MessageBox.Show("Please select a validity date.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Exit Sub
+            End If
+
+            Dim selectedValidityOption = DirectCast(cmbCostEstimateValidty.SelectedItem, ComboBoxItem).Content.ToString()
             Try
                 Dim selectedTax As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
                 Dim selectedDiscount As String = CType(txtDiscountSelection.SelectedItem, ComboBoxItem).Content.ToString()
                 ' Calculate actual validity date from selected option
-                Dim selectedValidityOption = DirectCast(cmbCostEstimateValidty.SelectedItem, ComboBoxItem).Content.ToString()
                 Dim actualValidityDate = GetValidityDate(selectedValidityOption, OrderDateVM.SelectedDate)
                 CEValidUntilDate = selectedValidityOption
                 CEQuoteValidityDateCache = actualValidityDate.ToString("yyyy-MM-dd")
