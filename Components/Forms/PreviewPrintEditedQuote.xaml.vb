@@ -465,12 +465,12 @@ Namespace DPC.Components.Forms
                 End If
                 Debug.WriteLine($"2. JSON Items serialized: {jsonItems.Length} characters")
 
-                ' Parse and clean numeric values
-                Dim totalTaxString As String = CETotalTaxValueCache.Replace("₱", "").Replace(" ", "").Trim()
-                Dim totalDiscountString As String = CETotalDiscountValueCache.Replace("₱", "").Replace(" ", "").Trim()
-                Dim totalAmountString As String = CETotalAmountCache.Replace("₱", "").Replace(" ", "").Trim()
+                ' Parse and clean numeric values from cache
+                Dim totalTaxString As String = If(String.IsNullOrWhiteSpace(CETotalTaxValueCache), "0", CETotalTaxValueCache.Replace("₱", "").Replace(" ", "").Trim())
+                Dim totalDiscountString As String = If(String.IsNullOrWhiteSpace(CETotalDiscountValueCache), "0", CETotalDiscountValueCache.Replace("₱", "").Replace(" ", "").Trim())
+                Dim totalAmountString As String = If(String.IsNullOrWhiteSpace(CETotalAmountCache), "0", CETotalAmountCache.Replace("₱", "").Replace(" ", "").Trim())
 
-                Debug.WriteLine($"3. Raw Values Before Cleaning:")
+                Debug.WriteLine($"3. Raw Values From Cache:")
                 Debug.WriteLine($"   Tax Value: {CETotalTaxValueCache}")
                 Debug.WriteLine($"   Discount Value: {CETotalDiscountValueCache}")
                 Debug.WriteLine($"   Amount Value: {CETotalAmountCache}")
@@ -542,7 +542,7 @@ Namespace DPC.Components.Forms
                     quoteDate = DateTime.Now
                 End Try
 
-                ' Call UpdateQuote
+                ' Call UpdateQuote with extracted values
                 Dim success As Boolean = QuotesController.UpdateQuote(
             quoteNumber,
             If(String.IsNullOrEmpty(CEReferenceNumber), "", CEReferenceNumber),
@@ -573,7 +573,6 @@ Namespace DPC.Components.Forms
                     Debug.WriteLine("UpdateToDb COMPLETED SUCCESSFULLY")
                 Else
                     Debug.WriteLine("8. FAILED - UpdateQuote returned False")
-                    Debug.WriteLine("UpdateToDb FAILED - Quote not updated")
                 End If
 
                 Debug.WriteLine("===============================================")

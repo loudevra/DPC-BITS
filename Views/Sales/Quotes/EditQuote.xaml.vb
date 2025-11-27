@@ -38,9 +38,42 @@ Namespace DPC.Views.Sales.Quotes
 
         Public Sub New()
             InitializeComponent()
+            If String.IsNullOrWhiteSpace(CEtaxSelection) Then
+                _TaxSelection = False
+            Else
+                _TaxSelection = CBool(CEtaxSelection)
+            End If
+            CEtaxSelection = _TaxSelection
+
+            ' Set the ComboBox selection to match _TaxSelection
+            If _TaxSelection Then
+                txtTaxSelection.SelectedItem = txtTaxSelection.Items.Cast(Of ComboBoxItem)().FirstOrDefault(Function(i) i.Content.ToString() = "Exclusive")
+            Else
+                txtTaxSelection.SelectedItem = txtTaxSelection.Items.Cast(Of ComboBoxItem)().FirstOrDefault(Function(i) i.Content.ToString() = "Inclusive")
+            End If
+
+            ' Run the selection changed logic to update all rates/tax fields
+            TxtTaxSelection_SelectionChanged(txtTaxSelection, Nothing)
+
             _typingTimer = New DispatcherTimer With {.Interval = TimeSpan.FromMilliseconds(300)}
             AddHandler _typingTimer.Tick, AddressOf OnSearchTimerTick
             AddHandler Me.Loaded, AddressOf EditQuote_Loaded
+
+            If txtTaxSelection.Text = "Inclusive" Then
+                ShowVatExBtn.Visibility = Visibility.Collapsed
+            Else
+                ShowVatExBtn.Visibility = Visibility.Visible
+            End If
+
+            ' Visibility for the Show/Hide VAT 12% button
+            VatExShowVat.Text = If(CEisVatExInclude, "Hide VAT 12%", "Show VAT 12%")
+
+            cmbCostEstimateValidty.Text = CostEstimateDetails.CEValidUntilDate
+
+            TaxHeader.Header = If(_TaxSelection, "Tax(%)", "Tax(12%)")
+
+            Debug.WriteLine($"Tax Selection - {_TaxSelection}")
+            Debug.WriteLine($"Tax Value In Quote Properties - {_TaxSelection}")
         End Sub
 
         Private Sub InitializeCalendar()
@@ -239,7 +272,7 @@ Namespace DPC.Views.Sales.Quotes
             {"txtTaxPercent_", "TaxPercent"},
             {"txtTaxValue_", "Tax"},
             {"txtDiscountPercent_", "DiscountPercent"},  ' ← FIXED: was "Discount"
-            {"txtDiscount_", "DiscountAmount"},          ' ← FIXED: was "DiscountAmount"
+            {"txtDiscount_", "Discount"},          ' ← FIXED: was "DiscountAmount"
             {"txtAmount_", "Amount"}
         }
 
@@ -527,33 +560,73 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Sub Quantity_TextChanged(sender As Object, e As TextChangedEventArgs)
-            Dim txt = TryCast(sender, TextBox)
-            If txt Is Nothing Then Return
-            UpdateRowCalculations(txt)
+            Dim textBox = TryCast(sender, TextBox)
+            If textBox Is Nothing Then Exit Sub
+
+            textBox.Dispatcher.BeginInvoke(Sub()
+                                               Dim parts = textBox.Name.Split("_"c)
+                                               If parts.Length < 2 Then Exit Sub
+
+                                               Dim rowIndex As Integer
+                                               If Not Integer.TryParse(parts(1), rowIndex) Then Exit Sub
+
+                                               CalculateAmount(rowIndex)
+                                           End Sub, DispatcherPriority.Background)
         End Sub
 
         Private Sub Quantity_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
-            e.Handled = Not IsNumeric(e.Text)
+            If Not e.Text.All(AddressOf Char.IsDigit) Then
+                e.Handled = True
+            End If
         End Sub
 
+        ' Tax Percent Textbox for Dynamic Product Input UI
         Private Sub TaxPercent_TextChanged(sender As Object, e As TextChangedEventArgs)
-            Dim txt = TryCast(sender, TextBox)
-            If txt Is Nothing Then Return
-            UpdateRowCalculations(txt)
+            Dim textBox = TryCast(sender, TextBox)
+            If textBox Is Nothing Then Exit Sub
+
+            textBox.Dispatcher.BeginInvoke(Sub()
+                                               Dim parts = textBox.Name.Split("_"c)
+                                               If parts.Length < 2 Then Exit Sub
+
+                                               Dim rowIndex As Integer
+                                               If Not Integer.TryParse(parts(1), rowIndex) Then Exit Sub
+
+                                               CalculateAmount(rowIndex)
+                                           End Sub, DispatcherPriority.Background)
         End Sub
 
         Private Sub TaxPercent_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
-            e.Handled = Not IsNumeric(e.Text)
+            Dim tb = DirectCast(sender, TextBox)
+
+            ' Block if input is not a digit or if new text would be longer than 3 chars
+            If Not Char.IsDigit(e.Text, 0) OrElse tb.Text.Length >= 6 Then
+                e.Handled = True
+            End If
         End Sub
 
         Private Sub DiscountPercent_TextChanged(sender As Object, e As TextChangedEventArgs)
-            Dim txt = TryCast(sender, TextBox)
-            If txt Is Nothing Then Return
-            UpdateRowCalculations(txt)
+            Dim textBox = TryCast(sender, TextBox)
+            If textBox Is Nothing Then Exit Sub
+
+            textBox.Dispatcher.BeginInvoke(Sub()
+                                               Dim parts = textBox.Name.Split("_"c)
+                                               If parts.Length < 2 Then Exit Sub
+
+                                               Dim rowIndex As Integer
+                                               If Not Integer.TryParse(parts(1), rowIndex) Then Exit Sub
+
+                                               CalculateAmount(rowIndex)
+                                           End Sub, DispatcherPriority.Background)
         End Sub
 
         Private Sub DiscountPercent_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
-            e.Handled = Not IsNumeric(e.Text)
+            Dim tb = DirectCast(sender, TextBox)
+
+            ' Block if input is not a digit or if new text would be longer than 3 chars
+            If Not Char.IsDigit(e.Text, 0) OrElse tb.Text.Length >= 3 Then
+                e.Handled = True
+            End If
         End Sub
 
         Private Function IsNumeric(text As String) As Boolean
@@ -576,23 +649,41 @@ Namespace DPC.Views.Sales.Quotes
                 Dim discountBox = TryCast(Me.FindName($"txtDiscount_{rowIndex}"), TextBox)
                 Dim amountBox = TryCast(Me.FindName($"txtAmount_{rowIndex}"), TextBox)
 
-                If qtyBox Is Nothing OrElse rateBox Is Nothing Then Return
-
+                ' Parse input values
                 Dim quantity As Decimal = 0, rate As Decimal = 0, taxPercent As Decimal = 0, discountPercent As Decimal = 0
-
                 Decimal.TryParse(qtyBox.Text, quantity)
                 Decimal.TryParse(rateBox.Text, rate)
                 If taxPercentBox IsNot Nothing Then Decimal.TryParse(taxPercentBox.Text, taxPercent)
                 If discountPercentBox IsNot Nothing Then Decimal.TryParse(discountPercentBox.Text, discountPercent)
 
-                Dim subtotal = quantity * rate
-                Dim calcTaxValue = subtotal * (taxPercent / 100)
-                Dim discountValue = subtotal * (discountPercent / 100)
-                Dim amount = subtotal + calcTaxValue - discountValue
+                Dim baseAmount = quantity * rate
+                Dim taxValue As Decimal = 0
+                Dim amountBeforeDiscount As Decimal = baseAmount
 
-                If taxValueBox IsNot Nothing Then taxValueBox.Text = calcTaxValue.ToString("F2")
-                If discountBox IsNot Nothing Then discountBox.Text = discountValue.ToString("F2")
-                If amountBox IsNot Nothing Then amountBox.Text = amount.ToString("F2")
+                If _TaxSelection Then
+                    ' Tax Exclusive: add tax to amount
+                    taxValue = baseAmount * (taxPercent / 100)
+                    amountBeforeDiscount = baseAmount + taxValue
+                Else
+                    ' Tax Inclusive: always use 12% for display, do NOT add to amount
+                    taxValue = baseAmount * 0.12D
+                    amountBeforeDiscount = baseAmount
+
+                    ' Update txtTaxValueBox and amount value
+                    Dim taxValueBoxVal = FindTextBoxByName($"txtTaxValue_{rowIndex}")
+                    taxValueBox.Text = taxValue.ToString("N2")
+                    Dim amountBoxVal = FindTextBoxByName($"txtAmount_{rowIndex}")
+                    amountBox.Text = "₱" & amountBeforeDiscount.ToString("N2")
+                End If
+
+                Dim discountValue = amountBeforeDiscount * (discountPercent / 100)
+                Dim finalAmount = amountBeforeDiscount - discountValue
+
+                If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
+                If discountBox IsNot Nothing Then discountBox.Text = discountValue.ToString("N2")
+                amountBox.Text = "₱" & finalAmount.ToString("N2")
+
+                Debug.WriteLine($"[Row {rowIndex}] Base: {baseAmount}, Tax: {taxValue}, Discount: {discountValue}, Total: {finalAmount}")
 
                 UpdateGrandTotal()
                 UpdateTotalTax()
@@ -603,25 +694,34 @@ Namespace DPC.Views.Sales.Quotes
             End Try
         End Sub
 
-        Private Sub UpdateGrandTotal()
-            Try
-                Dim total As Decimal = 0
-                For Each kvp In _productTextBoxes
-                    If kvp.Key.StartsWith("txtAmount_") Then
-                        Dim amount As Decimal = 0
-                        Decimal.TryParse(kvp.Value.Text, amount)
-                        total += amount
+        Public Sub UpdateGrandTotal()
+            Dim grandTotal As Decimal = 0
+
+            ' Loop through all entries in the dynamic amount textboxes
+            For Each name As String In LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
+    SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
+    Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtAmount_")).
+    Select(Function(txt) txt.Name).Distinct()
+
+                Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
+                If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
+                    Dim rawText = txtBox.Text.Replace("₱", "").Trim()
+                    Dim amount As Decimal
+                    If Decimal.TryParse(rawText, amount) Then
+                        grandTotal += amount
                     End If
-                Next
-                txtGrandTotal.Text = "₱ " & total.ToString("F2")
-            Catch ex As Exception
-                Debug.WriteLine("Error updating grand total: " & ex.Message)
-            End Try
+                End If
+            Next
+
+            ' Update the grand total display
+            txtGrandTotal.Text = "₱" & grandTotal.ToString("N2")
         End Sub
 
+        ' This function is for updating the value of tax whenever there is changes
         Public Sub UpdateTotalTax()
             Dim totalTax As Decimal = 0
 
+            ' Loop through all textboxes with names starting with txtTaxValue_
             For Each name As String In LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
         SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
         Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtTaxValue_")).
@@ -637,59 +737,73 @@ Namespace DPC.Views.Sales.Quotes
                 End If
             Next
 
-            txtTotalTax.Text = "₱ " & totalTax.ToString("N2")
+            ' Example output target: you should declare this in your XAML like you did with txtGrandTotal
+            txtTotalTax.Text = "₱" & totalTax.ToString("N2")
         End Sub
 
-        Private Sub UpdateTotalDiscount()
-            Try
-                Dim total As Decimal = 0
-                For Each kvp In _productTextBoxes
-                    If kvp.Key.StartsWith("txtDiscount_") Then
-                        Dim discount As Decimal = 0
-                        Decimal.TryParse(kvp.Value.Text, discount)
-                        total += discount
+        Public Sub UpdateTotalDiscount()
+            Dim totalDiscount As Decimal = 0
+
+            For Each name As String In LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
+        SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
+        Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtDiscount_")).
+        Select(Function(txt) txt.Name).Distinct()
+
+                Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
+                If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
+                    Dim rawText = txtBox.Text.Replace("₱", "").Trim()
+                    Dim discount As Decimal
+                    If Decimal.TryParse(rawText, discount) Then
+                        totalDiscount += discount
                     End If
-                Next
-                txtTotalDiscount.Text = "₱ " & total.ToString("F2")
-            Catch ex As Exception
-                Debug.WriteLine("Error updating total discount: " & ex.Message)
-            End Try
+                End If
+            Next
+
+            txtTotalDiscount.Text = "₱" & totalDiscount.ToString("N2")
         End Sub
 
         Private Sub SetProductDetails(rowIndex As Integer, product As ProductDataModel)
-            Try
-                Dim rateBox = TryCast(Me.FindName($"txtRate_{rowIndex}"), TextBox)
-                Dim taxPercentBox = TryCast(Me.FindName($"txtTaxPercent_{rowIndex}"), TextBox)
+            Dim rateBox = TryCast(FindTextBoxByName($"txtRate_{rowIndex}"), TextBox)
+            Dim taxPercentBox = TryCast(FindTextBoxByName($"txtTaxPercent_{rowIndex}"), TextBox)
+            Dim taxValueBox = TryCast(FindTextBoxByName($"txtTaxValue_{rowIndex}"), TextBox)
 
-                If rateBox IsNot Nothing Then
-                    rateBox.Text = product.SellingPrice.ToString("F2")
+            If rateBox IsNot Nothing Then
+                Dim buyingPrice As Decimal
+
+                buyingPrice = product.SellingPrice
+
+                rateBox.Text = buyingPrice.ToString("F2")
+
+                If taxPercentBox IsNot Nothing Then
+                    If Not _TaxSelection Then
+                        'Inclusive: set to default and lock
+                        taxPercentBox.Text = 12 ' Removed for testing 
+                        taxPercentBox.IsReadOnly = True
+                    Else
+                        ' Exclusive: let user type
+                        taxPercentBox.Text = "0"
+                        taxPercentBox.IsReadOnly = False
+                    End If
                 End If
 
-                If taxPercentBox IsNot Nothing AndAlso Not _TaxSelection Then
-                    taxPercentBox.Text = product.DefaultTax.ToString("F2")
-                End If
-
-                If rateBox IsNot Nothing Then
-                    UpdateRowCalculations(rateBox)
-                End If
-
-            Catch ex As Exception
-                Debug.WriteLine("Error setting product details: " & ex.Message)
-            End Try
+                ' Always recalculate using CalculateAmount so all logic is consistent
+                CalculateAmount(rowIndex)
+            End If
         End Sub
 
-        Private Shared Function FindVisualChildren(Of T As DependencyObject)(depObj As DependencyObject) As IEnumerable(Of T)
-            Dim children As New List(Of T)()
+        Private Iterator Function FindVisualChildren(Of T As DependencyObject)(depObj As DependencyObject) As IEnumerable(Of T)
             If depObj IsNot Nothing Then
                 For i As Integer = 0 To VisualTreeHelper.GetChildrenCount(depObj) - 1
-                    Dim child = VisualTreeHelper.GetChild(depObj, i)
+                    Dim child As DependencyObject = VisualTreeHelper.GetChild(depObj, i)
                     If child IsNot Nothing AndAlso TypeOf child Is T Then
-                        children.Add(CType(child, T))
+                        Yield CType(child, T)
                     End If
-                    children.AddRange(FindVisualChildren(Of T)(child))
+
+                    For Each childOfChild In FindVisualChildren(Of T)(child)
+                        Yield childOfChild
+                    Next
                 Next
             End If
-            Return children
         End Function
 
         Private Sub AddNewRow_Click(sender As Object, e As RoutedEventArgs)
@@ -1100,9 +1214,11 @@ Namespace DPC.Views.Sales.Quotes
             Dim discountBox = FindTextBoxByName($"txtDiscount_{rowIndex}")
 
             If quantityBox Is Nothing OrElse rateBox Is Nothing OrElse amountBox Is Nothing Then
+                Debug.WriteLine($"[Row {rowIndex}] One or more required boxes not found.")
                 Exit Sub
             End If
 
+            ' Parse input values
             Dim quantity As Decimal = 0, rate As Decimal = 0, taxPercent As Decimal = 0, discountPercent As Decimal = 0
             Decimal.TryParse(quantityBox.Text, quantity)
             Decimal.TryParse(rateBox.Text, rate)
@@ -1114,19 +1230,27 @@ Namespace DPC.Views.Sales.Quotes
             Dim amountBeforeDiscount As Decimal = baseAmount
 
             If _TaxSelection Then
+                ' Tax Exclusive: add tax to amount
                 taxValue = baseAmount * (taxPercent / 100)
                 amountBeforeDiscount = baseAmount + taxValue
             Else
+                ' Tax Inclusive: 12% is already in the base amount, calculate for display only
                 taxValue = baseAmount * 0.12D
-                amountBeforeDiscount = baseAmount
+                amountBeforeDiscount = baseAmount + taxValue' Base amount already includes tax conceptually
+
+                ' Update tax value display
+                If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
             End If
 
             Dim discountValue = amountBeforeDiscount * (discountPercent / 100)
             Dim finalAmount = amountBeforeDiscount - discountValue
 
+            ' Update all display boxes
             If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
             If discountBox IsNot Nothing Then discountBox.Text = discountValue.ToString("N2")
             amountBox.Text = "₱" & finalAmount.ToString("N2")
+
+            Debug.WriteLine($"[Row {rowIndex}] Base: {baseAmount}, Tax: {taxValue}, Discount: {discountValue}, Total: {finalAmount}")
 
             UpdateGrandTotal()
             UpdateTotalTax()
@@ -1163,6 +1287,8 @@ Namespace DPC.Views.Sales.Quotes
                 MessageBox.Show("Please select a client.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Exit Sub
             End If
+
+            SaveUpdatedTaxToDatabase()
 
             GetAllDataInQuoteProperties(client, productItemsJson)
         End Sub
@@ -1211,9 +1337,9 @@ Namespace DPC.Views.Sales.Quotes
                 If productPanel Is Nothing OrElse productPanel.Children.Count < 8 Then Continue For
 
                 Dim productData As New Dictionary(Of String, Object)
-                Dim fieldNames = {"ProductName", "Quantity", "Rate", "TaxPercent", "Tax", "Discount"}
+                Dim fieldNames = {"ProductName", "Quantity", "Rate", "TaxPercent", "TaxValue", "DiscountPercent", "Discount", "Amount"}
 
-                For j As Integer = 0 To 5
+                For j As Integer = 0 To 7
                     If j >= productPanel.Children.Count Then Exit For
 
                     Dim borderInput = TryCast(productPanel.Children(j), Border)
@@ -1233,7 +1359,7 @@ Namespace DPC.Views.Sales.Quotes
                     End If
 
                     If (fieldNames(j) = "ProductName" OrElse fieldNames(j) = "Quantity" OrElse fieldNames(j) = "Rate") AndAlso
-               String.IsNullOrWhiteSpace(value) Then
+       String.IsNullOrWhiteSpace(value) Then
                         MessageBox.Show($"Please fill in all required fields in row {i + 1}.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                         Return Nothing
                     End If
@@ -1259,11 +1385,29 @@ Namespace DPC.Views.Sales.Quotes
                         If descBorder IsNot Nothing Then
                             Dim descTextBox = TryCast(descBorder.Child, TextBox)
                             If descTextBox IsNot Nothing Then
-                                productData("Description") = descTextBox.Text
+                                ' Store the description, filtering out placeholder text
+                                Dim descText = descTextBox.Text.Trim()
+                                If descText = "Enter product description (Optional)" Then
+                                    descText = ""
+                                End If
+                                productData("Description") = descText
                             End If
                         End If
                     End If
                 End If
+
+                ' ========== ADD THIS NEW SECTION ==========
+                ' Get product image from database
+                Dim productName As String = productData("ProductName").ToString()
+                Dim imageBase64 As String = Nothing
+                Try
+                    ' Use GetProduct controller to retrieve image
+                    imageBase64 = GetProduct.GetProductImageBase64(productName)
+                Catch ex As Exception
+                    Debug.WriteLine($"Error getting image for {productName}: {ex.Message}")
+                End Try
+                productData("ProductImageBase64") = If(String.IsNullOrEmpty(imageBase64), "", imageBase64)
+                ' ========== END OF NEW SECTION ==========
 
                 productArray.Add(productData)
             Next
@@ -1277,10 +1421,41 @@ Namespace DPC.Views.Sales.Quotes
                 Dim selectedTax As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
                 Dim selectedDiscount As String = CType(txtDiscountSelection.SelectedItem, ComboBoxItem).Content.ToString()
 
-                ' FIX: Use different variable name to avoid conflict with QuoteDate control
                 Dim quoteDateValue = QuoteDate.SelectedDate.Value
                 Dim selectedValidityOption = DirectCast(cmbCostEstimateValidty.SelectedItem, ComboBoxItem).Content.ToString()
                 Dim actualValidityDate = GetValidityDate(selectedValidityOption, quoteDateValue)
+
+                ' Extract the actual tax values from the UI form
+                Dim totalTaxValue As Decimal = 0
+                Dim totalDiscountValue As Decimal = 0
+                Dim totalAmountValue As Decimal = 0
+
+                ' Parse Total Tax from txtTotalTax
+                If Decimal.TryParse(txtTotalTax.Text.Replace("₱", "").Trim(), totalTaxValue) Then
+                    Debug.WriteLine($"Total Tax Value Extracted: {totalTaxValue}")
+                Else
+                    Debug.WriteLine("Failed to parse Tax Value")
+                    totalTaxValue = 0
+                End If
+
+                ' Parse Total Discount from txtTotalDiscount
+                If Decimal.TryParse(txtTotalDiscount.Text.Replace("₱", "").Trim(), totalDiscountValue) Then
+                    Debug.WriteLine($"Total Discount Value Extracted: {totalDiscountValue}")
+                Else
+                    Debug.WriteLine("Failed to parse Discount Value")
+                    totalDiscountValue = 0
+                End If
+
+                ' Parse Total Amount from txtGrandTotal
+                If Decimal.TryParse(txtGrandTotal.Text.Replace("₱", "").Trim(), totalAmountValue) Then
+                    Debug.WriteLine($"Total Amount Value Extracted: {totalAmountValue}")
+                Else
+                    Debug.WriteLine("Failed to parse Grand Total Value")
+                    totalAmountValue = 0
+                End If
+
+                ' ===== SET ALL CACHE VALUES BEFORE NAVIGATION =====
+                ' These are the EXACT cache property names that PreviewPrintEditedQuote expects
 
                 CEQuoteNumberCache = txtQuoteNumber.Text
                 CEDiscountProperty = txtDiscountSelection.Text
@@ -1288,9 +1463,17 @@ Namespace DPC.Views.Sales.Quotes
                 CEQuoteDateCache = quoteDateValue.ToString("yyyy-MM-dd")
                 CEValidUntilDate = selectedValidityOption
                 CEQuoteValidityDateCache = actualValidityDate.ToString("yyyy-MM-dd")
-                CETaxValueCache = txtTotalTax.Text
-                CETotalDiscountValueCache = txtTotalDiscount.Text
-                CETotalAmountCache = txtGrandTotal.Text
+
+                ' ===== IMPORTANT: Use the EXACT cache property names =====
+                ' PreviewPrintEditedQuote uses these names:
+                CETotalTaxValueCache = "₱ " & totalTaxValue.ToString("N2")           ' ← Match PreviewPrintEditedQuote line: VAT12.Text = CostEstimateDetails.CETotalTaxValueCache
+                CETotalDiscountValueCache = "₱ " & totalDiscountValue.ToString("N2")  ' ← For consistency
+                CETotalAmountCache = "₱ " & totalAmountValue.ToString("N2")           ' ← For consistency
+
+                ' Also set these for PreviewPrintEditedQuote display
+                CESubTotalCache = "₱ " & (totalAmountValue - totalTaxValue).ToString("N2")  ' Subtotal (before tax)
+                CEGrandTotalCost = "₱ " & totalAmountValue.ToString("N2")                    ' Grand total (after tax)
+
                 CEnoteTxt = txtQuoteNote.Text
                 CEReferenceNumber = txtReferenceNumber.Text
                 CEQuoteItemsCache = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(productItemsJson)
@@ -1298,6 +1481,7 @@ Namespace DPC.Views.Sales.Quotes
                 CEImageCache = ""
                 CEPathCache = ""
                 CECompanyName = client.Company
+
                 Dim stringArray As List(Of String) = client.BillingAddress.Split(","c).Select(Function(s) s.Trim()).ToList()
 
                 CostEstimateDetails.CEAddress = stringArray(0)
@@ -1308,8 +1492,29 @@ Namespace DPC.Views.Sales.Quotes
                 CEPhone = client.Phone
                 CEClientName = client.Name
                 CostEstimateDetails.CERepresentative = client.Representative
+                CostEstimateDetails.CETaxProperty = selectedTax
 
+                ' ===== DEBUG OUTPUT =====
+                Debug.WriteLine("")
+                Debug.WriteLine("========== CACHE VALUES SET FOR PREVIEW ==========")
+                Debug.WriteLine($"Quote Number: {CEQuoteNumberCache}")
+                Debug.WriteLine($"CETotalTaxValueCache (for display): {CETotalTaxValueCache}")
+                Debug.WriteLine($"CETotalDiscountValueCache: {CETotalDiscountValueCache}")
+                Debug.WriteLine($"CETotalAmountCache: {CETotalAmountCache}")
+                Debug.WriteLine($"CESubTotalCache: {CESubTotalCache}")
+                Debug.WriteLine($"CEGrandTotalCost: {CEGrandTotalCost}")
+                Debug.WriteLine($"Reference Number: {CEReferenceNumber}")
+                Debug.WriteLine($"Tax Property: {CETaxProperty}")
+                Debug.WriteLine($"Discount Property: {CEDiscountProperty}")
+                Debug.WriteLine($"Client Name: {CEClientName}")
+                Debug.WriteLine($"Quote Date: {CEQuoteDateCache}")
+                Debug.WriteLine($"Validity: {CEQuoteValidityDateCache}")
+                Debug.WriteLine("==================================================")
+                Debug.WriteLine("")
+
+                ' NOW navigate to preview
                 ViewLoader.DynamicView.NavigateToView("costestimate", Me)
+
             Catch ex As Exception
                 MessageBox.Show("Please Fill up all of the Fields: " & ex.Message)
             End Try
@@ -1578,6 +1783,13 @@ Namespace DPC.Views.Sales.Quotes
                     _productTextBoxes($"txtDiscountPercent_{row}").Text = discountPercentVal.ToString("F2")
                 End If
 
+                ' Set discount value
+                If _productTextBoxes.ContainsKey($"txtDiscount_{row}") Then
+                    Dim discountVal As Decimal = 0
+                    Decimal.TryParse(discount, discountVal)
+                    _productTextBoxes($"txtDiscount_{row}").Text = discountVal.ToString("F2")
+                End If
+
                 ' Set description - get the description from the latest row
                 If row > 0 Then
                     Dim latestInputPanel = GetLatestInputPanel()
@@ -1604,8 +1816,7 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
 
-        ''' Helper function to safely get string value from dictionary
-
+        ' Helper function to safely get string value from dictionary
         ' SafeGetString helper - ENSURE THIS EXISTS
         Private Function SafeGetString(dict As Dictionary(Of String, Object), key As String) As String
             If dict Is Nothing OrElse Not dict.ContainsKey(key) Then
@@ -1692,10 +1903,79 @@ Namespace DPC.Views.Sales.Quotes
             If VatExShowVat.Text = "Show VAT 12%" Then
                 CEisVatExInclude = True
                 VatExShowVat.Text = "Hide VAT 12%"
+                MessageBox.Show($"Vat Selection - {CEisVatExInclude}")
             Else
                 CEisVatExInclude = False
                 VatExShowVat.Text = "Show VAT 12%"
+                MessageBox.Show($"Vat Selection - {CEisVatExInclude}")
             End If
+        End Sub
+
+        Private Sub SaveUpdatedTaxToDatabase()
+            Try
+                Dim quoteNumber As String = txtQuoteNumber.Text.Trim()
+
+                If String.IsNullOrWhiteSpace(quoteNumber) Then
+                    Debug.WriteLine("Quote number is empty - cannot save tax data")
+                    Return
+                End If
+
+                ' GET THE ORDERITEMS JSON FIRST
+                Dim productItemsJson As String
+                If _orderItems.Count > 0 Then
+                    productItemsJson = ExportDataGridToJson()
+                Else
+                    productItemsJson = SubmitAllProductInputs()
+                End If
+
+                ' Extract and parse total tax
+                Dim totalTaxText = txtTotalTax.Text.Replace("₱", "").Trim()
+                Dim totalTax As Decimal = 0
+                Decimal.TryParse(totalTaxText, totalTax)
+
+                ' Extract and parse total discount
+                Dim totalDiscountText = txtTotalDiscount.Text.Replace("₱", "").Trim()
+                Dim totalDiscount As Decimal = 0
+                Decimal.TryParse(totalDiscountText, totalDiscount)
+
+                ' Extract and parse grand total
+                Dim totalPriceText = txtGrandTotal.Text.Replace("₱", "").Trim()
+                Dim totalPrice As Decimal = 0
+                Decimal.TryParse(totalPriceText, totalPrice)
+
+                ' Get tax selection
+                Dim taxSelection As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
+
+                ' Get discount selection
+                Dim discountSelection As String = CType(txtDiscountSelection.SelectedItem, ComboBoxItem).Content.ToString()
+
+                ' UPDATE DATABASE WITH ORDERITEMS
+                Dim updateQuery As String = "UPDATE quotes SET TotalTax = @totalTax, TotalDiscount = @totalDiscount, TotalPrice = @totalPrice, Tax = @tax, Discount = @discount, OrderItems = @orderItems WHERE QuoteNumber = @quoteNumber"
+
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Using cmd As New MySqlCommand(updateQuery, conn)
+                        cmd.Parameters.AddWithValue("@totalTax", totalTax)
+                        cmd.Parameters.AddWithValue("@totalDiscount", totalDiscount)
+                        cmd.Parameters.AddWithValue("@totalPrice", totalPrice)
+                        cmd.Parameters.AddWithValue("@tax", taxSelection)
+                        cmd.Parameters.AddWithValue("@discount", discountSelection)
+                        cmd.Parameters.AddWithValue("@orderItems", productItemsJson)
+                        cmd.Parameters.AddWithValue("@quoteNumber", quoteNumber)
+
+                        Dim rowsAffected As Integer = cmd.ExecuteNonQuery()
+
+                        If rowsAffected > 0 Then
+                            Debug.WriteLine($"Tax data saved successfully - Quote: {quoteNumber}, Tax: {totalTax}, Discount: {totalDiscount}, Total: {totalPrice}")
+                        Else
+                            Debug.WriteLine($"No rows updated for quote: {quoteNumber}")
+                        End If
+                    End Using
+                End Using
+
+            Catch ex As Exception
+                Debug.WriteLine($"Error saving updated tax to database: {ex.Message}")
+            End Try
         End Sub
 
         Private Sub NavigateToCostEstimate(sender As Object, e As RoutedEventArgs)
