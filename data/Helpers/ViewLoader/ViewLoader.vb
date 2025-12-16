@@ -90,8 +90,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "managetickets"
                         Return New CRM.SupportTicket()
                     Case "newresidentialclient"
-
                         Return New CRM.CRMNewResidentialClient()
+                    Case "editresidentialclient"
+                        Return New CRM.CRMEditResidentialClient()
                     Case "newcorporationalclient"
                         Return New CRM.CRMCorporationalTabStructured()
                     Case "selectclients"
@@ -152,6 +153,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Sales.Quotes.Quote()
                     Case "salesnewquote"
                         Return New Sales.Quotes.NewQuote()
+                    Case "salesquotegovernment"
+                        Return New Sales.Quotes.NewQuoteGovernment()
                     Case "creditnote"
                         Return New Sales.CreditNotes.CreditNotes()
                     Case "newsubscriptioninvoice"
@@ -205,6 +208,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                          ' Sales Cost Estimate Navigation
                     Case "costestimate"
                         Return New Sales.Quotes.CostEstimate()
+                    Case "costestimategovernment"
+                        Return New Sales.Quotes.CostEstimateGovernment()
 
                     Case "editquote"
                         Return New Sales.Quotes.EditQuote()

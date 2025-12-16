@@ -2,6 +2,7 @@
 Imports DocumentFormat.OpenXml.Office2016.Drawing
 Imports DPC.DPC.Data.Model
 Imports DPC.DPC.Data.Models
+Imports DPC.DPC.Views.CRM
 Imports MailKit.Search
 Imports MySql.Data.MySqlClient
 Imports Newtonsoft.Json
@@ -168,7 +169,8 @@ Namespace DPC.Data.Controllers
     Email,
     Phone,
     Name,
-    NULL AS Company
+    NULL AS Company,
+    'client' AS Source
 FROM client
 
 UNION
@@ -179,7 +181,8 @@ SELECT
     Email,
     Phone,
     NULL AS Name,
-    Company
+    Company,
+    'clientcorporational' AS Source
 FROM clientcorporational;"
 
                     Using cmd As New MySqlCommand(query, conn)
@@ -193,12 +196,14 @@ FROM clientcorporational;"
                                     nameOrCompany = reader("Company").ToString()
                                 End If
 
+                                Dim source As String = reader("Source").ToString()
                                 Dim client As New Client With {
                             .ClientID = reader("ClientID"),
                             .Name = nameOrCompany,
                             .Phone = reader("Phone").ToString(),
                             .Email = reader("Email").ToString(),
-                            .BillingAddress = reader("BillingAddress").ToString()
+                            .BillingAddress = reader("BillingAddress").ToString(),
+                            .ClientType = GetClientType(source)
                         }
                                 clients.Add(client)
                             End While
@@ -211,6 +216,7 @@ FROM clientcorporational;"
             Return clients
         End Function
 
+        ' Update SearchClients() - Add ClientType to SQL query
         Public Shared Function SearchClients(_searchText As String) As ObservableCollection(Of Client)
             Dim clients As New ObservableCollection(Of Client)()
             Try
@@ -222,7 +228,8 @@ FROM clientcorporational;"
     Email,
     Phone,
     Name,
-    NULL AS Company
+    NULL AS Company,
+    'client' AS Source
 FROM client
 WHERE Name LIKE @searchText 
    OR ClientID LIKE @searchText 
@@ -236,15 +243,15 @@ SELECT
     Email,
     Phone,
     NULL AS Name,
-    Company
+    Company,
+    'clientcorporational' AS Source
 FROM clientcorporational
 WHERE Company LIKE @searchText 
    OR ClientID LIKE @searchText 
    OR Email LIKE @searchText
 
 ORDER BY Name ASC
-LIMIT 10;
-"
+LIMIT 10;"
 
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@searchText", "%" & _searchText & "%")
@@ -258,12 +265,14 @@ LIMIT 10;
                                     nameOrCompany = reader("Company").ToString()
                                 End If
 
+                                Dim source As String = reader("Source").ToString()
                                 Dim client As New Client With {
                             .ClientID = reader("ClientID"),
                             .Name = nameOrCompany,
                             .Phone = reader("Phone").ToString(),
                             .Email = reader("Email").ToString(),
-                            .BillingAddress = reader("BillingAddress").ToString()
+                            .BillingAddress = reader("BillingAddress").ToString(),
+                            .ClientType = GetClientType(source)
                         }
                                 clients.Add(client)
                             End While
@@ -289,7 +298,7 @@ LIMIT 10;
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             If reader.Read() Then
                                 client = New Client With {
-                                    .ClientID = Convert.ToInt32(reader("ClientID")),
+                                    .ClientID = reader("ClientID").ToString(), ' Change from Convert.ToInt32 to ToString()
                                     .ClientGroupID = Convert.ToInt32(reader("ClientGroupID")),
                                     .Name = reader("Name").ToString(),
                                     .Phone = reader("Phone").ToString(),
@@ -394,6 +403,159 @@ LIMIT 10;"
                 End Try
             End Using
             Return clients
+        End Function
+
+        Private Shared Function GetClientType(source As String) As String
+            Select Case source.ToLower()
+                Case "client"
+                    Return "Residential"
+                Case "clientcorporational"
+                    Return "Corporate"
+                Case Else
+                    Return "Unknown"
+            End Select
+        End Function
+
+        ' Add this method to your ClientController class
+
+        ' Replace the UpdateClient function in ClientController with this:
+
+        Public Shared Function UpdateClient(client As Client) As Boolean
+            Try
+                If Not ClientIDExists(client.ClientID.ToString()) Then
+                    MessageBox.Show("Client ID '" & client.ClientID & "' does not exist. Cannot update.", "Update Failed", MessageBoxButton.OK, MessageBoxImage.Warning)
+                    Return False
+                End If
+
+                ' Determine if it's a residential or corporate client based on the ClientID prefix
+                Dim clientIDStr As String = client.ClientID.ToString()
+                Dim prefix As String = clientIDStr.Substring(0, 2)
+                Dim query As String = ""
+
+                If prefix = "40" Then
+                    ' Residential client
+                    query = "UPDATE client SET ClientGroupID = @ClientGroupID, Name = @Name, Phone = @Phone, Email = @Email, " &
+                    "BillingAddress = @BillingAddress, ShippingAddress = @ShippingAddress, CustomerGroup = @CustomerGroup, " &
+                    "Language = @Language, UpdatedAt = @UpdatedAt WHERE ClientID = @ClientID"
+                ElseIf prefix = "50" Then
+                    ' Corporate client
+                    query = "UPDATE clientcorporational SET ClientGroupID = @ClientGroupID, Company = @Name, Phone = @Phone, Email = @Email, " &
+                    "BillingAddress = @BillingAddress, ShippingAddress = @ShippingAddress, CustomerGroup = @CustomerGroup, " &
+                    "Language = @Language, UpdatedAt = @UpdatedAt WHERE ClientID = @ClientID"
+                Else
+                    MessageBox.Show("Invalid Client ID format.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return False
+                End If
+
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    Try
+                        conn.Open()
+                        Using transaction As MySqlTransaction = conn.BeginTransaction()
+                            Try
+                                Using updateCmd As New MySqlCommand(query, conn, transaction)
+                                    ' Add all parameters
+                                    updateCmd.Parameters.AddWithValue("@ClientID", clientIDStr)
+                                    updateCmd.Parameters.AddWithValue("@ClientGroupID", client.ClientGroupID)
+                                    updateCmd.Parameters.AddWithValue("@Name", If(String.IsNullOrEmpty(client.Name), "", client.Name))
+                                    updateCmd.Parameters.AddWithValue("@Phone", If(String.IsNullOrEmpty(client.Phone), "", client.Phone))
+                                    updateCmd.Parameters.AddWithValue("@Email", If(String.IsNullOrEmpty(client.Email), "", client.Email))
+                                    updateCmd.Parameters.AddWithValue("@BillingAddress", If(String.IsNullOrEmpty(client.BillingAddress), "", client.BillingAddress))
+                                    updateCmd.Parameters.AddWithValue("@ShippingAddress", If(String.IsNullOrEmpty(client.ShippingAddress), "", client.ShippingAddress))
+                                    updateCmd.Parameters.AddWithValue("@CustomerGroup", If(String.IsNullOrEmpty(client.CustomerGroup), "", client.CustomerGroup))
+                                    updateCmd.Parameters.AddWithValue("@Language", If(String.IsNullOrEmpty(client.ClientLanguage), "", client.ClientLanguage))
+                                    updateCmd.Parameters.AddWithValue("@UpdatedAt", DateTime.Now)
+
+                                    Dim rowsAffected As Integer = updateCmd.ExecuteNonQuery()
+                                    If rowsAffected > 0 Then
+                                        transaction.Commit()
+                                        MessageBox.Show("Client has been successfully updated.", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                                        Return True
+                                    Else
+                                        transaction.Rollback()
+                                        MessageBox.Show("No rows were updated. Client ID may have changed.", "Update Failed", MessageBoxButton.OK, MessageBoxImage.Warning)
+                                        Return False
+                                    End If
+                                End Using
+                            Catch ex As Exception
+                                transaction.Rollback()
+                                MessageBox.Show("Error updating client: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                                Return False
+                            End Try
+                        End Using
+                    Catch ex As Exception
+                        MessageBox.Show("Error: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                        Return False
+                    End Try
+                End Using
+            Catch ex As Exception
+                MessageBox.Show("Error: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                Return False
+            End Try
+        End Function
+
+        Public Shared Function ClientIDExists(ClientID As String) As Boolean
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+
+                    Dim clientIDStr As String = ClientID.ToString()
+                    Dim query As String = "SELECT COUNT(*) FROM client WHERE ClientID = @ClientID " &
+                                  "UNION ALL " &
+                                  "SELECT COUNT(*) FROM clientcorporational WHERE ClientID = @ClientID"
+
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@ClientID", clientIDStr)
+                        Dim result As Object = cmd.ExecuteScalar()
+
+                        If result IsNot Nothing AndAlso result IsNot DBNull.Value Then
+                            Dim count As Integer = Convert.ToInt32(result)
+                            Return count > 0
+                        End If
+
+                        Return False
+                    End Using
+                End Using
+            Catch ex As Exception
+                Console.WriteLine("Error in ClientIDExists: " & ex.Message)
+                Return False
+            End Try
+        End Function
+
+        Public Shared Function DeleteClient(clientID As String) As Boolean
+            Try
+                ' Determine if it's a residential or corporate client based on the prefix
+                Dim prefix As String = clientID.Substring(0, 2)
+                Dim tableName As String = ""
+
+                If prefix = "40" Then
+                    tableName = "client"
+                ElseIf prefix = "50" Then
+                    tableName = "clientcorporational"
+                Else
+                    MessageBox.Show("Invalid Client ID format.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return False
+                End If
+
+                Dim query As String = $"DELETE FROM {tableName} WHERE ClientID = @ClientID"
+
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    Try
+                        conn.Open()
+                        Using cmd As New MySqlCommand(query, conn)
+                            cmd.Parameters.AddWithValue("@ClientID", clientID)
+
+                            Dim result As Integer = cmd.ExecuteNonQuery()
+                            Return result > 0
+                        End Using
+                    Catch ex As Exception
+                        MessageBox.Show("Error deleting client: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                        Return False
+                    End Try
+                End Using
+            Catch ex As Exception
+                MessageBox.Show("Error: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                Return False
+            End Try
         End Function
     End Class
 End Namespace
