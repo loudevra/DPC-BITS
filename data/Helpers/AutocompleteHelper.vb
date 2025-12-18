@@ -7,10 +7,10 @@ Imports System.Windows.Media
 
 Namespace DPC.Components.Forms
     Public Class AutocompleteHelper(Of T)
-        ' Observable collection for selected items
+        ' Observable collection for selected items - ONLY ONE PROPERTY
         Private _selectedItems As New ObservableCollection(Of T)()
 
-        ' Property to access selected items from outside
+        ' Property to access selected items from outside - ONLY ONE
         Public ReadOnly Property SelectedItems As ObservableCollection(Of T)
             Get
                 Return _selectedItems
@@ -43,7 +43,7 @@ Namespace DPC.Components.Forms
             ' Default chip creation function
             _createUIElement = Function(item)
                                    Dim chip As New Border With {
-                                       .Background = New SolidColorBrush(Color.FromRgb(82, 198, 157)),  ' #52C69D
+                                       .Background = New SolidColorBrush(Color.FromRgb(82, 198, 157)),
                                        .BorderBrush = New SolidColorBrush(Color.FromRgb(82, 198, 157)),
                                        .CornerRadius = New CornerRadius(15),
                                        .Margin = New Thickness(5),
@@ -62,7 +62,7 @@ Namespace DPC.Components.Forms
                                    }
 
                                    Dim closeIcon As New TextBlock With {
-                                       .Text = "×",  ' × is the Unicode multiplication sign
+                                       .Text = "×",
                                        .FontSize = 16,
                                        .Foreground = Brushes.White,
                                        .VerticalAlignment = VerticalAlignment.Center,
@@ -84,10 +84,8 @@ Namespace DPC.Components.Forms
 
         ' Initialize the control with all necessary UI elements
         Public Sub Initialize(textBox As TextBox, listBox As ListBox, chipPanel As Panel, popup As Popup, itemsSource As IEnumerable(Of T))
-            ' Store popup reference
             _autoCompletePopup = popup
 
-            ' Configure popup if needed
             If _autoCompletePopup.PlacementTarget Is Nothing Then
                 _autoCompletePopup.PlacementTarget = textBox
                 _autoCompletePopup.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom
@@ -95,10 +93,36 @@ Namespace DPC.Components.Forms
                 _autoCompletePopup.AllowsTransparency = True
             End If
 
-            ' Set up event handlers
             AddHandler textBox.TextChanged, Sub(sender, e) HandleTextChanged(sender, e, itemsSource, listBox)
             AddHandler textBox.KeyDown, Sub(sender, e) HandleKeyDown(sender, e, listBox, textBox, chipPanel)
             AddHandler listBox.SelectionChanged, Sub(sender, e) HandleSelectionChanged(sender, e, listBox, textBox, chipPanel)
+        End Sub
+
+
+        ''' Initialize with dynamic items source that can be updated
+        Public Sub InitializeWithDynamicSource(textBox As TextBox, listBox As ListBox, chipPanel As Panel, popup As Popup)
+            _autoCompletePopup = popup
+
+            If _autoCompletePopup.PlacementTarget Is Nothing Then
+
+                _autoCompletePopup.PlacementTarget = textBox
+
+                _autoCompletePopup.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom
+
+                _autoCompletePopup.StaysOpen = False
+
+                _autoCompletePopup.AllowsTransparency = True
+            End If
+
+            AddHandler textBox.KeyDown, Sub(sender, e) HandleKeyDown(sender, e, listBox, textBox, chipPanel)
+            AddHandler listBox.SelectionChanged, Sub(sender, e) HandleSelectionChanged(sender, e, listBox, textBox, chipPanel)
+        End Sub
+
+        ''' Update items source dynamically
+        Public Sub UpdateItemsSource(itemsSource As IEnumerable(Of T), textBox As TextBox, listBox As ListBox)
+            If textBox IsNot Nothing Then
+                AddHandler textBox.TextChanged, Sub(sender, e) HandleTextChanged(sender, e, itemsSource, listBox)
+            End If
         End Sub
 
         ' Clear all selected items
@@ -117,6 +141,24 @@ Namespace DPC.Components.Forms
             Next
         End Sub
 
+
+        ''' Get selected item by ID
+        Public Function GetSelectedItemById(itemId As Object) As T
+            Return _selectedItems.FirstOrDefault(Function(i) Object.Equals(_getItemId(i), itemId))
+        End Function
+
+        ''' Check if item is already selected
+        Public Function IsItemSelected(itemId As Object) As Boolean
+            Return _selectedItems.Any(Function(i) Object.Equals(_getItemId(i), itemId))
+        End Function
+
+
+        ''' Get count of selected items
+        Public Function GetSelectionCount() As Integer
+            Return _selectedItems.Count
+        End Function
+
+
         ' Method to handle TextChanged event for filtering items
         Public Sub HandleTextChanged(sender As Object, e As TextChangedEventArgs, itemsSource As IEnumerable(Of T), listBox As ListBox)
             Dim textBox = DirectCast(sender, TextBox)
@@ -127,44 +169,35 @@ Namespace DPC.Components.Forms
                 Return
             End If
 
-            ' Filter items based on search text - now with condition for additional field
             Dim filteredItems As IEnumerable(Of T)
 
             If _useAdditionalField Then
-                ' Search by both name and additional field
                 filteredItems = itemsSource.
-            Where(Function(i) _getItemName(i).ToLower().Contains(searchText) OrElse
-                          _getAdditionalSearchField(i).ToLower().Contains(searchText) AndAlso
-                          Not _selectedItems.Any(Function(si) Object.Equals(_getItemId(si), _getItemId(i)))).
-            ToList()
+                    Where(Function(i) (_getItemName(i).ToLower().Contains(searchText) OrElse
+                                  _getAdditionalSearchField(i).ToLower().Contains(searchText)) AndAlso
+                                  Not _selectedItems.Any(Function(si) Object.Equals(_getItemId(si), _getItemId(i)))).
+                    ToList()
             Else
-                ' Original search by name only
                 filteredItems = itemsSource.
-            Where(Function(i) _getItemName(i).ToLower().Contains(searchText) AndAlso
-                          Not _selectedItems.Any(Function(si) Object.Equals(_getItemId(si), _getItemId(i)))).
-            ToList()
+                    Where(Function(i) _getItemName(i).ToLower().Contains(searchText) AndAlso
+                                  Not _selectedItems.Any(Function(si) Object.Equals(_getItemId(si), _getItemId(i)))).
+                    ToList()
             End If
 
-            ' Update ListBox and show/hide popup
             listBox.ItemsSource = filteredItems
             _autoCompletePopup.IsOpen = filteredItems.Any()
         End Sub
 
-        ' Method to handle KeyDown event (Enter, Escape, Backspace)
+        ' Method to handle KeyDown event
         Public Sub HandleKeyDown(sender As Object, e As KeyEventArgs, listBox As ListBox, textBox As TextBox, chipPanel As Panel)
-            ' Handle Enter key to select the currently highlighted item
             If e.Key = Key.Enter AndAlso listBox.SelectedItem IsNot Nothing Then
                 AddItemToSelection(DirectCast(listBox.SelectedItem, T), chipPanel)
                 textBox.Clear()
                 _autoCompletePopup.IsOpen = False
                 e.Handled = True
-
-                ' Handle Escape key to close the popup
             ElseIf e.Key = Key.Escape Then
                 _autoCompletePopup.IsOpen = False
                 e.Handled = True
-
-                ' Handle Backspace key to remove the last chip when the textbox is empty
             ElseIf e.Key = Key.Back AndAlso String.IsNullOrEmpty(textBox.Text) AndAlso _selectedItems.Count > 0 Then
                 RemoveLastChip(chipPanel)
                 e.Handled = True
@@ -174,12 +207,9 @@ Namespace DPC.Components.Forms
         ' Method to handle ListBox selection changed event
         Public Sub HandleSelectionChanged(sender As Object, e As SelectionChangedEventArgs, listBox As ListBox, textBox As TextBox, chipPanel As Panel)
             If listBox.SelectedItem IsNot Nothing Then
-                ' Add the selected item as a chip
                 AddItemToSelection(DirectCast(listBox.SelectedItem, T), chipPanel)
                 textBox.Clear()
                 _autoCompletePopup.IsOpen = False
-
-                ' Clear selection to allow selecting the same item again
                 listBox.SelectedItem = Nothing
             End If
         End Sub
@@ -187,22 +217,16 @@ Namespace DPC.Components.Forms
         ' Method to add an item to the selection
         Public Sub AddItemToSelection(item As T, chipPanel As Panel)
             If Not _selectedItems.Any(Function(i) Object.Equals(_getItemId(i), _getItemId(item))) Then
-                ' Add to internal collection
                 _selectedItems.Add(item)
 
-                ' Create chip UI element
                 Dim chip = _createUIElement(item)
 
-                ' Add click handler if it's a Border (the default implementation)
                 If TypeOf chip Is Border Then
                     Dim border = DirectCast(chip, Border)
                     AddHandler border.MouseLeftButtonDown, Sub(sender, e) RemoveItemFromSelection(item, border, chipPanel)
                 End If
 
-                ' Add chip to panel
                 chipPanel.Children.Add(chip)
-
-                ' Raise event
                 RaiseEvent SelectedItemsChanged(Me, _selectedItems)
             End If
         End Sub
@@ -218,17 +242,37 @@ Namespace DPC.Components.Forms
         Public Sub RemoveLastChip(chipPanel As Panel)
             If _selectedItems.Count > 0 Then
                 Dim lastItem = _selectedItems.Last()
-
-                ' Get the last chip element
                 Dim lastChip = chipPanel.Children(chipPanel.Children.Count - 1)
-
-                ' Remove from panel and collection
                 chipPanel.Children.RemoveAt(chipPanel.Children.Count - 1)
                 _selectedItems.Remove(lastItem)
-
-                ' Raise event
                 RaiseEvent SelectedItemsChanged(Me, _selectedItems)
             End If
         End Sub
+
+
+        ''' Remove specific item by ID
+        Public Sub RemoveItemById(itemId As Object, chipPanel As Panel)
+            Dim itemToRemove = _selectedItems.FirstOrDefault(Function(i) Object.Equals(_getItemId(i), itemId))
+            If itemToRemove IsNot Nothing Then
+                _selectedItems.Remove(itemToRemove)
+                If chipPanel IsNot Nothing AndAlso chipPanel.Children.Count > 0 Then
+
+                    Dim chipToRemove = chipPanel.Children.Cast(Of UIElement)().FirstOrDefault()
+
+                    If chipToRemove IsNot Nothing Then
+
+                        chipPanel.Children.Remove(chipToRemove)
+                    End If
+                End If
+                RaiseEvent SelectedItemsChanged(Me, _selectedItems)
+            End If
+        End Sub
+
+
+        ''' Get all selected items as a list
+        Public Function GetAllSelectedItems() As List(Of T)
+            Return _selectedItems.ToList()
+        End Function
+
     End Class
 End Namespace

@@ -92,7 +92,7 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
                 SupplierController.InsertSupplier(supplierName, companyName, phone, email, address, city, region, country, postalCode, tinID, brandIDs)
 
                 ' Clear form and reset fields after successful insertion
-                ClearForm()
+
                 UnloadCache()
 
                 ViewLoader.DynamicView.NavigateToView("managesuppliers", Me)
@@ -101,25 +101,7 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
             End Try
         End Sub
 
-        ' Clear input fields and chips
-        Private Sub ClearForm()
-            TxtRepresentative.Clear()
-            TxtCompany.Clear()
-            TxtPhone.Clear()
-            TxtEmail.Clear()
-            TxtAddress.Clear()
-            TxtCity.Clear()
-            TxtRegion.Clear()
-            TxtCountry.Clear()
-            TxtPostalCode.Clear()
-            TxtTINID.Clear()
-            TxtItem.Clear()
 
-            ' Clear selected brands using the helper
-            autocompleteHelper.ClearSelection(ChipPanel)
-
-            MessageBox.Show("Form cleared!", "Info", MessageBoxButton.OK, MessageBoxImage.Information)
-        End Sub
 
         Private Sub TxtPhone_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
             If Not e.Text.All(AddressOf Char.IsDigit) Then
