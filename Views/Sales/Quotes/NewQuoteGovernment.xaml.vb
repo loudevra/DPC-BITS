@@ -638,7 +638,7 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         ' The UI will Add ProductUI to the Interface
-        
+
 
         ' Create the complete category UI section
 #Region "Category Management - FIXED"
