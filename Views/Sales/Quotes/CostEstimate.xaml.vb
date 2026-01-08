@@ -65,7 +65,6 @@ Namespace DPC.Views.Sales.Quotes
             End If
 
             ' Initialize allItems FIRST
-            allItems = CostEstimateDetails.CEQuoteItemsCache
             itemOrder = CostEstimateDetails.CEQuoteItemsCache
 
             If allItems IsNot Nothing AndAlso allItems.Count > 0 Then
@@ -548,40 +547,33 @@ Namespace DPC.Views.Sales.Quotes
             ' Parse Delivery
             Dim deliveryAmount As Decimal = 0
             Dim rawDelivery = Delivery.Text.Replace("₱", "").Trim().Replace(",", "").Trim()
-            Debug.WriteLine($"Raw Delivery: '{rawDelivery}'")
-            If Not Decimal.TryParse(rawDelivery, NumberStyles.Any, CultureInfo.InvariantCulture, deliveryAmount) Then
-                Debug.WriteLine($"Failed to parse Delivery.Text, input: '{rawDelivery}'")
-                deliveryAmount = 0D
+            If Not String.IsNullOrEmpty(rawDelivery) Then
+                Decimal.TryParse(rawDelivery, NumberStyles.Any, CultureInfo.InvariantCulture, deliveryAmount)
             End If
 
             ' Parse Installation
             Dim installationAmount As Decimal = 0
             Dim rawInstallation = Installation.Text.Replace("₱", "").Trim().Replace(",", "").Trim()
-            Debug.WriteLine($"Raw Installation: '{rawInstallation}'")
-            If Not Decimal.TryParse(rawInstallation, NumberStyles.Any, CultureInfo.InvariantCulture, installationAmount) Then
-                Debug.WriteLine($"Failed to parse Installation.Text, input: '{rawInstallation}'")
-                installationAmount = 0D
+            If Not String.IsNullOrEmpty(rawInstallation) Then
+                Decimal.TryParse(rawInstallation, NumberStyles.Any, CultureInfo.InvariantCulture, installationAmount)
             End If
 
             ' Parse Subtotal
             Dim subtotalAmount As Decimal = 0
             Dim rawSubtotal = Subtotal.Text.Replace("₱", "").Trim().Replace(",", "").Trim()
-            Debug.WriteLine($"Raw Subtotal: '{rawSubtotal}'")
-            If Not Decimal.TryParse(rawSubtotal, NumberStyles.Any, CultureInfo.InvariantCulture, subtotalAmount) Then
-                Debug.WriteLine($"Failed to parse Subtotal.Text, input: '{rawSubtotal}'")
-                subtotalAmount = 0D
+            If Not String.IsNullOrEmpty(rawSubtotal) Then
+                Decimal.TryParse(rawSubtotal, NumberStyles.Any, CultureInfo.InvariantCulture, subtotalAmount)
             End If
 
-            ' ✓ FIXED: Calculate baseAmount first
-            Dim baseAmount As Decimal = subtotalAmount + installationAmount + deliveryAmount
-            Debug.WriteLine($"Base Amount: {baseAmount}")
-
-            ' Calculate VAT12 for display
+            ' Parse VAT
             Dim vatAmount As Decimal = 0
-            ' Calculate total cost
-            Dim totalCostVal As Decimal
+            Dim rawVat = VAT12.Text.Replace("₱", "").Trim().Replace(",", "").Trim()
+            If Not String.IsNullOrEmpty(rawVat) Then
+                Decimal.TryParse(rawVat, NumberStyles.Any, CultureInfo.InvariantCulture, vatAmount)
+            End If
 
-            Debug.WriteLine($"Computed Total: {totalCostVal}")
+            ' ✓ CALCULATE TOTAL - ADD THIS LINE!
+            Dim totalCostVal As Decimal = subtotalAmount + installationAmount + deliveryAmount + vatAmount
 
             ' TotalCost display
             TotalCost.Text = "₱ " & totalCostVal.ToString("N2")

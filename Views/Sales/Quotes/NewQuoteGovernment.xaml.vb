@@ -69,8 +69,7 @@ Namespace DPC.Views.Sales.Quotes
             Public RowCount As Integer = 0
         End Class
 
-
-#Region "Initializiation once loaded the form"
+#Region "Initialization once loaded the form"
         Public Sub New()
             InitializeComponent()
 
@@ -89,36 +88,22 @@ Namespace DPC.Views.Sales.Quotes
                 txtTaxSelection.SelectedItem = txtTaxSelection.Items.Cast(Of ComboBoxItem)().FirstOrDefault(Function(i) i.Content.ToString() = "Inclusive")
             End If
 
-            ' Run the selection changed logic to update all rates/tax fields
-            txtTaxSelection_SelectionChanged(txtTaxSelection, Nothing)
+            ' ✅ FIX: Don't call txtTaxSelection_SelectionChanged here - it will be called after UI loads
 
             InitializeProductUI()
             rowCount += 1
 
             ' Set a default date today and tomorrow
             OrderDateVM.SelectedDate = DateTime.Today
-            'OrderDueDateVM.SelectedDate = DateTime.Today.AddDays(1)
 
             ' Set Date to bind
             QuoteDate.DataContext = OrderDateVM
             QuoteDateButton.DataContext = OrderDateVM
-            'QuoteValidityDate.DataContext = OrderDueDateVM
-            'QuoteValidityButton.DataContext = OrderDueDateVM
 
             ' Autocomplete part
             _typingTimer = New DispatcherTimer With {
                 .Interval = TimeSpan.FromMilliseconds(300)
             }
-
-
-            ' Hide/Show the button for vat12% if exclusive
-            ' Visibility of the Vat Text
-            'If CEVatShow Then
-            '    ChangeVATColumn.Text = "Hide Vat 12%"
-            'Else
-            '    ChangeVATColumn.Text = "Show Vat 12%"
-            'End If
-
 
             AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
             AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
@@ -183,6 +168,8 @@ Namespace DPC.Views.Sales.Quotes
                 LoadingCEType = False
             End If
 
+            ' ✅ FIX: ShowVatExBtn visibility should NOT affect generate button
+            ' This button is only for showing/hiding VAT column in exclusive mode
             If txtTaxSelection.Text = "Inclusive" Then
                 ShowVatExBtn.Visibility = Visibility.Collapsed
             Else
@@ -194,14 +181,13 @@ Namespace DPC.Views.Sales.Quotes
 
             cmbCostEstimateValidty.Text = CostEstimateDetails.CEValidUntilDate
 
-            'TaxHeader.Header = If(_TaxSelection, "Tax(%)", "Tax(12%)")
-
             Debug.WriteLine($"Tax Selection - {_TaxSelection}")
             Debug.WriteLine($"Tax Value In Quote Properties - {_SelectedTax}")
         End Sub
 
         Private Sub NewQuoteGovernment_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
-
+            ' ✅ FIX: Now it's safe to call tax selection logic after UI is fully loaded
+            txtTaxSelection_SelectionChanged(txtTaxSelection, Nothing)
         End Sub
 
         Private Sub UpdateAllCategoryTaxHeaders()
@@ -271,10 +257,6 @@ Namespace DPC.Views.Sales.Quotes
             If LoadingCEType Then Exit Sub
 
             CostEstimateDetails.CEValidUntilDate = cmbCostEstimateValidty.SelectedIndex
-
-            'CostEstimateDetails.CEQuoteValidityDateCache = cmbCostEstimateValidty.Text ' Fail Safe 
-            'Console.WriteLine($"Newly Selected Index in Valid Until Date - {CostEstimateDetails.CEValidUntilDate}")
-            'Console.WriteLine($"Newly Text in Valid Until Date - {CostEstimateDetails.CEQuoteValidityDateCache}")
         End Sub
 #End Region
 
@@ -423,10 +405,6 @@ Namespace DPC.Views.Sales.Quotes
             QuoteDate.IsDropDownOpen = True
         End Sub
 
-        'Private Sub QuoteValidityButton_Click(sender As Object, e As RoutedEventArgs)
-        '    QuoteValidityDate.IsDropDownOpen = True
-        'End Sub
-
         Private Sub txtReferenceNumber_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
             If Not e.Text.All(AddressOf Char.IsDigit) Then
                 e.Handled = True ' block the input
@@ -434,11 +412,16 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Sub txtTaxSelection_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+            ' ✅ FIX: Add null check
+            If txtTaxSelection.SelectedItem Is Nothing Then Return
+
             _TaxSelection = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString() = "Exclusive"
             Debug.WriteLine($"Tax Selection - {_TaxSelection}")
 
             ' Update all category headers (Tax(12%) for Inclusive, Tax(%) for Exclusive)
             UpdateAllCategoryTaxHeaders()
+
+
 
             ' Update all tax percent textboxes
             For Each kvp In _productTextBoxes
@@ -447,15 +430,10 @@ Namespace DPC.Views.Sales.Quotes
                         ' Exclusive: Allow user to edit
                         kvp.Value.Text = "0"
                         kvp.Value.IsReadOnly = False
-                        CEtaxSelection = True
-                        ShowVatExBtn.Visibility = Visibility.Visible
                     Else
                         ' Inclusive: Make readonly and clear value
                         kvp.Value.Text = ""
                         kvp.Value.IsReadOnly = True
-                        CEtaxSelection = False
-                        ShowVatExBtn.Visibility = Visibility.Collapsed
-                        CEisVatExInclude = False
                     End If
                 End If
             Next
@@ -465,6 +443,7 @@ Namespace DPC.Views.Sales.Quotes
                 Dim category = categoryKvp.Value
                 If category.ProductsPanel IsNot Nothing Then
                     For i As Integer = 1 To category.RowCount
+                        ' ✅ FIX: Use proper naming convention for category rows
                         Dim textboxes As New Dictionary(Of String, TextBox) From {
                     {"quantity", FindTextBoxByName($"txtQuantity_{category.CategoryId}_{i}")},
                     {"price", FindTextBoxByName($"txtUnitPrice_{category.CategoryId}_{i}")},
@@ -585,7 +564,6 @@ Namespace DPC.Views.Sales.Quotes
 
             Dim parsedDate As DateTime
             If DateTime.TryParse(CEQuoteDateCache, parsedDate) Then QuoteDate.SelectedDate = parsedDate
-            'If DateTime.TryParse(CEQuoteValidityDateCache, parsedDate) Then QuoteValidityDate.SelectedDate = parsedDate
 
             cmbCostEstimateValidty.Text = CEValidUntilDate
 
