@@ -657,9 +657,9 @@ Namespace DPC.Views.Sales.Quotes
             categoryNamePanel.Children.Add(categoryLabel)
 
             Dim categoryNameBorder As New Border With {
-        .Margin = New Thickness(0, 0, 0, 15),
+        .Margin = New Thickness(0, 0, 0, 5),
         .Padding = New Thickness(10),
-        .Height = 40,
+        .Height = 45,
         .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
         .BorderThickness = New Thickness(2),
         .CornerRadius = New CornerRadius(20),
@@ -675,10 +675,29 @@ Namespace DPC.Views.Sales.Quotes
         .Foreground = Brushes.Black,
         .TextWrapping = TextWrapping.Wrap,
         .Padding = New Thickness(5),
-        .Height = 22,
+        .Height = 30,
         .VerticalAlignment = VerticalAlignment.Center,
         .HorizontalAlignment = HorizontalAlignment.Stretch
     }
+            AddHandler categoryNameTextBox.LostFocus, Sub(sender As Object, e As RoutedEventArgs)
+                                                          Dim txtBox = TryCast(sender, TextBox)
+                                                          If txtBox Is Nothing Then Return
+
+                                                          Dim categoryName = txtBox.Text.Trim()
+
+                                                          ' Allow empty category names
+                                                          If String.IsNullOrEmpty(categoryName) Then Return
+
+                                                          ' Check for duplicates
+                                                          If IsCategoryNameDuplicate(categoryName, categoryId) Then
+                                                              MessageBox.Show($"Category name '{categoryName}' already exists. Please use a different name.",
+                                                                             "Duplicate Category",
+                                                                             MessageBoxButton.OK,
+                                                                             MessageBoxImage.Warning)
+                                                              txtBox.Clear()
+                                                              txtBox.Focus()
+                                                          End If
+                                                      End Sub
 
             categoryNameBorder.Child = categoryNameTextBox
             categoryNamePanel.Children.Add(categoryNameBorder)
@@ -1168,9 +1187,25 @@ Namespace DPC.Views.Sales.Quotes
                                                 typingTimer.Start()
                                             End Sub
 
+            ' ✅ HANDLE SELECTION WITH DUPLICATE CHECK
             AddHandler suggestionList.SelectionChanged, Sub(sender As Object, e As SelectionChangedEventArgs)
                                                             If suggestionList.SelectedItem IsNot Nothing Then
                                                                 Dim selectedProduct = CType(suggestionList.SelectedItem, ProductDataModel)
+                                                                Dim selectedProductName = selectedProduct.ProductName.Trim()
+
+                                                                ' Check for duplicates across all categories
+                                                                If IsProductNameDuplicateAcrossCategories(selectedProductName, categoryId, rowIndex) Then
+                                                                    MessageBox.Show($"Product '{selectedProductName}' is already added in another row. Please select a different product.",
+                               "Duplicate Product",
+                               MessageBoxButton.OK,
+                               MessageBoxImage.Warning)
+                                                                    textBox.Clear()
+                                                                    popup.IsOpen = False
+                                                                    suggestionList.SelectedItem = Nothing
+                                                                    Return
+                                                                End If
+
+                                                                ' No duplicate - proceed
                                                                 textBox.Text = selectedProduct.ProductName
                                                                 popup.IsOpen = False
                                                                 suggestionList.SelectedItem = Nothing
@@ -1186,6 +1221,24 @@ Namespace DPC.Views.Sales.Quotes
                                                                 End Try
                                                             End If
                                                         End Sub
+
+            ' ✅ VALIDATE ON LOST FOCUS (manual entry)
+            AddHandler textBox.LostFocus, Sub(sender As Object, e As RoutedEventArgs)
+                                              Dim currentTextBox = CType(sender, TextBox)
+                                              Dim currentText = currentTextBox.Text.Trim()
+
+                                              If String.IsNullOrEmpty(currentText) Then Return
+
+                                              ' Check if product name exists in any category
+                                              If IsProductNameDuplicateAcrossCategories(currentText, categoryId, rowIndex) Then
+                                                  MessageBox.Show($"Product '{currentText}' is already added in another row. Please use a different product.",
+                           "Duplicate Product",
+                           MessageBoxButton.OK,
+                           MessageBoxImage.Warning)
+                                                  currentTextBox.Clear()
+                                                  currentTextBox.Focus()
+                                              End If
+                                          End Sub
 
             Dim grid As New Grid()
             grid.Children.Add(textBox)
@@ -1203,7 +1256,6 @@ Namespace DPC.Views.Sales.Quotes
 
             Return border
         End Function
-
 
         Private Sub SetProductDetailsForCategory(categoryId As Integer, rowIndex As Integer, product As ProductDataModel)
             Dim rateBox = TryCast(FindTextBoxByName($"txtUnitPrice_{categoryId}_{rowIndex}"), TextBox)
@@ -1683,6 +1735,89 @@ Namespace DPC.Views.Sales.Quotes
                                            End Sub
             Return deleteButton
         End Function
+
+        Private Function IsCategoryNameDuplicate(categoryName As String, excludeCategoryId As Integer) As Boolean
+            If String.IsNullOrWhiteSpace(categoryName) Then Return False
+
+            Dim trimmedName = categoryName.Trim().ToLower()
+
+            For Each kvp In _categories
+                ' Skip the current category being edited
+                If kvp.Key = excludeCategoryId Then Continue For
+
+                Dim category = kvp.Value
+                If category.CategoryNameTextBox IsNot Nothing Then
+                    Dim existingName = category.CategoryNameTextBox.Text.Trim().ToLower()
+                    If existingName = trimmedName Then
+                        Return True
+                    End If
+                End If
+            Next
+
+            Return False
+        End Function
+
+        Private Function IsProductNameDuplicateAcrossCategories(productName As String, currentCategoryId As Integer, currentRowIndex As Integer) As Boolean
+            If String.IsNullOrWhiteSpace(productName) Then Return False
+
+            Dim trimmedName = productName.Trim().ToLower()
+
+            ' Loop through all categories
+            For Each kvp In _categories
+                Dim categoryId = kvp.Key
+                Dim category = kvp.Value
+
+                If category.ProductsPanel Is Nothing Then Continue For
+
+                ' Loop through all product rows in this category
+                For Each child As UIElement In category.ProductsPanel.Children
+                    Dim rowBorder = TryCast(child, Border)
+
+                    ' Skip if not a product row (could be description border)
+                    If rowBorder Is Nothing OrElse rowBorder.BorderThickness.Left = 0 Then Continue For
+
+                    Dim productPanel = TryCast(rowBorder.Child, StackPanel)
+                    If productPanel Is Nothing OrElse productPanel.Children.Count = 0 Then Continue For
+
+                    ' Get the first border which contains product name
+                    Dim firstBorder = TryCast(productPanel.Children(0), Border)
+                    If firstBorder Is Nothing Then Continue For
+
+                    Dim grid = TryCast(firstBorder.Child, Grid)
+                    If grid Is Nothing OrElse grid.Children.Count = 0 Then Continue For
+
+                    Dim productTextBox = TryCast(grid.Children(0), TextBox)
+                    If productTextBox Is Nothing Then Continue For
+
+                    ' Get the row index from the textbox name
+                    ' Format: txtProductName_{categoryId}_{rowIndex}
+                    If productTextBox.Name.StartsWith("txtProductName_") Then
+                        Dim parts = productTextBox.Name.Split("_"c)
+                        If parts.Length >= 3 Then
+                            Dim thisCatId As Integer
+                            Dim thisRowIdx As Integer
+
+                            If Integer.TryParse(parts(1), thisCatId) AndAlso Integer.TryParse(parts(2), thisRowIdx) Then
+                                ' Skip if this is the current textbox being edited
+                                If thisCatId = currentCategoryId AndAlso thisRowIdx = currentRowIndex Then
+                                    Continue For
+                                End If
+                            End If
+                        End If
+                    End If
+
+                    ' Compare product names
+                    Dim existingProductName = productTextBox.Text.Trim().ToLower()
+                    If existingProductName = trimmedName AndAlso Not String.IsNullOrEmpty(existingProductName) Then
+                        Return True
+                    End If
+                Next
+            Next
+
+            Return False
+        End Function
+
+
 #End Region
 
 #Region "Calculation Per Row"

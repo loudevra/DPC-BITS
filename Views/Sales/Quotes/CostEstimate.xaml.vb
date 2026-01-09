@@ -151,7 +151,7 @@ Namespace DPC.Views.Sales.Quotes
                 btnToggleImage.Opacity = 0.6
             End If
 
-            ' Check if the signature is enabled
+            ' Check if the signature is enabled0+51086.+63
             If Not String.IsNullOrWhiteSpace(base64Image) Then
                 DisplayUploadedImage()
             End If
@@ -363,20 +363,9 @@ Namespace DPC.Views.Sales.Quotes
                 End If
             End If
 
-            ' Get description and set visibility
-            Dim productDesc As String = ""
-            Dim descVisibility As Visibility = Visibility.Collapsed
-
-            If item.ContainsKey("Description") AndAlso Not String.IsNullOrWhiteSpace(item("Description")) Then
-                productDesc = item("Description")
-                descVisibility = Visibility.Visible
-            End If
-
             Return New OrderItems With {
         .Quantity = item("Quantity"),
         .Description = item("ProductName"),
-        .ProductDescription = productDesc,
-        .ProductDescriptionVisibility = descVisibility,
         .UnitPrice = $"₱ {rateFormatted}",
         .LinePrice = $"₱ {linePriceFormatted}",
         .ProductImage = productImage
