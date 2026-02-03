@@ -996,6 +996,9 @@
     <Compile Include="Views\HRM\Employees\Holidays\EmployeeHolidays.xaml.vb">
       <DependentUpon>EmployeeHolidays.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\HRM\Employees\NewPage\NewPage.xaml.vb">
+      <DependentUpon>NewPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\HRM\Employees\Payroll\PayrollTransaction.xaml.vb">
       <DependentUpon>PayrollTransaction.xaml</DependentUpon>
     </Compile>
@@ -1878,6 +1881,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\HRM\Employees\Holidays\EmployeeHolidays.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HRM\Employees\NewPage\NewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

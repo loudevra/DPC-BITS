@@ -142,6 +142,11 @@ Namespace DPC.Data.Helpers.ViewLoader
                    'Case "hrmeditfiles"
                         'Return New HRM.Files.ManageFile()
 
+                    'SAMPLE PAGE - FOR DEMO PURPOSES ONLY'
+                    Case "newpage"
+                        Return New HRM.Employees.NewPage.NewPage()
+
+
                          ' Sales Module Navigation
                     Case "salesnewinvoice"
                         Return New Views.Sales.Saless.SalesNewInvoice()

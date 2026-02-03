@@ -142,5 +142,11 @@ Namespace DPC.Components.UI
             ViewLoader.DynamicView.NavigateToView("editbrand", Me)
         End Sub
 
+        'New Page Navigation - For Demo Purposes Only
+        Private Sub NavigateToNewPage(sender As Object, e As RoutedEventArgs)
+            ' Open New Page view
+            ViewLoader.DynamicView.NavigateToView("newpage", Me)
+        End Sub
+
     End Class
 End Namespace
