@@ -502,7 +502,7 @@ Namespace DPC.Views.Sales.Quotes
         Private Sub AddCategoryHeaderRow(categoryName As String)
             itemDataSource.Add(New OrderItems With {
         .Quantity = "",
-        .Description = categoryName.ToLower(),
+        .Description = categoryName.ToUpper(),
         .ProductDescription = "",
         .ProductDescriptionVisibility = Visibility.Collapsed,
         .UnitPrice = "",
