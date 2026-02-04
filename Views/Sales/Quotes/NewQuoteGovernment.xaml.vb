@@ -198,6 +198,7 @@ Namespace DPC.Views.Sales.Quotes
             For Each kvp In _categories
                 Dim category = kvp.Value
 
+
                 ' Find the header grid in the category
                 If category.CategoryBorder IsNot Nothing Then
                     Dim productPanelStack = TryCast(category.CategoryBorder.Child, StackPanel)
@@ -2159,6 +2160,7 @@ Namespace DPC.Views.Sales.Quotes
                 Exit Sub
             End If
 
+
             GetAllDataInQuoteProperties(client, productItemsJson)
         End Sub
 
@@ -2216,6 +2218,12 @@ Namespace DPC.Views.Sales.Quotes
                         Else
                             Dim txtBox = TryCast(fieldBorder.Child, TextBox)
                             If txtBox IsNot Nothing Then value = txtBox.Text.Trim()
+                        End If
+
+                        ' Validates category string
+                        If categoryName = "" Then
+                            MessageBox.Show($"Please input a category name.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
+                            Return Nothing
                         End If
 
                         If (fieldNames(fieldIndex) = "ProductName" OrElse fieldNames(fieldIndex) = "Quantity" OrElse fieldNames(fieldIndex) = "Rate") AndAlso
