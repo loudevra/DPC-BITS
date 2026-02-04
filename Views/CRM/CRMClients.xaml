@@ -230,7 +230,7 @@
 
                         <!-- Table and Controls test-->
                         <Border Background="White" CornerRadius="8" Padding="5">
-                            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="0">
+                            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,15">
                                 <DataGrid Name="dataGrid"
 AutoGenerateColumns="False"
 CanUserAddRows="False"
@@ -241,14 +241,14 @@ AlternatingRowBackground="WhiteSmoke"
 BorderThickness="0"
 Height="425"
 FontFamily="Lexend"
-MouseLeftButtonUp="DataGrid_CellClick"                                      
+MouseLeftButtonUp="DataGrid_CellClick"
 IsReadOnly="True">
 
                                     <DataGrid.RowStyle>
                                         <Style TargetType="DataGridRow">
                                             <Setter Property="Margin" Value="0,5,0,5"/>
                                             <Setter Property="Padding" Value="5"/>
-                                            <Setter Property="Height" Value="30"/>
+                                            <Setter Property="Height" Value="35"/>
                                         </Style>
                                     </DataGrid.RowStyle>
 
@@ -305,6 +305,15 @@ IsReadOnly="True">
                                                 </Style>
                                             </DataGridTextColumn.ElementStyle>
                                         </DataGridTextColumn>
+                                        <DataGridTextColumn Header="Type" Binding="{Binding ClientType}" Width="130">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="FontFamily" Value="Lexend"/>
+                                                    <Setter Property="TextWrapping" Value="NoWrap"/>
+                                                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
                                         <DataGridTextColumn Header="Adress" Binding="{Binding BillingAddress}" Width="150">
                                             <DataGridTextColumn.ElementStyle>
                                                 <Style TargetType="TextBlock">
@@ -332,6 +341,22 @@ IsReadOnly="True">
                                                 </Style>
                                             </DataGridTextColumn.ElementStyle>
                                         </DataGridTextColumn>
+                                        <DataGridTemplateColumn Header="Settings" Width="80">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                        <Button Width="25" Height="23" Background="Transparent" Margin="0, 0, 2, 0" 
+                        ToolTip="Edit" Click="OpenEditCRMclient" Cursor="Hand">
+                                                            <materialDesign:PackIcon Kind="SquareEditOutline" Width="20" Height="18" Foreground="#52C69D"/>
+                                                        </Button>
+                                                        <Button Width="25" Height="23" Background="Transparent" Margin="0" 
+                        ToolTip="Delete" Click="DeleteCRMclient" Cursor="Hand">
+                                                            <materialDesign:PackIcon Kind="DeleteOutline" Width="20" Height="18" Foreground="#E65E5E"/>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
 
                                     </DataGrid.Columns>
                                 </DataGrid>

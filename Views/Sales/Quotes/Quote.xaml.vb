@@ -1,7 +1,11 @@
-﻿Imports System.Windows.Controls.Primitives
+﻿Imports System.Data
+Imports System.Windows.Controls.Primitives
 Imports System.Windows.Threading
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
+Imports DPC.DPC.Data.Model
+Imports MySql.Data.MySqlClient
+Imports System.Collections.ObjectModel
 
 Namespace DPC.Views.Sales.Quotes
     Public Class Quote
@@ -10,26 +14,267 @@ Namespace DPC.Views.Sales.Quotes
         Private dueDateViewModel As New CalendarController.SingleCalendar()
         Private _typingTimer As DispatcherTimer
 
+        Private _isInitialized As Boolean = False
+        Private _dataTable As DataTable
+        Private _QuoteNumber As String
+
         Public Sub New()
             InitializeComponent()
             SetupDatePickers()
-            GetDataFromDB()
+
+            ' Set up the TextChanged event immediately
+            AddHandler SearchText.TextChanged, AddressOf SearchText_TextChanged
+            AddHandler cmbLimit.SelectionChanged, AddressOf ComboBoxLimit_SelectionChanged
 
             _typingTimer = New DispatcherTimer With {
                 .Interval = TimeSpan.FromMilliseconds(250)
             }
 
             AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
-            AddHandler cmbLimit.SelectionChanged, AddressOf GetDataFromDB
+
+            ' Load data after initialization is complete
+            AddHandler Me.Loaded, AddressOf UserControl_Loaded
+        End Sub
+
+
+        Private Sub UserControl_Loaded(sender As Object, e As RoutedEventArgs)
+            If Not _isInitialized Then
+                LoadData()
+                _isInitialized = True
+            End If
+        End Sub
+
+        Private Shared Function CalculateValidityDate(validityOption As String, quoteDate As DateTime) As DateTime
+            Try
+                Dim selection = validityOption.Trim().ToLower()
+
+                Select Case selection
+                    Case "48 hours"
+                        Return quoteDate.AddHours(48)
+                    Case "1 week"
+                        Return quoteDate.AddDays(7)
+                    Case "2 weeks"
+                        Return quoteDate.AddDays(14)
+                    Case "3 weeks"
+                        Return quoteDate.AddDays(21)
+                    Case "1 month"
+                        Return quoteDate.AddMonths(1)
+                    Case "2 months"
+                        Return quoteDate.AddMonths(2)
+                    Case "6 months"
+                        Return quoteDate.AddMonths(6)
+                    Case "1 year"
+                        Return quoteDate.AddYears(1)
+                    Case Else
+                        ' Default to 48 hours if unknown
+                        Return quoteDate.AddHours(48)
+                End Select
+
+            Catch ex As Exception
+                Debug.WriteLine($"Error calculating validity date: {ex.Message}")
+                Return quoteDate.AddHours(48)
+            End Try
+        End Function
+
+        ''' Loads all quotes from the database
+        Public Sub LoadData()
+            Try
+                Dim limit As Integer = Convert.ToInt32(cmbLimit.Text)
+                Dim quotes = QuotesController.GetQuotes(limit)
+
+                ' Format quotes for display
+                FormatQuotesForDisplay(quotes)
+
+                dataGrid.ItemsSource = quotes
+            Catch ex As Exception
+                MessageBox.Show($"Error loading data: {ex.Message}")
+            End Try
+        End Sub
+
+
+        ''' Handles combo box selection change for display limit
+        Private Sub ComboBoxLimit_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+            If Not _isInitialized Then Return
+            LoadData()
+        End Sub
+
+        Private Sub OpenEditQuote(sender As Object, e As RoutedEventArgs)
+            Dim quote As QuotesModel = TryCast(dataGrid.SelectedItem, QuotesModel)
+
+            If quote IsNot Nothing Then
+                Dim cacheModule = GetCacheModule()
+                ' Store the quote data in cache
+                cacheModule.QuoteNumber = quote.QuoteNumber
+                cacheModule.ClientID = quote.ClientID
+                cacheModule.ClientName = quote.ClientName
+                cacheModule.WarehouseID = quote.WarehouseID
+                cacheModule.WarehouseName = quote.WarehouseName
+                cacheModule.QuoteDate = quote.QuoteDate
+                cacheModule.Validity = quote.Validity
+                cacheModule.QuoteNote = quote.QuoteNote
+                cacheModule.OrderItems = quote.OrderItems
+
+                ' Navigate to EditQuote
+                ViewLoader.DynamicView.NavigateToView("editquote", Me)
+
+            End If
+        End Sub
+
+        ''' Helper function to get or create cache module
+        Private Function GetCacheModule() As QuoteCacheData
+            ' Return a shared/global cache object - adjust based on your app structure
+            If Not Application.Current.Properties.Contains("QuoteCache") Then
+                Application.Current.Properties("QuoteCache") = New QuoteCacheData()
+            End If
+            Return DirectCast(Application.Current.Properties("QuoteCache"), QuoteCacheData)
+        End Function
+
+
+        Private Sub DeleteQuote(sender As Object, e As RoutedEventArgs)
+            Dim quote As QuotesModel = TryCast(dataGrid.SelectedItem, QuotesModel)
+
+            If quote Is Nothing Then
+                MessageBox.Show("Please select a Quote to delete.", "No Selection", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Exit Sub
+            End If
+
+            _QuoteNumber = quote.QuoteNumber
+
+            ' Show confirmation dialog
+            Dim result = MessageBox.Show("Are you sure you want to delete this quote?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Question)
+
+            If result = MessageBoxResult.Yes Then
+                DeleteQuoteConfirmation_Closed()
+            End If
+        End Sub
+
+
+        Private Sub DeleteQuoteConfirmation_Closed()
+            Dim query As String = "DELETE FROM quotes WHERE QuoteNumber = @quoteNumber"
+            Dim connStr As String = SplashScreen.GetDatabaseConnection().ConnectionString
+            Try
+                Using conn As New MySqlConnection(connStr)
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@quoteNumber", _QuoteNumber)
+                        cmd.ExecuteNonQuery()
+                    End Using
+                End Using
+
+                MessageBox.Show("Quote deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                dataGrid.ItemsSource = Nothing
+                LoadData()
+            Catch ex As Exception
+                MessageBox.Show("Error deleting quote: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+        End Sub
+
+
+        ''' Performs the search based on current search text
+        Private Sub PerformSearch()
+            Try
+                Dim searchTextValue As String = SearchText.Text.Trim()
+                Dim limit As Integer = Convert.ToInt32(cmbLimit.Text)
+
+                Dim quotes As ObservableCollection(Of QuotesModel)
+
+                If String.IsNullOrWhiteSpace(searchTextValue) Then
+                    quotes = QuotesController.GetQuotes(limit)
+                Else
+                    quotes = QuotesController.SearchQuotes(searchTextValue, limit)
+                End If
+
+                ' Format quotes for display
+                FormatQuotesForDisplay(quotes)
+
+                dataGrid.ItemsSource = quotes
+
+            Catch ex As Exception
+                MessageBox.Show($"Error searching: {ex.Message}")
+            End Try
+        End Sub
+
+        ''' Updates the warehouse information in the database for an existing quote
+        Public Shared Function UpdateQuoteWarehouse(quoteNumber As String, warehouseID As Integer, warehouseName As String) As Boolean
+            Try
+                Dim query As String = "UPDATE quotes SET WarehouseID = @warehouseID, WarehouseName = @warehouseName, UpdatedAt = @updatedAt WHERE QuoteNumber = @quoteNumber"
+                Dim connStr As String = SplashScreen.GetDatabaseConnection().ConnectionString
+                Using conn As New MySqlConnection(connStr)
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@warehouseID", warehouseID)
+                        cmd.Parameters.AddWithValue("@warehouseName", warehouseName)
+                        cmd.Parameters.AddWithValue("@updatedAt", DateTime.Now)
+                        cmd.Parameters.AddWithValue("@quoteNumber", quoteNumber)
+                        Dim rowsAffected As Integer = cmd.ExecuteNonQuery()
+                        If rowsAffected > 0 Then
+                            MessageBox.Show("Warehouse updated successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                            Return True
+                        Else
+                            MessageBox.Show("Quote not found or warehouse not updated.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning)
+                            Return False
+                        End If
+                    End Using
+                End Using
+
+            Catch ex As MySqlException
+                MessageBox.Show("Database error: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                Debug.WriteLine("Database error in UpdateQuoteWarehouse: " & ex.Message)
+                Return False
+
+            Catch ex As Exception
+                MessageBox.Show("Error updating warehouse: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                Debug.WriteLine("Error in UpdateQuoteWarehouse: " & ex.Message)
+                Return False
+            End Try
+        End Function
+
+
+        ''' Alternative: Updates warehouse and other quote details together
+        Public Shared Function UpdateQuoteWithWarehouse(quoteNumber As String, warehouseID As Integer, warehouseName As String,
+                                                clientID As String, totalTax As Decimal, totalDiscount As Decimal,
+                                                totalAmount As Decimal) As Boolean
+            Try
+                Dim query As String = "UPDATE quotes SET WarehouseID = @warehouseID, WarehouseName = @warehouseName, " &
+                             "ClientID = @clientID, TotalTax = @totalTax, TotalDiscount = @totalDiscount, " &
+                             "TotalAmount = @totalAmount, UpdatedAt = @updatedAt WHERE QuoteNumber = @quoteNumber"
+
+                Dim connStr As String = SplashScreen.GetDatabaseConnection().ConnectionString
+                Using conn As New MySqlConnection(connStr)
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@warehouseID", warehouseID)
+                        cmd.Parameters.AddWithValue("@warehouseName", warehouseName)
+                        cmd.Parameters.AddWithValue("@clientID", clientID)
+                        cmd.Parameters.AddWithValue("@totalTax", totalTax)
+                        cmd.Parameters.AddWithValue("@totalDiscount", totalDiscount)
+                        cmd.Parameters.AddWithValue("@totalAmount", totalAmount)
+                        cmd.Parameters.AddWithValue("@updatedAt", DateTime.Now)
+                        cmd.Parameters.AddWithValue("@quoteNumber", quoteNumber)
+                        Dim rowsAffected As Integer = cmd.ExecuteNonQuery()
+                        Return rowsAffected > 0
+                    End Using
+                End Using
+
+            Catch ex As Exception
+                Debug.WriteLine("Error in UpdateQuoteWithWarehouse: " & ex.Message)
+                Return False
+            End Try
+        End Function
+
+
+        ''' Refreshes the data when returning to this view
+        Public Sub RefreshData()
+            LoadData()
         End Sub
 
         Private Sub GetDataFromDB()
             If String.IsNullOrWhiteSpace(SearchText.Text) Then
                 dataGrid.ItemsSource = Nothing
-                dataGrid.ItemsSource = QuotesController.GetOrders(CInt(cmbLimit.Text))
+                dataGrid.ItemsSource = QuotesController.GetQuotes(CInt(cmbLimit.Text))
             Else
                 dataGrid.ItemsSource = Nothing
-                dataGrid.ItemsSource = QuotesController.GetOrdersSearch(SearchText.Text, CInt(cmbLimit.Text))
+                dataGrid.ItemsSource = QuotesController.SearchQuotes(SearchText.Text, CInt(cmbLimit.Text))
             End If
         End Sub
 
@@ -212,8 +457,110 @@ Namespace DPC.Views.Sales.Quotes
             ' Stop the timer
             _typingTimer.Stop()
 
-            GetDataFromDB()
+            PerformSearch()
         End Sub
+
+        Private Sub dataGrid_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles dataGrid.SelectionChanged
+        End Sub
+
+        Private Sub cmbLimit_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles cmbLimit.SelectionChanged
+        End Sub
+
+        Private Shared Function GetValidityDate(validitySelection As String, baseDate As DateTime) As String
+            Try
+                ' Remove extra spaces and convert to lowercase for comparison
+                Dim selection = validitySelection.Trim().ToLower()
+
+                ' If it's already a date in format "yyyy-MM-dd", convert to display format
+                Dim validityDate As DateTime
+                If DateTime.TryParse(selection, validityDate) Then
+                    Return validityDate.ToString("MMM d, yyyy")
+                End If
+
+                ' Calculate from base date based on ComboBox items
+                Select Case selection
+                    Case "48 hours"
+                        validityDate = baseDate.AddHours(48)
+                    Case "1 week"
+                        validityDate = baseDate.AddDays(7)
+                    Case "2 weeks"
+                        validityDate = baseDate.AddDays(14)
+                    Case "3 weeks"
+                        validityDate = baseDate.AddDays(21)
+                    Case "1 month"
+                        validityDate = baseDate.AddMonths(1)
+                    Case "2 months"
+                        validityDate = baseDate.AddMonths(2)
+                    Case "6 months"
+                        validityDate = baseDate.AddMonths(6)
+                    Case "1 year"
+                        validityDate = baseDate.AddYears(1)
+                End Select
+
+                ' Return in display format: MMM d, yyyy
+                Return validityDate.ToString("MMM d, yyyy")
+
+            Catch ex As Exception
+                Debug.WriteLine($"Error calculating validity date: {ex.Message}")
+                Return baseDate.AddHours(0).ToString("MMM d, yyyy")
+            End Try
+        End Function
+
+        ''' <summary>
+        ''' Formats the quote data before displaying in DataGrid
+        ''' Converts all validity dates from database format to display format
+        ''' </summary>
+        Private Shared Sub FormatQuotesForDisplay(quotes As ObservableCollection(Of QuotesModel))
+            Try
+                For Each quote In quotes
+                    ' Parse QuoteDate from database format (yyyy-MM-dd)
+                    Dim quoteDateValue As DateTime = DateTime.Now
+                    If Not String.IsNullOrEmpty(quote.QuoteDate) AndAlso quote.QuoteDate <> "-" Then
+                        If DateTime.TryParse(quote.QuoteDate, quoteDateValue) Then
+                            ' Keep quoteDate as-is in display format
+                            quote.QuoteDate = quoteDateValue.ToString("MMM d, yyyy")
+                        End If
+                    End If
+
+                    ' Calculate and display validity date based on validity option
+                    If Not String.IsNullOrEmpty(quote.Validity) AndAlso quote.Validity <> "-" Then
+                        ' Check if Validity is an option (like "6 months") or already a date
+                        Dim validityDate As DateTime
+
+                        ' Try to parse as date first
+                        If DateTime.TryParse(quote.Validity, validityDate) Then
+                            ' It's stored as a date in database - just format for display
+                            quote.Validity = validityDate.ToString("MMM d, yyyy")
+                        Else
+                            ' It's stored as an option (like "6 months") - calculate the date
+                            validityDate = CalculateValidityDate(quote.Validity, quoteDateValue)
+                            quote.Validity = validityDate.ToString("MMM d, yyyy")
+                        End If
+                    End If
+                Next
+            Catch ex As Exception
+                Debug.WriteLine($"Error formatting quotes: {ex.Message}")
+            End Try
+        End Sub
+
+
+        ''' Cache data holder for quote information
+        Public Class QuoteCacheData
+            Public Property QuoteNumber As String = ""
+            Public Property ClientID As String = ""
+            Public Property ClientName As String = ""
+            Public Property TxtClientDetails As String = ""
+            Public Property WarehouseID As String = ""
+            Public Property WarehouseName As String = ""
+            Public Property QuoteDate As String = ""
+            Public Property Validity As String = ""
+            Public Property QuoteNote As String = ""
+            Public Property TotalTax As Object = 0
+            Public Property TotalDiscount As Object = 0
+            Public Property TotalPrice As Object = 0
+            Public Property OrderItems As Object = Nothing
+        End Class
+
 
     End Class
 End Namespace

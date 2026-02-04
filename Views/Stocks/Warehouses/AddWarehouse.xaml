@@ -36,7 +36,7 @@
 				<Separator Margin="0,10,0,10"/>
 
 				<!-- Name Input -->
-				<TextBlock Text="Name:" FontSize="14" />
+				<TextBlock Text="Name:" FontSize="20" />
                 <Border Style="{StaticResource RoundedBorderStyle}">
                     <TextBox x:Name="txtName" Style="{StaticResource RoundedTextboxStyle}" />
                 </Border>

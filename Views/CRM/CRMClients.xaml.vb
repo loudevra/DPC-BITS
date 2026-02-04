@@ -3,6 +3,8 @@ Imports System.Windows.Controls.Primitives
 Imports System.Windows.Threading
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
+Imports DPC.DPC.Data.Models
+Imports DPC.Data.Helpers.ViewLoader
 
 Namespace DPC.Views.CRM
 
@@ -172,6 +174,150 @@ Namespace DPC.Views.CRM
 
         Private Sub NavigateToSelectClients(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("selectclients", Me)
+        End Sub
+
+
+
+        Private Sub DeleteCRMclient(sender As Object, e As RoutedEventArgs)
+            Try
+                ' Get the button that was clicked
+                Dim button As Button = TryCast(sender, Button)
+                If button Is Nothing Then Return
+
+                ' Get the data context (the client object) from the button
+                Dim client As Client = TryCast(button.DataContext, Client)
+                If client Is Nothing Then Return
+
+                ' Confirm deletion with user
+                Dim result As MessageBoxResult = MessageBox.Show(
+            $"Are you sure you want to delete client '{client.Name}'?",
+            "Confirm Deletion",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Question)
+
+                If result <> MessageBoxResult.Yes Then
+                    Return
+                End If
+
+                ' Call delete method from ClientController
+                Dim success As Boolean = ClientController.DeleteClient(client.ClientID.ToString())
+
+                If success Then
+                    MessageBox.Show("Client deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                    LoadClients() ' Refresh the client list
+                Else
+                    MessageBox.Show("Failed to delete client.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                End If
+
+            Catch ex As Exception
+                MessageBox.Show($"Error deleting client: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+        End Sub
+
+        Private Sub OpenEditCRMclient(sender As Object, e As RoutedEventArgs)
+            Try
+                ' Get the button that was clicked
+                Dim button As Button = TryCast(sender, Button)
+                If button Is Nothing Then Return
+
+                ' Get the data context (the client object) from the button
+                Dim client As Client = TryCast(button.DataContext, Client)
+                If client Is Nothing Then Return
+
+                System.Diagnostics.Debug.WriteLine($"DEBUG: Clicked edit for ClientID = {client.ClientID}")
+                System.Diagnostics.Debug.WriteLine($"DEBUG: ClientID Type = {client.ClientID.GetType()}")
+
+                ' Get the full client details from database
+                Dim clientIDString As String = client.ClientID.ToString()
+                System.Diagnostics.Debug.WriteLine($"DEBUG: Calling GetClientByID with: {clientIDString}")
+
+                Dim fullClient As Client = ClientController.GetClientByID(clientIDString)
+
+                If fullClient Is Nothing Then
+                    System.Diagnostics.Debug.WriteLine($"DEBUG: GetClientByID returned NULL for ID: {clientIDString}")
+                    MessageBox.Show($"Failed to load client details. ClientID: {clientIDString}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return
+                Else
+                    System.Diagnostics.Debug.WriteLine($"DEBUG: Got client: {fullClient.Name}")
+                End If
+
+                ' Determine client type and navigate accordingly
+                If client.ClientType = "Residential" Then
+                    System.Diagnostics.Debug.WriteLine($"DEBUG: Creating edit form for Residential client with ID: {clientIDString}")
+
+                    ' Create the edit form
+                    Dim editForm As New CRMEditResidentialClient()
+
+                    ' Set the ClientID before navigation
+                    editForm.SetClientID(clientIDString)
+
+                    System.Diagnostics.Debug.WriteLine($"DEBUG: Navigating to editresidentialclient")
+
+                    ' Navigate to the residential client edit form
+                    ViewLoader.DynamicView.NavigateToView("editresidentialclient", editForm)
+
+                ElseIf client.ClientType = "Corporate" Then
+                    MessageBox.Show("Corporate client editing is not yet implemented.", "Info", MessageBoxButton.OK, MessageBoxImage.Information)
+                End If
+
+            Catch ex As Exception
+                System.Diagnostics.Debug.WriteLine($"DEBUG: Exception in OpenEditCRMclient: {ex.Message}")
+                System.Diagnostics.Debug.WriteLine($"DEBUG: StackTrace: {ex.StackTrace}")
+                MessageBox.Show($"Error opening client for editing: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+        End Sub
+
+        Private Sub PopulateResidentialClientDetails(client As Client)
+            ' Parse the billing address (assuming format: "Address, City, Region, Country, ZipCode")
+            Dim billingParts As String() = If(String.IsNullOrEmpty(client.BillingAddress),
+                                      New String() {},
+                                      client.BillingAddress.Split(New String() {", "}, StringSplitOptions.None))
+            Dim shippingParts As String() = If(String.IsNullOrEmpty(client.ShippingAddress),
+                                       New String() {},
+                                       client.ShippingAddress.Split(New String() {", "}, StringSplitOptions.None))
+
+            ' Populate the ResidentialClientDetails module
+            ResidentialClientDetails.ClientName = client.Name
+            ResidentialClientDetails.Phone = client.Phone
+            ResidentialClientDetails.Email = client.Email
+
+            ' Billing Address
+            ResidentialClientDetails.BillAddress = If(billingParts.Length > 0, billingParts(0), "")
+            ResidentialClientDetails.BillCity = If(billingParts.Length > 1, billingParts(1), "")
+            ResidentialClientDetails.BillRegion = If(billingParts.Length > 2, billingParts(2), "")
+            ResidentialClientDetails.BillCountry = If(billingParts.Length > 3, billingParts(3), "")
+            ResidentialClientDetails.BillZipCode = If(billingParts.Length > 4, billingParts(4), "")
+
+            ' Shipping Address
+            ResidentialClientDetails.Address = If(shippingParts.Length > 0, shippingParts(0), "")
+            ResidentialClientDetails.City = If(shippingParts.Length > 1, shippingParts(1), "")
+            ResidentialClientDetails.Region = If(shippingParts.Length > 2, shippingParts(2), "")
+            ResidentialClientDetails.Country = If(shippingParts.Length > 3, shippingParts(3), "")
+            ResidentialClientDetails.ZipCode = If(shippingParts.Length > 4, shippingParts(4), "")
+
+            ' Other details
+            ResidentialClientDetails.ClientGroupID = client.ClientGroupID
+            ResidentialClientDetails.CustomerGroup = client.CustomerGroup
+            ResidentialClientDetails.CustomerLanguage = client.ClientLanguage
+            ResidentialClientDetails.SameAsBilling = (client.BillingAddress = client.ShippingAddress)
+        End Sub
+
+        Private Sub PopulateCorporateClientDetails(client As Client)
+            ' Parse the billing address (assuming format: "Address, City, Region, Country, ZipCode")
+            Dim billingParts As String() = If(String.IsNullOrEmpty(client.BillingAddress),
+                                      New String() {},
+                                      client.BillingAddress.Split(New String() {", "}, StringSplitOptions.None))
+            Dim shippingParts As String() = If(String.IsNullOrEmpty(client.ShippingAddress),
+                                       New String() {},
+                                       client.ShippingAddress.Split(New String() {", "}, StringSplitOptions.None))
+
+            ' TODO: Create a CorporateClientDetails module similar to ResidentialClientDetails
+            ' For now, this is a placeholder. You'll need to implement this based on your corporate client structure
+
+            ' Example structure (adjust based on your actual corporate client properties):
+            ' CorporateClientDetails.Company = client.Company
+            ' CorporateClientDetails.Representative = client.Representative
+            ' ... etc
         End Sub
     End Class
 End Namespace

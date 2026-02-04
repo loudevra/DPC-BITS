@@ -44,7 +44,7 @@
     Public CEInstallation As String
     Public CEtaxSelection As Boolean
     Public CEType As Integer = 0 ' default value for extra safety
-    Public CEValidUntilDate As String ' default value of extra safety
+    Public CEValidUntilDate As String = "" ' default value of extra safety
     Public CECompanyName As String = "" ' Company name for the cost estimate
     Public CESubtotalExInc As String = "Subtotal Vat Ex." ' Default Value if doesnt work
     Public CEWarranty As String = "Dream PC Build and IT Solutions Inc. offers 1 year warranty for this cost estimate.&#x0a;This warranty covers manufacturer defects and hardware malfunctions under normal usage. Terms and conditions apply."
@@ -53,8 +53,10 @@
     Public CECNIndetifier As String ' Client Identifier for the cost estimate
     Public CEGrandTotalCost As String ' Grand Total Cost for the cost estimate
     Public CEisVatExInclude As Boolean = False ' Default Value for extra safety
-    Public CEOtherServices As String = "" ' ADD THIS LINE - Other services text
+    Public CEOtherServices As String = "" ' Other services text
     Public CEShowProductImages As Boolean = True
+    Public CESubject As String = "" ' Subject for the cost estimate
+    Public CEProjectID As String = "" ' ✅ NEW: Project ID for the cost estimate
 
     Public Sub ClearAllCECache()
         CEQuoteNumberCache = ""
@@ -70,6 +72,8 @@
         CETotalDiscountValueCache = ""
         CETotalAmountCache = ""
 
+        CESubject = ""
+        CEProjectID = "" ' ✅ NEW: Clear Project ID
         CEnoteTxt = ""
         CEremarksTxt = ""
         CEpaymentTerms = ""
@@ -119,12 +123,9 @@
         CEApproved = ""
         CEInstallation = ""
         CEValidUntilDate = ""
-        CEOtherServices = "" ' ADD THIS LINE - Clear other services
+        CEOtherServices = ""
         CEShowProductImages = True
 
     End Sub
 
-
-
 End Module
-

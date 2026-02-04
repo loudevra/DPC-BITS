@@ -335,7 +335,7 @@ IsReadOnly="True">
                                     <Style TargetType="DataGridRow">
                                         <Setter Property="Margin" Value="0,5,0,5"/>
                                         <Setter Property="Padding" Value="5"/>
-                                        <Setter Property="Height" Value="30"/>
+                                        <Setter Property="Height" Value="45"/>
                                     </Style>
                                 </DataGrid.RowStyle>
 
@@ -483,6 +483,21 @@ IsReadOnly="True">
                                         </DataGridTextColumn.ElementStyle>
                                     </DataGridTextColumn>
 
+                                    <DataGridTemplateColumn Header="Settings" Width="80">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                    <Button Width="27" Height="27" Background="Transparent" Margin="0, 0, 2, 0" ToolTip="Edit" Click="OpenEditQuote" Cursor="Hand">
+                                                        <materialDesign:PackIcon Kind="SquareEditOutline" Width="16" Height="16" Foreground="#52C69D"/>
+                                                    </Button>
+                                                    <Button Width="27" Height="27" Background="Transparent" Margin="0" ToolTip="Delete" Cursor="Hand" Click="DeleteQuote">
+                                                        <materialDesign:PackIcon Kind="DeleteOutline" Width="16" Height="16" Foreground="#E65E5E"/>
+                                                    </Button>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    
                                 </DataGrid.Columns>
                             </DataGrid>
                         </ScrollViewer>
