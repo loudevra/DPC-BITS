@@ -19,8 +19,6 @@ Namespace DPC.Views.Sales.Quotes
         Private base64Image As String
         Private itemDataSource As New ObservableCollection(Of OrderItems)
         Private itemOrder As New List(Of Dictionary(Of String, String))
-        ' ✓ NEW: Track whether this is a NEW quote or EDITED quote
-        Private _isEditingExistingQuote As Boolean = False
         ' Text Editor PopOut
         Private Shared element As FrameworkElement
         Private itemsPerPage As Integer = 14
@@ -44,8 +42,6 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Sub CostEstimate_Loaded(sender As Object, e As RoutedEventArgs)
-            ' ✓ NEW: Detect if we're editing an existing quote
-            DetectQuoteMode()
 
             txtPageInfo = TryCast(Me.FindName("txtPageInfo"), TextBlock)
 
@@ -65,6 +61,7 @@ Namespace DPC.Views.Sales.Quotes
             End If
 
             ' Initialize allItems FIRST
+            allItems = CostEstimateDetails.CEQuoteItemsCache
             itemOrder = CostEstimateDetails.CEQuoteItemsCache
 
             If allItems IsNot Nothing AndAlso allItems.Count > 0 Then
@@ -151,28 +148,67 @@ Namespace DPC.Views.Sales.Quotes
                 btnToggleImage.Opacity = 0.6
             End If
 
-            ' Check if the signature is enabled0+51086.+63
+            ' Tax calculation logic
+            If Not CEtaxSelection Then
+                ' Tax Inclusive
+                VatText.Visibility = Visibility.Visible
+                VatValue.Visibility = Visibility.Visible
+                If String.IsNullOrWhiteSpace(CostEstimateDetails.CEremarksTxt) OrElse remarksBox.Text = "Tax Inclusive." OrElse remarksBox.Text = "Tax Exclusive." Then
+                    remarksBox.Text = "Tax Inclusive."
+                End If
+
+                Dim totalAmountBeforeVAT As Decimal = 0
+                Dim rawSubtotal = Subtotal.Text.Replace("₱", "").Trim().Replace(",", "").Trim()
+                If Decimal.TryParse(rawSubtotal, totalAmountBeforeVAT) Then
+                    Dim vatAmount As Decimal = totalAmountBeforeVAT * 0.12D
+                    VAT12.Text = "₱ " & vatAmount.ToString("N2")
+                    CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
+
+                    Dim totalCostValue As Decimal = totalAmountBeforeVAT + installationFee + deliveryCost
+                    TotalCost.Text = "₱ " & totalCostValue.ToString("N2")
+                    CostEstimateDetails.CETotalAmountCache = "₱ " & totalCostValue.ToString("N2")
+                Else
+                    Debug.WriteLine($"Failed to parse Subtotal.Text: '{rawSubtotal}'")
+                    TotalCost.Text = "₱ 0.00"
+                    VAT12.Text = "₱ 0.00"
+                End If
+            Else
+                ' Tax Exclusive
+                VatText.Visibility = Visibility.Visible
+                VatValue.Visibility = Visibility.Visible
+                If String.IsNullOrWhiteSpace(CostEstimateDetails.CEremarksTxt) OrElse remarksBox.Text = "Tax Inclusive." OrElse remarksBox.Text = "Tax Exclusive." Then
+                    remarksBox.Text = "Tax Exclusive."
+                End If
+
+                Dim totalCostValue As Decimal = 0
+                Dim rawSubtotal = Subtotal.Text.Replace("₱", "").Trim().Replace(",", "").Trim()
+                If Decimal.TryParse(rawSubtotal, totalCostValue) Then
+                    Dim vatAmount As Decimal
+                    If CEisVatExInclude Then
+                        vatAmount = totalCostValue * 0.12D
+                    Else
+                        vatAmount = 0D
+                        VatText.Visibility = Visibility.Collapsed
+                        VatValue.Visibility = Visibility.Collapsed
+                    End If
+                    VAT12.Text = "₱ " & vatAmount.ToString("N2")
+                    CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
+
+                    totalCostValue += installationFee + deliveryCost + vatAmount
+                    TotalCost.Text = "₱ " & totalCostValue.ToString("N2")
+                    CostEstimateDetails.CETotalAmountCache = "₱ " & totalCostValue.ToString("N2")
+                Else
+                    Debug.WriteLine($"Failed to parse Subtotal.Text: '{rawSubtotal}'")
+                    TotalCost.Text = "₱ 0.00"
+                    VAT12.Text = "₱ 0.00"
+                End If
+            End If
+
+            ' Check if the signature is enabled
             If Not String.IsNullOrWhiteSpace(base64Image) Then
                 DisplayUploadedImage()
             End If
 
-            ' Load the data in the datagrid
-            For Each item In itemOrder
-                Dim rate As Decimal = Decimal.Parse(item("Rate"))
-                Dim rateFormatted As String = rate.ToString("N2")
-                Dim linePrice As Decimal = Decimal.Parse(item("Amount"))
-                Dim linePriceFormatted As String = linePrice.ToString("N2")
-
-                itemDataSource.Add(New OrderItems With {
-        .Quantity = item("Quantity"),
-        .Description = item("ProductName"),
-        .UnitPrice = $"₱ {rateFormatted}",
-        .LinePrice = $"₱ {linePriceFormatted}"
-    })
-            Next
-
-            ' Display the data in the DataGrid
-            dataGrid.ItemsSource = itemDataSource
             AddHandler BrowseFile.MouseLeftButtonUp, AddressOf OpenFiles
         End Sub
 
@@ -363,9 +399,20 @@ Namespace DPC.Views.Sales.Quotes
                 End If
             End If
 
+            ' Get description and set visibility
+            Dim productDesc As String = ""
+            Dim descVisibility As Visibility = Visibility.Collapsed
+
+            If item.ContainsKey("Description") AndAlso Not String.IsNullOrWhiteSpace(item("Description")) Then
+                productDesc = item("Description")
+                descVisibility = Visibility.Visible
+            End If
+
             Return New OrderItems With {
         .Quantity = item("Quantity"),
         .Description = item("ProductName"),
+        .ProductDescription = productDesc,
+        .ProductDescriptionVisibility = descVisibility,
         .UnitPrice = $"₱ {rateFormatted}",
         .LinePrice = $"₱ {linePriceFormatted}",
         .ProductImage = productImage
@@ -456,45 +503,6 @@ Namespace DPC.Views.Sales.Quotes
             End If
         End Sub
 
-
-        ''' ✓ NEW FUNCTION: Detect if quote is new or existing
-        ''' This determines which preview form to navigate to
-        Private Sub DetectQuoteMode()
-            Try
-                Dim quoteNumber As String = CEQuoteNumberCache
-                Debug.WriteLine("")
-                Debug.WriteLine("═══════════════════════════════════════")
-                Debug.WriteLine("DETECTING QUOTE MODE")
-                Debug.WriteLine("═══════════════════════════════════════")
-                Debug.WriteLine($"Quote Number: {quoteNumber}")
-
-                If String.IsNullOrWhiteSpace(quoteNumber) Then
-                    Debug.WriteLine("→ MODE: NEW QUOTE (No quote number)")
-                    _isEditingExistingQuote = False
-                    Return
-                End If
-
-                ' Check if quote exists in database
-                Dim quoteExists As Boolean = QuotesController.QuoteNumberExists(quoteNumber)
-                Debug.WriteLine($"Quote exists in DB: {quoteExists}")
-
-                If quoteExists Then
-                    Debug.WriteLine("→ MODE: EDITING EXISTING QUOTE")
-                    _isEditingExistingQuote = True
-                Else
-                    Debug.WriteLine("→ MODE: NEW QUOTE")
-                    _isEditingExistingQuote = False
-                End If
-
-                Debug.WriteLine("═══════════════════════════════════════")
-                Debug.WriteLine("")
-
-            Catch ex As Exception
-                Debug.WriteLine($"Error in DetectQuoteMode: {ex.Message}")
-                _isEditingExistingQuote = False
-            End Try
-        End Sub
-
 #Region "Computation Part"
         Private Sub Delivery_TextChanged(sender As Object, e As TextChangedEventArgs)
             Dim tb As TextBox = TryCast(sender, TextBox)
@@ -536,33 +544,67 @@ Namespace DPC.Views.Sales.Quotes
             ' Parse Delivery
             Dim deliveryAmount As Decimal = 0
             Dim rawDelivery = Delivery.Text.Replace("₱", "").Trim().Replace(",", "").Trim()
-            If Not String.IsNullOrEmpty(rawDelivery) Then
-                Decimal.TryParse(rawDelivery, NumberStyles.Any, CultureInfo.InvariantCulture, deliveryAmount)
+            Debug.WriteLine($"Raw Delivery: '{rawDelivery}'")
+            If Not Decimal.TryParse(rawDelivery, NumberStyles.Any, CultureInfo.InvariantCulture, deliveryAmount) Then
+                Debug.WriteLine($"Failed to parse Delivery.Text, input: '{rawDelivery}'")
+                deliveryAmount = 0D
             End If
 
             ' Parse Installation
             Dim installationAmount As Decimal = 0
             Dim rawInstallation = Installation.Text.Replace("₱", "").Trim().Replace(",", "").Trim()
-            If Not String.IsNullOrEmpty(rawInstallation) Then
-                Decimal.TryParse(rawInstallation, NumberStyles.Any, CultureInfo.InvariantCulture, installationAmount)
+            Debug.WriteLine($"Raw Installation: '{rawInstallation}'")
+            If Not Decimal.TryParse(rawInstallation, NumberStyles.Any, CultureInfo.InvariantCulture, installationAmount) Then
+                Debug.WriteLine($"Failed to parse Installation.Text, input: '{rawInstallation}'")
+                installationAmount = 0D
             End If
 
             ' Parse Subtotal
             Dim subtotalAmount As Decimal = 0
             Dim rawSubtotal = Subtotal.Text.Replace("₱", "").Trim().Replace(",", "").Trim()
-            If Not String.IsNullOrEmpty(rawSubtotal) Then
-                Decimal.TryParse(rawSubtotal, NumberStyles.Any, CultureInfo.InvariantCulture, subtotalAmount)
+            Debug.WriteLine($"Raw Subtotal: '{rawSubtotal}'")
+            If Not Decimal.TryParse(rawSubtotal, NumberStyles.Any, CultureInfo.InvariantCulture, subtotalAmount) Then
+                Debug.WriteLine($"Failed to parse Subtotal.Text, input: '{rawSubtotal}'")
+                subtotalAmount = 0D
             End If
 
-            ' Parse VAT
-            Dim vatAmount As Decimal = 0
-            Dim rawVat = VAT12.Text.Replace("₱", "").Trim().Replace(",", "").Trim()
-            If Not String.IsNullOrEmpty(rawVat) Then
-                Decimal.TryParse(rawVat, NumberStyles.Any, CultureInfo.InvariantCulture, vatAmount)
-            End If
+            ' Calculate base amount
+            Dim baseAmount As Decimal
 
-            ' ✓ CALCULATE TOTAL - ADD THIS LINE!
-            Dim totalCostVal As Decimal = subtotalAmount + installationAmount + deliveryAmount + vatAmount
+            ' Calculate VAT12 for display only
+            Dim vatAmount As Decimal = baseAmount * 0.12D
+            VAT12.Text = "₱ " & vatAmount.ToString("N2")
+            CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
+            Debug.WriteLine($"Computed VAT: {vatAmount}")
+
+            ' Calculate total cost
+            Dim totalCostVal As Decimal
+            If CEtaxSelection Then
+                ' Tax Exclusive: Add VAT to total cost
+
+                ' Checks if the user choose to show hide the vat
+                If CEisVatExInclude Then
+                    vatAmount = subtotalAmount * 0.12D
+                Else
+                    vatAmount = 0D
+                End If
+
+                ' Display the value result
+                VAT12.Text = "₱ " & vatAmount.ToString("N2")
+                CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
+                Debug.WriteLine($"Computed VAT: {vatAmount}")
+
+                totalCostVal = subtotalAmount + installationAmount + deliveryAmount + vatAmount
+            Else
+                ' Tax Inclusive: Do NOT add VAT to total cost
+                vatAmount = subtotalAmount * 0.12D
+                VAT12.Text = "₱ " & vatAmount.ToString("N2")
+                CostEstimateDetails.CETotalTaxValueCache = VAT12.Text
+
+                baseAmount = subtotalAmount + installationAmount + deliveryAmount
+                totalCostVal = baseAmount
+            End If
+            Debug.WriteLine($"Computed Total: {totalCostVal}")
 
             ' TotalCost display
             TotalCost.Text = "₱ " & totalCostVal.ToString("N2")
@@ -682,25 +724,11 @@ Namespace DPC.Views.Sales.Quotes
 
                 Debug.WriteLine($"Approved - {CostEstimateDetails.CEApproved}")
 
-
-                ' ✓ EDIT: Add smart routing (REPLACE old ViewLoader line)
-                If _isEditingExistingQuote Then
-                    Debug.WriteLine("→ Back to: EditQuote")
-                    ViewLoader.DynamicView.NavigateToView("editquote", Me)
-                Else
-                    Debug.WriteLine("→ Back to: NewQuote")
-                    ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
-                End If
+                ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
 
             Catch ex As Exception
                 MessageBox.Show("Occurred when the installation or delivery fields were empty or invalid. Treated as 0.")
-
-                ' ✓ EDIT: Add smart routing here too
-                If _isEditingExistingQuote Then
-                    ViewLoader.DynamicView.NavigateToView("editquote", Me)
-                Else
-                    ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
-                End If
+                ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
             End Try
         End Sub
 
@@ -766,14 +794,7 @@ Namespace DPC.Views.Sales.Quotes
                 CostEstimateDetails.CEpaymentTerms = cmbTerms.Text
             End If
 
-            ' ✓ EDIT: Add smart routing here (REPLACE old ViewLoader line)
-            If _isEditingExistingQuote Then
-                Debug.WriteLine("→ Routing to: PreviewPrintEditedQuote ")
-                ViewLoader.DynamicView.NavigateToView("previewprintquoteeditedquote", Me)
-            Else
-                Debug.WriteLine("→ Routing to: PreviewPrintQuote")
-                ViewLoader.DynamicView.NavigateToView("printpreviewquotes", Me)
-            End If
+            ViewLoader.DynamicView.NavigateToView("printpreviewquotes", Me)
         End Sub
 #End Region
 
@@ -801,14 +822,6 @@ Namespace DPC.Views.Sales.Quotes
         Private Sub VAT12_TextChanged(sender As Object, e As TextChangedEventArgs)
 
         End Sub
-
-
-        ''' ✓ NEW PROPERTY: Public property to check if currently editing an existing quote
-        Public ReadOnly Property IsEditingExistingQuote As Boolean
-            Get
-                Return _isEditingExistingQuote
-            End Get
-        End Property
 #End Region
 
         ' CHANGES START HERE

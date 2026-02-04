@@ -1053,18 +1053,20 @@ Namespace DPC.Views.Sales.Quotes
                 taxValue = baseAmount * (taxPercent / 100)
                 amountBeforeDiscount = baseAmount + taxValue
             Else
-                ' Tax Inclusive: 12% is already in the base amount, calculate for display only
+                ' Tax Inclusive: always use 12% for display, do NOT add to amount
                 taxValue = baseAmount * 0.12D
-                amountBeforeDiscount = baseAmount + taxValue ' Base amount already includes tax conceptually
+                amountBeforeDiscount = baseAmount
 
-                ' Update tax value display
-                If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
+                ' Update txtTaxValueBox and amount value
+                Dim taxValueBoxVal = FindTextBoxByName($"txtTaxValue_{rowIndex}")
+                taxValueBox.Text = taxValue.ToString("N2")
+                Dim amountBoxVal = FindTextBoxByName($"txtAmount_{rowIndex}")
+                amountBox.Text = "₱" & amountBeforeDiscount.ToString("N2")
             End If
 
             Dim discountValue = amountBeforeDiscount * (discountPercent / 100)
             Dim finalAmount = amountBeforeDiscount - discountValue
 
-            ' Update all display boxes
             If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
             If discountBox IsNot Nothing Then discountBox.Text = discountValue.ToString("N2")
             amountBox.Text = "₱" & finalAmount.ToString("N2")
@@ -1340,9 +1342,9 @@ Namespace DPC.Views.Sales.Quotes
                 If productPanel Is Nothing OrElse productPanel.Children.Count < 8 Then Continue For
 
                 Dim productData As New Dictionary(Of String, Object)
-                Dim fieldNames = {"ProductName", "Quantity", "Rate", "TaxPercent", "TaxValue", "DiscountPercent", "Discount", "Amount"}
+                Dim fieldNames = {"ProductName", "Quantity", "Rate", "TaxPercent", "Tax", "Discount"}
 
-                For j As Integer = 0 To 7
+                For j As Integer = 0 To 5
                     If j >= productPanel.Children.Count Then Exit For
 
                     Dim borderInput = TryCast(productPanel.Children(j), Border)
@@ -1365,6 +1367,7 @@ Namespace DPC.Views.Sales.Quotes
 
                     If (fieldNames(j) = "ProductName" OrElse fieldNames(j) = "Quantity" OrElse fieldNames(j) = "Rate") AndAlso
        String.IsNullOrWhiteSpace(value) Then
+
                         MessageBox.Show($"Please fill in all required fields in row {i + 1}.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                         Return Nothing
                     End If
@@ -1428,7 +1431,7 @@ Namespace DPC.Views.Sales.Quotes
 #Region "Clearing all of the fields"
         Public Sub ClearAllFields()
             Me.UnregisterName(txtDiscountSelection.Name)
-            'Clear all fields in the quote form
+            ' Clear all fields in the quote form
             txtQuoteNumber.Clear()
             Dim quoteID As String = QuotesController.GenerateQuoteID()
             txtQuoteNumber.Text = quoteID
@@ -1441,8 +1444,8 @@ Namespace DPC.Views.Sales.Quotes
             txtTotalDiscount.Text = "₱0.00"
             txtGrandTotal.Text = ""
             TxtClientDetails.Clear()
-            'Do NOT clear _selectedClient, so autocomplete will not show the message
-            'Do NOT call UpdateSupplierDetails(Nothing)
+            ' Do NOT clear _selectedClient, so autocomplete will not show the message
+            ' Do NOT call UpdateSupplierDetails(Nothing)
             ClearAllRows()
             OrderDateVM.SelectedDate = DateTime.Today
             'OrderDueDateVM.SelectedDate = DateTime.Today.AddDays(1)
@@ -1477,57 +1480,16 @@ Namespace DPC.Views.Sales.Quotes
             End If
         End Sub
 
-        Private Function GetValidityDate(validitySelection As String, baseDate As DateTime) As DateTime
-            Try
-                ' Normalize input
-                Dim selection = validitySelection.Trim().ToLower()
-
-                ' Direct mapping to AddMonths/AddDays
-                Select Case selection
-                    Case "48 hours"
-                        Return baseDate.AddHours(48)
-                    Case "1 week"
-                        Return baseDate.AddDays(7)
-                    Case "2 weeks"
-                        Return baseDate.AddDays(14)
-                    Case "3 weeks"
-                        Return baseDate.AddDays(21)
-                    Case "1 month"
-                        Return baseDate.AddMonths(1)
-                    Case "2 months"
-                        Return baseDate.AddMonths(2)
-                    Case "6 months"
-                        Return baseDate.AddMonths(6)
-                    Case "1 year"
-                        Return baseDate.AddYears(1)
-                    Case Else
-                        Return baseDate.AddHours(48) ' Default
-                End Select
-
-            Catch ex As Exception
-                Debug.WriteLine($"Error calculating validity date: {ex.Message}")
-                Return baseDate.AddHours(48)
-            End Try
-        End Function
-
         ' Function for inserting the data into the quote table in the database
         Private Sub GetAllDataInQuoteProperties(client As Client, productItemsJson As String)
             If Not ValidateQuoteSubmission(client, productItemsJson) Then Exit Sub
-            If cmbCostEstimateValidty.SelectedItem Is Nothing Then
-                MessageBox.Show("Please select a validity date.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
-                Exit Sub
-            End If
-
-            Dim selectedValidityOption = DirectCast(cmbCostEstimateValidty.SelectedItem, ComboBoxItem).Content.ToString()
             Try
                 Dim selectedTax As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
                 Dim selectedDiscount As String = CType(txtDiscountSelection.SelectedItem, ComboBoxItem).Content.ToString()
-                ' Calculate actual validity date from selected option
-                Dim actualValidityDate = GetValidityDate(selectedValidityOption, OrderDateVM.SelectedDate)
-                CEValidUntilDate = selectedValidityOption
-                CEQuoteValidityDateCache = actualValidityDate.ToString("yyyy-MM-dd")
 
                 ' 07 - 04 - 2025 -- Moved the insert at the save and print button in previewprintquote.xaml.vb
+
+
                 CEQuoteNumberCache = txtQuoteNumber.Text
                 CEDiscountProperty = txtDiscountSelection.Text
                 CETaxProperty = txtTaxSelection.Text
