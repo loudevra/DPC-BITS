@@ -195,25 +195,6 @@
                  </TextBlock.ToolTip>
                     </TextBlock>
                 </Grid>
-
-                <!-- New Page -->
-                <Grid Margin="0,8,0,8">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <materialDesign:PackIcon Kind="PageNext" Foreground="White" Width="20" Height="20" Margin="10,0,0,0"/>
-                    <TextBlock Grid.Column="1">
-                        <Hyperlink Click="NavigateToNewPage">
-                            <TextBlock Text="New Page" Style="{StaticResource MainMenuItemStyle}"/>
-                        </Hyperlink>
-                                                                                    <TextBlock.ToolTip>
-<ToolTip Content="Navigates to new page." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
-                    </TextBlock>
-                </Grid>
             </StackPanel>
         </materialDesign:Card>
     </Grid>

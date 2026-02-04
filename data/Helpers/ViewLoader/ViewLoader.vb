@@ -90,9 +90,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "managetickets"
                         Return New CRM.SupportTicket()
                     Case "newresidentialclient"
+
                         Return New CRM.CRMNewResidentialClient()
-                    Case "editresidentialclient"
-                        Return New CRM.CRMEditResidentialClient()
                     Case "newcorporationalclient"
                         Return New CRM.CRMCorporationalTabStructured()
                     Case "selectclients"
@@ -142,11 +141,6 @@ Namespace DPC.Data.Helpers.ViewLoader
                    'Case "hrmeditfiles"
                         'Return New HRM.Files.ManageFile()
 
-                    'SAMPLE PAGE - FOR DEMO PURPOSES ONLY'
-                    Case "newpage"
-                        Return New HRM.Employees.NewPage.NewPage()
-
-
                          ' Sales Module Navigation
                     Case "salesnewinvoice"
                         Return New Views.Sales.Saless.SalesNewInvoice()
@@ -158,8 +152,6 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Sales.Quotes.Quote()
                     Case "salesnewquote"
                         Return New Sales.Quotes.NewQuote()
-                    Case "salesquotegovernment"
-                        Return New Sales.Quotes.NewQuoteGovernment()
                     Case "creditnote"
                         Return New Sales.CreditNotes.CreditNotes()
                     Case "newsubscriptioninvoice"
@@ -213,14 +205,6 @@ Namespace DPC.Data.Helpers.ViewLoader
                          ' Sales Cost Estimate Navigation
                     Case "costestimate"
                         Return New Sales.Quotes.CostEstimate()
-                    Case "costestimategovernment"
-                        Return New Sales.Quotes.CostEstimateGovernment()
-
-                    Case "editquote"
-                        Return New Sales.Quotes.EditQuote()
-                    Case "previewprintquoteeditedquote"
-                        Return New DPC.Components.Forms.PreviewPrintEditedQuote()
-
                          ' Sales Billing Estimate Navigation
                     Case "billingestimate"
                         Return New Sales.Quotes.BillingStatement()
@@ -449,12 +433,7 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "creditnote"
             ElseIf typeName = "newsubscriptioninvoice" Then
                 Return "newsubscriptioninvoice"
-            ElseIf typeName = "editquote" Then
-                Return "editquote"
-            ElseIf typeName = "previewprintquoteeditedquote" Then
-                Return "previewprintquoteeditedquote"
-            ElseIf typeName = "quote" Then
-                Return "quote"
+
 
 
                 ' Accounts Navigation
