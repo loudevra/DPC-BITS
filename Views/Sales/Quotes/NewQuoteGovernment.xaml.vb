@@ -788,7 +788,7 @@ Namespace DPC.Views.Sales.Quotes
             ' Add Row Button
             Dim buttonBorder As New Border With {
         .Background = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
-        .CornerRadius = New CornerRadius(10),
+        .CornerRadius = New CornerRadius(20),
         .Padding = New Thickness(0),
         .Margin = New Thickness(0, 0, 20, 0),
         .Width = 130,
