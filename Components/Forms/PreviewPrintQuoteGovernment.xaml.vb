@@ -76,11 +76,11 @@ Namespace DPC.Components.Forms
             Delivery.Text = "₱ " & CostEstimateDetails.CEDeliveryCost.ToString("N2")
             base64Image = CostEstimateDetails.CEImageCache
             tempImagePath = CostEstimateDetails.CEPathCache
-            ClientNameBox.Text = CostEstimateDetails.CEClientName
-            AddressLineOne.Text = CostEstimateDetails.CEAddress & ", " & CostEstimateDetails.CECity
-            AddressLineTwo.Text = CostEstimateDetails.CERegion & ", " & CostEstimateDetails.CECountry
-            PhoneBox.Text = "+63 " & FormatPhoneWithSpaces(CostEstimateDetails.CEPhone)
-            RepresentativeBox.Text = CostEstimateDetails.CERepresentative
+            'ClientNameBox.Text = CostEstimateDetails.CEClientName
+            'AddressLineOne.Text = CostEstimateDetails.CEAddress & ", " & CostEstimateDetails.CECity
+            'AddressLineTwo.Text = CostEstimateDetails.CERegion & ", " & CostEstimateDetails.CECountry
+            'PhoneBox.Text = "+63 " & FormatPhoneWithSpaces(CostEstimateDetails.CEPhone)
+            'RepresentativeBox.Text = CostEstimateDetails.CERepresentative
             noteBox.Text = CostEstimateDetails.CEnoteTxt
             remarksBox.Text = CostEstimateDetails.CEremarksTxt
             Term1.Text = CostEstimateDetails.CETerm1
@@ -105,14 +105,14 @@ Namespace DPC.Components.Forms
             DeliveryMobilization.Text = CostEstimateDetails.CEDeliveryMobilization
             CNIdentifier.Text = CostEstimateDetails.CECNIndetifier
 
-            ' Other Services
-            If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CEOtherServices) AndAlso
-               CostEstimateDetails.CEOtherServices <> "Services:" Then
-                OtherServicesText.Text = CostEstimateDetails.CEOtherServices.Replace("Services:", "").Trim()
-                OtherServicesText.Visibility = Visibility.Visible
-            Else
-                OtherServicesText.Visibility = Visibility.Collapsed
-            End If
+            '' Other Services
+            'If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CEOtherServices) AndAlso
+            '   CostEstimateDetails.CEOtherServices <> "Services:" Then
+            '    OtherServicesText.Text = CostEstimateDetails.CEOtherServices.Replace("Services:", "").Trim()
+            '    OtherServicesText.Visibility = Visibility.Visible
+            'Else
+            '    OtherServicesText.Visibility = Visibility.Collapsed
+            'End If
 
             ' Check if the terms is enabled
             If CostEstimateDetails.CEisCustomTerm = True Then
@@ -121,6 +121,19 @@ Namespace DPC.Components.Forms
             Else
                 cmbTerms.Text = CostEstimateDetails.CEpaymentTerms
             End If
+
+            Try
+                Dim subjectTextBlock = TryCast(Me.FindName("Subject"), TextBlock)
+                If subjectTextBlock IsNot Nothing Then
+                    If String.IsNullOrWhiteSpace(CostEstimateDetails.CESubject) Then
+                        subjectTextBlock.Text = "Subject:"
+                    Else
+                        subjectTextBlock.Text = "Subject: " & CostEstimateDetails.CESubject
+                    End If
+                End If
+            Catch ex As Exception
+                Debug.WriteLine($"Error in CostEstimateGovernment_Loaded: {ex.Message}")
+            End Try
 
             If CEtaxSelection Then
                 VatText.Visibility = Visibility.Collapsed
@@ -133,6 +146,76 @@ Namespace DPC.Components.Forms
             DisplaySignaturePreview()
 
             txtPageInfo = TryCast(Me.FindName("txtPageInfo"), TextBlock)
+
+            Try
+                Dim submittedToClient = TryCast(Me.FindName("SubmittedToClient"), TextBlock)
+                Dim submittedToAddress = TryCast(Me.FindName("SubmittedToAddress"), TextBlock)
+                Dim submittedToEmail = TryCast(Me.FindName("SubmittedToEmail"), TextBlock)
+                Dim submittedToProjectID = TryCast(Me.FindName("SubmittedToProjectID"), TextBlock)
+
+                If submittedToClient IsNot Nothing Then
+                    ' Use company name if available, otherwise use client name
+                    Dim clientDisplayName As String = ""
+
+                    If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CECompanyName) Then
+                        clientDisplayName = CostEstimateDetails.CECompanyName
+                        Debug.WriteLine($"✓ Client Company: {CostEstimateDetails.CECompanyName}")
+                    ElseIf Not String.IsNullOrWhiteSpace(CostEstimateDetails.CEClientName) Then
+                        clientDisplayName = CostEstimateDetails.CEClientName
+                        Debug.WriteLine($"✓ Client Name (Fallback): {CostEstimateDetails.CEClientName}")
+                    End If
+
+                    submittedToClient.Text = clientDisplayName
+                End If
+
+                If submittedToAddress IsNot Nothing Then
+                    ' Build complete address from parts
+                    Dim addressParts As New List(Of String)
+
+                    If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CEAddress) Then
+                        addressParts.Add(CostEstimateDetails.CEAddress)
+                    End If
+
+                    If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CECity) Then
+                        addressParts.Add(CostEstimateDetails.CECity)
+                    End If
+
+                    If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CERegion) Then
+                        addressParts.Add(CostEstimateDetails.CERegion)
+                    End If
+
+                    If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CECountry) Then
+                        addressParts.Add(CostEstimateDetails.CECountry)
+                    End If
+
+                    ' Join all parts with comma separator
+                    Dim completeAddress As String = String.Join(", ", addressParts)
+                    submittedToAddress.Text = completeAddress
+
+                    Debug.WriteLine($"✓ Client Address: {completeAddress}")
+                End If
+
+                If submittedToEmail IsNot Nothing Then
+                    submittedToEmail.Text = CostEstimateDetails.CEEmail
+                    Debug.WriteLine($"✓ Client Email: {CostEstimateDetails.CEEmail}")
+                End If
+
+                If submittedToProjectID IsNot Nothing Then
+                    ' Display Project ID from CEProjectID property
+                    Dim projectIDText As String = CostEstimateDetails.CEProjectID
+
+                    If String.IsNullOrWhiteSpace(projectIDText) Then
+                        submittedToProjectID.Text = ""
+                    Else
+                        submittedToProjectID.Text = projectIDText
+                    End If
+
+                    Debug.WriteLine($"✓ Project ID: {projectIDText}")
+                End If
+
+            Catch ex As Exception
+                Debug.WriteLine($"Error populating Submitted to section: {ex.Message}")
+            End Try
 
             ' Split items into pages and load first page
             SplitItemsIntoPagesByHeight()
@@ -398,7 +481,7 @@ Namespace DPC.Components.Forms
         End Function
 
         Private Sub CancelButton(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("costestimate", Me)
+            ViewLoader.DynamicView.NavigateToView("costestimategovernment", Me)
         End Sub
 
         Private Sub SavePrint(sender As Object, e As RoutedEventArgs)

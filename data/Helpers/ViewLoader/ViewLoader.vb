@@ -225,6 +225,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                         ' Print Preview for Quotes
                     Case "printpreviewquotes"
                         Return New DPC.Components.Forms.PreviewPrintQuote()
+                        ' Print Preview for Quotes Government
+                    Case "printpreviewquotesgovernment"
+                        Return New DPC.Components.Forms.PreviewPrintQuoteGovernment()
                         ' New Subscription Navigation
                     Case "newsubscriptions"
                         Return New Sales.Subscriptions.NewSubscriptionInvoice()

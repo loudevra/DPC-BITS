@@ -338,14 +338,14 @@
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                                     <Border Background="Transparent" BorderThickness="0,0,0,0" Padding="0,10" Width="720" Height="Auto" MinHeight="44" RenderTransformOrigin="0.482,0.469" >
                                                         <TextBlock x:Name="Subject" 
-                   FontSize="12" 
-                   FontWeight="SemiBold" 
-                   FontFamily="Lexend" 
-                   Foreground="#090909"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   TextAlignment="Center" 
-                   TextWrapping="Wrap"/>
+                                                            FontSize="12" 
+                                                            FontWeight="SemiBold" 
+                                                            FontFamily="Lexend" 
+                                                            Foreground="#090909"
+                                                            HorizontalAlignment="Center"
+                                                            VerticalAlignment="Center"
+                                                            TextAlignment="Center" 
+                                                            TextWrapping="Wrap"/>
                                                     </Border>
                                                 </StackPanel>
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="541" >

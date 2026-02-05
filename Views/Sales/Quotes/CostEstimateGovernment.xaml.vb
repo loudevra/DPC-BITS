@@ -1039,7 +1039,7 @@ Namespace DPC.Views.Sales.Quotes
                 ViewLoader.DynamicView.NavigateToView("previewprintquoteeditedquote", Me)
             Else
                 Debug.WriteLine("→ Routing to: PreviewPrintQuote")
-                ViewLoader.DynamicView.NavigateToView("printpreviewquotes", Me)
+                ViewLoader.DynamicView.NavigateToView("printpreviewquotesgovernment", Me)
             End If
         End Sub
 #End Region
