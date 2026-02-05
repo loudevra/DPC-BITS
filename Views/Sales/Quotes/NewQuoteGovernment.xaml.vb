@@ -796,13 +796,10 @@ Namespace DPC.Views.Sales.Quotes
     }
 
             Dim addRowButton As New Button With {
-        .Background = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
-        .Width = 130,
-        .Height = 40,
+        .Background = Brushes.Transparent,
         .BorderThickness = New Thickness(0),
         .Cursor = Cursors.Hand,
-        .Foreground = Brushes.White,
-        .Margin = New Thickness(20, 0, 20, 0)
+        .Foreground = Brushes.White
     }
 
             Dim addRowPanel As New StackPanel With {
@@ -813,9 +810,9 @@ Namespace DPC.Views.Sales.Quotes
             Dim addIcon As New MaterialDesignThemes.Wpf.PackIcon With {
         .Kind = MaterialDesignThemes.Wpf.PackIconKind.PlaylistAdd,
         .Foreground = Brushes.White,
-        .Width = 30,
-        .Height = 30,
-        .Margin = New Thickness(-50, 0, 5, 0)
+        .Width = 25,
+        .Height = 25,
+        .Margin = New Thickness(0, 5, 5, 0)
     }
             addRowPanel.Children.Add(addIcon)
 
@@ -824,8 +821,7 @@ Namespace DPC.Views.Sales.Quotes
         .FontSize = 16,
         .VerticalAlignment = VerticalAlignment.Center,
         .FontWeight = FontWeights.SemiBold,
-        .Foreground = Brushes.White,
-        .Margin = New Thickness(-30, 0, 5, 0)
+        .Foreground = Brushes.White
     }
             addRowPanel.Children.Add(addText)
 
