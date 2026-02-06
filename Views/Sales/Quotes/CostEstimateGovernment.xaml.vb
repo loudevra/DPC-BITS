@@ -12,7 +12,7 @@ Imports Microsoft.Win32
 Imports SkiaSharp.Views.WPF
 
 Namespace DPC.Views.Sales.Quotes
-    Public Class CostEstimate
+    Public Class CostEstimateGovernment
 
         ' Item Data
         Private tempImagePath As String
@@ -29,12 +29,25 @@ Namespace DPC.Views.Sales.Quotes
         Private totalPages As Integer = 1
         Private allItems As List(Of Dictionary(Of String, String))
         Private showProductImages As Boolean = True
+        ' ✓✓✓ NEW: Category grouping for proper display
+        Private Class CategoryGroup
+            Public CategoryName As String
+            Public Items As New List(Of Dictionary(Of String, String))
+            Public Subtotal As Decimal
+        End Class
+
+        Private _categoryGroups As New List(Of CategoryGroup)
+
         ' Add new variables for height-based pagination
         Private Const BaseItemHeight As Double = 55 ' Base height for items without description
         Private Const DescriptionLineHeight As Double = 15 ' Additional height per line of description
         Private Const PaginationTriggerHeight As Double = 412 ' Height threshold to trigger pagination 
         Private Const PageMaxHeight As Double = 770 ' Maximum height available per page
         Private Const ReservedSpaceForDescription As Double = 30 ' Extra space when item has description
+        ' ✓ FIX #1: NEW CONSTANTS ADDED
+        Private Const CategoryHeaderHeight As Double = 40
+        Private Const SubtotalRowHeight As Double = 40
+        Private Const FooterSectionHeight As Double = 250
 
 
         Public Sub New()
@@ -43,7 +56,13 @@ Namespace DPC.Views.Sales.Quotes
 
         End Sub
 
-        Private Sub CostEstimate_Loaded(sender As Object, e As RoutedEventArgs)
+        Private Sub CostEstimateGovernment_Loaded(sender As Object, e As RoutedEventArgs)
+
+            Debug.WriteLine("=== DATA CHECK ===")
+            Debug.WriteLine($"CESubject: '{CostEstimateDetails.CESubject}'")
+            Debug.WriteLine($"CEQuoteNumberCache: '{CostEstimateDetails.CEQuoteNumberCache}'")
+            Debug.WriteLine($"CEQuoteDateCache: '{CostEstimateDetails.CEQuoteDateCache}'")
+            Debug.WriteLine("==================")
             ' ✓ NEW: Detect if we're editing an existing quote
             DetectQuoteMode()
 
@@ -65,7 +84,9 @@ Namespace DPC.Views.Sales.Quotes
             End If
 
             ' Initialize allItems FIRST
-            itemOrder = CostEstimateDetails.CEQuoteItemsCache
+            allItems = CostEstimateDetails.CEQuoteItemsCache
+
+            GroupItemsByCategory()
 
             If allItems IsNot Nothing AndAlso allItems.Count > 0 Then
                 ' Calculate pages dynamically based on height
@@ -97,13 +118,9 @@ Namespace DPC.Views.Sales.Quotes
             TotalCost.Text = CostEstimateDetails.CETotalAmountCache
             base64Image = CostEstimateDetails.CEImageCache
             tempImagePath = CostEstimateDetails.CEPathCache
-            ClientNameBox.Text = CostEstimateDetails.CEClientName
             CESubTotalCache = CostEstimateDetails.CETotalAmountCache
-            AddressLineOne.Text = CostEstimateDetails.CEAddress & ", " & CostEstimateDetails.CECity
-            AddressLineTwo.Text = CostEstimateDetails.CERegion & ", " & CostEstimateDetails.CECountry
-            PhoneBox.Text = "+63" & FormatPhoneWithSpaces(CostEstimateDetails.CEPhone)
-            RepresentativeBox.Text = CostEstimateDetails.CERepresentative
             noteBox.Text = CostEstimateDetails.CEpaperNote
+
             Term1.Text = CostEstimateDetails.CETerm1
             Term2.Text = CostEstimateDetails.CETerm2
             Term3.Text = CostEstimateDetails.CETerm3
@@ -134,6 +151,22 @@ Namespace DPC.Views.Sales.Quotes
                 cmbTerms.Text = CostEstimateDetails.CEpaymentTerms
             End If
 
+            Try
+                Dim subjectTextBlock = TryCast(Me.FindName("Subject"), TextBlock)
+                If subjectTextBlock IsNot Nothing Then
+                    If String.IsNullOrWhiteSpace(CostEstimateDetails.CESubject) Then
+                        subjectTextBlock.Text = "Subject:"
+                    Else
+                        subjectTextBlock.Text = "Subject: " & CostEstimateDetails.CESubject
+                    End If
+                    Debug.WriteLine($"✓ Subject updated: {subjectTextBlock.Text}")
+                Else
+                    Debug.WriteLine("✗ Subject TextBlock not found!")
+                End If
+            Catch ex As Exception
+                Debug.WriteLine($"Error in CostEstimateGovernment_Loaded: {ex.Message}")
+            End Try
+
             ' Load items with pagination
             LoadPage(0)
 
@@ -151,7 +184,7 @@ Namespace DPC.Views.Sales.Quotes
                 btnToggleImage.Opacity = 0.6
             End If
 
-            ' Check if the signature is enabled0+51086.+63
+            ' Check if the signature is enabled
             If Not String.IsNullOrWhiteSpace(base64Image) Then
                 DisplayUploadedImage()
             End If
@@ -174,6 +207,120 @@ Namespace DPC.Views.Sales.Quotes
             ' Display the data in the DataGrid
             dataGrid.ItemsSource = itemDataSource
             AddHandler BrowseFile.MouseLeftButtonUp, AddressOf OpenFiles
+
+            ' Populate "Submitted to" section with client details
+            Try
+                Dim submittedToClient = TryCast(Me.FindName("SubmittedToClient"), TextBlock)
+                Dim submittedToAddress = TryCast(Me.FindName("SubmittedToAddress"), TextBlock)
+                Dim submittedToEmail = TryCast(Me.FindName("SubmittedToEmail"), TextBlock)
+                Dim submittedToProjectID = TryCast(Me.FindName("SubmittedToProjectID"), TextBlock)
+
+                If submittedToClient IsNot Nothing Then
+                    ' Use company name if available, otherwise use client name
+                    Dim clientDisplayName As String = ""
+
+                    If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CECompanyName) Then
+                        clientDisplayName = CostEstimateDetails.CECompanyName
+                        Debug.WriteLine($"✓ Client Company: {CostEstimateDetails.CECompanyName}")
+                    ElseIf Not String.IsNullOrWhiteSpace(CostEstimateDetails.CEClientName) Then
+                        clientDisplayName = CostEstimateDetails.CEClientName
+                        Debug.WriteLine($"✓ Client Name (Fallback): {CostEstimateDetails.CEClientName}")
+                    End If
+
+                    submittedToClient.Text = clientDisplayName
+                End If
+
+                If submittedToAddress IsNot Nothing Then
+                    ' Build complete address from parts
+                    Dim addressParts As New List(Of String)
+
+                    If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CEAddress) Then
+                        addressParts.Add(CostEstimateDetails.CEAddress)
+                    End If
+
+                    If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CECity) Then
+                        addressParts.Add(CostEstimateDetails.CECity)
+                    End If
+
+                    If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CERegion) Then
+                        addressParts.Add(CostEstimateDetails.CERegion)
+                    End If
+
+                    If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CECountry) Then
+                        addressParts.Add(CostEstimateDetails.CECountry)
+                    End If
+
+                    ' Join all parts with comma separator
+                    Dim completeAddress As String = String.Join(", ", addressParts)
+                    submittedToAddress.Text = completeAddress
+
+                    Debug.WriteLine($"✓ Client Address: {completeAddress}")
+                End If
+
+                If submittedToEmail IsNot Nothing Then
+                    submittedToEmail.Text = CostEstimateDetails.CEEmail
+                    Debug.WriteLine($"✓ Client Email: {CostEstimateDetails.CEEmail}")
+                End If
+
+                If submittedToProjectID IsNot Nothing Then
+                    ' Display Project ID from CEProjectID property
+                    Dim projectIDText As String = CostEstimateDetails.CEProjectID
+
+                    If String.IsNullOrWhiteSpace(projectIDText) Then
+                        submittedToProjectID.Text = ""
+                    Else
+                        submittedToProjectID.Text = projectIDText
+                    End If
+
+                    Debug.WriteLine($"✓ Project ID: {projectIDText}")
+                End If
+
+            Catch ex As Exception
+                Debug.WriteLine($"Error populating Submitted to section: {ex.Message}")
+            End Try
+        End Sub
+
+        Private Sub GroupItemsByCategory()
+            _categoryGroups.Clear()
+
+            If allItems Is Nothing OrElse allItems.Count = 0 Then Return
+
+            Dim currentCategory As CategoryGroup = Nothing
+            Dim lastCategoryName As String = ""
+
+            For Each item In allItems
+                Dim categoryName As String = ""
+
+                ' Get category name from item
+                If item.ContainsKey("Category") Then
+                    categoryName = item("Category").ToString().Trim()
+                End If
+
+                ' If category changed, create new group
+                If categoryName <> lastCategoryName Then
+                    currentCategory = New CategoryGroup With {
+                .CategoryName = If(String.IsNullOrWhiteSpace(categoryName), "", categoryName)
+            }
+                    _categoryGroups.Add(currentCategory)
+                    lastCategoryName = categoryName
+                End If
+
+                ' Add item to current category
+                If currentCategory IsNot Nothing Then
+                    currentCategory.Items.Add(item)
+
+                    ' Calculate subtotal
+                    If item.ContainsKey("Amount") Then
+                        Dim amountText As String = item("Amount").Replace("₱", "").Replace(",", "").Trim()
+                        Dim amount As Decimal
+                        If Decimal.TryParse(amountText, amount) Then
+                            currentCategory.Subtotal += amount
+                        End If
+                    End If
+                End If
+            Next
+
+            Debug.WriteLine($"✓ Grouped into {_categoryGroups.Count} categories")
         End Sub
 
         ' New method to calculate total pages based on trigger height and max heights
@@ -182,23 +329,35 @@ Namespace DPC.Views.Sales.Quotes
                 Return 1
             End If
 
-            ' Calculate total height of all items
+            ' Calculate total height of all items + category headers
             Dim totalHeight As Double = 0
-            For Each item In allItems
-                totalHeight += CalculateItemHeight(item)
+            For Each categoryGroup In _categoryGroups
+                ' Add category header height (if has name)
+                If Not String.IsNullOrWhiteSpace(categoryGroup.CategoryName) Then
+                    totalHeight += CategoryHeaderHeight ' ✓ FIX #3: CHANGED from hardcoded 40
+                End If
+
+                ' Add items height
+                For Each item In categoryGroup.Items
+                    totalHeight += CalculateItemHeight(item)
+                Next
+
+                ' Add subtotal row height
+                totalHeight += SubtotalRowHeight ' ✓ FIX #3: CHANGED from hardcoded 40
             Next
 
-            ' Below trigger height - single page
+            ' ✓ CRITICAL FIX: Footer always on separate last page
+            ' Below trigger height - content on page 1, footer on page 2
             If totalHeight <= PaginationTriggerHeight Then
-                Return 1
+                Return 2
             End If
 
-            ' Above trigger but below max height - 2 pages (items + visibility sections)
+            ' Above trigger but below max - content fills pages, footer on last page
             If totalHeight <= PageMaxHeight Then
                 Return 2
             End If
 
-            ' Above max height - calculate pages with visibility sections at the end
+            ' Above max height - calculate pages with footer always at the end
             Return CalculatePagesFromHeightWithVisibility()
         End Function
 
@@ -207,26 +366,62 @@ Namespace DPC.Views.Sales.Quotes
             Dim pageCount As Integer = 1
             Dim currentPageHeight As Double = 0
 
-            For i As Integer = 0 To allItems.Count - 1
-                Dim itemHeight As Double = CalculateItemHeight(allItems(i))
+            For Each categoryGroup In _categoryGroups
+                ' ✓ KEY FIX: Check if category header + first item + footer can fit
+                If Not String.IsNullOrWhiteSpace(categoryGroup.CategoryName) Then
+                    Dim minCategoryHeight As Double = CategoryHeaderHeight + SubtotalRowHeight
+                    If categoryGroup.Items.Count > 0 Then
+                        minCategoryHeight += CalculateItemHeight(categoryGroup.Items(0))
+                    End If
 
-                ' Check if adding this item exceeds page max height
-                If currentPageHeight + itemHeight > PageMaxHeight Then
-                    ' Start new page
+                    ' If category won't fit with footer, start new page
+                    If currentPageHeight > 0 AndAlso (currentPageHeight + minCategoryHeight + FooterSectionHeight > PageMaxHeight) Then
+                        pageCount += 1
+                        currentPageHeight = 0
+                        Debug.WriteLine($"[PAGINATION] Category boundary: moving '{categoryGroup.CategoryName}' to page {pageCount}")
+                    End If
+                End If
+
+                ' Add category header height
+                If Not String.IsNullOrWhiteSpace(categoryGroup.CategoryName) Then
+                    Dim headerHeight As Double = CategoryHeaderHeight ' ✓ FIX #5: CHANGED from hardcoded 40
+                    If currentPageHeight + headerHeight > PageMaxHeight Then
+                        pageCount += 1
+                        currentPageHeight = headerHeight
+                    Else
+                        currentPageHeight += headerHeight
+                    End If
+                End If
+
+                ' Add items
+                For Each item In categoryGroup.Items
+                    Dim itemHeight As Double = CalculateItemHeight(item)
+
+                    If currentPageHeight + itemHeight > PageMaxHeight Then
+                        pageCount += 1
+                        currentPageHeight = itemHeight
+                    Else
+                        currentPageHeight += itemHeight
+                    End If
+                Next
+
+                ' Add subtotal height
+                Dim subtotalHeight As Double = SubtotalRowHeight ' ✓ FIX #5: CHANGED from hardcoded 40
+                If currentPageHeight + subtotalHeight > PageMaxHeight Then
                     pageCount += 1
-                    currentPageHeight = itemHeight
+                    currentPageHeight = subtotalHeight
                 Else
-                    currentPageHeight += itemHeight
+                    currentPageHeight += subtotalHeight
                 End If
             Next
 
-            ' Check if last page is below trigger height
-            If currentPageHeight <= PaginationTriggerHeight Then
-                ' Don't add extra page for visibility sections
-                Return pageCount
-            Else
-                ' Add page for visibility sections only
+
+            ' ✓ CRITICAL FIX: Footer ALWAYS goes on last page, separate from content
+            ' If we have any content, add one more page for footer sections
+            If currentPageHeight > 0 Then
                 Return pageCount + 1
+            Else
+                Return pageCount
             End If
         End Function
 
@@ -237,8 +432,9 @@ Namespace DPC.Views.Sales.Quotes
             ' Check if item has product description
             If item.ContainsKey("Description") AndAlso Not String.IsNullOrWhiteSpace(item("Description")) Then
                 Dim descriptionText As String = item("Description")
-                ' Estimate lines based on character count (approximately 50 characters per line at width 400)
-                Dim estimatedLines As Integer = Math.Ceiling(descriptionText.Length / 50.0)
+                ' ✓ FIX #2: CHANGED from 50.0 to 80.0
+                ' Estimate lines based on character count (approximately 80 characters per line at width 400)
+                Dim estimatedLines As Integer = Math.Ceiling(descriptionText.Length / 80.0)
                 baseHeight += (estimatedLines * DescriptionLineHeight)
 
                 ' Add reserved space for items with descriptions
@@ -257,35 +453,37 @@ Namespace DPC.Views.Sales.Quotes
             currentPageIndex = pageIndex
             itemDataSource.Clear()
 
-            ' Calculate total height
-            Dim totalHeight As Double = 0
-            For Each item In allItems
-                totalHeight += CalculateItemHeight(item)
-            Next
-
-            ' Below trigger height - single page with all items
-            If totalHeight <= PaginationTriggerHeight Then
-                If pageIndex = 0 Then
-                    For Each item In allItems
-                        itemDataSource.Add(CreateOrderItemWithDescription(item))
-                    Next
-                End If
-                ' Above trigger but below max - items on page 1, visibility on page 2
-            ElseIf totalHeight <= PageMaxHeight Then
-                If pageIndex = 0 Then
-                    For Each item In allItems
-                        itemDataSource.Add(CreateOrderItemWithDescription(item))
-                    Next
-                End If
-                ' Page 2 has no items, just visibility sections
+            ' ✓ CRITICAL FIX: Simplified logic - footer ALWAYS on last page
+            ' If this is the last page (footer page), show no items
+            If pageIndex = totalPages - 1 Then
+                ' Last page - no items, just footer sections (handled by visibility updates)
+                ' itemDataSource stays empty
             Else
-                ' Multiple pages with visibility sections at the end
-                Dim itemIndices = GetItemsForPageByHeightWithVisibility(pageIndex)
-                For Each index In itemIndices
-                    If index < allItems.Count Then
-                        itemDataSource.Add(CreateOrderItemWithDescription(allItems(index)))
-                    End If
+                ' Not last page - show content for this page
+                Dim totalHeight As Double = 0
+                For Each item In allItems
+                    totalHeight += CalculateItemHeight(item)
                 Next
+
+                ' Below trigger height - all items on page 0
+                If totalHeight <= PaginationTriggerHeight Then
+                    If pageIndex = 0 Then
+                        LoadAllCategoriesWithSubtotals()
+                    End If
+                    ' Above trigger but below max - all items on page 0
+                ElseIf totalHeight <= PageMaxHeight Then
+                    If pageIndex = 0 Then
+                        LoadAllCategoriesWithSubtotals()
+                    End If
+                Else
+                    ' Multiple pages - load items for current page
+                    Dim itemIndices = GetItemsForPageByHeightWithVisibility(pageIndex)
+                    For Each index In itemIndices
+                        If index < allItems.Count Then
+                            itemDataSource.Add(CreateOrderItemWithDescription(allItems(index)))
+                        End If
+                    Next
+                End If
             End If
 
             dataGrid.ItemsSource = itemDataSource
@@ -299,6 +497,53 @@ Namespace DPC.Views.Sales.Quotes
             UpdatePrintPageIndicator()
             UpdateImageColumnVisibility()
 
+        End Sub
+
+        Private Sub AddCategoryHeaderRow(categoryName As String)
+            itemDataSource.Add(New OrderItems With {
+        .Quantity = "",
+        .Description = categoryName.ToLower(),
+        .ProductDescription = "",
+        .ProductDescriptionVisibility = Visibility.Collapsed,
+        .UnitPrice = "",
+        .LinePrice = "",
+        .ProductImage = Nothing,
+        .IsCategoryHeader = True,
+        .IsSubtotalRow = False
+    })
+        End Sub
+
+        ' ✓✓✓ NEW: Add category subtotal row (styled like "Subtotal: ₱ 12,331")
+        Private Sub AddCategorySubtotalRow(subtotal As Decimal)
+            itemDataSource.Add(New OrderItems With {
+        .Quantity = "",
+        .Description = "",
+        .ProductDescription = "",
+        .ProductDescriptionVisibility = Visibility.Collapsed,
+        .UnitPrice = "Subtotal:",
+        .LinePrice = $"₱ {subtotal:N2}",
+        .ProductImage = Nothing,
+        .IsCategoryHeader = False,
+        .IsSubtotalRow = True
+    })
+        End Sub
+
+        ' ✓✓✓ NEW: Load all categories with headers and subtotals
+        Private Sub LoadAllCategoriesWithSubtotals()
+            For Each categoryGroup In _categoryGroups
+                ' Add category header if category has a name
+                If Not String.IsNullOrWhiteSpace(categoryGroup.CategoryName) Then
+                    AddCategoryHeaderRow(categoryGroup.CategoryName)
+                End If
+
+                ' Add all items in this category
+                For Each item In categoryGroup.Items
+                    itemDataSource.Add(CreateOrderItemWithDescription(item))
+                Next
+
+                ' Add category subtotal row
+                AddCategorySubtotalRow(categoryGroup.Subtotal)
+            Next
         End Sub
 
         ' Get item indices for a specific page based on height - same logic for all pages
@@ -330,13 +575,10 @@ Namespace DPC.Views.Sales.Quotes
             ' Add remaining items
             If currentPageIndices.Count > 0 Then
                 allPagesIndices.Add(currentPageIndices)
-
-                ' Check if last page is below trigger - don't add visibility page
-                If currentPageHeight > PaginationTriggerHeight Then
-                    ' Add empty page for visibility sections
-                    allPagesIndices.Add(New List(Of Integer))
-                End If
             End If
+
+            ' ✓ CRITICAL FIX: ALWAYS add empty page for footer sections at the end
+            allPagesIndices.Add(New List(Of Integer))
 
             ' Return indices for requested page
             If pageIndex >= 0 AndAlso pageIndex < allPagesIndices.Count Then
@@ -348,10 +590,16 @@ Namespace DPC.Views.Sales.Quotes
 
         ' New helper method
         Private Function CreateOrderItemWithDescription(item As Dictionary(Of String, String)) As OrderItems
-            Dim rate As Decimal = Decimal.Parse(item("Rate"))
+            ' Parse rate
+            Dim rate As Decimal = 0
+            Dim rateText As String = item("Rate").Replace("₱", "").Replace(",", "").Trim()
+            Decimal.TryParse(rateText, rate)
             Dim rateFormatted As String = rate.ToString("N2")
 
-            Dim linePrice As Decimal = Decimal.Parse(item("Amount"))
+            ' Parse line price (Amount) - REMOVE ₱ symbol and commas
+            Dim linePrice As Decimal = 0
+            Dim linePriceText As String = item("Amount").Replace("₱", "").Replace(",", "").Trim()
+            Decimal.TryParse(linePriceText, linePrice)
             Dim linePriceFormatted As String = linePrice.ToString("N2")
 
             Dim productImage As BitmapImage = Nothing
@@ -363,12 +611,32 @@ Namespace DPC.Views.Sales.Quotes
                 End If
             End If
 
+            ' Get description and set visibility
+            Dim productDesc As String = ""
+            Dim descVisibility As Visibility = Visibility.Collapsed
+
+            ' ✓ FIX #7: CHANGED - Added .Trim() and debug output
+            If item.ContainsKey("Description") AndAlso Not String.IsNullOrWhiteSpace(item("Description")) Then
+                productDesc = item("Description").Trim()
+                descVisibility = Visibility.Visible
+
+                ' ✓ FIX #7: NEW - Add debug output
+                Debug.WriteLine($"[DESC] Product: {item("ProductName")} | Desc: {productDesc} | Visible: True")
+            Else
+                ' ✓ FIX #7: NEW - Add debug output
+                Debug.WriteLine($"[DESC] Product: {item("ProductName")} | No description")
+            End If
+
             Return New OrderItems With {
         .Quantity = item("Quantity"),
         .Description = item("ProductName"),
+        .ProductDescription = productDesc,
+        .ProductDescriptionVisibility = descVisibility,
         .UnitPrice = $"₱ {rateFormatted}",
         .LinePrice = $"₱ {linePriceFormatted}",
-        .ProductImage = productImage
+        .ProductImage = productImage,
+        .IsCategoryHeader = False,
+    .IsSubtotalRow = False
     }
         End Function
 
@@ -689,7 +957,7 @@ Namespace DPC.Views.Sales.Quotes
                     ViewLoader.DynamicView.NavigateToView("editquote", Me)
                 Else
                     Debug.WriteLine("→ Back to: NewQuote")
-                    ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
+                    ViewLoader.DynamicView.NavigateToView("salesquotegovernment", Me)
                 End If
 
             Catch ex As Exception
@@ -699,7 +967,7 @@ Namespace DPC.Views.Sales.Quotes
                 If _isEditingExistingQuote Then
                     ViewLoader.DynamicView.NavigateToView("editquote", Me)
                 Else
-                    ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
+                    ViewLoader.DynamicView.NavigateToView("salesquotegovernment", Me)
                 End If
             End Try
         End Sub
@@ -735,7 +1003,6 @@ Namespace DPC.Views.Sales.Quotes
             CostEstimateDetails.CEQuoteItemsCache = itemOrder
             CostEstimateDetails.CEImageCache = base64Image
             CostEstimateDetails.CEPathCache = tempImagePath
-            CostEstimateDetails.CEClientName = ClientNameBox.Text
             CostEstimateDetails.CEnoteTxt = noteBox.Text
             CostEstimateDetails.CEremarksTxt = remarksBox.Text
             CostEstimateDetails.CETerm1 = Term1.Text
@@ -1013,5 +1280,8 @@ Namespace DPC.Views.Sales.Quotes
             End If
         End Sub
 
+        Private Sub cmbApproved_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles cmbApproved.SelectionChanged
+
+        End Sub
     End Class
 End Namespace

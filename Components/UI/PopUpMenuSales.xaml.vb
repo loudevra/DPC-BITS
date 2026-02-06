@@ -123,6 +123,10 @@ Namespace DPC.Components.UI
             ViewLoader.DynamicView.NavigateToView("salesquote", Me)
         End Sub
 
+        Private Sub NavigateToNewQuoteGovernment(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("salesquotegovernment", Me)
+        End Sub
+
         Private Sub NavigateToNewSubscription(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("newsubscriptions", Me)
         End Sub

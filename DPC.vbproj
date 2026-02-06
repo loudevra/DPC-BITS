@@ -888,6 +888,21 @@
     <Compile Include="Views\CRM\CRMClientTabs.xaml.vb">
       <DependentUpon>CRMClientTabs.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CRM\CRMEditResidentialClientBillingAddress.xaml.vb">
+      <DependentUpon>CRMEditResidentialClientBillingAddress.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CRM\CRMEditResidentialClientOtherSettings.xaml.vb">
+      <DependentUpon>CRMEditResidentialClientOtherSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CRM\CRMEditResidentialClientPersonalInfo.xaml.vb">
+      <DependentUpon>CRMEditResidentialClientPersonalInfo.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CRM\CRMEditResidentialClients.xaml.vb">
+      <DependentUpon>CRMEditResidentialClients.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CRM\CRMEditResidentialClientShippingAddress.xaml.vb">
+      <DependentUpon>CRMEditResidentialClientShippingAddress.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CRM\CRMNewResidentialClient.xaml.vb">
       <DependentUpon>CRMNewResidentialClient.xaml</DependentUpon>
     </Compile>
@@ -1098,11 +1113,17 @@
     <Compile Include="Views\Sales\Quotes\CostEstimate.xaml.vb">
       <DependentUpon>CostEstimate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Sales\Quotes\CostEstimateGovernment.xaml.vb">
+      <DependentUpon>CostEstimateGovernment.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Sales\Quotes\EditQuote.xaml.vb">
       <DependentUpon>EditQuote.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Sales\Quotes\NewQuote.xaml.vb">
       <DependentUpon>NewQuote.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\Quotes\NewQuoteGovernment.xaml.vb">
+      <DependentUpon>NewQuoteGovernment.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Sales\Quotes\Quote.xaml.vb">
       <DependentUpon>Quote.xaml</DependentUpon>
@@ -1719,6 +1740,26 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\CRM\CRMEditResidentialClientBillingAddress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\CRMEditResidentialClientOtherSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\CRMEditResidentialClientPersonalInfo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\CRMEditResidentialClients.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CRM\CRMEditResidentialClientShippingAddress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\CRM\CRMNewResidentialClient.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1993,11 +2034,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Sales\Quotes\CostEstimateGovernment.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Sales\Quotes\EditQuote.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Sales\Quotes\NewQuote.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Quotes\NewQuoteGovernment.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

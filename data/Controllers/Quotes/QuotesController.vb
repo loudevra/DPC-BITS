@@ -671,5 +671,120 @@ Namespace DPC.Data.Controllers
 
         End Function
 
+
+        Public Shared Function SearchProductsByNameAllWarehouses(searchText As String) As ObservableCollection(Of ProductDataModel)
+            Dim products As New ObservableCollection(Of ProductDataModel)
+
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+
+                    Dim query As String = "
+                                    SELECT DISTINCT p.productID, p.productName, p.measurementUnit
+                                    FROM product p
+                                    LEFT JOIN productnovariation pnv ON p.productID = pnv.productID
+                                    LEFT JOIN productvariationstock pvs ON p.productID = pvs.productID
+                                    WHERE p.productName LIKE @searchText
+                                      AND (pnv.productID IS NOT NULL OR pvs.productID IS NOT NULL)
+                                    ORDER BY p.productName
+                                    LIMIT 20"
+
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@searchText", "%" & searchText & "%")
+
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            While reader.Read()
+                                products.Add(New ProductDataModel() With {
+                            .ProductID = reader("productID").ToString(),
+                            .ProductName = reader("productName").ToString(),
+                            .MeasurementUnit = If(reader("measurementUnit") Is DBNull.Value, String.Empty, reader("measurementUnit").ToString())
+                        })
+                            End While
+                        End Using
+                    End Using
+                End Using
+            Catch ex As Exception
+                Debug.WriteLine("Error in SearchProductsByNameAllWarehouses: " & ex.Message)
+            End Try
+
+            Return products
+        End Function
+
+        ''' <summary>
+        ''' Overloaded version - Gets product details across ALL warehouses (first match)
+        ''' Used by NewQuoteGovernment which doesn't have a specific warehouse selected
+        ''' </summary>
+        Public Shared Function GetProductDetailsByProductIDAllWarehouses(productID As String) As ObservableCollection(Of ProductDataModel)
+            Dim productDetails As New ObservableCollection(Of ProductDataModel)
+
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+
+                    ' Check productnovariation first
+                    Dim pnvQuery As String = "
+            SELECT p.productID, p.productName, p.measurementUnit, 
+                   pnv.buyingPrice, pnv.sellingPrice, pnv.defaultTax, pnv.stockUnit
+            FROM productnovariation pnv
+            INNER JOIN product p ON p.productID = pnv.productID
+            WHERE pnv.productID = @productID
+            LIMIT 1"
+
+                    Using cmdPNV As New MySqlCommand(pnvQuery, conn)
+                        cmdPNV.Parameters.AddWithValue("@productID", productID)
+
+                        Using reader As MySqlDataReader = cmdPNV.ExecuteReader()
+                            If reader.Read() Then
+                                productDetails.Add(New ProductDataModel With {
+                            .ProductID = reader("productID").ToString(),
+                            .ProductName = reader("productName").ToString(),
+                            .MeasurementUnit = reader("measurementUnit").ToString(),
+                            .BuyingPrice = Convert.ToDecimal(reader("buyingPrice")),
+                            .SellingPrice = Convert.ToDecimal(reader("sellingPrice")),
+                            .DefaultTax = Convert.ToDecimal(reader("defaultTax")),
+                            .StockUnits = Convert.ToInt32(reader("stockUnit"))
+                        })
+                                Return productDetails
+                            End If
+                        End Using
+                    End Using
+
+                    ' Check productvariationstock if not found in productnovariation
+                    Dim pvsQuery As String = "
+            SELECT p.productID, p.productName, p.measurementUnit, 
+                   pvs.buyingPrice, pvs.sellingPrice, pvs.defaultTax, pvs.stockUnit
+            FROM productvariationstock pvs
+            INNER JOIN product p ON p.productID = pvs.productID
+            WHERE pvs.productID = @productID
+            LIMIT 1"
+
+                    Using cmdPVS As New MySqlCommand(pvsQuery, conn)
+                        cmdPVS.Parameters.AddWithValue("@productID", productID)
+
+                        Using reader As MySqlDataReader = cmdPVS.ExecuteReader()
+                            If reader.Read() Then
+                                productDetails.Add(New ProductDataModel With {
+                            .ProductID = reader("productID").ToString(),
+                            .ProductName = reader("productName").ToString(),
+                            .MeasurementUnit = reader("measurementUnit").ToString(),
+                            .BuyingPrice = Convert.ToDecimal(reader("buyingPrice")),
+                            .SellingPrice = Convert.ToDecimal(reader("sellingPrice")),
+                            .DefaultTax = Convert.ToDecimal(reader("defaultTax")),
+                            .StockUnits = Convert.ToInt32(reader("stockUnit"))
+                        })
+                                Return productDetails
+                            End If
+                        End Using
+                    End Using
+
+                    Debug.WriteLine("Product not found in PNV or PVS (All Warehouses search).")
+                End Using
+            Catch ex As Exception
+                Debug.WriteLine("Error in GetProductDetailsByProductIDAllWarehouses: " & ex.Message)
+            End Try
+
+            Return productDetails
+        End Function
+
     End Class
 End Namespace
