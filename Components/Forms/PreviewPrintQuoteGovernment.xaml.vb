@@ -31,12 +31,25 @@ Namespace DPC.Components.Forms
         Private allItems As New List(Of Dictionary(Of String, String))
         Private allPages As New List(Of List(Of Integer))
         Private showProductImages As Boolean = True
+
+        Private _categoryGroups As New List(Of CategoryGroup)
+
         ' Add height-based pagination constants
         Private Const BaseItemHeight As Double = 55
         Private Const DescriptionLineHeight As Double = 15
         Private Const PaginationTriggerHeight As Double = 412
         Private Const PageMaxHeight As Double = 760
         Private Const ReservedSpaceForDescription As Double = 30
+
+        Private Class CategoryGroup
+            Public CategoryName As String
+            Public Items As New List(Of Dictionary(Of String, String))
+            Public Subtotal As Decimal
+        End Class
+
+        Private Const CategoryHeaderHeight As Double = 40
+        Private Const SubtotalRowHeight As Double = 40
+        Private Const FooterSectionHeight As Double = 250
 
         Public Sub New()
             InitializeComponent()
@@ -224,6 +237,148 @@ Namespace DPC.Components.Forms
             UpdateNavigationButtons()
 
         End Sub
+
+        Private Sub AddCategoryHeaderRow(categoryName As String)
+            itemDataSource.Add(New OrderItems With {
+        .Quantity = "",
+        .Description = categoryName.ToUpper(),
+        .ProductDescription = "",
+        .ProductDescriptionVisibility = Visibility.Collapsed,
+        .UnitPrice = "",
+        .LinePrice = "",
+        .ProductImage = Nothing,
+        .IsCategoryHeader = True,
+        .IsSubtotalRow = False
+    })
+        End Sub
+
+        ' ✓✓✓ NEW: Add category subtotal row (styled like "Subtotal: ₱ 12,331")
+        Private Sub AddCategorySubtotalRow(subtotal As Decimal)
+            itemDataSource.Add(New OrderItems With {
+        .Quantity = "",
+        .Description = "",
+        .ProductDescription = "",
+        .ProductDescriptionVisibility = Visibility.Collapsed,
+        .UnitPrice = "Subtotal:",
+        .LinePrice = $"₱ {subtotal:N2}",
+        .ProductImage = Nothing,
+        .IsCategoryHeader = False,
+        .IsSubtotalRow = True
+    })
+        End Sub
+
+        ' ✓✓✓ NEW: Load all categories with headers and subtotals
+        Private Sub LoadAllCategoriesWithSubtotals()
+            For Each categoryGroup In _categoryGroups
+                ' Add category header if category has a name
+                If Not String.IsNullOrWhiteSpace(categoryGroup.CategoryName) Then
+                    AddCategoryHeaderRow(categoryGroup.CategoryName)
+                End If
+
+                ' Add all items in this category
+                For Each item In categoryGroup.Items
+                    itemDataSource.Add(CreateOrderItemWithDescription(item))
+                Next
+
+                ' Add category subtotal row
+                AddCategorySubtotalRow(categoryGroup.Subtotal)
+            Next
+        End Sub
+
+        Private Sub GroupItemsByCategory()
+            _categoryGroups.Clear()
+
+            If allItems Is Nothing OrElse allItems.Count = 0 Then Return
+
+            Dim currentCategory As CategoryGroup = Nothing
+            Dim lastCategoryName As String = ""
+
+            For Each item In allItems
+                Dim categoryName As String = ""
+
+                ' Get category name from item
+                If item.ContainsKey("Category") Then
+                    categoryName = item("Category").ToString().Trim()
+                End If
+
+                ' If category changed, create new group
+                If categoryName <> lastCategoryName Then
+                    currentCategory = New CategoryGroup With {
+                .CategoryName = If(String.IsNullOrWhiteSpace(categoryName), "", categoryName)
+            }
+                    _categoryGroups.Add(currentCategory)
+                    lastCategoryName = categoryName
+                End If
+
+                ' Add item to current category
+                If currentCategory IsNot Nothing Then
+                    currentCategory.Items.Add(item)
+
+                    ' Calculate subtotal
+                    If item.ContainsKey("Amount") Then
+                        Dim amountText As String = item("Amount").Replace("₱", "").Replace(",", "").Trim()
+                        Dim amount As Decimal
+                        If Decimal.TryParse(amountText, amount) Then
+                            currentCategory.Subtotal += amount
+                        End If
+                    End If
+                End If
+            Next
+
+            Debug.WriteLine($"✓ Grouped into {_categoryGroups.Count} categories")
+        End Sub
+
+        Private Function CreateOrderItemWithDescription(item As Dictionary(Of String, String)) As OrderItems
+            ' Parse rate
+            Dim rate As Decimal = 0
+            Dim rateText As String = item("Rate").Replace("₱", "").Replace(",", "").Trim()
+            Decimal.TryParse(rateText, rate)
+            Dim rateFormatted As String = rate.ToString("N2")
+
+            ' Parse line price (Amount) - REMOVE ₱ symbol and commas
+            Dim linePrice As Decimal = 0
+            Dim linePriceText As String = item("Amount").Replace("₱", "").Replace(",", "").Trim()
+            Decimal.TryParse(linePriceText, linePrice)
+            Dim linePriceFormatted As String = linePrice.ToString("N2")
+
+            Dim productImage As BitmapImage = Nothing
+            If showProductImages Then
+                If item.ContainsKey("ProductImageBase64") AndAlso Not String.IsNullOrEmpty(item("ProductImageBase64").ToString()) Then
+                    productImage = Base64ToBitmapImage(item("ProductImageBase64").ToString())
+                Else
+                    productImage = GetProductImageFromDatabase(item("ProductName").ToString())
+                End If
+            End If
+
+            ' Get description and set visibility
+            Dim productDesc As String = ""
+            Dim descVisibility As Visibility = Visibility.Collapsed
+
+            ' ✓ FIX #7: CHANGED - Added .Trim() and debug output
+            If item.ContainsKey("Description") AndAlso Not String.IsNullOrWhiteSpace(item("Description")) Then
+                productDesc = item("Description").Trim()
+                descVisibility = Visibility.Visible
+
+                ' ✓ FIX #7: NEW - Add debug output
+                Debug.WriteLine($"[DESC] Product: {item("ProductName")} | Desc: {productDesc} | Visible: True")
+            Else
+                ' ✓ FIX #7: NEW - Add debug output
+                Debug.WriteLine($"[DESC] Product: {item("ProductName")} | No description")
+            End If
+
+            Return New OrderItems With {
+        .Quantity = item("Quantity"),
+        .Description = item("ProductName"),
+        .ProductDescription = productDesc,
+        .ProductDescriptionVisibility = descVisibility,
+        .UnitPrice = $"₱ {rateFormatted}",
+        .LinePrice = $"₱ {linePriceFormatted}",
+        .ProductImage = productImage,
+        .IsCategoryHeader = False,
+    .IsSubtotalRow = False
+    }
+        End Function
+
         Private Function CalculateTotalPagesByHeight() As Integer
             If allItems Is Nothing OrElse allItems.Count = 0 Then
                 Return 1
@@ -404,12 +559,8 @@ Namespace DPC.Components.Forms
             currentPageIndex = pageIndex
             itemDataSource.Clear()
 
-            ' Get item indices for this page and create OrderItems
-            For Each itemIndex In allPages(pageIndex)
-                If itemIndex < allItems.Count Then
-                    itemDataSource.Add(CreateOrderItem(allItems(itemIndex)))
-                End If
-            Next
+            GroupItemsByCategory()
+            LoadAllCategoriesWithSubtotals()
 
             dataGrid.ItemsSource = itemDataSource
 

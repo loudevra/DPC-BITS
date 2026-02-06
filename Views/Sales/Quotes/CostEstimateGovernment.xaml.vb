@@ -57,12 +57,6 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Sub CostEstimateGovernment_Loaded(sender As Object, e As RoutedEventArgs)
-
-            Debug.WriteLine("=== DATA CHECK ===")
-            Debug.WriteLine($"CESubject: '{CostEstimateDetails.CESubject}'")
-            Debug.WriteLine($"CEQuoteNumberCache: '{CostEstimateDetails.CEQuoteNumberCache}'")
-            Debug.WriteLine($"CEQuoteDateCache: '{CostEstimateDetails.CEQuoteDateCache}'")
-            Debug.WriteLine("==================")
             ' ✓ NEW: Detect if we're editing an existing quote
             DetectQuoteMode()
 
