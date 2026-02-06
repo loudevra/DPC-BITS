@@ -481,7 +481,6 @@
                                                                           Text="{Binding Description}" 
                                                                           FontSize="12" 
                                                                           FontFamily="Lexend"
-                                                                          FontWeight="SemiBold"
                                                                           MaxWidth="400"
                                                                           TextAlignment="Center"
                                                                           TextWrapping="Wrap"/>
@@ -539,6 +538,8 @@
                                                                 <Setter Property="Margin" Value="0"/>
                                                                 <Setter Property="Padding" Value="0"/>
                                                                 <Setter Property="MinHeight" Value="55"/>
+                                                                <Setter Property="BorderThickness" Value="0, 1, 0, 0"/>
+                                                                <Setter Property="BorderBrush" Value="Black"/>
 
                                                                 <!-- Style for category header rows -->
                                                                 <Style.Triggers>
@@ -547,6 +548,7 @@
                                                                         <Setter Property="MinHeight" Value="28"/>
                                                                         <Setter Property="FontWeight" Value="Bold"/>
                                                                         <Setter Property="Foreground" Value="Black"/>
+                                                                        <Setter Property="BorderThickness" Value="0, 1, 0, 0"/>
                                                                     </DataTrigger>
 
                                                                     <DataTrigger Binding="{Binding IsSubtotalRow}" Value="True">
@@ -581,7 +583,7 @@
                                                                 <Setter Property="TextBlock.TextWrapping" Value="NoWrap"/>
                                                                 <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Path=Foreground}"/>
                                                                 <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis"/>
-                                                                <Setter Property="BorderThickness" Value="1"/>
+                                                                <Setter Property="BorderThickness" Value="0, 0, 1, 0"/>
                                                                 <Setter Property="BorderBrush" Value="Black"/>
 
                                                                 <Setter Property="Template">
@@ -599,7 +601,11 @@
 
                                                                 <Style.Triggers>
                                                                     <DataTrigger Binding="{Binding IsSubtotalRow}" Value="True">
-                                                                        <Setter Property="BorderThickness" Value="0, 1, 0, 0"/>
+                                                                        <Setter Property="BorderThickness" Value="0, 0, 0, 0"/>
+                                                                        <Setter Property="BorderBrush" Value="Black"/>
+                                                                    </DataTrigger>
+                                                                    <DataTrigger Binding="{Binding IsCategoryHeader}" Value="True">
+                                                                        <Setter Property="BorderThickness" Value="0, 0, 0, 0"/>
                                                                         <Setter Property="BorderBrush" Value="Black"/>
                                                                     </DataTrigger>
                                                                 </Style.Triggers>
