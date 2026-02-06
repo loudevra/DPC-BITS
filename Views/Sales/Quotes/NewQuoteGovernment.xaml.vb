@@ -673,15 +673,52 @@ End Sub
         .Margin = New Thickness(0, 0, 0, 10)
     }
 
+            Dim headerGridWrapper As New Grid With {.Margin = New Thickness(0, 0, 0, 10)}
+            headerGridWrapper.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
+            headerGridWrapper.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
+
             Dim categoryLabel As New TextBlock With {
-        .Text = "Category:",
-        .FontWeight = FontWeights.SemiBold,
-        .FontFamily = New FontFamily("Lexend"),
-        .FontSize = 16,
-        .Foreground = CType(New BrushConverter().ConvertFrom("#555555"), Brush),
-        .Margin = New Thickness(0, 0, 0, 10)
-    }
-            categoryNamePanel.Children.Add(categoryLabel)
+                .Text = "Category:",
+                .FontWeight = FontWeights.SemiBold,
+                .FontFamily = New FontFamily("Lexend"),
+                .FontSize = 16,
+                .Foreground = CType(New BrushConverter().ConvertFrom("#555555"), Brush),
+                .Margin = New Thickness(0, 0, 0, 10)
+            }
+            Grid.SetColumn(categoryLabel, 0)
+            headerGridWrapper.Children.Add(categoryLabel)
+
+            ' Create the Trash Button
+            Dim deleteCategoryBtn As New Button With {
+                .Background = Brushes.Transparent,
+                .BorderThickness = New Thickness(0),
+                .Padding = New Thickness(5),
+                .Cursor = Cursors.Hand,
+                .VerticalAlignment = VerticalAlignment.Center
+            }
+
+            Dim trashIcon As New MaterialDesignThemes.Wpf.PackIcon With {
+                .Kind = MaterialDesignThemes.Wpf.PackIconKind.Delete,
+                .Foreground = CType(New BrushConverter().ConvertFrom("#D23636"), Brush),
+                .Width = 22,
+                .Height = 22
+            }
+            deleteCategoryBtn.Content = trashIcon
+
+            ' Attach the click event to remove the entire category
+            AddHandler deleteCategoryBtn.Click, Sub(s, args)
+                                                    If _categories.Count > 1 Then
+                                                        DeleteCategory(categoryId)
+                                                    Else
+                                                        MessageBox.Show("At least one category is required.")
+                                                    End If
+                                                End Sub
+
+            Grid.SetColumn(deleteCategoryBtn, 1)
+            headerGridWrapper.Children.Add(deleteCategoryBtn)
+
+            ' Add the wrapper grid to the panel instead of just the label
+            categoryNamePanel.Children.Add(headerGridWrapper)
 
             Dim categoryNameBorder As New Border With {
         .Margin = New Thickness(0, 0, 0, 5),
