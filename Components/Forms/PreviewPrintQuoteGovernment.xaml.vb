@@ -51,7 +51,6 @@ Namespace DPC.Components.Forms
 
             ' Initialize allItems
             allItems = CostEstimateDetails.CEQuoteItemsCache
-            itemOrder = CostEstimateDetails.CEQuoteItemsCache
 
             ' Calculate total pages
             If allItems IsNot Nothing AndAlso allItems.Count > 0 Then

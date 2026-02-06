@@ -1000,7 +1000,7 @@ Namespace DPC.Views.Sales.Quotes
             CostEstimateDetails.CEDeliveryCost = _deliveryCost
             CostEstimateDetails.CEInstallation = _installationCost
             CostEstimateDetails.CETaxValueCache = VAT12.Text
-            CostEstimateDetails.CEQuoteItemsCache = itemOrder
+            'CostEstimateDetails.CEQuoteItemsCache = itemOrder
             CostEstimateDetails.CEImageCache = base64Image
             CostEstimateDetails.CEPathCache = tempImagePath
             CostEstimateDetails.CEnoteTxt = noteBox.Text

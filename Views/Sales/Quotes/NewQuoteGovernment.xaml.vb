@@ -2216,6 +2216,10 @@ Namespace DPC.Views.Sales.Quotes
                             If txtBox IsNot Nothing Then value = txtBox.Text.Trim()
                         End If
 
+                        If fieldNames(fieldIndex) = "Amount" Then
+                            value = value.Replace("₱", "").Replace(",", "").Trim()
+                        End If
+
                         ' Validates category string
                         If categoryName = "" Then
                             MessageBox.Show($"Please input a category name.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
@@ -2397,14 +2401,6 @@ Namespace DPC.Views.Sales.Quotes
                 CostEstimateDetails.CEEmail = client.Email
                 CostEstimateDetails.CEClientName = client.Name
                 CostEstimateDetails.CERepresentative = client.Representative
-
-                ' Debugging 
-                Debug.WriteLine("✓ All data saved to CostEstimateDetails")
-                Debug.WriteLine($"QuoteNumber: {CostEstimateDetails.CEQuoteNumberCache}")
-                Debug.WriteLine($"Subject: {CostEstimateDetails.CESubject}")
-                Debug.WriteLine($"ProjectID: {CostEstimateDetails.CEProjectID}")
-                Debug.WriteLine($"ClientName: {CostEstimateDetails.CEClientName}")
-                Debug.WriteLine($"ValidityDate: {CostEstimateDetails.CEValidUntilDate}")
 
                 ' Navigate to Cost Estimate view
                 ViewLoader.DynamicView.NavigateToView("costestimategovernment", Me)
