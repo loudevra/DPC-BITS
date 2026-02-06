@@ -91,7 +91,6 @@ Namespace DPC.Views.Sales.Quotes
             ' ✅ FIX: Don't call txtTaxSelection_SelectionChanged here - it will be called after UI loads
 
             InitializeProductUI()
-            rowCount += 1
 
             ' Set a default date today and tomorrow
             OrderDateVM.SelectedDate = DateTime.Today
@@ -467,17 +466,18 @@ Namespace DPC.Views.Sales.Quotes
 #Region "This Loads every data if its available for updating"
         Private Sub InitializeProductUI()
             RestoreProjectIDAndSubject()
-            If HasCachedItems() Then
-                If _typingTimer Is Nothing Then
-                    _typingTimer = New DispatcherTimer()
-                    _typingTimer.Interval = TimeSpan.FromMilliseconds(300)
-                    AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
-                End If
 
+            If HasCachedItems() Then
                 FillClientsField()
                 LoadCachedQuoteItems()
             Else
-                AddNewCategory_Click(Nothing, Nothing)
+                _categoryIdCounter += 1
+                Dim catId = _categoryIdCounter
+                Dim newCategory As New CategorySection With {.CategoryId = catId, .RowCount = 0}
+                _categories.Add(catId, newCategory)
+
+                CreateCategoryUI(catId, newCategory)
+                AddProductRowToUI(catId, newCategory.ProductsPanel)
             End If
         End Sub
 
@@ -505,23 +505,44 @@ Namespace DPC.Views.Sales.Quotes
         End Function
 
         Private Sub LoadCachedQuoteItems()
-            For Each item In CEQuoteItemsCache
-                rowCount += 1
-                AddProductInputUI()
+            ' Group items by category name to recreate the UI structure
+            Dim groupedItems = CEQuoteItemsCache.GroupBy(Function(i) i("Category")).ToList()
 
-                Dim inputPanel = GetLatestInputPanel()
-                If inputPanel Is Nothing Then Continue For
+            If groupedItems.Count > 0 Then
+                MainContainer.Children.Clear()
+                _categories.Clear()
+                _categoryIdCounter = 0
+            End If
 
-                FillClientsField()
-                FillProductFields(item, rowCount)
-                FillDescriptionField(inputPanel, item)
+            For Each group In groupedItems
+                _categoryIdCounter += 1
+                Dim catId = _categoryIdCounter
+                Dim newCategory As New CategorySection With {.CategoryId = catId, .RowCount = 0}
+                _categories.Add(catId, newCategory)
+
+                CreateCategoryUI(catId, newCategory)
+
+                newCategory.CategoryNameTextBox.Text = group.Key
+
+                For Each item In group
+                    ' This adds ONLY the rows that exist in your JSON cache
+                    AddProductRowToUI(catId, newCategory.ProductsPanel)
+                    FillProductFields(item, catId, newCategory.RowCount)
+
+                    ' Handle Description (requires finding the specific textbox)
+                    Dim descBox = FindName($"txtDescription_{catId}_{newCategory.RowCount}")
+                    If descBox IsNot Nothing AndAlso item.ContainsKey("Description") Then
+                        CType(descBox, TextBox).Text = item("Description")
+                        CType(descBox, TextBox).Foreground = Brushes.Black ' Reset from placeholder color
+                    End If
+                Next
             Next
         End Sub
 
-        Private Sub AddProductInputUI()
-            ' This method is deprecated - use AddNewCategory_Click instead
-            AddNewCategory_Click(Nothing, Nothing)
-        End Sub
+        'Private Sub AddProductInputUI()
+        '    ' This method is deprecated - use AddNewCategory_Click instead
+        '    AddNewCategory_Click(Nothing, Nothing)
+        'End Sub
 
         Private Function GetLatestInputPanel() As StackPanel
             If MainContainer.Children.Count = 0 Then Return Nothing
@@ -571,25 +592,25 @@ Namespace DPC.Views.Sales.Quotes
             AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
         End Sub
 
-        Private Sub FillProductFields(item As Dictionary(Of String, String), row As Integer)
-            Dim productFields = New Dictionary(Of String, String) From {
-        {"txtProductName_", "ProductName"},
-        {"txtQuantity_", "Quantity"},
-        {"txtRate_", "Rate"},
-        {"txtTaxPercent_", "TaxPercent"},
-        {"txtTaxValue_", "Tax"},
-        {"txtDiscountPercent_", "Discount"},
-        {"txtDiscount_", "DiscountAmount"},
-        {"txtAmount_", "Amount"}
+        Private Sub FillProductFields(item As Dictionary(Of String, String), catId As Integer, rowIdx As Integer)
+    ' Mapping JSON keys to UI names including the Category ID
+    Dim fieldMapping = New Dictionary(Of String, String) From {
+        {$"txtProductName_{catId}_{rowIdx}", "ProductName"},
+        {$"txtQuantity_{catId}_{rowIdx}", "Quantity"},
+        {$"txtUnitPrice_{catId}_{rowIdx}", "Rate"}, ' Note: Check if you use txtUnitPrice or txtRate
+        {$"txtTaxPercent_{catId}_{rowIdx}", "TaxPercent"},
+        {$"txtTaxValue_{catId}_{rowIdx}", "TaxValue"},
+        {$"txtDiscountPercent_{catId}_{rowIdx}", "DiscountPercent"},
+        {$"txtDiscount_{catId}_{rowIdx}", "Discount"},
+        {$"txtAmount_{catId}_{rowIdx}", "Amount"}
     }
 
-            For Each field In productFields
-                Dim controlName = field.Key & row
-                If _productTextBoxes.ContainsKey(controlName) AndAlso item.ContainsKey(field.Value) Then
-                    _productTextBoxes(controlName).Text = item(field.Value)
-                End If
-            Next
-        End Sub
+    For Each mapping In fieldMapping
+        If _productTextBoxes.ContainsKey(mapping.Key) AndAlso item.ContainsKey(mapping.Value) Then
+            _productTextBoxes(mapping.Key).Text = item(mapping.Value).ToString()
+        End If
+    Next
+End Sub
 
         Private Sub FillDescriptionField(productPanel As StackPanel, item As Dictionary(Of String, String))
             Dim parentStack = TryCast(productPanel.Parent, StackPanel)
@@ -613,7 +634,7 @@ Namespace DPC.Views.Sales.Quotes
         ' Add New Row Button Click Event in the UI to be able to put new product input
         Private Sub AddNewRow_Click(sender As Object, e As RoutedEventArgs)
             rowCount += 1 ' Make sure to increment rowCount here so new rows get unique names
-            AddProductInputUI()
+            'AddProductInputUI()
         End Sub
 
         ' The UI will Add ProductUI to the Interface
@@ -638,6 +659,11 @@ Namespace DPC.Views.Sales.Quotes
 
             _categories.Add(categoryId, newCategory)
             CreateCategoryUI(categoryId, newCategory)
+
+            If sender IsNot Nothing Then
+                AddProductRowToUI(categoryId, newCategory.ProductsPanel)
+            End If
+
         End Sub
 
         Private Sub CreateCategoryUI(categoryId As Integer, categoryData As CategorySection)
@@ -772,7 +798,6 @@ Namespace DPC.Views.Sales.Quotes
     }
 
             categoryData.ProductsPanel = productsPanel
-            AddProductRowToUI(categoryId, productsPanel)
             productPanelStack.Children.Add(productsPanel)
 
             productPanelBorder.Child = productPanelStack
@@ -917,6 +942,12 @@ Namespace DPC.Views.Sales.Quotes
             ' 2. Quantity Box
             Dim quantityBox = CreateInputBox("1", 50, False, $"txtQuantity_{categoryId}_{rowIndex}")
             Dim quantityTxt = TryCast(quantityBox.Child, TextBox)
+
+            If Me.FindName(quantityTxt.Name) IsNot Nothing Then
+                Me.UnregisterName(quantityTxt.Name)
+            End If
+            Me.RegisterName(quantityTxt.Name, quantityTxt)
+
             textboxes("quantity") = quantityTxt
             productPanel.Children.Add(quantityBox)
 
