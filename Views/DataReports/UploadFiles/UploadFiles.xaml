@@ -259,9 +259,93 @@
                             </Grid>
                         </Border>
 
-                        <!-- Table and Controls test-->
+                        <!-- Table and Controls -->
                         <Border Background="White" CornerRadius="8" Padding="15">
-                            
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Status Text -->
+                                <TextBlock x:Name="txtStatus" 
+                   Grid.Row="0"
+                   Text="Loading files..." 
+                   FontFamily="Lexend"
+                   FontSize="12"
+                   Foreground="#666666"
+                   Margin="0,0,0,10"/>
+
+                                <!-- DataGrid -->
+                                <DataGrid x:Name="dgFiles"
+                  Grid.Row="1"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  IsReadOnly="True"
+                  SelectionMode="Single"
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="Horizontal"
+                  RowHeight="40"
+                  Background="White"
+                  BorderThickness="0">
+                                    <DataGrid.Columns>
+                                        <!-- File Name Column -->
+                                        <DataGridTextColumn Header="File Name" 
+                                    Binding="{Binding FileName}" 
+                                    Width="2*"
+                                    FontFamily="Lexend"/>
+
+                                        <!-- File Type Column -->
+                                        <DataGridTextColumn Header="Type" 
+                                    Binding="{Binding FileExtension}" 
+                                    Width="Auto"
+                                    FontFamily="Lexend"/>
+
+                                        <!-- File Size Column -->
+                                        <DataGridTextColumn Header="Size" 
+                                    Binding="{Binding FileSizeFormatted}" 
+                                    Width="Auto"
+                                    FontFamily="Lexend"/>
+
+                                        <!-- Upload Date Column -->
+                                        <DataGridTextColumn Header="Upload Date" 
+                                    Binding="{Binding UploadDateFormatted}" 
+                                    Width="*"
+                                    FontFamily="Lexend"/>
+
+                                        <!-- Actions Column -->
+                                        <DataGridTemplateColumn Header="Actions" Width="Auto">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Button x:Name="btnDownload"
+                                        Style="{StaticResource IconButton}"
+                                        ToolTip="Download"
+                                        Tag="{Binding Id}"
+                                        Margin="5,0">
+                                                            <materialDesign:PackIcon Kind="Download" 
+                                                             Width="20" 
+                                                             Height="20" 
+                                                             Foreground="#456B2E"/>
+                                                        </Button>
+                                                        <Button x:Name="btnDelete"
+                                        Style="{StaticResource IconButton}"
+                                        ToolTip="Delete"
+                                        Tag="{Binding Id}"
+                                        Margin="5,0">
+                                                            <materialDesign:PackIcon Kind="Delete" 
+                                                             Width="20" 
+                                                             Height="20" 
+                                                             Foreground="#D32F2F"/>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Grid>
                         </Border>
                     </StackPanel>
                 </Grid>
