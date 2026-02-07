@@ -611,6 +611,9 @@
     <Compile Include="Components\Forms\PreviewPrintQuote.xaml.vb">
       <DependentUpon>PreviewPrintQuote.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\PreviewPrintQuoteGovernment.xaml.vb">
+      <DependentUpon>PreviewPrintQuoteGovernment.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\PreviewPrintStatement.xaml.vb">
       <DependentUpon>PreviewPrintStatement.xaml</DependentUpon>
     </Compile>
@@ -1381,6 +1384,10 @@
     <Page Include="Components\Forms\PreviewPrintQuote.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Forms\PreviewPrintQuoteGovernment.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Forms\PreviewPrintStatement.xaml">
       <SubType>Designer</SubType>

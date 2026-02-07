@@ -57,12 +57,6 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Sub CostEstimateGovernment_Loaded(sender As Object, e As RoutedEventArgs)
-
-            Debug.WriteLine("=== DATA CHECK ===")
-            Debug.WriteLine($"CESubject: '{CostEstimateDetails.CESubject}'")
-            Debug.WriteLine($"CEQuoteNumberCache: '{CostEstimateDetails.CEQuoteNumberCache}'")
-            Debug.WriteLine($"CEQuoteDateCache: '{CostEstimateDetails.CEQuoteDateCache}'")
-            Debug.WriteLine("==================")
             ' ✓ NEW: Detect if we're editing an existing quote
             DetectQuoteMode()
 
@@ -325,39 +319,23 @@ Namespace DPC.Views.Sales.Quotes
 
         ' New method to calculate total pages based on trigger height and max heights
         Private Function CalculateTotalPagesByHeight() As Integer
-            If allItems Is Nothing OrElse allItems.Count = 0 Then
-                Return 1
-            End If
+            If allItems Is Nothing OrElse allItems.Count = 0 Then Return 1
 
-            ' Calculate total height of all items + category headers
             Dim totalHeight As Double = 0
             For Each categoryGroup In _categoryGroups
-                ' Add category header height (if has name)
-                If Not String.IsNullOrWhiteSpace(categoryGroup.CategoryName) Then
-                    totalHeight += CategoryHeaderHeight ' ✓ FIX #3: CHANGED from hardcoded 40
-                End If
-
-                ' Add items height
+                If Not String.IsNullOrWhiteSpace(categoryGroup.CategoryName) Then totalHeight += CategoryHeaderHeight
                 For Each item In categoryGroup.Items
                     totalHeight += CalculateItemHeight(item)
                 Next
-
-                ' Add subtotal row height
-                totalHeight += SubtotalRowHeight ' ✓ FIX #3: CHANGED from hardcoded 40
+                totalHeight += SubtotalRowHeight
             Next
 
-            ' ✓ CRITICAL FIX: Footer always on separate last page
-            ' Below trigger height - content on page 1, footer on page 2
-            If totalHeight <= PaginationTriggerHeight Then
-                Return 2
+            ' Check if everything fits on one single page
+            If (totalHeight + FooterSectionHeight) <= PageMaxHeight Then
+                Return 1
             End If
 
-            ' Above trigger but below max - content fills pages, footer on last page
-            If totalHeight <= PageMaxHeight Then
-                Return 2
-            End If
-
-            ' Above max height - calculate pages with footer always at the end
+            ' Otherwise, calculate multiple pages
             Return CalculatePagesFromHeightWithVisibility()
         End Function
 
@@ -416,12 +394,10 @@ Namespace DPC.Views.Sales.Quotes
             Next
 
 
-            ' ✓ CRITICAL FIX: Footer ALWAYS goes on last page, separate from content
-            ' If we have any content, add one more page for footer sections
-            If currentPageHeight > 0 Then
-                Return pageCount + 1
-            Else
+            If (currentPageHeight + FooterSectionHeight) <= PageMaxHeight Then
                 Return pageCount
+            Else
+                Return pageCount + 1
             End If
         End Function
 
@@ -446,44 +422,16 @@ Namespace DPC.Views.Sales.Quotes
 
         ' LoadPage method:
         Private Sub LoadPage(pageIndex As Integer)
-            If allItems Is Nothing OrElse allItems.Count = 0 Then
-                Return
-            End If
+            If allItems Is Nothing OrElse allItems.Count = 0 Then Return
 
             currentPageIndex = pageIndex
             itemDataSource.Clear()
 
-            ' ✓ CRITICAL FIX: Simplified logic - footer ALWAYS on last page
-            ' If this is the last page (footer page), show no items
-            If pageIndex = totalPages - 1 Then
-                ' Last page - no items, just footer sections (handled by visibility updates)
-                ' itemDataSource stays empty
-            Else
-                ' Not last page - show content for this page
-                Dim totalHeight As Double = 0
-                For Each item In allItems
-                    totalHeight += CalculateItemHeight(item)
-                Next
+            Dim itemsOnThisPage = GetItemsForPageByHeightWithVisibility(pageIndex)
 
-                ' Below trigger height - all items on page 0
-                If totalHeight <= PaginationTriggerHeight Then
-                    If pageIndex = 0 Then
-                        LoadAllCategoriesWithSubtotals()
-                    End If
-                    ' Above trigger but below max - all items on page 0
-                ElseIf totalHeight <= PageMaxHeight Then
-                    If pageIndex = 0 Then
-                        LoadAllCategoriesWithSubtotals()
-                    End If
-                Else
-                    ' Multiple pages - load items for current page
-                    Dim itemIndices = GetItemsForPageByHeightWithVisibility(pageIndex)
-                    For Each index In itemIndices
-                        If index < allItems.Count Then
-                            itemDataSource.Add(CreateOrderItemWithDescription(allItems(index)))
-                        End If
-                    Next
-                End If
+            If itemsOnThisPage.Count = 0 AndAlso pageIndex = totalPages - 1 AndAlso totalPages > 1 Then
+            Else
+                LoadAllCategoriesWithSubtotals()
             End If
 
             dataGrid.ItemsSource = itemDataSource
@@ -495,14 +443,12 @@ Namespace DPC.Views.Sales.Quotes
             UpdateTotalCostVisibility()
             UpdateWarrantyAndBottomSectionVisibility()
             UpdatePrintPageIndicator()
-            UpdateImageColumnVisibility()
-
         End Sub
 
         Private Sub AddCategoryHeaderRow(categoryName As String)
             itemDataSource.Add(New OrderItems With {
         .Quantity = "",
-        .Description = categoryName.ToLower(),
+        .Description = categoryName.ToUpper(),
         .ProductDescription = "",
         .ProductDescriptionVisibility = Visibility.Collapsed,
         .UnitPrice = "",
@@ -1000,7 +946,7 @@ Namespace DPC.Views.Sales.Quotes
             CostEstimateDetails.CEDeliveryCost = _deliveryCost
             CostEstimateDetails.CEInstallation = _installationCost
             CostEstimateDetails.CETaxValueCache = VAT12.Text
-            CostEstimateDetails.CEQuoteItemsCache = itemOrder
+            'CostEstimateDetails.CEQuoteItemsCache = itemOrder
             CostEstimateDetails.CEImageCache = base64Image
             CostEstimateDetails.CEPathCache = tempImagePath
             CostEstimateDetails.CEnoteTxt = noteBox.Text
@@ -1039,7 +985,7 @@ Namespace DPC.Views.Sales.Quotes
                 ViewLoader.DynamicView.NavigateToView("previewprintquoteeditedquote", Me)
             Else
                 Debug.WriteLine("→ Routing to: PreviewPrintQuote")
-                ViewLoader.DynamicView.NavigateToView("printpreviewquotes", Me)
+                ViewLoader.DynamicView.NavigateToView("printpreviewquotesgovernment", Me)
             End If
         End Sub
 #End Region

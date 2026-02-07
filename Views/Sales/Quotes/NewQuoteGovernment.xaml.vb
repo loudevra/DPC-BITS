@@ -91,7 +91,6 @@ Namespace DPC.Views.Sales.Quotes
             ' ✅ FIX: Don't call txtTaxSelection_SelectionChanged here - it will be called after UI loads
 
             InitializeProductUI()
-            rowCount += 1
 
             ' Set a default date today and tomorrow
             OrderDateVM.SelectedDate = DateTime.Today
@@ -197,6 +196,7 @@ Namespace DPC.Views.Sales.Quotes
 
             For Each kvp In _categories
                 Dim category = kvp.Value
+
 
                 ' Find the header grid in the category
                 If category.CategoryBorder IsNot Nothing Then
@@ -466,17 +466,18 @@ Namespace DPC.Views.Sales.Quotes
 #Region "This Loads every data if its available for updating"
         Private Sub InitializeProductUI()
             RestoreProjectIDAndSubject()
-            If HasCachedItems() Then
-                If _typingTimer Is Nothing Then
-                    _typingTimer = New DispatcherTimer()
-                    _typingTimer.Interval = TimeSpan.FromMilliseconds(300)
-                    AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
-                End If
 
+            If HasCachedItems() Then
                 FillClientsField()
                 LoadCachedQuoteItems()
             Else
-                AddNewCategory_Click(Nothing, Nothing)
+                _categoryIdCounter += 1
+                Dim catId = _categoryIdCounter
+                Dim newCategory As New CategorySection With {.CategoryId = catId, .RowCount = 0}
+                _categories.Add(catId, newCategory)
+
+                CreateCategoryUI(catId, newCategory)
+                AddProductRowToUI(catId, newCategory.ProductsPanel)
             End If
         End Sub
 
@@ -504,23 +505,44 @@ Namespace DPC.Views.Sales.Quotes
         End Function
 
         Private Sub LoadCachedQuoteItems()
-            For Each item In CEQuoteItemsCache
-                rowCount += 1
-                AddProductInputUI()
+            ' Group items by category name to recreate the UI structure
+            Dim groupedItems = CEQuoteItemsCache.GroupBy(Function(i) i("Category")).ToList()
 
-                Dim inputPanel = GetLatestInputPanel()
-                If inputPanel Is Nothing Then Continue For
+            If groupedItems.Count > 0 Then
+                MainContainer.Children.Clear()
+                _categories.Clear()
+                _categoryIdCounter = 0
+            End If
 
-                FillClientsField()
-                FillProductFields(item, rowCount)
-                FillDescriptionField(inputPanel, item)
+            For Each group In groupedItems
+                _categoryIdCounter += 1
+                Dim catId = _categoryIdCounter
+                Dim newCategory As New CategorySection With {.CategoryId = catId, .RowCount = 0}
+                _categories.Add(catId, newCategory)
+
+                CreateCategoryUI(catId, newCategory)
+
+                newCategory.CategoryNameTextBox.Text = group.Key
+
+                For Each item In group
+                    ' This adds ONLY the rows that exist in your JSON cache
+                    AddProductRowToUI(catId, newCategory.ProductsPanel)
+                    FillProductFields(item, catId, newCategory.RowCount)
+
+                    ' Handle Description (requires finding the specific textbox)
+                    Dim descBox = FindName($"txtDescription_{catId}_{newCategory.RowCount}")
+                    If descBox IsNot Nothing AndAlso item.ContainsKey("Description") Then
+                        CType(descBox, TextBox).Text = item("Description")
+                        CType(descBox, TextBox).Foreground = Brushes.Black ' Reset from placeholder color
+                    End If
+                Next
             Next
         End Sub
 
-        Private Sub AddProductInputUI()
-            ' This method is deprecated - use AddNewCategory_Click instead
-            AddNewCategory_Click(Nothing, Nothing)
-        End Sub
+        'Private Sub AddProductInputUI()
+        '    ' This method is deprecated - use AddNewCategory_Click instead
+        '    AddNewCategory_Click(Nothing, Nothing)
+        'End Sub
 
         Private Function GetLatestInputPanel() As StackPanel
             If MainContainer.Children.Count = 0 Then Return Nothing
@@ -570,25 +592,25 @@ Namespace DPC.Views.Sales.Quotes
             AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
         End Sub
 
-        Private Sub FillProductFields(item As Dictionary(Of String, String), row As Integer)
-            Dim productFields = New Dictionary(Of String, String) From {
-        {"txtProductName_", "ProductName"},
-        {"txtQuantity_", "Quantity"},
-        {"txtRate_", "Rate"},
-        {"txtTaxPercent_", "TaxPercent"},
-        {"txtTaxValue_", "Tax"},
-        {"txtDiscountPercent_", "Discount"},
-        {"txtDiscount_", "DiscountAmount"},
-        {"txtAmount_", "Amount"}
+        Private Sub FillProductFields(item As Dictionary(Of String, String), catId As Integer, rowIdx As Integer)
+    ' Mapping JSON keys to UI names including the Category ID
+    Dim fieldMapping = New Dictionary(Of String, String) From {
+        {$"txtProductName_{catId}_{rowIdx}", "ProductName"},
+        {$"txtQuantity_{catId}_{rowIdx}", "Quantity"},
+        {$"txtUnitPrice_{catId}_{rowIdx}", "Rate"}, ' Note: Check if you use txtUnitPrice or txtRate
+        {$"txtTaxPercent_{catId}_{rowIdx}", "TaxPercent"},
+        {$"txtTaxValue_{catId}_{rowIdx}", "TaxValue"},
+        {$"txtDiscountPercent_{catId}_{rowIdx}", "DiscountPercent"},
+        {$"txtDiscount_{catId}_{rowIdx}", "Discount"},
+        {$"txtAmount_{catId}_{rowIdx}", "Amount"}
     }
 
-            For Each field In productFields
-                Dim controlName = field.Key & row
-                If _productTextBoxes.ContainsKey(controlName) AndAlso item.ContainsKey(field.Value) Then
-                    _productTextBoxes(controlName).Text = item(field.Value)
-                End If
-            Next
-        End Sub
+    For Each mapping In fieldMapping
+        If _productTextBoxes.ContainsKey(mapping.Key) AndAlso item.ContainsKey(mapping.Value) Then
+            _productTextBoxes(mapping.Key).Text = item(mapping.Value).ToString()
+        End If
+    Next
+End Sub
 
         Private Sub FillDescriptionField(productPanel As StackPanel, item As Dictionary(Of String, String))
             Dim parentStack = TryCast(productPanel.Parent, StackPanel)
@@ -612,7 +634,7 @@ Namespace DPC.Views.Sales.Quotes
         ' Add New Row Button Click Event in the UI to be able to put new product input
         Private Sub AddNewRow_Click(sender As Object, e As RoutedEventArgs)
             rowCount += 1 ' Make sure to increment rowCount here so new rows get unique names
-            AddProductInputUI()
+            'AddProductInputUI()
         End Sub
 
         ' The UI will Add ProductUI to the Interface
@@ -637,6 +659,11 @@ Namespace DPC.Views.Sales.Quotes
 
             _categories.Add(categoryId, newCategory)
             CreateCategoryUI(categoryId, newCategory)
+
+            If sender IsNot Nothing Then
+                AddProductRowToUI(categoryId, newCategory.ProductsPanel)
+            End If
+
         End Sub
 
         Private Sub CreateCategoryUI(categoryId As Integer, categoryData As CategorySection)
@@ -646,15 +673,52 @@ Namespace DPC.Views.Sales.Quotes
         .Margin = New Thickness(0, 0, 0, 10)
     }
 
+            Dim headerGridWrapper As New Grid With {.Margin = New Thickness(0, 0, 0, 10)}
+            headerGridWrapper.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
+            headerGridWrapper.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
+
             Dim categoryLabel As New TextBlock With {
-        .Text = "Category:",
-        .FontWeight = FontWeights.SemiBold,
-        .FontFamily = New FontFamily("Lexend"),
-        .FontSize = 16,
-        .Foreground = CType(New BrushConverter().ConvertFrom("#555555"), Brush),
-        .Margin = New Thickness(0, 0, 0, 10)
-    }
-            categoryNamePanel.Children.Add(categoryLabel)
+                .Text = "Category:",
+                .FontWeight = FontWeights.SemiBold,
+                .FontFamily = New FontFamily("Lexend"),
+                .FontSize = 16,
+                .Foreground = CType(New BrushConverter().ConvertFrom("#555555"), Brush),
+                .Margin = New Thickness(0, 0, 0, 10)
+            }
+            Grid.SetColumn(categoryLabel, 0)
+            headerGridWrapper.Children.Add(categoryLabel)
+
+            ' Create the Trash Button
+            Dim deleteCategoryBtn As New Button With {
+                .Background = Brushes.Transparent,
+                .BorderThickness = New Thickness(0),
+                .Padding = New Thickness(5),
+                .Cursor = Cursors.Hand,
+                .VerticalAlignment = VerticalAlignment.Center
+            }
+
+            Dim trashIcon As New MaterialDesignThemes.Wpf.PackIcon With {
+                .Kind = MaterialDesignThemes.Wpf.PackIconKind.Delete,
+                .Foreground = CType(New BrushConverter().ConvertFrom("#D23636"), Brush),
+                .Width = 22,
+                .Height = 22
+            }
+            deleteCategoryBtn.Content = trashIcon
+
+            ' Attach the click event to remove the entire category
+            AddHandler deleteCategoryBtn.Click, Sub(s, args)
+                                                    If _categories.Count > 1 Then
+                                                        DeleteCategory(categoryId)
+                                                    Else
+                                                        MessageBox.Show("At least one category is required.")
+                                                    End If
+                                                End Sub
+
+            Grid.SetColumn(deleteCategoryBtn, 1)
+            headerGridWrapper.Children.Add(deleteCategoryBtn)
+
+            ' Add the wrapper grid to the panel instead of just the label
+            categoryNamePanel.Children.Add(headerGridWrapper)
 
             Dim categoryNameBorder As New Border With {
         .Margin = New Thickness(0, 0, 0, 5),
@@ -771,7 +835,6 @@ Namespace DPC.Views.Sales.Quotes
     }
 
             categoryData.ProductsPanel = productsPanel
-            AddProductRowToUI(categoryId, productsPanel)
             productPanelStack.Children.Add(productsPanel)
 
             productPanelBorder.Child = productPanelStack
@@ -787,7 +850,7 @@ Namespace DPC.Views.Sales.Quotes
             ' Add Row Button
             Dim buttonBorder As New Border With {
         .Background = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
-        .CornerRadius = New CornerRadius(10),
+        .CornerRadius = New CornerRadius(20),
         .Padding = New Thickness(0),
         .Margin = New Thickness(0, 0, 20, 0),
         .Width = 130,
@@ -795,13 +858,10 @@ Namespace DPC.Views.Sales.Quotes
     }
 
             Dim addRowButton As New Button With {
-        .Background = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
-        .Width = 130,
-        .Height = 40,
+        .Background = Brushes.Transparent,
         .BorderThickness = New Thickness(0),
         .Cursor = Cursors.Hand,
-        .Foreground = Brushes.White,
-        .Margin = New Thickness(20, 0, 20, 0)
+        .Foreground = Brushes.White
     }
 
             Dim addRowPanel As New StackPanel With {
@@ -812,9 +872,9 @@ Namespace DPC.Views.Sales.Quotes
             Dim addIcon As New MaterialDesignThemes.Wpf.PackIcon With {
         .Kind = MaterialDesignThemes.Wpf.PackIconKind.PlaylistAdd,
         .Foreground = Brushes.White,
-        .Width = 30,
-        .Height = 30,
-        .Margin = New Thickness(-50, 0, 5, 0)
+        .Width = 25,
+        .Height = 25,
+        .Margin = New Thickness(0, 5, 5, 0)
     }
             addRowPanel.Children.Add(addIcon)
 
@@ -823,8 +883,7 @@ Namespace DPC.Views.Sales.Quotes
         .FontSize = 16,
         .VerticalAlignment = VerticalAlignment.Center,
         .FontWeight = FontWeights.SemiBold,
-        .Foreground = Brushes.White,
-        .Margin = New Thickness(-30, 0, 5, 0)
+        .Foreground = Brushes.White
     }
             addRowPanel.Children.Add(addText)
 
@@ -920,6 +979,12 @@ Namespace DPC.Views.Sales.Quotes
             ' 2. Quantity Box
             Dim quantityBox = CreateInputBox("1", 50, False, $"txtQuantity_{categoryId}_{rowIndex}")
             Dim quantityTxt = TryCast(quantityBox.Child, TextBox)
+
+            If Me.FindName(quantityTxt.Name) IsNot Nothing Then
+                Me.UnregisterName(quantityTxt.Name)
+            End If
+            Me.RegisterName(quantityTxt.Name, quantityTxt)
+
             textboxes("quantity") = quantityTxt
             productPanel.Children.Add(quantityBox)
 
@@ -2159,6 +2224,7 @@ Namespace DPC.Views.Sales.Quotes
                 Exit Sub
             End If
 
+
             GetAllDataInQuoteProperties(client, productItemsJson)
         End Sub
 
@@ -2216,6 +2282,16 @@ Namespace DPC.Views.Sales.Quotes
                         Else
                             Dim txtBox = TryCast(fieldBorder.Child, TextBox)
                             If txtBox IsNot Nothing Then value = txtBox.Text.Trim()
+                        End If
+
+                        If fieldNames(fieldIndex) = "Amount" Then
+                            value = value.Replace("₱", "").Replace(",", "").Trim()
+                        End If
+
+                        ' Validates category string
+                        If categoryName = "" Then
+                            MessageBox.Show($"Please input a category name.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
+                            Return Nothing
                         End If
 
                         If (fieldNames(fieldIndex) = "ProductName" OrElse fieldNames(fieldIndex) = "Quantity" OrElse fieldNames(fieldIndex) = "Rate") AndAlso
@@ -2393,14 +2469,6 @@ Namespace DPC.Views.Sales.Quotes
                 CostEstimateDetails.CEEmail = client.Email
                 CostEstimateDetails.CEClientName = client.Name
                 CostEstimateDetails.CERepresentative = client.Representative
-
-                ' Debugging 
-                Debug.WriteLine("✓ All data saved to CostEstimateDetails")
-                Debug.WriteLine($"QuoteNumber: {CostEstimateDetails.CEQuoteNumberCache}")
-                Debug.WriteLine($"Subject: {CostEstimateDetails.CESubject}")
-                Debug.WriteLine($"ProjectID: {CostEstimateDetails.CEProjectID}")
-                Debug.WriteLine($"ClientName: {CostEstimateDetails.CEClientName}")
-                Debug.WriteLine($"ValidityDate: {CostEstimateDetails.CEValidUntilDate}")
 
                 ' Navigate to Cost Estimate view
                 ViewLoader.DynamicView.NavigateToView("costestimategovernment", Me)
