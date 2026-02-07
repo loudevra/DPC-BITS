@@ -240,6 +240,10 @@ Namespace DPC.Components.UI
             ' Open Payroll view
             ViewLoader.DynamicView.NavigateToView("hrmeditfiles", Me)
         End Sub
+        Private Sub NavigateToUploadFile(sender As Object, e As RoutedEventArgs)
+            ' Open Payroll view
+            ViewLoader.DynamicView.NavigateToView("hrmuploadfiles", Me)
+        End Sub
 
 
 
