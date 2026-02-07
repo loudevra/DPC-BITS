@@ -16,7 +16,50 @@ Namespace DPC.Views.DataReports.UploadFiles
 
             ' Load files when the control is loaded
             AddHandler Loaded, AddressOf UploadFiles_Loaded
+            ' Wire up DataGrid row events
+            AddHandler dgFiles.LoadingRow, AddressOf DataGrid_LoadingRow
         End Sub
+
+        Private Sub DataGrid_LoadingRow(sender As Object, e As DataGridRowEventArgs)
+            ' Find the buttons in the row and attach event handlers
+            AddHandler e.Row.Loaded, Sub(rowSender, rowArgs)
+                                         Dim downloadButton = FindVisualChild(Of Button)(e.Row, "btnDownload")
+                                         Dim deleteButton = FindVisualChild(Of Button)(e.Row, "btnDelete")
+
+                                         If downloadButton IsNot Nothing Then
+                                             AddHandler downloadButton.Click, AddressOf BtnDownload_Click
+                                         End If
+
+                                         If deleteButton IsNot Nothing Then
+                                             AddHandler deleteButton.Click, AddressOf BtnDelete_Click
+                                         End If
+                                     End Sub
+        End Sub
+
+        ' Helper method to find visual children
+        Private Function FindVisualChild(Of T As DependencyObject)(parent As DependencyObject, childName As String) As T
+            If parent Is Nothing Then Return Nothing
+
+            Dim childrenCount As Integer = VisualTreeHelper.GetChildrenCount(parent)
+            For i As Integer = 0 To childrenCount - 1
+                Dim child = VisualTreeHelper.GetChild(parent, i)
+                Dim childType = TryCast(child, T)
+
+                If childType IsNot Nothing AndAlso TypeOf child Is FrameworkElement Then
+                    Dim frameworkElement = TryCast(child, FrameworkElement)
+                    If frameworkElement.Name = childName Then
+                        Return childType
+                    End If
+                End If
+
+                Dim childOfChild = FindVisualChild(Of T)(child, childName)
+                If childOfChild IsNot Nothing Then
+                    Return childOfChild
+                End If
+            Next
+
+            Return Nothing
+        End Function
 
         Private Async Sub UploadFiles_Loaded(sender As Object, e As RoutedEventArgs)
             Await LoadFilesAsync()
@@ -126,6 +169,100 @@ Namespace DPC.Views.DataReports.UploadFiles
                 txtStatus.Text = "Error loading files"
             End Try
         End Function
+
+        ' DOWNLOAD FUNCTION
+        Private Async Sub BtnDownload_Click(sender As Object, e As RoutedEventArgs)
+            Try
+                Dim button As Button = CType(sender, Button)
+                Dim fileId As String = button.Tag.ToString()
+
+                ' Get the file item from the list to get filename
+                Dim fileItem = files.FirstOrDefault(Function(f) f.Id = fileId)
+                If fileItem Is Nothing Then
+                    MessageBox.Show("File not found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return
+                End If
+
+                txtStatus.Text = $"Downloading {fileItem.FileName}..."
+
+                ' Retrieve file from MongoDB
+                Dim database As IMongoDatabase = SplashScreen.GetMongoDatabaseConnection()
+                Dim collection As IMongoCollection(Of BsonDocument) = database.GetCollection(Of BsonDocument)(collectionName)
+
+                ' Create filter using BsonDocument
+                Dim filter As New BsonDocument("_id", New ObjectId(fileId))
+                Dim document = Await collection.Find(filter).FirstOrDefaultAsync()
+
+                If document Is Nothing Then
+                    MessageBox.Show("File not found in database!", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return
+                End If
+
+                ' Get the Base64 data
+                Dim base64Data As String = document("fileData").AsString
+                Dim fileBytes() As Byte = Convert.FromBase64String(base64Data)
+
+                ' Open Save File Dialog
+                Dim saveFileDialog As New SaveFileDialog()
+                saveFileDialog.FileName = fileItem.FileName
+                saveFileDialog.Filter = $"All Files (*.*)|*.*"
+
+                If saveFileDialog.ShowDialog() = True Then
+                    ' Save the file
+                    File.WriteAllBytes(saveFileDialog.FileName, fileBytes)
+                    MessageBox.Show($"File downloaded successfully to: {saveFileDialog.FileName}", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                    txtStatus.Text = $"{files.Count} file(s) found"
+                Else
+                    txtStatus.Text = "Download cancelled"
+                End If
+
+            Catch ex As Exception
+                MessageBox.Show($"Error downloading file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                txtStatus.Text = "Error downloading file"
+            End Try
+        End Sub
+
+        ' DELETE FUNCTION
+        Private Async Sub BtnDelete_Click(sender As Object, e As RoutedEventArgs)
+            Try
+                Dim button As Button = CType(sender, Button)
+                Dim fileId As String = button.Tag.ToString()
+
+                ' Get the file item from the list to show filename in confirmation
+                Dim fileItem = files.FirstOrDefault(Function(f) f.Id = fileId)
+                If fileItem Is Nothing Then
+                    MessageBox.Show("File not found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return
+                End If
+
+                ' Confirm deletion
+                Dim result = MessageBox.Show($"Are you sure you want to delete '{fileItem.FileName}'?{Environment.NewLine}{Environment.NewLine}This action cannot be undone.",
+                                            "Confirm Delete",
+                                            MessageBoxButton.YesNo,
+                                            MessageBoxImage.Warning)
+
+                If result = MessageBoxResult.Yes Then
+                    txtStatus.Text = $"Deleting {fileItem.FileName}..."
+
+                    ' Delete from MongoDB
+                    Dim database As IMongoDatabase = SplashScreen.GetMongoDatabaseConnection()
+                    Dim collection As IMongoCollection(Of BsonDocument) = database.GetCollection(Of BsonDocument)(collectionName)
+
+                    ' Create filter using BsonDocument
+                    Dim filter As New BsonDocument("_id", New ObjectId(fileId))
+                    Await collection.DeleteOneAsync(filter)
+
+                    MessageBox.Show($"File '{fileItem.FileName}' deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+
+                    ' Reload the files list
+                    Await LoadFilesAsync()
+                End If
+
+            Catch ex As Exception
+                MessageBox.Show($"Error deleting file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                txtStatus.Text = "Error deleting file"
+            End Try
+        End Sub
 
         Private Function FormatFileSize(bytes As Long) As String
             Dim sizes() As String = {"B", "KB", "MB", "GB", "TB"}
