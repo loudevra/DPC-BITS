@@ -68,23 +68,18 @@ Namespace DPC.Data.Helpers.ViewLoader
                         ' Promo Codes Navigation
                     Case "promocodes"
                         Return New PromoCodes.ManagePromoCodes()
-
                     Case "addpromocode"
                         Return New PromoCodes.AddPromoCode()
-
                     Case "newwalkinclient"
                         Return New Stocks.PurchaseOrder.WalkIn.AddNewWalkInClient()
-
                     Case "walkinorder"
                         Return New Stocks.PurchaseOrder.WalkIn.WalkInNewOrder()
 
                          ' CRM Navigation
                     Case "clientgroups"
                         Return New CRM.ClientGroup.ClientGroups()
-
                     Case "addnewclientgroup"
                         Return New CRM.ClientGroup.AddNewClientGroup()
-
                     Case "manageclients"
                         Return New CRM.CRMClients()
                     Case "managetickets"
@@ -97,12 +92,6 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New CRM.CRMCorporationalTabStructured()
                     Case "selectclients"
                         Return New CRM.SelectClients()
-
-
-
-
-
-
                         Return New CRM.CRMNewResidentialClient
                     Case "businnessregisters"
                         Return New DPC.Views.DataReports.BusinessRegisters.DTRBusinessRegisters()
@@ -267,6 +256,11 @@ Namespace DPC.Data.Helpers.ViewLoader
 
                     Case "navigatetocostestimate"
                         Return New Sales.Quotes.CostEstimate()
+
+                     'DataReports - Upload Files Navigation
+                    Case "hrmuploadfiles"
+                        Return New Views.DataReports.UploadFiles.UploadFiles()
+
 
 
                         'Misc - Cash Advance Navigation
@@ -477,7 +471,9 @@ Namespace DPC.Data.Helpers.ViewLoader
             ElseIf typeName = "navaddaccount" Then
                 Return "navaddaccount"
 
-
+                ' DataReports Navigation
+            ElseIf typeName = "hrmuploadfiles" Then
+                Return "hrmuploadfiles"
 
                 ' Projects Navigation
             ElseIf typeName = "newproject" Then
