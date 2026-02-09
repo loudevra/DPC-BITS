@@ -963,6 +963,9 @@
     <Compile Include="Views\DataReports\SummaryReportsTab.xaml.vb">
       <DependentUpon>SummaryReportsTab.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\DataReports\UploadFileOnline\UploadFileOnline.xaml.vb">
+      <DependentUpon>UploadFileOnline.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\HRM\Departments\DepartmentsView.xaml.vb">
       <DependentUpon>DepartmentsView.xaml</DependentUpon>
     </Compile>
@@ -1839,6 +1842,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DataReports\SummaryReportsTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DataReports\UploadFileOnline\UploadFileOnline.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

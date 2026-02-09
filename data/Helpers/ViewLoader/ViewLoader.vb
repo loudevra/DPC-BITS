@@ -259,7 +259,7 @@ Namespace DPC.Data.Helpers.ViewLoader
 
                      'DataReports - Upload Files Navigation
                     Case "hrmuploadfiles"
-                        Return New Views.DataReports.UploadFiles.UploadFiles()
+                        Return New Views.DataReports.UploadFileOnline.UploadFileOnline
 
 
 

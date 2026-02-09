@@ -1,0 +1,316 @@
+﻿Imports System.IO
+Imports Microsoft.Win32
+Imports MongoDB.Driver
+Imports MongoDB.Bson
+Imports System.Collections.ObjectModel
+
+Namespace DPC.Views.DataReports.UploadFileOnline
+    Public Class UploadFileOnline
+        Private ReadOnly collectionName As String = "media_files"
+        Private files As ObservableCollection(Of MediaFileItem)
+
+        Public Sub New()
+            InitializeComponent()
+            files = New ObservableCollection(Of MediaFileItem)()
+            dgFiles.ItemsSource = files
+
+            ' Load files when the control is loaded
+            AddHandler Loaded, AddressOf UploadFiles_Loaded
+            ' Wire up DataGrid row events
+            AddHandler dgFiles.LoadingRow, AddressOf DataGrid_LoadingRow
+        End Sub
+
+        Private Sub DataGrid_LoadingRow(sender As Object, e As DataGridRowEventArgs)
+            ' Find the buttons in the row and attach event handlers
+            AddHandler e.Row.Loaded, Sub(rowSender, rowArgs)
+                                         Dim downloadButton = FindVisualChild(Of Button)(e.Row, "btnDownload")
+                                         Dim deleteButton = FindVisualChild(Of Button)(e.Row, "btnDelete")
+
+                                         If downloadButton IsNot Nothing Then
+                                             AddHandler downloadButton.Click, AddressOf BtnDownload_Click
+                                         End If
+
+                                         If deleteButton IsNot Nothing Then
+                                             AddHandler deleteButton.Click, AddressOf BtnDelete_Click
+                                         End If
+                                     End Sub
+        End Sub
+
+        ' Helper method to find visual children
+        Private Function FindVisualChild(Of T As DependencyObject)(parent As DependencyObject, childName As String) As T
+            If parent Is Nothing Then Return Nothing
+
+            Dim childrenCount As Integer = VisualTreeHelper.GetChildrenCount(parent)
+            For i As Integer = 0 To childrenCount - 1
+                Dim child = VisualTreeHelper.GetChild(parent, i)
+                Dim childType = TryCast(child, T)
+
+                If childType IsNot Nothing AndAlso TypeOf child Is FrameworkElement Then
+                    Dim frameworkElement = TryCast(child, FrameworkElement)
+                    If frameworkElement.Name = childName Then
+                        Return childType
+                    End If
+                End If
+
+                Dim childOfChild = FindVisualChild(Of T)(child, childName)
+                If childOfChild IsNot Nothing Then
+                    Return childOfChild
+                End If
+            Next
+
+            Return Nothing
+        End Function
+
+        Private Async Sub UploadFiles_Loaded(sender As Object, e As RoutedEventArgs)
+            Await LoadFilesAsync()
+        End Sub
+
+        Private Async Sub SelectFile_Click(sender As Object, e As RoutedEventArgs) Handles btnSelectFile.Click
+            Try
+                ' Open file dialog
+                Dim openFileDialog As New OpenFileDialog()
+                openFileDialog.Title = "Select File to Upload"
+                openFileDialog.Filter = "All Files (*.*)|*.*|Images (*.jpg;*.jpeg;*.png;*.gif)|*.jpg;*.jpeg;*.png;*.gif|Documents (*.pdf;*.docx;*.txt)|*.pdf;*.docx;*.txt"
+                openFileDialog.Multiselect = False
+
+                If openFileDialog.ShowDialog() = True Then
+                    ' Get file info
+                    Dim fileInfo As New FileInfo(openFileDialog.FileName)
+
+                    ' Check file size (optional - limit to 16MB for regular collection)
+                    If fileInfo.Length > 16 * 1024 * 1024 Then
+                        MessageBox.Show("File is too large. Maximum size is 16MB.", "File Too Large", MessageBoxButton.OK, MessageBoxImage.Warning)
+                        Return
+                    End If
+
+                    ' Show uploading status
+                    txtStatus.Text = $"Uploading {fileInfo.Name}..."
+
+                    ' Read file as byte array
+                    Dim fileBytes() As Byte = File.ReadAllBytes(openFileDialog.FileName)
+
+                    ' Convert to Base64
+                    Dim base64String As String = Convert.ToBase64String(fileBytes)
+
+                    ' Upload to MongoDB
+                    Await UploadFileToMongoDBAsync(fileInfo.Name, fileInfo.Extension, fileInfo.Length, base64String)
+
+                    MessageBox.Show($"File '{fileInfo.Name}' uploaded successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+
+                    ' Reload the files list
+                    Await LoadFilesAsync()
+                End If
+
+            Catch ex As Exception
+                MessageBox.Show($"Error selecting/uploading file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                txtStatus.Text = "Error uploading file"
+            End Try
+        End Sub
+
+        Private Async Function UploadFileToMongoDBAsync(fileName As String, fileExtension As String, fileSize As Long, base64Data As String) As Task
+            Try
+                ' Use your existing connection function
+                Dim database As IMongoDatabase = SplashScreen.GetMongoDatabaseConnection()
+                Dim collection As IMongoCollection(Of BsonDocument) = database.GetCollection(Of BsonDocument)(collectionName)
+
+                ' Create document to insert
+                Dim document As New BsonDocument From {
+                    {"fileName", fileName},
+                    {"fileExtension", fileExtension},
+                    {"fileSize", fileSize},
+                    {"uploadDate", DateTime.Now},
+                    {"fileData", base64Data},
+                    {"contentType", GetContentType(fileExtension)}
+                }
+
+                ' Insert into MongoDB
+                Await collection.InsertOneAsync(document)
+
+            Catch ex As Exception
+                Throw New Exception($"Failed to upload to MongoDB: {ex.Message}")
+            End Try
+        End Function
+
+        Private Async Function LoadFilesAsync() As Task
+            Try
+                txtStatus.Text = "Loading files..."
+                files.Clear()
+
+                ' Get database connection
+                Dim database As IMongoDatabase = SplashScreen.GetMongoDatabaseConnection()
+                Dim collection As IMongoCollection(Of BsonDocument) = database.GetCollection(Of BsonDocument)(collectionName)
+
+                ' Get all documents (excluding the file data to improve performance)
+                Dim projection = Builders(Of BsonDocument).Projection.Exclude("fileData")
+                Dim documents = Await collection.Find(New BsonDocument()).Project(projection).ToListAsync()
+
+                ' Convert to MediaFileItem objects
+                For Each doc In documents
+                    Dim fileSize As Long = If(doc.Contains("fileSize"), doc("fileSize").AsInt64, 0)
+
+                    Dim fileItem As New MediaFileItem With {
+                        .Id = doc("_id").ToString(),
+                        .FileName = If(doc.Contains("fileName"), doc("fileName").AsString, "Unknown"),
+                        .FileExtension = If(doc.Contains("fileExtension"), doc("fileExtension").AsString, ""),
+                        .FileSize = fileSize,
+                        .FileSizeFormatted = FormatFileSize(fileSize),
+                        .UploadDate = If(doc.Contains("uploadDate"), doc("uploadDate").ToUniversalTime(), DateTime.MinValue),
+                        .ContentType = If(doc.Contains("contentType"), doc("contentType").AsString, "")
+                    }
+
+                    files.Add(fileItem)
+                Next
+
+                ' Update status
+                txtStatus.Text = $"{files.Count} file(s) found"
+
+            Catch ex As Exception
+                MessageBox.Show($"Error loading files: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                txtStatus.Text = "Error loading files"
+            End Try
+        End Function
+
+        ' DOWNLOAD FUNCTION
+        Private Async Sub BtnDownload_Click(sender As Object, e As RoutedEventArgs)
+            Try
+                Dim button As Button = CType(sender, Button)
+                Dim fileId As String = button.Tag.ToString()
+
+                ' Get the file item from the list to get filename
+                Dim fileItem = files.FirstOrDefault(Function(f) f.Id = fileId)
+                If fileItem Is Nothing Then
+                    MessageBox.Show("File not found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return
+                End If
+
+                txtStatus.Text = $"Downloading {fileItem.FileName}..."
+
+                ' Retrieve file from MongoDB
+                Dim database As IMongoDatabase = SplashScreen.GetMongoDatabaseConnection()
+                Dim collection As IMongoCollection(Of BsonDocument) = database.GetCollection(Of BsonDocument)(collectionName)
+
+                ' Create filter using BsonDocument
+                Dim filter As New BsonDocument("_id", New ObjectId(fileId))
+                Dim document = Await collection.Find(filter).FirstOrDefaultAsync()
+
+                If document Is Nothing Then
+                    MessageBox.Show("File not found in database!", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return
+                End If
+
+                ' Get the Base64 data
+                Dim base64Data As String = document("fileData").AsString
+                Dim fileBytes() As Byte = Convert.FromBase64String(base64Data)
+
+                ' Open Save File Dialog
+                Dim saveFileDialog As New SaveFileDialog()
+                saveFileDialog.FileName = fileItem.FileName
+                saveFileDialog.Filter = $"All Files (*.*)|*.*"
+
+                If saveFileDialog.ShowDialog() = True Then
+                    ' Save the file
+                    File.WriteAllBytes(saveFileDialog.FileName, fileBytes)
+                    MessageBox.Show($"File downloaded successfully to: {saveFileDialog.FileName}", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                    txtStatus.Text = $"{files.Count} file(s) found"
+                Else
+                    txtStatus.Text = "Download cancelled"
+                End If
+
+            Catch ex As Exception
+                MessageBox.Show($"Error downloading file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                txtStatus.Text = "Error downloading file"
+            End Try
+        End Sub
+
+        ' DELETE FUNCTION
+        Private Async Sub BtnDelete_Click(sender As Object, e As RoutedEventArgs)
+            Try
+                Dim button As Button = CType(sender, Button)
+                Dim fileId As String = button.Tag.ToString()
+
+                ' Get the file item from the list to show filename in confirmation
+                Dim fileItem = files.FirstOrDefault(Function(f) f.Id = fileId)
+                If fileItem Is Nothing Then
+                    MessageBox.Show("File not found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return
+                End If
+
+                ' Confirm deletion
+                Dim result = MessageBox.Show($"Are you sure you want to delete '{fileItem.FileName}'?{Environment.NewLine}{Environment.NewLine}This action cannot be undone.",
+                                            "Confirm Delete",
+                                            MessageBoxButton.YesNo,
+                                            MessageBoxImage.Warning)
+
+                If result = MessageBoxResult.Yes Then
+                    txtStatus.Text = $"Deleting {fileItem.FileName}..."
+
+                    ' Delete from MongoDB
+                    Dim database As IMongoDatabase = SplashScreen.GetMongoDatabaseConnection()
+                    Dim collection As IMongoCollection(Of BsonDocument) = database.GetCollection(Of BsonDocument)(collectionName)
+
+                    ' Create filter using BsonDocument
+                    Dim filter As New BsonDocument("_id", New ObjectId(fileId))
+                    Await collection.DeleteOneAsync(filter)
+
+                    MessageBox.Show($"File '{fileItem.FileName}' deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+
+                    ' Reload the files list
+                    Await LoadFilesAsync()
+                End If
+
+            Catch ex As Exception
+                MessageBox.Show($"Error deleting file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                txtStatus.Text = "Error deleting file"
+            End Try
+        End Sub
+
+        Private Function FormatFileSize(bytes As Long) As String
+            Dim sizes() As String = {"B", "KB", "MB", "GB", "TB"}
+            Dim order As Integer = 0
+            Dim size As Double = bytes
+
+            While size >= 1024 AndAlso order < sizes.Length - 1
+                order += 1
+                size = size / 1024
+            End While
+
+            Return $"{size:0.##} {sizes(order)}"
+        End Function
+
+        Private Function GetContentType(fileExtension As String) As String
+            Select Case fileExtension.ToLower()
+                Case ".jpg", ".jpeg"
+                    Return "image/jpeg"
+                Case ".png"
+                    Return "image/png"
+                Case ".gif"
+                    Return "image/gif"
+                Case ".pdf"
+                    Return "application/pdf"
+                Case ".docx"
+                    Return "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                Case ".txt"
+                    Return "text/plain"
+                Case Else
+                    Return "application/octet-stream"
+            End Select
+        End Function
+    End Class
+
+    ' MediaFileItem class
+    Public Class MediaFileItem
+        Public Property Id As String
+        Public Property FileName As String
+        Public Property FileExtension As String
+        Public Property FileSize As Long
+        Public Property FileSizeFormatted As String
+        Public Property UploadDate As DateTime
+        Public Property ContentType As String
+
+        Public ReadOnly Property UploadDateFormatted As String
+            Get
+                Return UploadDate.ToString("MM/dd/yyyy hh:mm tt")
+            End Get
+        End Property
+    End Class
+End Namespace
