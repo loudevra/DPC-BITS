@@ -87,6 +87,11 @@ Namespace DPC.Views.DataReports.UploadFileOnline
                     ' Get file info
                     Dim fileInfo As New FileInfo(openFileDialog.FileName)
 
+                    If Await FileExistsInFolder(fileInfo.Name, fileInfo.Extension, _currentlySelectedFolderId) Then
+                        MessageBox.Show($"The file '{fileInfo.Name}' already exists in this folder.", "Duplicate File", MessageBoxButton.OK, MessageBoxImage.Warning)
+                        Return
+                    End If
+
                     ' Check file size (optional - limit to 16MB for regular collection)
                     If fileInfo.Length > 16 * 1024 * 1024 Then
                         MessageBox.Show("File is too large. Maximum size is 16MB.", "File Too Large", MessageBoxButton.OK, MessageBoxImage.Warning)
@@ -392,6 +397,26 @@ Namespace DPC.Views.DataReports.UploadFileOnline
                 Case Else
                     Return "application/octet-stream"
             End Select
+        End Function
+
+        Private Async Function FileExistsInFolder(fileName As String, fileExt As String, folderId As Long) As Task(Of Boolean)
+            Try
+                Dim database As IMongoDatabase = SplashScreen.GetMongoDatabaseConnection()
+                Dim collection = database.GetCollection(Of BsonDocument)(collectionName)
+
+                Dim filter = Builders(Of BsonDocument).Filter.And(
+                    Builders(Of BsonDocument).Filter.Eq(Of String)("fileName", fileName),
+                    Builders(Of BsonDocument).Filter.Eq(Of String)("fileExtension", fileExt),
+                    Builders(Of BsonDocument).Filter.Eq(Of Long)("_folderId", folderId)
+                )
+
+                ' Count documents that match all three criteria
+                Dim count = Await collection.CountDocumentsAsync(filter)
+                Return count > 0
+            Catch ex As Exception
+                Debug.WriteLine("Error checking file existence: " & ex.Message)
+                Return False
+            End Try
         End Function
 
         Private Sub HighlightSelectedFolder()

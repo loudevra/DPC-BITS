@@ -25,7 +25,25 @@ Namespace DPC.Components.Forms
             End Try
         End Sub
 
+        Private Function FolderExists(folderName As String) As Boolean
+            Using DatabaseConn = SplashScreen.GetDatabaseConnection()
+                DatabaseConn.Open()
+                ' Use COUNT to see if the name is already taken
+                Dim query As String = "SELECT COUNT(*) FROM folders WHERE name = @name"
+                Using cmd As New MySqlCommand(query, DatabaseConn)
+                    cmd.Parameters.AddWithValue("@name", folderName)
+                    Dim count As Integer = Convert.ToInt32(cmd.ExecuteScalar())
+                    Return count > 0
+                End Using
+            End Using
+        End Function
+
         Private Sub SaveFolderToDb(name As String, desc As String)
+            If FolderExists(txtFolderName.Text) Then
+                MessageBox.Show("A folder with this name already exists!", "Duplicate Folder", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Return ' Stop the save process
+            End If
+
             Try
                 Using DatabaseConn = SplashScreen.GetDatabaseConnection()
                     DatabaseConn.Open()
