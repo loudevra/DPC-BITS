@@ -307,7 +307,6 @@
                                                     </DataTemplate>
                                                 </ItemsControl.ItemTemplate>
                                             </ItemsControl>
-
                                         </StackPanel>
                                     </ScrollViewer>
                                 </Grid>

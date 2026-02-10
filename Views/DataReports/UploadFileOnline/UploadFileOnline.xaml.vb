@@ -3,32 +3,14 @@ Imports Microsoft.Win32
 Imports MongoDB.Driver
 Imports MongoDB.Bson
 Imports System.Collections.ObjectModel
+Imports MySql.Data.MySqlClient
 
 Namespace DPC.Views.DataReports.UploadFileOnline
-
-    'New class for folder item
-    Public Class FolderItem
-        Public Property ID As Integer
-        Public Property Name As String
-        Public Property Description As String
-        Public Property ItemCount As Integer
-        Public Property CreatedAt As DateTime
-        Public Sub New()
-            Me.CreatedAt = DateTime.Now
-        End Sub
-
-        Public Sub New(id As Integer, name As String, description As String)
-            Me.ID = id
-            Me.Name = name
-            Me.Description = description
-            Me.CreatedAt = DateTime.Now
-        End Sub
-    End Class
 
     Public Class UploadFileOnline
         Private ReadOnly collectionName As String = "media_files"
         Private files As ObservableCollection(Of MediaFileItem)
-        Private _currentlySelectedFolderId As Long = 101
+        Private _currentlySelectedFolderId As Long = 1
 
         'Collection of Folders
         Private _foldersData As New ObservableCollection(Of FolderItem)
@@ -42,27 +24,6 @@ Namespace DPC.Views.DataReports.UploadFileOnline
             AddHandler Loaded, AddressOf UploadFiles_Loaded
             ' Wire up DataGrid row events
             AddHandler dgFiles.LoadingRow, AddressOf DataGrid_LoadingRow
-
-            Dim myFolders As New List(Of FolderItem) From {
-            New FolderItem With {.ID = 1, .Name = "Gym Members", .Description = "Active subscribers"},
-            New FolderItem With {.ID = 2, .Name = "Payments", .Description = "Monthly records"},
-            New FolderItem With {.ID = 3, .Name = "Equipment", .Description = "Inventory list"},
-            New FolderItem With {.ID = 1, .Name = "Gym Members", .Description = "Active subscribers"},
-            New FolderItem With {.ID = 2, .Name = "Payments", .Description = "Monthly records"},
-            New FolderItem With {.ID = 1, .Name = "Gym Members", .Description = "Active subscribers"},
-            New FolderItem With {.ID = 2, .Name = "Payments", .Description = "Monthly records"},
-            New FolderItem With {.ID = 1, .Name = "Gym Members", .Description = "Active subscribers"},
-            New FolderItem With {.ID = 2, .Name = "Payments", .Description = "Monthly records"},
-            New FolderItem With {.ID = 1, .Name = "Gym Members", .Description = "Active subscribers"},
-            New FolderItem With {.ID = 2, .Name = "Payments", .Description = "Monthly records"},
-            New FolderItem With {.ID = 1, .Name = "Gym Members", .Description = "Active subscribers"},
-            New FolderItem With {.ID = 2, .Name = "Payments", .Description = "Monthly records"}
-            }
-
-            _foldersData.Clear()
-            For Each f In myFolders
-                _foldersData.Add(f)
-            Next
 
             FoldersList.ItemsSource = _foldersData
         End Sub
@@ -109,7 +70,8 @@ Namespace DPC.Views.DataReports.UploadFileOnline
         End Function
 
         Private Async Sub UploadFiles_Loaded(sender As Object, e As RoutedEventArgs)
-            Await LoadFilesAsync(1)
+            Folders_Load()
+            Await LoadFilesAsync(_currentlySelectedFolderId)
         End Sub
 
         Private Async Sub SelectFile_Click(sender As Object, e As RoutedEventArgs) Handles btnSelectFile.Click
@@ -140,7 +102,7 @@ Namespace DPC.Views.DataReports.UploadFileOnline
                     Dim base64String As String = Convert.ToBase64String(fileBytes)
 
                     ' Upload to MongoDB
-                    Await UploadFileToMongoDBAsync(fileInfo.Name, fileInfo.Extension, fileInfo.Length, base64String)
+                    Await UploadFileToMongoDBAsync(_currentlySelectedFolderId, fileInfo.Name, fileInfo.Extension, fileInfo.Length, base64String)
 
                     MessageBox.Show($"File '{fileInfo.Name}' uploaded successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
 
@@ -159,12 +121,47 @@ Namespace DPC.Views.DataReports.UploadFileOnline
             If btn IsNot Nothing Then
                 _currentlySelectedFolderId = CLng(btn.Tag)
 
-                ' Load ONLY the files for this folder
                 Await LoadFilesAsync(_currentlySelectedFolderId)
             End If
         End Sub
 
-        Private Async Function UploadFileToMongoDBAsync(fileName As String, fileExtension As String, fileSize As Long, base64Data As String) As Task
+        Private Sub AddFolderToList(id As Integer, name As String, description As String)
+            Dim newFolder As New FolderItem(id, name, description)
+
+            _foldersData.Add(newFolder)
+        End Sub
+
+        Private Sub Folders_Load()
+            _foldersData.Clear()
+
+            Try
+                Using DatabaseConn = SplashScreen.GetDatabaseConnection()
+                    DatabaseConn.Open()
+
+                    Dim query As String = "SELECT id, name, description FROM folders"
+
+                    Using cmd As New MySqlCommand(query, DatabaseConn)
+                        Using reader = cmd.ExecuteReader()
+                            While reader.Read()
+
+                                Dim id As Integer = Convert.ToInt32(reader("id"))
+                                Dim name As String = reader("name").ToString()
+                                Dim description As String = reader("description").ToString()
+
+                                Debug.WriteLine(id)
+
+                                _foldersData.Add(New FolderItem(id, name, description))
+                            End While
+                        End Using
+                    End Using
+                End Using
+
+            Catch ex As Exception
+                MessageBox.Show("Failed to load folders: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+        End Sub
+
+        Private Async Function UploadFileToMongoDBAsync(folderId As Long, fileName As String, fileExtension As String, fileSize As Long, base64Data As String) As Task
             Try
                 ' Use your existing connection function
                 Dim database As IMongoDatabase = SplashScreen.GetMongoDatabaseConnection()
@@ -172,6 +169,7 @@ Namespace DPC.Views.DataReports.UploadFileOnline
 
                 ' Create document to insert
                 Dim document As New BsonDocument From {
+                    {"_folderId", folderId},
                     {"fileName", fileName},
                     {"fileExtension", fileExtension},
                     {"fileSize", fileSize},
@@ -224,6 +222,7 @@ Namespace DPC.Views.DataReports.UploadFileOnline
 
                 ' Update status
                 txtStatus.Text = $"{files.Count} file(s) found"
+                txtFolderStatus.Text = $"{_foldersData.Count} file(s) found"
 
             Catch ex As Exception
                 MessageBox.Show($"Error loading files: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
@@ -316,7 +315,7 @@ Namespace DPC.Views.DataReports.UploadFileOnline
                     MessageBox.Show($"File '{fileItem.FileName}' deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
 
                     ' Reload the files list
-                    Await LoadFilesAsync(101)
+                    Await LoadFilesAsync(_currentlySelectedFolderId)
                 End If
 
             Catch ex As Exception
@@ -374,5 +373,25 @@ Namespace DPC.Views.DataReports.UploadFileOnline
                 Return UploadDate.ToString("MM/dd/yyyy hh:mm tt")
             End Get
         End Property
+    End Class
+
+
+    'FolderItem Class
+    Public Class FolderItem
+        Public Property ID As Integer
+        Public Property Name As String
+        Public Property Description As String
+        Public Property ItemCount As Integer
+        Public Property CreatedAt As DateTime
+        Public Sub New()
+            Me.CreatedAt = DateTime.Now
+        End Sub
+
+        Public Sub New(id As Integer, name As String, description As String)
+            Me.ID = id
+            Me.Name = name
+            Me.Description = description
+            Me.CreatedAt = DateTime.Now
+        End Sub
     End Class
 End Namespace
