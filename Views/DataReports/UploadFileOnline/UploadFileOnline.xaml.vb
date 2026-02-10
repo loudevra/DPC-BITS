@@ -4,6 +4,7 @@ Imports MongoDB.Driver
 Imports MongoDB.Bson
 Imports System.Collections.ObjectModel
 Imports MySql.Data.MySqlClient
+Imports System.Windows.Controls.Primitives
 
 Namespace DPC.Views.DataReports.UploadFileOnline
 
@@ -11,6 +12,8 @@ Namespace DPC.Views.DataReports.UploadFileOnline
         Private ReadOnly collectionName As String = "media_files"
         Private files As ObservableCollection(Of MediaFileItem)
         Private _currentlySelectedFolderId As Long = 1
+        Private folderPopup As Popup
+        Private recentlyClosedFolder As Boolean = False
 
         'Collection of Folders
         Private _foldersData As New ObservableCollection(Of FolderItem)
@@ -125,10 +128,54 @@ Namespace DPC.Views.DataReports.UploadFileOnline
             End If
         End Sub
 
-        Private Sub AddFolderToList(id As Integer, name As String, description As String)
-            Dim newFolder As New FolderItem(id, name, description)
+        Private Sub OpenAddFolderPopup(sender As Object, e As RoutedEventArgs) Handles btnAddFolder.Click
+            Dim clickedButton As Button = TryCast(sender, Button)
+            If clickedButton Is Nothing Then Return
 
-            _foldersData.Add(newFolder)
+            ' Prevents the popup from re-opening immediately if it was just closed by a click
+            If recentlyClosedFolder Then
+                recentlyClosedFolder = False
+                Return
+            End If
+
+            ' Close if already open
+            If folderPopup IsNot Nothing AndAlso folderPopup.IsOpen Then
+                folderPopup.IsOpen = False
+                Return
+            End If
+
+            ' Initialize the Popup
+            folderPopup = New Popup With {
+                .PlacementTarget = clickedButton,
+                .Placement = PlacementMode.Bottom,
+                .StaysOpen = False, ' Closes when clicking outside
+                .AllowsTransparency = True,
+                .PopupAnimation = PopupAnimation.Fade
+            }
+
+            ' Initialize your AddFolder Component
+            Dim addFolderForm As New DPC.Components.Forms.AddFolder()
+
+            ' Handle the refresh event (Ensure this event exists in your AddFolder class)
+            AddHandler addFolderForm.AddFolder, AddressOf OnFolderAdded
+
+            ' Set the form as the child of the popup
+            folderPopup.Child = addFolderForm
+
+            ' Handle closing state
+            AddHandler folderPopup.Closed, Sub()
+                                               recentlyClosedFolder = True
+                                               Task.Delay(100).ContinueWith(Sub() recentlyClosedFolder = False, TaskScheduler.FromCurrentSynchronizationContext())
+                                           End Sub
+
+            folderPopup.IsOpen = True
+        End Sub
+
+        ' This runs when the database insert is done
+
+        Private Sub OnFolderAdded()
+            If folderPopup IsNot Nothing Then folderPopup.IsOpen = False
+            Folders_Load() ' Refresh your MariaDB folder buttons
         End Sub
 
         Private Sub Folders_Load()

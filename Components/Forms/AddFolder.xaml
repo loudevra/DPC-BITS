@@ -38,7 +38,7 @@
                 </Border>
                 
                 <!-- Add Button-->
-                <Button Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#52C69D" Click="AddFolder">
+                <Button x:Name="btnSave" Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#52C69D">
                     <TextBlock Text="Add" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="15"/>
                 </Button>
             </StackPanel>
