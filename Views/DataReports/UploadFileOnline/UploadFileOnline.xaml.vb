@@ -203,6 +203,7 @@ Namespace DPC.Views.DataReports.UploadFileOnline
                     End Using
                 End Using
 
+                txtFolderStatus.Text = $"{_foldersData.Count} folder(s) found"
             Catch ex As Exception
                 MessageBox.Show("Failed to load folders: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
@@ -269,7 +270,6 @@ Namespace DPC.Views.DataReports.UploadFileOnline
 
                 ' Update status
                 txtStatus.Text = $"{files.Count} file(s) found"
-                txtFolderStatus.Text = $"{_foldersData.Count} file(s) found"
 
             Catch ex As Exception
                 MessageBox.Show($"Error loading files: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
