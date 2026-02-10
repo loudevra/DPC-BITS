@@ -11,12 +11,10 @@ Namespace DPC.Views.DataReports.UploadFileOnline
     Public Class UploadFileOnline
         Private ReadOnly collectionName As String = "media_files"
         Private files As ObservableCollection(Of MediaFileItem)
+        Private _foldersData As New ObservableCollection(Of FolderItem)
         Private _currentlySelectedFolderId As Long = 1
         Private folderPopup As Popup
         Private recentlyClosedFolder As Boolean = False
-
-        'Collection of Folders
-        Private _foldersData As New ObservableCollection(Of FolderItem)
 
         Public Sub New()
             InitializeComponent()
@@ -123,6 +121,7 @@ Namespace DPC.Views.DataReports.UploadFileOnline
             Dim btn = TryCast(sender, Button)
             If btn IsNot Nothing Then
                 _currentlySelectedFolderId = CLng(btn.Tag)
+                HighlightSelectedFolder()
 
                 Await LoadFilesAsync(_currentlySelectedFolderId)
             End If
@@ -132,37 +131,30 @@ Namespace DPC.Views.DataReports.UploadFileOnline
             Dim clickedButton As Button = TryCast(sender, Button)
             If clickedButton Is Nothing Then Return
 
-            ' Prevents the popup from re-opening immediately if it was just closed by a click
             If recentlyClosedFolder Then
                 recentlyClosedFolder = False
                 Return
             End If
 
-            ' Close if already open
             If folderPopup IsNot Nothing AndAlso folderPopup.IsOpen Then
                 folderPopup.IsOpen = False
                 Return
             End If
 
-            ' Initialize the Popup
             folderPopup = New Popup With {
                 .PlacementTarget = clickedButton,
                 .Placement = PlacementMode.Bottom,
-                .StaysOpen = False, ' Closes when clicking outside
+                .StaysOpen = False,
                 .AllowsTransparency = True,
                 .PopupAnimation = PopupAnimation.Fade
             }
 
-            ' Initialize your AddFolder Component
             Dim addFolderForm As New DPC.Components.Forms.AddFolder()
 
-            ' Handle the refresh event (Ensure this event exists in your AddFolder class)
             AddHandler addFolderForm.AddFolder, AddressOf OnFolderAdded
 
-            ' Set the form as the child of the popup
             folderPopup.Child = addFolderForm
 
-            ' Handle closing state
             AddHandler folderPopup.Closed, Sub()
                                                recentlyClosedFolder = True
                                                Task.Delay(100).ContinueWith(Sub() recentlyClosedFolder = False, TaskScheduler.FromCurrentSynchronizationContext())
@@ -171,11 +163,10 @@ Namespace DPC.Views.DataReports.UploadFileOnline
             folderPopup.IsOpen = True
         End Sub
 
-        ' This runs when the database insert is done
 
         Private Sub OnFolderAdded()
             If folderPopup IsNot Nothing Then folderPopup.IsOpen = False
-            Folders_Load() ' Refresh your MariaDB folder buttons
+            Folders_Load()
         End Sub
 
         Private Sub Folders_Load()
@@ -402,6 +393,28 @@ Namespace DPC.Views.DataReports.UploadFileOnline
                     Return "application/octet-stream"
             End Select
         End Function
+
+        Private Sub HighlightSelectedFolder()
+            Dispatcher.BeginInvoke(Sub()
+                                       FoldersList.UpdateLayout()
+
+                                       For i As Integer = 0 To FoldersList.Items.Count - 1
+                                           Dim itemContainer = TryCast(FoldersList.ItemContainerGenerator.ContainerFromIndex(i), FrameworkElement)
+                                           If itemContainer Is Nothing Then Continue For
+
+                                           Dim folderBorder = FindVisualChild(Of Border)(itemContainer, "")
+                                           Dim btn = FindVisualChild(Of Button)(itemContainer, "")
+
+                                           If folderBorder IsNot Nothing AndAlso btn IsNot Nothing Then
+                                               If CLng(btn.Tag) = _currentlySelectedFolderId Then
+                                                   folderBorder.Background = New SolidColorBrush(Colors.LightBlue)
+                                               Else
+                                                   folderBorder.Background = New SolidColorBrush(Color.FromRgb(241, 243, 244))
+                                               End If
+                                           End If
+                                       Next
+                                   End Sub, System.Windows.Threading.DispatcherPriority.Loaded)
+        End Sub
     End Class
 
     ' MediaFileItem class
