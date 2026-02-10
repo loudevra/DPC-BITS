@@ -200,7 +200,7 @@
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Grid.Column="0"
-                               Text="Upload Files Here"
+                               Text="Upload Files There"
                                FontSize="35"
                                FontWeight="Bold"
                                FontFamily="Lexend"
