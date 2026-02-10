@@ -196,6 +196,7 @@
                         <Grid Margin="0,0,0,10">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
@@ -214,12 +215,14 @@
                                 Background="#555555"
                                 Foreground="#ffffff"
                                 Width="140"
-                                Height="29">
+                                Height="29"
+                                Margin="5,0,5,0">
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <materialDesign:PackIcon Kind="FolderUploadOutline"
+                                    <materialDesign:PackIcon Kind="FileUploadDownloadOutline"
                                  Width="16"
                                  Height="16"
-                                 VerticalAlignment="Center" />
+                                 VerticalAlignment="Center" 
+                                 Margin="0,0,5,0"/>
                                     <TextBlock Text="Select File"
                    FontSize="15"
                    FontFamily="Lexend"
@@ -227,96 +230,174 @@
                    VerticalAlignment="Center"/>
                                 </StackPanel>
                             </Button>
-                        </Grid>
 
+                            <Button x:Name="btnAddFolder"
+                                Grid.Column="2"
+                                Style="{StaticResource RoundedButtonStyle}"
+                                Background="#555555"
+                                Foreground="#ffffff"
+                                Width="140"
+                                Height="29"
+                                Margin="5,0,5,0">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <materialDesign:PackIcon Kind="FolderUploadOutline"
+                                 Width="16"
+                                 Height="16"
+                                 VerticalAlignment="Center" 
+                                 Margin="0,0,5,0"/>
+                                <TextBlock Text="Create Folder"
+                   FontSize="15"
+                   FontFamily="Lexend"
+                   Foreground="#ffffff"
+                   VerticalAlignment="Center"/>
+                            </StackPanel>
+                            </Button>
+                        </Grid>
 
 
                         <!-- Table and Controls -->
                         <Border Background="White" CornerRadius="8" Padding="15">
                             <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="200"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <Grid Grid.Column="0" 
+                                      Margin="0,0,10,0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
 
-                                <!-- Status Text -->
-                                <TextBlock x:Name="txtStatus" 
-                                           Grid.Row="0"
-                                           Text="Loading files..." 
-                                           FontFamily="Lexend"
-                                           FontSize="12"
-                                           Foreground="#666666"
-                                           Margin="0,0,0,10"/>
+                                    <TextBlock x:Name="txtFolderStatus" 
+                                       Grid.Row="0"
+                                       Text="Loading Folders..." 
+                                       FontFamily="Lexend"
+                                       FontSize="12"
+                                       Foreground="#666666"
+                                       Margin="0,0,0,10"/>
 
-                                <!-- DataGrid -->
-                                <DataGrid x:Name="dgFiles"
-                                          Grid.Row="1"
-                                          AutoGenerateColumns="False"
-                                          CanUserAddRows="False"
-                                          CanUserDeleteRows="False"
-                                          IsReadOnly="True"
-                                          SelectionMode="Single"
-                                          HeadersVisibility="Column"
-                                          GridLinesVisibility="Horizontal"
-                                          RowHeight="40"
-                                          Background="White"
-                                          BorderThickness="0">
-                                    <DataGrid.Columns>
-                                        <!-- File Name Column -->
-                                        <DataGridTextColumn Header="File Name" 
-                                                            Binding="{Binding FileName}" 
-                                                            Width="2*"
-                                                            FontFamily="Lexend"/>
+                                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden" MaxHeight="300">
+                                        <StackPanel Orientation="Vertical">
+                                            <ItemsControl x:Name="FoldersList">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Border Background="#f1f3f4" CornerRadius="5" Margin="0,0,0,5" ClipToBounds="True">
+                                                            <Button Background="Transparent" 
+                                                                BorderThickness="0" 
+                                                                HorizontalContentAlignment="Left" 
+                                                                Padding="5"
+                                                                materialDesign:ButtonAssist.CornerRadius="5"
+                                                                Click="Folder_Click"
+                                                                Tag="{Binding ID}">
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <materialDesign:PackIcon Kind="Folder" VerticalAlignment="Center" Margin="5,0,10,0"/>
+                                                                    <Grid VerticalAlignment="Center">
+                                                                        <Grid.RowDefinitions>
+                                                                            <RowDefinition Height="Auto"/>
+                                                                            <RowDefinition Height="Auto"/>
+                                                                        </Grid.RowDefinitions>
+                                                                        <TextBlock Text="{Binding Name}" FontWeight="Bold" Grid.Row="0"/>
+                                                                        <TextBlock Text="{Binding Description}" Foreground="Gray" Grid.Row="1"/>
+                                                                    </Grid>
+                                                                </StackPanel>
+                                                            </Button>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
 
-                                        <!-- File Type Column -->
-                                        <DataGridTextColumn Header="Type" 
-                                                            Binding="{Binding FileExtension}" 
-                                                            Width="Auto"
-                                                            FontFamily="Lexend"/>
+                                        </StackPanel>
+                                    </ScrollViewer>
+                                </Grid>
 
-                                        <!-- File Size Column -->
-                                        <DataGridTextColumn Header="Size" 
-                                                            Binding="{Binding FileSizeFormatted}" 
-                                                            Width="Auto"
-                                                            FontFamily="Lexend"/>
+                                <Grid Grid.Column="1"
+                                      Margin="10,0,0,0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
 
-                                        <!-- Upload Date Column -->
-                                        <DataGridTextColumn Header="Upload Date" 
-                                                            Binding="{Binding UploadDateFormatted}" 
-                                                            Width="*"
-                                                            FontFamily="Lexend"/>
+                                    <!-- Status Text -->
+                                    <TextBlock x:Name="txtStatus" 
+                                               Grid.Row="0"
+                                               Text="Loading files..." 
+                                               FontFamily="Lexend"
+                                               FontSize="12"
+                                               Foreground="#666666"
+                                               Margin="0,0,0,10"/>
 
-                                        <!-- Actions Column -->
-                                        <DataGridTemplateColumn Header="Actions" Width="Auto">
-                                            <DataGridTemplateColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <Button x:Name="btnDownload"
-                        Style="{StaticResource IconButton}"
-                        ToolTip="Download"
-                        Tag="{Binding Id}"
-                        Margin="5,0">
-                                                            <materialDesign:PackIcon Kind="CloudDownloadOutline" 
-                                             Width="20" 
-                                             Height="20" 
-                                             Foreground="#456B2E"/>
-                                                        </Button>
-                                                        <Button x:Name="btnDelete"
-                        Style="{StaticResource IconButton}"
-                        ToolTip="Delete"
-                        Tag="{Binding Id}"
-                        Margin="5,0">
-                                                            <materialDesign:PackIcon Kind="DeleteOutline" 
-                                             Width="20" 
-                                             Height="20" 
-                                             Foreground="#D32F2F"/>
-                                                        </Button>
-                                                    </StackPanel>
-                                                </DataTemplate>
-                                            </DataGridTemplateColumn.CellTemplate>
-                                        </DataGridTemplateColumn>
-                                    </DataGrid.Columns>
-                                </DataGrid>
+                                    <!-- DataGrid -->
+                                    <DataGrid x:Name="dgFiles"
+                                              Grid.Row="1"
+                                              AutoGenerateColumns="False"
+                                              CanUserAddRows="False"
+                                              CanUserDeleteRows="False"
+                                              IsReadOnly="True"
+                                              SelectionMode="Single"
+                                              HeadersVisibility="Column"
+                                              GridLinesVisibility="Horizontal"
+                                              RowHeight="40"
+                                              Background="White"
+                                              BorderThickness="0">
+                                        <DataGrid.Columns>
+                                            <!-- File Name Column -->
+                                            <DataGridTextColumn Header="File Name" 
+                                                                Binding="{Binding FileName}" 
+                                                                Width="2*"
+                                                                FontFamily="Lexend"/>
+
+                                            <!-- File Type Column -->
+                                            <DataGridTextColumn Header="Type" 
+                                                                Binding="{Binding FileExtension}" 
+                                                                Width="Auto"
+                                                                FontFamily="Lexend"/>
+
+                                            <!-- File Size Column -->
+                                            <DataGridTextColumn Header="Size" 
+                                                                Binding="{Binding FileSizeFormatted}" 
+                                                                Width="Auto"
+                                                                FontFamily="Lexend"/>
+
+                                            <!-- Upload Date Column -->
+                                            <DataGridTextColumn Header="Upload Date" 
+                                                                Binding="{Binding UploadDateFormatted}" 
+                                                                Width="*"
+                                                                FontFamily="Lexend"/>
+
+                                            <!-- Actions Column -->
+                                            <DataGridTemplateColumn Header="Actions" Width="Auto">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Button x:Name="btnDownload"
+                            Style="{StaticResource IconButton}"
+                            ToolTip="Download"
+                            Tag="{Binding Id}"
+                            Margin="5,0">
+                                                                <materialDesign:PackIcon Kind="CloudDownloadOutline" 
+                                                 Width="20" 
+                                                 Height="20" 
+                                                 Foreground="#456B2E"/>
+                                                            </Button>
+                                                            <Button x:Name="btnDelete"
+                            Style="{StaticResource IconButton}"
+                            ToolTip="Delete"
+                            Tag="{Binding Id}"
+                            Margin="5,0">
+                                                                <materialDesign:PackIcon Kind="DeleteOutline" 
+                                                 Width="20" 
+                                                 Height="20" 
+                                                 Foreground="#D32F2F"/>
+                                                            </Button>
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </Grid>
                             </Grid>
                         </Border>
                     </StackPanel>

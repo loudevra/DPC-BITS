@@ -5,9 +5,33 @@ Imports MongoDB.Bson
 Imports System.Collections.ObjectModel
 
 Namespace DPC.Views.DataReports.UploadFileOnline
+
+    'New class for folder item
+    Public Class FolderItem
+        Public Property ID As Integer
+        Public Property Name As String
+        Public Property Description As String
+        Public Property ItemCount As Integer
+        Public Property CreatedAt As DateTime
+        Public Sub New()
+            Me.CreatedAt = DateTime.Now
+        End Sub
+
+        Public Sub New(id As Integer, name As String, description As String)
+            Me.ID = id
+            Me.Name = name
+            Me.Description = description
+            Me.CreatedAt = DateTime.Now
+        End Sub
+    End Class
+
     Public Class UploadFileOnline
         Private ReadOnly collectionName As String = "media_files"
         Private files As ObservableCollection(Of MediaFileItem)
+        Private _currentlySelectedFolderId As Long = 101
+
+        'Collection of Folders
+        Private _foldersData As New ObservableCollection(Of FolderItem)
 
         Public Sub New()
             InitializeComponent()
@@ -18,6 +42,29 @@ Namespace DPC.Views.DataReports.UploadFileOnline
             AddHandler Loaded, AddressOf UploadFiles_Loaded
             ' Wire up DataGrid row events
             AddHandler dgFiles.LoadingRow, AddressOf DataGrid_LoadingRow
+
+            Dim myFolders As New List(Of FolderItem) From {
+            New FolderItem With {.ID = 1, .Name = "Gym Members", .Description = "Active subscribers"},
+            New FolderItem With {.ID = 2, .Name = "Payments", .Description = "Monthly records"},
+            New FolderItem With {.ID = 3, .Name = "Equipment", .Description = "Inventory list"},
+            New FolderItem With {.ID = 1, .Name = "Gym Members", .Description = "Active subscribers"},
+            New FolderItem With {.ID = 2, .Name = "Payments", .Description = "Monthly records"},
+            New FolderItem With {.ID = 1, .Name = "Gym Members", .Description = "Active subscribers"},
+            New FolderItem With {.ID = 2, .Name = "Payments", .Description = "Monthly records"},
+            New FolderItem With {.ID = 1, .Name = "Gym Members", .Description = "Active subscribers"},
+            New FolderItem With {.ID = 2, .Name = "Payments", .Description = "Monthly records"},
+            New FolderItem With {.ID = 1, .Name = "Gym Members", .Description = "Active subscribers"},
+            New FolderItem With {.ID = 2, .Name = "Payments", .Description = "Monthly records"},
+            New FolderItem With {.ID = 1, .Name = "Gym Members", .Description = "Active subscribers"},
+            New FolderItem With {.ID = 2, .Name = "Payments", .Description = "Monthly records"}
+            }
+
+            _foldersData.Clear()
+            For Each f In myFolders
+                _foldersData.Add(f)
+            Next
+
+            FoldersList.ItemsSource = _foldersData
         End Sub
 
         Private Sub DataGrid_LoadingRow(sender As Object, e As DataGridRowEventArgs)
@@ -62,7 +109,7 @@ Namespace DPC.Views.DataReports.UploadFileOnline
         End Function
 
         Private Async Sub UploadFiles_Loaded(sender As Object, e As RoutedEventArgs)
-            Await LoadFilesAsync()
+            Await LoadFilesAsync(1)
         End Sub
 
         Private Async Sub SelectFile_Click(sender As Object, e As RoutedEventArgs) Handles btnSelectFile.Click
@@ -98,13 +145,23 @@ Namespace DPC.Views.DataReports.UploadFileOnline
                     MessageBox.Show($"File '{fileInfo.Name}' uploaded successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
 
                     ' Reload the files list
-                    Await LoadFilesAsync()
+                    Await LoadFilesAsync(_currentlySelectedFolderId)
                 End If
 
             Catch ex As Exception
                 MessageBox.Show($"Error selecting/uploading file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 txtStatus.Text = "Error uploading file"
             End Try
+        End Sub
+
+        Private Async Sub Folder_Click(sender As Object, e As RoutedEventArgs)
+            Dim btn = TryCast(sender, Button)
+            If btn IsNot Nothing Then
+                _currentlySelectedFolderId = CLng(btn.Tag)
+
+                ' Load ONLY the files for this folder
+                Await LoadFilesAsync(_currentlySelectedFolderId)
+            End If
         End Sub
 
         Private Async Function UploadFileToMongoDBAsync(fileName As String, fileExtension As String, fileSize As Long, base64Data As String) As Task
@@ -131,7 +188,7 @@ Namespace DPC.Views.DataReports.UploadFileOnline
             End Try
         End Function
 
-        Private Async Function LoadFilesAsync() As Task
+        Private Async Function LoadFilesAsync(currentFolderId As Long) As Task
             Try
                 txtStatus.Text = "Loading files..."
                 files.Clear()
@@ -140,13 +197,16 @@ Namespace DPC.Views.DataReports.UploadFileOnline
                 Dim database As IMongoDatabase = SplashScreen.GetMongoDatabaseConnection()
                 Dim collection As IMongoCollection(Of BsonDocument) = database.GetCollection(Of BsonDocument)(collectionName)
 
+                Dim filter = Builders(Of BsonDocument).Filter.Eq(Of Long)("_folderId", currentFolderId)
+
                 ' Get all documents (excluding the file data to improve performance)
                 Dim projection = Builders(Of BsonDocument).Projection.Exclude("fileData")
-                Dim documents = Await collection.Find(New BsonDocument()).Project(projection).ToListAsync()
+                Dim documents = Await collection.Find(filter).Project(projection).ToListAsync()
 
                 ' Convert to MediaFileItem objects
                 For Each doc In documents
-                    Dim fileSize As Long = If(doc.Contains("fileSize"), doc("fileSize").AsInt64, 0)
+                    ' Use ToInt64() to safely handle the NumberLong from Mongo
+                    Dim fileSize As Long = If(doc.Contains("fileSize"), doc("fileSize").ToInt64(), 0)
 
                     Dim fileItem As New MediaFileItem With {
                         .Id = doc("_id").ToString(),
@@ -155,7 +215,8 @@ Namespace DPC.Views.DataReports.UploadFileOnline
                         .FileSize = fileSize,
                         .FileSizeFormatted = FormatFileSize(fileSize),
                         .UploadDate = If(doc.Contains("uploadDate"), doc("uploadDate").ToUniversalTime(), DateTime.MinValue),
-                        .ContentType = If(doc.Contains("contentType"), doc("contentType").AsString, "")
+                        .ContentType = If(doc.Contains("contentType"), doc("contentType").AsString, ""),
+                        .FolderId = If(doc.Contains("_folderId"), CInt(doc("_folderId").AsInt64), 0)
                     }
 
                     files.Add(fileItem)
@@ -255,7 +316,7 @@ Namespace DPC.Views.DataReports.UploadFileOnline
                     MessageBox.Show($"File '{fileItem.FileName}' deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
 
                     ' Reload the files list
-                    Await LoadFilesAsync()
+                    Await LoadFilesAsync(101)
                 End If
 
             Catch ex As Exception
@@ -306,6 +367,7 @@ Namespace DPC.Views.DataReports.UploadFileOnline
         Public Property FileSizeFormatted As String
         Public Property UploadDate As DateTime
         Public Property ContentType As String
+        Public Property FolderId As Long
 
         Public ReadOnly Property UploadDateFormatted As String
             Get
