@@ -518,8 +518,17 @@
     <Compile Include="Components\Forms\AddDepartment.xaml.vb">
       <DependentUpon>AddDepartment.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\AddFolder.xaml.vb">
+      <DependentUpon>AddFolder.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\AddHoliday.xaml.vb">
       <DependentUpon>AddHoliday.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\AddNewProducts.xaml.vb">
+      <DependentUpon>AddNewProducts.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\AddNewSupplierForm.xaml.vb">
+      <DependentUpon>AddNewSupplierForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\AddRowPopout.xaml.vb">
       <DependentUpon>AddRowPopout.xaml</DependentUpon>
@@ -581,6 +590,15 @@
     <Compile Include="Components\Forms\EditWarehouse.xaml.vb">
       <DependentUpon>EditWarehouse.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\FilterPopOut.xaml.vb">
+      <DependentUpon>FilterPopOut.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\HRMEmployerSalariesModal.xaml.vb">
+      <DependentUpon>HRMEmployerSalariesModal.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\HRMUpdateSalary.xaml.vb">
+      <DependentUpon>HRMUpdateSalary.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\PayrollTrasactionControl.xaml.vb">
       <DependentUpon>PayrollTrasactionControl.xaml</DependentUpon>
     </Compile>
@@ -608,6 +626,9 @@
     <Compile Include="Components\Forms\PreviewPrintEditedQuote.xaml.vb">
       <DependentUpon>PreviewPrintEditedQuote.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\PreviewPrintEditedQuoteFixing.xaml.vb">
+      <DependentUpon>PreviewPrintEditedQuoteFixing.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\PreviewPrintQuote.xaml.vb">
       <DependentUpon>PreviewPrintQuote.xaml</DependentUpon>
     </Compile>
@@ -629,9 +650,6 @@
     <Compile Include="Components\Forms\RowControllerPopout.xaml.vb">
       <DependentUpon>RowControllerPopout.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\Forms\FilterPopOut.xaml.vb">
-      <DependentUpon>FilterPopOut.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Components\Forms\SubscriptionChangeStatus.xaml.vb">
       <DependentUpon>SubscriptionChangeStatus.xaml</DependentUpon>
     </Compile>
@@ -643,9 +661,6 @@
     </Compile>
     <Compile Include="Components\Forms\UpdateCouponsPopoutError.xaml.vb">
       <DependentUpon>UpdateCouponsPopoutError.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\Forms\ViewExportDeletePopUp.xaml.vb">
-      <DependentUpon>ViewExportDeletePopUp.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\VariationDetails.xaml.vb">
       <DependentUpon>VariationDetails.xaml</DependentUpon>
@@ -661,6 +676,9 @@
     </Compile>
     <Compile Include="Components\Forms\VariationModal105.xaml.vb">
       <DependentUpon>VariationModal105.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\ViewExportDeletePopUp.xaml.vb">
+      <DependentUpon>ViewExportDeletePopUp.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\ViewPrintDeletePopUp.xaml.vb">
       <DependentUpon>ViewPrintDeletePopUp.xaml</DependentUpon>
@@ -1245,217 +1263,245 @@
     <Page Include="Components\ConfirmationModals\LoginConfirmationModals.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Components\Forms\AddAttendance.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\AddBrand.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\AddCategory.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\AddDepartment.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\AddHoliday.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\AddNewSupplierForm.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Components\Forms\AddRowPopout.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\AddSubcategory.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\AddVariation.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\BillingStatmentPrintPopUp.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\ConvertToPopUp.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\CostEstimatePrintPopUp.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\CreditNotesPopUp.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\CRMAddNewClientGroup.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\CRMApplyDiscountPopout.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\DeleteBrandPopup.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\DeleteCouponPopout.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\DeleteCreditPopUp.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\DeleteInvoicePopUp.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\DeletePOSInvoicePopUp.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\DeleteQuotePopUp.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\DeleteSubscriptionPopUp.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\EditBrand.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Components\ConfirmationModals\HRMConfirmationEmployeeSalaryUpdate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\Forms\AddAttendance.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\AddBrand.xaml">
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Components\Forms\AddCategory.xaml">
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Components\Forms\AddDepartment.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\AddFolder.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Components\Forms\AddHoliday.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\AddNewProducts.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Components\Forms\AddNewSupplierForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\AddRowPopout.xaml">
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Components\Forms\AddSubcategory.xaml">
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Components\Forms\AddVariation.xaml">
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Components\Forms\BillingStatmentPrintPopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\ConvertToPopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\CostEstimatePrintPopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\CreditNotesPopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\CRMAddNewClientGroup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\CRMApplyDiscountPopout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\DeleteBrandPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\DeleteCouponPopout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\DeleteCreditPopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\DeleteInvoicePopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\DeletePOSInvoicePopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\DeleteQuotePopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\DeleteSubscriptionPopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\EditBrand.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
     <Page Include="Components\Forms\EditDepartment.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\EditProductCategory.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\EditWarehouse.xaml">
       <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\FilterPopOut.xaml">
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Components\Forms\HRMEmployerSalariesModal.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Components\Forms\HRMUpdateSalary.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Forms\PayrollTrasactionControl.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\PopOutQuoteTextEditor.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\PopOutTextEditor.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\PopoutWalkInTextEditor.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\POSPayment.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\POSRegister.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\POSRegister2.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\POSWalkInClient.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\PreviewPrintEditedQuote.xaml">
       <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\PreviewPrintEditedQuoteFixing.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Forms\PreviewPrintQuote.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\PreviewPrintQuoteGovernment.xaml">
-      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\PreviewPrintStatement.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\PreviewPulloutReceipt.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\QuotePopout.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\RemoveRowPopout.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\RowControllerPopout.xaml">
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Components\Forms\FilterPopOut.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="Components\Forms\RowControllerPopout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\SubscriptionChangeStatus.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\SubscriptionStatus.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\UpdateCouponsPopout.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\UpdateCouponsPopoutError.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Components\Forms\ViewExportDeletePopUp.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\VariationDetails.xaml">
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\Forms\VariationModal102.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\VariationModal103.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\VariationModal104.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\VariationModal105.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\ViewExportDeletePopUp.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\ViewPrintDeletePopUp.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Navigation\Sidebar.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -1543,9 +1589,6 @@
     <Compile Include="Application.xaml.vb">
       <DependentUpon>Application.xaml</DependentUpon>
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Components\Forms\AddNewSupplierForm.xaml.vb">
-      <DependentUpon>AddNewSupplierForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Navigation\Sidebar.xaml.vb">
       <DependentUpon>Sidebar.xaml</DependentUpon>
