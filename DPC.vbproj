@@ -1092,6 +1092,9 @@
     <Compile Include="Views\Project\ToDoList.xaml.vb">
       <DependentUpon>ToDoList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Project\ToDoList2.xaml.vb">
+      <DependentUpon>ToDoList2.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PromoCodes\AddPromoCode.xaml.vb">
       <DependentUpon>AddPromoCode.xaml</DependentUpon>
     </Compile>
@@ -2009,6 +2012,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Project\ToDoList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Project\ToDoList2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

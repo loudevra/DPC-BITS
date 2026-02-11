@@ -129,6 +129,10 @@ Namespace DPC.Components.UI
         Private Sub NavigateToToDoList(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("todolist", Me)
         End Sub
+        Private Sub ToDoList2(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("todolist2", Me)
+        End Sub
+
     End Class
 End Namespace
 

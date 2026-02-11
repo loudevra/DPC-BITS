@@ -193,6 +193,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Project.ManageProject()
                     Case "todolist"
                         Return New Project.ToDoList()
+                    Case "todolist2"
+                        Return New Project.ToDoList2()
 
                          ' Sales Cost Estimate Navigation
                     Case "costestimate"
