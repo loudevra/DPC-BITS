@@ -123,12 +123,15 @@ Namespace DPC.Components.UI
             Else
                 MessageBox.Show("Access not permitted. Consult with admin")
             End If
-
         End Sub
 
         Private Sub NavigateToToDoList(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("todolist", Me)
         End Sub
+
+        Private Sub NavigateToToDoList2(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("todolist2", Me)
+        End Sub
+
     End Class
 End Namespace
-
