@@ -267,21 +267,34 @@ Namespace DPC.Components.Forms
     })
         End Sub
 
-        ' ✓✓✓ NEW: Load all categories with headers and subtotals
-        Private Sub LoadAllCategoriesWithSubtotals()
-            For Each categoryGroup In _categoryGroups
-                ' Add category header if category has a name
-                If Not String.IsNullOrWhiteSpace(categoryGroup.CategoryName) Then
-                    AddCategoryHeaderRow(categoryGroup.CategoryName)
-                End If
+        Private Sub LoadAllCategoriesWithSubtotals(pageItemIndices As List(Of Integer))
+            Dim allowedIndices As New HashSet(Of Integer)(pageItemIndices)
+            Dim globalItemIndex As Integer = 0
 
-                ' Add all items in this category
+            For Each categoryGroup In _categoryGroups
+                Dim itemsForThisPage As New List(Of Dictionary(Of String, String))
+
                 For Each item In categoryGroup.Items
-                    itemDataSource.Add(CreateOrderItemWithDescription(item))
+                    If allowedIndices.Contains(globalItemIndex) Then
+                        itemsForThisPage.Add(item)
+                    End If
+                    globalItemIndex += 1
                 Next
 
-                ' Add category subtotal row
-                AddCategorySubtotalRow(categoryGroup.Subtotal)
+                If itemsForThisPage.Count > 0 Then
+                    If Not String.IsNullOrWhiteSpace(categoryGroup.CategoryName) Then
+                        AddCategoryHeaderRow(categoryGroup.CategoryName)
+                    End If
+
+                    For Each item In itemsForThisPage
+                        itemDataSource.Add(CreateOrderItemWithDescription(item))
+                    Next
+
+                    Dim lastItemInGroup = categoryGroup.Items.Last()
+                    If itemsForThisPage.Contains(lastItemInGroup) Then
+                        AddCategorySubtotalRow(categoryGroup.Subtotal)
+                    End If
+                End If
             Next
         End Sub
 
@@ -560,7 +573,7 @@ Namespace DPC.Components.Forms
             itemDataSource.Clear()
 
             GroupItemsByCategory()
-            LoadAllCategoriesWithSubtotals()
+            LoadAllCategoriesWithSubtotals(allPages(pageIndex))
 
             dataGrid.ItemsSource = itemDataSource
 
