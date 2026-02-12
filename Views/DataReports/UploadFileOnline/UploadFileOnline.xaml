@@ -285,14 +285,20 @@
                                                     <Border Background="#f1f3f4" CornerRadius="5" Margin="0,0,0,5" ClipToBounds="True">
                                                         <Button Background="Transparent" 
                                                                 BorderThickness="0" 
-                                                                HorizontalContentAlignment="Left" 
+                                                                HorizontalContentAlignment="Stretch" 
                                                                 Padding="5"
                                                                 materialDesign:ButtonAssist.CornerRadius="5"
                                                                 Click="Folder_Click"
                                                                 Tag="{Binding ID}">
-                                                            <StackPanel Orientation="Horizontal">
-                                                                <materialDesign:PackIcon Kind="Folder" VerticalAlignment="Center" Margin="5,0,10,0"/>
-                                                                <Grid VerticalAlignment="Center">
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                </Grid.ColumnDefinitions>
+                                                                
+                                                                <materialDesign:PackIcon Grid.Column="0" Kind="Folder" VerticalAlignment="Center" Margin="5,0,10,0"/>
+                                                                <Grid VerticalAlignment="Center" Grid.Column="1">
                                                                     <Grid.RowDefinitions>
                                                                         <RowDefinition Height="Auto"/>
                                                                         <RowDefinition Height="Auto"/>
@@ -300,7 +306,16 @@
                                                                     <TextBlock Text="{Binding Name}" FontWeight="Bold" Grid.Row="0"/>
                                                                     <TextBlock Text="{Binding Description}" Foreground="Gray" Grid.Row="1"/>
                                                                 </Grid>
-                                                            </StackPanel>
+                                                                <Button Grid.Column="2"
+                                                                    Style="{StaticResource IconButton}"
+                                                                    x:Name="btnFolderOptions"
+                                                                    Click="FolderOptions_Click"
+                                                                    Tag="{Binding ID}"
+                                                                    VerticalAlignment="Center"
+                                                                    Margin="5,0,5,0">
+                                                                    <materialDesign:PackIcon Kind="DotsHorizontal" Foreground="Gray"/>
+                                                                </Button>
+                                                            </Grid>
                                                         </Button>
                                                     </Border>
                                                 </DataTemplate>

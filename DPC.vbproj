@@ -686,6 +686,9 @@
     <Compile Include="Components\Navigation\TopNavbar.xaml.vb">
       <DependentUpon>TopNavBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\UI\PopUpOptionFolder.xaml.vb">
+      <DependentUpon>PopUpOptionFolder.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Data.vb" />
     <Compile Include="Data\Cache\EditCashAdvanceRequestCache.vb" />
     <Compile Include="Data\Controllers\Account\AccountController.vb" />
@@ -738,6 +741,7 @@
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
     <Compile Include="Data\DataModules\CostEstimateDetails.vb" />
+    <Compile Include="Data\DataModules\FolderDetails.vb" />
     <Compile Include="Data\DataModules\PORDetails.vb" />
     <Compile Include="Data\DataModules\StatementDetails.vb" />
     <Compile Include="Data\DataModules\WalkinBillingStatementDetails.vb" />
@@ -1588,6 +1592,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\UI\PopUpOptionFolder.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2317,6 +2325,7 @@
     </EmbeddedResource>
     <None Include="DPC_TemporaryKey.pfx" />
     <None Include="My Project\app.manifest" />
+    <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
     <Resource Include="Assets\fonts\Lexend\Lexend-Regular.ttf" />
     <None Include="My Project\.env" />
@@ -2324,7 +2333,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
-    <None Include="OpenTK.dll.config" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

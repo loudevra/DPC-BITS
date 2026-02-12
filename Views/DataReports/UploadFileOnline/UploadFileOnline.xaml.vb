@@ -1,10 +1,11 @@
-﻿Imports System.IO
-Imports Microsoft.Win32
-Imports MongoDB.Driver
-Imports MongoDB.Bson
-Imports System.Collections.ObjectModel
-Imports MySql.Data.MySqlClient
+﻿Imports System.Collections.ObjectModel
+Imports System.IO
 Imports System.Windows.Controls.Primitives
+Imports DPC.DPC.Components.UI
+Imports Microsoft.Win32
+Imports MongoDB.Bson
+Imports MongoDB.Driver
+Imports MySql.Data.MySqlClient
 
 Namespace DPC.Views.DataReports.UploadFileOnline
 
@@ -24,6 +25,7 @@ Namespace DPC.Views.DataReports.UploadFileOnline
             AddHandler Loaded, AddressOf UploadFiles_Loaded
             ' Wire up DataGrid row events
             AddHandler dgFiles.LoadingRow, AddressOf DataGrid_LoadingRow
+            AddHandler PopUpOptionFolder.FolderDeletedSuccessfully, AddressOf LoadFoldersAsync
 
             FoldersList.ItemsSource = _foldersData
         End Sub
@@ -417,6 +419,27 @@ Namespace DPC.Views.DataReports.UploadFileOnline
                                            End If
                                        Next
                                    End Sub, System.Windows.Threading.DispatcherPriority.Loaded)
+        End Sub
+
+        Private Sub FolderOptions_Click(sender As Object, e As RoutedEventArgs)
+            e.Handled = True
+
+            Dim btn = TryCast(sender, Button)
+            If btn IsNot Nothing Then
+                Dim folderId As Long = CLng(btn.Tag)
+                ShowFolderOptions(btn, folderId)
+            End If
+        End Sub
+
+        Private Sub ShowFolderOptions(targetElement As FrameworkElement, folderId As Long)
+            Dim folderOptionsContol As New DPC.Components.UI.PopUpOptionFolder()
+            folderOptionsContol.Tag = folderId
+            Dim parentWindow = Window.GetWindow(Me)
+            PopupHelper.OpenPopupWithControl(targetElement, folderOptionsContol, "right", 0, 0, True, parentWindow)
+        End Sub
+
+        Private Sub LoadFoldersAsync()
+            Folders_Load()
         End Sub
     End Class
 
