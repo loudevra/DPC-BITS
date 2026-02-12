@@ -259,8 +259,10 @@ Namespace DPC.Data.Helpers.ViewLoader
                      'DataReports - Upload Files Navigation
                     Case "hrmuploadfiles"
                         Return New Views.DataReports.UploadFileOnline.UploadFileOnline()
-                    Case "hrmmanagecostestimatefiles"
-                        Return New Views.DataReports.ManageCostEstimateFiles.ManageCostEstimateFiles()
+                    Case "hrmmanageregularcostestimatefiles"
+                        Return New Views.DataReports.ManageRegularCostEstimateFiles.ManageRegularCostEstimateFiles()
+                    Case "hrmmanagegovernmentcostestimatefiles"
+                        Return New Views.DataReports.ManageGovernmentCostEstimateFiles.ManageGovernmentCostEstimateFiles()
 
                         'Misc - Cash Advance Navigation
                     Case "cashadvancenewrequest"

@@ -966,8 +966,11 @@
     <Compile Include="Views\DataReports\GraphicalReportsTab.xaml.vb">
       <DependentUpon>GraphicalReportsTab.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DataReports\ManageCostEstimateFiles\ManageCostEstimateFiles.xaml.vb">
-      <DependentUpon>ManageCostEstimateFiles.xaml</DependentUpon>
+    <Compile Include="Views\DataReports\ManageCostEstimateFiles\ManageGovernmentCostEstimateFiles.xaml.vb">
+      <DependentUpon>ManageGovernmentCostEstimateFiles.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DataReports\ManageCostEstimateFiles\ManageRegularCostEstimateFiles.xaml.vb">
+      <DependentUpon>ManageRegularCostEstimateFiles.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DataReports\Statements\StatementsTabs\DTRAccounts.xaml.vb">
       <DependentUpon>DTRAccounts.xaml</DependentUpon>
@@ -1871,7 +1874,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DataReports\ManageCostEstimateFiles\ManageCostEstimateFiles.xaml">
+    <Page Include="Views\DataReports\ManageCostEstimateFiles\ManageGovernmentCostEstimateFiles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\DataReports\ManageCostEstimateFiles\ManageRegularCostEstimateFiles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

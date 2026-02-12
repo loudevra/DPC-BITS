@@ -236,9 +236,13 @@ Namespace DPC.Components.UI
             ViewLoader.DynamicView.NavigateToView("generatestatement", Me)
         End Sub
 
-        Private Sub NavigateToFiles(sender As Object, e As RoutedEventArgs)
+        Private Sub NavigateToRegularFiles(sender As Object, e As RoutedEventArgs)
             ' Open Payroll view
-            ViewLoader.DynamicView.NavigateToView("hrmmanagecostestimatefiles", Me)
+            ViewLoader.DynamicView.NavigateToView("hrmmanageregularcostestimatefiles", Me)
+        End Sub
+        Private Sub NavigateToGovernmentFiles(sender As Object, e As RoutedEventArgs)
+            ' Open Payroll view
+            ViewLoader.DynamicView.NavigateToView("hrmmanagegovernmentcostestimatefiles", Me)
         End Sub
         Private Sub NavigateToUploadFile(sender As Object, e As RoutedEventArgs)
             ' Open Payroll view
