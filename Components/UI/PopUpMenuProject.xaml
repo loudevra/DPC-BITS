@@ -107,23 +107,50 @@
                 </StackPanel>
 
                 <!-- To Do List -->
-                <Grid Margin="0,8,0,8">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <materialDesign:PackIcon Kind="FormatListChecks" Foreground="White" Width="20" Height="20" Margin="10,0,0,0"/>
-                    <TextBlock Grid.Column="1">
-                        <Hyperlink Click="NavigateToToDoList">
-                            <TextBlock Text="To Do List" Style="{StaticResource MainMenuItemStyle}"/>
-                        </Hyperlink>
-                                                                                    <TextBlock.ToolTip>
-<ToolTip Content="Track personal or team task lists efficiently." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
-                    </TextBlock>
-                </Grid>
+                <StackPanel>
+                    <Grid Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <materialDesign:PackIcon Kind="FormatListChecks" Foreground="White" Width="20" Height="20" Margin="10,0,0,0"/>
+                        <TextBlock Grid.Column="1">
+            <Hyperlink Click="NavigateToToDoList">
+                <TextBlock Text="To Do List" Style="{StaticResource MainMenuItemStyle}"/>
+            </Hyperlink>
+            <TextBlock.ToolTip>
+                <ToolTip Content="Track personal or team task lists efficiently." 
+                         Style="{StaticResource SpeechBubbleToolTip}"
+                         Placement="Top"/>
+            </TextBlock.ToolTip>
+        </TextBlock>
+                    </Grid>
+
+                    <!-- Submenu items with vertical lines -->
+                    <Grid Margin="24,3,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Vertical line -->
+                        <Rectangle Width="1" Fill="#444444" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+
+                        <!-- Submenu items -->
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Margin="10,3,0,3">
+                <Hyperlink Click="NavigateToToDoList2">
+                    <TextBlock Text="To Do List 1" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
+                </Hyperlink>
+                <TextBlock.ToolTip>
+                    <ToolTip Content="Monitor, update, and manage ongoing projects." 
+                             Style="{StaticResource SpeechBubbleToolTip}"
+                             Placement="Top"/>
+                </TextBlock.ToolTip>
+            </TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
             </StackPanel>
         </materialDesign:Card>
     </Grid>
