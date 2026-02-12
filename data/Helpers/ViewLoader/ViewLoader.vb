@@ -128,8 +128,7 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New HRM.Employees.Employees.EmployeesView()
                     Case "hrmeditemployee"
                         Return New HRM.Employees.Employees.EditEmployee()
-                   'Case "hrmeditfiles"
-                        'Return New HRM.Files.ManageFile()
+
 
                          ' Sales Module Navigation
                     Case "salesnewinvoice"
@@ -259,9 +258,9 @@ Namespace DPC.Data.Helpers.ViewLoader
 
                      'DataReports - Upload Files Navigation
                     Case "hrmuploadfiles"
-                        Return New Views.DataReports.UploadFileOnline.UploadFileOnline
-
-
+                        Return New Views.DataReports.UploadFileOnline.UploadFileOnline()
+                    Case "hrmmanagecostestimatefiles"
+                        Return New Views.DataReports.ManageCostEstimateFiles.ManageCostEstimateFiles()
 
                         'Misc - Cash Advance Navigation
                     Case "cashadvancenewrequest"
@@ -350,8 +349,8 @@ Namespace DPC.Data.Helpers.ViewLoader
             ElseIf typeName = "previewwalkinclientprintstatement" Then
                 Return "previewwalkinclientprintstatement"
 
-            ElseIf typeName = "hrmeditfiles" Then
-                Return "hrmeditfiles"
+            ElseIf typeName = "hrmmanagecostestimatefiles" Then
+                Return "hrmmanagecostestimatefiles"
 
 
 

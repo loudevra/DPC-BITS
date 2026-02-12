@@ -966,6 +966,9 @@
     <Compile Include="Views\DataReports\GraphicalReportsTab.xaml.vb">
       <DependentUpon>GraphicalReportsTab.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\DataReports\ManageCostEstimateFiles\ManageCostEstimateFiles.xaml.vb">
+      <DependentUpon>ManageCostEstimateFiles.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\DataReports\Statements\StatementsTabs\DTRAccounts.xaml.vb">
       <DependentUpon>DTRAccounts.xaml</DependentUpon>
     </Compile>
@@ -1865,6 +1868,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DataReports\GraphicalReportsTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DataReports\ManageCostEstimateFiles\ManageCostEstimateFiles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

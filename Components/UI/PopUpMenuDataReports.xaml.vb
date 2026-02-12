@@ -238,7 +238,7 @@ Namespace DPC.Components.UI
 
         Private Sub NavigateToFiles(sender As Object, e As RoutedEventArgs)
             ' Open Payroll view
-            ViewLoader.DynamicView.NavigateToView("hrmeditfiles", Me)
+            ViewLoader.DynamicView.NavigateToView("hrmmanagecostestimatefiles", Me)
         End Sub
         Private Sub NavigateToUploadFile(sender As Object, e As RoutedEventArgs)
             ' Open Payroll view
