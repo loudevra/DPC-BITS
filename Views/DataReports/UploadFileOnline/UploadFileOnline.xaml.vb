@@ -13,7 +13,6 @@ Namespace DPC.Views.DataReports.UploadFileOnline
         Private files As ObservableCollection(Of MediaFileItem)
         Private _foldersData As New ObservableCollection(Of FolderItem)
         Private _currentlySelectedFolderId As Long = 1
-        Private folderPopup As Popup
         Private recentlyClosedFolder As Boolean = False
 
         Public Sub New()
@@ -141,36 +140,15 @@ Namespace DPC.Views.DataReports.UploadFileOnline
                 Return
             End If
 
-            If folderPopup IsNot Nothing AndAlso folderPopup.IsOpen Then
-                folderPopup.IsOpen = False
-                Return
-            End If
-
-            folderPopup = New Popup With {
-                .PlacementTarget = clickedButton,
-                .Placement = PlacementMode.Bottom,
-                .StaysOpen = False,
-                .AllowsTransparency = True,
-                .PopupAnimation = PopupAnimation.Fade
-            }
-
             Dim addFolderForm As New DPC.Components.Forms.AddFolder()
-
             AddHandler addFolderForm.AddFolder, AddressOf OnFolderAdded
-
-            folderPopup.Child = addFolderForm
-
-            AddHandler folderPopup.Closed, Sub()
-                                               recentlyClosedFolder = True
-                                               Task.Delay(100).ContinueWith(Sub() recentlyClosedFolder = False, TaskScheduler.FromCurrentSynchronizationContext())
-                                           End Sub
-
-            folderPopup.IsOpen = True
+            Dim parentWindow = Window.GetWindow(Me)
+            PopupHelper.OpenPopupWithControl(sender, addFolderForm, "windowcenter", True, 0, 0, parentWindow)
         End Sub
 
 
         Private Sub OnFolderAdded()
-            If folderPopup IsNot Nothing Then folderPopup.IsOpen = False
+            PopupHelper.ClosePopup()
             Folders_Load()
         End Sub
 

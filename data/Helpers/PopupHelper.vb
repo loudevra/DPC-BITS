@@ -44,7 +44,7 @@ Public Class PopupHelper
 
         ' Create a new popup with improved settings
         activePopup = New Popup With {
-            .StaysOpen = True,
+            .StaysOpen = False,
             .AllowsTransparency = True,
             .Child = control
         }
