@@ -1,10 +1,11 @@
-﻿Imports System.IO
-Imports Microsoft.Win32
-Imports MongoDB.Driver
-Imports MongoDB.Bson
-Imports System.Collections.ObjectModel
-Imports MySql.Data.MySqlClient
+﻿Imports System.Collections.ObjectModel
+Imports System.IO
 Imports System.Windows.Controls.Primitives
+Imports DPC.DPC.Components.UI
+Imports Microsoft.Win32
+Imports MongoDB.Bson
+Imports MongoDB.Driver
+Imports MySql.Data.MySqlClient
 
 Namespace DPC.Views.DataReports.UploadFileOnline
 
@@ -13,7 +14,6 @@ Namespace DPC.Views.DataReports.UploadFileOnline
         Private files As ObservableCollection(Of MediaFileItem)
         Private _foldersData As New ObservableCollection(Of FolderItem)
         Private _currentlySelectedFolderId As Long = 1
-        Private folderPopup As Popup
         Private recentlyClosedFolder As Boolean = False
 
         Public Sub New()
@@ -25,6 +25,7 @@ Namespace DPC.Views.DataReports.UploadFileOnline
             AddHandler Loaded, AddressOf UploadFiles_Loaded
             ' Wire up DataGrid row events
             AddHandler dgFiles.LoadingRow, AddressOf DataGrid_LoadingRow
+            AddHandler PopUpOptionFolder.FolderDeletedSuccessfully, AddressOf LoadFoldersAsync
 
             FoldersList.ItemsSource = _foldersData
         End Sub
@@ -141,36 +142,15 @@ Namespace DPC.Views.DataReports.UploadFileOnline
                 Return
             End If
 
-            If folderPopup IsNot Nothing AndAlso folderPopup.IsOpen Then
-                folderPopup.IsOpen = False
-                Return
-            End If
-
-            folderPopup = New Popup With {
-                .PlacementTarget = clickedButton,
-                .Placement = PlacementMode.Bottom,
-                .StaysOpen = False,
-                .AllowsTransparency = True,
-                .PopupAnimation = PopupAnimation.Fade
-            }
-
             Dim addFolderForm As New DPC.Components.Forms.AddFolder()
-
             AddHandler addFolderForm.AddFolder, AddressOf OnFolderAdded
-
-            folderPopup.Child = addFolderForm
-
-            AddHandler folderPopup.Closed, Sub()
-                                               recentlyClosedFolder = True
-                                               Task.Delay(100).ContinueWith(Sub() recentlyClosedFolder = False, TaskScheduler.FromCurrentSynchronizationContext())
-                                           End Sub
-
-            folderPopup.IsOpen = True
+            Dim parentWindow = Window.GetWindow(Me)
+            PopupHelper.OpenPopupWithControl(sender, addFolderForm, "windowcenter", True, 0, 0, parentWindow)
         End Sub
 
 
         Private Sub OnFolderAdded()
-            If folderPopup IsNot Nothing Then folderPopup.IsOpen = False
+            PopupHelper.ClosePopup()
             Folders_Load()
         End Sub
 
@@ -439,6 +419,27 @@ Namespace DPC.Views.DataReports.UploadFileOnline
                                            End If
                                        Next
                                    End Sub, System.Windows.Threading.DispatcherPriority.Loaded)
+        End Sub
+
+        Private Sub FolderOptions_Click(sender As Object, e As RoutedEventArgs)
+            e.Handled = True
+
+            Dim btn = TryCast(sender, Button)
+            If btn IsNot Nothing Then
+                Dim folderId As Long = CLng(btn.Tag)
+                ShowFolderOptions(btn, folderId)
+            End If
+        End Sub
+
+        Private Sub ShowFolderOptions(targetElement As FrameworkElement, folderId As Long)
+            Dim folderOptionsContol As New DPC.Components.UI.PopUpOptionFolder()
+            folderOptionsContol.Tag = folderId
+            Dim parentWindow = Window.GetWindow(Me)
+            PopupHelper.OpenPopupWithControl(targetElement, folderOptionsContol, "right", 0, 0, True, parentWindow)
+        End Sub
+
+        Private Sub LoadFoldersAsync()
+            Folders_Load()
         End Sub
     End Class
 

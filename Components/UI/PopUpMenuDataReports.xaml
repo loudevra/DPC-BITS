@@ -79,25 +79,63 @@
                  </TextBlock.ToolTip>
                     </TextBlock>
                 </Grid>
-                
+
                 <!-- Files -->
-                <Grid Margin="0,8,0,8">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <materialDesign:PackIcon Kind="FileCabinet" Foreground="White" Width="20" Height="20" Margin="10,0,0,0"/>
-                    <TextBlock Grid.Column="1">
-                        <Hyperlink Click="NavigateToFiles" >
+                <StackPanel>
+                    <Grid Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <materialDesign:PackIcon Kind="FileCabinet" Foreground="White" Width="20" Height="20" Margin="10,0,0,0"/>
+                        <TextBlock Grid.Column="1">
                             <TextBlock Text="Manage Files" Style="{StaticResource MainMenuItemStyle}"/>
-                        </Hyperlink>
-                                                                                    <TextBlock.ToolTip>
-<ToolTip Content="Upload, view, and organize all company files." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
-                    </TextBlock>
-                </Grid>
+                            <TextBlock.ToolTip>
+                                <ToolTip Content="Upload, view, and organize all company files." 
+                                         Style="{StaticResource SpeechBubbleToolTip}"
+                                         Placement="Top"/>
+                            </TextBlock.ToolTip>
+                        </TextBlock>
+                    </Grid>
+
+                    <!-- Submenu items with vertical lines -->
+                    <Grid Margin="24,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Vertical line -->
+                        <Rectangle Width="1" Fill="#444444" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+
+                        <!-- Submenu items -->
+                        <StackPanel Grid.Column="1">
+                            
+                            <TextBlock Margin="10,3,0,3">
+                                <Hyperlink Click="NavigateToRegularFiles" >
+                                    <TextBlock Text="Regular CE" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
+                                </Hyperlink>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="Manage files for regular customers." 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
+                            </TextBlock>
+
+                            <TextBlock Margin="10,3,0,3">
+                                <Hyperlink Click="NavigateToGovernmentFiles" >
+                                    <TextBlock Text="Government CE" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
+                                </Hyperlink>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="Manage files for government projects." 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
+                            </TextBlock>
+                            
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
 
                 <!-- Upload File -->
                 <Grid Margin="0,8,0,8">

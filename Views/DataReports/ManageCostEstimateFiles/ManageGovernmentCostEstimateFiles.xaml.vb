@@ -16,8 +16,8 @@ Imports MongoDB.Driver
 Imports MongoDB.Driver.GridFS
 Imports DPC.SplashScreen
 
-Namespace DPC.Views.DataReports.ManageCostEstimateFiles
-    Public Class ManageCostEstimateFiles
+Namespace DPC.Views.DataReports.ManageGovernmentCostEstimateFiles
+    Public Class ManageGovernmentCostEstimateFiles
         Inherits UserControl
 
         ' Observable collection for data binding
@@ -100,14 +100,19 @@ Namespace DPC.Views.DataReports.ManageCostEstimateFiles
                 Dim filterBuilder = Builders(Of BsonDocument).Filter
                 Dim filter As FilterDefinition(Of BsonDocument) = filterBuilder.Empty
 
-                ' Apply search filter if search text exists
+                Dim prefixFilter = filterBuilder.Regex("filename", New BsonRegularExpression("^GPCE-"))
+
                 If Not String.IsNullOrWhiteSpace(_searchText) Then
-                    filter = filterBuilder.Regex("filename", New BsonRegularExpression(_searchText, "i"))
+                    Dim searchFilter = filterBuilder.Regex("filename", New BsonRegularExpression(_searchText, "i"))
+
+                    filter = filterBuilder.And(prefixFilter, searchFilter)
+                Else
+                    filter = prefixFilter
                 End If
 
                 ' Get total count for pagination
                 _totalRecords = CInt(Await _fsFilesCollection.CountDocumentsAsync(filter))
-
+                
                 ' Calculate skip value for pagination
                 Dim skip As Integer = (_currentPage - 1) * _pageSize
 

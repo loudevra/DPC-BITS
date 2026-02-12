@@ -44,7 +44,7 @@ Public Class PopupHelper
 
         ' Create a new popup with improved settings
         activePopup = New Popup With {
-            .StaysOpen = True,
+            .StaysOpen = False,
             .AllowsTransparency = True,
             .Child = control
         }
@@ -57,6 +57,11 @@ Public Class PopupHelper
             ' For window center, we'll use the window as placement target
             activePopup.PlacementTarget = parentWindow
             activePopup.Placement = PlacementMode.Center
+        ElseIf position.ToLower() = "right" Then
+            activePopup.PlacementTarget = clickedElement
+            activePopup.Placement = PlacementMode.Right
+            activePopup.HorizontalOffset = 5
+            activePopup.VerticalOffset = 0
         Else
             ' For other positions, use the clicked element
             activePopup.PlacementTarget = clickedElement
