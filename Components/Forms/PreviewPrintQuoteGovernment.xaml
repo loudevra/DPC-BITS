@@ -166,7 +166,7 @@
                                                            Text="Page 1 of 1"/>
                                             <!--Billing Statement Label-->
                                             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,50,0,10">
-                                                <TextBlock Text="COST ESTIMATE (GOVERNMENT)" FontWeight="Bold" FontFamily="Lexend" FontSize="20" Foreground="#090909" VerticalAlignment="Center"/>
+                                                <TextBlock Text="COST ESTIMATE" FontWeight="Bold" FontFamily="Lexend" FontSize="20" Foreground="#090909" VerticalAlignment="Center"/>
                                             </StackPanel>
 
                                             <!--Invoice and Date-->
