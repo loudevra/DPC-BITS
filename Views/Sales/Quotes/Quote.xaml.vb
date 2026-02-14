@@ -122,12 +122,16 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         ''' Helper function to get or create cache module
-        Private Function GetCacheModule() As QuoteCacheData
-            ' Return a shared/global cache object - adjust based on your app structure
+        Private Function GetCacheModule() As QuotesModel
             If Not Application.Current.Properties.Contains("QuoteCache") Then
-                Application.Current.Properties("QuoteCache") = New QuoteCacheData()
+                Application.Current.Properties("QuoteCache") = New QuotesModel()
+            Else
+                If Not (TypeOf Application.Current.Properties("QuoteCache") Is QuotesModel) Then
+                    Application.Current.Properties("QuoteCache") = New QuotesModel()
+                End If
             End If
-            Return DirectCast(Application.Current.Properties("QuoteCache"), QuoteCacheData)
+
+            Return DirectCast(Application.Current.Properties("QuoteCache"), QuotesModel)
         End Function
 
 
@@ -543,25 +547,5 @@ Namespace DPC.Views.Sales.Quotes
                 Debug.WriteLine($"Error formatting quotes: {ex.Message}")
             End Try
         End Sub
-
-
-        ''' Cache data holder for quote information
-        Public Class QuoteCacheData
-            Public Property QuoteNumber As String = ""
-            Public Property ClientID As String = ""
-            Public Property ClientName As String = ""
-            Public Property TxtClientDetails As String = ""
-            Public Property WarehouseID As String = ""
-            Public Property WarehouseName As String = ""
-            Public Property QuoteDate As String = ""
-            Public Property Validity As String = ""
-            Public Property QuoteNote As String = ""
-            Public Property TotalTax As Object = 0
-            Public Property TotalDiscount As Object = 0
-            Public Property TotalPrice As Object = 0
-            Public Property OrderItems As Object = Nothing
-        End Class
-
-
     End Class
 End Namespace

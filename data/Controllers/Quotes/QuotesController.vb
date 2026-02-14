@@ -48,7 +48,7 @@ Namespace DPC.Data.Controllers
                                     .ClientName = reader("ClientName").ToString(),
                                     .WarehouseID = reader("WarehouseID").ToString(),
                                     .WarehouseName = reader("WarehouseName").ToString(),
-                                    .OrderItems = itemList,
+                                    .OrderItems = reader("OrderItems").ToString(),
                                     .QuoteNote = If(reader("QuoteNote") Is DBNull.Value, String.Empty, reader("QuoteNote").ToString()),
                                     .TotalTax = If(reader("TotalTax") Is DBNull.Value, 0, reader("TotalTax")),
                                     .TotalDiscount = If(reader("TotalDiscount") Is DBNull.Value, 0, reader("TotalDiscount")),

@@ -141,7 +141,7 @@
 
                                     <!--Bill To Label-->
                                     <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,20,20">
-                                        <TextBlock Text="Cost Estimate" FontWeight="SemiBold" FontFamily="Lexend" FontSize="24" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                                        <TextBlock x:Name="GovCETitle" Text="Cost Estimate" FontWeight="SemiBold" FontFamily="Lexend" FontSize="24" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,0"/>
                                     </StackPanel>
 
                                     <!-- Add Client Button -->
@@ -476,7 +476,7 @@
                                                 MaxWidth="250"
                                                 Click="GenerateCostEstimate_Click"
                                                 Style="{StaticResource ButtonStyle}" Background="#1D5642">
-                                            <TextBlock Text="Generate Cost Estimate" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="#FFFFFF"/>
+                                            <TextBlock x:Name="GovCEButton" Text="Generate Cost Estimate" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" Foreground="#FFFFFF"/>
                                         </Button>
                                     </StackPanel>
                                 </StackPanel>
