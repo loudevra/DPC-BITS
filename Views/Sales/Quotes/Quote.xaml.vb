@@ -17,6 +17,7 @@ Namespace DPC.Views.Sales.Quotes
         Private _isInitialized As Boolean = False
         Private _dataTable As DataTable
         Private _QuoteNumber As String
+        Private _Type As String = "Private"
 
         Public Sub New()
             InitializeComponent()
@@ -80,7 +81,7 @@ Namespace DPC.Views.Sales.Quotes
         Public Sub LoadData()
             Try
                 Dim limit As Integer = Convert.ToInt32(cmbLimit.Text)
-                Dim quotes = QuotesController.GetQuotes(limit)
+                Dim quotes = QuotesController.GetQuotes(limit, _Type)
 
                 ' Format quotes for display
                 FormatQuotesForDisplay(quotes)
@@ -179,9 +180,9 @@ Namespace DPC.Views.Sales.Quotes
                 Dim quotes As ObservableCollection(Of QuotesModel)
 
                 If String.IsNullOrWhiteSpace(searchTextValue) Then
-                    quotes = QuotesController.GetQuotes(limit)
+                    quotes = QuotesController.GetQuotes(limit, _Type)
                 Else
-                    quotes = QuotesController.SearchQuotes(searchTextValue, limit)
+                    quotes = QuotesController.SearchQuotes(searchTextValue, limit, _Type)
                 End If
 
                 ' Format quotes for display
@@ -271,10 +272,10 @@ Namespace DPC.Views.Sales.Quotes
         Private Sub GetDataFromDB()
             If String.IsNullOrWhiteSpace(SearchText.Text) Then
                 dataGrid.ItemsSource = Nothing
-                dataGrid.ItemsSource = QuotesController.GetQuotes(CInt(cmbLimit.Text))
+                DataGrid.ItemsSource = QuotesController.GetQuotes(CInt(cmbLimit.Text), _Type)
             Else
                 dataGrid.ItemsSource = Nothing
-                dataGrid.ItemsSource = QuotesController.SearchQuotes(SearchText.Text, CInt(cmbLimit.Text))
+                dataGrid.ItemsSource = QuotesController.SearchQuotes(SearchText.Text, CInt(cmbLimit.Text), _Type)
             End If
         End Sub
 

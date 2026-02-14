@@ -15,13 +15,21 @@ Namespace DPC.Data.Controllers
     Public Class QuotesController
 
         ''' Gets all quotes from the database with a limit
-        Public Shared Function GetQuotes(limit As Integer) As ObservableCollection(Of QuotesModel)
+        Public Shared Function GetQuotes(limit As Integer, quoteType As String) As ObservableCollection(Of QuotesModel)
             Dim quotes As New ObservableCollection(Of QuotesModel)
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "
+                    Dim filterClause As String
+                    If quoteType.Equals("Government", StringComparison.OrdinalIgnoreCase) Then
+                        filterClause = "WHERE QuoteNumber LIKE 'GPCE-%'"
+                    Else
+                        filterClause = "WHERE QuoteNumber NOT LIKE 'GPCE-%'"
+                    End If
+
+                    Dim query As String = $"
                         SELECT * FROM quotes 
+                        {filterClause}
                         ORDER BY QuoteNumber DESC
                         LIMIT @limit"
                     Using cmd As New MySqlCommand(query, conn)
@@ -125,17 +133,25 @@ Namespace DPC.Data.Controllers
 
 
         ''' Searches quotes based on search criteria
-        Public Shared Function SearchQuotes(searchText As String, limit As Integer) As ObservableCollection(Of QuotesModel)
+        Public Shared Function SearchQuotes(searchText As String, limit As Integer, quoteType As String) As ObservableCollection(Of QuotesModel)
             Dim quotes As New ObservableCollection(Of QuotesModel)
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "
-                        SELECT * FROM quotes
+                    Dim filterClause As String
+                    If quoteType.Equals("Government", StringComparison.OrdinalIgnoreCase) Then
+                        filterClause = "AND QuoteNumber LIKE 'GPCE-%'"
+                    Else
+                        filterClause = "AND QuoteNumber NOT LIKE 'GPCE-%'"
+                    End If
+
+                    Dim query As String = $"
+                        SELECT * FROM 
                         WHERE QuoteNumber LIKE @searchText 
                             OR ReferenceNo LIKE @searchText
                             OR ClientName LIKE @searchText
                             OR WarehouseName LIKE @searchText
+                            {filterClause}
                         ORDER BY QuoteNumber DESC
                         LIMIT @limit"
 
