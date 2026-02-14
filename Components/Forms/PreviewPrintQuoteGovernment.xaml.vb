@@ -46,7 +46,7 @@ Namespace DPC.Components.Forms
         Private Const BaseItemHeight As Double = 55
         Private Const DescriptionLineHeight As Double = 15
         Private Const PaginationTriggerHeight As Double = 412
-        Private Const PageMaxHeight As Double = 760
+        Private Const PageMaxHeight As Double = 730
         Private Const ReservedSpaceForDescription As Double = 30
         Private Const CategoryHeaderHeight As Double = 40
         Private Const SubtotalRowHeight As Double = 40
@@ -576,6 +576,11 @@ Namespace DPC.Components.Forms
                 Dim f As New NewQuoteGovernment()
                 f.ClearAllFields()
                 CostEstimateDetails.ClearAllCECache()
+
+                If Application.Current.Properties.Contains("QuoteCache") Then
+                    Application.Current.Properties.Remove("QuoteCache")
+                End If
+
                 ViewLoader.DynamicView.NavigateToView("salesquotegovernment", Me)
             Else
                 MessageBox.Show("Failed to submit quote.")
