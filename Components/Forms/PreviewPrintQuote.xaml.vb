@@ -114,22 +114,32 @@ Namespace DPC.Components.Forms
             DisplaySignaturePreview()
 
             ' Customer Details Header
-            PopulateHeaderInfo()
+            PopulateHeaderDetails()
         End Sub
 
-        Private Sub PopulateHeaderInfo()
-            ' Standardized Field Mapping
-            SubmittedToClient.Text = If(Not String.IsNullOrWhiteSpace(CostEstimateDetails.CECompanyName), CostEstimateDetails.CECompanyName, CostEstimateDetails.CEClientName)
+        Private Sub PopulateHeaderDetails()
+            Try
+                Dim clientBlock = TryCast(Me.FindName("SubmittedToClient"), TextBlock)
+                Dim addressBlock = TryCast(Me.FindName("SubmittedToAddress"), TextBlock)
+                Dim emailBlock = TryCast(Me.FindName("SubmittedToEmail"), TextBlock)
 
-            Dim parts As New List(Of String)
-            If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CEAddress) Then parts.Add(CostEstimateDetails.CEAddress)
-            If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CECity) Then parts.Add(CostEstimateDetails.CECity)
-            If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CERegion) Then parts.Add(CostEstimateDetails.CERegion)
-            If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CECountry) Then parts.Add(CostEstimateDetails.CECountry)
-            SubmittedToAddress.Text = String.Join(", ", parts)
+                If clientBlock IsNot Nothing Then
+                    clientBlock.Text = If(Not String.IsNullOrWhiteSpace(CostEstimateDetails.CECompanyName), CostEstimateDetails.CECompanyName, CostEstimateDetails.CEClientName)
+                End If
 
-            SubmittedToEmail.Text = CostEstimateDetails.CEEmail
-            SubmittedToProjectID.Text = CostEstimateDetails.CEProjectID
+                If addressBlock IsNot Nothing Then
+                    Dim parts As New List(Of String)
+                    If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CEAddress) Then parts.Add(CostEstimateDetails.CEAddress)
+                    If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CECity) Then parts.Add(CostEstimateDetails.CECity)
+                    If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CERegion) Then parts.Add(CostEstimateDetails.CERegion)
+                    If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CECountry) Then parts.Add(CostEstimateDetails.CECountry)
+                    addressBlock.Text = String.Join(", ", parts)
+                End If
+
+                If emailBlock IsNot Nothing Then emailBlock.Text = CostEstimateDetails.CEEmail
+            Catch ex As Exception
+                Debug.WriteLine("Header Error: " & ex.Message)
+            End Try
         End Sub
 #End Region
 

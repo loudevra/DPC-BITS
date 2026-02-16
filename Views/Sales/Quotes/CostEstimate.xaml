@@ -144,6 +144,10 @@
                             <StackPanel Grid.Row="1" Margin="0,0,0,0" >
                                 <Border Height="1344" Width="816" Background="White" CornerRadius="0,0,10,10"  BorderThickness="0" Padding="15">
                                     <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="8*"/>
+                                            <ColumnDefinition Width="385*"/>
+                                        </Grid.ColumnDefinitions>
 
                                         <Grid.Background>
                                             <ImageBrush ImageSource="/Assets/images/DREAMPCBUILD LOGO WATERMARK SLANTED SPACED.png" Stretch="UniformToFill" Opacity="0.05"/>
@@ -168,10 +172,10 @@
                                        StrokeThickness="1"
                                        Fill="Transparent"
                                        VerticalAlignment="Top"
-                                       Margin="10,0"/>
+                                       Margin="10,0" Grid.ColumnSpan="2"/>
 
                                         <!--DPC Logo Side Bar-->
-                                        <StackPanel Grid.Row="0" Height="Auto" Width="232" HorizontalAlignment="Left" Orientation="Horizontal" Margin="0,10,0,17" Background="Transparent" Grid.RowSpan="2">
+                                        <StackPanel Grid.Row="0" Height="Auto" Width="232" HorizontalAlignment="Left" Orientation="Horizontal" Margin="0,10,0,17" Background="Transparent" Grid.RowSpan="2" Grid.ColumnSpan="2">
                                             <Image Source="/Assets/images/logosidebarBlack.png" Stretch="Fill" Width="234" Height="75"/>
                                         </StackPanel>
                                         <TextBlock x:Name="PageIndicatorText" 
@@ -183,14 +187,14 @@
                                                FontSize="10"
                                                FontWeight="SemiBold"
                                                Foreground="#555555"
-                                               Text="Page 1 of 1"/>
+                                               Text="Page 1 of 1" Grid.Column="1"/>
                                         <!--Billing Statement Label-->
-                                        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,15">
+                                        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left" Margin="302,5,0,15" Grid.Column="1">
                                             <TextBlock Text="COST ESTIMATE" FontWeight="Bold" FontFamily="Lexend" FontSize="20" Foreground="#090909" VerticalAlignment="Center"/>
                                         </StackPanel>
                                         <!--Invoice and Date-->
                                         <!-- 08/01/2025 - Changed the Grid.Row Attribute from Grid.Row 2 to 3 -->
-                                        <StackPanel Grid.Row="3" Orientation="Vertical" HorizontalAlignment="Right" Margin="5">
+                                        <StackPanel Grid.Row="3" Orientation="Vertical" HorizontalAlignment="Right" Margin="0,5,5,5" Grid.Column="1">
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
                                                 <TextBlock x:Name="CNIdentifier" Text="CE #:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center" />
                                                 <Border Background="White" BorderThickness="0.5,0.5,0.5,0.25"  BorderBrush="#090909" Padding="3,0" Width="250" Height="20" >
@@ -214,31 +218,36 @@
                                             </StackPanel>
                                         </StackPanel>
 
-                                        <StackPanel Grid.Row="3" Orientation="Vertical" HorizontalAlignment="Left" Margin="5,5,0,10">
+                                        <StackPanel Grid.Row="3" Orientation="Vertical" HorizontalAlignment="Left" Margin="5,5,0,10" Grid.ColumnSpan="2">
 
                                             <!--Info-->
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                                <Grid Width="374" RenderTransformOrigin="0.519,0.491">
+                                                <Grid>
                                                     <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto" MinWidth="314"/>
-                                                        <ColumnDefinition Width="0*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
 
-                                                    <StackPanel Orientation="Vertical" Grid.ColumnSpan="2" Margin="0,0,-78,0">
-                                                        <TextBlock Text="Submitted by:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,10"/>
-                                                        <TextBlock Text="DREAM PC BUILD AND IT SOLUTIONS INC." FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5"  Width="239"/>
-                                                        <TextBlock Text="UNIT 2A AND 2B LEGENDA BLDG. CIRCUMFERENTIAL ROAD BRGY. SAN ROQUE ANTIPOLO CITY, RIZAL 1870" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5" Width="299" TextWrapping="Wrap"/>
-                                                        <TextBlock Text="information@dreampcbuild.com/parvitkumar@dreampcbuild.com/laarnimae@dreampcbuild.com/clarkbernandino@dreampcbuild.com/alecksbalingit@dreampcbuild.com/albiespinas@dreampcbuild.com/" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5" TextWrapping="Wrap" Width="385"/>
-                                                        <TextBlock Text="0917-187-3722; 02-8801-4252" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5"/>
-                                                        <TextBlock Text="TIN: 779 529 308 000 " FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                    <StackPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Right">
+                                                        <TextBlock Text="Client Name/Company Name:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                        <TextBlock Text="Client Address                         :" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,15"/>
+                                                        <TextBlock Text="Contact Number                     :" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                        <TextBlock Text="Company Representative       :" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
                                                     </StackPanel>
 
+                                                    <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Right">
+                                                        <TextBlock x:Name="SubmittedToClient" Text="Eli Clark" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                                        <TextBlock x:Name="SubmittedToAddress" Text="Wales, Swansea" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="270"/>
+                                                        <TextBlock x:Name="SubmittedToNumber" Text="+63966634982" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                                        <TextBlock x:Name="SubmittedToEmail" Text="brookerose@gmail.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                                    </StackPanel>
                                                 </Grid>
                                             </StackPanel>
+
                                         </StackPanel>
 
                                         <!--DataGrid 1: Seller Info-->
-                                        <Border BorderThickness="1,0" BorderBrush="Black" Grid.Row="4" Margin="5,0">
+                                        <Border BorderThickness="1,0" BorderBrush="Black" Grid.Row="4" Margin="5,0,5,0" Grid.ColumnSpan="2">
                                             <Grid>
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition/>
@@ -300,19 +309,19 @@
 
 
                                         <!--Bill Info-->
-                                        <Border Grid.Row="5" BorderBrush="Black" BorderThickness="1" Margin="5,0,5,0">
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="*" />
-                                                <!-- Content -->
-                                                <RowDefinition Height="Auto" />
-                                                <!-- Bottom Warranty -->
-                                            </Grid.RowDefinitions>
+                                        <Border Grid.Row="5" BorderBrush="Black" BorderThickness="1" Margin="5,0,5,268" Grid.ColumnSpan="2" Grid.RowSpan="2">
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="*" />
+                                                    <!-- Content -->
+                                                    <RowDefinition Height="Auto" />
+                                                    <!-- Bottom Warranty -->
+                                                </Grid.RowDefinitions>
 
-                                            <!-- Main content: DataGrid and "Nothing to follow" -->
+                                                <!-- Main content: DataGrid and "Nothing to follow" -->
 
-                                            <StackPanel Grid.Row="0">
-                                                <DataGrid x:Name="dataGrid"
+                                                <StackPanel Grid.Row="0">
+                                                    <DataGrid x:Name="dataGrid"
                                                    IsReadOnly="True"
                                                    AutoGenerateColumns="False"
                                                    CanUserAddRows="False"
@@ -322,18 +331,18 @@
                                                    RowBackground="Transparent"
                                                    BorderThickness="0, 1, 0, 0"
                                                    BorderBrush="Black">
-                                                    <DataGrid.Columns>
-                                                        <!-- Image Column with Hover Zoom Effect -->
+                                                        <DataGrid.Columns>
+                                                            <!-- Image Column with Hover Zoom Effect -->
 
-                                                        <DataGridTemplateColumn Header="Image" Width="60">
-                                                            <DataGridTemplateColumn.CellTemplate>
-                                                                <DataTemplate>
-                                                                    <Border Background="Transparent" 
+                                                            <DataGridTemplateColumn Header="Image" Width="60">
+                                                                <DataGridTemplateColumn.CellTemplate>
+                                                                    <DataTemplate>
+                                                                        <Border Background="Transparent" 
                                                                       HorizontalAlignment="Center" 
                                                                       VerticalAlignment="Center"
                                                                       Padding="2">
 
-                                                                        <Image x:Name="ProductImageControl"
+                                                                            <Image x:Name="ProductImageControl"
                                                                           Source="{Binding ProductImage}" 
                                                                           MaxHeight="50" 
                                                                           MaxWidth="50"
@@ -342,108 +351,108 @@
                                                                           VerticalAlignment="Center"
                                                                           Cursor="Hand"
                                                                           MouseLeftButtonDown="ProductImageControl_MouseLeftButtonDown">
-                                                                            <Image.Style>
-                                                                                <Style TargetType="Image">
-                                                                                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
-                                                                                    <Setter Property="RenderTransform">
-                                                                                        <Setter.Value>
-                                                                                            <ScaleTransform ScaleX="1" ScaleY="1"/>
-                                                                                        </Setter.Value>
-                                                                                    </Setter>
-                                                                                    <Style.Triggers>
-                                                                                        <!-- Hover Effect: Zoom In -->
-                                                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                                                            <Trigger.EnterActions>
-                                                                                                <BeginStoryboard>
-                                                                                                    <Storyboard>
-                                                                                                        <DoubleAnimation 
+                                                                                <Image.Style>
+                                                                                    <Style TargetType="Image">
+                                                                                        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                                                                                        <Setter Property="RenderTransform">
+                                                                                            <Setter.Value>
+                                                                                                <ScaleTransform ScaleX="1" ScaleY="1"/>
+                                                                                            </Setter.Value>
+                                                                                        </Setter>
+                                                                                        <Style.Triggers>
+                                                                                            <!-- Hover Effect: Zoom In -->
+                                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                                <Trigger.EnterActions>
+                                                                                                    <BeginStoryboard>
+                                                                                                        <Storyboard>
+                                                                                                            <DoubleAnimation 
              
                                                                                                          Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
                                                                                                          To="1.1" 
                                                                                                          Duration="0:0:0.3">
 
-                                                                                                            <DoubleAnimation.EasingFunction>
-                                                                                                                <QuadraticEase EasingMode="EaseOut"/>
-                                                                                                            </DoubleAnimation.EasingFunction>
-                                                                                                        </DoubleAnimation>
-                                                                                                        <DoubleAnimation 
+                                                                                                                <DoubleAnimation.EasingFunction>
+                                                                                                                    <QuadraticEase EasingMode="EaseOut"/>
+                                                                                                                </DoubleAnimation.EasingFunction>
+                                                                                                            </DoubleAnimation>
+                                                                                                            <DoubleAnimation 
              
                                                                                                          Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
                                                                                                          To="1.1" 
                                                                                                          Duration="0:0:0.3">
 
-                                                                                                            <DoubleAnimation.EasingFunction>
-                                                                                                                <QuadraticEase EasingMode="EaseOut"/>
-                                                                                                            </DoubleAnimation.EasingFunction>
-                                                                                                        </DoubleAnimation>
-                                                                                                    </Storyboard>
-                                                                                                </BeginStoryboard>
-                                                                                            </Trigger.EnterActions>
-                                                                                            <Trigger.ExitActions>
-                                                                                                <BeginStoryboard>
-                                                                                                    <Storyboard>
-                                                                                                        <DoubleAnimation 
+                                                                                                                <DoubleAnimation.EasingFunction>
+                                                                                                                    <QuadraticEase EasingMode="EaseOut"/>
+                                                                                                                </DoubleAnimation.EasingFunction>
+                                                                                                            </DoubleAnimation>
+                                                                                                        </Storyboard>
+                                                                                                    </BeginStoryboard>
+                                                                                                </Trigger.EnterActions>
+                                                                                                <Trigger.ExitActions>
+                                                                                                    <BeginStoryboard>
+                                                                                                        <Storyboard>
+                                                                                                            <DoubleAnimation 
              
                                                                                                          Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
                                                                                                          To="1" 
                                                                                                          Duration="0:0:0.2">
 
-                                                                                                            <DoubleAnimation.EasingFunction>
-                                                                                                                <QuadraticEase EasingMode="EaseIn"/>
-                                                                                                            </DoubleAnimation.EasingFunction>
-                                                                                                        </DoubleAnimation>
-                                                                                                        <DoubleAnimation 
+                                                                                                                <DoubleAnimation.EasingFunction>
+                                                                                                                    <QuadraticEase EasingMode="EaseIn"/>
+                                                                                                                </DoubleAnimation.EasingFunction>
+                                                                                                            </DoubleAnimation>
+                                                                                                            <DoubleAnimation 
              
                                                                                                          Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
                                                                                                          To="1" 
                                                                                                          Duration="0:0:0.2">
 
-                                                                                                            <DoubleAnimation.EasingFunction>
-                                                                                                                <QuadraticEase EasingMode="EaseIn"/>
-                                                                                                            </DoubleAnimation.EasingFunction>
-                                                                                                        </DoubleAnimation>
-                                                                                                    </Storyboard>
-                                                                                                </BeginStoryboard>
-                                                                                            </Trigger.ExitActions>
-                                                                                        </Trigger>
-                                                                                    </Style.Triggers>
-                                                                                </Style>
+                                                                                                                <DoubleAnimation.EasingFunction>
+                                                                                                                    <QuadraticEase EasingMode="EaseIn"/>
+                                                                                                                </DoubleAnimation.EasingFunction>
+                                                                                                            </DoubleAnimation>
+                                                                                                        </Storyboard>
+                                                                                                    </BeginStoryboard>
+                                                                                                </Trigger.ExitActions>
+                                                                                            </Trigger>
+                                                                                        </Style.Triggers>
+                                                                                    </Style>
 
-                                                                            </Image.Style>
-                                                                        </Image>
-                                                                    </Border>
-                                                                </DataTemplate>
-                                                            </DataGridTemplateColumn.CellTemplate>
-                                                        </DataGridTemplateColumn>
+                                                                                </Image.Style>
+                                                                            </Image>
+                                                                        </Border>
+                                                                    </DataTemplate>
+                                                                </DataGridTemplateColumn.CellTemplate>
+                                                            </DataGridTemplateColumn>
 
-                                                        <!-- Quantity Column - Centered -->
-                                                        <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="70">
-                                                            <DataGridTextColumn.ElementStyle>
-                                                                <Style TargetType="TextBlock">
-                                                                    <Setter Property="Margin" Value="0,8"/>
-                                                                    <Setter Property="HorizontalAlignment" Value="Center"/>
-                                                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                                                    <Setter Property="TextAlignment" Value="Center"/>
-                                                                    <Setter Property="FontSize" Value="12"/>
-                                                                    <Setter Property="FontFamily" Value="Lexend"/>
-                                                                    <Setter Property="TextWrapping" Value="NoWrap"/>
-                                                                </Style>
-                                                            </DataGridTextColumn.ElementStyle>
-                                                        </DataGridTextColumn>
+                                                            <!-- Quantity Column - Centered -->
+                                                            <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="70">
+                                                                <DataGridTextColumn.ElementStyle>
+                                                                    <Style TargetType="TextBlock">
+                                                                        <Setter Property="Margin" Value="0,8"/>
+                                                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                                                        <Setter Property="TextAlignment" Value="Center"/>
+                                                                        <Setter Property="FontSize" Value="12"/>
+                                                                        <Setter Property="FontFamily" Value="Lexend"/>
+                                                                        <Setter Property="TextWrapping" Value="NoWrap"/>
+                                                                    </Style>
+                                                                </DataGridTextColumn.ElementStyle>
+                                                            </DataGridTextColumn>
 
-                                                        <!-- Description Column - Centered -->
-                                                        <DataGridTemplateColumn Header="Description" Width="*">
-                                                            <DataGridTemplateColumn.CellTemplate>
-                                                                <DataTemplate>
-                                                                    <StackPanel Margin="8" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                                        <TextBlock 
+                                                            <!-- Description Column - Centered -->
+                                                            <DataGridTemplateColumn Header="Description" Width="*">
+                                                                <DataGridTemplateColumn.CellTemplate>
+                                                                    <DataTemplate>
+                                                                        <StackPanel Margin="8" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                                            <TextBlock 
                                                                           Text="{Binding Description}" 
                                                                           FontSize="12" 
                                                                           FontFamily="Lexend"
                                                                           FontWeight="SemiBold"
                                                                           MaxWidth="400"
                                                                           TextWrapping="Wrap"/>
-                                                                        <TextBlock 
+                                                                            <TextBlock 
                                                                           Text="{Binding ProductDescription}" 
                                                                           FontSize="12" 
                                                                           FontFamily="Lexend"
@@ -452,110 +461,110 @@
                                                                           Margin="0,3,0,0"
                                                                           MaxWidth="400"       
                                                                           Visibility="{Binding ProductDescriptionVisibility}"/>
-                                                                    </StackPanel>
-                                                                </DataTemplate>
-                                                            </DataGridTemplateColumn.CellTemplate>
-                                                        </DataGridTemplateColumn>
+                                                                        </StackPanel>
+                                                                    </DataTemplate>
+                                                                </DataGridTemplateColumn.CellTemplate>
+                                                            </DataGridTemplateColumn>
 
-                                                        <!-- Unit Price Column - Centered -->
-                                                        <DataGridTextColumn Header="Unit Price" Binding="{Binding UnitPrice}" Width="80">
-                                                            <DataGridTextColumn.ElementStyle>
-                                                                <Style TargetType="TextBlock">
-                                                                    <Setter Property="Margin" Value="0,8"/>
-                                                                    <Setter Property="HorizontalAlignment" Value="Center"/>
-                                                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                                                    <Setter Property="TextAlignment" Value="Center"/>
-                                                                    <Setter Property="FontSize" Value="12"/>
-                                                                    <Setter Property="FontFamily" Value="Lexend"/>
-                                                                    <Setter Property="TextWrapping" Value="NoWrap"/>
-                                                                </Style>
-                                                            </DataGridTextColumn.ElementStyle>
-                                                        </DataGridTextColumn>
+                                                            <!-- Unit Price Column - Centered -->
+                                                            <DataGridTextColumn Header="Unit Price" Binding="{Binding UnitPrice}" Width="80">
+                                                                <DataGridTextColumn.ElementStyle>
+                                                                    <Style TargetType="TextBlock">
+                                                                        <Setter Property="Margin" Value="0,8"/>
+                                                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                                                        <Setter Property="TextAlignment" Value="Center"/>
+                                                                        <Setter Property="FontSize" Value="12"/>
+                                                                        <Setter Property="FontFamily" Value="Lexend"/>
+                                                                        <Setter Property="TextWrapping" Value="NoWrap"/>
+                                                                    </Style>
+                                                                </DataGridTextColumn.ElementStyle>
+                                                            </DataGridTextColumn>
 
-                                                        <!-- Line Price Column - Centered -->
-                                                        <DataGridTextColumn Header="Line Price" Binding="{Binding LinePrice}" Width="80">
-                                                            <DataGridTextColumn.ElementStyle>
-                                                                <Style TargetType="TextBlock">
-                                                                    <Setter Property="Margin" Value="0,8"/>
-                                                                    <Setter Property="HorizontalAlignment" Value="Center"/>
-                                                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                                                    <Setter Property="TextAlignment" Value="Center"/>
-                                                                    <Setter Property="FontSize" Value="12"/>
-                                                                    <Setter Property="FontFamily" Value="Lexend"/>
-                                                                    <Setter Property="TextWrapping" Value="NoWrap"/>
-                                                                </Style>
-                                                            </DataGridTextColumn.ElementStyle>
-                                                        </DataGridTextColumn>
-                                                    </DataGrid.Columns>
+                                                            <!-- Line Price Column - Centered -->
+                                                            <DataGridTextColumn Header="Line Price" Binding="{Binding LinePrice}" Width="80">
+                                                                <DataGridTextColumn.ElementStyle>
+                                                                    <Style TargetType="TextBlock">
+                                                                        <Setter Property="Margin" Value="0,8"/>
+                                                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                                                        <Setter Property="TextAlignment" Value="Center"/>
+                                                                        <Setter Property="FontSize" Value="12"/>
+                                                                        <Setter Property="FontFamily" Value="Lexend"/>
+                                                                        <Setter Property="TextWrapping" Value="NoWrap"/>
+                                                                    </Style>
+                                                                </DataGridTextColumn.ElementStyle>
+                                                            </DataGridTextColumn>
+                                                        </DataGrid.Columns>
 
-                                                    <!-- Row style -->
-                                                    <DataGrid.RowStyle>
-                                                        <Style TargetType="DataGridRow">
-                                                            <Setter Property="Background" Value="Transparent"/>
-                                                            <Setter Property="FontFamily" Value="Lexend"/>
-                                                            <Setter Property="FontSize" Value="12"/>
-                                                            <Setter Property="Margin" Value="0"/>
-                                                            <Setter Property="Padding" Value="0"/>
-                                                            <Setter Property="MinHeight" Value="55"/>
-                                                        </Style>
-                                                    </DataGrid.RowStyle>
+                                                        <!-- Row style -->
+                                                        <DataGrid.RowStyle>
+                                                            <Style TargetType="DataGridRow">
+                                                                <Setter Property="Background" Value="Transparent"/>
+                                                                <Setter Property="FontFamily" Value="Lexend"/>
+                                                                <Setter Property="FontSize" Value="12"/>
+                                                                <Setter Property="Margin" Value="0"/>
+                                                                <Setter Property="Padding" Value="0"/>
+                                                                <Setter Property="MinHeight" Value="55"/>
+                                                            </Style>
+                                                        </DataGrid.RowStyle>
 
-                                                    <!-- Header style -->
-                                                    <DataGrid.ColumnHeaderStyle>
-                                                        <Style TargetType="DataGridColumnHeader">
-                                                            <Setter Property="FontFamily" Value="Lexend"/>
-                                                            <Setter Property="FontSize" Value="10"/>
-                                                            <Setter Property="FontWeight" Value="SemiBold"/>
-                                                            <Setter Property="Foreground" Value="#FDFDFD"/>
-                                                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
-                                                            <Setter Property="Padding" Value="5,3"/>
-                                                            <Setter Property="Background" Value="#090909"/>
-                                                            <Setter Property="Height" Value="30"/>
-                                                        </Style>
-                                                    </DataGrid.ColumnHeaderStyle>
+                                                        <!-- Header style -->
+                                                        <DataGrid.ColumnHeaderStyle>
+                                                            <Style TargetType="DataGridColumnHeader">
+                                                                <Setter Property="FontFamily" Value="Lexend"/>
+                                                                <Setter Property="FontSize" Value="10"/>
+                                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                                                <Setter Property="Foreground" Value="#FDFDFD"/>
+                                                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                                                <Setter Property="Padding" Value="5,3"/>
+                                                                <Setter Property="Background" Value="#090909"/>
+                                                                <Setter Property="Height" Value="30"/>
+                                                            </Style>
+                                                        </DataGrid.ColumnHeaderStyle>
 
-                                                    <!-- Cell style -->
-                                                    <DataGrid.CellStyle>
-                                                        <Style TargetType="DataGridCell">
-                                                            <Setter Property="Background" Value="Transparent"/>
-                                                            <Setter Property="Padding" Value="3,0"/>
-                                                            <Setter Property="FontSize" Value="12"/>
-                                                            <Setter Property="TextBlock.TextWrapping" Value="NoWrap"/>
-                                                            <Setter Property="Foreground" Value="Black"/>
-                                                            <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis"/>
-                                                            <Setter Property="BorderThickness" Value="0"/>
-                                                            <Setter Property="Template">
-                                                                <Setter.Value>
-                                                                    <ControlTemplate TargetType="DataGridCell">
-                                                                        <Border Padding="{TemplateBinding Padding}"                                                                             
+                                                        <!-- Cell style -->
+                                                        <DataGrid.CellStyle>
+                                                            <Style TargetType="DataGridCell">
+                                                                <Setter Property="Background" Value="Transparent"/>
+                                                                <Setter Property="Padding" Value="3,0"/>
+                                                                <Setter Property="FontSize" Value="12"/>
+                                                                <Setter Property="TextBlock.TextWrapping" Value="NoWrap"/>
+                                                                <Setter Property="Foreground" Value="Black"/>
+                                                                <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis"/>
+                                                                <Setter Property="BorderThickness" Value="0"/>
+                                                                <Setter Property="Template">
+                                                                    <Setter.Value>
+                                                                        <ControlTemplate TargetType="DataGridCell">
+                                                                            <Border Padding="{TemplateBinding Padding}"                                                                             
                                                                             Background="{TemplateBinding Background}">
-                                                                            <ContentPresenter VerticalAlignment="Top"/>
-                                                                        </Border>
-                                                                    </ControlTemplate>
-                                                                </Setter.Value>
-                                                            </Setter>
-                                                        </Style>
-                                                    </DataGrid.CellStyle>
-                                                </DataGrid>
+                                                                                <ContentPresenter VerticalAlignment="Top"/>
+                                                                            </Border>
+                                                                        </ControlTemplate>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                            </Style>
+                                                        </DataGrid.CellStyle>
+                                                    </DataGrid>
 
-                                                <!-- "Nothing to follow" text -->
-                                                <StackPanel x:Name="NothingToFollowSection" Margin="0,0,5,0" Orientation="Vertical" HorizontalAlignment="Center">
-                                                    <Border Background="Transparent" Padding="5" CornerRadius="5">
-                                                        <TextBlock 
+                                                    <!-- "Nothing to follow" text -->
+                                                    <StackPanel x:Name="NothingToFollowSection" Margin="0,0,5,0" Orientation="Vertical" HorizontalAlignment="Center">
+                                                        <Border Background="Transparent" Padding="5" CornerRadius="5">
+                                                            <TextBlock 
                                                            Text="*............................................... Nothing to follow ...............................................*"
                                                            FontFamily="Lexend"
                                                            FontSize="10"
                                                            FontWeight="Bold"
                                                            Foreground="Black"
                                                            HorizontalAlignment="Center"/>
-                                                    </Border>
-                                                </StackPanel>
+                                                        </Border>
+                                                    </StackPanel>
 
-                                                <!-- Editable TextBlock that triggers popup on click -->
-                                                <StackPanel x:Name="OtherServicesSection" Margin="5,0,5,0">
-                                                    <Border BorderBrush="Transparent" BorderThickness="0" Padding="1">
-                                                        <TextBlock 
+                                                    <!-- Editable TextBlock that triggers popup on click -->
+                                                    <StackPanel x:Name="OtherServicesSection" Margin="5,0,5,0">
+                                                        <Border BorderBrush="Transparent" BorderThickness="0" Padding="1">
+                                                            <TextBlock 
                                                            x:Name="OtherServices"
                                                            Text="Services:"
                                                            HorizontalAlignment="Center"
@@ -572,27 +581,27 @@
                                                            VerticalAlignment="Center"
                                                            Cursor="Hand"
                                                            MouseLeftButtonUp="TextEditorPopOut"/>
-                                                    </Border>
+                                                        </Border>
+                                                    </StackPanel>
                                                 </StackPanel>
-                                            </StackPanel>
 
-                                            <!-- Bottom warranty section -->
-                                            <StackPanel x:Name="WarrantySection" Grid.Row="1" Margin="0,10,0,7">
-                                                <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                                                    <Border Background="Transparent" Padding="2" CornerRadius="5">
-                                                        <TextBlock 
+                                                <!-- Bottom warranty section -->
+                                                <StackPanel x:Name="WarrantySection" Grid.Row="1" Margin="0,10,0,7">
+                                                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                                                        <Border Background="Transparent" Padding="2" CornerRadius="5">
+                                                            <TextBlock 
                                                             Text="Warranty:"
                                                             FontFamily="Lexend"
                                                             FontSize="10"
                                                             FontWeight="Bold"
                                                             Foreground="Red"
                                                             HorizontalAlignment="Left"/>
-                                                    </Border>
-                                                </StackPanel>
+                                                        </Border>
+                                                    </StackPanel>
 
-                                                <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-                                                    <Border Background="Transparent" CornerRadius="5">
-                                                        <TextBlock
+                                                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                                                        <Border Background="Transparent" CornerRadius="5">
+                                                            <TextBlock
                                                             x:Name="Warranty"
                                                             Text="Dream PC Build and IT Solutions Inc. offers 1 year warranty for this cost estimate. This warranty covers &#x0a;manufacturer defects and hardware malfunctions under normal usage. Terms and conditions apply."
                                                             FontFamily="Lexend"
@@ -604,13 +613,13 @@
                                                             Foreground="Red"
                                                             HorizontalAlignment="Center"
                                                             TextAlignment="Center"/>
-                                                            </Border>
-                                                        </StackPanel>
+                                                        </Border>
                                                     </StackPanel>
-                                                </Grid>
-                                            </Border>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
 
-                                        <StackPanel x:Name="BottomSection" Grid.Row="6">
+                                        <StackPanel x:Name="BottomSection" Grid.Row="6" Grid.ColumnSpan="2">
                                             <!--Customer Confirmation -->
                                             <Border Grid.Row="6" BorderBrush="#090909" BorderThickness="1" Margin="5,0,5,0" Padding="0">
                                                 <Grid>
@@ -800,21 +809,6 @@
                                                     <TextBlock Text="" TextAlignment="Center" FontFamily="Lexend" FontSize="8" Foreground="#090909"/>
                                                 </StackPanel>
                                             </Border>
-                                        </StackPanel>
-                                        <StackPanel Orientation="Vertical" Grid.Row="3" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="322" Height="130" Margin="0,0,0,20">
-                                            <TextBlock Text="Submitted to:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,10"/>
-
-                                            <!-- Client Company Name -->
-                                            <TextBlock x:Name="SubmittedToClient" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5" Width="314" Height="14"/>
-
-                                            <!-- Client Billing Address -->
-                                            <TextBlock x:Name="SubmittedToAddress" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5" Width="317" TextWrapping="Wrap"/>
-
-                                            <!-- Client Email -->
-                                            <TextBlock x:Name="SubmittedToEmail" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5" TextWrapping="Wrap" Width="312"/>
-
-                                            <!-- Project ID (User Input) -->
-                                            <TextBlock x:Name="SubmittedToProjectID" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
                                         </StackPanel>
                                     </Grid>
                                 </Border>

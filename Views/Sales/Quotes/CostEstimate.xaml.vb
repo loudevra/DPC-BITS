@@ -120,12 +120,6 @@ Namespace DPC.Views.Sales.Quotes
                 cmbTerms.Text = CostEstimateDetails.CEpaymentTerms
             End If
 
-            ' Subject Line
-            Dim subjectBlock = TryCast(Me.FindName("Subject"), TextBlock)
-            If subjectBlock IsNot Nothing Then
-                subjectBlock.Text = If(String.IsNullOrWhiteSpace(CostEstimateDetails.CESubject), "Subject:", "Subject: " & CostEstimateDetails.CESubject)
-            End If
-
             ' Header Details
             PopulateHeaderDetails()
         End Sub
@@ -135,7 +129,6 @@ Namespace DPC.Views.Sales.Quotes
                 Dim clientBlock = TryCast(Me.FindName("SubmittedToClient"), TextBlock)
                 Dim addressBlock = TryCast(Me.FindName("SubmittedToAddress"), TextBlock)
                 Dim emailBlock = TryCast(Me.FindName("SubmittedToEmail"), TextBlock)
-                Dim projectBlock = TryCast(Me.FindName("SubmittedToProjectID"), TextBlock)
 
                 If clientBlock IsNot Nothing Then
                     clientBlock.Text = If(Not String.IsNullOrWhiteSpace(CostEstimateDetails.CECompanyName), CostEstimateDetails.CECompanyName, CostEstimateDetails.CEClientName)
@@ -151,7 +144,6 @@ Namespace DPC.Views.Sales.Quotes
                 End If
 
                 If emailBlock IsNot Nothing Then emailBlock.Text = CostEstimateDetails.CEEmail
-                If projectBlock IsNot Nothing Then projectBlock.Text = CostEstimateDetails.CEProjectID
             Catch ex As Exception
                 Debug.WriteLine("Header Error: " & ex.Message)
             End Try
