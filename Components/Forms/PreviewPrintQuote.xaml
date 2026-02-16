@@ -138,12 +138,11 @@
                                             <ColumnDefinition Width="8*"/>
                                             <ColumnDefinition Width="385*"/>
                                         </Grid.ColumnDefinitions>
+
+                                        <Grid.Background>
+                                            <ImageBrush ImageSource="/Assets/images/DREAMPCBUILD LOGO WATERMARK SLANTED SPACED.png" Stretch="UniformToFill" Opacity="0.05"/>
+                                        </Grid.Background>
                                         
-                                        <Image Source="/Assets/images/DREAMPCBUILD LOGO WATERMARK SLANTED SPACED.png" 
-                                                   Stretch="UniformToFill" 
-                                                   Opacity="0.05" 
-                                                   HorizontalAlignment="Stretch" 
-                                                   VerticalAlignment="Stretch" />
                                         <Grid Grid.ColumnSpan="2">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto"/>
@@ -195,7 +194,7 @@
                                                         <TextBlock x:Name="QuoteValidityDate"  FontSize="9" FontWeight="Bold"  Foreground="Red" FontFamily="Lexend" HorizontalAlignment="Center"  VerticalAlignment="Center"/>
                                                     </Border>
                                                 </StackPanel>
-                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,145,0,0">
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
                                                     <TextBlock Text="NOT VALID WITHOUT DREAM PC VERIFIED STAMP"  FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="Red" TextWrapping="Wrap"/>
                                                 </StackPanel>
                                             </StackPanel>
@@ -215,7 +214,7 @@
                                                             <TextBlock Text="Client Name/Company Name:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
                                                             <TextBlock Text="Client Address                         :" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,15"/>
                                                             <TextBlock Text="Contact Number                     :" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                                            <TextBlock Text="Company Representative       :" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                            <TextBlock Text="Client Email                             :" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
                                                         </StackPanel>
 
                                                         <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Right">
