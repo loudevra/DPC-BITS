@@ -179,9 +179,8 @@ Namespace DPC.Views.Sales.Quotes
             VatExShowVat.Text = If(CEisVatExInclude, "Hide VAT 12%", "Show VAT 12%")
 
             cmbCostEstimateValidty.Text = CostEstimateDetails.CEValidUntilDate
-
-            Debug.WriteLine($"Tax Selection - {_TaxSelection}")
-            Debug.WriteLine($"Tax Value In Quote Properties - {_SelectedTax}")
+            GovCEButton.Text = CostEstimateDetails.CEGovCEButton
+            GovCETitle.Text = CostEstimateDetails.CEGovCETitle
         End Sub
 
         Private Sub NewQuoteGovernment_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
@@ -465,12 +464,14 @@ Namespace DPC.Views.Sales.Quotes
 
 #Region "This Loads every data if its available for updating"
         Private Sub InitializeProductUI()
-            RestoreProjectIDAndSubject()
+            Dim cache = GetCacheModule()
 
-            If HasCachedItems() Then
+            If Not String.IsNullOrEmpty(cache.QuoteNumber) Then
                 FillClientsField()
                 LoadCachedQuoteItems()
+                RestoreProjectIDAndSubject()
             Else
+                ' Standard "New Quote" behavior
                 _categoryIdCounter += 1
                 Dim catId = _categoryIdCounter
                 Dim newCategory As New CategorySection With {.CategoryId = catId, .RowCount = 0}
@@ -505,8 +506,12 @@ Namespace DPC.Views.Sales.Quotes
         End Function
 
         Private Sub LoadCachedQuoteItems()
-            ' Group items by category name to recreate the UI structure
-            Dim groupedItems = CEQuoteItemsCache.GroupBy(Function(i) i("Category")).ToList()
+            Dim cache = GetCacheModule()
+            If cache.OrderItems Is Nothing Then Return
+
+            Dim items = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(cache.OrderItems.ToString())
+
+            Dim groupedItems = items.GroupBy(Function(i) If(i.ContainsKey("Category"), i("Category"), "Uncategorized")).ToList()
 
             If groupedItems.Count > 0 Then
                 MainContainer.Children.Clear()
@@ -520,23 +525,20 @@ Namespace DPC.Views.Sales.Quotes
                 Dim newCategory As New CategorySection With {.CategoryId = catId, .RowCount = 0}
                 _categories.Add(catId, newCategory)
 
+                ' Create the UI Box for this category
                 CreateCategoryUI(catId, newCategory)
-
-                newCategory.CategoryNameTextBox.Text = group.Key
+                newCategory.CategoryNameTextBox.Text = group.Key ' Set the Category Name
 
                 For Each item In group
-                    ' This adds ONLY the rows that exist in your JSON cache
+                    ' Add a new row inside this specific category box
                     AddProductRowToUI(catId, newCategory.ProductsPanel)
-                    FillProductFields(item, catId, newCategory.RowCount)
 
-                    ' Handle Description (requires finding the specific textbox)
-                    Dim descBox = FindName($"txtDescription_{catId}_{newCategory.RowCount}")
-                    If descBox IsNot Nothing AndAlso item.ContainsKey("Description") Then
-                        CType(descBox, TextBox).Text = item("Description")
-                        CType(descBox, TextBox).Foreground = Brushes.Black ' Reset from placeholder color
-                    End If
+                    ' Map the JSON fields to the TextBoxes of this specific row
+                    FillProductFields(item, catId, newCategory.RowCount)
                 Next
             Next
+
+            UpdateCategoryGrandTotal()
         End Sub
 
         'Private Sub AddProductInputUI()
@@ -557,37 +559,31 @@ Namespace DPC.Views.Sales.Quotes
         End Function
 
         Private Sub FillClientsField()
+            Dim cache = GetCacheModule()
+
             RemoveHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
 
-            ' Fill client name first
-            If Not String.IsNullOrWhiteSpace(CEClientName) Then
-                txtSearchCustomer.Text = CEClientName
-            End If
+            ' 1. Transfer Header Data
+            txtQuoteNumber.Text = cache.QuoteNumber
+            txtReferenceNumber.Text = cache.Reference
+            txtSearchCustomer.Text = cache.ClientName
+            TxtClientDetails.Text = cache.ClientDetails
+            TxtProjectID.Text = cache.ProjectID
+            TxtSubjectDetails.Text = cache.Subject
+            txtQuoteNote.Text = cache.QuoteNote
 
-            ' Load clients manually before trying to match
-            If _clients Is Nothing OrElse _clients.Count = 0 Then
-                _clients = ClientController.SearchClient(txtSearchCustomer.Text)
-            End If
-
-            ' Now we can match safely
-            If _clients IsNot Nothing AndAlso _clients.Count > 0 Then
-                Dim match = _clients.FirstOrDefault(Function(c) c.Name = txtSearchCustomer.Text)
-                If match IsNot Nothing Then
-                    _selectedClient = match
-                    UpdateSupplierDetails(_selectedClient)
-                End If
-            End If
-
-            ' Continue setting other fields
-            If Not String.IsNullOrWhiteSpace(CEClientDetailsCache) Then TxtClientDetails.Text = CEClientDetailsCache
-            If Not String.IsNullOrWhiteSpace(CEQuoteNumberCache) Then txtQuoteNumber.Text = CEQuoteNumberCache
-            If Not String.IsNullOrWhiteSpace(CEReferenceNumber) Then txtReferenceNumber.Text = CEReferenceNumber
-            If Not String.IsNullOrWhiteSpace(CEnoteTxt) Then txtQuoteNote.Text = CEnoteTxt
-
+            ' 2. Handle Dates
             Dim parsedDate As DateTime
-            If DateTime.TryParse(CEQuoteDateCache, parsedDate) Then QuoteDate.SelectedDate = parsedDate
+            If DateTime.TryParse(cache.QuoteDate, parsedDate) Then
+                OrderDateVM.SelectedDate = parsedDate
+            End If
 
-            cmbCostEstimateValidty.Text = CEValidUntilDate
+            ' 3. Handle Validity ComboBox
+            cmbCostEstimateValidty.Text = cache.Validity
+
+            ' 4. Match the actual Client object for the Autocomplete logic
+            Dim results = ClientController.SearchClient(cache.ClientName)
+            _selectedClient = results.FirstOrDefault(Function(c) c.Name = cache.ClientName)
 
             AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
         End Sub
@@ -2511,5 +2507,16 @@ End Sub
         '    End If
         'End Sub
 #End Region
+
+        Private Function GetCacheModule() As QuotesModel
+            If Not Application.Current.Properties.Contains("QuoteCache") Then
+                Application.Current.Properties("QuoteCache") = New QuotesModel()
+            Else
+                If Not (TypeOf Application.Current.Properties("QuoteCache") Is QuotesModel) Then
+                    Application.Current.Properties("QuoteCache") = New QuotesModel()
+                End If
+            End If
+            Return DirectCast(Application.Current.Properties("QuoteCache"), QuotesModel)
+        End Function
     End Class
 End Namespace

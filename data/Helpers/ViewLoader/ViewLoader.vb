@@ -143,6 +143,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Sales.Quotes.NewQuote()
                     Case "salesquotegovernment"
                         Return New Sales.Quotes.NewQuoteGovernment()
+                    Case "salesquotegovernmentmanage"
+                        Return New Sales.Quotes.ManageQuoteGovernment()
                     Case "creditnote"
                         Return New Sales.CreditNotes.CreditNotes()
                     Case "newsubscriptioninvoice"

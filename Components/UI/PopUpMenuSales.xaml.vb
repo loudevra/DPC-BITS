@@ -1,6 +1,7 @@
-﻿Imports System.Windows.Controls.Primitives
-Imports System.Windows
+﻿Imports System.Windows
+Imports System.Windows.Controls.Primitives
 Imports DPC.DPC.Data.Helpers
+Imports DPC.DPC.Data.Model
 
 Namespace DPC.Components.UI
     Public Class PopUpMenuSales
@@ -124,7 +125,16 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToNewQuoteGovernment(sender As Object, e As RoutedEventArgs)
+            CostEstimateDetails.CEGovCETitle = "Cost Estimatee"
+            CostEstimateDetails.CEGovCEButton = "Generate Cost Estimate"
+            If Application.Current.Properties.Contains("QuoteCache") Then
+                Application.Current.Properties.Remove("QuoteCache")
+            End If
             ViewLoader.DynamicView.NavigateToView("salesquotegovernment", Me)
+        End Sub
+
+        Private Sub NavigateToManageQuoteGovernment(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("salesquotegovernmentmanage", Me)
         End Sub
 
         Private Sub NavigateToNewSubscription(sender As Object, e As RoutedEventArgs)

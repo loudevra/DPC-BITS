@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="DPC.Views.Sales.Quotes.Quote"
+﻿<UserControl x:Class="DPC.Views.Sales.Quotes.ManageQuoteGovernment"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -179,14 +179,14 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0"
-                                       Text="Manage Private Quote"
+                                       Text="Manage Government Quote"
                                        FontSize="32"
                                        FontWeight="SemiBold"
                                        FontFamily="Lexend"
                                        Foreground="#555555"
                                        VerticalAlignment="Center"/>
                             <StackPanel VerticalAlignment="Center">
-                                <Button x:Name="BtnAddQuote" HorizontalAlignment="Right" Style="{StaticResource AddQuoteButtonStyle}" Margin="20,0,0,0" Height="35" Width="152" Click="NavigateToQuotes">
+                                <Button x:Name="BtnAddQuote" HorizontalAlignment="Right" Style="{StaticResource AddQuoteButtonStyle}" Margin="20,0,0,0" Height="35" Width="152" Click="NavigateToGovernmentQuotes">
                                     <StackPanel Orientation="Horizontal">
                                         <materialDesign:PackIcon Kind="Plus" Width="25" Height="25" Foreground="#FDFDFD"/>
                                         <TextBlock Text="Add Quote" FontSize="17" Foreground="#FDFDFD"/>

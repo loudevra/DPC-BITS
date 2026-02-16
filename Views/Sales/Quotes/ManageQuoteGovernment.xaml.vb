@@ -8,7 +8,7 @@ Imports MySql.Data.MySqlClient
 Imports System.Collections.ObjectModel
 
 Namespace DPC.Views.Sales.Quotes
-    Public Class Quote
+    Public Class ManageQuoteGovernment
         ' Add SingleCalendar ViewModels for both pickers
         Private startDateViewModel As New CalendarController.SingleCalendar()
         Private dueDateViewModel As New CalendarController.SingleCalendar()
@@ -17,7 +17,7 @@ Namespace DPC.Views.Sales.Quotes
         Private _isInitialized As Boolean = False
         Private _dataTable As DataTable
         Private _QuoteNumber As String
-        Private _Type As String = "Private"
+        Private _Type As String = "Government"
 
         Public Sub New()
             InitializeComponent()
@@ -86,7 +86,7 @@ Namespace DPC.Views.Sales.Quotes
                 ' Format quotes for display
                 FormatQuotesForDisplay(quotes)
 
-                dataGrid.ItemsSource = quotes
+                DataGrid.ItemsSource = quotes
             Catch ex As Exception
                 MessageBox.Show($"Error loading data: {ex.Message}")
             End Try
@@ -115,8 +115,11 @@ Namespace DPC.Views.Sales.Quotes
                 cacheModule.QuoteNote = quote.QuoteNote
                 cacheModule.OrderItems = quote.OrderItems
 
+                CostEstimateDetails.CEGovCETitle = "Edit Cost Estimate"
+                CostEstimateDetails.CEGovCEButton = "Update Cost Estimate"
+
                 ' Navigate to EditQuote
-                ViewLoader.DynamicView.NavigateToView("editquote", Me)
+                ViewLoader.DynamicView.NavigateToView("salesquotegovernment", Me)
 
             End If
         End Sub
@@ -136,7 +139,7 @@ Namespace DPC.Views.Sales.Quotes
 
 
         Private Sub DeleteQuote(sender As Object, e As RoutedEventArgs)
-            Dim quote As QuotesModel = TryCast(dataGrid.SelectedItem, QuotesModel)
+            Dim quote As QuotesModel = TryCast(DataGrid.SelectedItem, QuotesModel)
 
             If quote Is Nothing Then
                 MessageBox.Show("Please select a Quote to delete.", "No Selection", MessageBoxButton.OK, MessageBoxImage.Warning)
@@ -167,7 +170,7 @@ Namespace DPC.Views.Sales.Quotes
                 End Using
 
                 MessageBox.Show("Quote deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
-                dataGrid.ItemsSource = Nothing
+                DataGrid.ItemsSource = Nothing
                 LoadData()
             Catch ex As Exception
                 MessageBox.Show("Error deleting quote: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
@@ -192,7 +195,7 @@ Namespace DPC.Views.Sales.Quotes
                 ' Format quotes for display
                 FormatQuotesForDisplay(quotes)
 
-                dataGrid.ItemsSource = quotes
+                DataGrid.ItemsSource = quotes
 
             Catch ex As Exception
                 MessageBox.Show($"Error searching: {ex.Message}")
@@ -275,23 +278,23 @@ Namespace DPC.Views.Sales.Quotes
 
         Private Sub GetDataFromDB()
             If String.IsNullOrWhiteSpace(SearchText.Text) Then
-                dataGrid.ItemsSource = Nothing
-                DataGrid.ItemsSource = QuotesController.GetQuotes(CInt(cmbLimit.Text), _Type)
+                DataGrid.ItemsSource = Nothing
+                dataGrid.ItemsSource = QuotesController.GetQuotes(CInt(cmbLimit.Text), _Type)
             Else
-                dataGrid.ItemsSource = Nothing
+                DataGrid.ItemsSource = Nothing
                 dataGrid.ItemsSource = QuotesController.SearchQuotes(SearchText.Text, CInt(cmbLimit.Text), _Type)
             End If
         End Sub
 
         Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
             ' Check if DataGrid has data
-            If dataGrid.Items.Count = 0 Then
+            If DataGrid.Items.Count = 0 Then
                 MessageBox.Show("No data to export!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Exit Sub
             End If
 
             ' Use the ExcelExporter helper with column exclusions
-            ExcelExporter.ExportDataGridToExcel(dataGrid, "QuotesExport", "Quotes List")
+            ExcelExporter.ExportDataGridToExcel(DataGrid, "QuotesExport", "Quotes List")
 
         End Sub
 
@@ -446,8 +449,8 @@ Namespace DPC.Views.Sales.Quotes
                                      End Sub
         End Sub
 
-        Private Sub NavigateToQuotes(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("navigatetoquotes", Me)
+        Private Sub NavigateToGovernmentQuotes(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("salesquotegovernment", Me)
         End Sub
 
         Private Sub SearchText_TextChanged(sender As Object, e As TextChangedEventArgs)

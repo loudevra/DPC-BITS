@@ -132,7 +132,7 @@
 
 
                             <StackPanel x:Name="PrintPreview" Grid.Row="1">
-                                <Border Height="1344"  Width="816" Background="White" CornerRadius="10,10,10,10" BorderThickness="0" Padding="10">
+                                <Border MinHeight="1344"  Width="816" Background="White" CornerRadius="10,10,10,10" BorderThickness="0" Padding="10">
                                     <Grid>
                                         <Image Source="/Assets/images/DREAMPCBUILD LOGO WATERMARK SLANTED SPACED.png" 
                                                Stretch="UniformToFill" 

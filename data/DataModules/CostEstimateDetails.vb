@@ -58,6 +58,9 @@
     Public CESubject As String = "" ' Subject for the cost estimate
     Public CEProjectID As String = "" ' ✅ NEW: Project ID for the cost estimate
 
+    Public CEGovCEButton = "Generate Cost Estimate"
+    Public CEGovCETitle = "Cost Estimate"
+
     Public Sub ClearAllCECache()
         CEQuoteNumberCache = ""
         CEClientIDCache = ""
@@ -125,6 +128,9 @@
         CEValidUntilDate = ""
         CEOtherServices = ""
         CEShowProductImages = True
+
+        CEGovCEButton = "Generate Cost Estimate"
+        CEGovCETitle = "Cost Estimate"
 
     End Sub
 

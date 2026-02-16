@@ -86,7 +86,7 @@ Namespace DPC.Views.Sales.Quotes
             Try
                 Dim cacheModule = GetCacheModule()
                 txtQuoteNumber.Text = cacheModule.QuoteNumber
-                TxtClientDetails.Text = cacheModule.TxtClientDetails
+                TxtClientDetails.Text = cacheModule.ClientDetails
 
                 If Not String.IsNullOrEmpty(cacheModule.WarehouseID) Then
                     For i As Integer = 0 To ComboBoxWarehouse.Items.Count - 1
@@ -126,11 +126,16 @@ Namespace DPC.Views.Sales.Quotes
             End Try
         End Sub
 
-        Private Function GetCacheModule() As QuoteCacheData
+        Private Function GetCacheModule() As QuotesModel
             If Not Application.Current.Properties.Contains("QuoteCache") Then
-                Application.Current.Properties("QuoteCache") = New QuoteCacheData()
+                Application.Current.Properties("QuoteCache") = New QuotesModel()
+            Else
+                If Not (TypeOf Application.Current.Properties("QuoteCache") Is QuotesModel) Then
+                    Application.Current.Properties("QuoteCache") = New QuotesModel()
+                End If
             End If
-            Return DirectCast(Application.Current.Properties("QuoteCache"), QuoteCacheData)
+
+            Return DirectCast(Application.Current.Properties("QuoteCache"), QuotesModel)
         End Function
 
         Private Sub InitializeControls()
@@ -1543,7 +1548,7 @@ Namespace DPC.Views.Sales.Quotes
                 ' Populate all fields
                 txtQuoteNumber.Text = quote.QuoteNumber
                 txtReferenceNumber.Text = quote.Reference
-                TxtClientDetails.Text = cacheModule.TxtClientDetails
+                TxtClientDetails.Text = cacheModule.ClientDetails
 
                 ' Set warehouse
                 If Not String.IsNullOrEmpty(quote.WarehouseID) Then
