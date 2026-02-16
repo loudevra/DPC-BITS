@@ -181,9 +181,6 @@ Namespace DPC.Views.Sales.Quotes
             cmbCostEstimateValidty.Text = CostEstimateDetails.CEValidUntilDate
 
             TaxHeader.Header = If(_TaxSelection, "Tax(%)", "Tax(12%)")
-
-            Debug.WriteLine($"Tax Selection - {_TaxSelection}")
-            Debug.WriteLine($"Tax Value In Quote Properties - {_SelectedTax}")
         End Sub
 #End Region
 

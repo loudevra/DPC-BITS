@@ -31,7 +31,7 @@ Namespace DPC.Views.Sales.Quotes
         Private Shared element As FrameworkElement
 
         ' Layout Constants - CALIBRATED FOR LEGAL SIZE
-        Private Const PageMaxHeight As Double = 800
+        Private Const PageMaxHeight As Double = 950
         Private Const FooterSectionHeight As Double = 250
         Private Const BaseItemHeight As Double = 55
         Private Const DescriptionLineHeight As Double = 15

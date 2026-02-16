@@ -527,24 +527,39 @@
 
                                                         <!-- Cell style -->
                                                         <DataGrid.CellStyle>
-                                                            <Style TargetType="DataGridCell">
+                                                            <Style TargetType="{x:Type DataGridCell}">
                                                                 <Setter Property="Background" Value="Transparent"/>
                                                                 <Setter Property="Padding" Value="3,0"/>
                                                                 <Setter Property="FontSize" Value="12"/>
                                                                 <Setter Property="TextBlock.TextWrapping" Value="NoWrap"/>
-                                                                <Setter Property="Foreground" Value="Black"/>
+                                                                <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Path=Foreground}"/>
                                                                 <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis"/>
-                                                                <Setter Property="BorderThickness" Value="0"/>
+                                                                <Setter Property="BorderThickness" Value="0, 0, 1, 1"/>
+                                                                <Setter Property="BorderBrush" Value="Black"/>
+
                                                                 <Setter Property="Template">
                                                                     <Setter.Value>
-                                                                        <ControlTemplate TargetType="DataGridCell">
-                                                                            <Border Padding="{TemplateBinding Padding}"                                                                             
-                                                                            Background="{TemplateBinding Background}">
+                                                                        <ControlTemplate TargetType="{x:Type DataGridCell}">
+                                                                            <Border Padding="{TemplateBinding Padding}"                                                                              
+                                                                                    Background="{TemplateBinding Background}"
+                                                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                                                    BorderThickness="{TemplateBinding BorderThickness}">
                                                                                 <ContentPresenter VerticalAlignment="Top"/>
                                                                             </Border>
                                                                         </ControlTemplate>
                                                                     </Setter.Value>
                                                                 </Setter>
+
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsSubtotalRow}" Value="True">
+                                                                        <Setter Property="BorderThickness" Value="0, 0, 0, 0"/>
+                                                                        <Setter Property="BorderBrush" Value="Black"/>
+                                                                    </DataTrigger>
+                                                                    <DataTrigger Binding="{Binding IsCategoryHeader}" Value="True">
+                                                                        <Setter Property="BorderThickness" Value="0, 0, 0, 0"/>
+                                                                        <Setter Property="BorderBrush" Value="Black"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
                                                             </Style>
                                                         </DataGrid.CellStyle>
                                                     </DataGrid>

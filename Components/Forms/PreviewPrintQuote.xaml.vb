@@ -38,7 +38,7 @@ Namespace DPC.Components.Forms
         Private Const BaseItemHeight As Double = 55
         Private Const DescriptionLineHeight As Double = 15
         Private Const PaginationTriggerHeight As Double = 412
-        Private Const PageMaxHeight As Double = 850
+        Private Const PageMaxHeight As Double = 950
         Private Const ReservedSpaceForDescription As Double = 30
         Private Const FooterSectionHeight As Double = 250
 #End Region
