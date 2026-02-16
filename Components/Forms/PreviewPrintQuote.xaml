@@ -132,7 +132,7 @@
 
 
                             <StackPanel x:Name="PrintPreview" Grid.Row="1">
-                                <Border MinHeight="1344"  Width="816" Background="White" CornerRadius="10,10,10,10" BorderThickness="0" Padding="15">
+                                <Border MinHeight="1344"  Width="816" Background="White" CornerRadius="10,10,10,10" BorderThickness="0" Padding="40">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="8*"/>

@@ -142,7 +142,16 @@
                                 </Grid>
                             </Border>
                             <StackPanel Grid.Row="1" Margin="0,0,0,0" >
-                                <Border Height="1344" Width="816" Background="White" CornerRadius="0,0,10,10"  BorderThickness="0" Padding="15">
+                                <Border Background="White">
+                                    <Rectangle Width="auto"
+                                            Height="1" 
+                                            Stroke="#AEAEAE"
+                                            StrokeThickness="1"
+                                            Fill="Transparent"
+                                            VerticalAlignment="Top"
+                                            Margin="10"/>
+                                </Border>
+                                <Border Height="1344" Width="816" Background="White" CornerRadius="0,0,10,10"  BorderThickness="0" Padding="40">
                                     <Grid>
 
                                         <Grid.Background>
@@ -159,16 +168,6 @@
                                             <RowDefinition Height="Auto"/>
 
                                         </Grid.RowDefinitions>
-
-                                        <!--Rectangle as line-->
-                                        <Rectangle Grid.Row="0"
-                                       Width="auto"
-                                       Height="1" 
-                                       Stroke="#AEAEAE"
-                                       StrokeThickness="1"
-                                       Fill="Transparent"
-                                       VerticalAlignment="Top"
-                                       Margin="10,0"/>
 
                                         <!--DPC Logo Side Bar-->
                                         <StackPanel Grid.Row="0" Height="Auto" Width="232" HorizontalAlignment="Left" Orientation="Horizontal" Margin="0,10,0,17" Background="Transparent" Grid.RowSpan="2">

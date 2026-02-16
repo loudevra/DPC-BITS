@@ -435,7 +435,7 @@ Namespace DPC.Components.Forms
                     Application.Current.Properties.Remove("QuoteCache")
                 End If
 
-                ViewLoader.DynamicView.NavigateToView("salesquote", Me)
+                ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
             Else
                 MessageBox.Show("Failed to submit quote.")
             End If
