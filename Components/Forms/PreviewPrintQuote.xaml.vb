@@ -86,6 +86,8 @@ Namespace DPC.Components.Forms
             QuoteValidityDate.Text = CostEstimateDetails.CEValidUntilDate
             Subtotal.Text = CostEstimateDetails.CETotalBaseAmount
             TotalCost.Text = CostEstimateDetails.CEGrandTotalCost
+            lblVat.Text = CostEstimateDetails.CEVatLabel
+            SubtotalTax.Text = CostEstimateDetails.CESubtotalLabel
             VAT12.Text = CostEstimateDetails.CETotalTaxValueCache
             noteBox.Text = CostEstimateDetails.CEnoteTxt
             remarksBox.Text = CostEstimateDetails.CEremarksTxt
@@ -93,7 +95,6 @@ Namespace DPC.Components.Forms
             ' Signatories & UI Labels
             SalesRep.Text = CacheOnLoggedInName
             cmbApproved.Text = CostEstimateDetails.CEApproved
-            SubtotalTax.Text = CostEstimateDetails.CESubtotalExInc
             Warranty.Text = CostEstimateDetails.CEWarranty
             DeliveryMobilization.Text = CostEstimateDetails.CEDeliveryMobilization
             CNIdentifier.Text = CostEstimateDetails.CECNIndetifier

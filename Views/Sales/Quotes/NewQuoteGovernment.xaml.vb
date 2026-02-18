@@ -1419,11 +1419,13 @@ End Sub
                 'Dim amountBeforeDiscount As Decimal = baseAmount
 
                 If _TaxSelection Then
+                    ' Tax Exclusive: add tax to amount
+                    'amountWithTax = baseAmount + taxValue
                     taxValue = baseAmount * (taxPercent / 100)
-                    'amountBeforeDiscount = baseAmount + taxValue
                 Else
+                    ' Tax Inclusive: 12% is already in the base amount, calculate for display only
                     taxValue = baseAmount * 0.12D
-                    'amountBeforeDiscount = baseAmount + taxValue
+                    'amountWithTax = baseAmount + taxValue
                 End If
 
                 Dim discountValue = baseAmount * (discountPercent / 100)
@@ -2009,23 +2011,23 @@ End Sub
 
             Dim baseAmount = quantity * rate
             Dim taxValue As Decimal = 0
-            Dim amountBeforeDiscount As Decimal = baseAmount
+            'Dim amountBeforeDiscount As Decimal = baseAmount
 
-            If _TaxSelection Then
+            If CostEstimateDetails.CETaxProperty Is "Exclusive" Then
                 ' Tax Exclusive: add tax to amount
                 taxValue = baseAmount * (taxPercent / 100)
-                amountBeforeDiscount = baseAmount + taxValue
-            Else
+                'amountBeforeDiscount = baseAmount + taxValue
+            ElseIf CostEstimateDetails.CETaxProperty Is "Inclusive" Then
                 ' Tax Inclusive: 12% is already in the base amount, calculate for display only
                 taxValue = baseAmount * 0.12D
-                amountBeforeDiscount = baseAmount + taxValue ' Base amount already includes tax conceptually
+                'amountBeforeDiscount = baseAmount + taxValue
 
                 ' Update tax value display
                 If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
             End If
 
-            Dim discountValue = amountBeforeDiscount * (discountPercent / 100)
-            Dim finalAmount = amountBeforeDiscount - discountValue
+            Dim discountValue = baseAmount * (discountPercent / 100)
+            Dim finalAmount = baseAmount - discountValue
 
             ' Update all display boxes
             If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
@@ -2536,6 +2538,17 @@ End Sub
                 CostEstimateDetails.CEEmail = client.Email
                 CostEstimateDetails.CEClientName = client.Name
                 CostEstimateDetails.CERepresentative = client.Representative
+
+
+                Dim selectedTaxType As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
+
+                If selectedTaxType = "Exclusive" Then
+                    CostEstimateDetails.CEVatLabel = $"VAT Exclusive"
+                    CostEstimateDetails.CESubtotalLabel = "Subtotal Vat Ex."
+                ElseIf selectedTaxType = "Inclusive" Then
+                    CostEstimateDetails.CEVatLabel = "VAT 12%"
+                    CostEstimateDetails.CESubtotalLabel = "Subtotal Vat In."
+                End If
 
                 ' Navigate to Cost Estimate view
                 ViewLoader.DynamicView.NavigateToView("costestimategovernment", Me)

@@ -1033,11 +1033,10 @@ Namespace DPC.Views.Sales.Quotes
             Dim taxValue As Decimal = 0
             'Dim amountWithTax As Decimal
 
-
             If _TaxSelection Then
                 ' Tax Exclusive: add tax to amount
-                taxValue = baseAmount * (taxPercent / 100)
                 'amountWithTax = baseAmount + taxValue
+                taxValue = baseAmount * (taxPercent / 100)
             Else
                 ' Tax Inclusive: 12% is already in the base amount, calculate for display only
                 taxValue = baseAmount * 0.12D
@@ -1554,6 +1553,16 @@ Namespace DPC.Views.Sales.Quotes
                 CostEstimateDetails.CEEmail = client.Email
 
                 ' Debugging 
+                Dim selectedTaxType As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
+
+                If selectedTaxType = "Exclusive" Then
+                    CostEstimateDetails.CEVatLabel = $"VAT Exclusive"
+                    CostEstimateDetails.CESubtotalLabel = "Subtotal Vat Ex."
+                ElseIf selectedTaxType = "Inclusive" Then
+                    CostEstimateDetails.CEVatLabel = "VAT 12%"
+                    CostEstimateDetails.CESubtotalLabel = "Subtotal Vat In."
+                End If
+
                 Debug.WriteLine($"QuoteNumber: {CEQuoteNumberCache}, QuoteDate: {CEQuoteDateCache}, ValidityDate: {CEQuoteValidityDateCache}, Tax: {CETaxValueCache}, TotalAmount: {CETotalAmountCache}, Note: {CEnoteTxt}, Remarks: {CEremarksTxt}, Items: {JsonConvert.SerializeObject(CEQuoteItemsCache)}, Signature: {CEsignature}, Image: {CEImageCache}, Path: {CEPathCache}, ClientName: {CEClientName}, Phone: {CEPhone}, Email: {CEEmail}, Term1: {CETerm1}, Term2: {CETerm2}, Term3: {CETerm3}, Term4: {CETerm4}, Term5: {CETerm5}, Term6: {CETerm6}, Term7: {CETerm7}, Term8: {CETerm8}, Term9: {CETerm9}, Term10: {CETerm10}, Term11: {CETerm11}, Term12: {CETerm12}")
                 ViewLoader.DynamicView.NavigateToView("costestimate", Me)
             Catch ex As Exception
