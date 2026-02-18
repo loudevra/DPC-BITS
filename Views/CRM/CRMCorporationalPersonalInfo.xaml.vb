@@ -18,10 +18,7 @@ Namespace DPC.Views.CRM
 
         Private Sub txtInput_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
             ' Regex allows digits, symbols, and space
-            Dim pattern As String = "^[0-9!@#$%^&*()_\-+=\.,:;?/ ]$"
-            If Not System.Text.RegularExpressions.Regex.IsMatch(e.Text, pattern) Then
-                e.Handled = True
-            End If
+            ' Removed regex restriction
         End Sub
 
         Private Sub SetInfo()
