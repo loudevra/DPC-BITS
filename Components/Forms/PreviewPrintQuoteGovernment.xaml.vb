@@ -94,8 +94,10 @@ Namespace DPC.Components.Forms
             QuoteNumber.Text = CostEstimateDetails.CEQuoteNumberCache
             QuoteDate.Text = CostEstimateDetails.CEQuoteDateCache
             QuoteValidityDate.Text = CostEstimateDetails.CEValidUntilDate
-            Subtotal.Text = CostEstimateDetails.CESubTotalCache
+            Subtotal.Text = CostEstimateDetails.CETotalBaseAmount
             TotalCost.Text = CostEstimateDetails.CEGrandTotalCost
+            lblVat.Text = CostEstimateDetails.CEVatLabel
+            SubtotalTax.Text = CostEstimateDetails.CESubtotalLabel
             VAT12.Text = CostEstimateDetails.CETotalTaxValueCache
 
             noteBox.Text = CostEstimateDetails.CEnoteTxt

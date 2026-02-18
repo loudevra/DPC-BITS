@@ -105,8 +105,10 @@ Namespace DPC.Views.Sales.Quotes
             QuoteNumber.Text = CostEstimateDetails.CEQuoteNumberCache
             QuoteDate.Text = CostEstimateDetails.CEQuoteDateCache
             QuoteValidityDate.Text = CostEstimateDetails.CEValidUntilDate
-            Subtotal.Text = CostEstimateDetails.CETotalAmountCache
+            Subtotal.Text = CostEstimateDetails.CETotalBaseAmount
+            VAT12.Text = CostEstimateDetails.CETotalTaxValueCache
             TotalCost.Text = CostEstimateDetails.CETotalAmountCache
+            lblVat.Text = CostEstimateDetails.CEVatLabel
 
             noteBox.Text = CostEstimateDetails.CEpaperNote
             remarksBox.Text = CostEstimateDetails.CEremarksTxt
@@ -442,7 +444,7 @@ Namespace DPC.Views.Sales.Quotes
             CostEstimateDetails.CEInstallation = install
 
             If _isEditingExistingQuote Then
-                ViewLoader.DynamicView.NavigateToView("previewprintquoteeditedquote", Me)
+                ViewLoader.DynamicView.NavigateToView("printpreviewquotesgovernment", Me)
             Else
                 ViewLoader.DynamicView.NavigateToView("printpreviewquotesgovernment", Me)
             End If

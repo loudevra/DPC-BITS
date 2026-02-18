@@ -32,6 +32,8 @@ Namespace DPC.Views.Sales.Quotes
         Private _productPopups As New Dictionary(Of String, Popup)
         Private _productListBoxes As New Dictionary(Of String, ListBox)
         Private _productTextBoxes As New Dictionary(Of String, TextBox)
+
+        Private _isEditingExistingQuote As Boolean = False
         ' Controllers for calendar to shows the date by binding
         Private OrderDateVM As New CalendarController.SingleCalendar()
         'Private OrderDueDateVM As New CalendarController.SingleCalendar()
@@ -69,9 +71,49 @@ Namespace DPC.Views.Sales.Quotes
             Public RowCount As Integer = 0
         End Class
 
+        Private _cache As QuotesModel
+
 #Region "Initialization once loaded the form"
         Public Sub New()
             InitializeComponent()
+
+            _cache = GetCacheModule()
+            If _cache IsNot Nothing AndAlso Not String.IsNullOrEmpty(_cache.QuoteNumber) Then
+                _isEditingExistingQuote = True
+                Try
+                    Dim format As String = "MMM d, yyyy"
+
+                    Dim originalDate As DateTime = DateTime.ParseExact(_cache.QuoteDate, format, Globalization.CultureInfo.InvariantCulture)
+                    Dim validityDate As DateTime = DateTime.ParseExact(_cache.Validity, format, Globalization.CultureInfo.InvariantCulture)
+
+                    Dim diff As TimeSpan = validityDate - originalDate
+                    Dim totalDays As Double = Math.Round(diff.TotalDays)
+
+                    Debug.WriteLine(totalDays)
+
+                    ' 4. Map to Index
+                    Dim targetIndex As Integer = 0
+
+                    Select Case totalDays
+                        Case <= 2 : targetIndex = 0  ' 48 Hours
+                        Case <= 8 : targetIndex = 1  ' 1 Week (Buffer for 7-8 days)
+                        Case <= 15 : targetIndex = 2 ' 2 Weeks
+                        Case <= 22 : targetIndex = 3 ' 3 Weeks
+                        Case <= 32 : targetIndex = 4 ' 1 Month
+                        Case <= 62 : targetIndex = 5 ' 2 Months
+                        Case <= 184 : targetIndex = 6 ' 6 Months
+                        Case >= 364 : targetIndex = 7 ' 1 Year
+                    End Select
+
+                    cmbCostEstimateValidty.SelectedIndex = targetIndex
+
+                Catch ex As Exception
+                    Debug.WriteLine("Date Parsing Error: " & ex.Message)
+                    cmbCostEstimateValidty.SelectedIndex = 0
+                End Try
+            Else
+                _isEditingExistingQuote = False
+            End If
 
             ' For Tax Selection
             If String.IsNullOrWhiteSpace(CEtaxSelection) Then
@@ -117,8 +159,13 @@ Namespace DPC.Views.Sales.Quotes
                 cmbCostEstimateType.SelectedIndex = 0
                 CEType = 0
                 ' Generate Quote ID
-                Dim quoteID As String = QuotesController.GenerateQuoteID(CEType)
-                txtQuoteNumber.Text = quoteID
+
+                If String.IsNullOrEmpty(_cache.QuoteNumber) Then
+                    Dim quoteID As String = QuotesController.GenerateQuoteID(CEType)
+                    txtQuoteNumber.Text = quoteID
+                Else
+                    txtQuoteNumber.Text = _cache.QuoteNumber
+                End If
 
                 Dim _prefix As String
 
@@ -143,8 +190,12 @@ Namespace DPC.Views.Sales.Quotes
                 cmbCostEstimateType.SelectedIndex = CostEstimateDetails.CEType
                 CEType = CostEstimateDetails.CEType
                 ' Generate Quote ID
-                Dim quoteID As String = QuotesController.GenerateQuoteID(CEType)
-                txtQuoteNumber.Text = quoteID
+                If String.IsNullOrEmpty(_cache.QuoteNumber) Then
+                    Dim quoteID As String = QuotesController.GenerateQuoteID(CEType)
+                    txtQuoteNumber.Text = quoteID
+                Else
+                    txtQuoteNumber.Text = _cache.QuoteNumber
+                End If
 
                 Dim _prefix As String
 
@@ -178,9 +229,10 @@ Namespace DPC.Views.Sales.Quotes
             ' Visibility for the Show/Hide VAT 12% button
             VatExShowVat.Text = If(CEisVatExInclude, "Hide VAT 12%", "Show VAT 12%")
 
-            cmbCostEstimateValidty.Text = CostEstimateDetails.CEValidUntilDate
             GovCEButton.Text = CostEstimateDetails.CEGovCEButton
             GovCETitle.Text = CostEstimateDetails.CEGovCETitle
+
+            LoadingCEType = False
         End Sub
 
         Private Sub NewQuoteGovernment_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
@@ -248,8 +300,12 @@ Namespace DPC.Views.Sales.Quotes
             CostEstimateDetails.CECNIndetifier = _prefix
 
             ' Generate Quote ID
-            Dim quoteID As String = QuotesController.GenerateQuoteID(CEType)
-            txtQuoteNumber.Text = quoteID
+            If String.IsNullOrEmpty(_cache.QuoteNumber) Then
+                Dim quoteID As String = QuotesController.GenerateQuoteID(CEType)
+                txtQuoteNumber.Text = quoteID
+            Else
+                txtQuoteNumber.Text = _cache.QuoteNumber
+            End If
         End Sub
 
         Private Sub cmbCostEstimateValidty_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
@@ -564,7 +620,7 @@ Namespace DPC.Views.Sales.Quotes
             RemoveHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
 
             ' 1. Transfer Header Data
-            txtQuoteNumber.Text = cache.QuoteNumber
+            'txtQuoteNumber.Text = cache.QuoteNumber
             txtReferenceNumber.Text = cache.Reference
             txtSearchCustomer.Text = cache.ClientName
             TxtClientDetails.Text = cache.ClientDetails
@@ -577,9 +633,6 @@ Namespace DPC.Views.Sales.Quotes
             If DateTime.TryParse(cache.QuoteDate, parsedDate) Then
                 OrderDateVM.SelectedDate = parsedDate
             End If
-
-            ' 3. Handle Validity ComboBox
-            cmbCostEstimateValidty.Text = cache.Validity
 
             ' 4. Match the actual Client object for the Autocomplete logic
             Dim results = ClientController.SearchClient(cache.ClientName)
@@ -1363,24 +1416,28 @@ End Sub
 
                 Dim baseAmount = quantity * unitPrice
                 Dim taxValue As Decimal = 0
-                Dim amountBeforeDiscount As Decimal = baseAmount
+                'Dim amountBeforeDiscount As Decimal = baseAmount
 
                 If _TaxSelection Then
+                    ' Tax Exclusive: add tax to amount
+                    'amountWithTax = baseAmount + taxValue
                     taxValue = baseAmount * (taxPercent / 100)
-                    amountBeforeDiscount = baseAmount + taxValue
                 Else
+                    ' Tax Inclusive: 12% is already in the base amount, calculate for display only
                     taxValue = baseAmount * 0.12D
-                    amountBeforeDiscount = baseAmount + taxValue
+                    'amountWithTax = baseAmount + taxValue
                 End If
 
-                Dim discountValue = amountBeforeDiscount * (discountPercent / 100)
-                Dim finalAmount = amountBeforeDiscount - discountValue
+                Dim discountValue = baseAmount * (discountPercent / 100)
+                Dim finalAmount = baseAmount - discountValue
 
                 textboxes("taxValue").Text = taxValue.ToString("N2")
                 textboxes("discount").Text = discountValue.ToString("N2")
                 textboxes("amount").Text = "₱ " & finalAmount.ToString("N2")
 
                 UpdateCategorySubtotal(categoryId)
+                UpdateTotalTax()
+                UpdateGrandTotal()
 
             Catch ex As Exception
                 Debug.WriteLine($"Error in CalculateCategoryAmount: {ex.Message}")
@@ -1954,23 +2011,23 @@ End Sub
 
             Dim baseAmount = quantity * rate
             Dim taxValue As Decimal = 0
-            Dim amountBeforeDiscount As Decimal = baseAmount
+            'Dim amountBeforeDiscount As Decimal = baseAmount
 
-            If _TaxSelection Then
+            If CostEstimateDetails.CETaxProperty Is "Exclusive" Then
                 ' Tax Exclusive: add tax to amount
                 taxValue = baseAmount * (taxPercent / 100)
-                amountBeforeDiscount = baseAmount + taxValue
-            Else
+                'amountBeforeDiscount = baseAmount + taxValue
+            ElseIf CostEstimateDetails.CETaxProperty Is "Inclusive" Then
                 ' Tax Inclusive: 12% is already in the base amount, calculate for display only
                 taxValue = baseAmount * 0.12D
-                amountBeforeDiscount = baseAmount + taxValue ' Base amount already includes tax conceptually
+                'amountBeforeDiscount = baseAmount + taxValue
 
                 ' Update tax value display
                 If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
             End If
 
-            Dim discountValue = amountBeforeDiscount * (discountPercent / 100)
-            Dim finalAmount = amountBeforeDiscount - discountValue
+            Dim discountValue = baseAmount * (discountPercent / 100)
+            Dim finalAmount = baseAmount - discountValue
 
             ' Update all display boxes
             If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
@@ -2001,9 +2058,10 @@ End Sub
         End Function
 
         Public Sub UpdateGrandTotal()
-            Dim grandTotal As Decimal = 0
+            Dim subtotalAmount As Decimal = 0
+            Dim totalTaxAmount As Decimal = 0
 
-            ' Loop through all entries in the dynamic amount textboxes
+            ' 1. Sum up all individual row amounts (Price x Qty - Discount)
             For Each name As String In LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
             SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
             Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtAmount_")).
@@ -2011,39 +2069,49 @@ End Sub
 
                 Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
                 If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
-                    Dim rawText = txtBox.Text.Replace("₱", "").Trim()
+                    Dim rawText = txtBox.Text.Replace("₱", "").Replace(",", "").Trim()
                     Dim amount As Decimal
                     If Decimal.TryParse(rawText, amount) Then
-                        grandTotal += amount
+                        subtotalAmount += amount
                     End If
                 End If
             Next
 
-            ' Update the grand total display
-            txtGrandTotal.Text = "₱" & grandTotal.ToString("N2")
+            CostEstimateDetails.CETotalBaseAmount = "₱ " & subtotalAmount.ToString("N2")
+
+            UpdateTotalTax()
+
+            Dim rawTax = txtTotalTax.Text.Replace("₱", "").Replace(",", "").Trim()
+            Decimal.TryParse(rawTax, totalTaxAmount)
+
+            Dim finalGrandTotal As Decimal = subtotalAmount + totalTaxAmount
+
+            txtGrandTotal.Text = "₱" & finalGrandTotal.ToString("N2")
         End Sub
 
-        ' This function is for updating the value of tax whenever there is changes
         Public Sub UpdateTotalTax()
             Dim totalTax As Decimal = 0
 
-            ' Loop through all textboxes with names starting with txtTaxValue_
-            For Each name As String In LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
-        SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
-        Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtTaxValue_")).
-        Select(Function(txt) txt.Name).Distinct()
+            For Each kvp In _categories
+                Dim category = kvp.Value
 
-                Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
-                If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
-                    Dim rawText = txtBox.Text.Replace("₱", "").Trim()
-                    Dim tax As Decimal
-                    If Decimal.TryParse(rawText, tax) Then
-                        totalTax += tax
+                Dim taxBoxes = _productTextBoxes.Where(Function(x) x.Key.StartsWith($"txtTaxValue_{category.CategoryId}_"))
+
+                For Each taxEntry In taxBoxes
+                    Dim txtBox = taxEntry.Value
+                    If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
+                        ' Clean the string (remove currency and commas)
+                        Dim rawText = txtBox.Text.Replace("₱", "").Replace(",", "").Trim()
+                        Dim taxValue As Decimal
+                        If Decimal.TryParse(rawText, taxValue) Then
+                            totalTax += taxValue
+                        End If
                     End If
-                End If
+                Next
             Next
 
-            ' Example output target: you should declare this in your XAML like you did with txtGrandTotal
+            CostEstimateDetails.CETotalTaxValueCache = "₱ " & totalTax.ToString("N2")
+            ' 3. Update the Footer TextBlock
             txtTotalTax.Text = "₱" & totalTax.ToString("N2")
         End Sub
 
@@ -2196,7 +2264,12 @@ End Sub
 
             If QuotesController.QuoteNumberExists(currentQuoteID) Then
                 ' If the quote number already exists, generate a new one and set it
-                txtQuoteNumber.Text = QuotesController.GenerateQuoteID()
+                If _cache.QuoteNumber IsNot txtQuoteNumber.Text Then
+                    Dim quoteID As String = QuotesController.GenerateQuoteID(CEType)
+                    txtQuoteNumber.Text = quoteID
+                Else
+                    txtQuoteNumber.Text = _cache.QuoteNumber
+                End If
                 txtQuoteNumber.CaretIndex = txtQuoteNumber.Text.Length ' Keep cursor at end
             End If
         End Sub
@@ -2466,6 +2539,17 @@ End Sub
                 CostEstimateDetails.CEClientName = client.Name
                 CostEstimateDetails.CERepresentative = client.Representative
 
+
+                Dim selectedTaxType As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
+
+                If selectedTaxType = "Exclusive" Then
+                    CostEstimateDetails.CEVatLabel = $"VAT Exclusive"
+                    CostEstimateDetails.CESubtotalLabel = "Subtotal Vat Ex."
+                ElseIf selectedTaxType = "Inclusive" Then
+                    CostEstimateDetails.CEVatLabel = "VAT 12%"
+                    CostEstimateDetails.CESubtotalLabel = "Subtotal Vat In."
+                End If
+
                 ' Navigate to Cost Estimate view
                 ViewLoader.DynamicView.NavigateToView("costestimategovernment", Me)
 
@@ -2518,5 +2602,18 @@ End Sub
             End If
             Return DirectCast(Application.Current.Properties("QuoteCache"), QuotesModel)
         End Function
+
+        Private Sub DetectQuoteMode()
+            Try
+                Dim qNum As String = CEQuoteNumberCache
+                If String.IsNullOrWhiteSpace(qNum) Then
+                    _isEditingExistingQuote = False
+                Else
+                    _isEditingExistingQuote = QuotesController.QuoteNumberExists(qNum)
+                End If
+            Catch
+                _isEditingExistingQuote = False
+            End Try
+        End Sub
     End Class
 End Namespace

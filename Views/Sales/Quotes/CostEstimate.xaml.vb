@@ -82,8 +82,11 @@ Namespace DPC.Views.Sales.Quotes
             QuoteNumber.Text = CostEstimateDetails.CEQuoteNumberCache
             QuoteDate.Text = CostEstimateDetails.CEQuoteDateCache
             QuoteValidityDate.Text = CostEstimateDetails.CEValidUntilDate
-            Subtotal.Text = CostEstimateDetails.CETotalAmountCache
+            Subtotal.Text = CostEstimateDetails.CETotalBaseAmount
+            VAT12.Text = CostEstimateDetails.CETotalTaxValueCache
+            lblVat.Text = CostEstimateDetails.CEVatLabel
             TotalCost.Text = CostEstimateDetails.CETotalAmountCache
+
 
             noteBox.Text = CostEstimateDetails.CEpaperNote
             remarksBox.Text = CostEstimateDetails.CEremarksTxt
@@ -285,7 +288,7 @@ Namespace DPC.Views.Sales.Quotes
                 If _isEditingExistingQuote Then
                     ViewLoader.DynamicView.NavigateToView("editquote", Me)
                 Else
-                    ViewLoader.DynamicView.NavigateToView("salesquotegovernment", Me)
+                    ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
                 End If
             Catch ex As Exception
                 MessageBox.Show("Error navigating: " & ex.Message)
