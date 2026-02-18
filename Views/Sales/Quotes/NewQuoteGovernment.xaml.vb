@@ -1416,24 +1416,26 @@ End Sub
 
                 Dim baseAmount = quantity * unitPrice
                 Dim taxValue As Decimal = 0
-                Dim amountBeforeDiscount As Decimal = baseAmount
+                'Dim amountBeforeDiscount As Decimal = baseAmount
 
                 If _TaxSelection Then
                     taxValue = baseAmount * (taxPercent / 100)
-                    amountBeforeDiscount = baseAmount + taxValue
+                    'amountBeforeDiscount = baseAmount + taxValue
                 Else
                     taxValue = baseAmount * 0.12D
-                    amountBeforeDiscount = baseAmount + taxValue
+                    'amountBeforeDiscount = baseAmount + taxValue
                 End If
 
-                Dim discountValue = amountBeforeDiscount * (discountPercent / 100)
-                Dim finalAmount = amountBeforeDiscount - discountValue
+                Dim discountValue = baseAmount * (discountPercent / 100)
+                Dim finalAmount = baseAmount - discountValue
 
                 textboxes("taxValue").Text = taxValue.ToString("N2")
                 textboxes("discount").Text = discountValue.ToString("N2")
                 textboxes("amount").Text = "₱ " & finalAmount.ToString("N2")
 
                 UpdateCategorySubtotal(categoryId)
+                UpdateTotalTax()
+                UpdateGrandTotal()
 
             Catch ex As Exception
                 Debug.WriteLine($"Error in CalculateCategoryAmount: {ex.Message}")
@@ -2054,9 +2056,10 @@ End Sub
         End Function
 
         Public Sub UpdateGrandTotal()
-            Dim grandTotal As Decimal = 0
+            Dim subtotalAmount As Decimal = 0
+            Dim totalTaxAmount As Decimal = 0
 
-            ' Loop through all entries in the dynamic amount textboxes
+            ' 1. Sum up all individual row amounts (Price x Qty - Discount)
             For Each name As String In LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
             SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
             Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtAmount_")).
@@ -2064,39 +2067,49 @@ End Sub
 
                 Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
                 If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
-                    Dim rawText = txtBox.Text.Replace("₱", "").Trim()
+                    Dim rawText = txtBox.Text.Replace("₱", "").Replace(",", "").Trim()
                     Dim amount As Decimal
                     If Decimal.TryParse(rawText, amount) Then
-                        grandTotal += amount
+                        subtotalAmount += amount
                     End If
                 End If
             Next
 
-            ' Update the grand total display
-            txtGrandTotal.Text = "₱" & grandTotal.ToString("N2")
+            CostEstimateDetails.CETotalBaseAmount = "₱ " & subtotalAmount.ToString("N2")
+
+            UpdateTotalTax()
+
+            Dim rawTax = txtTotalTax.Text.Replace("₱", "").Replace(",", "").Trim()
+            Decimal.TryParse(rawTax, totalTaxAmount)
+
+            Dim finalGrandTotal As Decimal = subtotalAmount + totalTaxAmount
+
+            txtGrandTotal.Text = "₱" & finalGrandTotal.ToString("N2")
         End Sub
 
-        ' This function is for updating the value of tax whenever there is changes
         Public Sub UpdateTotalTax()
             Dim totalTax As Decimal = 0
 
-            ' Loop through all textboxes with names starting with txtTaxValue_
-            For Each name As String In LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
-        SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
-        Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtTaxValue_")).
-        Select(Function(txt) txt.Name).Distinct()
+            For Each kvp In _categories
+                Dim category = kvp.Value
 
-                Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
-                If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
-                    Dim rawText = txtBox.Text.Replace("₱", "").Trim()
-                    Dim tax As Decimal
-                    If Decimal.TryParse(rawText, tax) Then
-                        totalTax += tax
+                Dim taxBoxes = _productTextBoxes.Where(Function(x) x.Key.StartsWith($"txtTaxValue_{category.CategoryId}_"))
+
+                For Each taxEntry In taxBoxes
+                    Dim txtBox = taxEntry.Value
+                    If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
+                        ' Clean the string (remove currency and commas)
+                        Dim rawText = txtBox.Text.Replace("₱", "").Replace(",", "").Trim()
+                        Dim taxValue As Decimal
+                        If Decimal.TryParse(rawText, taxValue) Then
+                            totalTax += taxValue
+                        End If
                     End If
-                End If
+                Next
             Next
 
-            ' Example output target: you should declare this in your XAML like you did with txtGrandTotal
+            CostEstimateDetails.CETotalTaxValueCache = "₱ " & totalTax.ToString("N2")
+            ' 3. Update the Footer TextBlock
             txtTotalTax.Text = "₱" & totalTax.ToString("N2")
         End Sub
 

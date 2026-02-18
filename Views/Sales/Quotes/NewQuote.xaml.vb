@@ -125,14 +125,10 @@ Namespace DPC.Views.Sales.Quotes
                 Dim _prefix As String
 
                 Select Case CEType
-                    Case 0
-                        _prefix = "GPCE #:"
-                    Case 1
-                        _prefix = "BCCE #:"
                     Case 2
-                        _prefix = "HHCE #:"
-                    Case 3
                         _prefix = "WICE #:"
+                    Case 3
+                        _prefix = "HHCE #:"
                     Case Else
                         _prefix = "CE #:" ' Fail Safe if doesnt work
                 End Select
@@ -151,14 +147,10 @@ Namespace DPC.Views.Sales.Quotes
                 Dim _prefix As String
 
                 Select Case CEType
-                    Case 0
-                        _prefix = "GPCE #:"
-                    Case 1
-                        _prefix = "BCCE #:"
                     Case 2
-                        _prefix = "HHCE #:"
-                    Case 3
                         _prefix = "WICE #:"
+                    Case 3
+                        _prefix = "HHCE #:"
                     Case Else
                         _prefix = "CE #:" ' Fail Safe if doesnt work
                 End Select
@@ -193,14 +185,10 @@ Namespace DPC.Views.Sales.Quotes
             Dim _prefix As String
 
             Select Case CEType
-                Case 0
-                    _prefix = "GPCE #:"
-                Case 1
-                    _prefix = "BCCE #:"
                 Case 2
-                    _prefix = "HHCE #:"
-                Case 3
                     _prefix = "WICE #:"
+                Case 3
+                    _prefix = "HHCE #:"
                 Case Else
                     _prefix = "CE #:" ' Fail Safe if doesnt work
             End Select
@@ -1043,23 +1031,24 @@ Namespace DPC.Views.Sales.Quotes
 
             Dim baseAmount = quantity * rate
             Dim taxValue As Decimal = 0
-            Dim amountBeforeDiscount As Decimal = baseAmount
+            'Dim amountWithTax As Decimal
+
 
             If _TaxSelection Then
                 ' Tax Exclusive: add tax to amount
                 taxValue = baseAmount * (taxPercent / 100)
-                amountBeforeDiscount = baseAmount + taxValue
+                'amountWithTax = baseAmount + taxValue
             Else
                 ' Tax Inclusive: 12% is already in the base amount, calculate for display only
                 taxValue = baseAmount * 0.12D
-                amountBeforeDiscount = baseAmount + taxValue ' Base amount already includes tax conceptually
+                'amountWithTax = baseAmount + taxValue
 
                 ' Update tax value display
                 If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
             End If
 
-            Dim discountValue = amountBeforeDiscount * (discountPercent / 100)
-            Dim finalAmount = amountBeforeDiscount - discountValue
+            Dim discountValue = baseAmount * (discountPercent / 100)
+            Dim finalAmount = baseAmount - discountValue
 
             ' Update all display boxes
             If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
@@ -1090,9 +1079,10 @@ Namespace DPC.Views.Sales.Quotes
         End Function
 
         Public Sub UpdateGrandTotal()
-            Dim grandTotal As Decimal = 0
+            Dim subtotalAmount As Decimal = 0
+            Dim totalTaxAmount As Decimal = 0
 
-            ' Loop through all entries in the dynamic amount textboxes
+            ' 1. Sum up all individual row amounts (Price x Qty - Discount)
             For Each name As String In LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
             SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
             Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtAmount_")).
@@ -1100,16 +1090,24 @@ Namespace DPC.Views.Sales.Quotes
 
                 Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
                 If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
-                    Dim rawText = txtBox.Text.Replace("₱", "").Trim()
+                    Dim rawText = txtBox.Text.Replace("₱", "").Replace(",", "").Trim()
                     Dim amount As Decimal
                     If Decimal.TryParse(rawText, amount) Then
-                        grandTotal += amount
+                        subtotalAmount += amount
                     End If
                 End If
             Next
 
-            ' Update the grand total display
-            txtGrandTotal.Text = "₱" & grandTotal.ToString("N2")
+            CostEstimateDetails.CETotalBaseAmount = "₱ " & subtotalAmount.ToString("N2")
+
+            UpdateTotalTax()
+
+            Dim rawTax = txtTotalTax.Text.Replace("₱", "").Replace(",", "").Trim()
+            Decimal.TryParse(rawTax, totalTaxAmount)
+
+            Dim finalGrandTotal As Decimal = subtotalAmount + totalTaxAmount
+
+            txtGrandTotal.Text = "₱" & finalGrandTotal.ToString("N2")
         End Sub
 
         ' This function is for updating the value of tax whenever there is changes
@@ -1132,7 +1130,7 @@ Namespace DPC.Views.Sales.Quotes
                 End If
             Next
 
-            ' Example output target: you should declare this in your XAML like you did with txtGrandTotal
+            CostEstimateDetails.CETotalTaxValueCache = "₱ " & totalTax.ToString("N2")
             txtTotalTax.Text = "₱" & totalTax.ToString("N2")
         End Sub
 
