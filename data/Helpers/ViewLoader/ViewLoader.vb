@@ -154,7 +154,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Views.POS.SalesNewInvoice()
                     Case "salesnewposinvoicemobile"
                         Return New Views.POS.SalesNewInvoiceMobile()
-
+                    Case "statementofaccount"
+                        Return New Sales.StatementAccount.StatementOfAccount()
 
                         ' Accounts Navigation
                     Case "manageaccounts"

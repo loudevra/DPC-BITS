@@ -1,0 +1,171 @@
+﻿<UserControl x:Class="DPC.Views.Sales.StatementAccount.StatementOfAccount" 
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="White">
+
+
+    <!-- ADDED SCROLLVIEWER -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+
+        <Grid>
+           
+
+
+            <Border BorderBrush="Black" BorderThickness="1" Margin="5">
+
+                <StackPanel>
+
+                    <!-- HEADER -->
+                    <Border Background="White"
+                            BorderBrush="Black"
+                            BorderThickness="0,0,0,1">
+
+                        <StackPanel>
+
+                            <TextBlock Text="DREAM PC BUILD AND IT SOLUTIONS INC."
+                                       FontSize="13"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,4,0,0"/>
+
+                            <Border BorderBrush="Black"
+                                    BorderThickness="0,1,0,0"
+                                    Margin="0,4,0,2"/>
+
+                            <TextBlock Text="STATEMENT OF ACCOUNT"
+                                       FontSize="10"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,4"/>
+
+                        </StackPanel>
+                    </Border>
+
+                    <!-- BILL FROM / DATE -->
+                    <Grid Margin="6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel>
+                            <TextBlock Text="BILL FROM: DREAM PC BUILD AND IT SOLUTIONS INC." FontSize="9" FontWeight="Bold"/>
+                            <TextBlock Text="UNIT2A 2B LEGENDA BUILDING CIRCUMFERENTIAL RD. BRGY SAN ROQUE ANTIPOLO CITY, RIZAL 1870" FontSize="9" TextWrapping="Wrap"/>
+                            <TextBlock Text="CONTACT: 0995-xxxxxxx" FontSize="9"/>
+                            <TextBlock Text="TIN: 775-320-600-000" FontSize="9"/>
+                        </StackPanel>
+
+                        <TextBlock Grid.Column="1"
+                                   Text="Date: January 30, 2026"
+                                   FontSize="9"
+                                   VerticalAlignment="Top"/>
+                    </Grid>
+
+                    <!-- BILL TO -->
+                    <StackPanel Margin="6,0">
+                        <TextBlock Text="BILL TO:" FontSize="9" FontWeight="Bold"/>
+                        <TextBlock Text="PHILIPPINE MERCHANT MARINE ACADEMY" FontSize="9"/>
+                        <TextBlock Text="San Narciso, Zambales" FontSize="9"/>
+                        <TextBlock Text="Contact: 047-913-4586" FontSize="9"/>
+                    </StackPanel>
+
+                    <!-- PROJECT DETAILS -->
+                    <StackPanel Margin="6,6,6,0">
+                        <TextBlock Text="PROJECT TITLE: ICT EQUIPMENT, TOOLS, AND SMART TV FOR COMPUTER LABORATORY"
+                                   FontSize="9" TextWrapping="Wrap"/>
+                        <TextBlock Text="P.O. NO: 2025-10-003" FontSize="9"/>
+                        <TextBlock Text="DR NO: DR-PMMA-ZAMBALES-CS26-8004" FontSize="9"/>
+                        <TextBlock Text="BS NO: BS-PMMA-ZAMBALES-CS26-8001" FontSize="9"/>
+                    </StackPanel>
+
+                    <!-- TABLE HEADER -->
+                    <Border BorderBrush="Black" BorderThickness="0,1,0,1" Margin="0,6,0,0">
+                        <Grid Background="#808080" Height="22">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="4*"/>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="2*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="DATE" FontSize="9" Margin="4,0"/>
+                            <TextBlock Text="DESCRIPTION" Grid.Column="1" FontSize="9"/>
+                            <TextBlock Text="QTY" Grid.Column="2" FontSize="9"/>
+                            <TextBlock Text="AMOUNT" Grid.Column="3" FontSize="9"/>
+                            <TextBlock Text="PAYMENT" Grid.Column="4" FontSize="9"/>
+                            <TextBlock Text="BALANCE" Grid.Column="5" FontSize="9"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Height="110" BorderBrush="Black" BorderThickness="0,0,0,1"/>
+
+                    <!-- PAYMENT DETAILS -->
+                    <Border Background="#808080" Padding="3">
+                        <TextBlock Text="PAYMENT DETAILS"
+                                   Foreground="White"
+                                   FontWeight="Bold"
+                                   FontSize="9"
+                                   HorizontalAlignment="Center"/>
+                    </Border>
+
+                    <Grid Background="#E6E6E6" Height="20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="4*"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="DATE" FontSize="9" Margin="4,0"/>
+                        <TextBlock Text="REFERENCE" Grid.Column="1" FontSize="9"/>
+                        <TextBlock Text="AMOUNT PAID (₱)" Grid.Column="2" FontSize="9"/>
+                    </Grid>
+
+                    <Border Height="50" BorderBrush="Black" BorderThickness="0,0,0,1"/>
+
+                    <!-- LIQUIDATED DAMAGES -->
+                    <Border Background="#808080" Padding="3">
+                        <TextBlock Text="LIQUIDATED DAMAGES (LD) COMPUTATION"
+                                   Foreground="White"
+                                   FontWeight="Bold"
+                                   FontSize="9"
+                                   HorizontalAlignment="Center"/>
+                    </Border>
+
+                    <Border Height="40" BorderBrush="Black" BorderThickness="0,0,0,1"/>
+
+                    <!-- DELIVERY -->
+                    <Border Background="#808080" Padding="3">
+                        <TextBlock Text="DELIVERY CONTACT INFORMATION"
+                                   Foreground="White"
+                                   FontWeight="Bold"
+                                   FontSize="9"
+                                   HorizontalAlignment="Center"/>
+                    </Border>
+
+                    <Border Height="40" BorderBrush="Black" BorderThickness="0,0,0,1"/>
+
+                    <!-- SUMMARY -->
+                    <Border Background="#808080" Padding="3">
+                        <TextBlock Text="SUMMARY OF ACCOUNT"
+                                   Foreground="White"
+                                   FontWeight="Bold"
+                                   FontSize="9"
+                                   HorizontalAlignment="Center"/>
+                    </Border>
+
+                    <Border Height="50"/>
+
+                    <Border Background="#E6E6E6" Padding="3">
+                        <TextBlock Text="Net Amount Due (VAT Inclusive)   ₱ "
+                                   FontSize="8"
+                                   HorizontalAlignment="Right"/>
+                    </Border>
+
+                </StackPanel>
+            </Border>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

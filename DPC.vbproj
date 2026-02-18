@@ -1143,6 +1143,9 @@
     <Compile Include="Views\Sales\Saless\SalesNewInvoice.xaml.vb">
       <DependentUpon>SalesNewInvoice.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Sales\StatementAccount\StatementOfAccount.xaml.vb">
+      <DependentUpon>StatementOfAccount.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Sales\Subscriptions\NewSubscriptionInvoice.xaml.vb">
       <DependentUpon>NewSubscriptionInvoice.xaml</DependentUpon>
     </Compile>
@@ -2080,6 +2083,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Sales\Saless\SalesNewInvoice.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\StatementAccount\StatementOfAccount.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
