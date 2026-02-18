@@ -195,57 +195,26 @@
                                                 </StackPanel>
                                             </StackPanel>
 
-                                            <!--DreamPC's Info-->
-                                            <StackPanel Grid.Row="2" Orientation="Vertical" HorizontalAlignment="Left" Margin="5" Visibility="Collapsed">
-                                                <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,5">
-                                                    <TextBlock Text="Bill from:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                </StackPanel>
-                                                <!--Info-->
-                                                <StackPanel Orientation="Vertical" HorizontalAlignment="Right">
-                                                    <TextBlock Text="Dream PC Build and I.T Solutions Inc" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                    <TextBlock Text="Unit 2A and 2B Legenda Building " FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                    <TextBlock Text="Circumferential RD Antipolo, Philippines" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                    <TextBlock Text="Phone No: +63 917 187 3722" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                    <TextBlock  Text="information@dreampcbuild.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                    <TextBlock  Text="dreampcbuild.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                    <TextBlock  Text="Tel No: 02 880 14252" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                </StackPanel>
-                                            </StackPanel>
-
-                                            <!--Customers' Info-->
-                                            <StackPanel Grid.Row="3" Orientation="Vertical" HorizontalAlignment="Left" Margin="5">
+                                            <StackPanel Grid.Row="3" Orientation="Vertical" HorizontalAlignment="Left" Margin="5,5,0,10">
 
                                                 <!--Info-->
-                                                <!--Customers' Info-->
-                                                <!-- 08/01/2025 - Changed the the Bill To to Client Details -->
-                                                <StackPanel Grid.Row="3" Orientation="Vertical" HorizontalAlignment="Left" Margin="5,5,0,10">
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                    <Grid Width="374" RenderTransformOrigin="0.519,0.491">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto" MinWidth="314"/>
+                                                            <ColumnDefinition Width="0*"/>
+                                                        </Grid.ColumnDefinitions>
 
-                                                    <!--Info-->
-                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                                        <Grid Width="374" RenderTransformOrigin="0.519,0.491">
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="Auto" MinWidth="314"/>
-                                                                <ColumnDefinition Width="0*"/>
-                                                            </Grid.ColumnDefinitions>
+                                                        <StackPanel Orientation="Vertical" Grid.ColumnSpan="2" Margin="0,0,-78,0">
+                                                            <TextBlock Text="Submitted by:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,10"/>
+                                                            <TextBlock Text="DREAM PC BUILD AND IT SOLUTIONS INC." FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5"  Width="239"/>
+                                                            <TextBlock Text="UNIT 2A AND 2B LEGENDA BLDG. CIRCUMFERENTIAL ROAD BRGY. SAN ROQUE ANTIPOLO CITY, RIZAL 1870" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5" Width="299" TextWrapping="Wrap"/>
+                                                            <TextBlock Text="information@dreampcbuild.com/parvitkumar@dreampcbuild.com/laarnimae@dreampcbuild.com/clarkbernandino@dreampcbuild.com/alecksbalingit@dreampcbuild.com/albiespinas@dreampcbuild.com/" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5" TextWrapping="Wrap" Width="385"/>
+                                                            <TextBlock Text="0917-187-3722; 02-8801-4252" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5"/>
+                                                            <TextBlock Text="TIN: 779 529 308 000 " FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                        </StackPanel>
 
-                                                            <StackPanel Orientation="Vertical" Grid.ColumnSpan="2" Margin="0,0,-78,0">
-                                                                <TextBlock Text="Submitted by:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,10"/>
-                                                                <TextBlock Text="DREAM PC BUILD AND IT SOLUTIONS INC." 
-                                                                           FontWeight="SemiBold" 
-                                                                           FontFamily="Lexend" 
-                                                                           FontSize="12" 
-                                                                           Foreground="#090909" 
-                                                                           HorizontalAlignment="Left" 
-                                                                           Margin="5,0,5,5" 
-                                                                           Width="239"/>
-                                                                <TextBlock Text="UNIT 2A AND 2B LEGENDA BLDG. CIRCUMFERENTIAL ROAD BRGY. SAN ROQUE ANTIPOLO CITY, RIZAL 1870" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5" Width="299" TextWrapping="Wrap"/>
-                                                                <TextBlock Text="information@dreampcbuild.com/parvitkumar@dreampcbuild.com/laarnimae@dreampcbuild.com/clarkbernandino@dreampcbuild.com/alecksbalingit@dreampcbuild.com/albiespinas@dreampcbuild.com/" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5" TextWrapping="Wrap" Width="385"/>
-                                                                <TextBlock Text="0917-187-3722; 02-8801-4252" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5"/>
-                                                                <TextBlock Text="TIN: 779 529 308 000 " FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                                            </StackPanel>
-
-                                                        </Grid>
-                                                    </StackPanel>
+                                                    </Grid>
                                                 </StackPanel>
                                             </StackPanel>
 
@@ -779,7 +748,7 @@
                                                     </StackPanel>
                                                 </Border>
                                             </StackPanel>
-                                            <StackPanel Orientation="Vertical" Margin="445,74,0,0" Grid.Row="3" HorizontalAlignment="Left" Width="322" Height="130" VerticalAlignment="Top">
+                                            <StackPanel Orientation="Vertical" Grid.Row="3" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="322" Height="130" Margin="0,0,0,20">
                                                 <TextBlock Text="Submitted to:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,10"/>
 
                                                 <!-- Client Company Name -->

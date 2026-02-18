@@ -142,7 +142,16 @@
                                 </Grid>
                             </Border>
                             <StackPanel Grid.Row="1" Margin="0,0,0,0" >
-                                <Border Height="1344" Width="816" Background="White" CornerRadius="0,0,10,10"  BorderThickness="0" Padding="15">
+                                <Border Background="White">
+                                    <Rectangle Width="auto"
+                                            Height="1" 
+                                            Stroke="#AEAEAE"
+                                            StrokeThickness="1"
+                                            Fill="Transparent"
+                                            VerticalAlignment="Top"
+                                            Margin="10"/>
+                                </Border>
+                                <Border Height="1344" Width="816" Background="White" CornerRadius="0,0,10,10"  BorderThickness="0" Padding="40">
                                     <Grid>
 
                                         <Grid.Background>
@@ -159,16 +168,6 @@
                                             <RowDefinition Height="Auto"/>
 
                                         </Grid.RowDefinitions>
-
-                                        <!--Rectangle as line-->
-                                        <Rectangle Grid.Row="0"
-                                       Width="auto"
-                                       Height="1" 
-                                       Stroke="#AEAEAE"
-                                       StrokeThickness="1"
-                                       Fill="Transparent"
-                                       VerticalAlignment="Top"
-                                       Margin="10,0"/>
 
                                         <!--DPC Logo Side Bar-->
                                         <StackPanel Grid.Row="0" Height="Auto" Width="232" HorizontalAlignment="Left" Orientation="Horizontal" Margin="0,10,0,17" Background="Transparent" Grid.RowSpan="2">
@@ -875,7 +874,7 @@
                                                 </StackPanel>
                                             </Border>
                                         </StackPanel>
-                                        <StackPanel Orientation="Vertical" Margin="405,73,0,0" Grid.Row="3" HorizontalAlignment="Left" Width="322" Height="130" VerticalAlignment="Top">
+                                        <StackPanel Orientation="Vertical" Grid.Row="3" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="322" Height="130" Margin="0,0,0,20">
                                             <TextBlock Text="Submitted to:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,10"/>
 
                                             <!-- Client Company Name -->
