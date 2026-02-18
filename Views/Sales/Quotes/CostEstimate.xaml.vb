@@ -288,7 +288,7 @@ Namespace DPC.Views.Sales.Quotes
                 If _isEditingExistingQuote Then
                     ViewLoader.DynamicView.NavigateToView("editquote", Me)
                 Else
-                    ViewLoader.DynamicView.NavigateToView("salesquotegovernment", Me)
+                    ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
                 End If
             Catch ex As Exception
                 MessageBox.Show("Error navigating: " & ex.Message)
