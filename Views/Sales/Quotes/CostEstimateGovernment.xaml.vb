@@ -442,7 +442,7 @@ Namespace DPC.Views.Sales.Quotes
             CostEstimateDetails.CEInstallation = install
 
             If _isEditingExistingQuote Then
-                ViewLoader.DynamicView.NavigateToView("previewprintquoteeditedquote", Me)
+                ViewLoader.DynamicView.NavigateToView("printpreviewquotesgovernment", Me)
             Else
                 ViewLoader.DynamicView.NavigateToView("printpreviewquotesgovernment", Me)
             End If
