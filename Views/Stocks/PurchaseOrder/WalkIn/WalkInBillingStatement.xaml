@@ -171,53 +171,40 @@
 
 
                                     <!--DataGrid 1: Seller Info-->
-                                    <Border BorderThickness="1,0" BorderBrush="Black" Grid.Row="4" Margin="5,0">
+                                    <Border BorderThickness="1,0" BorderBrush="Black" Grid.Row="4" Margin="5,0,5,0" Grid.ColumnSpan="2">
                                         <Grid>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition/>
                                                 <RowDefinition/>
                                             </Grid.RowDefinitions>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition/>
-                                                <ColumnDefinition/>
-                                                <ColumnDefinition/>
-                                                <ColumnDefinition/>
-                                            </Grid.ColumnDefinitions>
 
                                             <!-- Column Header-->
                                             <Border Grid.Row="0" Grid.Column="0" Height="20" VerticalAlignment="Center" Background="Black" Padding="10,0,0,0">
-                                                <TextBlock Height="10" Text="Sales Representative:" Foreground="#FDFDFD" FontSize="10" FontWeight="SemiBold" FontFamily="{StaticResource Lexend}" TextAlignment="Center"/>
+                                                <TextBlock Height="10" Text="DPCBITS Representative:" Foreground="#FDFDFD" FontSize="10" FontWeight="SemiBold" FontFamily="{StaticResource Lexend}"/>
                                             </Border>
                                             <Border Grid.Row="0" Grid.Column="1" Height="20" VerticalAlignment="Center" Background="Black" Padding="10,0,0,0">
-                                                <TextBlock Height="10" Text="Prepared by:" Foreground="#FDFDFD" FontSize="10" FontWeight="SemiBold" FontFamily="{StaticResource Lexend}" TextAlignment="Center"/>
+                                                <TextBlock Height="10" Text="Approved by:" Foreground="#FDFDFD" FontSize="10" FontWeight="SemiBold" FontFamily="{StaticResource Lexend}"/>
                                             </Border>
                                             <Border Grid.Row="0" Grid.Column="2" Height="20" VerticalAlignment="Center" Background="Black" Padding="10,0,0,0">
-                                                <TextBlock Height="10" Text="Approved by:" Foreground="#FDFDFD" FontSize="10" FontWeight="SemiBold" FontFamily="{StaticResource Lexend}" TextAlignment="Center"/>
-                                            </Border>
-                                            <Border Grid.Row="0" Grid.Column="3" Height="20" VerticalAlignment="Center" Background="Black" Padding="10,0,0,0">
-                                                <TextBlock Height="10" Text="Payment Terms:" Foreground="#FDFDFD" FontSize="10" FontWeight="SemiBold" FontFamily="{StaticResource Lexend}" TextAlignment="Center"/>
+                                                <TextBlock Height="10" Text="Payment Terms:" Foreground="#FDFDFD" FontSize="10" FontWeight="SemiBold" FontFamily="{StaticResource Lexend}"/>
                                             </Border>
 
                                             <!-- Row Items -->
-                                            <Border Grid.Row="1" Grid.Column="0" Height="20" VerticalAlignment="Center">
-                                                <TextBox x:Name="SalesRep" FontWeight="Bold" Width="175" BorderThickness="0" Background="Transparent" Foreground="#090909" FontSize="11" FontFamily="{StaticResource Lexend}" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Border Grid.Row="1" Grid.Column="0" Height="20" VerticalAlignment="Center" Padding="10,0,0,0">
+                                                <TextBlock x:Name="SalesRep" FontWeight="Bold" Height="11" Text="Prepared by:" Foreground="#090909" FontSize="11" FontFamily="{StaticResource Lexend}"/>
                                             </Border>
-                                            <Border Grid.Row="1" Grid.Column="1" Height="20" VerticalAlignment="Center"  BorderThickness="1,0,0,0" BorderBrush="Black">
-                                                <TextBlock x:Name="PreparedBy" FontWeight="Bold" Height="11" Text="" Foreground="#090909" FontSize="11" FontFamily="{StaticResource Lexend}" TextAlignment="Center"/>
-                                            </Border>
-                                            <Border Grid.Row="1" Grid.Column="2" Height="20" VerticalAlignment="Center" BorderBrush="Black" BorderThickness="1,0,0,0">
-                                                <ComboBox x:Name="cmbApproved" FontSize="10" FontWeight="Bold" HorizontalContentAlignment="Center" >
+                                            <Border Grid.Row="1" Grid.Column="1" Height="20" VerticalAlignment="Center" >
+                                                <ComboBox x:Name="cmbApproved" FontSize="10" FontWeight="Bold">
+                                                    <ComboBoxItem Content=""/>
                                                     <ComboBoxItem Content="Alecksandra Balingit"/>
                                                     <ComboBoxItem Content="Parvit Kumar"/>
                                                 </ComboBox>
                                             </Border>
-                                            <Border Grid.Row="1" Grid.Column="3" Height="20" VerticalAlignment="Center" Background="Red" BorderBrush="Black" BorderThickness="1,0,0,0">
+                                            <Border Grid.Row="1" Grid.Column="2" Height="20" VerticalAlignment="Center" Background="Red">
                                                 <ComboBox x:Name="cmbTerms"
-                                                          FontSize="10"
-                                                          FontWeight="Bold"
-                                                          SelectionChanged="cmbTerms_SelectionChanged"
-                                                          HorizontalContentAlignment="Center"
-                                                          >
+                  FontSize="10"
+                  FontWeight="Bold"
+                  SelectionChanged="cmbTerms_SelectionChanged">
                                                     <ComboBoxItem Content="Cash"/>
                                                     <ComboBoxItem Content="7 Days PDC"/>
                                                     <ComboBoxItem Content="14 Days PDC"/>
@@ -236,9 +223,14 @@
                                                     </ComboBoxItem>
                                                 </ComboBox>
                                             </Border>
-                                            
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                                <ColumnDefinition/>
+                                            </Grid.ColumnDefinitions>
                                         </Grid>
                                     </Border>
+
 
 
                                     <!--Bill Info-->

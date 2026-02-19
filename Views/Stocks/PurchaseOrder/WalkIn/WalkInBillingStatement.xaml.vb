@@ -66,8 +66,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             ClientContact.Text = "+63 " & FormatPhoneWithSpaces(BLPhone)
             CompanyRep.Text = BLCompanyRep
 
-            SalesRep.Text = BLSalesRep
-            PreparedBy.Text = CacheOnLoggedInName
+            SalesRep.Text = CacheOnLoggedInName
             cmbApproved.Text = WalkinBillingStatementDetails.BLApproved
             ' Check if the terms is enabled
             If WalkinBillingStatementDetails.BLisCustomTerm = True Then
@@ -358,7 +357,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
         Private Sub PrintPreview(sender As Object, e As RoutedEventArgs)
 
-            If String.IsNullOrWhiteSpace(PreparedBy.Text) OrElse
+            If String.IsNullOrWhiteSpace(SalesRep.Text) OrElse
                String.IsNullOrWhiteSpace(SalesRep.Text) OrElse
                cmbApproved.SelectedItem Is Nothing OrElse
                cmbTerms.SelectedItem Is Nothing Then

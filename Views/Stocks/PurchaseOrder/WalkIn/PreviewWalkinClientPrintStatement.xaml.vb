@@ -36,8 +36,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             ClientContact.Text = BLClientContact
             CompanyRep.Text = BLCompanyRep
 
-            SalesRep.Text = BLSalesRep
-            PreparedBy.Text = CacheOnLoggedInName
+            SalesRep.Text = CacheOnLoggedInName
             cmbApproved.Text = BLApproved
 
             ' Check if the terms is enabled
