@@ -9,6 +9,7 @@ Imports DPC.DPC.Data.Model
 Imports MaterialDesignThemes.Wpf
 Imports Microsoft.Win32
 
+
 Namespace DPC.Views.Stocks.ItemManager.NewProduct
     Public Class AddNewProducts
         Inherits UserControl
@@ -19,6 +20,8 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         Private uploadTimer As New DispatcherTimer()
         Private base64Image As String
         Private isUploadLocked As Boolean = False
+        Private popupAddBrand As Popup
+        Private recentlyClosed As Boolean = False
 
 #Region "Initialization"
         Public Sub New()
@@ -446,6 +449,57 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             End Try
         End Sub
 
+        ' Callback to reload the brand data
+        Private Sub OnBrandAdded()
+            ' LoadBrands()
+        End Sub
+        Private Sub BtnAddBrand_Click(sender As Object, e As RoutedEventArgs)
+            Dim clickedButton As Button = TryCast(sender, Button)
+            If clickedButton Is Nothing Then Return
+            If recentlyClosed Then
+                recentlyClosed = False
+                Return
+            End If
+            If popupAddBrand IsNot Nothing AndAlso popupAddBrand.IsOpen Then
+                popupAddBrand.IsOpen = False
+                recentlyClosed = True
+                Return
+            End If
+
+            Dim addBrandWindow As New DPC.Components.Forms.AddBrand()
+            AddHandler addBrandWindow.BrandAdded, AddressOf OnBrandAdded
+
+            popupAddBrand = New Popup With {
+        .Placement = PlacementMode.AbsolutePoint,
+        .StaysOpen = False,
+        .AllowsTransparency = True,
+        .Child = addBrandWindow
+    }
+
+            ' Wait for the popup to load so we can get its actual size
+            AddHandler popupAddBrand.Opened, Sub()
+                                                 Dim screenWidth As Double = SystemParameters.PrimaryScreenWidth
+                                                 Dim screenHeight As Double = SystemParameters.PrimaryScreenHeight
+                                                 Dim popupWidth As Double = addBrandWindow.ActualWidth
+                                                 Dim popupHeight As Double = addBrandWindow.ActualHeight
+
+                                                 popupAddBrand.HorizontalOffset = (screenWidth / 2) - (popupWidth / 2)
+                                                 popupAddBrand.VerticalOffset = (screenHeight / 2) - (popupHeight / 2)
+                                             End Sub
+
+            AddHandler popupAddBrand.Closed, Sub()
+                                                 recentlyClosed = True
+                                                 Task.Delay(100).ContinueWith(Sub() recentlyClosed = False, TaskScheduler.FromCurrentSynchronizationContext())
+                                             End Sub
+
+            popupAddBrand.IsOpen = True
+        End Sub
+
+        Private Sub BtnAddSupplier_Click(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("newsuppliers", Me)
+        End Sub
+
+
 #Region "Markup and Price Calculation"
         Private Sub CalculateSellingPrice()
             Try
@@ -568,4 +622,9 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Return visibility <> Visibility.Visible
         End Function
     End Class
+
+
+
+
+
 End Namespace
