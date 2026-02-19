@@ -141,7 +141,7 @@
 
                                     <!--Bill To Label-->
                                     <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,20,20">
-                                        <TextBlock x:Name="GovCETitle" Text="Cost Estimate" FontWeight="SemiBold" FontFamily="Lexend" FontSize="24" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                                        <TextBlock x:Name="GovCETitle" Text="Gov Cost Estimate" FontWeight="SemiBold" FontFamily="Lexend" FontSize="24" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,0"/>
                                     </StackPanel>
 
                                     <!-- Add Client Button -->
@@ -253,9 +253,9 @@
                                                               Margin="0,0,0,5"
                                                               Padding="5" Height="34">
                                                     <ComboBoxItem Content="Government Project CE (Government)" IsSelected="True"/>
-                                                    <ComboBoxItem Content="Business CE (Corporate)"/>
-                                                    <ComboBoxItem Content="Household CE (Residential)"/>
-                                                    <ComboBoxItem Content="Walk-In CE (Walk In)"/>
+                                                    <ComboBoxItem Content="Business CE (Corporate)" Visibility="Collapsed" />
+                                                    <ComboBoxItem Content="Household CE (Residential)" Visibility="Collapsed" />
+                                                    <ComboBoxItem Content="Walk-In CE (Walk In)" Visibility="Collapsed" />
                                                 </ComboBox>
                                             </StackPanel>
 

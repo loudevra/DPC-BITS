@@ -209,7 +209,6 @@
                                                             <TextBlock Text="Submitted by:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,10"/>
                                                             <TextBlock Text="DREAM PC BUILD AND IT SOLUTIONS INC." FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5"  Width="239"/>
                                                             <TextBlock Text="UNIT 2A AND 2B LEGENDA BLDG. CIRCUMFERENTIAL ROAD BRGY. SAN ROQUE ANTIPOLO CITY, RIZAL 1870" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5" Width="299" TextWrapping="Wrap"/>
-                                                            <TextBlock Text="information@dreampcbuild.com/parvitkumar@dreampcbuild.com/laarnimae@dreampcbuild.com/clarkbernandino@dreampcbuild.com/alecksbalingit@dreampcbuild.com/albiespinas@dreampcbuild.com/" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5" TextWrapping="Wrap" Width="385"/>
                                                             <TextBlock Text="0917-187-3722; 02-8801-4252" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5"/>
                                                             <TextBlock Text="TIN: 779 529 308 000 " FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
                                                         </StackPanel>
@@ -284,7 +283,7 @@
                                                         </StackPanel>
                                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="541" >
                                                             <Border BorderThickness="0,1,0,0" BorderBrush="Black" Background="Transparent" Padding="0,0" Width="541" Height="28" RenderTransformOrigin="0.482,0.469" >
-                                                                <TextBlock Text="Quotation" FontWeight="Bold" FontFamily="Lexend" FontSize="14" Foreground="#090909" Height="18" Margin="237,5,237,4"/>
+                                                                <TextBlock Text="Quotation" FontWeight="Bold" FontFamily="Lexend" FontSize="12" Foreground="#090909" Height="18" Margin="237,5,237,4"/>
                                                             </Border>
                                                         </StackPanel>
 
@@ -601,7 +600,7 @@
 
                                                                 <!-- Row 0 -->
                                                                 <Border Grid.Row="0" Grid.Column="0" BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
-                                                                    <TextBlock x:Name="SubtotalTax" Text="SUBTOTAL VAT" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" Margin="5,0,5,0"/>
+                                                                    <TextBlock x:Name="SubtotalTax" Text="SUBTOTAL VAT" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#090909" Margin="5,0,5,0"/>
                                                                 </Border>
                                                                 <Border Grid.Row="0" Grid.Column="1" BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
                                                                     <TextBlock x:Name="Subtotal" Text="₱ 0.00" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" Margin="5,0,5,0"/>
@@ -609,18 +608,18 @@
 
                                                                 <!-- Row 1 -->
                                                                 <Border Grid.Row="1" Grid.Column="0" BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
-                                                                    <TextBlock x:Name="DeliveryMobilization" Text="DELIVERY CHARGE" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" Margin="5,0,5,0"/>
+                                                                    <TextBlock x:Name="DeliveryMobilization" Text="DELIVERY CHARGE" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#090909" Margin="5,0,5,0"/>
                                                                 </Border>
                                                                 <Border Grid.Row="1" Grid.Column="1" BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                    <TextBox x:Name="Delivery" IsReadOnly="True" BorderThickness="0" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" Margin="5,0,5,0"/>
+                                                                    <TextBox x:Name="Delivery" IsReadOnly="True" BorderThickness="0" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#090909" Margin="5,0,5,0"/>
                                                                 </Border>
 
                                                                 <!-- Row 2 -->
                                                                 <Border Grid.Row="2" Grid.Column="0" BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
-                                                                    <TextBlock Text="INSTALLATION FEE" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" Margin="5,0,5,0"/>
+                                                                    <TextBlock Text="INSTALLATION FEE" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#090909" Margin="5,0,5,0"/>
                                                                 </Border>
                                                                 <Border Grid.Row="2" Grid.Column="1" BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                    <TextBox x:Name="Installation" IsReadOnly="True" BorderThickness="0" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" Margin="5,0,5,0"/>
+                                                                    <TextBox x:Name="Installation" IsReadOnly="True" BorderThickness="0" FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#090909" Margin="5,0,5,0"/>
                                                                 </Border>
 
                                                                 <!-- Row 3 -->
@@ -752,16 +751,16 @@
                                                 <TextBlock Text="Submitted to:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,10"/>
 
                                                 <!-- Client Company Name -->
-                                                <TextBlock x:Name="SubmittedToClient" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5" Width="314" Height="14"/>
+                                                <TextBlock x:Name="SubmittedToClient" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5" Width="314" Height="14" Text="Procuring Entity:"/>
 
                                                 <!-- Client Billing Address -->
-                                                <TextBlock x:Name="SubmittedToAddress" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5" Width="317" TextWrapping="Wrap"/>
+                                                <TextBlock x:Name="SubmittedToAddress" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5" Width="317" TextWrapping="Wrap" Text="Address:"/>
 
                                                 <!-- Client Email -->
-                                                <TextBlock x:Name="SubmittedToEmail" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5" TextWrapping="Wrap" Width="312"/>
+                                                <TextBlock x:Name="SubmittedToEmail" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,5" TextWrapping="Wrap" Width="312" Text="Email:"/>
 
                                                 <!-- Project ID (User Input) -->
-                                                <TextBlock x:Name="SubmittedToProjectID" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                <TextBlock x:Name="SubmittedToProjectID" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0" Text="Project ID:"/>
                                             </StackPanel>
                                         </Grid>
                                     </Grid>
