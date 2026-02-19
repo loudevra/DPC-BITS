@@ -6,6 +6,8 @@ Imports DPC.DPC.Data.Helpers
 Imports MySql.Data.MySqlClient
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers.SoftwareUpdate
+Imports System.Windows.Media
+Imports MaterialDesignThemes.Wpf
 
 Namespace DPC.Components.Navigation
     Public Class Sidebar
@@ -54,6 +56,47 @@ Namespace DPC.Components.Navigation
 
             ' Attach event handlers dynamically
             AddHandler SidebarLogoButton.Click, AddressOf SidebarLogoButton_Click
+            ' Apply visual styles to indicate unavailable items
+            ApplyPermissionStyles()
+        End Sub
+
+        ''' <summary>
+        ''' Apply gray styling to sidebar items that the current role cannot access.
+        ''' Items remain visible but are dimmed to indicate lack of permission.
+        ''' </summary>
+        Private Sub ApplyPermissionStyles()
+            Dim isAdmin As Boolean = RoleName = "Administrator"
+
+            ' Helper to gray out a button's icon and text
+            Dim GrayOutButton = Sub(btn As Button)
+                                    If btn Is Nothing Then Return
+                                    Try
+                                        Dim sp = TryCast(btn.Content, StackPanel)
+                                        If sp IsNot Nothing Then
+                                            For Each child As UIElement In sp.Children
+                                                If TypeOf child Is TextBlock Then
+                                                    CType(child, TextBlock).Foreground = Brushes.Gray
+                                                ElseIf TypeOf child Is PackIcon Then
+                                                    CType(child, PackIcon).Foreground = Brushes.Gray
+                                                End If
+                                            Next
+                                        Else
+                                            btn.Foreground = Brushes.Gray
+                                        End If
+                                    Catch
+                                    End Try
+                                End Sub
+
+            ' Apply per-permission
+            If Not (Sales Or isAdmin) Then GrayOutButton(BtnSales)
+            If Not (Stock Or isAdmin) Then GrayOutButton(BtnStocks)
+            If Not (Crm Or isAdmin) Then GrayOutButton(BtnCRM)
+            If Not (Project Or isAdmin) Then GrayOutButton(BtnProjects)
+            If Not (Accounts Or isAdmin) Then GrayOutButton(BtnAccounts)
+            If Not (Reports Or isAdmin) Then GrayOutButton(BtnDataReports)
+            If Not (Employees Or isAdmin) Then GrayOutButton(BtnHRM)
+            If Not (Miscellaneous Or isAdmin) Then GrayOutButton(BtnMiscellaneous)
+            ' Leave other buttons as-is (Dashboard, PromoCodes, SoftwareUpdates, Logout)
         End Sub
 
         ''' <summary>
@@ -219,7 +262,10 @@ Namespace DPC.Components.Navigation
         ''' Opens the Projects popup menu.
         ''' </summary>
         Private Sub OpenProject(sender As Object, e As RoutedEventArgs)
-            If Project = True Or AssignProject = True Or AssignProject = False Or RoleName = "Administrator" Then
+            ' Fix: previous condition included "AssignProject = False" which made the
+            ' condition always true. Require either Project permission or AssignProject
+            ' permission (or admin) to allow opening the Projects menu.
+            If Project = True Or AssignProject = True Or RoleName = "Administrator" Then
                 Dim popupMenu As New PopUpMenuProjects(AssignProject, RoleName)
 
                 ' Get the position of the Stocks button

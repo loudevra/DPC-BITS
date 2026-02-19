@@ -101,15 +101,64 @@ Namespace DPC.Views.Auth
                     Dim cmd As New MySqlCommand(query, conn)
                     Dim reader = cmd.ExecuteReader()
                     While (reader.Read)
-
-                        'MessageBox.Show(reader.GetString("RoleName"))
                         Dim Role As String = reader.GetString("RoleName")
 
-                        ' Redirect to Base.xaml and load Dashboard view
-                        Dim baseWindow As New Base(Role) With {
-                            .CurrentView = ViewLoader.DynamicView.Load("dashboard") ' Set CurrentView to Dashboard
-                        } ' Create instance of Base.xaml
+                        ' Determine landing view based on role and permissions.
+                        ' Default to dashboard if no preferred landing view is available.
+                        Dim landingView As String = "dashboard"
 
+                        ' Query permissions for this role to ensure the landing view is accessible
+                        Try
+                            Using permConn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                                permConn.Open()
+                                Dim permQuery As String = "SELECT * FROM permissions WHERE Role = '" & Role & "'"
+                                Dim permCmd As New MySqlCommand(permQuery, permConn)
+                                Dim permReader = permCmd.ExecuteReader()
+                                Dim SalesPerm As Boolean = False
+                                Dim ProjectPerm As Boolean = False
+                                Dim AccountsPerm As Boolean = False
+                                If permReader.Read() Then
+                                    SalesPerm = Convert.ToBoolean(permReader("Sales"))
+                                    ProjectPerm = Convert.ToBoolean(permReader("Project"))
+                                    AccountsPerm = Convert.ToBoolean(permReader("Accounts"))
+                                End If
+
+                                ' Role-specific preferred landing
+                                Dim roleLower = Role.ToLower()
+                                If roleLower.Contains("sales") Then
+                                    If SalesPerm Then
+                                        landingView = "salesnewinvoice" ' Sales person -> New Invoice
+                                    End If
+                                ElseIf roleLower.Contains("manager") AndAlso roleLower.Contains("business") Then
+                                    If ProjectPerm Then
+                                        landingView = "manageproject" ' Business Manager -> Manage Project
+                                    End If
+                                ElseIf roleLower.Contains("owner") Then
+                                    If AccountsPerm Then
+                                        landingView = "manageaccounts" ' Business Owner -> Manage Accounts
+                                    End If
+                                End If
+
+                                ' Fallback: if preferred role mapping not usable, pick first available important module
+                                If landingView = "dashboard" Then
+                                    If SalesPerm Then
+                                        landingView = "salesnewinvoice"
+                                    ElseIf ProjectPerm Then
+                                        landingView = "manageproject"
+                                    ElseIf AccountsPerm Then
+                                        landingView = "manageaccounts"
+                                    End If
+                                End If
+                            End Using
+                        Catch exPerm As Exception
+                            ' If permission check fails, continue with default dashboard
+                            landingView = "dashboard"
+                        End Try
+
+                        ' Redirect to Base.xaml and load chosen landing view
+                        Dim baseWindow As New Base(Role) With {
+                            .CurrentView = ViewLoader.DynamicView.Load(landingView)
+                        }
 
                         ' Show the Base window
                         baseWindow.Show()
@@ -118,14 +167,19 @@ Namespace DPC.Views.Auth
                         Dim currentWindow As Window = Window.GetWindow(Me)
                         currentWindow?.Close()
                     End While
-
-
                 Catch ex As Exception
-
+                    ' If anything goes wrong, fallback to opening Base with dashboard
+                    Try
+                        Dim baseWindow As New Base("") With {
+                            .CurrentView = ViewLoader.DynamicView.Load("dashboard")
+                        }
+                        baseWindow.Show()
+                        Dim currentWindow As Window = Window.GetWindow(Me)
+                        currentWindow?.Close()
+                    Catch
+                    End Try
                 End Try
             End Using
-
-
         End Sub
 
         ' Handle retry after login error
