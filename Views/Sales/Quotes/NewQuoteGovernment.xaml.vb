@@ -229,6 +229,8 @@ Namespace DPC.Views.Sales.Quotes
             ' Visibility for the Show/Hide VAT 12% button
             VatExShowVat.Text = If(CEisVatExInclude, "Hide VAT 12%", "Show VAT 12%")
 
+            cmbCostEstimateValidty.Text = CostEstimateDetails.CEValidUntilDate
+
             GovCEButton.Text = CostEstimateDetails.CEGovCEButton
             GovCETitle.Text = CostEstimateDetails.CEGovCETitle
 
