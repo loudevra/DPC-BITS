@@ -208,7 +208,7 @@
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToNewQuoteGovernment">
-                                    <TextBlock Text="New Government Cost Estimate" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
+                                    <TextBlock Text="New Gov Cost Estimate" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                                 <TextBlock.ToolTip>
                                     <ToolTip Content="Create a government cost estimate." Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
@@ -216,7 +216,7 @@
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageQuoteGovernment">
-                                    <TextBlock Text="Manage Government Cost Estimate" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
+                                    <TextBlock Text="Manage Gov Cost Estimate" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                                 <TextBlock.ToolTip>
                                     <ToolTip Content="Manage a government cost estimate." Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
