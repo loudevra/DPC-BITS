@@ -145,40 +145,44 @@ Namespace DPC.Data.Controllers
                         filterClause = "AND QuoteNumber NOT LIKE 'GPCE-%'"
                     End If
 
+                    ' ✅ Fixed: Added table name "quotes" after FROM
+                    ' ✅ Fixed: Moved filterClause before the search conditions using WHERE 1=1
                     Dim query As String = $"
-                        SELECT * FROM 
-                        WHERE QuoteNumber LIKE @searchText 
-                            OR ReferenceNo LIKE @searchText
-                            OR ClientName LIKE @searchText
-                            OR WarehouseName LIKE @searchText
-                            {filterClause}
-                        ORDER BY QuoteNumber DESC
-                        LIMIT @limit"
+                SELECT * FROM quotes
+                WHERE 1=1
+                    {filterClause}
+                    AND (
+                        QuoteNumber LIKE @searchText 
+                        OR ReferenceNo LIKE @searchText
+                        OR ClientName LIKE @searchText
+                        OR WarehouseName LIKE @searchText
+                    )
+                ORDER BY QuoteNumber DESC
+                LIMIT @limit"
 
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@searchText", "%" & searchText & "%")
                         cmd.Parameters.AddWithValue("@limit", limit)
-
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
                                 Dim itemList = ParseOrderItems(reader("OrderItems").ToString())
                                 quotes.Add(New QuotesModel() With {
-                                    .QuoteNumber = reader("QuoteNumber").ToString(),
-                                    .Reference = If(reader("ReferenceNo") Is DBNull.Value, "-", reader("ReferenceNo").ToString()),
-                                    .QuoteDate = If(reader("QuoteDate") Is DBNull.Value, "-", reader.GetDateTime("QuoteDate").ToString("MMM d, yyyy")),
-                                    .Validity = If(reader("QuoteValidity") Is DBNull.Value, "-", reader.GetDateTime("QuoteValidity").ToString("MMM d, yyyy")),
-                                    .Tax = reader("Tax").ToString(),
-                                    .Discount = ("Discount").ToString(),
-                                    .ClientID = reader("ClientID").ToString(),
-                                    .ClientName = reader("ClientName").ToString(),
-                                    .WarehouseID = reader("WarehouseID").ToString(),
-                                    .WarehouseName = reader("WarehouseName").ToString(),
-                                    .OrderItems = itemList,
-                                    .QuoteNote = If(reader("QuoteNote") Is DBNull.Value, String.Empty, reader("QuoteNote").ToString()),
-                                    .TotalTax = If(reader("TotalTax") Is DBNull.Value, 0, reader("TotalTax")),
-                                    .TotalDiscount = If(reader("TotalDiscount") Is DBNull.Value, 0, reader("TotalDiscount")),
-                                    .TotalPrice = If(reader("TotalPrice") Is DBNull.Value, 0, reader("TotalPrice"))
-                                })
+                            .QuoteNumber = reader("QuoteNumber").ToString(),
+                            .Reference = If(reader("ReferenceNo") Is DBNull.Value, "-", reader("ReferenceNo").ToString()),
+                            .QuoteDate = If(reader("QuoteDate") Is DBNull.Value, "-", reader.GetDateTime("QuoteDate").ToString("MMM d, yyyy")),
+                            .Validity = If(reader("QuoteValidity") Is DBNull.Value, "-", reader.GetDateTime("QuoteValidity").ToString("MMM d, yyyy")),
+                            .Tax = reader("Tax").ToString(),
+                            .Discount = reader("Discount").ToString(), ' ✅ Fixed: was ("Discount").ToString() missing reader
+                            .ClientID = reader("ClientID").ToString(),
+                            .ClientName = reader("ClientName").ToString(),
+                            .WarehouseID = reader("WarehouseID").ToString(),
+                            .WarehouseName = reader("WarehouseName").ToString(),
+                            .OrderItems = itemList,
+                            .QuoteNote = If(reader("QuoteNote") Is DBNull.Value, String.Empty, reader("QuoteNote").ToString()),
+                            .TotalTax = If(reader("TotalTax") Is DBNull.Value, 0, reader("TotalTax")),
+                            .TotalDiscount = If(reader("TotalDiscount") Is DBNull.Value, 0, reader("TotalDiscount")),
+                            .TotalPrice = If(reader("TotalPrice") Is DBNull.Value, 0, reader("TotalPrice"))
+                        })
                             End While
                         End Using
                     End Using
@@ -186,7 +190,6 @@ Namespace DPC.Data.Controllers
             Catch ex As Exception
                 Debug.WriteLine("Error in SearchQuotes: " & ex.Message)
             End Try
-
             Return quotes
         End Function
 
