@@ -26,7 +26,7 @@
                 </StackPanel>
                 <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,20">
                     <!--Product Name Value is here!-->
-                    <TextBox x:Name="TxtBrand" Style="{StaticResource RoundedTextboxStyle}"/>
+                    <TextBox x:Name="TxtBrand" Style="{StaticResource RoundedTextboxStyle}" CharacterCasing="Upper" TextChanged="TxtBrand_TextChanged"/>
                 </Border>
                 <Button Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#52C69D" Click="BtnAddBrand">
                     <TextBlock Text="Add" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="15"/>

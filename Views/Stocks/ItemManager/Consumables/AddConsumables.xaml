@@ -38,12 +38,12 @@
 				<!-- Name Input -->
 				<TextBlock Text="Name:" FontSize="14" />
                 <Border Style="{StaticResource RoundedBorderStyle}">
-                    <TextBox x:Name="txtName" Style="{StaticResource RoundedTextboxStyle}" />
+                    <TextBox x:Name="txtName" Style="{StaticResource RoundedTextboxStyle}" CharacterCasing="Upper" TextChanged="txtName_TextChanged"/>
                 </Border>
 
                 <TextBlock Text="Stock:" FontSize="14" />
                 <Border Style="{StaticResource RoundedBorderStyle}">
-                    <TextBox x:Name="txtStock" Style="{StaticResource RoundedTextboxStyle}" />
+                    <TextBox x:Name="txtStock" Style="{StaticResource RoundedTextboxStyle}" CharacterCasing="Upper" TextChanged="txtStock_TextChanged"/>
                 </Border>
 
                 <!-- Business Location Dropdown -->

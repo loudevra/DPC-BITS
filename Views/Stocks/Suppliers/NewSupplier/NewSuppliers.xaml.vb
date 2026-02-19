@@ -126,16 +126,36 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
 
         ' Stores in a Module serve as cache
         Private Sub StoreCache()
-            CacheCompanyRepresentative = TxtRepresentative.Text
-            CacheCompanyName = TxtCompany.Text
-            CachePhone = TxtPhone.Text
-            CacheEmail = TxtEmail.Text
-            CacheCompanyAddress = TxtAddress.Text
-            CacheCompanyCity = TxtCity.Text
-            CacheCompanyRegion = TxtRegion.Text
-            CacheCompanyCountry = TxtCountry.Text
-            CacheCompanyPostalCode = TxtPostalCode.Text
-            CacheCompanyTINID = TxtTINID.Text
+            CacheCompanyRepresentative = If(TxtRepresentative IsNot Nothing, TxtRepresentative.Text.ToUpperInvariant(), String.Empty)
+            CacheCompanyName = If(TxtCompany IsNot Nothing, TxtCompany.Text.ToUpperInvariant(), String.Empty)
+            CachePhone = If(TxtPhone IsNot Nothing, TxtPhone.Text, String.Empty)
+            CacheEmail = If(TxtEmail IsNot Nothing, TxtEmail.Text.ToUpperInvariant(), String.Empty)
+            CacheCompanyAddress = If(TxtAddress IsNot Nothing, TxtAddress.Text.ToUpperInvariant(), String.Empty)
+            CacheCompanyCity = If(TxtCity IsNot Nothing, TxtCity.Text.ToUpperInvariant(), String.Empty)
+            CacheCompanyRegion = If(TxtRegion IsNot Nothing, TxtRegion.Text.ToUpperInvariant(), String.Empty)
+            CacheCompanyCountry = If(TxtCountry IsNot Nothing, TxtCountry.Text.ToUpperInvariant(), String.Empty)
+            CacheCompanyPostalCode = If(TxtPostalCode IsNot Nothing, TxtPostalCode.Text, String.Empty)
+            CacheCompanyTINID = If(TxtTINID IsNot Nothing, TxtTINID.Text, String.Empty)
+        End Sub
+
+        ' Ensure any user input is displayed in uppercase regardless of keyboard state
+        Private Sub ForceUppercase_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim tb = TryCast(sender, TextBox)
+            If tb Is Nothing Then Return
+
+            Dim original = tb.Text
+            Dim upper = original.ToUpperInvariant()
+            If original = upper Then Return
+
+            Dim selStart = tb.SelectionStart
+            Dim selLength = tb.SelectionLength
+
+            RemoveHandler tb.TextChanged, AddressOf ForceUppercase_TextChanged
+            tb.Text = upper
+            ' Restore selection/caret
+            tb.SelectionStart = Math.Min(selStart, tb.Text.Length)
+            tb.SelectionLength = selLength
+            AddHandler tb.TextChanged, AddressOf ForceUppercase_TextChanged
         End Sub
 
         ' Reload all of the unsave data again
