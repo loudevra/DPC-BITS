@@ -23,6 +23,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         Private popupAddBrand As Popup
         Private popupAddSupplier As Popup
         Private recentlyClosed As Boolean = False
+        Private filterTimer As New DispatcherTimer()
 
 #Region "Initialization"
         Public Sub New()
@@ -38,6 +39,44 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ' Now initialize the markup UI after the control has been loaded
             InitializeMarkupUI()
             InitializeUIElements()
+
+            Dim cbTextBox As TextBox = CType(ComboBoxBrand.Template.FindName("PART_EditableTextBox", ComboBoxBrand), TextBox)
+
+            If cbTextBox IsNot Nothing Then
+                ' Initialize the debouncing timer
+                filterTimer = New DispatcherTimer()
+                filterTimer.Interval = TimeSpan.FromMilliseconds(300) ' The delay amount
+
+                ' This is the code that runs ONLY after the user stops typing
+                AddHandler filterTimer.Tick, Sub(src, args)
+                                                 filterTimer.Stop() ' Stop timer so it only runs once
+
+                                                 Dim view = CollectionViewSource.GetDefaultView(ComboBoxBrand.Items)
+                                                 If view IsNot Nothing Then
+                                                     view.Refresh()
+                                                     ' Ensure dropdown stays open if results exist
+                                                     If Not view.IsEmpty Then
+                                                         ComboBoxBrand.IsDropDownOpen = True
+                                                     End If
+                                                 End If
+                                             End Sub
+
+                AddHandler cbTextBox.PreviewMouseLeftButtonDown, Sub(src, args)
+                                                                     ComboBoxBrand.IsDropDownOpen = True
+                                                                 End Sub
+
+                AddHandler cbTextBox.TextChanged, Sub(s, args)
+                                                      ' 1. Open the dropdown immediately for visual feedback
+                                                      If cbTextBox.IsFocused Then
+                                                          ComboBoxBrand.IsDropDownOpen = True
+                                                      End If
+
+                                                      ' 2. RESTART the timer. 
+                                                      ' This cancels the previous pending refresh and starts a new 300ms wait.
+                                                      filterTimer.Stop()
+                                                      filterTimer.Start()
+                                                  End Sub
+            End If
         End Sub
 
         Private Sub SetupTimers()
