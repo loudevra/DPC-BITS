@@ -489,6 +489,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             AddHandler popupAddBrand.Closed, Sub()
                                                  recentlyClosed = True
+                                                 ProductController.GetBrandsWithSupplier(ComboBoxBrand)
                                                  Task.Delay(100).ContinueWith(Sub() recentlyClosed = False, TaskScheduler.FromCurrentSynchronizationContext())
                                              End Sub
 
