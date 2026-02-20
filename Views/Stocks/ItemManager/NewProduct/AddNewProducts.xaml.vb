@@ -45,16 +45,14 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             If cbTextBox IsNot Nothing Then
                 ' Initialize the debouncing timer
                 filterTimer = New DispatcherTimer()
-                filterTimer.Interval = TimeSpan.FromMilliseconds(300) ' The delay amount
+                filterTimer.Interval = TimeSpan.FromMilliseconds(300)
 
-                ' This is the code that runs ONLY after the user stops typing
                 AddHandler filterTimer.Tick, Sub(src, args)
-                                                 filterTimer.Stop() ' Stop timer so it only runs once
+                                                 filterTimer.Stop()
 
                                                  Dim view = CollectionViewSource.GetDefaultView(ComboBoxBrand.Items)
                                                  If view IsNot Nothing Then
                                                      view.Refresh()
-                                                     ' Ensure dropdown stays open if results exist
                                                      If Not view.IsEmpty Then
                                                          ComboBoxBrand.IsDropDownOpen = True
                                                      End If
@@ -66,13 +64,20 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                                                                  End Sub
 
                 AddHandler cbTextBox.TextChanged, Sub(s, args)
-                                                      ' 1. Open the dropdown immediately for visual feedback
-                                                      If cbTextBox.IsFocused Then
-                                                          ComboBoxBrand.IsDropDownOpen = True
+                                                      Dim originalText = cbTextBox.Text
+                                                      Dim upperText = originalText.ToUpper()
+
+                                                      If originalText <> upperText Then
+                                                          Dim selStart = cbTextBox.SelectionStart
+                                                          cbTextBox.Text = upperText
+                                                          cbTextBox.SelectionStart = selStart
+                                                          Return
                                                       End If
 
-                                                      ' 2. RESTART the timer. 
-                                                      ' This cancels the previous pending refresh and starts a new 300ms wait.
+                                                      If Not cbTextBox.IsFocused Then Return
+
+                                                      ComboBoxBrand.IsDropDownOpen = True
+
                                                       filterTimer.Stop()
                                                       filterTimer.Start()
                                                   End Sub
