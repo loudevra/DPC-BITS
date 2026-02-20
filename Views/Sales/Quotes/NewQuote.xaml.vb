@@ -1081,12 +1081,12 @@ Namespace DPC.Views.Sales.Quotes
             Dim subtotalAmount As Decimal = 0
             Dim totalTaxAmount As Decimal = 0
 
-            ' 1. Sum up all individual row amounts (Price x Qty - Discount)
-            For Each name As String In LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
-            SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
-            Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtAmount_")).
-            Select(Function(txt) txt.Name).Distinct()
+            Dim amountTextBoxNames = LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
+        SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
+        Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtAmount_")).
+        Select(Function(txt) txt.Name).Distinct()
 
+            For Each name As String In amountTextBoxNames
                 Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
                 If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
                     Dim rawText = txtBox.Text.Replace("₱", "").Replace(",", "").Trim()
@@ -1097,16 +1097,23 @@ Namespace DPC.Views.Sales.Quotes
                 End If
             Next
 
-            CostEstimateDetails.CETotalBaseAmount = "₱ " & subtotalAmount.ToString("N2")
-
             UpdateTotalTax()
 
             Dim rawTax = txtTotalTax.Text.Replace("₱", "").Replace(",", "").Trim()
             Decimal.TryParse(rawTax, totalTaxAmount)
 
-            Dim finalGrandTotal As Decimal = subtotalAmount + totalTaxAmount
+            Dim finalGrandTotal As Decimal = 0
+
+            If _TaxSelection Then
+                finalGrandTotal = subtotalAmount + totalTaxAmount
+                CostEstimateDetails.CETotalAmountCache = "₱ " & finalGrandTotal.ToString("N2")
+            Else
+                finalGrandTotal = subtotalAmount
+                CostEstimateDetails.CETotalAmountCache = "₱ " & finalGrandTotal.ToString("N2")
+            End If
 
             txtGrandTotal.Text = "₱" & finalGrandTotal.ToString("N2")
+            CostEstimateDetails.CETotalBaseAmount = "₱" & subtotalAmount.ToString("N2")
         End Sub
 
         ' This function is for updating the value of tax whenever there is changes

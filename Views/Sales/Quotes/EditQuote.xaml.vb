@@ -700,26 +700,42 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Public Sub UpdateGrandTotal()
-            Dim grandTotal As Decimal = 0
+            Dim subtotalAmount As Decimal = 0
+            Dim totalTaxAmount As Decimal = 0
 
-            ' Loop through all entries in the dynamic amount textboxes
-            For Each name As String In LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
-    SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
-    Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtAmount_")).
-    Select(Function(txt) txt.Name).Distinct()
+            Dim amountTextBoxNames = LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
+        SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
+        Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtAmount_")).
+        Select(Function(txt) txt.Name).Distinct()
 
+            For Each name As String In amountTextBoxNames
                 Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
                 If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
-                    Dim rawText = txtBox.Text.Replace("₱", "").Trim()
+                    Dim rawText = txtBox.Text.Replace("₱", "").Replace(",", "").Trim()
                     Dim amount As Decimal
                     If Decimal.TryParse(rawText, amount) Then
-                        grandTotal += amount
+                        subtotalAmount += amount
                     End If
                 End If
             Next
 
-            ' Update the grand total display
-            txtGrandTotal.Text = "₱" & grandTotal.ToString("N2")
+            UpdateTotalTax()
+
+            Dim rawTax = txtTotalTax.Text.Replace("₱", "").Replace(",", "").Trim()
+            Decimal.TryParse(rawTax, totalTaxAmount)
+
+            Dim finalGrandTotal As Decimal = 0
+
+            If _TaxSelection Then
+                finalGrandTotal = subtotalAmount + totalTaxAmount
+                CostEstimateDetails.CETotalAmountCache = "₱ " & finalGrandTotal.ToString("N2")
+            Else
+                finalGrandTotal = subtotalAmount
+                CostEstimateDetails.CETotalAmountCache = "₱ " & finalGrandTotal.ToString("N2")
+            End If
+
+            txtGrandTotal.Text = "₱" & finalGrandTotal.ToString("N2")
+            CostEstimateDetails.CETotalBaseAmount = "₱" & subtotalAmount.ToString("N2")
         End Sub
 
         ' This function is for updating the value of tax whenever there is changes
@@ -742,7 +758,7 @@ Namespace DPC.Views.Sales.Quotes
                 End If
             Next
 
-            ' Example output target: you should declare this in your XAML like you did with txtGrandTotal
+            CostEstimateDetails.CETotalTaxValueCache = "₱ " & totalTax.ToString("N2")
             txtTotalTax.Text = "₱" & totalTax.ToString("N2")
         End Sub
 
@@ -1209,7 +1225,7 @@ Namespace DPC.Views.Sales.Quotes
             Return deleteButton
         End Function
 
-        Public Sub CalculateAmount(rowIndex As Integer)
+                Public Sub CalculateAmount(rowIndex As Integer)
             Dim quantityBox = FindTextBoxByName($"txtQuantity_{rowIndex}")
             Dim rateBox = FindTextBoxByName($"txtRate_{rowIndex}")
             Dim amountBox = FindTextBoxByName($"txtAmount_{rowIndex}")
@@ -1232,23 +1248,23 @@ Namespace DPC.Views.Sales.Quotes
 
             Dim baseAmount = quantity * rate
             Dim taxValue As Decimal = 0
-            Dim amountBeforeDiscount As Decimal = baseAmount
+            'Dim amountWithTax As Decimal
 
             If _TaxSelection Then
                 ' Tax Exclusive: add tax to amount
+                'amountWithTax = baseAmount + taxValue
                 taxValue = baseAmount * (taxPercent / 100)
-                amountBeforeDiscount = baseAmount + taxValue
             Else
                 ' Tax Inclusive: 12% is already in the base amount, calculate for display only
                 taxValue = baseAmount * 0.12D
-                amountBeforeDiscount = baseAmount + taxValue' Base amount already includes tax conceptually
+                'amountWithTax = baseAmount + taxValue
 
                 ' Update tax value display
                 If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
             End If
 
-            Dim discountValue = amountBeforeDiscount * (discountPercent / 100)
-            Dim finalAmount = amountBeforeDiscount - discountValue
+            Dim discountValue = baseAmount * (discountPercent / 100)
+            Dim finalAmount = baseAmount - discountValue
 
             ' Update all display boxes
             If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
@@ -1422,71 +1438,40 @@ Namespace DPC.Views.Sales.Quotes
 
         Private Sub GetAllDataInQuoteProperties(client As Client, productItemsJson As String)
             If Not ValidateQuoteSubmission(client, productItemsJson) Then Exit Sub
+            If cmbCostEstimateValidty.SelectedItem Is Nothing Then
+                MessageBox.Show("Please select a validity date.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Exit Sub
+            End If
+
+            Dim selectedValidityOption = DirectCast(cmbCostEstimateValidty.SelectedItem, ComboBoxItem).Content.ToString()
             Try
                 Dim selectedTax As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
                 Dim selectedDiscount As String = CType(txtDiscountSelection.SelectedItem, ComboBoxItem).Content.ToString()
-
+                ' Calculate actual validity date from selected optiong
                 Dim quoteDateValue = QuoteDate.SelectedDate.Value
-                Dim selectedValidityOption = DirectCast(cmbCostEstimateValidty.SelectedItem, ComboBoxItem).Content.ToString()
                 Dim actualValidityDate = GetValidityDate(selectedValidityOption, quoteDateValue)
-
-                ' Extract the actual tax values from the UI form
-                Dim totalTaxValue As Decimal = 0
-                Dim totalDiscountValue As Decimal = 0
-                Dim totalAmountValue As Decimal = 0
-
-                ' Parse Total Tax from txtTotalTax
-                If Decimal.TryParse(txtTotalTax.Text.Replace("₱", "").Trim(), totalTaxValue) Then
-                    Debug.WriteLine($"Total Tax Value Extracted: {totalTaxValue}")
-                Else
-                    Debug.WriteLine("Failed to parse Tax Value")
-                    totalTaxValue = 0
-                End If
-
-                ' Parse Total Discount from txtTotalDiscount
-                If Decimal.TryParse(txtTotalDiscount.Text.Replace("₱", "").Trim(), totalDiscountValue) Then
-                    Debug.WriteLine($"Total Discount Value Extracted: {totalDiscountValue}")
-                Else
-                    Debug.WriteLine("Failed to parse Discount Value")
-                    totalDiscountValue = 0
-                End If
-
-                ' Parse Total Amount from txtGrandTotal
-                If Decimal.TryParse(txtGrandTotal.Text.Replace("₱", "").Trim(), totalAmountValue) Then
-                    Debug.WriteLine($"Total Amount Value Extracted: {totalAmountValue}")
-                Else
-                    Debug.WriteLine("Failed to parse Grand Total Value")
-                    totalAmountValue = 0
-                End If
-
-                ' ===== SET ALL CACHE VALUES BEFORE NAVIGATION =====
-                ' These are the EXACT cache property names that PreviewPrintEditedQuote expects
-
-                CEQuoteNumberCache = txtQuoteNumber.Text
-                CEDiscountProperty = txtDiscountSelection.Text
-                CETaxProperty = txtTaxSelection.Text
-                CEQuoteDateCache = quoteDateValue.ToString("yyyy-MM-dd")
                 CEValidUntilDate = selectedValidityOption
                 CEQuoteValidityDateCache = actualValidityDate.ToString("yyyy-MM-dd")
 
-                ' ===== IMPORTANT: Use the EXACT cache property names =====
-                ' PreviewPrintEditedQuote uses these names:
-                CETotalTaxValueCache = "₱ " & totalTaxValue.ToString("N2")           ' ← Match PreviewPrintEditedQuote line: VAT12.Text = CostEstimateDetails.CETotalTaxValueCache
-                CETotalDiscountValueCache = "₱ " & totalDiscountValue.ToString("N2")  ' ← For consistency
-                CETotalAmountCache = "₱ " & totalAmountValue.ToString("N2")           ' ← For consistency
-
-                ' Also set these for PreviewPrintEditedQuote display
-                CESubTotalCache = "₱ " & (totalAmountValue - totalTaxValue).ToString("N2")  ' Subtotal (before tax)
-                CEGrandTotalCost = "₱ " & totalAmountValue.ToString("N2")                    ' Grand total (after tax)
-
+                ' 07 - 04 - 2025 -- Moved the insert at the save and print button in previewprintquote.xaml.vb
+                CEQuoteNumberCache = txtQuoteNumber.Text
+                CEDiscountProperty = txtDiscountSelection.Text
+                CETaxProperty = txtTaxSelection.Text
+                CEQuoteDateCache = QuoteDate.SelectedDate.Value.ToString("yyyy-MM-dd")
+                CEValidUntilDate = cmbCostEstimateValidty.Text ' Changed the value of the text instead
+                'CETotalTaxValueCache = txtTotalTax.Text ' Doesnt need since im calculating it in the preview
+                CETaxValueCache = txtTotalTax.Text
+                CETotalDiscountValueCache = txtTotalDiscount.Text
+                CETotalAmountCache = txtGrandTotal.Text
                 CEnoteTxt = txtQuoteNote.Text
                 CEReferenceNumber = txtReferenceNumber.Text
+                'CEpaymentTerms = "None"
                 CEQuoteItemsCache = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(productItemsJson)
-                CEsignature = False
-                CEImageCache = ""
-                CEPathCache = ""
-                CECompanyName = client.Company
-
+                CEsignature = False ' Assuming no signature for now
+                CEImageCache = "" ' Assuming no image for now
+                CEPathCache = "" ' Assuming no path for now
+                'ils
+                CECompanyName = client.Company ' Changed from Client Name to Company Name
                 Dim stringArray As List(Of String) = client.BillingAddress.Split(","c).Select(Function(s) s.Trim()).ToList()
 
                 CostEstimateDetails.CEAddress = stringArray(0)
@@ -1497,29 +1482,21 @@ Namespace DPC.Views.Sales.Quotes
                 CEPhone = client.Phone
                 CEClientName = client.Name
                 CostEstimateDetails.CERepresentative = client.Representative
-                CostEstimateDetails.CETaxProperty = selectedTax
+                CostEstimateDetails.CEEmail = client.Email
 
-                ' ===== DEBUG OUTPUT =====
-                Debug.WriteLine("")
-                Debug.WriteLine("========== CACHE VALUES SET FOR PREVIEW ==========")
-                Debug.WriteLine($"Quote Number: {CEQuoteNumberCache}")
-                Debug.WriteLine($"CETotalTaxValueCache (for display): {CETotalTaxValueCache}")
-                Debug.WriteLine($"CETotalDiscountValueCache: {CETotalDiscountValueCache}")
-                Debug.WriteLine($"CETotalAmountCache: {CETotalAmountCache}")
-                Debug.WriteLine($"CESubTotalCache: {CESubTotalCache}")
-                Debug.WriteLine($"CEGrandTotalCost: {CEGrandTotalCost}")
-                Debug.WriteLine($"Reference Number: {CEReferenceNumber}")
-                Debug.WriteLine($"Tax Property: {CETaxProperty}")
-                Debug.WriteLine($"Discount Property: {CEDiscountProperty}")
-                Debug.WriteLine($"Client Name: {CEClientName}")
-                Debug.WriteLine($"Quote Date: {CEQuoteDateCache}")
-                Debug.WriteLine($"Validity: {CEQuoteValidityDateCache}")
-                Debug.WriteLine("==================================================")
-                Debug.WriteLine("")
+                ' Debugging 
+                Dim selectedTaxType As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
 
-                ' NOW navigate to preview
+                If selectedTaxType = "Exclusive" Then
+                    CostEstimateDetails.CEVatLabel = $"VAT Exclusive"
+                    CostEstimateDetails.CESubtotalLabel = "Subtotal Vat Ex."
+                ElseIf selectedTaxType = "Inclusive" Then
+                    CostEstimateDetails.CEVatLabel = "VAT 12%"
+                    CostEstimateDetails.CESubtotalLabel = "Subtotal Vat In."
+                End If
+
+                Debug.WriteLine($"QuoteNumber: {CEQuoteNumberCache}, QuoteDate: {CEQuoteDateCache}, ValidityDate: {CEQuoteValidityDateCache}, Tax: {CETaxValueCache}, TotalAmount: {CETotalAmountCache}, Note: {CEnoteTxt}, Remarks: {CEremarksTxt}, Items: {JsonConvert.SerializeObject(CEQuoteItemsCache)}, Signature: {CEsignature}, Image: {CEImageCache}, Path: {CEPathCache}, ClientName: {CEClientName}, Phone: {CEPhone}, Email: {CEEmail}, Term1: {CETerm1}, Term2: {CETerm2}, Term3: {CETerm3}, Term4: {CETerm4}, Term5: {CETerm5}, Term6: {CETerm6}, Term7: {CETerm7}, Term8: {CETerm8}, Term9: {CETerm9}, Term10: {CETerm10}, Term11: {CETerm11}, Term12: {CETerm12}")
                 ViewLoader.DynamicView.NavigateToView("costestimate", Me)
-
             Catch ex As Exception
                 MessageBox.Show("Please Fill up all of the Fields: " & ex.Message)
             End Try
