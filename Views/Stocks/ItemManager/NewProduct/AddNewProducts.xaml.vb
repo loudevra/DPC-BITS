@@ -21,6 +21,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         Private base64Image As String
         Private isUploadLocked As Boolean = False
         Private popupAddBrand As Popup
+        Private popupAddSupplier As Popup
         Private recentlyClosed As Boolean = False
 
 #Region "Initialization"
@@ -497,7 +498,34 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         End Sub
 
         Private Sub BtnAddSupplier_Click(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("newsuppliers", Me)
+            If popupAddSupplier IsNot Nothing Then
+                popupAddSupplier.IsOpen = False
+                popupAddSupplier.Child = Nothing
+            End If
+
+            Dim addSupplierControl As New DPC.Views.Stocks.Supplier.NewSuppliers.NewSuppliers()
+            AddHandler addSupplierControl.SupplierAdded, Sub()
+                                                             ProductController.GetSuppliersByBrand(0, ComboBoxSupplier)
+                                                         End Sub
+            AddHandler addSupplierControl.ClosePopup, Sub()
+                                                          popupAddSupplier.IsOpen = False
+                                                      End Sub
+
+            popupAddSupplier = New Popup With {
+        .Placement = PlacementMode.AbsolutePoint,
+        .StaysOpen = False,
+        .AllowsTransparency = True,
+        .Child = addSupplierControl
+    }
+
+            AddHandler popupAddSupplier.Opened, Sub()
+                                                    Dim screenWidth As Double = SystemParameters.PrimaryScreenWidth
+                                                    Dim screenHeight As Double = SystemParameters.PrimaryScreenHeight
+                                                    popupAddSupplier.HorizontalOffset = (screenWidth / 2) - (addSupplierControl.ActualWidth / 2)
+                                                    popupAddSupplier.VerticalOffset = (screenHeight / 2) - (addSupplierControl.ActualHeight / 2)
+                                                End Sub
+
+            popupAddSupplier.IsOpen = True
         End Sub
 
 

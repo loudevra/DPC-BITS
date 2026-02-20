@@ -6,13 +6,16 @@ Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Components.Forms
 Imports DPC.DPC.Data.Helpers
 
-
 Namespace DPC.Views.Stocks.Supplier.NewSuppliers
     Public Class NewSuppliers
         Inherits UserControl
 
         Private brandList As ObservableCollection(Of Brand)
         Private autocompleteHelper As AutocompleteHelper(Of Brand)
+
+        ' Events for communication with parent forms/popups
+        Public Event SupplierAdded()
+        Public Event ClosePopup()
 
         ' Cache the value of the textbox whenever it is empty
         Private Shared viewCache As New Dictionary(Of String, UserControl)
@@ -31,11 +34,11 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
 
             ' Configure and initialize autocomplete control
             autocompleteHelper.Initialize(
-                TxtItem,                   ' TextBox for input
-                LstItems,                  ' ListBox for suggestions
-                ChipPanel,                 ' Panel for chips
-                AutoCompletePopup,         ' Popup for suggestions
-                brandList                  ' Data source
+                TxtItem,
+                LstItems,
+                ChipPanel,
+                AutoCompletePopup,
+                brandList
             )
         End Sub
 
@@ -66,65 +69,57 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
         ' Add supplier
         Private Sub BtnAddSupplier(sender As Object, e As RoutedEventArgs)
             Try
-                ' Collect input values
-                Dim supplierName As String = TxtRepresentative.Text.Trim()
-                Dim companyName As String = TxtCompany.Text.Trim()
-                Dim phone As String = TxtPhone.Text.Trim()
-                Dim email As String = TxtEmail.Text.Trim()
-                Dim address As String = TxtAddress.Text.Trim()
-                Dim city As String = TxtCity.Text.Trim()
-                Dim region As String = TxtRegion.Text.Trim()
-                Dim country As String = TxtCountry.Text.Trim()
-                Dim postalCode As String = TxtPostalCode.Text.Trim()
-                Dim tinID As String = TxtTINID.Text.Trim()
-
-                ' Validate fields
-                If String.IsNullOrWhiteSpace(supplierName) OrElse String.IsNullOrWhiteSpace(companyName) OrElse
-                   String.IsNullOrWhiteSpace(email) OrElse String.IsNullOrWhiteSpace(phone) Then
-                    MessageBox.Show("Please fill in all required fields.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
+                ' 1. Validate required fields
+                If String.IsNullOrWhiteSpace(TxtRepresentative.Text) OrElse
+                   String.IsNullOrWhiteSpace(TxtCompany.Text) OrElse
+                   String.IsNullOrWhiteSpace(TxtEmail.Text) OrElse
+                   String.IsNullOrWhiteSpace(TxtPhone.Text) Then
+                    MessageBox.Show("Please fill in all required fields (*).", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                     Return
                 End If
 
-                ' Get selected brand IDs from the helper
+                ' 2. Collect Data
                 Dim brandIDs As List(Of String) = autocompleteHelper.SelectedItems.Select(Function(b) b.ID.ToString()).ToList()
 
-                ' Call the InsertSupplier function
-                SupplierController.InsertSupplier(supplierName, companyName, phone, email, address, city, region, country, postalCode, tinID, brandIDs)
+                ' 3. Insert to Database
+                SupplierController.InsertSupplier(
+                    TxtRepresentative.Text.Trim(), TxtCompany.Text.Trim(), TxtPhone.Text.Trim(),
+                    TxtEmail.Text.Trim(), TxtAddress.Text.Trim(), TxtCity.Text.Trim(),
+                    TxtRegion.Text.Trim(), TxtCountry.Text.Trim(), TxtPostalCode.Text.Trim(),
+                    TxtTINID.Text.Trim(), brandIDs)
 
-                ' Clear form and reset fields after successful insertion
+                RaiseEvent SupplierAdded()
 
-                UnloadCache()
+                ClearCacheModule()
 
-                ViewLoader.DynamicView.NavigateToView("managesuppliers", Me)
+                RaiseEvent ClosePopup()
+
             Catch ex As Exception
                 MessageBox.Show("An error occurred while adding the supplier: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Sub
 
-
-
-        Private Sub TxtPhone_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
-            If Not e.Text.All(AddressOf Char.IsDigit) Then
-                e.Handled = True
-                Return
-            End If
-
-            ' Limit to 11 digits
-            Dim textBox = CType(sender, TextBox)
-            If textBox.Text.Length >= 11 Then
-                e.Handled = True
-            End If
+        ' Cancel button for Popup use
+        Private Sub BtnCancel_Click(sender As Object, e As RoutedEventArgs)
+            RaiseEvent ClosePopup()
         End Sub
 
-        Private Sub NewSupplierUserControl_Unloaded(sender As Object, e As RoutedEventArgs)
-            StoreCache()
+#Region "Cache Management"
+        ' Helper to reset the global module variables after successful save
+        Private Sub ClearCacheModule()
+            CacheCompanyRepresentative = String.Empty
+            CacheCompanyName = String.Empty
+            CachePhone = String.Empty
+            CacheEmail = String.Empty
+            CacheCompanyAddress = String.Empty
+            CacheCompanyCity = String.Empty
+            CacheCompanyRegion = String.Empty
+            CacheCompanyCountry = String.Empty
+            CacheCompanyPostalCode = String.Empty
+            CacheCompanyTINID = String.Empty
         End Sub
 
-        Private Sub NewSupplierUserControl_Loaded(sender As Object, e As RoutedEventArgs)
-            UnloadCache()
-        End Sub
-
-        ' Stores in a Module serve as cache
+        ' Stores in a Module serve as cache when navigating away
         Private Sub StoreCache()
             CacheCompanyRepresentative = If(TxtRepresentative IsNot Nothing, TxtRepresentative.Text.ToUpperInvariant(), String.Empty)
             CacheCompanyName = If(TxtCompany IsNot Nothing, TxtCompany.Text.ToUpperInvariant(), String.Empty)
@@ -138,6 +133,22 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
             CacheCompanyTINID = If(TxtTINID IsNot Nothing, TxtTINID.Text, String.Empty)
         End Sub
 
+        ' Reload all of the unsaved data again
+        Private Sub UnloadCache()
+            TxtRepresentative.Text = CacheCompanyRepresentative
+            TxtCompany.Text = CacheCompanyName
+            TxtPhone.Text = CachePhone
+            TxtEmail.Text = CacheEmail
+            TxtAddress.Text = CacheCompanyAddress
+            TxtCity.Text = CacheCompanyCity
+            TxtRegion.Text = CacheCompanyRegion
+            TxtCountry.Text = CacheCompanyCountry
+            TxtPostalCode.Text = CacheCompanyPostalCode
+            TxtTINID.Text = CacheCompanyTINID
+        End Sub
+#End Region
+
+#Region "Formatting & Validation"
         ' Ensure any user input is displayed in uppercase regardless of keyboard state
         Private Sub ForceUppercase_TextChanged(sender As Object, e As TextChangedEventArgs)
             Dim tb = TryCast(sender, TextBox)
@@ -152,34 +163,17 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
 
             RemoveHandler tb.TextChanged, AddressOf ForceUppercase_TextChanged
             tb.Text = upper
-            ' Restore selection/caret
             tb.SelectionStart = Math.Min(selStart, tb.Text.Length)
             tb.SelectionLength = selLength
             AddHandler tb.TextChanged, AddressOf ForceUppercase_TextChanged
         End Sub
 
-        ' Reload all of the unsave data again
-        Private Sub UnloadCache()
-            TxtRepresentative.Text = CacheCompanyRepresentative
-            TxtCompany.Text = CacheCompanyName
-            TxtPhone.Text = CachePhone
-            TxtEmail.Text = CacheEmail
-            TxtAddress.Text = CacheCompanyAddress
-            TxtCity.Text = CacheCompanyCity
-            TxtRegion.Text = CacheCompanyRegion
-            TxtCountry.Text = CacheCompanyCountry
-            TxtPostalCode.Text = CacheCompanyPostalCode
-            TxtTINID.Text = CacheCompanyTINID
-        End Sub
-
-        Private Sub TxtTINID_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
+        Private Sub TxtPhone_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
             If Not e.Text.All(AddressOf Char.IsDigit) Then
                 e.Handled = True
                 Return
             End If
-        End Sub
 
-        Private Sub TxtPostalCode_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
             ' Limit to 11 digits
             Dim textBox = CType(sender, TextBox)
             If textBox.Text.Length >= 11 Then
@@ -187,11 +181,33 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
             End If
         End Sub
 
+        Private Sub TxtTINID_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
+            If Not e.Text.All(AddressOf Char.IsDigit) Then
+                e.Handled = True
+            End If
+        End Sub
+
+        Private Sub TxtPostalCode_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
+            Dim textBox = CType(sender, TextBox)
+            If Not e.Text.All(AddressOf Char.IsDigit) OrElse textBox.Text.Length >= 11 Then
+                e.Handled = True
+            End If
+        End Sub
+
         Private Sub TxtCountry_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
             If Not e.Text.All(AddressOf Char.IsLetter) Then
                 e.Handled = True
-                Return
             End If
+        End Sub
+#End Region
+
+        ' Lifecycle event handlers
+        Private Sub NewSupplierUserControl_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
+            UnloadCache()
+        End Sub
+
+        Private Sub NewSupplierUserControl_Unloaded(sender As Object, e As RoutedEventArgs) Handles Me.Unloaded
+            StoreCache()
         End Sub
     End Class
 End Namespace
