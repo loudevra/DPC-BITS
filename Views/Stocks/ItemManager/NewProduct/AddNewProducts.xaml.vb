@@ -21,7 +21,9 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         Private base64Image As String
         Private isUploadLocked As Boolean = False
         Private popupAddBrand As Popup
+        Private popupAddSupplier As Popup
         Private recentlyClosed As Boolean = False
+        Private filterTimer As New DispatcherTimer()
 
 #Region "Initialization"
         Public Sub New()
@@ -37,6 +39,49 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ' Now initialize the markup UI after the control has been loaded
             InitializeMarkupUI()
             InitializeUIElements()
+
+            Dim cbTextBox As TextBox = CType(ComboBoxBrand.Template.FindName("PART_EditableTextBox", ComboBoxBrand), TextBox)
+
+            If cbTextBox IsNot Nothing Then
+                ' Initialize the debouncing timer
+                filterTimer = New DispatcherTimer()
+                filterTimer.Interval = TimeSpan.FromMilliseconds(300)
+
+                AddHandler filterTimer.Tick, Sub(src, args)
+                                                 filterTimer.Stop()
+
+                                                 Dim view = CollectionViewSource.GetDefaultView(ComboBoxBrand.Items)
+                                                 If view IsNot Nothing Then
+                                                     view.Refresh()
+                                                     If Not view.IsEmpty Then
+                                                         ComboBoxBrand.IsDropDownOpen = True
+                                                     End If
+                                                 End If
+                                             End Sub
+
+                AddHandler cbTextBox.PreviewMouseLeftButtonDown, Sub(src, args)
+                                                                     ComboBoxBrand.IsDropDownOpen = True
+                                                                 End Sub
+
+                AddHandler cbTextBox.TextChanged, Sub(s, args)
+                                                      Dim originalText = cbTextBox.Text
+                                                      Dim upperText = originalText.ToUpper()
+
+                                                      If originalText <> upperText Then
+                                                          Dim selStart = cbTextBox.SelectionStart
+                                                          cbTextBox.Text = upperText
+                                                          cbTextBox.SelectionStart = selStart
+                                                          Return
+                                                      End If
+
+                                                      If Not cbTextBox.IsFocused Then Return
+
+                                                      ComboBoxBrand.IsDropDownOpen = True
+
+                                                      filterTimer.Stop()
+                                                      filterTimer.Start()
+                                                  End Sub
+            End If
         End Sub
 
         Private Sub SetupTimers()
@@ -489,6 +534,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 
             AddHandler popupAddBrand.Closed, Sub()
                                                  recentlyClosed = True
+                                                 ProductController.GetBrandsWithSupplier(ComboBoxBrand)
                                                  Task.Delay(100).ContinueWith(Sub() recentlyClosed = False, TaskScheduler.FromCurrentSynchronizationContext())
                                              End Sub
 
@@ -496,7 +542,34 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         End Sub
 
         Private Sub BtnAddSupplier_Click(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("newsuppliers", Me)
+            If popupAddSupplier IsNot Nothing Then
+                popupAddSupplier.IsOpen = False
+                popupAddSupplier.Child = Nothing
+            End If
+
+            Dim addSupplierControl As New DPC.Views.Stocks.Supplier.NewSuppliers.NewSuppliers()
+            AddHandler addSupplierControl.SupplierAdded, Sub()
+                                                             ProductController.GetSuppliersByBrand(0, ComboBoxSupplier)
+                                                         End Sub
+            AddHandler addSupplierControl.ClosePopup, Sub()
+                                                          popupAddSupplier.IsOpen = False
+                                                      End Sub
+
+            popupAddSupplier = New Popup With {
+        .Placement = PlacementMode.AbsolutePoint,
+        .StaysOpen = False,
+        .AllowsTransparency = True,
+        .Child = addSupplierControl
+    }
+
+            AddHandler popupAddSupplier.Opened, Sub()
+                                                    Dim screenWidth As Double = SystemParameters.PrimaryScreenWidth
+                                                    Dim screenHeight As Double = SystemParameters.PrimaryScreenHeight
+                                                    popupAddSupplier.HorizontalOffset = (screenWidth / 2) - (addSupplierControl.ActualWidth / 2)
+                                                    popupAddSupplier.VerticalOffset = (screenHeight / 2) - (addSupplierControl.ActualHeight / 2)
+                                                End Sub
+
+            popupAddSupplier.IsOpen = True
         End Sub
 
 
