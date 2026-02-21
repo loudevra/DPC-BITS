@@ -79,5 +79,7 @@ Namespace DPC.Views.ItemManager.Consumables
         Private Sub ClosePopup(sender As Object, e As RoutedEventArgs)
             Me.Close()
         End Sub
+
+
     End Class
 End Namespace
