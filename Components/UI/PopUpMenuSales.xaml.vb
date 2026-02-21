@@ -124,6 +124,10 @@ Namespace DPC.Components.UI
             ViewLoader.DynamicView.NavigateToView("salesquote", Me)
         End Sub
 
+        Private Sub NavigateToManageWalkInClients(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("managewalkin", Me)
+        End Sub
+
         Private Sub NavigateToNewQuoteGovernment(sender As Object, e As RoutedEventArgs)
             CostEstimateDetails.CEGovCETitle = "Cost Estimatee"
             CostEstimateDetails.CEGovCEButton = "Generate Cost Estimate"
@@ -150,6 +154,10 @@ Namespace DPC.Components.UI
         End Sub
         Private Sub NavigateToNewPOSInvoice(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("salesnewposinvoice", Me)
+        End Sub
+
+        Private Sub NavigateToWalkIn(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
         End Sub
 
     End Class

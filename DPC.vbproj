@@ -1153,6 +1153,9 @@
     <Compile Include="Views\Sales\Quotes\EditQuote.xaml.vb">
       <DependentUpon>EditQuote.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Sales\Quotes\ManageWalkInClients.xaml.vb">
+      <DependentUpon>ManageWalkInClients.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Sales\Quotes\NewQuote.xaml.vb">
       <DependentUpon>NewQuote.xaml</DependentUpon>
     </Compile>
@@ -2121,6 +2124,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Sales\Quotes\EditQuote.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Quotes\ManageWalkInClients.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

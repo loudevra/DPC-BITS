@@ -237,7 +237,7 @@
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToWalkIn">
-                                 <TextBlock Text="Walk-In Client" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
+                                 <TextBlock Text="Walk-In Client" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend" Visibility="Collapsed" />
                                 </Hyperlink>
                                 <TextBlock.ToolTip>
                                     <ToolTip Content="Process immediate purchases from walk-in customers" 
