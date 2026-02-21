@@ -141,7 +141,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Sales.Quotes.Quote()
                     Case "salesnewquote"
                         Return New Sales.Quotes.NewQuote()
-                    Case "salesquotegovernment"
+                    Case "managewalkin"
+                        Return New Sales.Quotes.ManageWalkInClients()
+                    Case "managewalkin"
                         Return New Sales.Quotes.NewQuoteGovernment()
                     Case "salesquotegovernmentmanage"
                         Return New Sales.Quotes.ManageQuoteGovernment()
