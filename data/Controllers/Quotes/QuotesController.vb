@@ -286,15 +286,10 @@ Namespace DPC.Data.Controllers
             ' Add switch case what is stored in cache CECostEstimate
             Select Case CeType
                 Case 0
-                    prefix = "GPCE-"
-                Case 1
-                    prefix = "BCCE-"
-                Case 2
-                    prefix = "HHCE-"
-                Case 3
                     prefix = "WICE-"
+                Case 1
+                    prefix = "HHCE-"
                 Case Else
-                    ' default value of everything is wrong
                     prefix = "CE-"
             End Select
 
