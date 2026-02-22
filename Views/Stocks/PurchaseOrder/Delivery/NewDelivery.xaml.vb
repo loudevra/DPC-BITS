@@ -48,6 +48,24 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             End If
         End Sub
 
+        Private Sub GenerateDeliveryReceipt_Click(sender As Object, e As RoutedEventArgs)
+            DeliveryDetails.DRReferenceInvoice = txtInvoiceNumber.Text
+            DeliveryDetails.DRNumber = txtDeliveryNumber.Text
+            DeliveryDetails.DRDate = DateTime.Today.ToString("MMM dd, yyyy")
+
+            DeliveryDetails.DRClientName = txtClientName.Text
+            DeliveryDetails.DRClientDetails = txtClientDetails.Text
+
+            Dim selectedMethod As ComboBoxItem = TryCast(cmbShippingMethod.SelectedItem, ComboBoxItem)
+            If selectedMethod IsNot Nothing Then
+                DeliveryDetails.DRShippingMethod = selectedMethod.Content.ToString()
+            End If
+
+            DeliveryDetails.DRDeliveryItems = WalkinBillingStatementDetails.BLItemsCache
+
+            ViewLoader.DynamicView.NavigateToView("previewEditableDeliveryReceipt", Me)
+        End Sub
+
 #Region "Helpers"
         Private Sub UpdateClientDetails(client As Client)
             Dim txtClientDetails As TextBox = TryCast(FindName("txtClientDetails"), TextBox)
