@@ -38,6 +38,7 @@ Namespace DPC.Components.Forms
 
             Dim categoryBorder As New Border() With {.Style = CType(Application.Current.TryFindResource("RoundedBorderStyle"), Style), .Margin = New Thickness(0, 0, 0, 15)}
             Dim txtName As New TextBox() With {.Style = CType(Application.Current.TryFindResource("RoundedTextboxStyle"), Style), .Name = "TxtSubCatName", .Text = subcategoryName}
+            AddHandler txtName.TextChanged, AddressOf TxtToUpper_TextChanged
             productcategoryNameTextBoxes.Add(txtName)
             categoryBorder.Child = txtName
 
@@ -52,6 +53,7 @@ Namespace DPC.Components.Forms
 
             Dim descriptionBorder As New Border() With {.Style = CType(Application.Current.TryFindResource("RoundedBorderStyle"), Style), .Margin = New Thickness(0, 0, 0, 15)}
             Dim txtDescription As New TextBox() With {.Style = CType(Application.Current.TryFindResource("RoundedTextboxStyle"), Style), .Name = "TxtSubDescription", .Text = subcategoryDescription}
+            AddHandler txtDescription.TextChanged, AddressOf TxtToUpper_TextChanged
             productcategoryDescriptionTextBoxes.Add(txtDescription)
             descriptionBorder.Child = txtDescription
 
@@ -65,6 +67,25 @@ Namespace DPC.Components.Forms
             ' Add panels to UI
             MainContent.Children.Add(subcategoryPanel)
             MainContent.Children.Add(descriptionPanel)
+        End Sub
+
+        ' Ensure typed text is converted to uppercase while preserving caret position
+        Private Sub TxtToUpper_TextChanged(sender As Object, e As Windows.Controls.TextChangedEventArgs)
+            Dim tb = TryCast(sender, TextBox)
+            If tb Is Nothing Then Return
+
+            Dim originalSelectionStart = tb.SelectionStart
+            Dim originalSelectionLength = tb.SelectionLength
+            Dim originalText = tb.Text
+
+            Dim upperText = originalText.ToUpperInvariant()
+            If Not String.Equals(originalText, upperText, StringComparison.Ordinal) Then
+                tb.Text = upperText
+                ' Restore caret/selection
+                Dim newSelectionStart = Math.Min(originalSelectionStart, tb.Text.Length)
+                tb.SelectionStart = newSelectionStart
+                tb.SelectionLength = originalSelectionLength
+            End If
         End Sub
 
         ' UPDATE IN THE DATABASE FUNCTION PART
