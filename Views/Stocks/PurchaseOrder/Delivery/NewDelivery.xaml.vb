@@ -13,18 +13,41 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
     Public Class NewDelivery
         Private _selectedClient As Client
         Private _client As New ObservableCollection(Of Client)
+        Private deliveryDate As New CalendarController.SingleCalendar()
+
         Public Sub New()
             InitializeComponent()
-
             InitializeFields()
         End Sub
 
         Public Sub InitializeFields()
             txtClientName.Text = WalkinBillingStatementDetails.BLClientName
             txtInvoiceNumber.Text = WalkinBillingStatementDetails.BLNumberCache
+
+            dtDate.SelectedDate = DateTime.Today
+            txtSelectedDate.Text = dtDate.SelectedDate.Value.ToString("MMM dd, yyyy")
+
             GetClientInfo()
         End Sub
 
+        Private Sub GetClientInfo()
+
+            ' Load clients manually before trying to match
+            If _client Is Nothing OrElse _client.Count = 0 Then
+                _client = ClientController.SearchClient(txtClientName.Text)
+            End If
+
+            ' Now we can match safely
+            If _client IsNot Nothing AndAlso _client.Count > 0 Then
+                Dim match = _client.FirstOrDefault(Function(c) c.Name = txtClientName.Text)
+                If match IsNot Nothing Then
+                    _selectedClient = match
+                    UpdateClientDetails(_selectedClient)
+                End If
+            End If
+        End Sub
+
+#Region "Helpers"
         Private Sub UpdateClientDetails(client As Client)
             Dim txtClientDetails As TextBox = TryCast(FindName("txtClientDetails"), TextBox)
             If txtClientDetails Is Nothing OrElse client Is Nothing Then Return
@@ -44,21 +67,16 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             txtClientDetails.Text = details
         End Sub
 
-        Private Sub GetClientInfo()
+        Private Sub btnOpenCalendar_Click(sender As Object, e As RoutedEventArgs)
+            dtDate.IsDropDownOpen = True
+        End Sub
 
-            ' Load clients manually before trying to match
-            If _client Is Nothing OrElse _client.Count = 0 Then
-                _client = ClientController.SearchClient(txtClientName.Text)
-            End If
-
-            ' Now we can match safely
-            If _client IsNot Nothing AndAlso _client.Count > 0 Then
-                Dim match = _client.FirstOrDefault(Function(c) c.Name = txtClientName.Text)
-                If match IsNot Nothing Then
-                    _selectedClient = match
-                    UpdateClientDetails(_selectedClient)
-                End If
+        Private Sub dtDate_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs)
+            If dtDate.SelectedDate.HasValue Then
+                ' Update the TextBlock/TextBox display
+                txtSelectedDate.Text = dtDate.SelectedDate.Value.ToString("MMM dd, yyyy")
             End If
         End Sub
+#End Region
     End Class
 End Namespace
