@@ -17,7 +17,7 @@ Imports PdfSharp.Pdf
 Imports SkiaSharp.Views.WPF
 
 Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
-    Public Class PrintPreviewDeliveryReceipt
+    Public Class PreviewPrintDeliveryReceipt
         Public Sub New()
             InitializeComponent()
 

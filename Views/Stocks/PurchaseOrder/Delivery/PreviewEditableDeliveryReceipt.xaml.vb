@@ -54,7 +54,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Sub
 
         Private Sub PrintPreview(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("printpreviewdeliveryreceipt", Me)
+            ViewLoader.DynamicView.NavigateToView("previewprintdeliveryreceipt", Me)
         End Sub
     End Class
 End Namespace
