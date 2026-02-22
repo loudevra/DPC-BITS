@@ -79,7 +79,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Stocks.PurchaseOrder.Delivery.NewDelivery()
                     Case "previeweditabledeliveryeeceipt"
                         Return New Stocks.PurchaseOrder.Delivery.PreviewEditableDeliveryReceipt()
-
+                    Case "printpreviewdeliveryreceipt"
+                        Return New Stocks.PurchaseOrder.Delivery.PrintPreviewDeliveryReceipt()
                          ' CRM Navigation
                     Case "clientgroups"
                         Return New CRM.ClientGroup.ClientGroups()

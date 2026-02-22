@@ -52,5 +52,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         Private Sub NextPage_Click(sender As Object, e As RoutedEventArgs)
             'If currentPageIndex < totalPages - 1 Then LoadPage(currentPageIndex + 1)
         End Sub
+
+        Private Sub PrintPreview(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("printpreviewdeliveryreceipt", Me)
+        End Sub
     End Class
 End Namespace
