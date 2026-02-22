@@ -23,6 +23,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         Public Sub InitializeFields()
             txtClientName.Text = WalkinBillingStatementDetails.BLClientName
             txtInvoiceNumber.Text = WalkinBillingStatementDetails.BLNumberCache
+            txtDeliveryNumber.Text = GenerateDeliveryId(txtInvoiceNumber.Text)
 
             dtDate.SelectedDate = DateTime.Today
             txtSelectedDate.Text = dtDate.SelectedDate.Value.ToString("MMM dd, yyyy")
@@ -66,6 +67,10 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
             txtClientDetails.Text = details
         End Sub
+
+        Private Function GenerateDeliveryId(invoiceNumber As String) As String
+            Return invoiceNumber.Trim().Replace("BL", "DR").Replace(" ", "")
+        End Function
 
         Private Sub btnOpenCalendar_Click(sender As Object, e As RoutedEventArgs)
             dtDate.IsDropDownOpen = True
