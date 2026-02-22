@@ -3,6 +3,7 @@ Imports System.Windows.Controls
 Imports System.Windows.Media
 Imports DPC.DPC.Views
 Imports DPC.DPC.Views.Accounts.Accounts.ManageAccounts
+Imports DPC.DPC.Views.Stocks.PurchaseOrder.Delivery
 Imports DPC.DPC.Views.Stocks.Suppliers.NewSupplier
 
 Namespace DPC.Data.Helpers.ViewLoader
@@ -74,6 +75,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Stocks.PurchaseOrder.WalkIn.AddNewWalkInClient()
                     Case "walkinorder"
                         Return New Stocks.PurchaseOrder.WalkIn.WalkInNewOrder()
+                    Case "newdelivery"
+                        Return New Stocks.PurchaseOrder.Delivery.NewDelivery()
 
                          ' CRM Navigation
                     Case "clientgroups"

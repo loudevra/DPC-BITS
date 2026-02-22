@@ -1201,6 +1201,9 @@
     <Compile Include="Views\Stocks\ProductsLabel\LabelPrintPreview.xaml.vb">
       <DependentUpon>LabelPrintPreview.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Stocks\PurchaseOrder\Delivery\NewDelivery.xaml.vb">
+      <DependentUpon>NewDelivery.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stocks\PurchaseOrder\NewOrder\BillingStatement.xaml.vb">
       <DependentUpon>BillingStatement.xaml</DependentUpon>
     </Compile>
@@ -2189,6 +2192,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Stocks\PurchaseOrder\Delivery\NewDelivery.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Stocks\PurchaseOrder\NewOrder\BillingStatement.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2360,6 +2367,7 @@
     <Folder Include="Views\DataReports\GraphicalReports\" />
     <Folder Include="Views\DataReports\SummaryReports\" />
     <Folder Include="Views\HRM\Payroll\" />
+    <Folder Include="Views\Stocks\PurchaseOrder\NewFolder1\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ILLink\ILLink.Descriptors.LibraryBuild.xml" />
