@@ -21,12 +21,21 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Sub
 
         Public Sub InitializeFields()
+
             txtClientName.Text = WalkinBillingStatementDetails.BLClientName
             txtInvoiceNumber.Text = WalkinBillingStatementDetails.BLNumberCache
             txtDeliveryNumber.Text = GenerateDeliveryId(txtInvoiceNumber.Text)
 
             dtDate.SelectedDate = DateTime.Today
             txtSelectedDate.Text = dtDate.SelectedDate.Value.ToString("MMM dd, yyyy")
+
+            If Not String.IsNullOrEmpty(DeliveryDetails.DRShippingMethod) Then
+                cmbShippingMethod.Text = DeliveryDetails.DRShippingMethod
+            End If
+
+            If Not String.IsNullOrEmpty(DeliveryDetails.DRDeliveryNotes) Then
+                txtDeliveryNote.Text = DeliveryDetails.DRDeliveryNotes
+            End If
 
             GetClientInfo()
         End Sub
@@ -55,6 +64,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
             DeliveryDetails.DRClientName = txtClientName.Text
             DeliveryDetails.DRClientDetails = txtClientDetails.Text
+            DeliveryDetails.DRDeliveryNotes = txtDeliveryNote.Text
 
             Dim selectedMethod As ComboBoxItem = TryCast(cmbShippingMethod.SelectedItem, ComboBoxItem)
             If selectedMethod IsNot Nothing Then
@@ -63,7 +73,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
             DeliveryDetails.DRDeliveryItems = WalkinBillingStatementDetails.BLItemsCache
 
-            ViewLoader.DynamicView.NavigateToView("previewEditableDeliveryReceipt", Me)
+            ViewLoader.DynamicView.NavigateToView("previeweditabledeliveryeeceipt", Me)
         End Sub
 
 #Region "Helpers"
@@ -80,7 +90,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             If client.BillingAddress Is Nothing Then
                 details &= $"{Environment.NewLine}{Environment.NewLine}Delivery Address: (No data)"
             Else
-                details &= String.Join(Environment.NewLine, $"Delivery Address : {client.BillingAddress}")
+                details &= String.Join(Environment.NewLine, $"Delivery Address: {client.BillingAddress}")
             End If
 
             txtClientDetails.Text = details

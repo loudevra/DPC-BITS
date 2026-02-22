@@ -101,16 +101,16 @@
                                             </Grid.RowDefinitions>
 
                                             <TextBlock Grid.Row="0" Grid.Column="0" Text="CLIENT NAME/COMPANY NAME: " FontWeight="Bold" FontSize="11" FontFamily="Lexend"/>
-                                            <TextBlock Grid.Row="0" Grid.Column="1" x:Name="DeliveryClientName" Text="ANGONO MINICIPALITY" FontSize="11" FontFamily="Lexend" TextWrapping="Wrap" Margin="5,0"/>
+                                            <TextBlock Grid.Row="0" Grid.Column="1" x:Name="txtDeliveryClientName" Text="ANGONO MINICIPALITY" FontSize="11" FontFamily="Lexend" TextWrapping="Wrap" Margin="5,0"/>
 
                                             <TextBlock Grid.Row="1" Grid.Column="0" Text="CLIENT ADDRESS: " FontWeight="Bold" FontSize="11" FontFamily="Lexend" Margin="0,5,0,0"/>
-                                            <TextBlock Grid.Row="1" Grid.Column="1" x:Name="DeliveryAddress" Text="Address details go here..." FontSize="11" FontFamily="Lexend" TextWrapping="Wrap" Margin="5,5,5,0"/>
+                                            <TextBlock Grid.Row="1" Grid.Column="1" x:Name="txtDeliveryAddress" Text="Address details go here..." FontSize="11" FontFamily="Lexend" TextWrapping="Wrap" Margin="5,5,5,0"/>
 
                                             <TextBlock Grid.Row="2" Grid.Column="0" Text="CONTACT NUMBER: " FontWeight="Bold" FontSize="11" FontFamily="Lexend" Margin="0,5,0,0"/>
-                                            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="DeliveryContact" Text="09XXXXXXXXX" FontSize="11" FontFamily="Lexend" Margin="5,5,5,0"/>
+                                            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="txtDeliveryContact" Text="09XXXXXXXXX" FontSize="11" FontFamily="Lexend" Margin="5,5,5,0"/>
 
                                             <TextBlock Grid.Row="3" Grid.Column="0" Text="COMPANY REPRESENTATIVE: " FontWeight="Bold" FontSize="11" FontFamily="Lexend" Margin="0,5,0,0"/>
-                                            <TextBlock Grid.Row="3" Grid.Column="1" x:Name="DeliveryRep" Text="ANGONO MINICIPALITY" FontSize="11" FontFamily="Lexend" Margin="5,5,5,0"/>
+                                            <TextBlock Grid.Row="3" Grid.Column="1" x:Name="txtDeliveryRep" Text="ANGONO MINICIPALITY" FontSize="11" FontFamily="Lexend" Margin="5,5,5,0"/>
                                         </Grid>
                                     </StackPanel>
 
@@ -119,19 +119,19 @@
                                         <StackPanel Orientation="Horizontal" Margin="0,2">
                                             <TextBlock Text="DR #:" FontWeight="SemiBold" FontSize="11" Width="70"/>
                                             <Border BorderBrush="Black" BorderThickness="0.5" Width="170" Padding="5,0">
-                                                <TextBlock x:Name="DeliveryNumber" FontSize="11" HorizontalAlignment="Center"/>
+                                                <TextBlock x:Name="txtDeliveryNumber" FontSize="11" HorizontalAlignment="Center"/>
                                             </Border>
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal" Margin="0,2">
                                             <TextBlock Text="Date:" FontWeight="SemiBold" FontSize="11" Width="70"/>
                                             <Border BorderBrush="Black" BorderThickness="0.5"  Width="170" Padding="5,0">
-                                                <TextBlock x:Name="DeliveryDate" FontSize="11" HorizontalAlignment="Center"/>
+                                                <TextBlock x:Name="txtDeliveryDate" FontSize="11" HorizontalAlignment="Center"/>
                                             </Border>
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal" Margin="0,2">
                                             <TextBlock Text="Ref Inv:" FontWeight="SemiBold" FontSize="11" Width="70"/>
                                             <Border BorderBrush="Black" BorderThickness="0.5"  Width="170" Padding="5,0">
-                                                <TextBlock x:Name="ReferenceInvoice" FontSize="11" HorizontalAlignment="Center"/>
+                                                <TextBlock x:Name="txtReferenceInvoice" FontSize="11" HorizontalAlignment="Center"/>
                                             </Border>
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal" Margin="0,2">
@@ -167,10 +167,10 @@
                                         </Border>
 
                                         <Border Grid.Row="1" Grid.Column="0" Padding="5" BorderBrush="Black" BorderThickness="0,0,1,0">
-                                            <TextBlock x:Name="SalesRep" FontSize="10" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                                            <TextBlock x:Name="txtSalesRep" FontSize="10" HorizontalAlignment="Center" FontWeight="SemiBold"/>
                                         </Border>
                                         <Border Grid.Row="1" Grid.Column="1" Padding="5" BorderBrush="Black" BorderThickness="0,0,1,0">
-                                            <TextBlock x:Name="Shipping" FontSize="10" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                                            <TextBlock x:Name="txtShippingMethod" FontSize="10" HorizontalAlignment="Center" FontWeight="SemiBold"/>
                                         </Border>
                                         <Border Grid.Row="1" Grid.Column="2" Padding="2" BorderBrush="Black" BorderThickness="0,0,1,0">
                                             <ComboBox x:Name="cmbApproved" FontSize="10" BorderThickness="0" Background="Transparent" VerticalAlignment="Center">
@@ -291,7 +291,7 @@
                                     <Border Grid.Row="2" Grid.ColumnSpan="3" BorderBrush="Black" BorderThickness="1,0,1,1">
                                         <TextBox Text="Placeholder" FontSize="10" HorizontalAlignment="Center" BorderThickness="0" Foreground="Gray"/>
                                     </Border>
-                                    <Border Grid.Row="3" Grid.ColumnSpan="3" Margin="0,20,0,0">
+                                    <Border Grid.Row="3" Grid.ColumnSpan="3" Padding="0,10,0,0" BorderBrush="Black" BorderThickness="1,0,1,1">
                                         <StackPanel >
                                             <TextBlock Text="Dream PC Build and IT Solutions Inc." HorizontalAlignment="Center" FontWeight="Bold" FontSize="10"/>
                                             <TextBlock Text="Unit 2A &amp; 2B LEGENDA BUILDING CIRCUMFERENCIAL RD. | ANTIPOLO CITY, RIZAL 1870 | PHONE: +639171873722 | TEL: 02-8801-4252 | EMAIL: information@dreampcbuild.com" HorizontalAlignment="Center" FontSize="8" Margin="0,0,0,10"/>

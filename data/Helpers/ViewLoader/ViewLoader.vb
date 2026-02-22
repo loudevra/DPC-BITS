@@ -77,7 +77,7 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Stocks.PurchaseOrder.WalkIn.WalkInNewOrder()
                     Case "newdelivery"
                         Return New Stocks.PurchaseOrder.Delivery.NewDelivery()
-                    Case "previewEditableDeliveryReceipt"
+                    Case "previeweditabledeliveryeeceipt"
                         Return New Stocks.PurchaseOrder.Delivery.PreviewEditableDeliveryReceipt()
 
                          ' CRM Navigation

@@ -6,7 +6,6 @@
     ' Client Information
     Public DRClientDetails As String = ""
     Public DRClientName As String = ""
-    Public DRFullDeliveryAddress As String = ""
 
     ' Logistic Details
     Public DRDeliveryNotes As String = ""
