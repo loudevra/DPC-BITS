@@ -14,6 +14,31 @@ Namespace DPC.Views.CRM
             AddHandler txtLandline.TextChanged, AddressOf SetInfo
             AddHandler txtPhone.TextChanged, AddressOf SetInfo
             AddHandler txtEmail.TextChanged, AddressOf SetInfo
+
+            ' Attach uppercase handler (exclude email)
+            AddHandler txtCompanyName.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler txtRepresentative.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler txtLandline.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler txtPhone.TextChanged, AddressOf TxtToUpper_TextChanged
+        End Sub
+
+        ' Ensure typed text is converted to uppercase while preserving caret position
+        Private Sub TxtToUpper_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim tb = TryCast(sender, TextBox)
+            If tb Is Nothing Then Return
+
+            Dim originalSelectionStart = tb.SelectionStart
+            Dim originalSelectionLength = tb.SelectionLength
+            Dim originalText = tb.Text
+
+            Dim upperText = originalText.ToUpperInvariant()
+            If Not String.Equals(originalText, upperText, StringComparison.Ordinal) Then
+                RemoveHandler tb.TextChanged, AddressOf TxtToUpper_TextChanged
+                tb.Text = upperText
+                tb.SelectionStart = Math.Min(originalSelectionStart, tb.Text.Length)
+                tb.SelectionLength = originalSelectionLength
+                AddHandler tb.TextChanged, AddressOf TxtToUpper_TextChanged
+            End If
         End Sub
 
         Private Sub txtInput_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)

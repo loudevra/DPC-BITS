@@ -92,7 +92,7 @@
                             </StackPanel>
                             <Border Style="{StaticResource RoundedBorderStyle}">
                                 <!--Email Value is here!-->
-                                <TextBox x:Name="TxtEmail" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" CharacterCasing="Upper" TextChanged="ForceUppercase_TextChanged"/>
+                                <TextBox x:Name="TxtEmail" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold"/>
                             </Border>
                         </StackPanel>
 

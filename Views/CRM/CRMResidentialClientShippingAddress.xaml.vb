@@ -20,6 +20,7 @@ Namespace DPC.Views.CRM
             AddHandler txtRegion.SelectionChanged, AddressOf SetInfo
             AddHandler txtCountry.SelectionChanged, AddressOf SetInfo
             AddHandler txtZipCode.TextChanged, AddressOf SetInfo
+            ' Uppercase behaviour is wired in XAML (TextChanged attributes); no extra AddHandler needed here.
             AddHandler billingCheckBox.Checked, AddressOf GetInfoBillAddress
             AddHandler billingCheckBox.Unchecked, Sub()
                                                       txtAddress.Text = Nothing
@@ -33,6 +34,26 @@ Namespace DPC.Views.CRM
                                                       txtCountry.IsEnabled = True
                                                       txtZipCode.IsEnabled = True
                                                   End Sub
+
+        End Sub
+
+        ' Ensure typed text is converted to uppercase while preserving caret position
+        Private Sub TxtToUpper_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim tb = TryCast(sender, TextBox)
+            If tb Is Nothing Then Return
+
+            Dim originalSelectionStart = tb.SelectionStart
+            Dim originalSelectionLength = tb.SelectionLength
+            Dim originalText = tb.Text
+
+            Dim upperText = originalText.ToUpperInvariant()
+            If Not String.Equals(originalText, upperText, StringComparison.Ordinal) Then
+                RemoveHandler tb.TextChanged, AddressOf TxtToUpper_TextChanged
+                tb.Text = upperText
+                tb.SelectionStart = Math.Min(originalSelectionStart, tb.Text.Length)
+                tb.SelectionLength = originalSelectionLength
+                AddHandler tb.TextChanged, AddressOf TxtToUpper_TextChanged
+            End If
         End Sub
 
         Private Sub GetInfoBillAddress()

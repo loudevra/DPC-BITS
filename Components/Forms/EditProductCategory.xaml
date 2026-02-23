@@ -40,7 +40,7 @@
                 </StackPanel>
                 <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,20">
                     <!--Category Name Value is here!-->
-                    <TextBox x:Name="TxtCategoryName" Style="{StaticResource RoundedTextboxStyle}"/>
+                    <TextBox x:Name="TxtCategoryName" Style="{StaticResource RoundedTextboxStyle}" TextChanged="TxtToUpper_TextChanged"/>
                 </Border>
 
                 <!-- Category Description -->
@@ -49,7 +49,7 @@
                 </StackPanel>
                 <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,20">
                     <!--Category Description Value is here!-->
-                    <TextBox x:Name="TxtCategoryDescription" Style="{StaticResource RoundedTextboxStyle}"/>
+                    <TextBox x:Name="TxtCategoryDescription" Style="{StaticResource RoundedTextboxStyle}" TextChanged="TxtToUpper_TextChanged"/>
                 </Border>
             </StackPanel>
 
