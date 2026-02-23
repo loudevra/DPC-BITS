@@ -955,6 +955,7 @@
     <Compile Include="Views\CRM\CRMCorporationalTabStructured.xaml.vb">
       <DependentUpon>CRMCorporationalTabStructured.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CRM\IClientEditor.vb" />
     <Compile Include="Views\CRM\SelectClients.xaml.vb">
       <DependentUpon>SelectClients.xaml</DependentUpon>
     </Compile>
