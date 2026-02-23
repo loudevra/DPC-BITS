@@ -96,6 +96,8 @@ Namespace DPC.Components.Navigation
             If Not (Reports Or isAdmin) Then GrayOutButton(BtnDataReports)
             If Not (Employees Or isAdmin) Then GrayOutButton(BtnHRM)
             If Not (Miscellaneous Or isAdmin) Then GrayOutButton(BtnMiscellaneous)
+            If Not (Project Or isAdmin) Then GrayOutButton(BtnPromoCodes)
+
             ' Leave other buttons as-is (Dashboard, PromoCodes, SoftwareUpdates, Logout)
         End Sub
 
@@ -284,14 +286,18 @@ Namespace DPC.Components.Navigation
         ''' Opens the Promo Codes popup menu.
         ''' </summary>
         Private Sub OpenPromoCodes(sender As Object, e As RoutedEventArgs)
-            Dim popupMenu As New PopUpMenuPromoCodes()
+            If Project = True Or RoleName = "Administrator" Then
+                Dim popupMenu As New PopUpMenuPromoCodes()
 
-            ' Get the position of the Stocks button
-            Dim button As Button = CType(sender, Button)
-            Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
+                ' Get the position of the button
+                Dim button As Button = CType(sender, Button)
+                Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
 
-            ' Call the ShowPopup method to show the popup at the button's position
-            popupMenu.ShowPopup(Me, sender)
+                ' Call the ShowPopup method to show the popup at the button's position
+                popupMenu.ShowPopup(Me, sender)
+            Else
+                MessageBox.Show("Access not permitted. Consult with admin")
+            End If
         End Sub
 
         ''' <summary>
