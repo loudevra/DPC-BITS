@@ -1186,6 +1186,9 @@
     <Compile Include="Views\Stocks\ItemManager\Consumables\Consumables.xaml.vb">
       <DependentUpon>Consumables.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Stocks\ItemManager\Consumables\EditConsumables.xaml.vb">
+      <DependentUpon>EditConsumables.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stocks\ItemManager\NewProduct\ProductBatchEdit.xaml.vb">
       <DependentUpon>ProductBatchEdit.xaml</DependentUpon>
     </Compile>
@@ -2168,6 +2171,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Stocks\ItemManager\Consumables\Consumables.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\ItemManager\Consumables\EditConsumables.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
