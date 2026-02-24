@@ -58,8 +58,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
             itemDataSource.Clear()
 
+            Dim i As Integer = 1
+
             For Each item As Dictionary(Of String, String) In DeliveryDetails.DRDeliveryItems
                 Dim displayItem As New Dictionary(Of String, String)(item)
+
+                displayItem("Number") = i.ToString()
+                i += 1
 
                 If displayItem.ContainsKey("Description") Then
                     Dim currentDesc As String = displayItem("Description").Trim()
