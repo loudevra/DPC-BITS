@@ -528,7 +528,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 popupAddCategory.Child = Nothing
             End If
 
-            Dim addNewCategory As New DPC.Views.Stocks.ProductCategories.AddNewCategory()
+            Dim addNewCategory As New DPC.Components.Forms.AddCategory()
 
             popupAddCategory = New Popup With {
         .Placement = PlacementMode.AbsolutePoint,
