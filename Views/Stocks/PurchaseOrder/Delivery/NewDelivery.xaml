@@ -12,7 +12,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="25,20,0,10">
@@ -28,10 +28,11 @@
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <StackPanel Grid.Column="0" Grid.RowSpan="2"  Margin="0,0,15,0">
+                <StackPanel Grid.Column="0" Grid.Row="0"  Margin="0,0,15,0">
                     <TextBlock Text="Client Name:" FontWeight="SemiBold" Margin="0,0,0,5"/>
                     <Border Style="{StaticResource RoundedBorderStyle}" Background="White" Height="40" BorderBrush="#AEAEAE" BorderThickness="1">
                         <Grid>
@@ -129,7 +130,26 @@
                         </Border>
                     </Grid>
                 </Border>
-                <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+
+                <StackPanel Width="Auto" Grid.ColumnSpan="2" Grid.Row="1" Margin="0,15">
+                    <Border Background="#1D3242" CornerRadius="10,10,0,0" Padding="10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="4*"/>
+                                <ColumnDefinition Width="70"/>
+                                <ColumnDefinition Width="2*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Item Name" Foreground="White" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="1" Text="Qty" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="Serial Number" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+
+                    <StackPanel x:Name="MainContainer" Orientation="Vertical">
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
                     <Button x:Name="btnGenerateDeliveryReceipt"
                         MinWidth="210"
                         MaxWidth="250"
