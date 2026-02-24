@@ -12,6 +12,8 @@ Imports SkiaSharp.Views.WPF
 
 Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
     Public Class PreviewEditableDeliveryReceipt
+        Private itemDataSource As New System.Collections.ObjectModel.ObservableCollection(Of Dictionary(Of String, String))
+
         Public Sub New()
             InitializeComponent()
 
@@ -40,7 +42,32 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 txtDeliveryContact.Text = Regex.Match(clientDetails, "Contact: (.*)").Groups(1).Value.Trim()
                 txtDeliveryAddress.Text = Regex.Match(clientDetails, "Delivery Address: (.*)").Groups(1).Value.Trim()
             End If
+
+            LoadPage()
         End Sub
+
+        Private Sub LoadPage()
+            If DeliveryDetails.DRDeliveryItems Is Nothing Then Return
+
+            itemDataSource.Clear()
+
+            For Each item As Dictionary(Of String, String) In DeliveryDetails.DRDeliveryItems
+                Dim displayItem As New Dictionary(Of String, String)(item)
+
+                If displayItem.ContainsKey("Description") Then
+                    Dim currentDesc As String = displayItem("Description").Trim()
+
+                    If currentDesc = "Enter product description (Optional)" OrElse String.IsNullOrWhiteSpace(currentDesc) Then
+                        displayItem("Description") = "No additional details provided."
+                    End If
+                End If
+
+                itemDataSource.Add(displayItem)
+            Next
+
+            DeliveryDataGrid.ItemsSource = itemDataSource
+        End Sub
+
         Private Sub BackToUI_Click(sender As Object, e As MouseButtonEventArgs)
             ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
         End Sub

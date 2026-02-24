@@ -213,26 +213,36 @@
 
                                 <Border Grid.Row="4" BorderBrush="Black" BorderThickness="1" Margin="5,0,5,0">
                                     <DataGrid x:Name="DeliveryDataGrid" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False"
-                                              HeadersVisibility="Column" GridLinesVisibility="None" Background="Transparent" BorderThickness="0">
+                                              HeadersVisibility="Column" GridLinesVisibility="All" Background="Transparent" BorderThickness="0">
+
                                         <DataGrid.Columns>
-                                            <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}" Width="50">
+                                            <DataGridTextColumn Header="Qty" Binding="{Binding [Quantity]}" Width="50">
                                                 <DataGridTextColumn.ElementStyle>
                                                     <Style TargetType="TextBlock">
                                                         <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                        <Setter Property="VerticalAlignment" Value="Center"/>
                                                     </Style>
                                                 </DataGridTextColumn.ElementStyle>
                                             </DataGridTextColumn>
-                                            <DataGridTemplateColumn Header="Description" Width="*">
+                                            <DataGridTemplateColumn Header="Description" Width="3*">
                                                 <DataGridTemplateColumn.CellTemplate>
                                                     <DataTemplate>
                                                         <StackPanel Margin="5">
-                                                            <TextBlock Text="{Binding Description}" FontWeight="SemiBold" TextWrapping="Wrap"/>
-                                                            <TextBlock Text="{Binding ProductDescription}" FontSize="10" TextWrapping="Wrap" Opacity="0.8"/>
+                                                            <TextBlock Text="{Binding [ProductName]}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+
+                                                            <TextBlock Text="{Binding [Description]}" FontSize="10" Opacity="0.8" FontStyle="Italic" TextWrapping="Wrap"/>
                                                         </StackPanel>
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
                                             </DataGridTemplateColumn>
-                                            <DataGridTextColumn Header="Unit" Binding="{Binding Unit}" Width="60"/>
+                                            <DataGridTextColumn Header="Serial Number" Binding="{Binding [SerialNumber]}" Width="2*">
+                                                <DataGridTextColumn.ElementStyle>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                                    </Style>
+                                                </DataGridTextColumn.ElementStyle>
+                                            </DataGridTextColumn>
                                         </DataGrid.Columns>
                                         <DataGrid.ColumnHeaderStyle>
                                             <Style TargetType="DataGridColumnHeader">
