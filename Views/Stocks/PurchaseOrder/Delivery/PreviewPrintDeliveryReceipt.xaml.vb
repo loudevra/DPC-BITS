@@ -91,7 +91,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 {"ProductName", "HIKVISION - 2MP WEATHERPROOF IR IP CAMERA"},
                 {"Description", "High-definition outdoor security camera with night vision."},
                 {"Amount", "1881.60"},
-                {"SerialNumber", "SN-HK-992831"}
+                {"SerialNumber", "SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831"}
             }
 
             Dim item2 As New Dictionary(Of String, String) From {
@@ -226,7 +226,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Sub
 
         Private Sub CancelButton(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("previeweditabledeliveryeeceipt", Me)
+            ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
         End Sub
         Private Sub PreviousPage_Click(sender As Object, e As RoutedEventArgs)
             'If currentPageIndex > 0 Then LoadPage(currentPageIndex - 1)

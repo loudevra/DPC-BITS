@@ -226,7 +226,7 @@
 											<DataGridTemplateColumn Header="Description" Width="3*">
 												<DataGridTemplateColumn.CellTemplate>
 													<DataTemplate>
-														<StackPanel Margin="5">
+														<StackPanel Margin="5" VerticalAlignment="Center">
 															<TextBlock Text="{Binding [ProductName]}" FontWeight="SemiBold" TextWrapping="Wrap"/>
 
 															<TextBlock Text="{Binding [Description]}" FontSize="10" Opacity="0.8" FontStyle="Italic" TextWrapping="Wrap"/>
@@ -242,11 +242,13 @@
 													</Style>
 												</DataGridTextColumn.ElementStyle>
 											</DataGridTextColumn>
-											<DataGridTextColumn Header="Serial Number" Binding="{Binding [SerialNumber]}" Width="2*">
+											<DataGridTextColumn Header="Serial Number" Binding="{Binding [SerialNumber]}" Width="2*" >
 												<DataGridTextColumn.ElementStyle>
 													<Style TargetType="TextBlock">
 														<Setter Property="HorizontalAlignment" Value="Center"/>
 														<Setter Property="VerticalAlignment" Value="Center"/>
+														<Setter Property="TextWrapping" Value="Wrap"/>
+														<Setter Property="Padding" Value="25,5,25,5"/>
 													</Style>
 												</DataGridTextColumn.ElementStyle>
 											</DataGridTextColumn>
