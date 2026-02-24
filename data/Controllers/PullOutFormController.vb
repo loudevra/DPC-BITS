@@ -4,6 +4,7 @@ Imports DPC.DPC.Data.Model
 Imports DPC.DPC.Views.Stocks.ItemManager.Consumables
 Imports MySql.Data.MySqlClient
 Imports Newtonsoft.Json
+Imports DPC.Views.HRM.Departments.DepartmentsView
 
 Namespace DPC.Data.Controllers.Stocks
     Public Class PullOutFormController

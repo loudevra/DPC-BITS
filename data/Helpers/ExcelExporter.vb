@@ -482,5 +482,91 @@ Namespace DPC.Data.Helpers
             End If
         End Sub
 
+
+        Public Class ExcelExporter
+
+            Public Shared Sub ExportDataGridToExcel(dg As DataGrid,
+                                                    sheetName As String,
+                                                    title As String)
+
+                Dim saveDialog As New Microsoft.Win32.SaveFileDialog()
+                saveDialog.Filter = "Excel Workbook|*.xlsx"
+                saveDialog.FileName = sheetName
+
+                If saveDialog.ShowDialog() <> True Then Exit Sub
+
+                Using workbook As New XLWorkbook()
+                    Dim worksheet = workbook.Worksheets.Add(sheetName)
+
+                    Dim rowIndex As Integer = 1
+                    Dim colIndex As Integer = 1
+
+                    ' =========================
+                    ' HEADERS
+                    ' =========================
+                    For Each col As DataGridColumn In dg.Columns
+
+                        ' Skip TemplateColumn (Actions column)
+                        If TypeOf col Is DataGridTemplateColumn Then
+                            Continue For
+                        End If
+
+                        worksheet.Cell(rowIndex, colIndex).Value = col.Header.ToString()
+                        colIndex += 1
+                    Next
+
+                    worksheet.Row(1).Style.Font.Bold = True
+                    rowIndex += 1
+
+                    ' =========================
+                    ' DATA
+                    ' =========================
+                    For Each item In dg.ItemsSource
+
+                        colIndex = 1
+
+                        For Each col As DataGridColumn In dg.Columns
+
+                            If TypeOf col Is DataGridTemplateColumn Then
+                                Continue For
+                            End If
+
+                            Dim textColumn = TryCast(col, DataGridTextColumn)
+
+                            If textColumn IsNot Nothing Then
+                                Dim binding = TryCast(textColumn.Binding, Binding)
+
+                                If binding IsNot Nothing Then
+                                    Dim propertyName = binding.Path.Path
+                                    Dim prop = item.GetType().GetProperty(propertyName)
+
+                                    If prop IsNot Nothing Then
+                                        Dim value = prop.GetValue(item)
+                                        worksheet.Cell(rowIndex, colIndex).Value = If(value, "")
+                                    End If
+                                End If
+                            End If
+
+                            colIndex += 1
+                        Next
+
+                        rowIndex += 1
+                    Next
+
+                    worksheet.Columns().AdjustToContents()
+                    worksheet.SheetView.FreezeRows(1)
+
+                    workbook.SaveAs(saveDialog.FileName)
+                End Using
+
+                MessageBox.Show("Excel Export Successful!",
+                                "Success",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Information)
+
+            End Sub
+
+        End Class
+
     End Class
 End Namespace

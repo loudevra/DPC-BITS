@@ -320,7 +320,7 @@
                                         <materialDesign:PackIcon Kind="PencilOutline"
                                                                  Width="20"
                                                                  Height="20"
-                                                                 Foreground="#1976D2"/>
+                                                                 Foreground="#52C69D"/>
                                     </Button>
 
                                     <Button x:Name="btnDelete"

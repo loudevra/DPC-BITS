@@ -69,7 +69,7 @@ Namespace DPC.Views.CRM
 
         Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
             ' Check if DataGrid has data
-            If dataGrid.Items.Count = 0 Then
+            If dataGrid.Items.Count = 3 Then
                 MessageBox.Show("No data to export!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Exit Sub
             End If
