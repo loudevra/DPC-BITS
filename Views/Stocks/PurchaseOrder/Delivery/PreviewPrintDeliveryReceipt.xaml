@@ -164,7 +164,7 @@
                                             </Border>
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal" Margin="0,2">
-                                            <TextBlock Text="NOT VALID WITHOUT DREAM PC VERIFIED STAMP" FontWeight="Bold" FontSize="10" Foreground="Red" Margin="0,0,0,5"/>
+                                            <TextBlock Text="NOT VALID WITHOUT DREAM PC VERIFIED STAMP" FontWeight="Bold" FontSize="10" Foreground="Red" Margin="0,5,0,5"/>
                                         </StackPanel>
                                     </StackPanel>
                                 </Grid>
@@ -202,46 +202,56 @@
                                             <TextBlock x:Name="txtShippingMethod" FontSize="10" HorizontalAlignment="Center" FontWeight="SemiBold"/>
                                         </Border>
                                         <Border Grid.Row="1" Grid.Column="2" Padding="5" BorderBrush="Black" BorderThickness="0,0,1,0">
-											<TextBlock x:Name="txtApprovedBy" Text="Placehlder" FontSize="10" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+											<TextBlock x:Name="txtApprovedBy" FontSize="10" HorizontalAlignment="Center" FontWeight="SemiBold"/>
                                         </Border>
                                         <Border Grid.Row="1" Grid.Column="3" Padding="5">
-											<TextBlock x:Name="txtPaymentTerm" Text="Placehlder" FontSize="10" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+											<TextBlock x:Name="txtPaymentTerm" FontSize="10" HorizontalAlignment="Center" FontWeight="SemiBold"/>
                                         </Border>
                                     </Grid>
                                 </Border>
 
                                 <Border Grid.Row="4" BorderBrush="Black" BorderThickness="1" Margin="5,0,5,0">
-                                    <DataGrid x:Name="DeliveryDataGrid" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False"
-                                          HeadersVisibility="Column" GridLinesVisibility="None" Background="Transparent" BorderThickness="0">
-                                        <DataGrid.Columns>
-                                            <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}" Width="50">
-                                                <DataGridTextColumn.ElementStyle>
-                                                    <Style TargetType="TextBlock">
-                                                        <Setter Property="HorizontalAlignment" Value="Center"/>
-                                                    </Style>
-                                                </DataGridTextColumn.ElementStyle>
-                                            </DataGridTextColumn>
-                                            <DataGridTemplateColumn Header="Description" Width="*">
-                                                <DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <StackPanel Margin="5">
-                                                            <TextBlock Text="{Binding Description}" FontWeight="SemiBold" TextWrapping="Wrap"/>
-                                                            <TextBlock Text="{Binding ProductDescription}" FontSize="10" TextWrapping="Wrap" Opacity="0.8"/>
-                                                        </StackPanel>
-                                                    </DataTemplate>
-                                                </DataGridTemplateColumn.CellTemplate>
-                                            </DataGridTemplateColumn>
-                                            <DataGridTextColumn Header="Unit" Binding="{Binding Unit}" Width="60"/>
-                                        </DataGrid.Columns>
-                                        <DataGrid.ColumnHeaderStyle>
-                                            <Style TargetType="DataGridColumnHeader">
-                                                <Setter Property="Background" Value="Black"/>
-                                                <Setter Property="Foreground" Value="White"/>
-                                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                                                <Setter Property="Height" Value="25"/>
-                                            </Style>
-                                        </DataGrid.ColumnHeaderStyle>
-                                    </DataGrid>
+									<DataGrid x:Name="DeliveryDataGrid" IsReadOnly="True" AutoGenerateColumns="False" CanUserAddRows="False"
+                                              HeadersVisibility="Column" GridLinesVisibility="All" Background="Transparent" BorderThickness="0">
+
+										<DataGrid.Columns>
+											<DataGridTextColumn Header="Qty" Binding="{Binding [Quantity]}" Width="50">
+												<DataGridTextColumn.ElementStyle>
+													<Style TargetType="TextBlock">
+														<Setter Property="HorizontalAlignment" Value="Center"/>
+														<Setter Property="VerticalAlignment" Value="Center"/>
+													</Style>
+												</DataGridTextColumn.ElementStyle>
+											</DataGridTextColumn>
+											<DataGridTemplateColumn Header="Description" Width="3*">
+												<DataGridTemplateColumn.CellTemplate>
+													<DataTemplate>
+														<StackPanel Margin="5">
+															<TextBlock Text="{Binding [ProductName]}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+
+															<TextBlock Text="{Binding [Description]}" FontSize="10" Opacity="0.8" FontStyle="Italic" TextWrapping="Wrap"/>
+														</StackPanel>
+													</DataTemplate>
+												</DataGridTemplateColumn.CellTemplate>
+											</DataGridTemplateColumn>
+											<DataGridTextColumn Header="Serial Number" Binding="{Binding [SerialNumber]}" Width="2*">
+												<DataGridTextColumn.ElementStyle>
+													<Style TargetType="TextBlock">
+														<Setter Property="HorizontalAlignment" Value="Center"/>
+														<Setter Property="VerticalAlignment" Value="Center"/>
+													</Style>
+												</DataGridTextColumn.ElementStyle>
+											</DataGridTextColumn>
+										</DataGrid.Columns>
+										<DataGrid.ColumnHeaderStyle>
+											<Style TargetType="DataGridColumnHeader">
+												<Setter Property="Background" Value="Black"/>
+												<Setter Property="Foreground" Value="White"/>
+												<Setter Property="HorizontalContentAlignment" Value="Center"/>
+												<Setter Property="Height" Value="25"/>
+											</Style>
+										</DataGrid.ColumnHeaderStyle>
+									</DataGrid>
                                 </Border>
 
                                 <Grid Grid.Row="5" Margin="5,0">

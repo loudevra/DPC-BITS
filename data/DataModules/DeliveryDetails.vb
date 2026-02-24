@@ -17,6 +17,8 @@
     ' Product Data (Cached from the Billing Table)
     Public Property DRDeliveryItems As List(Of Dictionary(Of String, String))
 
+
+
     Public Sub ClearDeliveryDetails()
         ' Reset Strings to Empty
         DRNumber = ""

@@ -69,11 +69,20 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             Dim selectedMethod As ComboBoxItem = TryCast(cmbShippingMethod.SelectedItem, ComboBoxItem)
             If selectedMethod IsNot Nothing Then
                 DeliveryDetails.DRShippingMethod = selectedMethod.Content.ToString()
+            Else
+                MessageBox.Show("Please select a Shipping Method (e.g., Pick-up or Delivery) before proceeding.",
+                    "Selection Required",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning)
+                Return
             End If
 
             DeliveryDetails.DRDeliveryItems = WalkinBillingStatementDetails.BLItemsCache
 
-            ViewLoader.DynamicView.NavigateToView("previeweditabledeliveryeeceipt", Me)
+            DeliveryDetails.DRApprovedBy = cmbApprovedBy.Text
+            DeliveryDetails.DRPaymentTerm = cmbPaymentTerm.Text
+
+            ViewLoader.DynamicView.NavigateToView("previewprintdeliveryreceipt", Me)
         End Sub
 
 #Region "Helpers"

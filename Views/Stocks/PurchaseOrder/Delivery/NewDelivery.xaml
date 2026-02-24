@@ -45,7 +45,7 @@
                         <TextBox x:Name="txtClientDetails" Height="120" TextWrapping="Wrap" AcceptsReturn="True" BorderThickness="0" Background="Transparent" Padding="10" IsReadOnly="True"/>
                     </Border>
 
-                    <TextBlock Text="Shipping Method:" FontWeight="SemiBold" Margin="0,15,0,5"/>
+                    <TextBlock Text="Shipping Method (Required):" FontWeight="SemiBold" Margin="0,15,0,5"/>
                     <ComboBox x:Name="cmbShippingMethod" 
                               Style="{StaticResource RoundedComboBoxStyle}" 
                               Height="40" Background="White">
@@ -53,6 +53,21 @@
                         <ComboBoxItem Content="Delivery - Truck"/>
                         <ComboBoxItem Content="Delivery - Courier (Lalamove/Grab)"/>
                         <ComboBoxItem Content="Shipping (LBC/J&amp;T)"/>
+                    </ComboBox>
+                    <TextBlock Text="Approved By (Optional):" FontWeight="SemiBold" Margin="0,15,0,5"/>
+                    <ComboBox x:Name="cmbApprovedBy" 
+                              Style="{StaticResource RoundedComboBoxStyle}" 
+                              Height="40" Background="White">
+                        <ComboBoxItem Content="Alecksandra Balingit"/>
+                        <ComboBoxItem Content="Parvit Kumar"/>
+                    </ComboBox>
+                    <TextBlock Text="Payment Terms (Optional):" FontWeight="SemiBold" Margin="0,15,0,5"/>
+                    <ComboBox x:Name="cmbPaymentTerm" 
+                              Style="{StaticResource RoundedComboBoxStyle}" 
+                              Height="40" Background="White">
+                        <ComboBoxItem Content="Cash"/>
+                        <ComboBoxItem Content="30 Days PDC"/>
+                        <ComboBoxItem Content="Upon Completion"/>
                     </ComboBox>
                 </StackPanel>
 
