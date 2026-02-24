@@ -242,7 +242,7 @@
         Foreground="#474747" 
         FontWeight="SemiBold"/>
                                 <Button Grid.Column="1"
-Click="BtnAddSupplier_Click"
+Click="BtnAddCategory_Click"
 Width="40" Height="40"
 Style="{StaticResource MaterialDesignIconButton}"
 ToolTip="Add Category">
@@ -278,7 +278,7 @@ ToolTip="Add Category">
         SelectedIndex="0" 
         Margin="0"/>
                                 <Button Grid.Column="1"
-Click="BtnAddSupplier_Click"
+Click="BtnAddSubcategory_Click"
 Width="40" Height="40"
 Style="{StaticResource MaterialDesignIconButton}"
 ToolTip="Add Sub-category">

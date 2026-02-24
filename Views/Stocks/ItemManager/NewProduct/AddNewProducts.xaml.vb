@@ -572,6 +572,16 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             popupAddSupplier.IsOpen = True
         End Sub
 
+        ' ADDED LOGIC STARTS HERE '
+        Private Sub BtnAddCategory_Click(sender As Object, e As RoutedEventArgs)
+            ' your logic here
+        End Sub
+
+        Private Sub BtnAddSubcategory_Click(sender As Object, e As RoutedEventArgs)
+            ' your logic here
+        End Sub
+        ' ADDED LOGIC ENDS HERE '
+
 
 #Region "Markup and Price Calculation"
         Private Sub CalculateSellingPrice()
