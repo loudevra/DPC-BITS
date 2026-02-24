@@ -49,7 +49,7 @@
                     <StackPanel x:Name="MainContent">
                     </StackPanel>
                 </ScrollViewer>
-                <Button Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#7d57ab" Margin="0,10,0,10" Click="InsertBtn">
+                <Button Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#52C69D" Margin="0,10,0,10" Click="InsertBtn">
                     <TextBlock Text="Add" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="15"/>
                 </Button>
             </StackPanel>

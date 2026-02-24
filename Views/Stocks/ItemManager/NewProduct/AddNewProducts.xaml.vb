@@ -23,6 +23,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         Private popupAddBrand As Popup
         Private popupAddSupplier As Popup
         Private popupAddCategory As Popup
+        Private popupAddSubCategory As Popup
         Private recentlyClosed As Boolean = False
         Private filterTimer As New DispatcherTimer()
 
@@ -138,6 +139,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ProductController.GetBrandsWithSupplier(ComboBoxBrand)
             ProductController.GetProductCategory(ComboBoxCategory)
             ProductController.GetWarehouse(ComboBoxWarehouse)
+            ProductController.GetProductSubcategory(String.Empty, ComboBoxSubCategory, SubCategoryLabel, StackPanelSubCategory)
 
             ProductController.BtnAddRow_Click(Nothing, Nothing)
 
@@ -552,7 +554,32 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         End Sub
 
         Private Sub BtnAddSubcategory_Click(sender As Object, e As RoutedEventArgs)
-            ' your logic here
+            If popupAddSubCategory IsNot Nothing Then
+                popupAddSubCategory.IsOpen = False
+                popupAddSubCategory.Child = Nothing
+            End If
+
+            Dim addNewSubCategory As New DPC.Components.Forms.AddSubcategory()
+
+            popupAddSubCategory = New Popup With {
+        .Placement = PlacementMode.AbsolutePoint,
+        .StaysOpen = False,
+        .AllowsTransparency = True,
+        .Child = addNewSubCategory
+    }
+
+            AddHandler popupAddSubCategory.Opened, Sub()
+                                                       Dim screenWidth As Double = SystemParameters.PrimaryScreenWidth
+                                                       Dim screenHeight As Double = SystemParameters.PrimaryScreenHeight
+                                                       popupAddSubCategory.HorizontalOffset = (screenWidth / 2) - (addNewSubCategory.ActualWidth / 2)
+                                                       popupAddSubCategory.VerticalOffset = (screenHeight / 2) - (addNewSubCategory.ActualHeight / 2)
+                                                   End Sub
+
+            AddHandler popupAddSubCategory.Closed, Sub()
+                                                       ProductController.GetProductSubcategory(String.Empty, ComboBoxSubCategory, SubCategoryLabel, StackPanelSubCategory)
+                                                   End Sub
+
+            popupAddSubCategory.IsOpen = True
         End Sub
 
 #Region "Markup and Price Calculation"
