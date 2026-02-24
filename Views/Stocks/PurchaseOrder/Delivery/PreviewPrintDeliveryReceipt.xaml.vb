@@ -33,6 +33,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             txtDeliveryClientName.Text = DeliveryDetails.DRClientName
             txtNotes.Text = DeliveryDetails.DRDeliveryNotes
             txtShippingMethod.Text = DeliveryDetails.DRShippingMethod
+            txtApprovedBy.Text = DeliveryDetails.DRApprovedBy
+            txtPaymentTerm.Text = DeliveryDetails.DRPaymentTerm
 
             ' Populate the DataGrid with the delivery items
             Dim deliveryItems As New ObservableCollection(Of Dictionary(Of String, String))(DeliveryDetails.DRDeliveryItems)

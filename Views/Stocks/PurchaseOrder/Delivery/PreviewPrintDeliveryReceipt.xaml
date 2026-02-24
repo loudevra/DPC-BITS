@@ -201,18 +201,11 @@
                                         <Border Grid.Row="1" Grid.Column="1" Padding="5" BorderBrush="Black" BorderThickness="0,0,1,0">
                                             <TextBlock x:Name="txtShippingMethod" FontSize="10" HorizontalAlignment="Center" FontWeight="SemiBold"/>
                                         </Border>
-                                        <Border Grid.Row="1" Grid.Column="2" Padding="2" BorderBrush="Black" BorderThickness="0,0,1,0">
-                                            <ComboBox x:Name="cmbApproved" FontSize="10" BorderThickness="0" Background="Transparent" VerticalAlignment="Center">
-                                                <ComboBoxItem Content="Alecksandra Balingit"/>
-                                                <ComboBoxItem Content="Parvit Kumar"/>
-                                            </ComboBox>
+                                        <Border Grid.Row="1" Grid.Column="2" Padding="5" BorderBrush="Black" BorderThickness="0,0,1,0">
+											<TextBlock x:Name="txtApprovedBy" Text="Placehlder" FontSize="10" HorizontalAlignment="Center" FontWeight="SemiBold"/>
                                         </Border>
-                                        <Border Grid.Row="1" Grid.Column="3" Padding="2">
-                                            <ComboBox x:Name="cmbTerms" FontSize="10" BorderThickness="0" Background="Transparent" VerticalAlignment="Center">
-                                                <ComboBoxItem Content="Cash"/>
-                                                <ComboBoxItem Content="30 Days PDC"/>
-                                                <ComboBoxItem Content="Upon Completion"/>
-                                            </ComboBox>
+                                        <Border Grid.Row="1" Grid.Column="3" Padding="5">
+											<TextBlock x:Name="txtPaymentTerm" Text="Placehlder" FontSize="10" HorizontalAlignment="Center" FontWeight="SemiBold"/>
                                         </Border>
                                     </Grid>
                                 </Border>
