@@ -16,8 +16,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         Private _client As New ObservableCollection(Of Client)
         Private deliveryDate As New CalendarController.SingleCalendar()
         Private itemDataSource As New System.Collections.ObjectModel.ObservableCollection(Of Dictionary(Of String, String))
-        ' Add this line with your other private variables
         Private _productTextBoxes As New Dictionary(Of String, TextBox)
+        Private _serialCounters As New Dictionary(Of Integer, Integer)
 
         Public Sub New()
             InitializeComponent()
@@ -106,9 +106,10 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             For Each item As Dictionary(Of String, String) In DeliveryDetails.DRDeliveryItems
                 Dim displayItem As New Dictionary(Of String, String)(item)
                 displayItem("SerialNumber") = ""
+                _serialCounters(i - 1) = 0 ' Initialize counter
                 itemDataSource.Add(displayItem)
 
-                ' Outer row container
+                ' 1. Outer row container
                 Dim rowBorder As New Border With {
                     .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
                     .BorderThickness = New Thickness(2),
@@ -124,9 +125,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 rowGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(70, GridUnitType.Pixel)})
                 rowGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(2, GridUnitType.Star)})
 
-                rowGrid.RowDefinitions.Add(New RowDefinition With {.Height = New GridLength(0, GridUnitType.Auto)})
-                rowGrid.RowDefinitions.Add(New RowDefinition With {.Height = New GridLength(0, GridUnitType.Auto)})
+                ' Three rows: Inputs, Header (Labels/Button), and List
+                rowGrid.RowDefinitions.Add(New RowDefinition With {.Height = GridLength.Auto})
+                rowGrid.RowDefinitions.Add(New RowDefinition With {.Height = GridLength.Auto})
+                rowGrid.RowDefinitions.Add(New RowDefinition With {.Height = GridLength.Auto})
 
+                ' 2. Item Name & Qty (Row 0)
                 Dim nameBorder As New Border With {
                     .Style = CType(FindResource("RoundedBorderStyle"), Style),
                     .Background = CType(New BrushConverter().ConvertFrom("#F5F5F5"), Brush),
@@ -134,7 +138,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     .BorderThickness = New Thickness(2),
                     .CornerRadius = New CornerRadius(10),
                     .Height = 50,
-                    .Margin = New Thickness(5, 0, 5, 0)
+                    .Margin = New Thickness(5, 0, 5, 5)
                 }
                 Dim txtName As New TextBox With {
                     .Text = item("ProductName"),
@@ -150,7 +154,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 Grid.SetColumn(nameBorder, 0)
                 rowGrid.Children.Add(nameBorder)
 
-                ' 2. Quantity Container (Column 1)
                 Dim qtyBorder As New Border With {
                     .Style = CType(FindResource("RoundedBorderStyle"), Style),
                     .Background = CType(New BrushConverter().ConvertFrom("#F5F5F5"), Brush),
@@ -158,7 +161,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     .BorderThickness = New Thickness(2),
                     .CornerRadius = New CornerRadius(10),
                     .Height = 50,
-                    .Margin = New Thickness(5, 0, 5, 0)
+                    .Margin = New Thickness(5, 0, 5, 5)
                 }
                 Dim txtQty As New TextBox With {
                     .Text = item("Quantity"),
@@ -175,7 +178,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 Grid.SetColumn(qtyBorder, 1)
                 rowGrid.Children.Add(qtyBorder)
 
-                ' 3. Serial Number Container (Column 2)
+                ' 3. Serial Input (Row 0, Col 2)
                 Dim serialBorder As New Border With {
                     .Style = CType(FindResource("RoundedBorderStyle"), Style),
                     .Background = Brushes.White,
@@ -183,30 +186,67 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     .BorderThickness = New Thickness(2),
                     .CornerRadius = New CornerRadius(10),
                     .Height = 50,
-                    .Margin = New Thickness(5, 0, 5, 0)
+                    .Margin = New Thickness(5, 0, 5, 5)
                 }
                 Dim txtSerial As New TextBox With {
                     .Name = $"txtSerialInput_{i}",
-                    .IsReadOnly = False,
                     .BorderThickness = New Thickness(0),
                     .Background = Brushes.Transparent,
                     .VerticalContentAlignment = VerticalAlignment.Center,
                     .Padding = New Thickness(10, 0, 10, 0),
                     .FontFamily = New FontFamily("Lexend"),
-                    .Tag = i - 1
+                    .Tag = i - 1 ' Crucial for identifying the row
                 }
-
-                AddHandler txtSerial.TextChanged, Sub(sender, e)
-                                                      Dim tb = DirectCast(sender, TextBox)
-                                                      itemDataSource(CInt(tb.Tag))("SerialNumber") = tb.Text
-                                                  End Sub
-
-                _productTextBoxes(txtSerial.Name) = txtSerial
                 serialBorder.Child = txtSerial
                 Grid.SetRow(serialBorder, 0)
                 Grid.SetColumn(serialBorder, 2)
                 rowGrid.Children.Add(serialBorder)
 
+                ' 4. Header Grid (Row 1): Labels and Edit Button
+                Dim headerGrid As New Grid With {
+                    .VerticalAlignment = VerticalAlignment.Center,
+                    .Margin = New Thickness(5, 5, 5, 2)
+                }
+                headerGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
+                headerGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
+                headerGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
+
+                Dim lblSerial As New TextBlock With {
+                    .Text = "Serial Numbers: ",
+                    .VerticalAlignment = VerticalAlignment.Center,
+                    .FontFamily = New FontFamily("Lexend"),
+                    .FontWeight = FontWeights.SemiBold,
+                    .Foreground = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush)
+                }
+                Grid.SetColumn(lblSerial, 0)
+
+                Dim lblRemaining As New TextBlock With {
+                    .Text = $"Remaining: {item("Quantity")}",
+                    .VerticalAlignment = VerticalAlignment.Center,
+                    .FontStyle = FontStyles.Italic,
+                    .Foreground = Brushes.Gray,
+                    .Margin = New Thickness(5, 0, 0, 0)
+                }
+                Grid.SetColumn(lblRemaining, 1)
+
+                Dim btnEditSerial As New Button With {
+                    .Style = CType(FindResource("MaterialDesignIconButton"), Style),
+                    .Width = 30, .Height = 30,
+                    .Content = New PackIcon With {.Kind = PackIconKind.EditOutline, .Width = 18, .Height = 18},
+                    .Cursor = Cursors.Hand,
+                    .VerticalAlignment = VerticalAlignment.Center
+                }
+                Grid.SetColumn(btnEditSerial, 2)
+
+                headerGrid.Children.Add(lblSerial)
+                headerGrid.Children.Add(lblRemaining)
+                headerGrid.Children.Add(btnEditSerial)
+
+                Grid.SetRow(headerGrid, 1)
+                Grid.SetColumnSpan(headerGrid, 3)
+                rowGrid.Children.Add(headerGrid)
+
+                ' 5. Serial List (Row 2)
                 Dim serialListBorder As New Border With {
                     .Style = CType(FindResource("RoundedBorderStyle"), Style),
                     .Background = CType(New BrushConverter().ConvertFrom("#F5F5F5"), Brush),
@@ -214,45 +254,50 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     .BorderThickness = New Thickness(2),
                     .CornerRadius = New CornerRadius(5),
                     .MinHeight = 80,
-                    .Margin = New Thickness(5, 5, 5, 5)
+                    .Margin = New Thickness(5)
                 }
-                Dim txtSerialList As New TextBox With {
-                    .IsReadOnly = True,
+                Dim txtSerialList As New TextBlock With {
                     .TextWrapping = TextWrapping.Wrap,
-                    .BorderThickness = New Thickness(0),
-                    .Background = Brushes.Transparent,
-                    .Padding = New Thickness(10, 5, 10, 5),
+                    .Padding = New Thickness(10),
                     .FontFamily = New FontFamily("Lexend"),
                     .FontSize = 11
                 }
+                serialListBorder.Child = txtSerialList
+                Grid.SetRow(serialListBorder, 2)
+                Grid.SetColumnSpan(serialListBorder, 3)
+                rowGrid.Children.Add(serialListBorder)
 
+                ' Logic
                 AddHandler txtSerial.KeyDown, Sub(sender, e)
                                                   If e.Key = Key.Enter Then
                                                       Dim input = DirectCast(sender, TextBox)
-                                                      Dim currentVal = input.Text.Trim()
+                                                      Dim idx As Integer = CInt(input.Tag)
+                                                      Dim val = input.Text.Trim()
+                                                      Dim total As Integer = 0
+                                                      Integer.TryParse(item("Quantity"), total)
 
-                                                      Dim index As Integer = CInt(input.Tag)
+                                                      If Not String.IsNullOrEmpty(val) AndAlso _serialCounters(idx) < total Then
+                                                          _serialCounters(idx) += 1
+                                                          Dim entry = $"({_serialCounters(idx)}) {val}"
+                                                          txtSerialList.Text &= If(String.IsNullOrEmpty(txtSerialList.Text), entry, $"  {entry}")
 
-                                                      If Not String.IsNullOrEmpty(currentVal) Then
-                                                          If String.IsNullOrEmpty(txtSerialList.Text) Then
-                                                              txtSerialList.Text = currentVal
-                                                          Else
-                                                              txtSerialList.Text &= $", {currentVal}"
+                                                          Dim remCount = total - _serialCounters(idx)
+                                                          lblRemaining.Text = If(remCount <= 0, "COMPLETE", $"Remaining: {remCount}")
+
+                                                          If remCount <= 0 Then
+                                                              lblRemaining.Foreground = Brushes.Green
+                                                              lblRemaining.FontWeight = FontWeights.Bold
+                                                              input.IsReadOnly = True
+                                                              serialBorder.Background = CType(New BrushConverter().ConvertFrom("#F5F5F5"), Brush)
+                                                              input.Text = "DONE"
                                                           End If
 
-                                                          itemDataSource(index)("SerialNumber") = txtSerialList.Text
-
+                                                          itemDataSource(idx)("SerialNumber") = txtSerialList.Text
                                                           input.Clear()
-                                                          input.Focus()
                                                       End If
                                                       e.Handled = True
                                                   End If
                                               End Sub
-
-                serialListBorder.Child = txtSerialList
-                Grid.SetRow(serialListBorder, 1)
-                Grid.SetColumnSpan(serialListBorder, 3)
-                rowGrid.Children.Add(serialListBorder)
 
                 rowBorder.Child = rowGrid
                 MainContainer.Children.Add(rowBorder)
