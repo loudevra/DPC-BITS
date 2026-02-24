@@ -1,9 +1,12 @@
 ﻿Imports System.Windows.Markup
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Models
+Imports DPC.Data.Helpers.ViewLoader
 
 Namespace DPC.Views.CRM
     Public Class CRMEditResidentialClientPersonalInfo
+        Implements IClientEditor
+
         Private _clientID As String
 
         Public Sub New()
@@ -26,6 +29,7 @@ Namespace DPC.Views.CRM
             ResidentialClientDetails.Email = txtEmail.Text
         End Sub
 
+
         Private Sub GetInfo()
             Try
                 Dim client As Client = ClientController.GetClientByID(_clientID)
@@ -42,6 +46,25 @@ Namespace DPC.Views.CRM
                 System.Diagnostics.Debug.WriteLine($"Error loading personal info: {ex.Message}")
             End Try
         End Sub
+
+
+        Public Sub LoadFromClient(client As Client) Implements IClientEditor.LoadFromClient
+            If client Is Nothing Then Return
+            Try
+                _clientID = client.ClientID.ToString()
+                txtName.Text = client.Name
+                txtPhone.Text = client.Phone
+                txtEmail.Text = client.Email
+
+                ' keep shared module updated for backward compatibility
+                ResidentialClientDetails.ClientName = client.Name
+                ResidentialClientDetails.Phone = client.Phone
+                ResidentialClientDetails.Email = client.Email
+            Catch ex As Exception
+                System.Diagnostics.Debug.WriteLine($"Error in LoadFromClient (PersonalInfo): {ex.Message}")
+            End Try
+        End Sub
+
 
         Private Sub UpdateCRMClient(sender As Object, e As RoutedEventArgs)
             If String.IsNullOrWhiteSpace(txtName.Text) OrElse
