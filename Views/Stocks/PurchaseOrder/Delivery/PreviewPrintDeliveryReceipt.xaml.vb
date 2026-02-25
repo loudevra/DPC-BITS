@@ -41,7 +41,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             Dim deliveryItems As New ObservableCollection(Of Dictionary(Of String, String))(DeliveryDetails.DRDeliveryItems)
             DeliveryDataGrid.ItemsSource = deliveryItems
 
-            LoadTestPlaceholderData()
+            LoadPage()
 
             Dim clientDetails As String
             clientDetails = DeliveryDetails.DRClientDetails
@@ -65,6 +65,20 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
                 displayItem("Number") = i.ToString()
                 i += 1
+
+                If displayItem.ContainsKey("SerialNumber") Then
+                    Dim rawSerials As String = displayItem("SerialNumber").Trim()
+
+                    If Not String.IsNullOrEmpty(rawSerials) Then
+                        Dim cleanSerials = Regex.Replace(rawSerials, "\(\d+\)\s*", "")
+
+                        cleanSerials = cleanSerials.Replace("-", ChrW(&H2011))
+
+                        displayItem("SerialNumber") = cleanSerials.Replace("  ", ", ").Trim()
+                    Else
+                        displayItem("SerialNumber") = "N/A"
+                    End If
+                End If
 
                 If displayItem.ContainsKey("Description") Then
                     Dim currentDesc As String = displayItem("Description").Trim()

@@ -98,7 +98,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 Return
             End If
 
-            DeliveryDetails.DRDeliveryItems = WalkinBillingStatementDetails.BLItemsCache
+            DeliveryDetails.DRDeliveryItems = itemDataSource.ToList()
 
             DeliveryDetails.DRApprovedBy = cmbApprovedBy.Text
             DeliveryDetails.DRPaymentTerm = cmbPaymentTerm.Text
