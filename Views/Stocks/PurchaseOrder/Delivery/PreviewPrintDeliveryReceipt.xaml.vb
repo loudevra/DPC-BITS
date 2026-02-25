@@ -19,6 +19,9 @@ Imports SkiaSharp.Views.WPF
 Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
     Public Class PreviewPrintDeliveryReceipt
         Private itemDataSource As New System.Collections.ObjectModel.ObservableCollection(Of Dictionary(Of String, String))
+        Private _pageMap As New Dictionary(Of Integer, List(Of Integer))
+        Private ReadOnly _maxContainerHeight As Double = 800
+
         Public Sub New()
             InitializeComponent()
 
@@ -29,7 +32,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             txtDeliveryNumber.Text = DeliveryDetails.DRNumber
             txtReferenceInvoice.Text = DeliveryDetails.DRReferenceInvoice
             txtDeliveryDate.Text = DeliveryDetails.DRDate
-            'DRClientDetails.Text = DeliveryDetails.DRClientDetails
             txtSalesRep.Text = CacheOnLoggedInName
             txtDeliveryClientName.Text = DeliveryDetails.DRClientName
             txtNotes.Text = DeliveryDetails.DRDeliveryNotes
