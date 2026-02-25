@@ -70,6 +70,15 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Sub
 
         Private Sub GenerateDeliveryReceipt_Click(sender As Object, e As RoutedEventArgs)
+
+            If Not AreAllSerialsCompleted() Then
+                MessageBox.Show("Some items have missing serial numbers. Please ensure all items are 'COMPLETE' before generating the receipt.",
+                        "Incomplete Serials",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning)
+                Return
+            End If
+
             DeliveryDetails.DRReferenceInvoice = txtInvoiceNumber.Text
             DeliveryDetails.DRNumber = txtDeliveryNumber.Text
             DeliveryDetails.DRDate = DateTime.Today.ToString("MMM dd, yyyy")
@@ -441,6 +450,21 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
             txtClientDetails.Text = details
         End Sub
+
+        Private Function AreAllSerialsCompleted() As Boolean
+            For Each item In itemDataSource
+                Dim requiredQty As Integer = 0
+                Integer.TryParse(item("Quantity"), requiredQty)
+
+                Dim index As Integer = itemDataSource.IndexOf(item)
+                Dim currentCount As Integer = If(_serialCounters.ContainsKey(index), _serialCounters(index), 0)
+
+                If currentCount < requiredQty Then
+                    Return False
+                End If
+            Next
+            Return True
+        End Function
 
         Private Function GenerateDeliveryId(invoiceNumber As String) As String
             Return invoiceNumber.Trim().Replace("BL", "DR").Replace(" ", "")
