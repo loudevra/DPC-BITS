@@ -8,6 +8,7 @@ Imports DPC.DPC.Data.Models
 Imports MaterialDesignThemes.Wpf
 Imports Microsoft.Win32
 Imports NuGet.Protocol.Plugins
+Imports System.Windows.Controls.Primitives
 
 Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
@@ -18,6 +19,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         Private itemDataSource As New System.Collections.ObjectModel.ObservableCollection(Of Dictionary(Of String, String))
         Private _productTextBoxes As New Dictionary(Of String, TextBox)
         Private _serialCounters As New Dictionary(Of Integer, Integer)
+        Private popupEditSerial As Popup
+        Private recentlyClosedSerial As Boolean = False
 
         Public Sub New()
             InitializeComponent()
@@ -221,6 +224,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 Grid.SetColumn(lblSerial, 0)
 
                 Dim lblRemaining As New TextBlock With {
+                    .Name = $"lblRemaining_{i}",
                     .Text = $"Remaining: {item("Quantity")}",
                     .VerticalAlignment = VerticalAlignment.Center,
                     .FontStyle = FontStyles.Italic,
@@ -234,6 +238,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     .Width = 30, .Height = 30,
                     .Content = New PackIcon With {.Kind = PackIconKind.EditOutline, .Width = 18, .Height = 18},
                     .Cursor = Cursors.Hand,
+                    .Tag = i - 1,
                     .VerticalAlignment = VerticalAlignment.Center
                 }
                 Grid.SetColumn(btnEditSerial, 2)
@@ -257,6 +262,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     .Margin = New Thickness(5)
                 }
                 Dim txtSerialList As New TextBlock With {
+                    .Name = $"txtSerialList_{i}",
                     .TextWrapping = TextWrapping.Wrap,
                     .Padding = New Thickness(10),
                     .FontFamily = New FontFamily("Lexend"),
@@ -299,10 +305,101 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                                                   End If
                                               End Sub
 
+                AddHandler btnEditSerial.Click, AddressOf OpenEditSerialPopup
+
                 rowBorder.Child = rowGrid
                 MainContainer.Children.Add(rowBorder)
                 i += 1
             Next
+        End Sub
+
+        Private Sub OpenEditSerialPopup(sender As Object, e As RoutedEventArgs)
+            Dim clickedButton As Button = TryCast(sender, Button)
+            If clickedButton Is Nothing OrElse recentlyClosedSerial Then
+                recentlyClosedSerial = False
+                Return
+            End If
+
+            If popupEditSerial IsNot Nothing AndAlso popupEditSerial.IsOpen Then
+                popupEditSerial.IsOpen = False
+                Return
+            End If
+
+            Dim index As Integer = CInt(clickedButton.Tag)
+            Dim item = itemDataSource(index)
+            Dim qty As Integer = 0
+            Integer.TryParse(item("Quantity"), qty)
+
+            Dim editControl As New DPC.Components.Forms.EditSerialNumberList(item("ProductName"), item("SerialNumber"), qty)
+
+            popupEditSerial = New Popup With {
+                .Placement = PlacementMode.AbsolutePoint,
+                .StaysOpen = False,
+                .AllowsTransparency = True,
+                .Child = editControl
+            }
+
+            AddHandler popupEditSerial.Opened, Sub()
+                                                   Dim screenWidth As Double = SystemParameters.PrimaryScreenWidth
+                                                   Dim screenHeight As Double = SystemParameters.PrimaryScreenHeight
+                                                   popupEditSerial.HorizontalOffset = (screenWidth / 2) - (editControl.ActualWidth / 2)
+                                                   popupEditSerial.VerticalOffset = (screenHeight / 2) - (editControl.ActualHeight / 2)
+                                               End Sub
+
+            AddHandler popupEditSerial.Closed, Sub()
+                                                   recentlyClosedSerial = True
+
+                                                   If editControl.IsSaved Then
+                                                       Dim newList As String = editControl.SerialResult
+                                                       Dim newLength As Integer = CInt(editControl.ListLength)
+
+                                                       _serialCounters(index) = newLength
+
+                                                       itemDataSource(index)("SerialNumber") = newList
+
+                                                       Dim targetTxt As TextBox = TryCast(Me.FindName($"txtSerialList_{index}"), TextBox)
+                                                       Dim lblRemaining As TextBlock = TryCast(Me.FindName($"lblRemaining_{index}"), TextBlock)
+                                                       Dim serialBorder As Border = TryCast(Me.FindName($"serialBorder_{index}"), Border)
+                                                       Dim input As TextBox = TryCast(Me.FindName($"txtSerialInput_{index}"), TextBox)
+
+                                                       Dim totalQty As Integer = CInt(itemDataSource(index)("Quantity"))
+                                                       Dim remCount As Integer = totalQty - newLength
+
+                                                       If lblRemaining IsNot Nothing Then
+                                                           lblRemaining.Text = If(remCount <= 0, "COMPLETE", $"Remaining: {remCount}")
+
+                                                           If remCount <= 0 Then
+                                                               lblRemaining.Foreground = Brushes.Green
+                                                               lblRemaining.FontWeight = FontWeights.Bold
+
+                                                               If input IsNot Nothing Then
+                                                                   input.IsReadOnly = True
+                                                                   input.Text = "DONE"
+                                                               End If
+
+                                                               If serialBorder IsNot Nothing Then
+                                                                   serialBorder.Background = CType(New BrushConverter().ConvertFrom("#F5F5F5"), Brush)
+                                                               End If
+                                                           Else
+                                                               lblRemaining.Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#555555"))
+                                                               lblRemaining.FontWeight = FontWeights.Normal
+                                                               If input IsNot Nothing Then
+                                                                   input.IsReadOnly = False
+                                                                   input.Clear()
+                                                               End If
+                                                               If serialBorder IsNot Nothing Then serialBorder.Background = Brushes.Transparent
+                                                           End If
+                                                       End If
+
+                                                       If targetTxt IsNot Nothing Then
+                                                           targetTxt.Text = newList
+                                                       End If
+                                                   End If
+
+                                                   Task.Delay(100).ContinueWith(Sub() recentlyClosedSerial = False, TaskScheduler.FromCurrentSynchronizationContext())
+                                               End Sub
+
+            popupEditSerial.IsOpen = True
         End Sub
 
 #Region "Helpers"

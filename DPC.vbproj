@@ -587,6 +587,9 @@
     <Compile Include="Components\Forms\EditProductCategory.xaml.vb">
       <DependentUpon>EditProductCategory.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\EditSerialNumberList.xaml.vb">
+      <DependentUpon>EditSerialNumberList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\EditWarehouse.xaml.vb">
       <DependentUpon>EditWarehouse.xaml</DependentUpon>
     </Compile>
@@ -1400,6 +1403,10 @@
     <Page Include="Components\Forms\EditProductCategory.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\EditSerialNumberList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\EditWarehouse.xaml">
       <SubType>Designer</SubType>
