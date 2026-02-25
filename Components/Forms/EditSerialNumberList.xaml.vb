@@ -1,7 +1,6 @@
 ﻿Imports System.Text.RegularExpressions
 Imports System.Windows.Controls
-Imports DPC.DPC.Data.Controllers
-Imports MySql.Data.MySqlClient
+Imports System.Windows
 
 Namespace DPC.Components.Forms
     Public Class EditSerialNumberList
@@ -17,6 +16,9 @@ Namespace DPC.Components.Forms
             _productName = productName
             _maxQty = maxQty
             _serialsList = currentSerials
+
+            AddHandler btnSaveDelivery.Click, AddressOf btnSaveDelivery_Click
+            AddHandler btnDeleteAll.Click, AddressOf btnDeleteAll_Click
 
             LoadList(_maxQty)
         End Sub
@@ -44,7 +46,7 @@ Namespace DPC.Components.Forms
                 borderLeft.Child = txtIndex
                 Grid.SetColumn(borderLeft, 0)
 
-
+                ' --- Right Side: Serial Input ---
                 Dim borderRight As New Border With {
                     .BorderBrush = Brushes.Black, .BorderThickness = New Thickness(2),
                     .CornerRadius = New CornerRadius(5), .Margin = New Thickness(5, 0, 0, 0)
@@ -83,18 +85,19 @@ Namespace DPC.Components.Forms
                 outerGrid.Children.Add(borderRight)
 
                 SerialNumberList.Children.Add(outerGrid)
-
-                PopulateSerialList(_serialsList)
             Next
+
+            PopulateSerialList(_serialsList)
         End Sub
 
         Private Sub PopulateSerialList(serials As String)
+            If String.IsNullOrEmpty(serials) Then Return
+
             Dim pattern As String = "\(\d+\)\s*(.*?)(?=\s*\(\d+\)|$)"
             Dim matches = Regex.Matches(serials, pattern)
 
             For i As Integer = 0 To _maxQty - 1
                 Dim targetTxt = TryCast(Me.FindName($"txtSerialList_{i}"), TextBox)
-
                 If targetTxt IsNot Nothing Then
                     If i < matches.Count Then
                         targetTxt.Text = matches(i).Groups(1).Value.Trim()
@@ -107,23 +110,39 @@ Namespace DPC.Components.Forms
 
         Private Sub btnSaveDelivery_Click(sender As Object, e As RoutedEventArgs)
             Dim allSerials As New List(Of String)
+            Dim displayCounter As Integer = 1
 
-            For Each child In SerialNumberList.Children
-                ' Find the TextBox inside the Borders/Grids
-                ' Concatenate them into a single string for the result
+            For i As Integer = 0 To _maxQty - 1
+                Dim txt = TryCast(Me.FindName($"txtSerialList_{i}"), TextBox)
+                If txt IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txt.Text) Then
+                    allSerials.Add($"({displayCounter}) {txt.Text.Trim()}")
+                    displayCounter += 1
+                End If
             Next
 
-            SerialResult = String.Join("  ", allSerials)
+            Me.SerialResult = String.Join("  ", allSerials)
+            Me.ListLength = allSerials.Count
+            Me.IsSaved = True
 
-            Dim parentWindow = Window.GetWindow(Me)
-            If parentWindow IsNot Nothing Then
-                parentWindow.DialogResult = True
-                parentWindow.Close()
+            Dim parentPopup = TryCast(Me.Parent, System.Windows.Controls.Primitives.Popup)
+
+            If parentPopup IsNot Nothing Then
+                parentPopup.IsOpen = False
+            Else
+                Dim itm = Me.Parent
+                While itm IsNot Nothing AndAlso Not TypeOf itm Is System.Windows.Controls.Primitives.Popup
+                    itm = LogicalTreeHelper.GetParent(itm)
+                End While
+
+                If itm IsNot Nothing Then DirectCast(itm, System.Windows.Controls.Primitives.Popup).IsOpen = False
             End If
         End Sub
 
         Private Sub btnDeleteAll_Click(sender As Object, e As RoutedEventArgs)
-            ' Clear all textboxes in the SerialNumberList
+            For i As Integer = 0 To _maxQty - 1
+                Dim txt = TryCast(Me.FindName($"txtSerialList_{i}"), TextBox)
+                If txt IsNot Nothing Then txt.Clear()
+            Next
         End Sub
     End Class
 End Namespace

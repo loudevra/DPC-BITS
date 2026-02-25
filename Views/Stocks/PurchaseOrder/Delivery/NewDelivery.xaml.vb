@@ -200,6 +200,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     .FontFamily = New FontFamily("Lexend"),
                     .Tag = i - 1 ' Crucial for identifying the row
                 }
+
+                txtSerial.Name = $"txtSerialInput_{i - 1}"
+                If Me.FindName(txtSerial.Name) IsNot Nothing Then Me.UnregisterName(txtSerial.Name)
+                Me.RegisterName(txtSerial.Name, txtSerial)
+
                 serialBorder.Child = txtSerial
                 Grid.SetRow(serialBorder, 0)
                 Grid.SetColumn(serialBorder, 2)
@@ -231,6 +236,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     .Foreground = Brushes.Gray,
                     .Margin = New Thickness(5, 0, 0, 0)
                 }
+
+                lblRemaining.Name = $"lblRemaining_{i - 1}"
+                If Me.FindName(lblRemaining.Name) IsNot Nothing Then Me.UnregisterName(lblRemaining.Name)
+                Me.RegisterName(lblRemaining.Name, lblRemaining)
+
                 Grid.SetColumn(lblRemaining, 1)
 
                 Dim btnEditSerial As New Button With {
@@ -261,6 +271,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     .MinHeight = 80,
                     .Margin = New Thickness(5)
                 }
+
+                serialBorder.Name = $"serialBorder_{i - 1}"
+                If Me.FindName(serialBorder.Name) IsNot Nothing Then Me.UnregisterName(serialBorder.Name)
+                Me.RegisterName(serialBorder.Name, serialBorder)
+
                 Dim txtSerialList As New TextBlock With {
                     .Name = $"txtSerialList_{i}",
                     .TextWrapping = TextWrapping.Wrap,
@@ -268,6 +283,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     .FontFamily = New FontFamily("Lexend"),
                     .FontSize = 11
                 }
+
+                txtSerialList.Name = $"txtSerialList_{i - 1}"
+                If Me.FindName(txtSerialList.Name) IsNot Nothing Then Me.UnregisterName(txtSerialList.Name)
+                Me.RegisterName(txtSerialList.Name, txtSerialList)
+
                 serialListBorder.Child = txtSerialList
                 Grid.SetRow(serialListBorder, 2)
                 Grid.SetColumnSpan(serialListBorder, 3)
@@ -357,7 +377,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
                                                        itemDataSource(index)("SerialNumber") = newList
 
-                                                       Dim targetTxt As TextBox = TryCast(Me.FindName($"txtSerialList_{index}"), TextBox)
+                                                       Dim targetTxt As TextBlock = TryCast(Me.FindName($"txtSerialList_{index}"), TextBlock)
                                                        Dim lblRemaining As TextBlock = TryCast(Me.FindName($"lblRemaining_{index}"), TextBlock)
                                                        Dim serialBorder As Border = TryCast(Me.FindName($"serialBorder_{index}"), Border)
                                                        Dim input As TextBox = TryCast(Me.FindName($"txtSerialInput_{index}"), TextBox)
