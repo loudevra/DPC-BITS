@@ -139,41 +139,49 @@ Namespace DPC.Components.Forms
 
 
         Private Sub InsertBtn(sender As Object, e As RoutedEventArgs)
-            ' Get selected category ID
             Dim selectedItem As ComboBoxItem = TryCast(ComboBoxCategory.SelectedItem, ComboBoxItem)
 
             If selectedItem Is Nothing Then
-                'MessageBox.Show("Please select a category.")
                 Exit Sub
             End If
 
             Dim selectedCategoryID As Integer = Convert.ToInt32(selectedItem.Tag)
 
-            ' Collect all subcategory names from dynamically created textboxes
+            ' Fetch existing subcategory names for the selected category
+            Dim existingNames As List(Of String) = ProductCategoryController.GetExistingSubcategoryNames(selectedCategoryID)
+
             Dim subcategories As New List(Of Subcategory)()
+            Dim duplicatesFound As New List(Of String)()
 
             For i As Integer = 0 To subcategoryNameTextBoxes.Count - 1
-                Dim subcategoryName As String = subcategoryNameTextBoxes(i).Text.Trim()
-                If Not String.IsNullOrWhiteSpace(subcategoryName) Then
-                    Dim subcategory As New Subcategory With {
-                .categoryID = selectedCategoryID,
-                .subcategoryName = subcategoryName
-            }
-                    subcategories.Add(subcategory)
+                Dim subcategoryName As String = subcategoryNameTextBoxes(i).Text.Trim().ToUpperInvariant()
+
+                If String.IsNullOrWhiteSpace(subcategoryName) Then Continue For
+
+                ' Check against existing DB entries
+                If existingNames.Contains(subcategoryName) Then
+                    duplicatesFound.Add(subcategoryName)
+                    Continue For
                 End If
+
+                Dim subcategory As New Subcategory With {
+            .categoryID = selectedCategoryID,
+            .subcategoryName = subcategoryName
+        }
+                subcategories.Add(subcategory)
             Next
 
-            ' Insert into database
+            ' Block insert if any duplicates were found
+            If duplicatesFound.Count > 0 Then
+                MessageBox.Show($"Duplicate detected! ""{String.Join(", ", duplicatesFound)}"" is already registered under this category.")
+                Exit Sub
+            End If
+
+            If subcategories.Count = 0 Then Exit Sub
+
             If ProductCategoryController.InsertSubcategories(selectedCategoryID, subcategories) Then
-                'MessageBox.Show("All subcategories added successfully!")
-
-                ' Notify that a new category has been added
                 RaiseEvent SubCategoryAdded(Me, EventArgs.Empty)
-
-                ' Close the popup after successful addition
                 BtnClose_Click(Me, New RoutedEventArgs())
-            Else
-                'MessageBox.Show("Failed to add subcategories.")
             End If
         End Sub
 
