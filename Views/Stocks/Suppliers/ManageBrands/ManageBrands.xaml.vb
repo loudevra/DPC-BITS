@@ -147,7 +147,6 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
 
                 _paginationHelper.AllItems = allBrands
 
-                ' *** SubCategory added here so it is included in search/filter ***
                 _searchFilterHelper = New SearchFilterHelper(_paginationHelper, "ID", "Name", "Category", "SubCategory", "TotalSupplier")
 
             Catch ex As Exception
@@ -210,22 +209,24 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
                 .AllowsTransparency = True
             }
 
-            Dim addBrandWindow As New DPC.Components.Forms.EditBrand()
-
             Dim brand As Brand = TryCast(dataGrid.SelectedItem, Brand)
+            If brand Is Nothing Then Return
 
-            addBrandWindow.TxtBrand.Text = brand.Name
-            addBrandWindow.brandID = Convert.ToInt32(brand.ID)
-            addBrandWindow.manageBrands = Me
+            Dim editBrandWindow As New DPC.Components.Forms.EditBrand()
 
-            ' *** Pass SubCategory data to EditBrand if it has a property for it ***
-            If Not String.IsNullOrEmpty(brand.SubCategory) Then
-                addBrandWindow.SubCategoryName = brand.SubCategory
-            End If
+            ' Set all properties BEFORE calling LoadData()
+            editBrandWindow.TxtBrand.Text = brand.Name
+            editBrandWindow.brandID = Convert.ToInt32(brand.ID)
+            editBrandWindow.manageBrands = Me
+            editBrandWindow.CategoryName = brand.Category
+            editBrandWindow.SubCategoryName = brand.SubCategory
 
-            AddHandler addBrandWindow.BrandAdded, AddressOf OnBrandAdded
+            ' Loads combos and pre-selects the correct category/subcategory
+            editBrandWindow.LoadData()
 
-            popup.Child = addBrandWindow
+            AddHandler editBrandWindow.BrandAdded, AddressOf OnBrandAdded
+
+            popup.Child = editBrandWindow
 
             AddHandler popup.Closed, Sub()
                                          recentlyClosed = True
