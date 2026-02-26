@@ -9,6 +9,7 @@ Namespace DPC.Components.Forms
         Public Event BrandAdded()
         Public brandID As Integer?
         Public manageBrands As ManageBrands
+        Public Property SubCategoryName As String
 
         Public Sub New()
             InitializeComponent()
