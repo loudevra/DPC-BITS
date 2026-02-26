@@ -13,15 +13,12 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-
             <!-- Header -->
             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
                 <materialDesign:PackIcon Kind="TextBoxOutline" Width="40" Height="40" Margin="0,0,15,0" VerticalAlignment="Center" Foreground="#555555"/>
                 <TextBlock FontSize="20" Foreground="#555555" FontWeight="Bold" Text="Add Brand" VerticalAlignment="Center"/>
             </StackPanel>
-
             <StackPanel Grid.Row="1">
-
                 <!-- Brand Name -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                     <TextBlock Text="Name:" Foreground="#555555" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
@@ -32,27 +29,22 @@
                              CharacterCasing="Upper"
                              TextChanged="TxtBrand_TextChanged"/>
                 </Border>
-
                 <!-- Category -->
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                     <TextBlock Text="Category:" Foreground="#555555" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                 </StackPanel>
-                <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,20">
-                    <ComboBox x:Name="CmbCategory"
-                              BorderThickness="0"
-                              Background="Transparent"
-                              FontSize="14"
-                              Foreground="#555555"
-                              FontFamily="{StaticResource Lexend}"
-                              Padding="8,10"
-                              VerticalContentAlignment="Center"/>
-                </Border>
-
+                <ComboBox x:Name="CmbCategory"
+                          Style="{StaticResource RoundedComboBoxStyle}"
+                          Width="Auto"
+                          Height="40"
+                          Margin="0,0,0,20"
+                          FontFamily="{StaticResource Lexend}"
+                          Foreground="#474747"
+                          FontWeight="SemiBold"/>
                 <!-- Add Button -->
                 <Button Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#52C69D" Click="BtnAddBrand">
                     <TextBlock Text="Add" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="15"/>
                 </Button>
-
             </StackPanel>
         </Grid>
     </materialDesign:Card>
