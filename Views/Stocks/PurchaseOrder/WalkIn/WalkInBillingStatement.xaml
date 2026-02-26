@@ -73,6 +73,8 @@
 
                         <Border Background="White" CornerRadius="10,10, 0, 0">
                             <Grid Grid.Row="1"  Margin="0,0,0,0"  >
+                                
+                                
 
                                 <!--view-->
                                 <Border HorizontalAlignment="Right" CornerRadius="10,10,10, 0 " Background="White" >
@@ -90,9 +92,10 @@
                             <Border Height="1121.28" Background="White" CornerRadius="0,0,10,10"  BorderThickness="0" Padding="10">
                                 <Grid>
 
-                                    <!--<Grid.Background>
-                                        <ImageBrush ImageSource="/Assets/images/watermarkv2.png" Stretch="UniformToFill"/>
-                                    </Grid.Background>-->
+                                   
+                                    <Grid.Background>
+                                        <ImageBrush ImageSource="/Assets/images/DREAMPCBUILD LOGO WATERMARK SLANTED SPACED.png" Stretch="UniformToFill" Opacity="0.05"/>
+                                    </Grid.Background>
 
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
