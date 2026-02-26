@@ -7,7 +7,11 @@ Namespace DPC.Data.Controllers
     Public Class BrandController
         Public Shared Function GetBrands() As ObservableCollection(Of Brand)
             Dim brandList As New ObservableCollection(Of Brand)()
-            Dim query As String = "SELECT brandID, brandname FROM brand;"
+            Dim query As String = "SELECT b.brandID, b.BrandName, 
+                            c.CategoryName AS Category,
+                            (SELECT COUNT(*) FROM supplier WHERE brandID = b.brandID) AS TotalSupplier
+                            FROM brand b
+                            LEFT JOIN category c ON b.categoryID = c.categoryID"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
@@ -16,9 +20,11 @@ Namespace DPC.Data.Controllers
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
                                 brandList.Add(New Brand With {
-                                    .ID = reader.GetInt32("brandid"), ' Changed to GetInt32 for auto-increment
-                                    .Name = reader.GetString("brandname")
-                                })
+                            .ID = reader.GetInt32("brandID"),
+                            .Name = reader.GetString("BrandName"),
+                            .Category = If(reader.IsDBNull(reader.GetOrdinal("Category")), "", reader.GetString("Category")),
+                            .TotalSupplier = reader.GetInt32("TotalSupplier")
+                        })
                             End While
                         End Using
                     End Using
@@ -30,7 +36,7 @@ Namespace DPC.Data.Controllers
             Return brandList
         End Function
 
-        Public Shared Sub InsertBrand(brandName As String)
+        Public Shared Sub InsertBrand(brandName As String, categoryID As Integer)
             If String.IsNullOrWhiteSpace(brandName) Then
                 MessageBox.Show("Brand name cannot be empty.")
                 Return
@@ -44,21 +50,19 @@ Namespace DPC.Data.Controllers
                     Dim checkQuery As String = "SELECT COUNT(*) FROM brand WHERE brandName = @BrandName"
                     Using checkCmd As New MySqlCommand(checkQuery, conn)
                         checkCmd.Parameters.AddWithValue("@BrandName", brandName)
-
-                        ' Safely check for NULL and convert to Int32
                         Dim result As Object = checkCmd.ExecuteScalar()
                         Dim count As Integer = If(result IsNot DBNull.Value, Convert.ToInt32(result), 0)
-
                         If count > 0 Then
                             MessageBox.Show("Brand already exists.")
                             Return
                         End If
                     End Using
 
-                    ' Insert brand without BrandID
-                    Dim query As String = "INSERT INTO brand (BrandName) VALUES (@BrandName)"
+                    ' Insert brand with categoryID
+                    Dim query As String = "INSERT INTO brand (BrandName, categoryID) VALUES (@BrandName, @CategoryID)"
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@BrandName", brandName)
+                        cmd.Parameters.AddWithValue("@CategoryID", categoryID)
                         cmd.ExecuteNonQuery()
                     End Using
 

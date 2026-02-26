@@ -14,7 +14,24 @@ Namespace DPC.Components.Forms
         End Sub
 
         Private Sub BtnAddBrand(sender As Object, e As RoutedEventArgs)
-            BrandController.InsertBrand(TxtBrand.Text)
+            ' Validate brand name
+            If String.IsNullOrWhiteSpace(TxtBrand.Text) Then
+                MessageBox.Show("Please enter a brand name.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Return
+            End If
+
+            ' Validate category selection
+            If CmbCategory.SelectedItem Is Nothing Then
+                MessageBox.Show("Please select a category.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Return
+            End If
+
+            ' Get categoryID from Tag (this is how GetProductCategory stores the ID)
+            Dim selectedItem As ComboBoxItem = TryCast(CmbCategory.SelectedItem, ComboBoxItem)
+            If selectedItem Is Nothing Then Return
+
+            Dim categoryID As Integer = Convert.ToInt32(selectedItem.Tag)
+            BrandController.InsertBrand(TxtBrand.Text, categoryID)
             RaiseEvent BrandAdded()
         End Sub
 

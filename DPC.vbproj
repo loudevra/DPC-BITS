@@ -760,6 +760,7 @@
     <Compile Include="Data\Helpers\ViewLoader\ViewLoader.vb" />
     <Compile Include="Data\Helpers\ViewLoader\ViewNavigation.vb" />
     <Compile Include="Data\Models\Account.vb" />
+    <Compile Include="Data\Models\Brand.vb" />
     <Compile Include="Data\Models\BusinessLocation.vb" />
     <Compile Include="Data\Models\CashAdvanceRequestModel.vb" />
     <Compile Include="Data\Models\Client.vb" />
