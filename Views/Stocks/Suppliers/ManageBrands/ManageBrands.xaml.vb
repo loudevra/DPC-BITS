@@ -172,7 +172,7 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
                 _paginationHelper.AllItems = allBrands
 
                 ' Initialize search filter helper with our pagination helper
-                _searchFilterHelper = New SearchFilterHelper(_paginationHelper, "ID", "Name", "TotalSupplier")
+                _searchFilterHelper = New SearchFilterHelper(_paginationHelper, "ID", "Name", "Category", "TotalSupplier")
 
             Catch ex As Exception
                 MessageBox.Show("Error in LoadBrands: " & ex.Message & vbCrLf & "Stack Trace: " & ex.StackTrace,
