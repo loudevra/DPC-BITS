@@ -228,60 +228,69 @@
                                                 <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
 
                                             <!-- Hidden DatePickers -->
+                                            <!-- Bind SelectedDate to the viewmodel property name 'SelectedDate' (SingleCalendar) -->
                                             <DatePicker x:Name="StartDatePicker"
-                    SelectedDate="{Binding StartDate, Mode=TwoWay}"
-                    Visibility="Hidden"
-                    SelectedDateChanged="StartDatePicker_SelectedDateChanged" />
+                                                        SelectedDate="{Binding SelectedDate, Mode=TwoWay}"
+                                                        Visibility="Hidden"
+                                                        SelectedDateChanged="StartDatePicker_SelectedDateChanged" />
 
                                             <DatePicker x:Name="DueDatePicker"
-                    SelectedDate="{Binding EndDate, Mode=TwoWay}"
-                    Visibility="Hidden"
-                    SelectedDateChanged="DueDatePicker_SelectedDateChanged" />
+                                                        SelectedDate="{Binding SelectedDate, Mode=TwoWay}"
+                                                        Visibility="Hidden"
+                                                        SelectedDateChanged="DueDatePicker_SelectedDateChanged" />
 
                                             <!-- Start Date Button -->
                                             <Button x:Name="StartDateButton" Grid.Column="0"
-                Background="Transparent"
-                BorderThickness="0"
-                HorizontalAlignment="Stretch"
-                Click="StartDateButton_Click">
-                                                <TextBlock Text="{Binding StartDate, StringFormat='MMM dd, yyyy'}"
-                       FontFamily="Lexend"
-                       FontSize="12"
-                       VerticalAlignment="Center"
-                       Margin="10,0,5,0"/>
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    HorizontalAlignment="Stretch"
+                                                    Click="StartDateButton_Click">
+                                                <!-- Named TextBlock for reliable programmatic updates -->
+                                                <TextBlock x:Name="StartDateText" Text="Start" 
+                                                           FontFamily="Lexend"
+                                                           FontSize="12"
+                                                           VerticalAlignment="Center"
+                                                           Margin="10,0,5,0"/>
                                             </Button>
 
                                             <TextBlock Text=" - "
-                   FontFamily="Lexend"
-                   FontSize="12"
-                   VerticalAlignment="Center"
-                   Grid.Column="1" />
+                                                       FontFamily="Lexend"
+                                                       FontSize="12"
+                                                       VerticalAlignment="Center"
+                                                       Grid.Column="1" />
 
                                             <!-- End Date Button -->
                                             <Button x:Name="DueDateButton" Grid.Column="2"
-                Background="Transparent"
-                BorderThickness="0"
-                Padding="0"
-                HorizontalAlignment="Stretch"
-                Click="DueDateButton_Click">
-                                                <TextBlock Text="{Binding EndDate, StringFormat='MMM dd, yyyy'}"
-                       FontFamily="Lexend"
-                       FontSize="12"
-                       VerticalAlignment="Center"
-                       Margin="5,0,10,0"/>
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    Padding="0"
+                                                    HorizontalAlignment="Stretch"
+                                                    Click="DueDateButton_Click">
+                                                <TextBlock x:Name="DueDateText" Text="End"
+                                                           FontFamily="Lexend"
+                                                           FontSize="12"
+                                                           VerticalAlignment="Center"
+                                                           Margin="5,0,10,0"/>
                                             </Button>
 
                                             <materialDesign:PackIcon Kind="Calendar"
-                                 Width="20"
-                                 Height="20"
-                                 Foreground="Black"
-                                 HorizontalAlignment="Right"
-                                 VerticalAlignment="Center"
-                                 Grid.Column="3"
-                                 Margin="0,0,5,0"/>
+                                                                     Width="20"
+                                                                     Height="20"
+                                                                     Foreground="Black"
+                                                                     HorizontalAlignment="Right"
+                                                                     VerticalAlignment="Center"
+                                                                     Grid.Column="3"
+                                                                     Margin="0,0,5,0"/>
+
+                                            <!-- Clear dates button -->
+                                            <Button Grid.Column="4" x:Name="BtnClearDates" Width="26" Height="26" Margin="2,0,5,0" ToolTip="Clear dates" Click="ClearDateFilters_Click"
+                                                    Background="Transparent" BorderThickness="0" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                <materialDesign:PackIcon Kind="Close" Width="16" Height="16" Foreground="#AEAEAE"/>
+                                            </Button>
                                         </Grid>
                                     </Border>
 
@@ -307,8 +316,8 @@
                                                 <RowDefinition Height="19*"/>
                                             </Grid.RowDefinitions>
                                             <TextBox x:Name="SearchText"
-                                    BorderThickness="0" Background="Transparent" FontFamily="Lexend" Style="{StaticResource RoundedTextboxStyle}"
-                                         Height="22" VerticalAlignment="Top" HorizontalAlignment="Center" Width="179" Grid.RowSpan="2" TextChanged="SearchText_TextChanged" />
+                                                     BorderThickness="0" Background="Transparent" FontFamily="Lexend" Style="{StaticResource RoundedTextboxStyle}"
+                                                     Height="22" VerticalAlignment="Top" HorizontalAlignment="Center" Width="179" Grid.RowSpan="2" TextChanged="SearchText_TextChanged" />
                                             <materialDesign:PackIcon Kind="Magnify" Width="25" Height="26" Foreground="#AEAEAE" Margin="159,0,0,0" VerticalAlignment="Center" Grid.RowSpan="2"/>
                                         </Grid>
                                     </Border>
@@ -319,17 +328,17 @@
                         <!-- DataGrid Section - Scrollable Content -->
                         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="0">
                             <DataGrid Name="dataGrid"
-AutoGenerateColumns="False"
-CanUserAddRows="False"
-HeadersVisibility="Column"
-GridLinesVisibility="None"
-RowBackground="White"
-AlternatingRowBackground="WhiteSmoke"
-BorderThickness="0"
-Height="425"
-FontFamily="Lexend"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      HeadersVisibility="Column"
+                                      GridLinesVisibility="None"
+                                      RowBackground="White"
+                                      AlternatingRowBackground="WhiteSmoke"
+                                      BorderThickness="0"
+                                      Height="425"
+                                      FontFamily="Lexend"
                                       MouseLeftButtonUp="DataGrid_CellClick" 
-IsReadOnly="True">
+                                      IsReadOnly="True">
 
                                 <DataGrid.RowStyle>
                                     <Style TargetType="DataGridRow">
@@ -360,9 +369,9 @@ IsReadOnly="True">
                                             <Setter.Value>
                                                 <ControlTemplate TargetType="DataGridCell">
                                                     <Border Padding="{TemplateBinding Padding}" 
-                      BorderBrush="{TemplateBinding BorderBrush}" 
-                      BorderThickness="{TemplateBinding BorderThickness}" 
-                      Background="{TemplateBinding Background}">
+                                                            BorderBrush="{TemplateBinding BorderBrush}" 
+                                                            BorderThickness="{TemplateBinding BorderThickness}" 
+                                                            Background="{TemplateBinding Background}">
                                                         <ContentPresenter VerticalAlignment="Center"/>
                                                     </Border>
                                                 </ControlTemplate>
@@ -374,114 +383,18 @@ IsReadOnly="True">
                                 </DataGrid.CellStyle>
 
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Quote No." Binding="{Binding QuoteNumber}" Width="170">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="FontFamily" Value="Lexend"/>
-                                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Ref No." Binding="{Binding Reference}" Width="120">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="FontFamily" Value="Lexend"/>
-                                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Date" Binding="{Binding QuoteDate}" Width="120">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="FontFamily" Value="Lexend"/>
-                                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Valid Until" Binding="{Binding Validity}" Width="120">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="FontFamily" Value="Lexend"/>
-                                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Tax" Binding="{Binding Tax}" Width="120">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="FontFamily" Value="Lexend"/>
-                                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Discount" Binding="{Binding Discount}" Width="120">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="FontFamily" Value="Lexend"/>
-                                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Client" Binding="{Binding ClientName}" Width="120">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="FontFamily" Value="Lexend"/>
-                                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Warehouse" Binding="{Binding WarehouseName}" Width="120">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="FontFamily" Value="Lexend"/>
-                                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Items" Binding="{Binding OrderItems}" Width="120">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="FontFamily" Value="Lexend"/>
-                                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Total Tax" Binding="{Binding TotalTax}" Width="120">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="FontFamily" Value="Lexend"/>
-                                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Total Discount" Binding="{Binding TotalDiscount}" Width="120">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="FontFamily" Value="Lexend"/>
-                                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Total Price" Binding="{Binding TotalPrice}" Width="120">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="FontFamily" Value="Lexend"/>
-                                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="Quote No." Binding="{Binding QuoteNumber}" Width="170"/>
+                                    <DataGridTextColumn Header="Ref No." Binding="{Binding Reference}" Width="120"/>
+                                    <DataGridTextColumn Header="Date" Binding="{Binding QuoteDate}" Width="120"/>
+                                    <DataGridTextColumn Header="Valid Until" Binding="{Binding Validity}" Width="120"/>
+                                    <DataGridTextColumn Header="Tax" Binding="{Binding Tax}" Width="120"/>
+                                    <DataGridTextColumn Header="Discount" Binding="{Binding Discount}" Width="120"/>
+                                    <DataGridTextColumn Header="Client" Binding="{Binding ClientName}" Width="120"/>
+                                    <DataGridTextColumn Header="Warehouse" Binding="{Binding WarehouseName}" Width="120"/>
+                                    <DataGridTextColumn Header="Items" Binding="{Binding OrderItems}" Width="120"/>
+                                    <DataGridTextColumn Header="Total Tax" Binding="{Binding TotalTax}" Width="120"/>
+                                    <DataGridTextColumn Header="Total Discount" Binding="{Binding TotalDiscount}" Width="120"/>
+                                    <DataGridTextColumn Header="Total Price" Binding="{Binding TotalPrice}" Width="120"/>
 
                                     <DataGridTemplateColumn Header="Settings" Width="80">
                                         <DataGridTemplateColumn.CellTemplate>
@@ -507,21 +420,21 @@ IsReadOnly="True">
                     </StackPanel>
 
                     <Popup x:Name="CellValuePopup"
-       Placement="Mouse"
-       AllowsTransparency="True"
-       StaysOpen="False">
+                           Placement="Mouse"
+                           AllowsTransparency="True"
+                           StaysOpen="False">
                         <Border Background="White" 
-            BorderBrush="Black" 
-            BorderThickness="1" 
-            Padding="10"
-            CornerRadius="8"
-            Effect="{DynamicResource MaterialDesignShadowDepth2}">
+                                BorderBrush="Black" 
+                                BorderThickness="1" 
+                                Padding="10"
+                                CornerRadius="8"
+                                Effect="{DynamicResource MaterialDesignShadowDepth2}">
                             <TextBlock x:Name="PopupText" 
-                   FontFamily="Lexend"
-                   FontSize="14"
-                   Foreground="Black"
-                   TextWrapping="Wrap"
-                   MaxWidth="300"/>
+                                       FontFamily="Lexend"
+                                       FontSize="14"
+                                       Foreground="Black"
+                                       TextWrapping="Wrap"
+                                       MaxWidth="300"/>
                         </Border>
                     </Popup>
                 </Grid>
