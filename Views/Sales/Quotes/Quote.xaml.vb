@@ -29,7 +29,7 @@ Namespace DPC.Views.Sales.Quotes
 
             _typingTimer = New DispatcherTimer With {
                 .Interval = TimeSpan.FromMilliseconds(250)
-            }
+                }
 
             AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
 
@@ -175,19 +175,29 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
 
-        ''' Performs the search based on current search text
+        ''' Performs the search based on current search text and date range if provided
         Private Sub PerformSearch()
             Try
                 Dim searchTextValue As String = SearchText.Text.Trim()
                 Dim limit As Integer = Convert.ToInt32(cmbLimit.Text)
 
+                ' Read selected dates from the ViewModels (nullable)
+                Dim startDate As Nullable(Of DateTime) = Nothing
+                Dim endDate As Nullable(Of DateTime) = Nothing
+
+                If startDateViewModel IsNot Nothing AndAlso startDateViewModel.SelectedDate.HasValue Then
+                    startDate = startDateViewModel.SelectedDate.Value.Date
+                End If
+
+                If dueDateViewModel IsNot Nothing AndAlso dueDateViewModel.SelectedDate.HasValue Then
+                    ' Make endDate inclusive by taking the end of the day
+                    endDate = dueDateViewModel.SelectedDate.Value.Date.AddDays(1).AddTicks(-1)
+                End If
+
                 Dim quotes As ObservableCollection(Of QuotesModel)
 
-                If String.IsNullOrWhiteSpace(searchTextValue) Then
-                    quotes = QuotesController.GetQuotes(limit, _Type)
-                Else
-                    quotes = QuotesController.SearchQuotes(searchTextValue, limit, _Type)
-                End If
+                ' Pass the optional date filters into the controller SearchQuotes method.
+                quotes = QuotesController.SearchQuotes(searchTextValue, limit, _Type, startDate, endDate)
 
                 ' Format quotes for display
                 FormatQuotesForDisplay(quotes)
@@ -196,6 +206,33 @@ Namespace DPC.Views.Sales.Quotes
 
             Catch ex As Exception
                 MessageBox.Show($"Error searching: {ex.Message}")
+            End Try
+        End Sub
+
+        ''' New: Clear date filters and re-run search
+        Private Sub ClearDateFilters_Click(sender As Object, e As RoutedEventArgs)
+            Try
+                ' Clear viewmodels
+                startDateViewModel.SelectedDate = Nothing
+                dueDateViewModel.SelectedDate = Nothing
+
+                ' Clear the actual DatePickers (in case they maintain state)
+                StartDatePicker.SelectedDate = Nothing
+                DueDatePicker.SelectedDate = Nothing
+
+                ' Close any open dropdowns
+                StartDatePicker.IsDropDownOpen = False
+                DueDatePicker.IsDropDownOpen = False
+
+                ' Reset visible labels
+                StartDateText.Text = "Start"
+                DueDateText.Text = "End"
+
+                ' Re-run search with no date filters
+                PerformSearch()
+            Catch ex As Exception
+                Debug.WriteLine("Error clearing date filters: " & ex.Message)
+                MessageBox.Show("Unable to clear dates: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Sub
 
@@ -276,7 +313,7 @@ Namespace DPC.Views.Sales.Quotes
         Private Sub GetDataFromDB()
             If String.IsNullOrWhiteSpace(SearchText.Text) Then
                 dataGrid.ItemsSource = Nothing
-                DataGrid.ItemsSource = QuotesController.GetQuotes(CInt(cmbLimit.Text), _Type)
+                dataGrid.ItemsSource = QuotesController.GetQuotes(CInt(cmbLimit.Text), _Type)
             Else
                 dataGrid.ItemsSource = Nothing
                 dataGrid.ItemsSource = QuotesController.SearchQuotes(SearchText.Text, CInt(cmbLimit.Text), _Type)
@@ -305,6 +342,10 @@ Namespace DPC.Views.Sales.Quotes
 
             DueDatePicker.DataContext = dueDateViewModel
             DueDateButton.DataContext = dueDateViewModel
+
+            ' Ensure initial text labels show placeholder
+            StartDateText.Text = "Start"
+            DueDateText.Text = "End"
         End Sub
 
         ' Trigger dropdown open
@@ -338,7 +379,25 @@ Namespace DPC.Views.Sales.Quotes
                 Dim vm = TryCast(dp.DataContext, CalendarController.SingleCalendar)
                 If vm IsNot Nothing Then
                     vm.SelectedDate = dp.SelectedDate
-                    BindingOperations.GetBindingExpression(StartDateButton, Button.DataContextProperty)?.UpdateTarget()
+
+                    ' Update visible label reliably (avoid depending on vm's INotify)
+                    If vm.SelectedDate.HasValue Then
+                        StartDateText.Text = vm.SelectedDate.Value.ToString("MMM dd, yyyy")
+                    Else
+                        StartDateText.Text = "Start"
+                    End If
+
+                    ' Validate and trigger search automatically
+                    If vm.SelectedDate.HasValue Then
+                        If dueDateViewModel IsNot Nothing AndAlso dueDateViewModel.SelectedDate.HasValue AndAlso vm.SelectedDate > dueDateViewModel.SelectedDate Then
+                            MessageBox.Show("Start date cannot be after end date.", "Invalid Date Range", MessageBoxButton.OK, MessageBoxImage.Warning)
+                        Else
+                            PerformSearch()
+                        End If
+                    Else
+                        ' If start date cleared, still re-run search to remove filter
+                        PerformSearch()
+                    End If
                 End If
             End If
         End Sub
@@ -349,7 +408,25 @@ Namespace DPC.Views.Sales.Quotes
                 Dim vm = TryCast(dp.DataContext, CalendarController.SingleCalendar)
                 If vm IsNot Nothing Then
                     vm.SelectedDate = dp.SelectedDate
-                    BindingOperations.GetBindingExpression(DueDateButton, Button.DataContextProperty)?.UpdateTarget()
+
+                    ' Update visible label reliably (avoid depending on vm's INotify)
+                    If vm.SelectedDate.HasValue Then
+                        DueDateText.Text = vm.SelectedDate.Value.ToString("MMM dd, yyyy")
+                    Else
+                        DueDateText.Text = "End"
+                    End If
+
+                    ' Validate and trigger search automatically
+                    If vm.SelectedDate.HasValue Then
+                        If startDateViewModel IsNot Nothing AndAlso startDateViewModel.SelectedDate.HasValue AndAlso startDateViewModel.SelectedDate > vm.SelectedDate Then
+                            MessageBox.Show("End date cannot be before start date.", "Invalid Date Range", MessageBoxButton.OK, MessageBoxImage.Warning)
+                        Else
+                            PerformSearch()
+                        End If
+                    Else
+                        ' If end date cleared, re-run search to remove filter
+                        PerformSearch()
+                    End If
                 End If
             End If
         End Sub
@@ -395,13 +472,13 @@ Namespace DPC.Views.Sales.Quotes
 
             ' Create the popup with proper positioning
             Dim popup As New Popup With {
-    .Child = Me,
-    .StaysOpen = False,
-    .Placement = PlacementMode.Relative,
-    .PlacementTarget = button,
-    .IsOpen = True,
-    .AllowsTransparency = True
-}
+                .Child = Me,
+                .StaysOpen = False,
+                .Placement = PlacementMode.Relative,
+                .PlacementTarget = button,
+                .IsOpen = True,
+                .AllowsTransparency = True
+            }
 
             ' Calculate optimal position based on sidebar width
             If sidebarWidth <= 80 Then
