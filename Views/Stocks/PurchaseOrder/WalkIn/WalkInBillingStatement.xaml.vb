@@ -31,12 +31,15 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
         Private Sub WalkInBillilingStatement_Loaded(sender As Object, e As RoutedEventArgs)
             Dim priceString As String = WalkinBillingStatementDetails.BLTotalAmountCache
+            Dim subtotalString As String = WalkinBillingStatementDetails.BLSubtotalAmountCache
+            Dim cleanedSubtotal As String = subtotalString.Replace("₱", "").Replace(",", "").Trim()
             Dim cleaned As String = priceString.Replace("₱", "").Replace(",", "").Trim()
             Dim numericValue As Double = Double.Parse(cleaned)
+            Dim numericSubtotal As Double = Double.Parse(cleanedSubtotal)
             Dim vat As Double = (numericValue - (numericValue / 1.12))
 
-            Dim subTot As Double = (numericValue / 1.12)
-            Dim totCost As Double = vat + subTot
+            Dim subTot As Double = numericSubtotal
+            Dim totCost As Double = numericValue
 
 
             ' Check if important fields are initialized
@@ -105,7 +108,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             End If
 
             If BLTaxProperty = "Exclusive" Then
-                Subtotal.Text = "₱ " & totCost.ToString("N2")
+                Subtotal.Text = "₱ " & subTot.ToString("N2")
             Else
                 Subtotal.Text = "₱ " & subTot.ToString("N2")
             End If

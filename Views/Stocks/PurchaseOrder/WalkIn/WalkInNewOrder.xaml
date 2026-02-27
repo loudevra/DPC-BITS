@@ -512,7 +512,7 @@
                                             <Button
                                                 x:Name="GenerateCostEstimate"
                                                 Width="200"
-                                                Click="GenerateCostEstimate_Click"
+                                                Click="GenerateBilling_Click"
                                                 Style="{StaticResource ButtonStyle}" Background="#1D5642">
                                                 <TextBlock Text="Generate Invoice" FontSize="16" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#FFFFFF" Margin="0,0,5,0"/>
                                             </Button>

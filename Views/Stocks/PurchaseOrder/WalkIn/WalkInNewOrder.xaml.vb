@@ -6,6 +6,7 @@ Imports System.Windows.Controls.Primitives
 Imports System.Windows.Threading
 Imports DocumentFormat.OpenXml.Bibliography
 Imports DocumentFormat.OpenXml.Math
+Imports DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing
 Imports DPC.DPC.Components.Forms
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
@@ -989,6 +990,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 finalGrandTotal = subtotalAmount
             End If
 
+            BLSubtotalAmountCache = (subtotalAmount).ToString("F2")
             ' 4. Format outputs for UI display
             txtGrandTotal.Text = "₱" & finalGrandTotal.ToString("N2")
 
@@ -1154,7 +1156,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
 #Region "Generate the Quote Before saving"
         ' Once Done All of the Data Will Be pass to another form for generating invoice
-        Private Sub GenerateCostEstimate_Click(sender As Object, e As RoutedEventArgs)
+        Private Sub GenerateBilling_Click(sender As Object, e As RoutedEventArgs)
             Dim productItemsJson As String = SubmitAllProductInputs()
 
             If productItemsJson Is Nothing Then
