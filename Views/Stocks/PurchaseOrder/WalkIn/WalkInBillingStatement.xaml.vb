@@ -358,9 +358,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         Private Sub PrintPreview(sender As Object, e As RoutedEventArgs)
 
             If String.IsNullOrWhiteSpace(SalesRep.Text) OrElse
-               String.IsNullOrWhiteSpace(SalesRep.Text) OrElse
-               cmbApproved.SelectedItem Is Nothing OrElse
-               cmbTerms.SelectedItem Is Nothing Then
+               String.IsNullOrWhiteSpace(SalesRep.Text) Then
 
                 MessageBox.Show("Please fill in all required fields before proceeding to print.", "Missing Information", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Return

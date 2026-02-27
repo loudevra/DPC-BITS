@@ -389,8 +389,23 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 ' Unregister all textbox names before clearing UI to avoid duplicate name errors
                 Dim WalkInForm As New DPC.Views.Stocks.PurchaseOrder.WalkIn.WalkInNewOrder()
                 WalkInForm.ClearAllFields()
-                WalkinBillingStatementDetails.ClearAllBLCache()
-                ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
+
+                Dim _showDelivery As Boolean = False
+
+                Dim result As MessageBoxResult = MessageBox.Show("Walk-in billing submitted successfully! Do you want to create a Delivery Receipt for this billing?",
+                                                 "Submission Successful",
+                                                 MessageBoxButton.YesNo,
+                                                 MessageBoxImage.Question)
+
+                ' Handle the response
+                If result = MessageBoxResult.Yes Then
+                    _showDelivery = True
+                    ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
+                Else
+                    Debug.WriteLine("User declined Delivery Receipt creation.")
+                    WalkinBillingStatementDetails.ClearAllBLCache()
+                    ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
+                End If
             Else
                 MessageBox.Show("Failed to submit walk-in billing.")
             End If

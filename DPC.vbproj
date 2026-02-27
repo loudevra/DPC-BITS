@@ -587,6 +587,9 @@
     <Compile Include="Components\Forms\EditProductCategory.xaml.vb">
       <DependentUpon>EditProductCategory.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Forms\EditSerialNumberList.xaml.vb">
+      <DependentUpon>EditSerialNumberList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\EditWarehouse.xaml.vb">
       <DependentUpon>EditWarehouse.xaml</DependentUpon>
     </Compile>
@@ -729,6 +732,7 @@
     <Compile Include="Data\Controllers\StocksTransferController.vb" />
     <Compile Include="Data\Controllers\Stocks\StocksLabelController.vb" />
     <Compile Include="Data\Controllers\SupplierController.vb" />
+    <Compile Include="Data\Controllers\DeliveryReceiptController.vb" />
     <Compile Include="Data\Controllers\WalkIn\WalkInController.vb" />
     <Compile Include="Data\Controllers\WarehouseController.vb" />
     <Compile Include="Data\Converters\BooleanToVisibilityConverter.vb" />
@@ -741,6 +745,7 @@
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
     <Compile Include="Data\DataModules\CostEstimateDetails.vb" />
+    <Compile Include="Data\DataModules\DeliveryDetails.vb" />
     <Compile Include="Data\DataModules\FolderDetails.vb" />
     <Compile Include="Data\DataModules\PORDetails.vb" />
     <Compile Include="Data\DataModules\StatementDetails.vb" />
@@ -1207,6 +1212,15 @@
     <Compile Include="Views\Stocks\ProductsLabel\LabelPrintPreview.xaml.vb">
       <DependentUpon>LabelPrintPreview.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Stocks\PurchaseOrder\Delivery\NewDelivery.xaml.vb">
+      <DependentUpon>NewDelivery.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\PurchaseOrder\Delivery\PreviewEditableDeliveryReceipt.xaml.vb">
+      <DependentUpon>PreviewEditableDeliveryReceipt.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\PurchaseOrder\Delivery\PreviewPrintDeliveryReceipt.xaml.vb">
+      <DependentUpon>PreviewPrintDeliveryReceipt.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stocks\PurchaseOrder\NewOrder\BillingStatement.xaml.vb">
       <DependentUpon>BillingStatement.xaml</DependentUpon>
     </Compile>
@@ -1396,6 +1410,10 @@
     <Page Include="Components\Forms\EditProductCategory.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\EditSerialNumberList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Forms\EditWarehouse.xaml">
       <SubType>Designer</SubType>
@@ -2199,6 +2217,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Stocks\PurchaseOrder\Delivery\NewDelivery.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Stocks\PurchaseOrder\Delivery\PreviewEditableDeliveryReceipt.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\PurchaseOrder\Delivery\PreviewPrintDeliveryReceipt.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Stocks\PurchaseOrder\NewOrder\BillingStatement.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2370,6 +2400,7 @@
     <Folder Include="Views\DataReports\GraphicalReports\" />
     <Folder Include="Views\DataReports\SummaryReports\" />
     <Folder Include="Views\HRM\Payroll\" />
+    <Folder Include="Views\Stocks\PurchaseOrder\NewFolder1\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ILLink\ILLink.Descriptors.LibraryBuild.xml" />
