@@ -2,35 +2,58 @@
 Imports MySql.Data.MySqlClient
 Imports DPC.DPC.Data.Models
 Imports System.Windows.Controls.Primitives
-
+Imports System.Windows.Input
 
 Namespace DPC.Components.Forms
     Public Class AddSubcategory
         Private subcategoryNameTextBoxes As New List(Of TextBox)()
         Private subcategoryDescriptionTextBoxes As New List(Of TextBox)()
         Private subcategoryPanels As New List(Of StackPanel)()
+        Private categoryItems As New List(Of ComboBoxItem)()
         Public Event SubCategoryAdded As EventHandler
 
         Public Sub New()
             InitializeComponent()
 
             ProductCategoryController.GetProductCategory(ComboBoxCategory)
+            SnapshotCategoryItems()
+
+            ComboBoxCategory.IsEditable = True
+            ComboBoxCategory.IsTextSearchEnabled = False
+            ComboBoxCategory.StaysOpenOnEdit = True
+
+            AddHandler ComboBoxCategory.PreviewTextInput, AddressOf CmbCategory_Filter
 
             CreateSubCategoryPanel()
 
-            ' Add event handler for the close button
             AddHandler BtnClose.Click, AddressOf BtnClose_Click
         End Sub
 
-        ' Event handler for the close button
+        Private Sub SnapshotCategoryItems()
+            categoryItems.Clear()
+            For Each item As ComboBoxItem In ComboBoxCategory.Items
+                categoryItems.Add(item)
+            Next
+        End Sub
+
+        Private Sub CmbCategory_Filter(sender As Object, e As TextCompositionEventArgs)
+            ComboBoxCategory.IsDropDownOpen = True
+            Dim tb = TryCast(ComboBoxCategory.Template.FindName("PART_EditableTextBox", ComboBoxCategory), TextBox)
+            Dim filterText = If(tb IsNot Nothing, tb.Text & e.Text, e.Text).ToUpperInvariant()
+
+            ComboBoxCategory.Items.Clear()
+            For Each item In categoryItems
+                If item.Content.ToString().ToUpperInvariant().Contains(filterText) Then
+                    ComboBoxCategory.Items.Add(item)
+                End If
+            Next
+        End Sub
+
         Private Sub BtnClose_Click(sender As Object, e As RoutedEventArgs)
-            ' Get the parent Popup if it exists
             Dim parent = TryCast(Me.Parent, Popup)
             If parent IsNot Nothing Then
-                ' Close the popup
                 parent.IsOpen = False
             Else
-                ' Try to find another parent container to close
                 Dim parentWindow = Window.GetWindow(Me)
                 If parentWindow IsNot Nothing Then
                     parentWindow.Close()
@@ -39,7 +62,6 @@ Namespace DPC.Components.Forms
         End Sub
 
         Private Sub CreateSubCategoryPanel()
-            ' Create subcategory panel
             Dim subcategoryPanel As New StackPanel() With {.Name = "SubCategoryPanel"}
             Dim subcategoryLabelPanel As New StackPanel() With {.Orientation = Orientation.Horizontal, .Margin = New Thickness(0, 0, 0, 5)}
             Dim subcategoryLabel As New TextBlock() With {.Text = "Sub-Category Name:", .FontSize = 14, .FontWeight = FontWeights.SemiBold, .Margin = New Thickness(0, 0, 5, 0)}
@@ -54,7 +76,6 @@ Namespace DPC.Components.Forms
             subcategoryPanel.Children.Add(subcategoryLabelPanel)
             subcategoryPanel.Children.Add(categoryBorder)
 
-            ' Create description panel
             Dim descriptionPanel As New StackPanel() With {.Name = "DescriptionPanel"}
             Dim descriptionLabelPanel As New StackPanel() With {.Orientation = Orientation.Horizontal, .Margin = New Thickness(0, 0, 0, 5)}
             Dim descriptionLabel As New TextBlock() With {.Text = "Description:", .FontSize = 14, .FontWeight = FontWeights.SemiBold, .Margin = New Thickness(0, 0, 5, 0)}
@@ -69,16 +90,13 @@ Namespace DPC.Components.Forms
             descriptionPanel.Children.Add(descriptionLabelPanel)
             descriptionPanel.Children.Add(descriptionBorder)
 
-            ' Store panels for later removal
             subcategoryPanels.Add(subcategoryPanel)
             subcategoryPanels.Add(descriptionPanel)
 
-            ' Add panels to UI
             MainContent.Children.Add(subcategoryPanel)
             MainContent.Children.Add(descriptionPanel)
         End Sub
 
-        ' Ensure typed text is converted to uppercase while preserving caret position
         Private Sub TxtToUpper_TextChanged(sender As Object, e As Windows.Controls.TextChangedEventArgs)
             Dim tb = TryCast(sender, TextBox)
             If tb Is Nothing Then Return
@@ -98,7 +116,6 @@ Namespace DPC.Components.Forms
 
         Private Sub RemoveCategoryPanel()
             If subcategoryPanels.Count >= 2 Then
-                ' Remove last added panels from UI and list
                 Dim lastDescriptionPanel As StackPanel = subcategoryPanels(subcategoryPanels.Count - 1)
                 Dim lastSubcategoryPanel As StackPanel = subcategoryPanels(subcategoryPanels.Count - 2)
 
@@ -109,7 +126,6 @@ Namespace DPC.Components.Forms
                 subcategoryPanels.RemoveAt(subcategoryPanels.Count - 1)
             End If
         End Sub
-
 
         Private Sub RemoveCategoryTextBoxes()
             If subcategoryNameTextBoxes.Count > 0 Then subcategoryNameTextBoxes.RemoveAt(subcategoryNameTextBoxes.Count - 1)
@@ -137,7 +153,6 @@ Namespace DPC.Components.Forms
             End If
         End Sub
 
-
         Private Sub InsertBtn(sender As Object, e As RoutedEventArgs)
             Dim selectedItem As ComboBoxItem = TryCast(ComboBoxCategory.SelectedItem, ComboBoxItem)
 
@@ -147,7 +162,6 @@ Namespace DPC.Components.Forms
 
             Dim selectedCategoryID As Integer = Convert.ToInt32(selectedItem.Tag)
 
-            ' Fetch existing subcategory names for the selected category
             Dim existingNames As List(Of String) = ProductCategoryController.GetExistingSubcategoryNames(selectedCategoryID)
 
             Dim subcategories As New List(Of Subcategory)()
@@ -158,20 +172,18 @@ Namespace DPC.Components.Forms
 
                 If String.IsNullOrWhiteSpace(subcategoryName) Then Continue For
 
-                ' Check against existing DB entries
                 If existingNames.Contains(subcategoryName) Then
                     duplicatesFound.Add(subcategoryName)
                     Continue For
                 End If
 
                 Dim subcategory As New Subcategory With {
-            .categoryID = selectedCategoryID,
-            .subcategoryName = subcategoryName
-        }
+                    .categoryID = selectedCategoryID,
+                    .subcategoryName = subcategoryName
+                }
                 subcategories.Add(subcategory)
             Next
 
-            ' Block insert if any duplicates were found
             If duplicatesFound.Count > 0 Then
                 MessageBox.Show($"Duplicate detected! ""{String.Join(", ", duplicatesFound)}"" is already registered under this category.")
                 Exit Sub
