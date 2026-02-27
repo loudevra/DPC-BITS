@@ -90,10 +90,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
             Dim pageList = _pageMap(index)
 
-            ' FORCE width and transparent backgrounds to prevent "shrinking" and "white strips"
             Dim dg As New DataGrid With {
+                .MinWidth = 726,
                 .Width = 726,
-                .HorizontalAlignment = HorizontalAlignment.Left,
+                .HorizontalAlignment = HorizontalAlignment.Stretch,
+                .HorizontalContentAlignment = HorizontalAlignment.Stretch,
                 .IsReadOnly = True,
                 .AutoGenerateColumns = False,
                 .HeadersVisibility = DataGridHeadersVisibility.Column,
@@ -105,7 +106,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
             AddColumnsToGrid(dg)
 
-            ' Wrap in a transparent container
             Dim container As New Border With {
                 .Background = Brushes.Transparent,
                 .Width = 726,
@@ -116,7 +116,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
             MainContainer.Children.Add(container)
 
-            ' Synchronize both indicators
             PageIndicatorText.Text = $"Page {index + 1} of {_pageMap.Count}"
             txtPageInfo.Text = $"Page {index + 1} of {_pageMap.Count}"
         End Sub
@@ -162,7 +161,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Function
 
         Private Sub AddColumnsToGrid(dg As DataGrid)
-            ' 1. Header Style (Match your XAML: Black background, White text, Size 9)
             Dim headerStyle As New Style(GetType(System.Windows.Controls.Primitives.DataGridColumnHeader))
             headerStyle.Setters.Add(New Setter(Control.BackgroundProperty, Brushes.Black))
             headerStyle.Setters.Add(New Setter(Control.ForegroundProperty, Brushes.White))
@@ -183,32 +181,30 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             cellStyle.Setters.Add(New Setter(DataGridCell.FocusVisualStyleProperty, Nothing))
             dg.CellStyle = cellStyle
 
-            ' 2. Centered Cell Style (Number & Qty columns - Size 10)
             Dim centeredStyle As New Style(GetType(TextBlock))
             centeredStyle.Setters.Add(New Setter(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center))
             centeredStyle.Setters.Add(New Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center))
             centeredStyle.Setters.Add(New Setter(TextBlock.FontSizeProperty, 11.0))
 
-            ' --- Column 1: Number (#) ---
             dg.Columns.Add(New DataGridTextColumn With {
                 .Header = "#",
                 .Binding = New Binding("[Number]"),
+                .MinWidth = 60,
                 .Width = 60,
                 .HeaderStyle = headerStyle,
                 .ElementStyle = centeredStyle
             })
 
-            ' --- Column 2: Product Name & Description ---
             Dim colProduct As New DataGridTemplateColumn With {
                 .Header = "Product / Description",
                 .Width = New DataGridLength(2, DataGridLengthUnitType.Star),
+                .MinWidth = 303,
                 .HeaderStyle = headerStyle
             }
 
             Dim factory = New FrameworkElementFactory(GetType(StackPanel))
             factory.SetValue(StackPanel.MarginProperty, New Thickness(5))
 
-            ' Product Name (Size 11, Bold, and Wrapping)
             Dim txtName = New FrameworkElementFactory(GetType(TextBlock))
             txtName.SetBinding(TextBlock.TextProperty, New Binding("[ProductName]"))
             txtName.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold)
@@ -216,7 +212,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             txtName.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap)
             txtName.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center)
 
-            ' Description (Size 9)
             Dim txtDesc = New FrameworkElementFactory(GetType(TextBlock))
             txtDesc.SetBinding(TextBlock.TextProperty, New Binding("[Description]"))
             txtDesc.SetValue(TextBlock.FontSizeProperty, 11.0)
@@ -229,16 +224,15 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             colProduct.CellTemplate = New DataTemplate With {.VisualTree = factory}
             dg.Columns.Add(colProduct)
 
-            ' --- Column 3: Qty (Same size as Number) ---
             dg.Columns.Add(New DataGridTextColumn With {
                 .Header = "Qty",
                 .Binding = New Binding("[Quantity]"),
+                .MinWidth = 60,
                 .Width = 60,
                 .HeaderStyle = headerStyle,
                 .ElementStyle = centeredStyle
             })
 
-            ' --- Column 4: Serial Numbers ---
             Dim serialStyle As New Style(GetType(TextBlock))
             serialStyle.Setters.Add(New Setter(TextBlock.TextWrappingProperty, TextWrapping.Wrap))
             serialStyle.Setters.Add(New Setter(TextBlock.FontSizeProperty, 11.0))
@@ -248,6 +242,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 .Header = "Serial Numbers",
                 .Binding = New Binding("[SerialNumber]"),
                 .Width = New DataGridLength(2, DataGridLengthUnitType.Star),
+                .MinWidth = 303,
                 .HeaderStyle = headerStyle,
                 .ElementStyle = serialStyle
             })
@@ -308,16 +303,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 Try
                     Dim pdf As New PdfDocument()
 
-                    ' Iterate through the pre-calculated pages
                     For i As Integer = 0 To _pageMap.Count - 1
-                        ' 1. Switch the UI to the current page
                         RenderPages(i)
 
-                        ' 2. Force the UI to refresh so the watermark and data are visible
                         Application.Current.Dispatcher.Invoke(Sub() Me.UpdateLayout(), System.Windows.Threading.DispatcherPriority.Render)
-                        System.Threading.Thread.Sleep(100) ' Small delay for rendering
+                        System.Threading.Thread.Sleep(100)
 
-                        ' 3. Create PDF Page (Legal Size: 8.5 x 14 in)
                         Dim page As PdfPage = pdf.AddPage()
                         page.Width = XUnit.FromInch(8.5)
                         page.Height = XUnit.FromInch(14)
@@ -326,7 +317,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     Next
 
                     pdf.Save(dlg.FileName)
-                    RenderPages(0) ' Reset view to first page
+                    RenderPages(0)
                     Return dlg.FileName
                 Catch ex As Exception
                     MessageBox.Show("PDF Error: " & ex.Message)
@@ -363,7 +354,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 Using gfx As XGraphics = XGraphics.FromPdfPage(page)
                     Dim img = XImage.FromStream(ms)
 
-                    ' Draw WITHOUT stretching distortion
                     gfx.DrawImage(img, 0, 0, page.Width.Point, page.Height.Point)
                 End Using
             End Using
@@ -380,16 +370,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     Application.Current.Dispatcher.Invoke(Sub() Me.UpdateLayout(),
                 System.Windows.Threading.DispatcherPriority.Render)
 
-                    ' Legal size in WPF units (96 DPI)
                     Dim pageWidth As Double = 8.5 * 96
                     Dim pageHeight As Double = 14 * 96
 
-                    ' Force exact layout size
                     PrintAreaBorder.Measure(New Size(pageWidth, pageHeight))
                     PrintAreaBorder.Arrange(New Rect(0, 0, pageWidth, pageHeight))
                     PrintAreaBorder.UpdateLayout()
 
-                    ' Scale to printable area
                     Dim scaleX As Double = dlg.PrintableAreaWidth / pageWidth
                     Dim scaleY As Double = dlg.PrintableAreaHeight / pageHeight
                     Dim scale As Double = Math.Min(scaleX, scaleY)
@@ -399,7 +386,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
                     dlg.PrintVisual(PrintAreaBorder, $"{docName} - Page {i + 1}")
 
-                    ' Remove transform after printing page
                     PrintAreaBorder.LayoutTransform = Nothing
                 Next
 
@@ -408,11 +394,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Sub
 
         Private Sub SaveToDb()
-            ' 1. Serialize the list of product dictionaries from your Module
             Dim json As String = Newtonsoft.Json.JsonConvert.SerializeObject(DeliveryDetails.DRDeliveryItems)
 
-            ' 2. Call your Controller with the specific fields from DeliveryDetails
-            ' Ensure your DeliveryReceiptController exists and has this method signature
             If DeliveryReceiptController.InsertDeliveryReceipt(
                 DeliveryDetails.DRNumber,
                 DeliveryDetails.DRReferenceInvoice,
@@ -428,10 +411,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
                 MessageBox.Show("Delivery Receipt successfully saved to database.", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
 
-                ' 3. Clear the global module cache to prevent data bleed into the next order
                 DeliveryDetails.ClearDeliveryDetails()
 
-                ' 4. Navigate to the requested path
                 ' ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
             Else
                 MessageBox.Show("Failed to submit Delivery Receipt to the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
@@ -440,10 +421,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
         Private Shared Function SavePdfPathToMongoDB(path As String, drNum As String, user As String) As Boolean
             Try
-                ' Initialize GridFS connection
                 Dim fs As MongoDB.Driver.GridFS.GridFSBucket = SplashScreen.GetGridFSConnection()
 
-                ' Filter for the specific Delivery Number to replace old versions
                 Dim filter = MongoDB.Driver.Builders(Of MongoDB.Driver.GridFS.GridFSFileInfo).Filter.Eq(Of String)("metadata.deliveryNumber", drNum)
                 Dim existingFiles = fs.Find(filter).ToList()
 
@@ -451,7 +430,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     fs.Delete(file.Id)
                 Next
 
-                ' Upload the PDF file stream
                 Using s As New FileStream(path, FileMode.Open, FileAccess.Read)
                     Dim opts As New MongoDB.Driver.GridFS.GridFSUploadOptions() With {
                 .Metadata = New MongoDB.Bson.BsonDocument From {
