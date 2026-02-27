@@ -1,4 +1,5 @@
-﻿Imports DPC.DPC.Data.Controllers
+﻿'AddCategory.xaml.vb
+Imports DPC.DPC.Data.Controllers
 Imports MySql.Data.MySqlClient
 Imports DPC.DPC.Data.Models
 Imports System.Windows.Controls.Primitives

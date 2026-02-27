@@ -9,8 +9,6 @@ Namespace DPC.Components.Forms
     Public Class AddBrand
         Public Event BrandAdded()
         Private ProductController As New ProductController()
-        Private popupAddCategory As Popup
-        Private popupAddSubCategory As Popup
         Private categoryItems As New List(Of ComboBoxItem)()
         Private subcategoryItems As New List(Of ComboBoxItem)()
 
@@ -30,6 +28,17 @@ Namespace DPC.Components.Forms
             AddHandler CmbCategory.PreviewTextInput, AddressOf CmbCategory_Filter
             AddHandler CmbSubCategory.PreviewTextInput, AddressOf CmbSubCategory_Filter
         End Sub
+
+        ' Walks up the logical tree to find the Popup hosting this AddBrand form
+        Private Function FindParentPopup() As Popup
+            Dim current As DependencyObject = Me
+            While current IsNot Nothing
+                Dim p = TryCast(current, Popup)
+                If p IsNot Nothing Then Return p
+                current = LogicalTreeHelper.GetParent(current)
+            End While
+            Return Nothing
+        End Function
 
         Private Sub SnapshotCategoryItems()
             categoryItems.Clear()
@@ -122,64 +131,65 @@ Namespace DPC.Components.Forms
         End Sub
 
         Private Sub BtnAddCategory_Click(sender As Object, e As RoutedEventArgs)
-            If popupAddCategory IsNot Nothing Then
-                popupAddCategory.IsOpen = False
-                popupAddCategory.Child = Nothing
-            End If
-
             Dim addNewCategory As New DPC.Components.Forms.AddCategory()
 
-            popupAddCategory = New Popup With {
-                .Placement = PlacementMode.AbsolutePoint,
-                .StaysOpen = False,
+            Dim win As New Window() With {
+                .Content = addNewCategory,
+                .SizeToContent = SizeToContent.WidthAndHeight,
+                .WindowStyle = WindowStyle.None,
                 .AllowsTransparency = True,
-                .Child = addNewCategory
+                .Background = Brushes.Transparent,
+                .WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                .ResizeMode = ResizeMode.NoResize,
+                .ShowInTaskbar = False,
+                .Topmost = True
             }
 
-            AddHandler popupAddCategory.Opened, Sub()
-                                                    Dim screenWidth As Double = SystemParameters.PrimaryScreenWidth
-                                                    Dim screenHeight As Double = SystemParameters.PrimaryScreenHeight
-                                                    popupAddCategory.HorizontalOffset = (screenWidth / 2) - (addNewCategory.ActualWidth / 2)
-                                                    popupAddCategory.VerticalOffset = (screenHeight / 2) - (addNewCategory.ActualHeight / 2)
-                                                End Sub
+            AddHandler addNewCategory.CategoryAdded, Sub(s As Object, ev As EventArgs)
+                                                         ProductController.GetProductCategory(CmbCategory)
+                                                         SnapshotCategoryItems()
+                                                         win.Close()
+                                                     End Sub
 
-            AddHandler popupAddCategory.Closed, Sub()
-                                                    ProductController.GetProductCategory(CmbCategory)
-                                                    SnapshotCategoryItems()
-                                                End Sub
+            ' Pin the AddBrand popup so it does not close when focus shifts to the new Window
+            Dim parentPopup As Popup = FindParentPopup()
+            If parentPopup IsNot Nothing Then parentPopup.StaysOpen = True
 
-            popupAddCategory.IsOpen = True
+            win.ShowDialog()
+
+            ' Restore normal behavior after the category window is fully closed
+            If parentPopup IsNot Nothing Then parentPopup.StaysOpen = False
         End Sub
 
         Private Sub BtnAddSubcategory_Click(sender As Object, e As RoutedEventArgs)
-            If popupAddSubCategory IsNot Nothing Then
-                popupAddSubCategory.IsOpen = False
-                popupAddSubCategory.Child = Nothing
-            End If
-
             Dim addNewSubCategory As New DPC.Components.Forms.AddSubcategory()
 
-            popupAddSubCategory = New Popup With {
-                .Placement = PlacementMode.AbsolutePoint,
-                .StaysOpen = False,
+            Dim win As New Window() With {
+                .Content = addNewSubCategory,
+                .SizeToContent = SizeToContent.WidthAndHeight,
+                .WindowStyle = WindowStyle.None,
                 .AllowsTransparency = True,
-                .Child = addNewSubCategory
+                .Background = Brushes.Transparent,
+                .WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                .ResizeMode = ResizeMode.NoResize,
+                .ShowInTaskbar = False,
+                .Topmost = True
             }
 
-            AddHandler popupAddSubCategory.Opened, Sub()
-                                                       Dim screenWidth As Double = SystemParameters.PrimaryScreenWidth
-                                                       Dim screenHeight As Double = SystemParameters.PrimaryScreenHeight
-                                                       popupAddSubCategory.HorizontalOffset = (screenWidth / 2) - (addNewSubCategory.ActualWidth / 2)
-                                                       popupAddSubCategory.VerticalOffset = (screenHeight / 2) - (addNewSubCategory.ActualHeight / 2)
-                                                   End Sub
+            AddHandler win.Closed, Sub(s As Object, ev As EventArgs)
+                                       Dim selectedCategory As String = TryCast(CmbCategory.SelectedItem, ComboBoxItem)?.Content?.ToString()
+                                       ProductController.GetProductSubcategory(If(selectedCategory, String.Empty), CmbSubCategory, SubCategoryLabel, New StackPanel())
+                                       SnapshotSubcategoryItems()
+                                   End Sub
 
-            AddHandler popupAddSubCategory.Closed, Sub()
-                                                       Dim selectedCategory As String = TryCast(CmbCategory.SelectedItem, ComboBoxItem)?.Content?.ToString()
-                                                       ProductController.GetProductSubcategory(If(selectedCategory, String.Empty), CmbSubCategory, SubCategoryLabel, New StackPanel())
-                                                       SnapshotSubcategoryItems()
-                                                   End Sub
+            ' Pin the AddBrand popup so it does not close when focus shifts to the new Window
+            Dim parentPopup As Popup = FindParentPopup()
+            If parentPopup IsNot Nothing Then parentPopup.StaysOpen = True
 
-            popupAddSubCategory.IsOpen = True
+            win.ShowDialog()
+
+            ' Restore normal behavior after the subcategory window is fully closed
+            If parentPopup IsNot Nothing Then parentPopup.StaysOpen = False
         End Sub
 
     End Class
