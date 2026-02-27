@@ -39,8 +39,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             txtApprovedBy.Text = DeliveryDetails.DRApprovedBy
             txtPaymentTerm.Text = DeliveryDetails.DRPaymentTerm
 
-            LoadTestPlaceholderData()
-            'LoadPage()
+            'LoadTestPlaceholderData()
+            LoadPage()
 
             Dim clientDetails As String
             clientDetails = DeliveryDetails.DRClientDetails
