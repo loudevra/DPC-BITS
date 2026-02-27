@@ -1,554 +1,229 @@
-﻿Imports System.Data
+﻿Imports System.Collections.ObjectModel
+Imports System.Data
 Imports System.Windows.Controls.Primitives
 Imports System.Windows.Threading
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
+Imports DPC.DPC.Data.Models
 Imports MySql.Data.MySqlClient
-Imports System.Collections.ObjectModel
 
 Namespace DPC.Views.Sales.Quotes
     Public Class ManageWalkInClients
-        ' Add SingleCalendar ViewModels for both pickers
+        Inherits UserControl
+
+        ' ViewModels for the custom DatePicker behavior
         Private startDateViewModel As New CalendarController.SingleCalendar()
         Private dueDateViewModel As New CalendarController.SingleCalendar()
         Private _typingTimer As DispatcherTimer
 
         Private _isInitialized As Boolean = False
-        Private _dataTable As DataTable
-        Private _QuoteNumber As String
-        Private _Type As String = "Private"
+        Private _BillingNumber As String
+        Private _Type As String = "Private" ' Default filter for billing
 
         Public Sub New()
             InitializeComponent()
             SetupDatePickers()
 
-            ' Set up the TextChanged event immediately
-            AddHandler SearchText.TextChanged, AddressOf SearchText_TextChanged
-            AddHandler cmbLimit.SelectionChanged, AddressOf ComboBoxLimit_SelectionChanged
-
+            ' Initialize the search delay timer
             _typingTimer = New DispatcherTimer With {
                 .Interval = TimeSpan.FromMilliseconds(250)
             }
-
             AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
 
-            ' Load data after initialization is complete
+            ' Load data when the control is ready
             AddHandler Me.Loaded, AddressOf UserControl_Loaded
         End Sub
 
-
         Private Sub UserControl_Loaded(sender As Object, e As RoutedEventArgs)
             If Not _isInitialized Then
+                ' Wire up events once InitializeComponent is finished
+                AddHandler SearchText.TextChanged, AddressOf SearchText_TextChanged
+                AddHandler cmbLimit.SelectionChanged, AddressOf ComboBoxLimit_SelectionChanged
+
                 LoadData()
                 _isInitialized = True
             End If
         End Sub
 
-        Private Shared Function CalculateValidityDate(validityOption As String, quoteDate As DateTime) As DateTime
-            Try
-                Dim selection = validityOption.Trim().ToLower()
-
-                Select Case selection
-                    Case "48 hours"
-                        Return quoteDate.AddHours(48)
-                    Case "1 week"
-                        Return quoteDate.AddDays(7)
-                    Case "2 weeks"
-                        Return quoteDate.AddDays(14)
-                    Case "3 weeks"
-                        Return quoteDate.AddDays(21)
-                    Case "1 month"
-                        Return quoteDate.AddMonths(1)
-                    Case "2 months"
-                        Return quoteDate.AddMonths(2)
-                    Case "6 months"
-                        Return quoteDate.AddMonths(6)
-                    Case "1 year"
-                        Return quoteDate.AddYears(1)
-                    Case Else
-                        ' Default to 48 hours if unknown
-                        Return quoteDate.AddHours(48)
-                End Select
-
-            Catch ex As Exception
-                Debug.WriteLine($"Error calculating validity date: {ex.Message}")
-                Return quoteDate.AddHours(48)
-            End Try
-        End Function
-
-        ''' Loads all quotes from the database
+        ''' <summary>
+        ''' Loads billing data into the DataGrid based on the selected limit
+        ''' </summary>
         Public Sub LoadData()
             Try
-                Dim limit As Integer = Convert.ToInt32(cmbLimit.Text)
-                Dim quotes = QuotesController.GetQuotes(limit, _Type)
+                ' Extract limit from ComboBoxItem
+                Dim limit As Integer = 10
+                If cmbLimit.SelectedItem IsNot Nothing Then
+                    limit = Convert.ToInt32(CType(cmbLimit.SelectedItem, ComboBoxItem).Content)
+                End If
 
-                ' Format quotes for display
-                FormatQuotesForDisplay(quotes)
+                ' Call the BillingController to fetch records
+                Dim statements = BillingController.GetBillingStatements(limit, _Type)
 
-                dataGrid.ItemsSource = quotes
+                FormatStatementsForDisplay(statements)
+                dataGrid.ItemsSource = statements
             Catch ex As Exception
-                MessageBox.Show($"Error loading data: {ex.Message}")
+                MessageBox.Show($"Error loading billing data: {ex.Message}")
             End Try
         End Sub
 
+        ''' <summary>
+        ''' Formats the model dates into user-friendly strings for the UI
+        ''' </summary>
+        Private Shared Sub FormatStatementsForDisplay(statements As ObservableCollection(Of BillingModel))
+            Try
+                For Each stmt In statements
+                    ' Format Billing Date
+                    If Not String.IsNullOrEmpty(stmt.BillingDate) AndAlso stmt.BillingDate <> "-" Then
+                        Dim dt As DateTime
+                        If DateTime.TryParse(stmt.BillingDate, dt) Then
+                            stmt.BillingDate = dt.ToString("MMM d, yyyy")
+                        End If
+                    End If
 
-        ''' Handles combo box selection change for display limit
-        Private Sub ComboBoxLimit_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
-            If Not _isInitialized Then Return
-            LoadData()
+                    ' Format DateAdded if used in columns
+                    ' stmt.DateAdded is handled by the model
+                Next
+            Catch ex As Exception
+                Debug.WriteLine($"Error formatting: {ex.Message}")
+            End Try
         End Sub
 
-        Private Sub OpenEditQuote(sender As Object, e As RoutedEventArgs)
-            Dim quote As QuotesModel = TryCast(dataGrid.SelectedItem, QuotesModel)
+        ''' <summary>
+        ''' Logic for the "Edit" button inside the DataGrid rows
+        ''' </summary>
+        Private Sub OpenEditStatement(sender As Object, e As RoutedEventArgs)
+            Dim statement As BillingModel = TryCast(dataGrid.SelectedItem, BillingModel)
 
-            If quote IsNot Nothing Then
-                Dim cacheModule = GetCacheModule()
-                ' Store the quote data in cache
-                cacheModule.QuoteNumber = quote.QuoteNumber
-                cacheModule.ClientID = quote.ClientID
-                cacheModule.ClientName = quote.ClientName
-                cacheModule.WarehouseID = quote.WarehouseID
-                cacheModule.WarehouseName = quote.WarehouseName
-                cacheModule.QuoteDate = quote.QuoteDate
-                cacheModule.Validity = quote.Validity
-                cacheModule.QuoteNote = quote.QuoteNote
-                cacheModule.OrderItems = quote.OrderItems
+            If statement IsNot Nothing Then
+                Dim cache = GetCacheModule()
+                ' Assign billing-specific fields to cache
+                cache.BillingNumber = statement.BillingNumber
+                cache.ClientID = statement.ClientID
+                cache.BillingDate = statement.BillingDate
+                cache.OrderItems = statement.OrderItems
+                ' Add other fields as necessary...
 
-                CostEstimateDetails.CEGovCETitle = "Edit Cost Estimate"
-                CostEstimateDetails.CEGovCEButton = "Update Cost Estimate"
+                ' Set global details for the billing form view
+                BillingDetails.HeaderTitle = "Edit Billing Statement"
+                BillingDetails.SubmitButtonText = "Update Statement"
 
-                ' Navigate to EditQuote
-                ViewLoader.DynamicView.NavigateToView("salesquotegovernment", Me)
-
+                ViewLoader.DynamicView.NavigateToView("billingform", Me)
             End If
         End Sub
 
-        ''' Helper function to get or create cache module
-        Private Function GetCacheModule() As QuotesModel
-            If Not Application.Current.Properties.Contains("QuoteCache") Then
-                Application.Current.Properties("QuoteCache") = New QuotesModel()
-            Else
-                If Not (TypeOf Application.Current.Properties("QuoteCache") Is QuotesModel) Then
-                    Application.Current.Properties("QuoteCache") = New QuotesModel()
-                End If
-            End If
+        ''' <summary>
+        ''' Logic for the "Delete" button inside the DataGrid rows
+        ''' </summary>
+        Private Sub DeleteStatement(sender As Object, e As RoutedEventArgs)
+            Dim statement As BillingModel = TryCast(dataGrid.SelectedItem, BillingModel)
+            If statement Is Nothing Then Return
 
-            Return DirectCast(Application.Current.Properties("QuoteCache"), QuotesModel)
-        End Function
-
-
-        Private Sub DeleteQuote(sender As Object, e As RoutedEventArgs)
-            Dim quote As QuotesModel = TryCast(dataGrid.SelectedItem, QuotesModel)
-
-            If quote Is Nothing Then
-                MessageBox.Show("Please select a Quote to delete.", "No Selection", MessageBoxButton.OK, MessageBoxImage.Warning)
-                Exit Sub
-            End If
-
-            _QuoteNumber = quote.QuoteNumber
-
-            ' Show confirmation dialog
-            Dim result = MessageBox.Show("Are you sure you want to delete this quote?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Question)
+            Dim result = MessageBox.Show($"Are you sure you want to delete Billing Statement {statement.BillingNumber}?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning)
 
             If result = MessageBoxResult.Yes Then
-                DeleteQuoteConfirmation_Closed()
-            End If
-        End Sub
-
-
-        Private Sub DeleteQuoteConfirmation_Closed()
-            Dim query As String = "DELETE FROM quotes WHERE QuoteNumber = @quoteNumber"
-            Dim connStr As String = SplashScreen.GetDatabaseConnection().ConnectionString
-            Try
-                Using conn As New MySqlConnection(connStr)
-                    conn.Open()
-                    Using cmd As New MySqlCommand(query, conn)
-                        cmd.Parameters.AddWithValue("@quoteNumber", _QuoteNumber)
-                        cmd.ExecuteNonQuery()
+                Try
+                    ' You can move this query to BillingController for better structure
+                    Dim query As String = "DELETE FROM walkinbilling WHERE billingNumber = @billingNumber"
+                    Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                        conn.Open()
+                        Using cmd As New MySqlCommand(query, conn)
+                            cmd.Parameters.AddWithValue("@billingNumber", statement.BillingNumber)
+                            cmd.ExecuteNonQuery()
+                        End Using
                     End Using
-                End Using
 
-                MessageBox.Show("Quote deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
-                dataGrid.ItemsSource = Nothing
-                LoadData()
-            Catch ex As Exception
-                MessageBox.Show("Error deleting quote: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
-            End Try
-        End Sub
-
-
-        ''' Performs the search based on current search text
-        Private Sub PerformSearch()
-            Try
-                Dim searchTextValue As String = SearchText.Text.Trim()
-                Dim limit As Integer = Convert.ToInt32(cmbLimit.Text)
-
-                Dim quotes As ObservableCollection(Of QuotesModel)
-
-                If String.IsNullOrWhiteSpace(searchTextValue) Then
-                    quotes = QuotesController.GetQuotes(limit, _Type)
-                Else
-                    quotes = QuotesController.SearchQuotes(searchTextValue, limit, _Type)
-                End If
-
-                ' Format quotes for display
-                FormatQuotesForDisplay(quotes)
-
-                dataGrid.ItemsSource = quotes
-
-            Catch ex As Exception
-                MessageBox.Show($"Error searching: {ex.Message}")
-            End Try
-        End Sub
-
-        ''' Updates the warehouse information in the database for an existing quote
-        Public Shared Function UpdateQuoteWarehouse(quoteNumber As String, warehouseID As Integer, warehouseName As String) As Boolean
-            Try
-                Dim query As String = "UPDATE quotes SET WarehouseID = @warehouseID, WarehouseName = @warehouseName, UpdatedAt = @updatedAt WHERE QuoteNumber = @quoteNumber"
-                Dim connStr As String = SplashScreen.GetDatabaseConnection().ConnectionString
-                Using conn As New MySqlConnection(connStr)
-                    conn.Open()
-                    Using cmd As New MySqlCommand(query, conn)
-                        cmd.Parameters.AddWithValue("@warehouseID", warehouseID)
-                        cmd.Parameters.AddWithValue("@warehouseName", warehouseName)
-                        cmd.Parameters.AddWithValue("@updatedAt", DateTime.Now)
-                        cmd.Parameters.AddWithValue("@quoteNumber", quoteNumber)
-                        Dim rowsAffected As Integer = cmd.ExecuteNonQuery()
-                        If rowsAffected > 0 Then
-                            MessageBox.Show("Warehouse updated successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
-                            Return True
-                        Else
-                            MessageBox.Show("Quote not found or warehouse not updated.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning)
-                            Return False
-                        End If
-                    End Using
-                End Using
-
-            Catch ex As MySqlException
-                MessageBox.Show("Database error: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
-                Debug.WriteLine("Database error in UpdateQuoteWarehouse: " & ex.Message)
-                Return False
-
-            Catch ex As Exception
-                MessageBox.Show("Error updating warehouse: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
-                Debug.WriteLine("Error in UpdateQuoteWarehouse: " & ex.Message)
-                Return False
-            End Try
-        End Function
-
-
-        ''' Alternative: Updates warehouse and other quote details together
-        Public Shared Function UpdateQuoteWithWarehouse(quoteNumber As String, warehouseID As Integer, warehouseName As String,
-                                                clientID As String, totalTax As Decimal, totalDiscount As Decimal,
-                                                totalAmount As Decimal) As Boolean
-            Try
-                Dim query As String = "UPDATE quotes SET WarehouseID = @warehouseID, WarehouseName = @warehouseName, " &
-                             "ClientID = @clientID, TotalTax = @totalTax, TotalDiscount = @totalDiscount, " &
-                             "TotalAmount = @totalAmount, UpdatedAt = @updatedAt WHERE QuoteNumber = @quoteNumber"
-
-                Dim connStr As String = SplashScreen.GetDatabaseConnection().ConnectionString
-                Using conn As New MySqlConnection(connStr)
-                    conn.Open()
-                    Using cmd As New MySqlCommand(query, conn)
-                        cmd.Parameters.AddWithValue("@warehouseID", warehouseID)
-                        cmd.Parameters.AddWithValue("@warehouseName", warehouseName)
-                        cmd.Parameters.AddWithValue("@clientID", clientID)
-                        cmd.Parameters.AddWithValue("@totalTax", totalTax)
-                        cmd.Parameters.AddWithValue("@totalDiscount", totalDiscount)
-                        cmd.Parameters.AddWithValue("@totalAmount", totalAmount)
-                        cmd.Parameters.AddWithValue("@updatedAt", DateTime.Now)
-                        cmd.Parameters.AddWithValue("@quoteNumber", quoteNumber)
-                        Dim rowsAffected As Integer = cmd.ExecuteNonQuery()
-                        Return rowsAffected > 0
-                    End Using
-                End Using
-
-            Catch ex As Exception
-                Debug.WriteLine("Error in UpdateQuoteWithWarehouse: " & ex.Message)
-                Return False
-            End Try
-        End Function
-
-
-        ''' Refreshes the data when returning to this view
-        Public Sub RefreshData()
-            LoadData()
-        End Sub
-
-        Private Sub GetDataFromDB()
-            If String.IsNullOrWhiteSpace(SearchText.Text) Then
-                dataGrid.ItemsSource = Nothing
-                dataGrid.ItemsSource = QuotesController.GetQuotes(CInt(cmbLimit.Text), _Type)
-            Else
-                dataGrid.ItemsSource = Nothing
-                dataGrid.ItemsSource = QuotesController.SearchQuotes(SearchText.Text, CInt(cmbLimit.Text), _Type)
+                    MessageBox.Show("Statement deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                    LoadData()
+                Catch ex As Exception
+                    MessageBox.Show("Error deleting: " & ex.Message)
+                End Try
             End If
         End Sub
 
-        Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
-            ' Check if DataGrid has data
-            If dataGrid.Items.Count = 0 Then
-                MessageBox.Show("No data to export!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning)
-                Exit Sub
-            End If
-
-            ' Use the ExcelExporter helper with column exclusions
-            ExcelExporter.ExportDataGridToExcel(dataGrid, "QuotesExport", "Quotes List")
-
-        End Sub
-
-        ' Setup bindings between DatePickers, Buttons, and ViewModels
-        Public Sub SetupDatePickers()
-            startDateViewModel.SelectedDate = Nothing
-            dueDateViewModel.SelectedDate = Nothing
-
-            StartDatePicker.DataContext = startDateViewModel
-            StartDateButton.DataContext = startDateViewModel
-
-            DueDatePicker.DataContext = dueDateViewModel
-            DueDateButton.DataContext = dueDateViewModel
-        End Sub
-
-        ' Trigger dropdown open
-        Private Sub StartDateButton_Click(sender As Object, e As RoutedEventArgs) Handles StartDateButton.Click
-            StartDatePicker.IsDropDownOpen = True
-        End Sub
-
-        Private Sub DueDateButton_Click(sender As Object, e As RoutedEventArgs) Handles DueDateButton.Click
-            DueDatePicker.IsDropDownOpen = True
-        End Sub
-
-        Private Sub DataGrid_CellClick(sender As Object, e As MouseButtonEventArgs)
-            Dim depObj As DependencyObject = TryCast(e.OriginalSource, DependencyObject)
-
-            Dim cell = TryCast(depObj, TextBlock)
-
-            If TypeOf cell Is TextBlock Then
-                ' Show popup near the clicked cell
-                PopupText.Text = cell.Text
-                CellValuePopup.PlacementTarget = sender
-                CellValuePopup.IsOpen = True
-            End If
-
-        End Sub
-
-
-        ' Handle selected date change
-        Private Sub StartDatePicker_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs) Handles StartDatePicker.SelectedDateChanged
-            Dim dp = TryCast(sender, DatePicker)
-            If dp IsNot Nothing AndAlso dp.DataContext IsNot Nothing Then
-                Dim vm = TryCast(dp.DataContext, CalendarController.SingleCalendar)
-                If vm IsNot Nothing Then
-                    vm.SelectedDate = dp.SelectedDate
-                    BindingOperations.GetBindingExpression(StartDateButton, Button.DataContextProperty)?.UpdateTarget()
-                End If
-            End If
-        End Sub
-
-        Private Sub DueDatePicker_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs) Handles DueDatePicker.SelectedDateChanged
-            Dim dp = TryCast(sender, DatePicker)
-            If dp IsNot Nothing AndAlso dp.DataContext IsNot Nothing Then
-                Dim vm = TryCast(dp.DataContext, CalendarController.SingleCalendar)
-                If vm IsNot Nothing Then
-                    vm.SelectedDate = dp.SelectedDate
-                    BindingOperations.GetBindingExpression(DueDateButton, Button.DataContextProperty)?.UpdateTarget()
-                End If
-            End If
-        End Sub
-        Friend Sub ShowPopup(parent As UIElement, sender As Object)
-            ' Ensure sender is a Button
-            Dim button As Button = TryCast(sender, Button)
-            If button Is Nothing Then
-                Return
-            End If
-
-            ' Get the window containing the button
-            Dim window As Window = Window.GetWindow(button)
-            If window Is Nothing Then
-                Return
-            End If
-
-            ' Get sidebar width - determine if sidebar is expanded or collapsed
-            Dim sidebarWidth As Double = 0
-
-            ' Get parent sidebar if available
-            Dim parentControl = TryCast(button.Parent, FrameworkElement)
-            While parentControl IsNot Nothing
-                If TypeOf parentControl Is StackPanel AndAlso parentControl.Name = "SidebarMenu" Then
-                    ' Found the sidebar menu container, get its parent (likely the sidebar)
-                    Dim sidebarContainer = TryCast(parentControl.Parent, FrameworkElement)
-                    If sidebarContainer IsNot Nothing Then
-                        sidebarWidth = sidebarContainer.ActualWidth
-                        Exit While
-                    End If
-                ElseIf TypeOf parentControl.Parent Is DPC.Components.Navigation.Sidebar Then
-                    ' Direct parent is sidebar
-                    sidebarWidth = CType(parentControl.Parent, FrameworkElement).ActualWidth
-                    Exit While
-                End If
-                parentControl = TryCast(parentControl.Parent, FrameworkElement)
-            End While
-
-            ' If we couldn't find sidebar, use a default value
-            If sidebarWidth = 0 Then
-                ' Default to expanded sidebar width
-                sidebarWidth = 260
-            End If
-
-            ' Create the popup with proper positioning
-            Dim popup As New Popup With {
-    .Child = Me,
-    .StaysOpen = False,
-    .Placement = PlacementMode.Relative,
-    .PlacementTarget = button,
-    .IsOpen = True,
-    .AllowsTransparency = True
-}
-
-            ' Calculate optimal position based on sidebar width
-            If sidebarWidth <= 80 Then
-                ' Sidebar is collapsed - position menu farther right
-                popup.HorizontalOffset = 60
-                popup.VerticalOffset = -button.ActualHeight * 3 ' Align with button
-            Else
-                ' Sidebar is expanded - position menu immediately to the right
-                popup.HorizontalOffset = sidebarWidth - button.Margin.Left
-                popup.VerticalOffset = -button.ActualHeight * 3 ' Align with button
-            End If
-
-            ' Store references to event handlers so we can remove them later
-            Dim locationChangedHandler As EventHandler = Nothing
-            Dim sizeChangedHandler As SizeChangedEventHandler = Nothing
-
-            ' Define event handlers
-            locationChangedHandler = Sub(s, e)
-                                         If popup.IsOpen Then
-                                             ' Recalculate position when window moves
-                                             popup.HorizontalOffset = popup.HorizontalOffset
-                                             popup.VerticalOffset = popup.VerticalOffset
-                                         End If
-                                     End Sub
-
-            sizeChangedHandler = Sub(s, e)
-                                     If popup.IsOpen Then
-                                         ' Recalculate position when window resizes
-                                         popup.HorizontalOffset = popup.HorizontalOffset
-                                         popup.VerticalOffset = popup.VerticalOffset
-                                     End If
-                                 End Sub
-
-            ' Add event handlers
-            AddHandler window.LocationChanged, locationChangedHandler
-            AddHandler window.SizeChanged, sizeChangedHandler
-
-            ' Handle popup closed to cleanup event handlers
-            AddHandler popup.Closed, Sub(s, e)
-                                         RemoveHandler window.LocationChanged, locationChangedHandler
-                                         RemoveHandler window.SizeChanged, sizeChangedHandler
-                                     End Sub
-        End Sub
-
-        Private Sub NavigateToGovernmentQuotes(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("salesquotegovernment", Me)
-        End Sub
-
+        ' Search Logic with Typing Delay
         Private Sub SearchText_TextChanged(sender As Object, e As TextChangedEventArgs)
-            ' Reset the timer
             _typingTimer.Stop()
-
-            ' Start the timer
             _typingTimer.Start()
         End Sub
 
         Private Sub OnTypingTimerTick(sender As Object, e As EventArgs)
-            ' Stop the timer
             _typingTimer.Stop()
-
             PerformSearch()
         End Sub
 
-        Private Sub dataGrid_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles dataGrid.SelectionChanged
-        End Sub
-
-        Private Sub cmbLimit_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles cmbLimit.SelectionChanged
-        End Sub
-
-        Private Shared Function GetValidityDate(validitySelection As String, baseDate As DateTime) As String
+        Private Sub PerformSearch()
             Try
-                ' Remove extra spaces and convert to lowercase for comparison
-                Dim selection = validitySelection.Trim().ToLower()
-
-                ' If it's already a date in format "yyyy-MM-dd", convert to display format
-                Dim validityDate As DateTime
-                If DateTime.TryParse(selection, validityDate) Then
-                    Return validityDate.ToString("MMM d, yyyy")
+                Dim limit As Integer = 10
+                If cmbLimit.SelectedItem IsNot Nothing Then
+                    limit = Convert.ToInt32(CType(cmbLimit.SelectedItem, ComboBoxItem).Content)
                 End If
 
-                ' Calculate from base date based on ComboBox items
-                Select Case selection
-                    Case "48 hours"
-                        validityDate = baseDate.AddHours(48)
-                    Case "1 week"
-                        validityDate = baseDate.AddDays(7)
-                    Case "2 weeks"
-                        validityDate = baseDate.AddDays(14)
-                    Case "3 weeks"
-                        validityDate = baseDate.AddDays(21)
-                    Case "1 month"
-                        validityDate = baseDate.AddMonths(1)
-                    Case "2 months"
-                        validityDate = baseDate.AddMonths(2)
-                    Case "6 months"
-                        validityDate = baseDate.AddMonths(6)
-                    Case "1 year"
-                        validityDate = baseDate.AddYears(1)
-                End Select
-
-                ' Return in display format: MMM d, yyyy
-                Return validityDate.ToString("MMM d, yyyy")
-
+                Dim results = BillingController.SearchBillingStatements(SearchText.Text.Trim(), limit, _Type)
+                FormatStatementsForDisplay(results)
+                dataGrid.ItemsSource = results
             Catch ex As Exception
-                Debug.WriteLine($"Error calculating validity date: {ex.Message}")
-                Return baseDate.AddHours(0).ToString("MMM d, yyyy")
-            End Try
-        End Function
-
-        ''' <summary>
-        ''' Formats the quote data before displaying in DataGrid
-        ''' Converts all validity dates from database format to display format
-        ''' </summary>
-        Private Shared Sub FormatQuotesForDisplay(quotes As ObservableCollection(Of QuotesModel))
-            Try
-                For Each quote In quotes
-                    ' Parse QuoteDate from database format (yyyy-MM-dd)
-                    Dim quoteDateValue As DateTime = DateTime.Now
-                    If Not String.IsNullOrEmpty(quote.QuoteDate) AndAlso quote.QuoteDate <> "-" Then
-                        If DateTime.TryParse(quote.QuoteDate, quoteDateValue) Then
-                            ' Keep quoteDate as-is in display format
-                            quote.QuoteDate = quoteDateValue.ToString("MMM d, yyyy")
-                        End If
-                    End If
-
-                    ' Calculate and display validity date based on validity option
-                    If Not String.IsNullOrEmpty(quote.Validity) AndAlso quote.Validity <> "-" Then
-                        ' Check if Validity is an option (like "6 months") or already a date
-                        Dim validityDate As DateTime
-
-                        ' Try to parse as date first
-                        If DateTime.TryParse(quote.Validity, validityDate) Then
-                            ' It's stored as a date in database - just format for display
-                            quote.Validity = validityDate.ToString("MMM d, yyyy")
-                        Else
-                            ' It's stored as an option (like "6 months") - calculate the date
-                            validityDate = CalculateValidityDate(quote.Validity, quoteDateValue)
-                            quote.Validity = validityDate.ToString("MMM d, yyyy")
-                        End If
-                    End If
-                Next
-            Catch ex As Exception
-                Debug.WriteLine($"Error formatting quotes: {ex.Message}")
+                Debug.WriteLine("Search error: " & ex.Message)
             End Try
         End Sub
+
+        ' XAML Bound Event: Cell Click Popup
+        Private Sub DataGrid_CellClick(sender As Object, e As MouseButtonEventArgs)
+            Dim depObj As DependencyObject = TryCast(e.OriginalSource, DependencyObject)
+            Dim cell = TryCast(depObj, TextBlock)
+
+            If cell IsNot Nothing Then
+                PopupText.Text = cell.Text
+                CellValuePopup.PlacementTarget = TryCast(sender, UIElement)
+                CellValuePopup.IsOpen = True
+            End If
+        End Sub
+
+        ' DatePicker Handlers
+        Private Sub StartDateButton_Click(sender As Object, e As RoutedEventArgs)
+            StartDatePicker.IsDropDownOpen = True
+        End Sub
+
+        Private Sub DueDateButton_Click(sender As Object, e As RoutedEventArgs)
+            DueDatePicker.IsDropDownOpen = True
+        End Sub
+
+        Private Sub StartDatePicker_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs)
+            startDateViewModel.SelectedDate = StartDatePicker.SelectedDate
+        End Sub
+
+        Private Sub DueDatePicker_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs)
+            dueDateViewModel.SelectedDate = DueDatePicker.SelectedDate
+        End Sub
+
+        ' Excel Export
+        Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
+            If dataGrid.Items.Count > 0 Then
+                ExcelExporter.ExportDataGridToExcel(dataGrid, "Billing_Statements", "Billing Statement Report")
+            End If
+        End Sub
+
+        Private Sub NavigateToGovernmentQuotes(sender As Object, e As RoutedEventArgs)
+            ' Redirect to your Add Billing View
+            ViewLoader.DynamicView.NavigateToView("billingform", Me)
+        End Sub
+
+        Private Sub ComboBoxLimit_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+            If _isInitialized Then LoadData()
+        End Sub
+
+        Public Sub SetupDatePickers()
+            StartDatePicker.DataContext = startDateViewModel
+            StartDateButton.DataContext = startDateViewModel
+            DueDatePicker.DataContext = dueDateViewModel
+            DueDateButton.DataContext = dueDateViewModel
+        End Sub
+
+        Private Function GetCacheModule() As BillingModel
+            If Not Application.Current.Properties.Contains("BillingCache") Then
+                Application.Current.Properties("BillingCache") = New BillingModel()
+            End If
+            Return DirectCast(Application.Current.Properties("BillingCache"), BillingModel)
+        End Function
     End Class
 End Namespace
