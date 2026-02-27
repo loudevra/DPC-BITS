@@ -272,15 +272,15 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
                 If res = MessageBoxResult.Cancel Then Return
 
-                Dim path As String = SaveAsPDF(docName)
 
                 If res = MessageBoxResult.Yes Then
+                    Dim path As String = SaveAsPDF(docName)
                     If Not SavePdfPathToMongoDB(path, docName, CacheOnLoggedInName) Then Exit Sub
                     SaveToDb()
                 ElseIf res = MessageBoxResult.No Then
                     PrintPhysically(docName)
-                    If Not SavePdfPathToMongoDB(path, docName, CacheOnLoggedInName) Then Exit Sub
-                    SaveToDb()
+                    'If Not SavePdfPathToMongoDB(path, docName, CacheOnLoggedInName) Then Exit Sub
+                    'SaveToDb()
                 End If
             Catch ex As Exception
                 MessageBox.Show("Print Error: " & ex.Message)
@@ -364,33 +364,56 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             Dim dlg As New PrintDialog()
 
             If dlg.ShowDialog() = True Then
+                Try
+                    Dim fixedDoc As New FixedDocument()
+                    Dim legalWidth As Double = 8.5 * 96
+                    Dim legalHeight As Double = 14 * 96
 
-                For i As Integer = 0 To _pageMap.Count - 1
+                    For i As Integer = 0 To _pageMap.Count - 1
+                        RenderPages(i)
+                        Application.Current.Dispatcher.Invoke(Sub() Me.UpdateLayout(), System.Windows.Threading.DispatcherPriority.Render)
 
-                    RenderPages(i)
-                    Application.Current.Dispatcher.Invoke(Sub() Me.UpdateLayout(),
-                System.Windows.Threading.DispatcherPriority.Render)
+                        Dim rtb As New RenderTargetBitmap(CInt(legalWidth), CInt(legalHeight), 96, 96, PixelFormats.Pbgra32)
 
-                    Dim pageWidth As Double = 8.5 * 96
-                    Dim pageHeight As Double = 14 * 96
+                        Dim dv As New DrawingVisual()
+                        Using ctx = dv.RenderOpen()
+                            Dim vb As New VisualBrush(PrintAreaBorder)
+                            ctx.DrawRectangle(vb, Nothing, New Rect(0, 0, legalWidth, legalHeight))
+                        End Using
 
-                    PrintAreaBorder.Measure(New Size(pageWidth, pageHeight))
-                    PrintAreaBorder.Arrange(New Rect(0, 0, pageWidth, pageHeight))
-                    PrintAreaBorder.UpdateLayout()
+                        rtb.Render(dv)
+                        rtb.Freeze()
 
-                    Dim scaleX As Double = dlg.PrintableAreaWidth / pageWidth
-                    Dim scaleY As Double = dlg.PrintableAreaHeight / pageHeight
-                    Dim scale As Double = Math.Min(scaleX, scaleY)
+                        Dim imageBrush As New ImageBrush(rtb)
+                        Dim visualRect As New System.Windows.Shapes.Rectangle() With {
+                            .Width = legalWidth,
+                            .Height = legalHeight,
+                            .Fill = imageBrush
+                        }
 
-                    Dim transform As New ScaleTransform(scale, scale)
-                    PrintAreaBorder.LayoutTransform = transform
+                        Dim fp As New FixedPage() With {
+                            .Width = legalWidth,
+                            .Height = legalHeight
+                        }
+                        fp.Children.Add(visualRect)
 
-                    dlg.PrintVisual(PrintAreaBorder, $"{docName} - Page {i + 1}")
+                        fp.Measure(New Size(legalWidth, legalHeight))
+                        fp.Arrange(New Rect(0, 0, legalWidth, legalHeight))
+                        fp.UpdateLayout()
 
-                    PrintAreaBorder.LayoutTransform = Nothing
-                Next
+                        ' 6. Add to document
+                        Dim pc As New PageContent()
+                        CType(pc, System.Windows.Markup.IAddChild).AddChild(fp)
+                        fixedDoc.Pages.Add(pc)
+                    Next
 
-                RenderPages(0)
+                    dlg.PrintDocument(fixedDoc.DocumentPaginator, docName)
+
+                    RenderPages(0)
+
+                Catch ex As Exception
+                    MessageBox.Show("Printing Error: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                End Try
             End If
         End Sub
 
