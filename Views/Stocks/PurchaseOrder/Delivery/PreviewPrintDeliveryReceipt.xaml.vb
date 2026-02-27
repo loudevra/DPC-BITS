@@ -19,8 +19,8 @@ Imports SkiaSharp.Views.WPF
 Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
     Public Class PreviewPrintDeliveryReceipt
         Private itemDataSource As New System.Collections.ObjectModel.ObservableCollection(Of Dictionary(Of String, String))
-        Private _pageMap As New Dictionary(Of Integer, List(Of Integer))
-        Private ReadOnly _maxContainerHeight As Double = 800
+        Private _pageMap As New List(Of List(Of Dictionary(Of String, String)))
+        Private _currentPageIndex As Integer = 0
 
         Public Sub New()
             InitializeComponent()
@@ -39,11 +39,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             txtApprovedBy.Text = DeliveryDetails.DRApprovedBy
             txtPaymentTerm.Text = DeliveryDetails.DRPaymentTerm
 
-            ' Populate the DataGrid with the delivery items
-            Dim deliveryItems As New ObservableCollection(Of Dictionary(Of String, String))(DeliveryDetails.DRDeliveryItems)
-            DeliveryDataGrid.ItemsSource = deliveryItems
-
-            LoadPage()
+            LoadTestPlaceholderData()
+            'LoadPage()
 
             Dim clientDetails As String
             clientDetails = DeliveryDetails.DRClientDetails
@@ -56,200 +53,215 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Sub
 
         Private Sub LoadPage()
-            If DeliveryDetails.DRDeliveryItems Is Nothing Then Return
+            _pageMap.Clear()
 
-            itemDataSource.Clear()
+            Dim maxHeightPerPage As Double = 650
+            Dim currentHeight As Double = 0
+            Dim currentPageItems As New List(Of Dictionary(Of String, String))
 
-            Dim i As Integer = 1
+            _pageMap.Add(currentPageItems)
 
-            For Each item As Dictionary(Of String, String) In DeliveryDetails.DRDeliveryItems
-                Dim displayItem As New Dictionary(Of String, String)(item)
+            For i As Integer = 0 To DeliveryDetails.DRDeliveryItems.Count - 1
+                Dim rawItem = DeliveryDetails.DRDeliveryItems(i)
+                Dim displayItem = CleanItemForDisplay(rawItem, i)
 
-                displayItem("Number") = i.ToString()
-                i += 1
+                Dim rowElement = CreateRowElement(displayItem)
+                rowElement.Measure(New Size(726, Double.PositiveInfinity))
+                Dim rowHeight = rowElement.DesiredSize.Height
 
-                If displayItem.ContainsKey("SerialNumber") Then
-                    Dim rawSerials As String = displayItem("SerialNumber").Trim()
-
-                    If Not String.IsNullOrEmpty(rawSerials) Then
-                        Dim cleanSerials = Regex.Replace(rawSerials, "\(\d+\)\s*", "")
-
-                        cleanSerials = cleanSerials.Replace("-", ChrW(&H2011))
-
-                        displayItem("SerialNumber") = cleanSerials.Replace("  ", ", ").Trim()
-                    Else
-                        displayItem("SerialNumber") = "N/A"
-                    End If
+                If (currentHeight + rowHeight + 10) > maxHeightPerPage AndAlso currentPageItems.Count > 0 Then
+                    currentPageItems = New List(Of Dictionary(Of String, String))
+                    _pageMap.Add(currentPageItems)
+                    currentHeight = 0
                 End If
 
-                If displayItem.ContainsKey("Description") Then
-                    Dim currentDesc As String = displayItem("Description").Trim()
-
-                    If currentDesc = "Enter product description (Optional)" OrElse String.IsNullOrWhiteSpace(currentDesc) Then
-                        displayItem("Description") = "No additional details provided."
-                    End If
-                End If
-
-                itemDataSource.Add(displayItem)
+                currentPageItems.Add(displayItem)
+                currentHeight += rowHeight + 10
             Next
 
-            DeliveryDataGrid.ItemsSource = itemDataSource
+            RenderPages(_currentPageIndex)
         End Sub
 
-        ' FOR TESTING ONLY
-        Public Sub LoadTestPlaceholderData()
-            DeliveryDetails.DRDeliveryItems.Clear()
+        Private Sub RenderPages(index As Integer)
+            If _pageMap.Count = 0 OrElse index < 0 OrElse index >= _pageMap.Count Then Return
 
-            DeliveryDetails.DRDeliveryItems = New List(Of Dictionary(Of String, String))()
+            _currentPageIndex = index
+            MainContainer.Children.Clear()
 
-            Dim item1 As New Dictionary(Of String, String) From {
-                {"Quantity", "1"},
-                {"ProductName", "HIKVISION - 2MP WEATHERPROOF IR IP CAMERA"},
-                {"Description", "High-definition outdoor security camera with night vision."},
-                {"Amount", "1881.60"},
-                {"SerialNumber", "SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831"}
+            Dim pageList = _pageMap(index)
+
+            Dim dg As New DataGrid With {
+                .IsReadOnly = True,
+                .AutoGenerateColumns = False,
+                .HeadersVisibility = DataGridHeadersVisibility.Column,
+                .GridLinesVisibility = DataGridGridLinesVisibility.All,
+                .Background = Brushes.Transparent,
+                .ItemsSource = pageList
             }
 
-            Dim item2 As New Dictionary(Of String, String) From {
-                {"Quantity", "5"},
-                {"ProductName", "AEROCOOL UNITED POWER 500W (80+ WHITE)"},
-                {"Description", "Enter product description (Optional)"},
-                {"Amount", "2035.04"},
-                {"SerialNumber", "N/A"}
+            AddColumnsToGrid(dg)
+
+            ' Create the "Paper" Border
+            Dim pageBorder As New Border With {
+                .Background = Brushes.Transparent,
+                .Width = 726,
+                .MinHeight = 800,
+                .Child = dg,
+                .HorizontalAlignment = HorizontalAlignment.Center
             }
 
-            Dim item3 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
+            MainContainer.Children.Add(pageBorder)
+
+
+            PageIndicatorText.Text = $"Page {index + 1} of {_pageMap.Count}"
+            txtPageInfo.Text = $"Page {index + 1} of {_pageMap.Count}"
+        End Sub
+
+        Private Function CleanItemForDisplay(item As Dictionary(Of String, String), index As Integer) As Dictionary(Of String, String)
+            Dim displayItem As New Dictionary(Of String, String)(item)
+            displayItem("Number") = (index + 1).ToString()
+
+            If displayItem.ContainsKey("SerialNumber") Then
+                Dim raw = displayItem("SerialNumber")
+                Dim clean = Regex.Replace(raw, "\(\d+\)\s*", "").Replace("-", ChrW(&H2011)).Replace("  ", ", ")
+                displayItem("SerialNumber") = clean.Trim()
+            End If
+
+            Return displayItem
+        End Function
+
+        Private Function CreateRowElement(item As Dictionary(Of String, String)) As FrameworkElement
+            Dim rowGrid As New Grid()
+            rowGrid.Width = 726
+
+            rowGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(50)})
+            rowGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(3, GridUnitType.Star)})
+            rowGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
+
+            Dim sp As New StackPanel With {.Margin = New Thickness(5)}
+            sp.Children.Add(New TextBlock With {
+                .Text = item("ProductName"),
+                .FontWeight = FontWeights.SemiBold,
+                .TextWrapping = TextWrapping.Wrap
+            })
+
+            sp.Children.Add(New TextBlock With {
+                .Text = item("SerialNumber"),
+                .TextWrapping = TextWrapping.Wrap,
+                .FontSize = 11
+            })
+
+            Grid.SetColumn(sp, 1)
+            rowGrid.Children.Add(sp)
+
+            Return rowGrid
+        End Function
+
+        Private Sub AddColumnsToGrid(dg As DataGrid)
+            ' 1. Header Style (Match your XAML: Black background, White text, Size 9)
+            Dim headerStyle As New Style(GetType(System.Windows.Controls.Primitives.DataGridColumnHeader))
+            headerStyle.Setters.Add(New Setter(Control.BackgroundProperty, Brushes.Black))
+            headerStyle.Setters.Add(New Setter(Control.ForegroundProperty, Brushes.White))
+            headerStyle.Setters.Add(New Setter(Control.FontSizeProperty, 9.0))
+            headerStyle.Setters.Add(New Setter(Control.PaddingProperty, New Thickness(5)))
+            headerStyle.Setters.Add(New Setter(Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Center))
+            headerStyle.Setters.Add(New Setter(Control.BorderBrushProperty, Brushes.Black))
+            headerStyle.Setters.Add(New Setter(Control.BorderThicknessProperty, New Thickness(0, 0, 1, 0)))
+
+            Dim rowStyle As New Style(GetType(DataGridRow))
+            rowStyle.Setters.Add(New Setter(DataGridRow.BackgroundProperty, Brushes.Transparent))
+            rowStyle.Setters.Add(New Setter(DataGridRow.BorderThicknessProperty, New Thickness(0)))
+            dg.RowStyle = rowStyle
+
+            Dim cellStyle As New Style(GetType(DataGridCell))
+            cellStyle.Setters.Add(New Setter(DataGridCell.BackgroundProperty, Brushes.Transparent))
+            cellStyle.Setters.Add(New Setter(DataGridCell.BorderThicknessProperty, New Thickness(0)))
+            cellStyle.Setters.Add(New Setter(DataGridCell.FocusVisualStyleProperty, Nothing))
+            dg.CellStyle = cellStyle
+
+            ' 2. Centered Cell Style (Number & Qty columns - Size 10)
+            Dim centeredStyle As New Style(GetType(TextBlock))
+            centeredStyle.Setters.Add(New Setter(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center))
+            centeredStyle.Setters.Add(New Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center))
+            centeredStyle.Setters.Add(New Setter(TextBlock.FontSizeProperty, 11.0))
+
+            ' --- Column 1: Number (#) ---
+            dg.Columns.Add(New DataGridTextColumn With {
+                .Header = "#",
+                .Binding = New Binding("[Number]"),
+                .Width = 60,
+                .HeaderStyle = headerStyle,
+                .ElementStyle = centeredStyle
+            })
+
+            ' --- Column 2: Product Name & Description ---
+            Dim colProduct As New DataGridTemplateColumn With {
+                .Header = "Product / Description",
+                .Width = New DataGridLength(2, DataGridLengthUnitType.Star),
+                .HeaderStyle = headerStyle
             }
 
-            Dim item4 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
-            }
+            Dim factory = New FrameworkElementFactory(GetType(StackPanel))
+            factory.SetValue(StackPanel.MarginProperty, New Thickness(5))
 
-            Dim item5 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
-            }
+            ' Product Name (Size 11, Bold, and Wrapping)
+            Dim txtName = New FrameworkElementFactory(GetType(TextBlock))
+            txtName.SetBinding(TextBlock.TextProperty, New Binding("[ProductName]"))
+            txtName.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold)
+            txtName.SetValue(TextBlock.FontSizeProperty, 11.0)
+            txtName.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap)
+            txtName.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center)
 
-            Dim item6 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
-            }
+            ' Description (Size 9)
+            Dim txtDesc = New FrameworkElementFactory(GetType(TextBlock))
+            txtDesc.SetBinding(TextBlock.TextProperty, New Binding("[Description]"))
+            txtDesc.SetValue(TextBlock.FontSizeProperty, 11.0)
+            txtDesc.SetValue(TextBlock.ForegroundProperty, Brushes.DimGray)
+            txtDesc.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap)
+            txtDesc.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center)
 
-            Dim item7 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
-            }
+            factory.AppendChild(txtName)
+            factory.AppendChild(txtDesc)
+            colProduct.CellTemplate = New DataTemplate With {.VisualTree = factory}
+            dg.Columns.Add(colProduct)
 
-            Dim item8 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
-            }
+            ' --- Column 3: Qty (Same size as Number) ---
+            dg.Columns.Add(New DataGridTextColumn With {
+                .Header = "Qty",
+                .Binding = New Binding("[Quantity]"),
+                .Width = 60,
+                .HeaderStyle = headerStyle,
+                .ElementStyle = centeredStyle
+            })
 
-            Dim item9 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
-            }
+            ' --- Column 4: Serial Numbers ---
+            Dim serialStyle As New Style(GetType(TextBlock))
+            serialStyle.Setters.Add(New Setter(TextBlock.TextWrappingProperty, TextWrapping.Wrap))
+            serialStyle.Setters.Add(New Setter(TextBlock.FontSizeProperty, 11.0))
+            serialStyle.Setters.Add(New Setter(TextBlock.PaddingProperty, New Thickness(5)))
 
-            Dim item10 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
-            }
-
-            Dim item11 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
-            }
-
-            Dim item12 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
-            }
-
-            Dim item13 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
-            }
-
-            Dim item14 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
-            }
-
-            Dim item15 As New Dictionary(Of String, String) From {
-                {"Quantity", "1"},
-                {"ProductName", "HIKVISION - 2MP WEATHERPROOF IR IP CAMERA"},
-                {"Description", "High-definition outdoor security camera with night vision."},
-                {"Amount", "1881.60"},
-                {"SerialNumber", "SN-HK-992831"}
-            }
-
-            DeliveryDetails.DRDeliveryItems.Add(item1)
-            DeliveryDetails.DRDeliveryItems.Add(item2)
-            DeliveryDetails.DRDeliveryItems.Add(item3)
-            DeliveryDetails.DRDeliveryItems.Add(item4)
-            DeliveryDetails.DRDeliveryItems.Add(item5)
-            DeliveryDetails.DRDeliveryItems.Add(item6)
-            DeliveryDetails.DRDeliveryItems.Add(item7)
-            DeliveryDetails.DRDeliveryItems.Add(item8)
-            DeliveryDetails.DRDeliveryItems.Add(item9)
-            DeliveryDetails.DRDeliveryItems.Add(item10)
-            DeliveryDetails.DRDeliveryItems.Add(item11)
-            DeliveryDetails.DRDeliveryItems.Add(item12)
-            DeliveryDetails.DRDeliveryItems.Add(item13)
-            DeliveryDetails.DRDeliveryItems.Add(item14)
-            DeliveryDetails.DRDeliveryItems.Add(item15)
-
-            LoadPage()
+            dg.Columns.Add(New DataGridTextColumn With {
+                .Header = "Serial Numbers",
+                .Binding = New Binding("[SerialNumber]"),
+                .Width = New DataGridLength(2, DataGridLengthUnitType.Star),
+                .HeaderStyle = headerStyle,
+                .ElementStyle = serialStyle
+            })
         End Sub
 
         Private Sub CancelButton(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
         End Sub
         Private Sub PreviousPage_Click(sender As Object, e As RoutedEventArgs)
-            'If currentPageIndex > 0 Then LoadPage(currentPageIndex - 1)
+            If _currentPageIndex > 0 Then
+                RenderPages(_currentPageIndex - 1)
+            End If
         End Sub
 
         Private Sub NextPage_Click(sender As Object, e As RoutedEventArgs)
-            'If currentPageIndex < totalPages - 1 Then LoadPage(currentPageIndex + 1)
+            If _currentPageIndex < _pageMap.Count - 1 Then
+                RenderPages(_currentPageIndex + 1)
+            End If
         End Sub
 
         Private Sub SavePrint(sender As Object, e As RoutedEventArgs)
@@ -423,5 +435,150 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         '        Return False
         '    End Try
         'End Function
+
+        ' FOR TESTING ONLY
+        Public Sub LoadTestPlaceholderData()
+            DeliveryDetails.DRDeliveryItems.Clear()
+
+            DeliveryDetails.DRDeliveryItems = New List(Of Dictionary(Of String, String))()
+
+            Dim item1 As New Dictionary(Of String, String) From {
+                {"Quantity", "1"},
+                {"ProductName", "HIKVISION - 2MP WEATHERPROOF IR IP CAMERA"},
+                {"Description", "High-definition outdoor security camera with night vision."},
+                {"Amount", "1881.60"},
+                {"SerialNumber", "SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831"}
+            }
+
+            Dim item2 As New Dictionary(Of String, String) From {
+                {"Quantity", "5"},
+                {"ProductName", "AEROCOOL UNITED POWER 500W (80+ WHITE)"},
+                {"Description", "Enter product description (Optional)"},
+                {"Amount", "2035.04"},
+                {"SerialNumber", "N/A"}
+            }
+
+            Dim item3 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item4 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item5 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item6 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item7 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item8 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item9 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item10 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item11 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item12 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item13 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item14 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item15 As New Dictionary(Of String, String) From {
+                {"Quantity", "1"},
+                {"ProductName", "HIKVISION - 2MP WEATHERPROOF IR IP CAMERA"},
+                {"Description", "High-definition outdoor security camera with night vision."},
+                {"Amount", "1881.60"},
+                {"SerialNumber", "SN-HK-992831"}
+            }
+
+            DeliveryDetails.DRDeliveryItems.Add(item1)
+            DeliveryDetails.DRDeliveryItems.Add(item2)
+            DeliveryDetails.DRDeliveryItems.Add(item3)
+            DeliveryDetails.DRDeliveryItems.Add(item4)
+            DeliveryDetails.DRDeliveryItems.Add(item5)
+            DeliveryDetails.DRDeliveryItems.Add(item6)
+            DeliveryDetails.DRDeliveryItems.Add(item7)
+            DeliveryDetails.DRDeliveryItems.Add(item8)
+            DeliveryDetails.DRDeliveryItems.Add(item9)
+            DeliveryDetails.DRDeliveryItems.Add(item10)
+            DeliveryDetails.DRDeliveryItems.Add(item11)
+            DeliveryDetails.DRDeliveryItems.Add(item12)
+            DeliveryDetails.DRDeliveryItems.Add(item13)
+            DeliveryDetails.DRDeliveryItems.Add(item14)
+            DeliveryDetails.DRDeliveryItems.Add(item15)
+
+            LoadPage()
+        End Sub
     End Class
 End Namespace
