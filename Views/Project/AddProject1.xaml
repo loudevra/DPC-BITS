@@ -1,225 +1,259 @@
 ﻿<UserControl x:Class="DPC.Views.Project.AddProject1"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        FontFamily="{StaticResource Lexend}"
-        Background="#D9D9D9">
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             FontFamily="{StaticResource Lexend}"
+             Background="#D9D9D9">
 
     <Grid>
         <Grid.RowDefinitions>
-            <!-- Header Row - Fixed at top -->
             <RowDefinition Height="Auto"/>
-            <!-- Content Row - Scrollable -->
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Sticky Header -->
-        <Border Grid.Row="0" Background="#D9D9D9" Padding="20,10" Panel.ZIndex="1">
+        <Border Grid.Row="0" Background="#D9D9D9" Padding="20,10" Panel.ZIndex="10">
             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                 <materialDesign:PackIcon Kind="FilePlusOutline" Width="40" Height="40" Margin="0,0,15,0" Foreground="#474747" />
                 <TextBlock Text="Add Project" FontSize="35" FontWeight="Bold" VerticalAlignment="Center" FontFamily="Lexend" Foreground="#474747" />
             </StackPanel>
         </Border>
 
-        <!-- Main Content - Scrollable -->
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-            <StackPanel Margin="20,10,20,20" Width="800">
-                <!-- Form Content -->
-                <StackPanel>
+        <ScrollViewer Grid.Row="1" 
+                      VerticalScrollBarVisibility="Auto" 
+                      HorizontalScrollBarVisibility="Auto"
+                      PanningMode="Both">
 
-                    <!-- Project Name -->
-                    <TextBlock Text="Project Name:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
-                    <Border Style="{StaticResource RoundedBorderStyle}" Width="768">
-                        <TextBox x:Name="txtName" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="735" TextChanged="TxtToUpper_TextChanged"/>
+            <StackPanel Width="800" Margin="40" HorizontalAlignment="Center">
+
+                <TextBlock Text="Project Name:" Margin="0,0,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                <Border Style="{StaticResource RoundedBorderStyle}">
+                    <TextBox x:Name="txtName" 
+                             Height="40" 
+                             Style="{StaticResource RoundedTextboxStyle}" 
+                             HorizontalAlignment="Stretch" 
+                             VerticalContentAlignment="Center"
+                             Background="Transparent" 
+                             BorderThickness="0"
+                             TextChanged="TxtToUpper_TextChanged"/>
+                </Border>
+
+                <TextBlock Text="Status:" Margin="0,20,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                <Border Style="{StaticResource RoundedBorderStyle}">
+                    <ComboBox x:Name="cmbStatus" 
+                              Style="{StaticResource RoundedComboBoxStyle}" 
+                              HorizontalAlignment="Stretch" 
+                              Height="40" 
+                              SelectedIndex="0" 
+                              Background="Transparent" 
+                              BorderThickness="0"/>
+                </Border>
+
+                <TextBlock Text="Customer:" Margin="0,20,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                <Border Style="{StaticResource RoundedBorderStyle}">
+                    <TextBox x:Name="txtCustomer" 
+                             Height="40" 
+                             Style="{StaticResource RoundedTextboxStyle}" 
+                             HorizontalAlignment="Stretch"
+                             VerticalContentAlignment="Center"
+                             Background="Transparent" 
+                             BorderThickness="0"/>
+                </Border>
+
+                <TextBlock Text="ABC:" Margin="0,20,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                <Border Style="{StaticResource RoundedBorderStyle}">
+                    <ComboBox x:Name="cmbBudget" 
+                              Style="{StaticResource RoundedComboBoxStyle}" 
+                              HorizontalAlignment="Stretch" 
+                              Height="40" 
+                              SelectedIndex="0"
+                              Background="Transparent" 
+                              BorderThickness="0"/>
+                </Border>
+
+                <Grid Margin="0,20,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Start Date:" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Grid.Column="0" Grid.Row="1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="35"/>
+                            </Grid.ColumnDefinitions>
+                            <DatePicker x:Name="StartDatePicker" Style="{StaticResource SingleDatePickerStyle}" SelectedDateChanged="StartDatePicker_SelectedDateChanged" Opacity="0" IsHitTestVisible="False"/>
+                            <materialDesign:PackIcon Kind="Calendar" Width="25" Height="25" Foreground="#474747" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="1"/>
+                            <Button x:Name="StartDateButton" Grid.Column="0" Style="{StaticResource DateButtonStyle}" Click="StartDateButton_Click" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Margin="10,0,0,0">
+                                <TextBlock Text="{Binding ElementName=StartDatePicker, Path=SelectedDate, StringFormat='{}{0:MMM dd, yyyy}', TargetNullValue='Select date'}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ElementName=StartDatePicker, Path=SelectedDate}" Value="{x:Null}">
+                                                    <Setter Property="Foreground" Value="#999"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Button>
+                        </Grid>
                     </Border>
 
-                    <!-- Status -->
-                    <TextBlock Text="Status:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
-                    <ComboBox x:Name="cmbStatus" Style="{StaticResource RoundedComboBoxStyle}" Width="773" Height="40" SelectedIndex="0" Margin="0">
-                    </ComboBox>
+                    <TextBlock Text="Due Date:" Grid.Column="2" Grid.Row="0" Margin="0,0,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Grid.Column="2" Grid.Row="1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="35"/>
+                            </Grid.ColumnDefinitions>
+                            <DatePicker x:Name="DueDatePicker" Style="{StaticResource SingleDatePickerStyle}" SelectedDateChanged="DueDatePicker_SelectedDateChanged" Opacity="0" IsHitTestVisible="False"/>
+                            <materialDesign:PackIcon Kind="Calendar" Width="25" Height="25" Foreground="#474747" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="1"/>
+                            <Button x:Name="DueDateButton" Grid.Column="0" Style="{StaticResource DateButtonStyle}" Click="DueDateButton_Click" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Margin="10,0,0,0">
+                                <TextBlock Text="{Binding ElementName=DueDatePicker, Path=SelectedDate, StringFormat='{}{0:MMM dd, yyyy}', TargetNullValue='Select date'}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ElementName=DueDatePicker, Path=SelectedDate}" Value="{x:Null}">
+                                                    <Setter Property="Foreground" Value="#999"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Button>
+                        </Grid>
+                    </Border>
 
-                    <!-- Slider -->
-                    <TextBlock Text="Progress:" Margin="0,10,0,5" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
+                    <Button Style="{StaticResource RoundedButtonStyle}" Grid.Column="0" Grid.Row="2" Margin="0,20,0,0" HorizontalAlignment="Stretch">
+                        <RadioButton x:Name="RadBtnDueDateOnly" Margin="10" GroupName="CalculationMode" IsChecked="True" Content="Due Date Only" Foreground="#474747" FontWeight="SemiBold" FontSize="14"/>
+                    </Button>
+                    <Button Style="{StaticResource RoundedButtonStyle}" Grid.Column="2" Grid.Row="2" Margin="0,20,0,0" HorizontalAlignment="Stretch">
+                        <RadioButton x:Name="RadBtnStartDueDate" Margin="10" GroupName="CalculationMode" Content="Start to Due Date" Foreground="#474747" FontWeight="SemiBold" FontSize="14"/>
+                    </Button>
 
-                    <Slider x:Name="ProgressSlider"
-                            Minimum="0" Maximum="100"
-                            Value="45"
-                            Height="40"
-                            TickFrequency="1"
-                            IsSnapToTickEnabled="True"
-                            VerticalAlignment="Center"
-                            Margin="0,0,0,4"
-                            Width="773">
-                        <Slider.Resources>
-                            <!-- Custom Thumb with Tooltip -->
-                            <Style TargetType="Thumb">
-                                <Setter Property="OverridesDefaultStyle" Value="True"/>
-                                <Setter Property="Width" Value="20"/>
-                                <Setter Property="Height" Value="20"/>
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Thumb">
-                                            <Grid>
-                                                <Border Background="#333"
-                                                        CornerRadius="2"
-                                                        Padding="2"
-                                                        Margin="0,0,0,5"
-                                                        VerticalAlignment="Top"
-                                                        HorizontalAlignment="Center">
-                                                    <TextBlock Text="{Binding Value, ElementName=ProgressSlider, StringFormat={}{0}%}"
-                                                               Foreground="White" FontSize="10"/>
-                                                </Border>
-                                                <Ellipse Fill="White"
-                                                         Stroke="#444"
-                                                         StrokeThickness="1">
-                                                    <Ellipse.Effect>
-                                                        <DropShadowEffect BlurRadius="4" ShadowDepth="1" Opacity="0.3"/>
-                                                    </Ellipse.Effect>
-                                                </Ellipse>
-                                            </Grid>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </Slider.Resources>
+                    <CheckBox Content="Link to Calendar" Grid.Row="3" Grid.ColumnSpan="3" Margin="0,20,0,0" FontWeight="SemiBold" Foreground="#474747"/>
+                </Grid>
 
-                        <Slider.Template>
-                            <ControlTemplate TargetType="Slider">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
+                <TextBlock Text="Assign to:" Margin="0,20,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                <ComboBox x:Name="cmbAssign" Style="{StaticResource RoundedComboBoxStyle}" HorizontalAlignment="Stretch" Height="40" SelectedIndex="0"/>
 
-                                    <!-- Full Track Background -->
-                                    <Border Height="20"
-                                            CornerRadius="10"
-                                            Background="White"
-                                            VerticalAlignment="Center"/>
+                <TextBlock Text="Note:" Margin="0,20,0,5" FontWeight="SemiBold" Foreground="#474747"/>
 
-                                    <!-- Filled Portion -->
-                                    <Rectangle x:Name="PART_SelectionRange"
-                                               Height="10"
-                                               Fill="#555"
-                                               RadiusX="5" RadiusY="5"
-                                               VerticalAlignment="Center"
-                                               HorizontalAlignment="Left"/>
+                <DockPanel LastChildFill="True" Margin="0,0,0,10">
+                    <Border DockPanel.Dock="Top" Background="#A9A9A9" Padding="4" CornerRadius="12,12,0,0" BorderThickness="1,1,1,0" BorderBrush="#545454">
+                        <UniformGrid Columns="24">
+                            <Button ToolTip="Bold" Padding="0">
+                                <materialDesign:PackIcon Kind="FormatBold" Width="18" Height="18" Foreground="#474747"/>
+                            </Button>
+                            <Button ToolTip="Italic" Padding="0">
+                                <materialDesign:PackIcon Kind="FormatItalic" Width="18" Height="18" Foreground="#474747"/>
+                            </Button>
+                            <Button ToolTip="Underline" Padding="0">
+                                <materialDesign:PackIcon Kind="FormatUnderline" Width="18" Height="18" Foreground="#474747"/>
+                            </Button>
+                            <Button ToolTip="Strikethrough" Padding="0">
+                                <materialDesign:PackIcon Kind="FormatStrikethroughVariant" Width="18" Height="18" Foreground="#474747"/>
+                            </Button>
+                            <Button ToolTip="Subscript" Padding="0">
+                                <materialDesign:PackIcon Kind="FormatSubscript" Width="18" Height="18" Foreground="#474747"/>
+                            </Button>
+                            <Button ToolTip="Superscript" Padding="0">
+                                <materialDesign:PackIcon Kind="FormatSuperscript" Width="18" Height="18" Foreground="#474747"/>
+                            </Button>
+                            <ComboBox Height="22" Padding="2" FontSize="10">
+                                <ComboBoxItem Content="14"/>
+                                <ComboBoxItem Content="16"/>
+                                <ComboBoxItem Content="18"/>
+                            </ComboBox>
+                            <Button ToolTip="Font Color" Padding="0">
+                                <materialDesign:PackIcon Kind="Palette" Width="18" Height="18" Foreground="#A070C0"/>
+                            </Button>
+                            <Button ToolTip="Highlight" Padding="0">
+                                <materialDesign:PackIcon Kind="Marker" Width="18" Height="18" Foreground="#474747"/>
+                            </Button>
+                            <Button ToolTip="Clear" Padding="0">
+                                <materialDesign:PackIcon Kind="Eraser" Width="18" Height="18" Foreground="#474747"/>
+                            </Button>
+                            <Button ToolTip="Undo" Padding="0">
+                                <materialDesign:PackIcon Kind="Undo" Width="18" Height="18" Foreground="#474747"/>
+                            </Button>
+                            <Button ToolTip="Redo" Padding="0">
+                                <materialDesign:PackIcon Kind="Redo" Width="18" Height="18" Foreground="#474747"/>
+                            </Button>
+                            <Button ToolTip="List" Padding="0">
+                                <materialDesign:PackIcon Kind="FormatListBulleted" Width="18" Height="18" Foreground="#474747"/>
+                            </Button>
+                            <Button ToolTip="Left" Padding="0">
+                                <materialDesign:PackIcon Kind="FormatAlignLeft" Width="18" Height="18" Foreground="#474747"/>
+                            </Button>
+                            <Button ToolTip="Center" Padding="0">
+                                <materialDesign:PackIcon Kind="FormatAlignCenter" Width="18" Height="18" Foreground="#474747"/>
+                            </Button>
+                            <Button ToolTip="Right" Padding="0">
+                                <materialDesign:PackIcon Kind="FormatAlignRight" Width="18" Height="18" Foreground="#474747"/>
+                            </Button>
+                            <Button ToolTip="Justify" Padding="0">
+                                <materialDesign:PackIcon Kind="FormatAlignJustify" Width="18" Height="18" Foreground="#474747"/>
+                            </Button>
+                            <Button ToolTip="Indent" Padding="0">
+                                <materialDesign:PackIcon Kind="FormatIndentIncrease" Width="18" Height="18" Foreground="#474747"/>
+                            </Button>
+                            <Button ToolTip="Outdent" Padding="0">
+                                <materialDesign:PackIcon Kind="FormatIndentDecrease" Width="18" Height="18" Foreground="#474747"/>
+                            </Button>
+                            <Button ToolTip="Quote" Padding="0">
+                                <materialDesign:PackIcon Kind="FormatQuoteClose" Width="18" Height="18" Foreground="#474747"/>
+                            </Button>
+                            <Button ToolTip="Link" Padding="0">
+                                <materialDesign:PackIcon Kind="LinkVariant" Width="18" Height="18" Foreground="#474747"/>
+                            </Button>
+                            <Button ToolTip="Image" Padding="0">
+                                <materialDesign:PackIcon Kind="ImageOutline" Width="18" Height="18" Foreground="#474747"/>
+                            </Button>
+                            <Button ToolTip="Code" Padding="0">
+                                <materialDesign:PackIcon Kind="CodeBraces" Width="18" Height="18" Foreground="#474747"/>
+                            </Button>
+                            <Button ToolTip="Fullscreen" Padding="0">
+                                <materialDesign:PackIcon Kind="Fullscreen" Width="18" Height="18" Foreground="#474747"/>
+                            </Button>
+                        </UniformGrid>
+                    </Border>
+                    <Border Background="White" CornerRadius="0,0,12,12" BorderBrush="#545454" BorderThickness="1,0,1,1" ClipToBounds="True">
+                        <RichTextBox x:Name="EditorBox" Background="White" BorderThickness="0" Padding="10" FontSize="14" Height="250" VerticalScrollBarVisibility="Auto"/>
+                    </Border>
+                </DockPanel>
 
-                                    <!-- Thumb -->
-                                    <Thumb x:Name="PART_Thumb"
-                                           VerticalAlignment="Center"/>
-                                </Grid>
-                            </ControlTemplate>
-                        </Slider.Template>
-                    </Slider>
+                <Grid Margin="0,30,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-                    <!-- 0% and 100% Labels -->
-                    <Grid Margin="0,0,0,20" Width="773">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="0%" FontSize="15" HorizontalAlignment="Left" Foreground="#474747" FontFamily="{StaticResource Lexend}"/>
-                        <TextBlock Text="100%" FontSize="15" HorizontalAlignment="Right" Grid.Column="1" Foreground="#474747" FontFamily="{StaticResource Lexend}"/>
-                    </Grid>
-
-                    <TextBlock Text="Priority:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
-                    <!-- Cards Row -->
-                    <Grid Grid.Row="0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <!-- Low -->
-                        <Border Background="White" CornerRadius="10" Margin="10" Width="170" Grid.Column="0" BorderBrush="#afafaf" BorderThickness="2">
-                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
-
-                                <materialDesign:PackIcon Kind="ClipboardTextOutline"
-                                          Width="80" Height="80"
-                                          Foreground="#afafaf"
-                                          HorizontalAlignment="Center"
-                                          VerticalAlignment="Center"/>
-
-                                <TextBlock Text="Low" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" Margin="0,0,0,0" Foreground="#afafaf"/>
-
-                            </StackPanel>
-                        </Border>
-
-                        <!-- Medium -->
-                        <Border Background="White" CornerRadius="10" Margin="10" Width="170" Grid.Column="1" BorderBrush="#afafaf" BorderThickness="2">
-                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
-
-                                <materialDesign:PackIcon Kind="ClipboardTextOutline"
-                  Width="80" Height="80"
-                  Foreground="#afafaf"
-                  HorizontalAlignment="Center"
-                  VerticalAlignment="Center"/>
-
-                                <TextBlock Text="Medium" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" Margin="0,0,0,0" Foreground="#afafaf"/>
-
-                            </StackPanel>
-                        </Border>
-
-                        <!-- High -->
-                        <Border Background="White" CornerRadius="10" Margin="10" Width="170" Grid.Column="2" BorderBrush="#afafaf" BorderThickness="2">
-                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
-
-                                <materialDesign:PackIcon Kind="ClipboardTextOutline"
-                  Width="80" Height="80"
-                  Foreground="#afafaf"
-                  HorizontalAlignment="Center"
-                  VerticalAlignment="Center"/>
-
-                                <TextBlock Text="High" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" Margin="0,0,0,0" Foreground="#afafaf"/>
-
-                            </StackPanel>
-                        </Border>
-
-                        <!-- Urgent -->
-                        <Border Background="White" CornerRadius="10" Margin="10" Width="170" Grid.Column="3" BorderBrush="#afafaf" BorderThickness="2">
-                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
-
-                                <materialDesign:PackIcon Kind="ClipboardTextOutline"
-                  Width="80" Height="80"
-                  Foreground="#afafaf"
-                  HorizontalAlignment="Center"
-                  VerticalAlignment="Center"/>
-
-                                <TextBlock Text="Urgent" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" Margin="0,0,0,0" Foreground="#afafaf"/>
-
-                            </StackPanel>
-                        </Border>
-
-                    </Grid>
-
-                    <!-- Next Button -->
-                    <Button
-Content="Next   &gt;"
-Width="140" Height="38" Margin="0,24,0,0"
-HorizontalAlignment="right"
-FontSize="16"
-Background="#444"
-Foreground="White"
-Click="NavigateToAddProj2"
-BorderBrush="Transparent">
+                    <Button Grid.Column="1"
+                            Content="Add Project"
+                            Width="140" Height="40" 
+                            FontSize="16"
+                            Background="#444"
+                            Foreground="White"
+                            Click="Button_Click_1">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}"
-            CornerRadius="20"
-            BorderBrush="{TemplateBinding BorderBrush}"
-            BorderThickness="{TemplateBinding BorderThickness}">
-                                    <ContentPresenter HorizontalAlignment="Center"
-                          VerticalAlignment="Center"
-                          Margin="10,0"/>
+                                <Border Background="{TemplateBinding Background}" CornerRadius="20">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Border>
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
-
-
-                </StackPanel>
+                </Grid>
             </StackPanel>
         </ScrollViewer>
     </Grid>

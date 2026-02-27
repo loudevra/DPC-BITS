@@ -154,13 +154,6 @@
                 </Grid>
 
 
-                <!-- Tags -->
-                <TextBlock Text="Tags:" Margin="0,10,0,5" FontWeight="SemiBold" Foreground="#474747"/>
-                <ComboBox x:Name="cmbTags" Style="{StaticResource RoundedComboBoxStyle}" Width="773" Height="40" SelectedIndex="0"/>
-
-                <!-- Task -->
-                <TextBlock Text="Task Communication:" Margin="0,10,0,5" FontWeight="SemiBold" Foreground="#474747"/>
-                <ComboBox x:Name="cmbTask" Style="{StaticResource RoundedComboBoxStyle}" Width="773" Height="40" SelectedIndex="0"/>
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -169,7 +162,7 @@
                     </Grid.ColumnDefinitions>
                     <!-- Finish Button -->
                     <Button
-Content="Finish  &gt;"
+Content="Add Project"
 Width="140" Height="38" Margin="0,24,15,0"
 HorizontalAlignment="right"
 FontSize="16"
@@ -177,7 +170,7 @@ Background="#444"
 Foreground="White"
 BorderBrush="Transparent"
                         Grid.Column="1"
-                        HorizontalContentAlignment="Center">
+                        HorizontalContentAlignment="Center" Click="Button_Click_1">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border Background="{TemplateBinding Background}"
@@ -191,30 +184,9 @@ BorderBrush="Transparent"
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
-                    <!-- Next Button -->
-                    <Button
-Content="&lt;  Back"
-Width="140" Height="38" Margin="0,24,0,0"
-HorizontalAlignment="left"
-FontSize="16"
-Background="#8a8a8a"
-Foreground="White"
-BorderBrush="Transparent"
-                        Grid.Column="0"
-                        HorizontalContentAlignment="Center">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}"
-            CornerRadius="20"
-            BorderBrush="{TemplateBinding BorderBrush}"
-            BorderThickness="{TemplateBinding BorderThickness}">
-                                    <ContentPresenter HorizontalAlignment="Center"
-                          VerticalAlignment="Center"
-                          Margin="10,0"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
+                    
+                        
+        
                 </Grid>
             </StackPanel>
 
