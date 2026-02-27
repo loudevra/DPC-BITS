@@ -90,29 +90,33 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
             Dim pageList = _pageMap(index)
 
+            ' FORCE width and transparent backgrounds to prevent "shrinking" and "white strips"
             Dim dg As New DataGrid With {
+                .Width = 726,
+                .HorizontalAlignment = HorizontalAlignment.Left,
                 .IsReadOnly = True,
                 .AutoGenerateColumns = False,
                 .HeadersVisibility = DataGridHeadersVisibility.Column,
                 .GridLinesVisibility = DataGridGridLinesVisibility.All,
                 .Background = Brushes.Transparent,
-                .ItemsSource = pageList
+                .ItemsSource = pageList,
+                .BorderThickness = New Thickness(0)
             }
 
             AddColumnsToGrid(dg)
 
-            ' Create the "Paper" Border
-            Dim pageBorder As New Border With {
+            ' Wrap in a transparent container
+            Dim container As New Border With {
                 .Background = Brushes.Transparent,
                 .Width = 726,
-                .MinHeight = 800,
                 .Child = dg,
-                .HorizontalAlignment = HorizontalAlignment.Center
+                .HorizontalAlignment = HorizontalAlignment.Center,
+                .VerticalAlignment = VerticalAlignment.Top
             }
 
-            MainContainer.Children.Add(pageBorder)
+            MainContainer.Children.Add(container)
 
-
+            ' Synchronize both indicators
             PageIndicatorText.Text = $"Page {index + 1} of {_pageMap.Count}"
             txtPageInfo.Text = $"Page {index + 1} of {_pageMap.Count}"
         End Sub
@@ -265,176 +269,208 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Sub
 
         Private Sub SavePrint(sender As Object, e As RoutedEventArgs)
-            'Try
-            '    Dim res As MessageBoxResult = MessageBox.Show("Do you want to save this as a PDF?", "Output", MessageBoxButton.YesNoCancel)
-            '    Dim docName As String = CEQuoteNumberCache
-            '    Dim path As String = SaveAsPDF(docName)
+            Try
+                Dim res As MessageBoxResult = MessageBox.Show("Do you want to save this as a PDF?", "Output", MessageBoxButton.YesNoCancel)
+                Dim docName As String = DeliveryDetails.DRNumber
 
-            '    If res = MessageBoxResult.Yes Then
-            '        If Not SavePdfPathToMongoDB(path, CEQuoteNumberCache, CacheOnLoggedInName) Then Exit Sub
-            '        SaveToDb()
-            '    ElseIf res = MessageBoxResult.No Then
-            '        PrintPhysically(docName)
-            '        If Not SavePdfPathToMongoDB(path, CEQuoteNumberCache, CacheOnLoggedInName) Then Exit Sub
-            '        SaveToDb()
-            '    End If
-            'Catch ex As Exception
-            '    MessageBox.Show("Print Error: " & ex.Message)
-            'End Try
+                If res = MessageBoxResult.Cancel Then Return
+
+                Dim path As String = SaveAsPDF(docName)
+
+                If res = MessageBoxResult.Yes Then
+                    If Not SavePdfPathToMongoDB(path, docName, CacheOnLoggedInName) Then Exit Sub
+                    SaveToDb()
+                ElseIf res = MessageBoxResult.No Then
+                    PrintPhysically(docName)
+                    If Not SavePdfPathToMongoDB(path, docName, CacheOnLoggedInName) Then Exit Sub
+                    SaveToDb()
+                End If
+            Catch ex As Exception
+                MessageBox.Show("Print Error: " & ex.Message)
+            End Try
         End Sub
 
         Private Sub SaveDb_Click(sender As Object, e As RoutedEventArgs)
-            'Try
-            '    Dim path As String = SaveAsPDF(CEQuoteNumberCache)
-            '    If Not String.IsNullOrEmpty(path) Then
-            '        If Not SavePdfPathToMongoDB(path, CEQuoteNumberCache, CacheOnLoggedInName) Then Exit Sub
-            '        SaveToDb()
-            '    End If
-            'Catch ex As Exception
-            '    MessageBox.Show("Save Error: " & ex.Message)
-            'End Try
+            Try
+                Dim path As String = SaveAsPDF(DeliveryDetails.DRNumber)
+                If Not String.IsNullOrEmpty(path) Then
+                    If Not SavePdfPathToMongoDB(path, DeliveryDetails.DRNumber, CacheOnLoggedInName) Then Exit Sub
+                    SaveToDb()
+                End If
+            Catch ex As Exception
+                MessageBox.Show("Save Error: " & ex.Message)
+            End Try
         End Sub
 
-        'Private Function SaveAsPDF(docName As String) As String
-        '    Dim dlg As New Microsoft.Win32.SaveFileDialog() With {.FileName = docName & ".pdf", .Filter = "PDF Files|*.pdf"}
-        '    If dlg.ShowDialog() = True Then
-        '        Try
-        '            Dim pdf As New PdfDocument()
-        '            For i As Integer = 0 To totalPages - 1
-        '                LoadPrintPage(i)
-        '                Application.Current.Dispatcher.Invoke(Sub() PrintPreview.UpdateLayout(), System.Windows.Threading.DispatcherPriority.Render)
-        '                System.Threading.Thread.Sleep(300)
+        Private Function SaveAsPDF(docName As String) As String
+            Dim dlg As New Microsoft.Win32.SaveFileDialog() With {.FileName = docName & ".pdf", .Filter = "PDF Files|*.pdf"}
+            If dlg.ShowDialog() = True Then
+                Try
+                    Dim pdf As New PdfDocument()
 
-        '                Dim page As PdfPage = pdf.AddPage()
-        '                Dim layoutWidth = PrintPreview.ActualWidth
-        '                Dim layoutHeight = PrintPreview.ActualHeight
+                    ' Iterate through the pre-calculated pages
+                    For i As Integer = 0 To _pageMap.Count - 1
+                        ' 1. Switch the UI to the current page
+                        RenderPages(i)
 
-        '                page.Width = XUnit.FromInch(layoutWidth / 96)
-        '                page.Height = XUnit.FromInch(layoutHeight / 96)
-        '                RenderToPdfPage(PrintPreview, page)
-        '            Next
-        '            pdf.Save(dlg.FileName)
-        '            LoadPrintPage(0) ' Reset
-        '            Return dlg.FileName
-        '        Catch ex As Exception
-        '            MessageBox.Show("PDF Error: " & ex.Message)
-        '            Return Nothing
-        '        End Try
-        '    End If
-        '    Return Nothing
-        'End Function
+                        ' 2. Force the UI to refresh so the watermark and data are visible
+                        Application.Current.Dispatcher.Invoke(Sub() Me.UpdateLayout(), System.Windows.Threading.DispatcherPriority.Render)
+                        System.Threading.Thread.Sleep(100) ' Small delay for rendering
 
-        'Private Sub RenderToPdfPage(elem As FrameworkElement, page As PdfPage)
-        '    Dim dpi As Integer = 300
-        '    Dim w = elem.ActualWidth
-        '    Dim h = elem.ActualHeight
-        '    Dim pxW = CInt(w * dpi / 96)
-        '    Dim pxH = CInt(h * dpi / 96)
+                        ' 3. Create PDF Page (Legal Size: 8.5 x 14 in)
+                        Dim page As PdfPage = pdf.AddPage()
+                        page.Width = XUnit.FromInch(8.5)
+                        page.Height = XUnit.FromInch(14)
 
-        '    Dim rtb As New RenderTargetBitmap(pxW, pxH, dpi, dpi, PixelFormats.Pbgra32)
+                        RenderToPdfPage(PrintAreaBorder, page)
+                    Next
 
-        '    elem.Measure(New Size(w, h))
-        '    elem.Arrange(New Rect(0, 0, w, h))
-        '    elem.UpdateLayout()
-        '    rtb.Render(elem)
+                    pdf.Save(dlg.FileName)
+                    RenderPages(0) ' Reset view to first page
+                    Return dlg.FileName
+                Catch ex As Exception
+                    MessageBox.Show("PDF Error: " & ex.Message)
+                    Return Nothing
+                End Try
+            End If
+            Return Nothing
+        End Function
 
-        '    Dim enc As New PngBitmapEncoder()
-        '    enc.Frames.Add(BitmapFrame.Create(rtb))
+        Private Sub RenderToPdfPage(elem As FrameworkElement, page As PdfPage)
 
-        '    Using ms As New MemoryStream()
-        '        enc.Save(ms)
-        '        ms.Position = 0
-        '        Using gfx As XGraphics = XGraphics.FromPdfPage(page)
-        '            Dim img = XImage.FromStream(ms)
-        '            gfx.DrawImage(img, 0, 0, page.Width.Point, page.Height.Point)
-        '        End Using
-        '    End Using
-        'End Sub
+            Dim pageWidth As Double = 8.5 * 96
+            Dim pageHeight As Double = 14 * 96
 
-        'Private Sub PrintPhysically(docName As String)
-        '    Dim dlg As New PrintDialog()
-        '    If dlg.ShowDialog() = True Then
-        '        For i As Integer = 0 To totalPages - 1
-        '            LoadPrintPage(i)
-        '            Application.Current.Dispatcher.Invoke(Sub() PrintPreview.UpdateLayout(), System.Windows.Threading.DispatcherPriority.Render)
+            elem.Measure(New Size(pageWidth, pageHeight))
+            elem.Arrange(New Rect(0, 0, pageWidth, pageHeight))
+            elem.UpdateLayout()
 
-        '            ' Create Fixed Document Logic
-        '            Dim width As Double = 8.3 * 96
-        '            Dim height As Double = 11.69 * 96
+            ' Now render at 300 DPI for quality
+            Dim dpi As Integer = 300
+            Dim pxW As Integer = CInt(8.5 * dpi)
+            Dim pxH As Integer = CInt(14 * dpi)
 
-        '            ' Create a temporary grid for printing to avoid detaching the visual parent
-        '            Dim container As New Grid With {.Width = width, .Height = height}
+            Dim rtb As New RenderTargetBitmap(pxW, pxH, dpi, dpi, PixelFormats.Pbgra32)
+            rtb.Render(elem)
 
-        '            ' Transform visual
-        '            Dim scale = Math.Min(width / PrintPreview.ActualWidth, height / PrintPreview.ActualHeight)
-        '            Dim brush As New VisualBrush(PrintPreview)
-        '            Dim rect As New Rectangle With {
-        '                .Width = PrintPreview.ActualWidth,
-        '                .Height = PrintPreview.ActualHeight,
-        '                .Fill = brush,
-        '                .LayoutTransform = New ScaleTransform(scale, scale)
-        '            }
-        '            container.Children.Add(rect)
+            Dim encoder As New PngBitmapEncoder()
+            encoder.Frames.Add(BitmapFrame.Create(rtb))
 
-        '            container.Measure(New Size(width, height))
-        '            container.Arrange(New Rect(0, 0, width, height))
+            Using ms As New MemoryStream()
+                encoder.Save(ms)
+                ms.Position = 0
 
-        '            dlg.PrintVisual(container, $"{docName} - Page {i + 1}")
-        '        Next
-        '        LoadPrintPage(0)
-        '    End If
-        'End Sub
+                Using gfx As XGraphics = XGraphics.FromPdfPage(page)
+                    Dim img = XImage.FromStream(ms)
 
-        'Private Sub SaveToDb()
-        '    Dim json As String = Newtonsoft.Json.JsonConvert.SerializeObject(CEQuoteItemsCache)
-        '    If QuotesController.InsertQuote(CEQuoteNumberCache, CEReferenceNumber, CEQuoteDateCache,
-        '                                    CEQuoteValidityDateCache, CETaxProperty, CEDiscountProperty,
-        '                                    CEClientIDCache, CEClientName, CEWarehouseIDCache, CEWarehouseNameCache,
-        '                                    json, CEQuoteNumberCache, CETotalTaxValueCache, CETotalDiscountValueCache,
-        '                                    CETotalAmountCache, CacheOnLoggedInName, CEApproved, CEpaymentTerms) Then
+                    ' Draw WITHOUT stretching distortion
+                    gfx.DrawImage(img, 0, 0, page.Width.Point, page.Height.Point)
+                End Using
+            End Using
+        End Sub
 
-        '        Dim f As New NewQuoteGovernment()
-        '        f.ClearAllFields()
-        '        CostEstimateDetails.ClearAllCECache()
+        Private Sub PrintPhysically(docName As String)
+            Dim dlg As New PrintDialog()
 
-        '        If Application.Current.Properties.Contains("QuoteCache") Then
-        '            Application.Current.Properties.Remove("QuoteCache")
-        '        End If
+            If dlg.ShowDialog() = True Then
 
-        '        ViewLoader.DynamicView.NavigateToView("salesquotegovernment", Me)
-        '    Else
-        '        MessageBox.Show("Failed to submit quote.")
-        '    End If
-        'End Sub
+                For i As Integer = 0 To _pageMap.Count - 1
 
-        'Private Shared Function SavePdfPathToMongoDB(path As String, qNum As String, user As String) As Boolean
-        '    Try
-        '        Dim fs As GridFSBucket = SplashScreen.GetGridFSConnection()
-        '        Dim filter = Builders(Of GridFSFileInfo).Filter.Eq(Of String)("metadata.quoteNumber", qNum)
-        '        Dim existingFiles = fs.Find(filter).ToList()
+                    RenderPages(i)
+                    Application.Current.Dispatcher.Invoke(Sub() Me.UpdateLayout(),
+                System.Windows.Threading.DispatcherPriority.Render)
 
-        '        For Each file In existingFiles
-        '            fs.Delete(file.Id)
-        '        Next
+                    ' Legal size in WPF units (96 DPI)
+                    Dim pageWidth As Double = 8.5 * 96
+                    Dim pageHeight As Double = 14 * 96
 
-        '        Using s As New FileStream(path, FileMode.Open, FileAccess.Read)
-        '            Dim opts As New GridFSUploadOptions() With {
-        '        .Metadata = New BsonDocument From {
-        '            {"uploadedBy", user},
-        '            {"uploadedAt", BsonDateTime.Create(DateTime.UtcNow)},
-        '            {"source", "cost-estimate/quote"},
-        '            {"quoteNumber", qNum},
-        '            {"pdfFilePath", path}
-        '        }
-        '    }
-        '            fs.UploadFromStream(System.IO.Path.GetFileName(path), s, opts)
-        '        End Using
-        '        Return True
-        '    Catch ex As Exception
-        '        MessageBox.Show("Database Error during file replace: " & ex.Message)
-        '        Return False
-        '    End Try
-        'End Function
+                    ' Force exact layout size
+                    PrintAreaBorder.Measure(New Size(pageWidth, pageHeight))
+                    PrintAreaBorder.Arrange(New Rect(0, 0, pageWidth, pageHeight))
+                    PrintAreaBorder.UpdateLayout()
+
+                    ' Scale to printable area
+                    Dim scaleX As Double = dlg.PrintableAreaWidth / pageWidth
+                    Dim scaleY As Double = dlg.PrintableAreaHeight / pageHeight
+                    Dim scale As Double = Math.Min(scaleX, scaleY)
+
+                    Dim transform As New ScaleTransform(scale, scale)
+                    PrintAreaBorder.LayoutTransform = transform
+
+                    dlg.PrintVisual(PrintAreaBorder, $"{docName} - Page {i + 1}")
+
+                    ' Remove transform after printing page
+                    PrintAreaBorder.LayoutTransform = Nothing
+                Next
+
+                RenderPages(0)
+            End If
+        End Sub
+
+        Private Sub SaveToDb()
+            ' 1. Serialize the list of product dictionaries from your Module
+            Dim json As String = Newtonsoft.Json.JsonConvert.SerializeObject(DeliveryDetails.DRDeliveryItems)
+
+            ' 2. Call your Controller with the specific fields from DeliveryDetails
+            ' Ensure your DeliveryReceiptController exists and has this method signature
+            If DeliveryReceiptController.InsertDeliveryReceipt(
+                DeliveryDetails.DRNumber,
+                DeliveryDetails.DRReferenceInvoice,
+                DeliveryDetails.DRDate,
+                DeliveryDetails.DRClientName,
+                DeliveryDetails.DRClientDetails,
+                DeliveryDetails.DRDeliveryNotes,
+                DeliveryDetails.DRShippingMethod,
+                DeliveryDetails.DRApprovedBy,
+                DeliveryDetails.DRPaymentTerm,
+                json,
+                CacheOnLoggedInName) Then
+
+                MessageBox.Show("Delivery Receipt successfully saved to database.", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+
+                ' 3. Clear the global module cache to prevent data bleed into the next order
+                DeliveryDetails.ClearDeliveryDetails()
+
+                ' 4. Navigate to the requested path
+                ' ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
+            Else
+                MessageBox.Show("Failed to submit Delivery Receipt to the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End If
+        End Sub
+
+        Private Shared Function SavePdfPathToMongoDB(path As String, drNum As String, user As String) As Boolean
+            Try
+                ' Initialize GridFS connection
+                Dim fs As MongoDB.Driver.GridFS.GridFSBucket = SplashScreen.GetGridFSConnection()
+
+                ' Filter for the specific Delivery Number to replace old versions
+                Dim filter = MongoDB.Driver.Builders(Of MongoDB.Driver.GridFS.GridFSFileInfo).Filter.Eq(Of String)("metadata.deliveryNumber", drNum)
+                Dim existingFiles = fs.Find(filter).ToList()
+
+                For Each file In existingFiles
+                    fs.Delete(file.Id)
+                Next
+
+                ' Upload the PDF file stream
+                Using s As New FileStream(path, FileMode.Open, FileAccess.Read)
+                    Dim opts As New MongoDB.Driver.GridFS.GridFSUploadOptions() With {
+                .Metadata = New MongoDB.Bson.BsonDocument From {
+                    {"uploadedBy", user},
+                    {"uploadedAt", MongoDB.Bson.BsonDateTime.Create(DateTime.UtcNow)},
+                    {"source", "stocks/delivery-receipt"},
+                    {"deliveryNumber", drNum},
+                    {"pdfFilePath", path}
+                }
+            }
+                    fs.UploadFromStream(System.IO.Path.GetFileName(path), s, opts)
+                End Using
+
+                Return True
+            Catch ex As Exception
+                MessageBox.Show("MongoDB File Error: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Return False
+            End Try
+        End Function
 
         ' FOR TESTING ONLY
         Public Sub LoadTestPlaceholderData()

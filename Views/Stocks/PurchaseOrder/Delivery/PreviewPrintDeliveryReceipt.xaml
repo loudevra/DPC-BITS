@@ -85,7 +85,7 @@
                                 Foreground="#555555" BorderBrush="#AEAEAE" FontWeight="SemiBold" FontSize="12"/>
                         </StackPanel>
 
-                        <Border Height="1344" Width="816" Background="White" CornerRadius="10" Padding="40">
+                        <Border x:Name="PrintAreaBorder" Height="1344" Width="816" Background="White" CornerRadius="10" Padding="40" VerticalAlignment="Top" HorizontalAlignment="Center">
                             <Grid>
                                 <Grid.Background>
                                     <ImageBrush ImageSource="/Assets/images/DREAMPCBUILD LOGO WATERMARK SLANTED SPACED.png" Stretch="UniformToFill" Opacity="0.05"/>
@@ -210,8 +210,11 @@
                                     </Grid>
                                 </Border>
 
-                                <Border Grid.Row="4" Background="Transparent" Margin="5,0,5,0">
-                                    <StackPanel x:Name="MainContainer" HorizontalAlignment="Center" Background="Transparent"/>
+                                <Border Grid.Row="4" VerticalAlignment="Top" Background="Transparent" Margin="5,0">
+                                    <StackPanel x:Name="MainContainer" 
+                                                VerticalAlignment="Top" 
+                                                HorizontalAlignment="Center" 
+                                                Background="Transparent"/>
                                 </Border>
 
                                 <Grid Grid.Row="5" Margin="5,0">

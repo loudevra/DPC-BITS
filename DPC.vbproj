@@ -732,6 +732,7 @@
     <Compile Include="Data\Controllers\StocksTransferController.vb" />
     <Compile Include="Data\Controllers\Stocks\StocksLabelController.vb" />
     <Compile Include="Data\Controllers\SupplierController.vb" />
+    <Compile Include="Data\Controllers\DeliveryReceiptController.vb" />
     <Compile Include="Data\Controllers\WalkIn\WalkInController.vb" />
     <Compile Include="Data\Controllers\WarehouseController.vb" />
     <Compile Include="Data\Converters\BooleanToVisibilityConverter.vb" />
