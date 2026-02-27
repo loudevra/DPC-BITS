@@ -2393,7 +2393,6 @@
     <Folder Include="Views\DataReports\GraphicalReports\" />
     <Folder Include="Views\DataReports\SummaryReports\" />
     <Folder Include="Views\HRM\Payroll\" />
-    <Folder Include="Views\Stocks\PurchaseOrder\NewFolder1\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ILLink\ILLink.Descriptors.LibraryBuild.xml" />

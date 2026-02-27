@@ -133,13 +133,13 @@
                                 <!--Header-->
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="2*"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
 
                                     <!--Bill To Label-->
-                                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,20">
-                                        <TextBlock Text="Billing Statement" FontWeight="SemiBold" FontFamily="Lexend" FontSize="24" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock Text="Billing Statement" FontWeight="SemiBold" FontFamily="Lexend" FontSize="24" Foreground="#555555" VerticalAlignment="Center"/>
                                     </StackPanel>
 
                                     <!-- Add Client Button -->
@@ -158,7 +158,7 @@
                                 
                                 <!--Search Client-->
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="Search Client:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,10"/>
+                                    <TextBlock Text="Search Client:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,10,20,10"/>
                                     <Border Style="{StaticResource RoundedGridStyle}" Margin="0,0,0,10"
                                             Padding="5" Width="Auto" Height="40" BorderBrush="#474747">
                                         <Grid>
@@ -388,7 +388,7 @@
                                     <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="80"/>
                                     <DataGridTextColumn Header="Rate:" Binding="{Binding Rate}" Width="80"/>
                                     <DataGridTextColumn Header="Tax (%)" Binding="{Binding TaxtPercent}" Width="93"/>
-                                    <DataGridTextColumn Header="Tax" Binding="{Binding TaxValue}" Width="50"/>
+                                    <DataGridTextColumn x:Name="TaxHeader" Header="Tax" Binding="{Binding TaxValue}" Width="50"/>
                                     <DataGridTextColumn Header="Discount (%)" Binding="{Binding DiscountPercent}" Width="120"/>
                                     <DataGridTextColumn Header="Discount" Binding="{Binding Discount}" Width="75"/>
                                     <DataGridTextColumn Header="Amount(₱)" Binding="{Binding Amount}" Width="89"/>
