@@ -297,6 +297,28 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 ProductController.UpdateProductVariationText(variations, TxtProductVariation)
             End If
         End Sub
+        Private Sub ForceUpperCase(tb As TextBox)
+            If tb Is Nothing Then Return
+            Dim text As String = tb.Text
+            Dim upper As String = text.ToUpper()
+            If text <> upper Then
+                Dim caretPos As Integer = tb.SelectionStart
+                tb.Text = upper
+                tb.SelectionStart = Math.Min(caretPos, upper.Length)
+            End If
+        End Sub
+
+        Private Sub TxtProductName_TextChanged(sender As Object, e As TextChangedEventArgs) Handles TxtProductName.TextChanged
+            ForceUpperCase(TryCast(sender, TextBox))
+        End Sub
+
+        Private Sub TxtProductCode_TextChanged(sender As Object, e As TextChangedEventArgs) Handles TxtProductCode.TextChanged
+            ForceUpperCase(TryCast(sender, TextBox))
+        End Sub
+
+        Private Sub TxtDescription_TextChanged(sender As Object, e As TextChangedEventArgs) Handles TxtDescription.TextChanged
+            ForceUpperCase(TryCast(sender, TextBox))
+        End Sub
 #End Region
 #Region "Image Handling"
         Private Sub BtnBrowse_Click(sender As Object, e As RoutedEventArgs)

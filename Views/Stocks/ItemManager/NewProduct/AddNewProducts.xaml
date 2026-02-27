@@ -132,8 +132,10 @@
                             </StackPanel>
                             <Border Style="{StaticResource RoundedBorderStyle}">
                                 <TextBox x:Name="TxtProductName" 
-                                     Style="{StaticResource RoundedTextboxStyle}"
-                                     Text="{Binding ProductName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" FontFamily="Lexend"  Foreground="#474747" FontWeight="SemiBold"/>
+     Style="{StaticResource RoundedTextboxStyle}"
+     Text="{Binding ProductName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+     FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"
+     TextChanged="TxtProductName_TextChanged"/>
                             </Border>
                         </StackPanel>
 
@@ -143,8 +145,10 @@
                             </StackPanel>
                             <Border Style="{StaticResource RoundedBorderStyle}">
                                 <TextBox x:Name="TxtProductCode" 
-                                 Style="{StaticResource RoundedTextboxStyle}"
-                                 Text="{Binding ProductCode, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" FontFamily="Lexend"  Foreground="#474747" FontWeight="SemiBold"/>
+     Style="{StaticResource RoundedTextboxStyle}"
+     Text="{Binding ProductCode, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+     FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"
+     TextChanged="TxtProductCode_TextChanged"/>
                             </Border>
                         </StackPanel>
 
@@ -328,14 +332,15 @@
                             </StackPanel>
                             <Border Style="{StaticResource RoundedBorderStyle}" Padding="0,10,0,10">
                                 <TextBox x:Name="TxtDescription" 
-                                 Style="{StaticResource RoundedTextboxStyle}" 
-                                 Height="100" 
-                                 VerticalContentAlignment="Top" 
-                                 Margin="20,2,20,1" 
-                                 TextWrapping="Wrap"
-                                 AcceptsReturn="True"
-                                 Text="{Binding Description, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                 FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"/>
+     Style="{StaticResource RoundedTextboxStyle}" 
+     Height="100" 
+     VerticalContentAlignment="Top" 
+     Margin="20,2,20,1" 
+     TextWrapping="Wrap"
+     AcceptsReturn="True"
+     Text="{Binding Description, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+     FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"
+     TextChanged="TxtDescription_TextChanged"/>
                             </Border>
                         </StackPanel>
 
