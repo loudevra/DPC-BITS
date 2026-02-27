@@ -1,22 +1,65 @@
-﻿Imports DPC.DPC.Data.Controllers
+﻿Imports System.Windows.Markup
+Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Models
 
 Namespace DPC.Views.CRM
     Public Class CRMCorporationalBillingAddress
         Inherits UserControl
+
+        ' =========================================================
+        ' 1. INTERNAL MEMORY (Keeps data alive across tabs)
+        ' =========================================================
+        Private Shared _savedAddress As String = ""
+        Private Shared _savedCity As String = ""
+        Private Shared _savedRegion As String = ""
+        Private Shared _savedCountry As String = ""
+        Private Shared _savedZipCode As String = ""
+
         Public Sub New()
             InitializeComponent()
 
-            GetInfo()
+            ' 2. RESTORE DATA
+            ' Load data from memory immediately
+            txtAddress.Text = _savedAddress
+            txtCity.Text = _savedCity
+            txtRegion.Text = _savedRegion
+            txtCountry.Text = _savedCountry
+            txtZipCode.Text = _savedZipCode
 
-            AddHandler txtAddress.TextChanged, AddressOf SetInfo
-            AddHandler txtCity.SelectionChanged, AddressOf SetInfo
-            AddHandler txtRegion.SelectionChanged, AddressOf SetInfo
-            AddHandler txtCountry.SelectionChanged, AddressOf SetInfo
-            AddHandler txtZipCode.TextChanged, AddressOf SetInfo
+            ' 3. AUTO-SAVE HANDLERS
+            ' Use TextChanged to capture every keystroke
+            AddHandler txtAddress.TextChanged, AddressOf SaveToMemory
+            AddHandler txtCity.TextChanged, AddressOf SaveToMemory
+            AddHandler txtRegion.TextChanged, AddressOf SaveToMemory
+            AddHandler txtCountry.TextChanged, AddressOf SaveToMemory
+            AddHandler txtZipCode.TextChanged, AddressOf SaveToMemory
+
+            ' 4. FORMATTING (Uppercase)
+            AddHandler txtAddress.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler txtCity.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler txtRegion.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler txtCountry.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler txtZipCode.TextChanged, AddressOf TxtToUpper_TextChanged
         End Sub
 
-        ' Ensure typed text is converted to uppercase while preserving caret position
+        ' --- MEMORY MANAGEMENT ---
+        Private Sub SaveToMemory(sender As Object, e As RoutedEventArgs)
+            ' 1. Save to Local Memory
+            _savedAddress = txtAddress.Text
+            _savedCity = txtCity.Text
+            _savedRegion = txtRegion.Text
+            _savedCountry = txtCountry.Text
+            _savedZipCode = txtZipCode.Text
+
+            ' 2. Save to Global Model (For the Add Button)
+            CorporationalClientDetails.BillAddress = txtAddress.Text
+            CorporationalClientDetails.BillCity = txtCity.Text
+            CorporationalClientDetails.BillRegion = txtRegion.Text
+            CorporationalClientDetails.BillCountry = txtCountry.Text
+            CorporationalClientDetails.BillZipCode = txtZipCode.Text
+        End Sub
+
+        ' --- FORMATTING ---
         Private Sub TxtToUpper_TextChanged(sender As Object, e As TextChangedEventArgs)
             Dim tb = TryCast(sender, TextBox)
             If tb Is Nothing Then Return
@@ -35,49 +78,18 @@ Namespace DPC.Views.CRM
             End If
         End Sub
 
-        Private Sub SetInfo()
-            CorporationalClientDetails.BillAddress = txtAddress.Text
-            CorporationalClientDetails.BillCity = txtCity.Text
-            CorporationalClientDetails.BillRegion = txtRegion.Text
-            CorporationalClientDetails.BillCountry = txtCountry.Text
-            CorporationalClientDetails.BillZipCode = txtZipCode.Text
-        End Sub
-
-        Private Sub GetInfo()
-            txtAddress.Text = CorporationalClientDetails.BillAddress
-            txtCity.Text = CorporationalClientDetails.BillCity
-            txtRegion.Text = CorporationalClientDetails.BillRegion
-            txtCountry.Text = CorporationalClientDetails.BillCountry
-            txtZipCode.Text = CorporationalClientDetails.BillZipCode
-        End Sub
-
+        ' --- ADD CLIENT BUTTON ---
         Private Sub AddClient(sender As Object, e As RoutedEventArgs)
-            If CorporationalClientDetails.Representative = Nothing OrElse
-                CorporationalClientDetails.TinID = Nothing OrElse
-                CorporationalClientDetails.CompanyName = Nothing OrElse
-                CorporationalClientDetails.Phone = Nothing OrElse
-                CorporationalClientDetails.Landline = Nothing OrElse
-                CorporationalClientDetails.Email = Nothing OrElse
-                CorporationalClientDetails.BillAddress = Nothing OrElse
-                CorporationalClientDetails.BillCity = Nothing OrElse
-                CorporationalClientDetails.BillRegion = Nothing OrElse
-                CorporationalClientDetails.BillCountry = Nothing OrElse
-                CorporationalClientDetails.BillZipCode = Nothing OrElse
-                CorporationalClientDetails.ClientGroupID = Nothing OrElse
-                CorporationalClientDetails.CustomerGroup = Nothing OrElse
-                CorporationalClientDetails.CustomerLanguage = Nothing OrElse
-                CorporationalClientDetails.Address = Nothing OrElse
-                CorporationalClientDetails.City = Nothing OrElse
-                CorporationalClientDetails.Region = Nothing OrElse
-                CorporationalClientDetails.Country = Nothing OrElse
-                CorporationalClientDetails.ZipCode = Nothing OrElse
-                CorporationalClientDetails.SameAsBilling = Nothing Then
+            ' Check Required Fields (Global Model Check)
+            If String.IsNullOrEmpty(CorporationalClientDetails.CompanyName) OrElse
+               String.IsNullOrEmpty(CorporationalClientDetails.Representative) OrElse
+               String.IsNullOrEmpty(CorporationalClientDetails.Phone) OrElse
+               String.IsNullOrEmpty(CorporationalClientDetails.Email) OrElse
+               String.IsNullOrEmpty(CorporationalClientDetails.BillAddress) Then
 
-                MessageBox.Show("Please fill in all required fields before adding a client.", "Missing Information", MessageBoxButton.OK, MessageBoxImage.Warning)
-
+                MessageBox.Show("Please fill in all required fields (Personal, Billing, etc.) before adding.", "Missing Information", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Exit Sub
             End If
-
 
             Dim client As New ClientCorporational With {
                 .ClientGroupID = CorporationalClientDetails.ClientGroupID,
@@ -96,25 +108,33 @@ Namespace DPC.Views.CRM
 
             Dim success As Boolean = ClientController.CreateClientCorporational(client)
 
-            If success = True Then
+            If success Then
                 MessageBox.Show("Client added successfully.")
+                ClearCache()
             End If
-
-            txtAddress.Text = Nothing
-            txtCity.Text = Nothing
-            txtRegion.Text = Nothing
-            txtCountry.Text = Nothing
-            txtZipCode.Text = Nothing
-
-            ClearCache()
         End Sub
 
         Private Sub ClearCache()
-            CorporationalClientDetails.Landline = Nothing
+            ' Clear Local Memory
+            _savedAddress = ""
+            _savedCity = ""
+            _savedRegion = ""
+            _savedCountry = ""
+            _savedZipCode = ""
+
+            ' Clear UI
+            txtAddress.Text = ""
+            txtCity.Text = ""
+            txtRegion.Text = ""
+            txtCountry.Text = ""
+            txtZipCode.Text = ""
+
+            ' Clear Global Model
             CorporationalClientDetails.Representative = Nothing
             CorporationalClientDetails.TinID = Nothing
             CorporationalClientDetails.CompanyName = Nothing
             CorporationalClientDetails.Phone = Nothing
+            CorporationalClientDetails.Landline = Nothing
             CorporationalClientDetails.Email = Nothing
             CorporationalClientDetails.BillAddress = Nothing
             CorporationalClientDetails.BillCity = Nothing
