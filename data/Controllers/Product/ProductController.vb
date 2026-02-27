@@ -87,6 +87,13 @@ Namespace DPC.Data.Controllers
         End Sub
 
         ''' <summary>
+        ''' Populates a combobox with product categories filtered by brand
+        ''' </summary>
+        Public Shared Sub GetCategoryByBrand(brandID As Integer, comboBox As ComboBox)
+            GetProduct.GetCategoryByBrand(brandID, comboBox)
+        End Sub
+
+        ''' <summary>
         ''' Populates a combobox with product categories
         ''' </summary>
         Public Shared Sub GetProductCategory(comboBox As ComboBox)
@@ -163,8 +170,6 @@ Namespace DPC.Data.Controllers
         Public Shared Sub ImportSerialNumbers_Click()
             UploadProduct.ImportSerialNumbers()
         End Sub
-
-
 
 #End Region
 
@@ -322,7 +327,6 @@ Namespace DPC.Data.Controllers
         ''' <summary>
         ''' Validates all product fields before saving
         ''' </summary>
-        ''' 
         Public Shared Function ValidateProductFieldsWithVariation(ProductName As TextBox, ProductImage As String, Category As ComboBox, Brand As ComboBox,
                                               Supplier As ComboBox, MeasurementUnit As ComboBox, Description As TextBox,
                                                allVariationData As Dictionary(Of String, ProductVariationData)) As Boolean
@@ -545,7 +549,6 @@ Namespace DPC.Data.Controllers
                 Return Nothing
             End If
 
-            ' Create and add if doesn't exist
             If Not VariationDataDict.ContainsKey(combinationName) Then
                 Dim newData As New ProductVariationData(combinationName)
                 VariationDataDict.Add(combinationName, newData)
@@ -577,7 +580,6 @@ Namespace DPC.Data.Controllers
         Public Function GetAllVariationData() As Dictionary(Of String, ProductVariationData)
             Return VariationDataDict
         End Function
-
 
 #End Region
     End Class

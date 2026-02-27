@@ -130,7 +130,6 @@ Namespace DPC.Data.Controllers
                                 End While
                                 comboBox.SelectedIndex = 0
                             Else
-                                'MessageBox.Show("No suppliers found for the selected brand.", "Information", MessageBoxButton.OK, MessageBoxImage.Information)
                                 comboBox.Items.Clear()
                             End If
                         End Using
@@ -166,6 +165,46 @@ Namespace DPC.Data.Controllers
                     End Using
                 Catch ex As Exception
                     MessageBox.Show($"Error: {ex.Message}")
+                End Try
+            End Using
+        End Sub
+
+        'Call this on comboboxes to get categories filtered by brand
+        Public Shared Sub GetCategoryByBrand(brandID As Integer, comboBox As ComboBox)
+            Dim query As String = "
+        SELECT c.categoryID, c.categoryName
+        FROM category c
+        INNER JOIN brand b ON b.categoryID = c.categoryID
+        WHERE b.brandID = @brandID
+        ORDER BY c.categoryName ASC;
+    "
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@brandID", brandID)
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            comboBox.Items.Clear()
+
+                            If reader.HasRows Then
+                                While reader.Read()
+                                    Dim categoryName As String = reader("categoryName").ToString()
+                                    Dim categoryId As Integer = Convert.ToInt32(reader("categoryID"))
+                                    Dim item As New ComboBoxItem With {
+                                .Content = categoryName,
+                                .Tag = categoryId
+                            }
+                                    comboBox.Items.Add(item)
+                                End While
+                                comboBox.SelectedIndex = 0
+                            Else
+                                comboBox.Items.Clear()
+                            End If
+                        End Using
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show($"Error: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 End Try
             End Using
         End Sub
