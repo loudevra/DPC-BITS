@@ -3,6 +3,7 @@ Imports DPC.DPC.Data.Controllers
 Imports MySql.Data.MySqlClient
 Imports System.Windows.Controls
 Imports System.Windows.Controls.Primitives
+Imports System.Windows.Input
 
 Namespace DPC.Components.Forms
     Public Class AddBrand
@@ -10,18 +11,74 @@ Namespace DPC.Components.Forms
         Private ProductController As New ProductController()
         Private popupAddCategory As Popup
         Private popupAddSubCategory As Popup
+        Private categoryItems As New List(Of ComboBoxItem)()
+        Private subcategoryItems As New List(Of ComboBoxItem)()
 
         Public Sub New()
             InitializeComponent()
             ProductController.GetProductCategory(CmbCategory)
+            SnapshotCategoryItems()
+
+            CmbCategory.IsEditable = True
+            CmbCategory.IsTextSearchEnabled = False
+            CmbCategory.StaysOpenOnEdit = True
+
+            CmbSubCategory.IsEditable = True
+            CmbSubCategory.IsTextSearchEnabled = False
+            CmbSubCategory.StaysOpenOnEdit = True
+
+            AddHandler CmbCategory.PreviewTextInput, AddressOf CmbCategory_Filter
+            AddHandler CmbSubCategory.PreviewTextInput, AddressOf CmbSubCategory_Filter
+        End Sub
+
+        Private Sub SnapshotCategoryItems()
+            categoryItems.Clear()
+            For Each item As ComboBoxItem In CmbCategory.Items
+                categoryItems.Add(item)
+            Next
+        End Sub
+
+        Private Sub SnapshotSubcategoryItems()
+            subcategoryItems.Clear()
+            For Each item As ComboBoxItem In CmbSubCategory.Items
+                subcategoryItems.Add(item)
+            Next
+        End Sub
+
+        Private Sub CmbCategory_Filter(sender As Object, e As TextCompositionEventArgs)
+            CmbCategory.IsDropDownOpen = True
+            Dim tb = TryCast(CmbCategory.Template.FindName("PART_EditableTextBox", CmbCategory), TextBox)
+            Dim filterText = If(tb IsNot Nothing, tb.Text & e.Text, e.Text).ToUpperInvariant()
+
+            CmbCategory.Items.Clear()
+            For Each item In categoryItems
+                If item.Content.ToString().ToUpperInvariant().Contains(filterText) Then
+                    CmbCategory.Items.Add(item)
+                End If
+            Next
+        End Sub
+
+        Private Sub CmbSubCategory_Filter(sender As Object, e As TextCompositionEventArgs)
+            CmbSubCategory.IsDropDownOpen = True
+            Dim tb = TryCast(CmbSubCategory.Template.FindName("PART_EditableTextBox", CmbSubCategory), TextBox)
+            Dim filterText = If(tb IsNot Nothing, tb.Text & e.Text, e.Text).ToUpperInvariant()
+
+            CmbSubCategory.Items.Clear()
+            For Each item In subcategoryItems
+                If item.Content.ToString().ToUpperInvariant().Contains(filterText) Then
+                    CmbSubCategory.Items.Add(item)
+                End If
+            Next
         End Sub
 
         Private Sub CmbCategory_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles CmbCategory.SelectionChanged
             Dim selectedCategory As String = TryCast(CmbCategory.SelectedItem, ComboBoxItem)?.Content?.ToString()
             If Not String.IsNullOrEmpty(selectedCategory) Then
                 ProductController.GetProductSubcategory(selectedCategory, CmbSubCategory, SubCategoryLabel, New StackPanel())
+                SnapshotSubcategoryItems()
             Else
                 CmbSubCategory.Items.Clear()
+                subcategoryItems.Clear()
             End If
         End Sub
 
@@ -88,6 +145,7 @@ Namespace DPC.Components.Forms
 
             AddHandler popupAddCategory.Closed, Sub()
                                                     ProductController.GetProductCategory(CmbCategory)
+                                                    SnapshotCategoryItems()
                                                 End Sub
 
             popupAddCategory.IsOpen = True
@@ -118,6 +176,7 @@ Namespace DPC.Components.Forms
             AddHandler popupAddSubCategory.Closed, Sub()
                                                        Dim selectedCategory As String = TryCast(CmbCategory.SelectedItem, ComboBoxItem)?.Content?.ToString()
                                                        ProductController.GetProductSubcategory(If(selectedCategory, String.Empty), CmbSubCategory, SubCategoryLabel, New StackPanel())
+                                                       SnapshotSubcategoryItems()
                                                    End Sub
 
             popupAddSubCategory.IsOpen = True
