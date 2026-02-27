@@ -108,7 +108,7 @@ Namespace DPC.Views.Sales.Quotes
                 BillingDetails.HeaderTitle = "Edit Billing Statement"
                 BillingDetails.SubmitButtonText = "Update Statement"
 
-                ViewLoader.DynamicView.NavigateToView("billingform", Me)
+                ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
             End If
         End Sub
 
