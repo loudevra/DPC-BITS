@@ -204,20 +204,19 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
             Dim factory = New FrameworkElementFactory(GetType(StackPanel))
             factory.SetValue(StackPanel.MarginProperty, New Thickness(5))
+            factory.SetValue(StackPanel.VerticalAlignmentProperty, VerticalAlignment.Center)
 
             Dim txtName = New FrameworkElementFactory(GetType(TextBlock))
             txtName.SetBinding(TextBlock.TextProperty, New Binding("[ProductName]"))
             txtName.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold)
             txtName.SetValue(TextBlock.FontSizeProperty, 11.0)
             txtName.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap)
-            txtName.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center)
 
             Dim txtDesc = New FrameworkElementFactory(GetType(TextBlock))
             txtDesc.SetBinding(TextBlock.TextProperty, New Binding("[Description]"))
             txtDesc.SetValue(TextBlock.FontSizeProperty, 11.0)
             txtDesc.SetValue(TextBlock.ForegroundProperty, Brushes.DimGray)
             txtDesc.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap)
-            txtDesc.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center)
 
             factory.AppendChild(txtName)
             factory.AppendChild(txtDesc)
@@ -237,6 +236,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             serialStyle.Setters.Add(New Setter(TextBlock.TextWrappingProperty, TextWrapping.Wrap))
             serialStyle.Setters.Add(New Setter(TextBlock.FontSizeProperty, 11.0))
             serialStyle.Setters.Add(New Setter(TextBlock.PaddingProperty, New Thickness(5)))
+            serialStyle.Setters.Add(New Setter(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center))
+            serialStyle.Setters.Add(New Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center))
+            serialStyle.Setters.Add(New Setter(TextBlock.TextAlignmentProperty, TextAlignment.Center))
 
             dg.Columns.Add(New DataGridTextColumn With {
                 .Header = "Serial Numbers",
@@ -336,7 +338,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             elem.Arrange(New Rect(0, 0, pageWidth, pageHeight))
             elem.UpdateLayout()
 
-            ' Now render at 300 DPI for quality
             Dim dpi As Integer = 300
             Dim pxW As Integer = CInt(8.5 * dpi)
             Dim pxH As Integer = CInt(14 * dpi)
@@ -413,7 +414,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
                 DeliveryDetails.ClearDeliveryDetails()
 
-                ' ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
+                ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
             Else
                 MessageBox.Show("Failed to submit Delivery Receipt to the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End If
