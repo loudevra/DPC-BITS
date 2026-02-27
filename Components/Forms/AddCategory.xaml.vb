@@ -44,11 +44,6 @@ Namespace DPC.Components.Forms
             .categoryDescription = categoryDescription
         }
 
-                If String.IsNullOrWhiteSpace(newCategory.categoryName) OrElse String.IsNullOrWhiteSpace(categoryDescription) Then
-                    'MessageBox.Show("Please fill out both category name and description.")
-                    Return
-                End If
-
                 If ProductCategoryController.InsertCategory(newCategory) Then
                     'MessageBox.Show("Category added successfully!")
 
