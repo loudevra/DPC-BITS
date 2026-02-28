@@ -102,7 +102,7 @@
 
 
                         <StackPanel x:Name="PrintPreview" Grid.Row="1">
-                            <Border Height="1123" Background="White" CornerRadius="0,0,10,10" BorderThickness="0" Padding="10">
+                            <Border Height="1344" Width="816" Background="White" CornerRadius="0,0,10,10" BorderThickness="0" Padding="10">
                                 <Grid>
                                     <Image Source="/Assets/images/DREAMPCBUILD WATERMARK SLANTED SPACED.png" 
                                            Stretch="UniformToFill" 
@@ -199,30 +199,10 @@
                                                     <TextBlock x:Name="SalesRep" FontWeight="Bold" Height="11" Text="Prepared by:" Foreground="#090909" FontSize="11" FontFamily="{StaticResource Lexend}"/>
                                                 </Border>
                                                 <Border Grid.Row="1" Grid.Column="1" Height="20" VerticalAlignment="Center" >
-                                                    <ComboBox x:Name="cmbApproved" FontSize="10" FontWeight="Bold">
-                                                        <ComboBoxItem Content="Alecksandra Balingit"/>
-                                                        <ComboBoxItem Content="Parvit Kumar"/>
-                                                    </ComboBox>
+                                                    <TextBlock x:Name="txtApproved" FontWeight="Bold" Height="11" Text="Approved by:" Foreground="#090909" FontSize="11" FontFamily="{StaticResource Lexend}"/>
                                                 </Border>
-                                                <Border Grid.Row="1" Grid.Column="2" Height="20" VerticalAlignment="Center" Background="Red">
-                                                    <ComboBox x:Name="cmbTerms" FontSize="10" FontWeight="Bold">
-                                                        <ComboBoxItem Content="Cash"/>
-                                                        <ComboBoxItem Content="7 Days PDC"/>
-                                                        <ComboBoxItem Content="14 Days PDC"/>
-                                                        <ComboBoxItem Content="30 Days PDC"/>
-                                                        <ComboBoxItem Content="45 Days PDC"/>
-                                                        <ComboBoxItem Content="60 Days PDC"/>
-                                                        <ComboBoxItem>
-                                                            <Grid Width="230">
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="Auto"/>
-                                                                    <ColumnDefinition Width="*"/>
-                                                                </Grid.ColumnDefinitions>
-                                                                <TextBlock Grid.Column="0" Text="Custom:" Margin="5,0"/>
-                                                                <TextBox Grid.Column="1" x:Name="CustomTerms"/>
-                                                            </Grid>
-                                                        </ComboBoxItem>
-                                                    </ComboBox>
+                                                <Border Grid.Row="1" Grid.Column="2" Height="20" VerticalAlignment="Center">
+                                                    <TextBlock x:Name="txtTerms" FontWeight="Bold" Height="11" Text="Payment Terms:" Foreground="#090909" FontSize="11" FontFamily="{StaticResource Lexend}"/>
                                                 </Border>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition/>
