@@ -131,10 +131,11 @@
                                 <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
                             </StackPanel>
                             <Border Style="{StaticResource RoundedBorderStyle}">
-                                <!-- Modified TextBox with binding -->
                                 <TextBox x:Name="TxtProductName" 
-                                     Style="{StaticResource RoundedTextboxStyle}"
-                                     Text="{Binding ProductName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" FontFamily="Lexend"  Foreground="#474747" FontWeight="SemiBold"/>
+     Style="{StaticResource RoundedTextboxStyle}"
+     Text="{Binding ProductName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+     FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"
+     TextChanged="TxtProductName_TextChanged"/>
                             </Border>
                         </StackPanel>
 
@@ -143,19 +144,18 @@
                                 <TextBlock Text="Product Code:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                             </StackPanel>
                             <Border Style="{StaticResource RoundedBorderStyle}">
-                                <!-- Modified TextBox with binding -->
                                 <TextBox x:Name="TxtProductCode" 
-                                 Style="{StaticResource RoundedTextboxStyle}"
-                                 Text="{Binding ProductCode, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" FontFamily="Lexend"  Foreground="#474747" FontWeight="SemiBold"/>
+     Style="{StaticResource RoundedTextboxStyle}"
+     Text="{Binding ProductCode, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" 
+     FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"
+     TextChanged="TxtProductCode_TextChanged"/>
                             </Border>
                         </StackPanel>
-    
 
                         <StackPanel Margin="0,10">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Text="Brand:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                             </StackPanel>
-                            <!--Brand Value-->
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -176,10 +176,10 @@
                                           DisplayMemberPath="Content"
                                           StaysOpenOnEdit="True"/>
                                 <Button Grid.Column="1"
-                Click="BtnAddBrand_Click"
-                Width="40" Height="40"
-                Style="{StaticResource MaterialDesignIconButton}"
-                ToolTip="Add Brand">
+                                    Click="BtnAddBrand_Click"
+                                    Width="40" Height="40"
+                                    Style="{StaticResource MaterialDesignIconButton}"
+                                    ToolTip="Add Brand">
                                     <materialDesign:PackIcon Kind="BagPersonalPlusOutline" 
                                      Width="24" Height="24" 
                                      VerticalAlignment="Center"
@@ -192,25 +192,24 @@
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Text="Supplier:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                             </StackPanel>
-                            <!--Supplier Value-->
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <ComboBox x:Name="ComboBoxSupplier" 
-                  Grid.Column="0"
-                  Style="{StaticResource RoundedComboBoxStyle}" 
-                  Width="Auto" Height="40" 
-                  SelectedIndex="0" Margin="0,0,5,0" 
-                  FontFamily="Lexend" 
-                  Foreground="#474747" 
-                  FontWeight="SemiBold"/>
+                                          Grid.Column="0"
+                                          Style="{StaticResource RoundedComboBoxStyle}" 
+                                          Width="Auto" Height="40" 
+                                          SelectedIndex="0" Margin="0,0,5,0" 
+                                          FontFamily="Lexend" 
+                                          Foreground="#474747" 
+                                          FontWeight="SemiBold"/>
                                 <Button Grid.Column="1"
-                Click="BtnAddSupplier_Click"
-                Width="40" Height="40"
-                Style="{StaticResource MaterialDesignIconButton}"
-                ToolTip="Add Supplier">
+                                    Click="BtnAddSupplier_Click"
+                                    Width="40" Height="40"
+                                    Style="{StaticResource MaterialDesignIconButton}"
+                                    ToolTip="Add Supplier">
                                     <materialDesign:PackIcon Kind="AccountMultiplePlus" 
                                      Width="24" Height="24" 
                                      VerticalAlignment="Center"
@@ -223,18 +222,84 @@
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Text="Product Category:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                             </StackPanel>
-                            <!--Category Value-->
-                            <ComboBox x:Name="ComboBoxCategory" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0" FontFamily="Lexend"  Foreground="#474747" FontWeight="SemiBold"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- UPDATED: Added IsEditable and search attributes -->
+                                <ComboBox 
+                                    Grid.Column="0"
+                                    x:Name="ComboBoxCategory" 
+                                    Style="{StaticResource RoundedComboBoxStyle}" 
+                                    Width="Auto" 
+                                    Height="40" 
+                                    Margin="0" 
+                                    FontFamily="Lexend"  
+                                    Foreground="#474747" 
+                                    FontWeight="SemiBold"
+                                    IsEditable="True"
+                                    IsReadOnly="False"
+                                    IsTextSearchEnabled="True"
+                                    TextSearch.TextPath="Content"
+                                    StaysOpenOnEdit="True"/>
+
+                                <Button Grid.Column="1"
+                                    Click="BtnAddCategory_Click"
+                                    Width="40" Height="40"
+                                    Style="{StaticResource MaterialDesignIconButton}"
+                                    ToolTip="Add Category">
+                                    <materialDesign:PackIcon 
+                                        Kind="LayersOutline" 
+                                        Width="24" 
+                                        Height="24" 
+                                        VerticalAlignment="Center"
+                                        Margin="6,0,0,0"
+                                        Foreground="#474747"/>
+                                </Button>
+                            </Grid>
                         </StackPanel>
 
                         <StackPanel x:Name="StackPanelSubCategory" Margin="0,10" Visibility="Collapsed">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                <TextBlock x:Name="SubCategoryLabel"  Text="Sub-Category:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                                <TextBlock x:Name="SubCategoryLabel" Text="Sub-Category:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                             </StackPanel>
-                            <!--Sub Category Value-->
-                            <ComboBox x:Name="ComboBoxSubCategory" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0"/>
-                        </StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
 
+                                <!-- UPDATED: Added IsEditable and search attributes -->
+                                <ComboBox 
+                                    Grid.Column="0"
+                                    x:Name="ComboBoxSubCategory" 
+                                    Style="{StaticResource RoundedComboBoxStyle}" 
+                                    Width="Auto" 
+                                    Height="40" 
+                                    Margin="0"
+                                    IsEditable="True"
+                                    IsReadOnly="False"
+                                    IsTextSearchEnabled="True"
+                                    TextSearch.TextPath="Content"
+                                    StaysOpenOnEdit="True"/>
+
+                                <Button Grid.Column="1"
+                                    Click="BtnAddSubcategory_Click"
+                                    Width="40" Height="40"
+                                    Style="{StaticResource MaterialDesignIconButton}"
+                                    ToolTip="Add Sub-category">
+                                    <materialDesign:PackIcon 
+                                        Kind="TagOutline" 
+                                        Width="24" 
+                                        Height="24" 
+                                        VerticalAlignment="Center"
+                                        Margin="6,0,0,0"
+                                        Foreground="#474747"/>
+                                </Button>
+                            </Grid>
+                        </StackPanel>
 
                         <StackPanel Margin="0,10">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
@@ -246,39 +311,36 @@
                                         <ColumnDefinition Width=".05*"/>
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <!-- Single Date Picker -->
                                     <DatePicker x:Name="SingleDatePicker" 
-                Style="{StaticResource SingleDatePickerStyle}" 
-                SelectedDate="{Binding SelectedDate, Mode=TwoWay}"
-                DisplayDateStart="{Binding MinimumDate}"
-                SelectedDateChanged="SingleDatePicker_SelectedDateChanged"/>
-                                    <!-- Calendar Icon -->
+                                        Style="{StaticResource SingleDatePickerStyle}" 
+                                        SelectedDate="{Binding SelectedDate, Mode=TwoWay}"
+                                        DisplayDateStart="{Binding MinimumDate}"
+                                        SelectedDateChanged="SingleDatePicker_SelectedDateChanged"/>
                                     <materialDesign:PackIcon Grid.Column="0" Kind="Calendar" Width="25" Height="25" Foreground="#474747" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,0,0,0"/>
-                                    <!-- Date Display - Now uses FormattedDate property -->
                                     <Button x:Name="DateButton" Grid.Column="1" Style="{StaticResource DateButtonStyle}" Click="StartDate_Click" Width="Auto" Margin="10,0,25,0">
-                                        <TextBlock Text="{Binding FormattedDate}" Margin="0,0,5,0" FontFamily="Lexend"  Foreground="#474747" FontWeight="SemiBold" Height="14"/>
+                                        <TextBlock Text="{Binding FormattedDate}" Margin="0,0,5,0" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold" Height="14"/>
                                     </Button>
                                 </Grid>
                             </Border>
                             <TextBlock Text="Do not change if not applicable." Margin="10,5,0,0"/>
                         </StackPanel>
-                        
+
                         <StackPanel Margin="0,10">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Text="Description:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                                 <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
                             </StackPanel>
                             <Border Style="{StaticResource RoundedBorderStyle}" Padding="0,10,0,10">
-                                <!-- Description Value with binding -->
                                 <TextBox x:Name="TxtDescription" 
-                                 Style="{StaticResource RoundedTextboxStyle}" 
-                                 Height="100" 
-                                 VerticalContentAlignment="Top" 
-                                 Margin="20,2,20,1" 
-                                 TextWrapping="Wrap"
-                                 AcceptsReturn="True"
-                                 Text="{Binding Description, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                 FontFamily="Lexend"  Foreground="#474747" FontWeight="SemiBold"/>
+     Style="{StaticResource RoundedTextboxStyle}" 
+     Height="100" 
+     VerticalContentAlignment="Top" 
+     Margin="20,2,20,1" 
+     TextWrapping="Wrap"
+     AcceptsReturn="True"
+     Text="{Binding Description, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+     FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"
+     TextChanged="TxtDescription_TextChanged"/>
                             </Border>
                         </StackPanel>
 
@@ -286,8 +348,7 @@
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <TextBlock Text="Measurement Unit:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                             </StackPanel>
-                            <!--Measurement Unit Value-->
-                            <ComboBox x:Name="ComboBoxMeasurementUnit" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0" FontFamily="Lexend"  Foreground="#474747" FontWeight="SemiBold">
+                            <ComboBox x:Name="ComboBoxMeasurementUnit" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold">
                                 <ComboBoxItem Content="None" Tag="None"/>
                                 <ComboBoxItem Content="cm" Tag="Cm"/>
                                 <ComboBoxItem Content="mm" Tag="Mm"/>
@@ -297,7 +358,7 @@
                         <Border x:Name="BorderSeperator" BorderBrush="#AEAEAE" BorderThickness="1" Margin="-10,10,0,10"/>
                     </StackPanel>
 
-                    <StackPanel  Grid.Row="2">
+                    <StackPanel Grid.Row="2">
                         <StackPanel Margin="0,10,0,20">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -334,8 +395,7 @@
                                 <TextBlock Text="Warehouse:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                                 <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
                             </StackPanel>
-                            <!--Warehouse Value-->
-                            <ComboBox x:Name="ComboBoxWarehouse" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0" FontFamily="Lexend"  Foreground="#474747" FontWeight="SemiBold"/>
+                            <ComboBox x:Name="ComboBoxWarehouse" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"/>
                         </StackPanel>
 
                         <StackPanel Margin="0,10,0,10" x:Name="StackPanelOrderPrice">
@@ -346,20 +406,14 @@
                                 </StackPanel>
                                 <Border Style="{StaticResource RoundedBorderStyle}">
                                     <Grid>
-                                        <!-- Define two columns: one for the icon, one for the TextBox -->
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-
-                                        <!-- Icon with Vertical Centering -->
                                         <materialDesign:PackIcon Kind="CurrencyPhp" Width="25" Height="20" Margin="10,0,0,0" VerticalAlignment="Center" Grid.Column="0"/>
-
-                                        <!-- TextBox with Rounded Style -->
-                                        <!-- Product Purchase Order Value-->
                                         <TextBox x:Name="TxtPurchaseOrder" Style="{StaticResource RoundedTextboxStyle}" Margin="0,0,25,0" Grid.Column="1"
                                             PreviewTextInput="IntegerOnlyTextInputHandler"
-                                            DataObject.Pasting="IntegerOnlyPasteHandler" FontFamily="Lexend"  Foreground="#474747" FontWeight="SemiBold"/>
+                                            DataObject.Pasting="IntegerOnlyPasteHandler" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"/>
                                     </Grid>
                                 </Border>
                             </StackPanel>
@@ -375,13 +429,13 @@
                                     </Grid.ColumnDefinitions>
                                     <Button Style="{StaticResource RoundedButtonStyle}" Grid.Column="0" Margin="0,0,10,0">
                                         <RadioButton x:Name="RadBtnPercentage" Margin="10" BorderBrush="#474747" BorderThickness="1.5" 
-                 GroupName="CalculationMode" IsChecked="True" Checked="RadioButton_Checked">
+                                             GroupName="CalculationMode" IsChecked="True" Checked="RadioButton_Checked">
                                             <TextBlock Text="Percentage" FontSize="14" FontWeight="SemiBold" FontFamily="{StaticResource Lexend}" Foreground="#474747"/>
                                         </RadioButton>
                                     </Button>
                                     <Button Style="{StaticResource RoundedButtonStyle}" Grid.Column="1" Margin="10,0,0,0">
                                         <RadioButton x:Name="RadBtnFlat" Margin="10" BorderBrush="#474747" BorderThickness="1.5"
-                 GroupName="CalculationMode" Checked="RadioButton_Checked">
+                                             GroupName="CalculationMode" Checked="RadioButton_Checked">
                                             <TextBlock Text="Flat" FontSize="14" FontWeight="SemiBold" FontFamily="{StaticResource Lexend}" Foreground="#474747"/>
                                         </RadioButton>
                                     </Button>
@@ -394,22 +448,16 @@
                                 </StackPanel>
                                 <Border Style="{StaticResource RoundedBorderStyle}">
                                     <Grid>
-                                        <!-- Define columns for the input field -->
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-
-                                        <!-- Icon or prefix based on markup type -->
                                         <materialDesign:PackIcon x:Name="MarkupPrefix" Grid.Column="0" Kind="PercentOutline" Width="25" Height="20" Margin="10,0,0,0" VerticalAlignment="Center"/>
-
-
-                                        <!-- TextBox for markup value -->
                                         <TextBox x:Name="TxtMarkup" Style="{StaticResource RoundedTextboxStyle}" Margin="0,0,20,0" Grid.Column="1"
                                              PreviewTextInput="IntegerOnlyTextInputHandler"
                                              DataObject.Pasting="IntegerOnlyPasteHandler" 
                                              TextChanged="TxtMarkup_TextChanged"
-                                             VerticalAlignment="Center" FontFamily="Lexend"  Foreground="#474747" FontWeight="SemiBold"/>
+                                             VerticalAlignment="Center" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"/>
                                     </Grid>
                                 </Border>
                             </StackPanel>
@@ -422,21 +470,15 @@
                                 </StackPanel>
                                 <Border Style="{StaticResource RoundedBorderStyle}">
                                     <Grid>
-                                        <!-- Define two columns: one for the icon, one for the TextBox -->
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="*"/>
                                         </Grid.ColumnDefinitions>
-
-                                        <!-- Icon with Vertical Centering -->
                                         <materialDesign:PackIcon Kind="CurrencyPhp" Width="25" Height="20" Margin="10,0,0,0" VerticalAlignment="Center" Grid.Column="0"/>
-
-                                        <!-- TextBox with Rounded Style -->
-                                        <!-- Product Retail Price Value-->
                                         <TextBox x:Name="TxtRetailPrice" Style="{StaticResource RoundedTextboxStyle}" Margin="0,0,25,0" Grid.Column="1" 
                                             PreviewTextInput="IntegerOnlyTextInputHandler"
                                             DataObject.Pasting="IntegerOnlyPasteHandler"
-                                            IsReadOnly="True" FontFamily="Lexend"  Foreground="#474747" FontWeight="SemiBold"/>
+                                            IsReadOnly="True" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"/>
                                     </Grid>
                                 </Border>
                             </StackPanel>
@@ -449,19 +491,13 @@
                             </StackPanel>
                             <Border Style="{StaticResource RoundedBorderStyle}">
                                 <Grid>
-                                    <!-- Define two columns: one for the icon, one for the TextBox -->
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-
-                                    <!-- TextBox with Rounded Style -->
-                                    <!-- Default Tax Rate-->
                                     <TextBox x:Name="TxtDefaultTax" Style="{StaticResource RoundedTextboxStyle}" Margin="25,0,0,0" Grid.Column="0"
-                                    PreviewTextInput="IntegerOnlyTextInputHandler"
-                                    DataObject.Pasting="IntegerOnlyPasteHandler"/>
-
-                                    <!-- Icon with Vertical Centering -->
+                                        PreviewTextInput="IntegerOnlyTextInputHandler"
+                                        DataObject.Pasting="IntegerOnlyPasteHandler"/>
                                     <materialDesign:PackIcon Kind="PercentOutline" Width="25" Height="20" Margin="0,0,10,0" VerticalAlignment="Center" Grid.Column="1"/>
                                 </Grid>
                             </Border>
@@ -474,19 +510,13 @@
                             </StackPanel>
                             <Border Style="{StaticResource RoundedBorderStyle}">
                                 <Grid>
-                                    <!-- Define two columns: one for the icon, one for the TextBox -->
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
-
-                                    <!-- TextBox with Rounded Style -->
-                                    <!-- Default Discount Rate-->
                                     <TextBox x:Name="TxtDiscountRate" Style="{StaticResource RoundedTextboxStyle}" Margin="25,0,0,0" Grid.Column="0"
-                                    PreviewTextInput="IntegerOnlyTextInputHandler"
-                                    DataObject.Pasting="IntegerOnlyPasteHandler" FontFamily="Lexend"  Foreground="#474747" FontWeight="SemiBold"/>
-
-                                    <!-- Icon with Vertical Centering -->
+                                        PreviewTextInput="IntegerOnlyTextInputHandler"
+                                        DataObject.Pasting="IntegerOnlyPasteHandler" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"/>
                                     <materialDesign:PackIcon Kind="PercentOutline" Width="25" Height="20" Margin="0,0,10,0" VerticalAlignment="Center" Grid.Column="1"/>
                                 </Grid>
                             </Border>
@@ -503,11 +533,10 @@
                                 <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
                             </StackPanel>
                             <Border Style="{StaticResource RoundedBorderStyle}" x:Name="BorderStockUnits">
-                                <!-- Stock Units Value-->
                                 <TextBox x:Name="TxtStockUnits" Style="{StaticResource RoundedTextboxStyle}"
-                                PreviewTextInput="IntegerOnlyTextInputHandler"
-                                DataObject.Pasting="IntegerOnlyPasteHandler"
-                                KeyDown="TxtStockUnits_KeyDown" FontFamily="Lexend"  Foreground="#474747" FontWeight="SemiBold"/>
+                                    PreviewTextInput="IntegerOnlyTextInputHandler"
+                                    DataObject.Pasting="IntegerOnlyPasteHandler"
+                                    KeyDown="TxtStockUnits_KeyDown" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"/>
                             </Border>
                         </StackPanel>
 
@@ -517,16 +546,15 @@
                                 <TextBlock Text="*" FontSize="14" Foreground="#D23636" FontWeight="Bold"/>
                             </StackPanel>
                             <Border Style="{StaticResource RoundedBorderStyle}">
-                                <!-- Alert Quantity Value-->
                                 <TextBox x:Name="TxtAlertQuantity" Style="{StaticResource RoundedTextboxStyle}"      
-                                PreviewTextInput="IntegerOnlyTextInputHandler"
-                                DataObject.Pasting="IntegerOnlyPasteHandler" FontFamily="Lexend"  Foreground="#474747" FontWeight="SemiBold"/>
+                                    PreviewTextInput="IntegerOnlyTextInputHandler"
+                                    DataObject.Pasting="IntegerOnlyPasteHandler" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"/>
                             </Border>
                         </StackPanel>
                     </StackPanel>
 
                     <!-- Serial Number Data-->
-                    <StackPanel Grid.Row="4"  x:Name="OuterStackPanel">
+                    <StackPanel Grid.Row="4" x:Name="OuterStackPanel">
                         <StackPanel Margin="0,10,0,10" x:Name="StackPanelSerialNumber">
                             <StackPanel Orientation="Horizontal">
                                 <CheckBox x:Name="CheckBoxSerialNumber" Click="IncludeSerial_Click"/>
@@ -544,11 +572,11 @@
                             <StackPanel x:Name="MainContainer" Background="white">
                                 <!-- Other UI elements -->
                             </StackPanel>
-
                         </StackPanel>
                     </StackPanel>
+
                     <StackPanel Grid.Row="5" HorizontalAlignment="Right">
-                        <Button Background="Transparent" HorizontalAlignment="Right" BorderThickness="0" Margin="0,15,0,0" x:Name="btnAddProduct"  Click="BtnAddProduct_Click">
+                        <Button Background="Transparent" HorizontalAlignment="Right" BorderThickness="0" Margin="0,15,0,0" x:Name="btnAddProduct" Click="BtnAddProduct_Click">
                             <Border Style="{StaticResource RoundedBorderStyle}" Padding="1" Background="#52C69D" BorderThickness="0" Width="200" Height="40">
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Background="#52C69D" Margin="10,0,10,0">
                                     <materialDesign:PackIcon Kind="CartAdd" Width="20" Height="20" Margin="5,0,5,0" Foreground="White" VerticalAlignment="Center"/>

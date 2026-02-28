@@ -101,9 +101,10 @@
                             <Border Height="1344" Width="816" Background="White" CornerRadius="0,0,10,10"  BorderThickness="0" Padding="40">
                                 <Grid>
 
-                                    <!--<Grid.Background>
-                                        <ImageBrush ImageSource="/Assets/images/watermarkv2.png" Stretch="UniformToFill"/>
-                                    </Grid.Background>-->
+                                   
+                                    <Grid.Background>
+                                        <ImageBrush ImageSource="/Assets/images/DREAMPCBUILD LOGO WATERMARK SLANTED SPACED.png" Stretch="UniformToFill" Opacity="0.05"/>
+                                    </Grid.Background>
 
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>

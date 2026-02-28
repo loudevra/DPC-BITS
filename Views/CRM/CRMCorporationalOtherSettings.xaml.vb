@@ -5,28 +5,40 @@ Imports DPC.DPC.Data.Models
 Namespace DPC.Views.CRM
     Public Class CRMCorporationalOtherSettings
         Inherits UserControl
-        Public Sub New()
 
-            ' This call is required by the designer.
+        ' =========================================================
+        ' 1. INTERNAL MEMORY (Keeps data alive across tabs)
+        ' =========================================================
+        Private Shared _savedTinID As String = ""
+        Private Shared _savedClientGroupID As Integer? = Nothing
+        Private Shared _savedCustomerGroup As String = ""
+        Private Shared _savedLanguage As String = ""
+
+        Public Sub New()
             InitializeComponent()
 
-            ' Add any initialization after the InitializeComponent() call.
+            ' 2. INITIALIZATION
             LoadCustomerGroups()
-            GetInfo()
 
-            AddHandler cmbCustomerGroup.SelectionChanged, AddressOf SetInfo
-            AddHandler cmbLanguage.SelectionChanged, AddressOf SetInfo
-            AddHandler txtTinID.TextChanged, AddressOf SetInfo
-        End Sub
+            ' 3. RESTORE DATA
+            txtTinID.Text = _savedTinID
 
-        Private Sub txtInput_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
-            ' Regex allows digits, symbols, and space
-            Dim pattern As String = "^[0-9!@#$%^&*()_\-+=\.,:;?/ ]$"
-            If Not System.Text.RegularExpressions.Regex.IsMatch(e.Text, pattern) Then
-                e.Handled = True
+            If _savedClientGroupID.HasValue Then
+                cmbCustomerGroup.SelectedValue = _savedClientGroupID.Value
             End If
+
+            If Not String.IsNullOrEmpty(_savedLanguage) Then
+                cmbLanguage.Text = _savedLanguage
+            End If
+
+            ' 4. AUTO-SAVE HANDLERS
+            AddHandler txtTinID.TextChanged, AddressOf SaveToMemory
+            AddHandler cmbCustomerGroup.SelectionChanged, AddressOf SaveToMemory
+            AddHandler cmbLanguage.SelectionChanged, AddressOf SaveToMemory
+            AddHandler cmbLanguage.KeyUp, AddressOf SaveToMemory
         End Sub
 
+        ' --- NOTE: Regex Validation Sub has been removed to allow all characters ---
 
         Private Sub LoadCustomerGroups()
             Dim customerGroups = ClientGroupController.GetCustomerGroup()
@@ -35,55 +47,68 @@ Namespace DPC.Views.CRM
             cmbCustomerGroup.ItemsSource = customerGroups
         End Sub
 
-        Private Sub SetInfo()
-            Dim selectedGroup = CType(cmbCustomerGroup.SelectedItem, KeyValuePair(Of Integer, String))
-            Dim selectedItem As ComboBoxItem = TryCast(cmbLanguage.SelectedItem, ComboBoxItem)
+        ' --- MEMORY MANAGEMENT ---
+        ' --- MEMORY MANAGEMENT ---
+        Private Sub SaveToMemory(sender As Object, e As RoutedEventArgs)
+            Try
+                ' 1. Save TIN
+                _savedTinID = txtTinID.Text
 
-            CorporationalClientDetails.TinID = txtTinID.Text.Trim()
-            CorporationalClientDetails.ClientGroupID = cmbCustomerGroup.SelectedValue
+                ' 2. Save Group
+                If cmbCustomerGroup IsNot Nothing AndAlso cmbCustomerGroup.SelectedItem IsNot Nothing Then
+                    If cmbCustomerGroup.SelectedValue IsNot Nothing Then
+                        _savedClientGroupID = CInt(cmbCustomerGroup.SelectedValue)
 
-            If String.IsNullOrWhiteSpace(selectedGroup.Value) Then
-                CorporationalClientDetails.CustomerGroup = ""
-            Else
-                CorporationalClientDetails.CustomerGroup = selectedGroup.Value.ToString()
-            End If
+                        ' Safe Cast
+                        Dim selectedGroup As KeyValuePair(Of Integer, String) =
+                    CType(cmbCustomerGroup.SelectedItem, KeyValuePair(Of Integer, String))
+                        _savedCustomerGroup = selectedGroup.Value
+                    End If
+                Else
+                    _savedClientGroupID = Nothing
+                    _savedCustomerGroup = ""
+                End If
 
-            CorporationalClientDetails.CustomerLanguage = selectedItem?.Content.ToString()
+                ' 3. Save Language
+                If cmbLanguage IsNot Nothing AndAlso cmbLanguage.SelectedItem IsNot Nothing Then
+                    Dim selectedItem As ComboBoxItem = TryCast(cmbLanguage.SelectedItem, ComboBoxItem)
+                    If selectedItem IsNot Nothing Then
+                        _savedLanguage = selectedItem.Content.ToString()
+                    Else
+                        _savedLanguage = cmbLanguage.Text
+                    End If
+                Else
+                    _savedLanguage = cmbLanguage.Text
+                End If
+
+                ' 4. Update Global Model
+                ' FIX: Removed the "If CorporationalClientDetails IsNot Nothing" check
+                CorporationalClientDetails.TinID = _savedTinID
+                CorporationalClientDetails.ClientGroupID = _savedClientGroupID
+                CorporationalClientDetails.CustomerGroup = _savedCustomerGroup
+                CorporationalClientDetails.CustomerLanguage = _savedLanguage
+
+            Catch ex As Exception
+                Debug.WriteLine("Error saving memory: " & ex.Message)
+            End Try
         End Sub
 
-        Private Sub GetInfo()
-            txtTinID.Text = CorporationalClientDetails.TinID
-            cmbCustomerGroup.SelectedValue = CorporationalClientDetails.ClientGroupID
-            cmbLanguage.Text = CorporationalClientDetails.CustomerLanguage
-        End Sub
-
+        ' --- ADD CLIENT BUTTON ---
         Private Sub AddClient(sender As Object, e As RoutedEventArgs)
-            If CorporationalClientDetails.Representative = Nothing OrElse
-                CorporationalClientDetails.TinID = Nothing OrElse
-                CorporationalClientDetails.CompanyName = Nothing OrElse
-                CorporationalClientDetails.Phone = Nothing OrElse
-                CorporationalClientDetails.Landline = Nothing OrElse
-                CorporationalClientDetails.Email = Nothing OrElse
-                CorporationalClientDetails.BillAddress = Nothing OrElse
-                CorporationalClientDetails.BillCity = Nothing OrElse
-                CorporationalClientDetails.BillRegion = Nothing OrElse
-                CorporationalClientDetails.BillCountry = Nothing OrElse
-                CorporationalClientDetails.BillZipCode = Nothing OrElse
-                CorporationalClientDetails.ClientGroupID = Nothing OrElse
-                CorporationalClientDetails.CustomerGroup = Nothing OrElse
-                CorporationalClientDetails.CustomerLanguage = Nothing OrElse
-                CorporationalClientDetails.Address = Nothing OrElse
-                CorporationalClientDetails.City = Nothing OrElse
-                CorporationalClientDetails.Region = Nothing OrElse
-                CorporationalClientDetails.Country = Nothing OrElse
-                CorporationalClientDetails.ZipCode = Nothing OrElse
-                CorporationalClientDetails.SameAsBilling = Nothing Then
+            ' Check Global Fields (Personal, Billing, Shipping)
+            If String.IsNullOrEmpty(CorporationalClientDetails.CompanyName) OrElse
+               String.IsNullOrEmpty(CorporationalClientDetails.BillAddress) OrElse
+               String.IsNullOrEmpty(CorporationalClientDetails.Address) Then
 
-                MessageBox.Show("Please fill in all required fields before adding a client.", "Missing Information", MessageBoxButton.OK, MessageBoxImage.Warning)
-
+                MessageBox.Show("Please fill in required fields in other tabs (Personal, Billing, Shipping).", "Missing Information", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Exit Sub
             End If
 
+            ' Check Local Fields
+            If String.IsNullOrEmpty(txtTinID.Text) Then
+                MessageBox.Show("Please fill in the TIN ID.", "Missing Information", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Exit Sub
+            End If
 
             Dim client As New ClientCorporational With {
                 .ClientGroupID = CorporationalClientDetails.ClientGroupID,
@@ -102,23 +127,31 @@ Namespace DPC.Views.CRM
 
             Dim success As Boolean = ClientController.CreateClientCorporational(client)
 
-            If success = True Then
+            If success Then
                 MessageBox.Show("Client added successfully.")
+                ClearCache()
             End If
-
-            txtTinID.Text = Nothing
-            cmbCustomerGroup.SelectedIndex = -1
-            cmbLanguage.SelectedIndex = -1
-
-            ClearCache()
         End Sub
 
         Private Sub ClearCache()
-            CorporationalClientDetails.Landline = Nothing
+            ' Clear Local Memory
+            _savedTinID = ""
+            _savedClientGroupID = Nothing
+            _savedCustomerGroup = ""
+            _savedLanguage = ""
+
+            ' Clear UI
+            txtTinID.Text = ""
+            cmbCustomerGroup.SelectedIndex = -1
+            cmbLanguage.SelectedIndex = -1
+            cmbLanguage.Text = ""
+
+            ' Clear Global Model
             CorporationalClientDetails.Representative = Nothing
             CorporationalClientDetails.TinID = Nothing
             CorporationalClientDetails.CompanyName = Nothing
             CorporationalClientDetails.Phone = Nothing
+            CorporationalClientDetails.Landline = Nothing
             CorporationalClientDetails.Email = Nothing
             CorporationalClientDetails.BillAddress = Nothing
             CorporationalClientDetails.BillCity = Nothing

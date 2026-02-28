@@ -241,6 +241,13 @@
 
                 <!-- Right Controls (Date Range & Search) -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                    <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200">
+                        <Grid>
+                            <TextBox x:Name="SearchText" Height="Auto" Margin="10,0,30,0" VerticalAlignment="Center" VerticalContentAlignment="Center" BorderThickness="0"
+                                 FontFamily="Lexend" Background="Transparent" HorizontalAlignment="Stretch" Focusable="True" TextChanged="TextBox_TextChanged"/>
+                            <materialDesign:PackIcon Kind="Magnify" Width="20" Height="20" Foreground="Black" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                        </Grid>
+                    </Border>
                     <Border Style="{StaticResource RoundedGridStyle}" HorizontalAlignment="Right" Margin="10" MinWidth="250">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -259,7 +266,7 @@
                                 BorderThickness="0"
                                 HorizontalAlignment="Stretch"
                                 Click="StartDate_Click">
-                                <TextBlock Text="{Binding StartDate, StringFormat='MMM dd, yyyy'}"
+                                <TextBlock Text="{Binding StartDate, StringFormat=MMM dd\, yyyy}"
                                        FontFamily="Lexend"
                                        FontSize="12"
                                        VerticalAlignment="Center"
@@ -282,7 +289,7 @@
                                 Padding="0"
                                 HorizontalAlignment="Stretch"
                                 Click="EndDate_Click">
-                                <TextBlock Text="{Binding EndDate, StringFormat='MMM dd, yyyy'}"
+                                <TextBlock Text="{Binding EndDate, StringFormat=MMM dd\, yyyy}"
                                        FontFamily="Lexend"
                                        FontSize="12"
                                        VerticalAlignment="Center"
@@ -297,14 +304,6 @@
                                                  VerticalAlignment="Center"
                                                  Grid.Column="3"
                                                  Margin="0,0,5,0"/>
-                        </Grid>
-                    </Border>
-
-                    <Border Style="{StaticResource RoundedGridStyle}" HorizontalAlignment="Right" Margin="10" MinWidth="200">
-                        <Grid>
-                            <TextBox x:Name="SearchText" Height="Auto" Margin="10,0,30,0" VerticalAlignment="Center" VerticalContentAlignment="Center" BorderThickness="0"
-                                 FontFamily="Lexend" Background="Transparent" HorizontalAlignment="Stretch" Focusable="True" TextChanged="TextBox_TextChanged"/>
-                            <materialDesign:PackIcon Kind="Magnify" Width="20" Height="20" Foreground="Black" HorizontalAlignment="Right" Margin="0,0,10,0"/>
                         </Grid>
                     </Border>
                 </StackPanel>

@@ -3,10 +3,12 @@ Imports System.Windows
 Imports System.Windows.Controls
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Models
+Imports DPC.Data.Helpers.ViewLoader
 
 Namespace DPC.Views.CRM
 
     Partial Public Class CRMEditResidentialClientShippingAddress
+        Implements IClientEditor
         Private _clientID As String = ""
 
         Public Sub New()
@@ -58,6 +60,36 @@ Namespace DPC.Views.CRM
                 End If
             Catch ex As Exception
                 MessageBox.Show($"Error loading data: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+        End Sub
+
+        Public Sub LoadFromClient(client As Client) Implements IClientEditor.LoadFromClient
+            If client Is Nothing Then Return
+            Try
+                _clientID = client.ClientID.ToString()
+
+                Dim shippingParts As String() = If(String.IsNullOrEmpty(client.ShippingAddress),
+                                               New String() {},
+                                               client.ShippingAddress.Split(New String() {", "}, StringSplitOptions.None))
+                txtAddress.Text = If(shippingParts.Length > 0, shippingParts(0), "")
+                txtCity.Text = If(shippingParts.Length > 1, shippingParts(1), "")
+                txtRegion.Text = If(shippingParts.Length > 2, shippingParts(2), "")
+                txtCountry.Text = If(shippingParts.Length > 3, shippingParts(3), "")
+                txtZipCode.Text = If(shippingParts.Length > 4, shippingParts(4), "")
+                billingCheckBox.IsChecked = (client.BillingAddress = client.ShippingAddress)
+                If billingCheckBox.IsChecked = True Then
+                    GetInfoBillAddress()
+                End If
+
+                ' update shared module for compatibility
+                ResidentialClientDetails.Address = txtAddress.Text
+                ResidentialClientDetails.City = txtCity.Text
+                ResidentialClientDetails.Region = txtRegion.Text
+                ResidentialClientDetails.Country = txtCountry.Text
+                ResidentialClientDetails.ZipCode = txtZipCode.Text
+                ResidentialClientDetails.SameAsBilling = billingCheckBox.IsChecked.GetValueOrDefault(False)
+            Catch ex As Exception
+                MessageBox.Show($"Error in LoadFromClient (Shipping): {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Sub
 

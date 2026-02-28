@@ -16,20 +16,14 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
     Public Class ManageBrands
         Inherits UserControl
 
-        ' Properties for popup and data handling
         Private popup As Popup
         Private recentlyClosed As Boolean = False
         Private view As ICollectionView
 
-        ' UI elements for direct access
-
-
-        ' Properties for pagination
         Private _paginationHelper As PaginationHelper
         Private _searchFilterHelper As SearchFilterHelper
 
         Public Sub New(lblPageInfo As TextBlock)
-            ' Constructor for testing or other uses that might provide a page info label
             InitializeComponent()
             InitializeControls()
         End Sub
@@ -40,13 +34,11 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
         End Sub
 
         Public Sub InitializeControls()
-            ' Find UI elements using their name
             dataGrid = TryCast(FindName("dataGrid"), DataGrid)
             txtSearch = TryCast(FindName("txtSearch"), TextBox)
             cboItemsPerPage = TryCast(FindName("cboItemsPerPage"), ComboBox)
             paginationPanel = TryCast(FindName("paginationPanel"), StackPanel)
 
-            ' Verify that required controls are found
             If dataGrid Is Nothing Then
                 MessageBox.Show("DataGrid not found in the XAML.", "Initialization Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 Return
@@ -57,7 +49,6 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
                 Return
             End If
 
-            ' Wire up event handlers
             If txtSearch IsNot Nothing Then
                 AddHandler txtSearch.TextChanged, AddressOf TxtSearch_TextChanged
             End If
@@ -66,21 +57,17 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
                 AddHandler cboItemsPerPage.SelectionChanged, AddressOf CboItemsPerPage_SelectionChanged
             End If
 
-            ' Initialize and load brands data
             LoadBrands()
         End Sub
 
-        ' Event handler for TextChanged to update the filter
         Private Sub TxtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
             If _searchFilterHelper IsNot Nothing Then
                 _searchFilterHelper.SearchText = txtSearch.Text
             End If
         End Sub
 
-        ' Event Handler for Export Button Click - Updated to use ExcelExporter
         Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
             If dataGrid Is Nothing Then Return
-
             Dim columnsToExclude As New List(Of String) From {"Actions"}
             ExcelExporter.ExportDataGridToExcel(dataGrid, columnsToExclude, "BrandsExport", "Brands")
         End Sub
@@ -108,10 +95,7 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
             }
 
             Dim addBrandWindow As New DPC.Components.Forms.AddBrand()
-
-            ' Handle the BrandAdded event
             AddHandler addBrandWindow.BrandAdded, AddressOf OnBrandAdded
-
             popup.Child = addBrandWindow
 
             AddHandler popup.Closed, Sub()
@@ -122,20 +106,17 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
             popup.IsOpen = True
         End Sub
 
-        ' Callback to reload the brand data
         Private Sub OnBrandAdded()
             LoadBrands()
         End Sub
 
         Private Sub LoadBrands()
             Try
-                ' Check if DataGrid exists
                 If dataGrid Is Nothing Then
                     MessageBox.Show("DataGrid control not found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
                     Return
                 End If
 
-                ' Get all brands with error handling
                 Dim allBrands As ObservableCollection(Of Object)
                 Try
                     Dim brandList = BrandController.GetBrands()
@@ -150,13 +131,9 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
                     allBrands = New ObservableCollection(Of Object)()
                 End Try
 
-                ' Clear the pagination panel to avoid duplicate controls
                 paginationPanel.Children.Clear()
-
-                ' Initialize pagination helper with our DataGrid and pagination panel
                 _paginationHelper = New PaginationHelper(dataGrid, paginationPanel)
 
-                ' Set the items per page from the combo box if available
                 If cboItemsPerPage IsNot Nothing Then
                     Dim selectedItem = TryCast(cboItemsPerPage.SelectedItem, ComboBoxItem)
                     If selectedItem IsNot Nothing Then
@@ -168,11 +145,9 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
                     End If
                 End If
 
-                ' Set the all items to the helper
                 _paginationHelper.AllItems = allBrands
 
-                ' Initialize search filter helper with our pagination helper
-                _searchFilterHelper = New SearchFilterHelper(_paginationHelper, "ID", "Name", "TotalSupplier")
+                _searchFilterHelper = New SearchFilterHelper(_paginationHelper, "ID", "Name", "Category", "SubCategory", "TotalSupplier")
 
             Catch ex As Exception
                 MessageBox.Show("Error in LoadBrands: " & ex.Message & vbCrLf & "Stack Trace: " & ex.StackTrace,
@@ -190,8 +165,6 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
                         Using adapter As New MySqlDataAdapter(cmd)
                             Dim dataTable As New DataTable()
                             adapter.Fill(dataTable)
-
-                            ' Assuming your DataGrid is named "dgBrands"
                             dataGrid.ItemsSource = dataTable.DefaultView
                         End Using
                     End Using
@@ -201,23 +174,18 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
             End Try
         End Sub
 
-
         Private Sub CboItemsPerPage_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
             If _paginationHelper Is Nothing Then Return
 
-            ' Get the selected value from the ComboBox
             Dim selectedComboBoxItem As ComboBoxItem = TryCast(cboItemsPerPage.SelectedItem, ComboBoxItem)
             If selectedComboBoxItem IsNot Nothing Then
                 Dim itemsPerPageText As String = TryCast(selectedComboBoxItem.Content, String)
                 Dim newItemsPerPage As Integer
-
                 If Integer.TryParse(itemsPerPageText, newItemsPerPage) Then
-                    ' Update the pagination helper's items per page
                     _paginationHelper.ItemsPerPage = newItemsPerPage
                 End If
             End If
         End Sub
-
 
         Private Sub OpenEditBrand(sender As Object, e As RoutedEventArgs)
             Dim clickedButton As Button = TryCast(sender, Button)
@@ -241,20 +209,24 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
                 .AllowsTransparency = True
             }
 
-            Dim addBrandWindow As New DPC.Components.Forms.EditBrand()
-
-            ' Converts selected row items into brand model
             Dim brand As Brand = TryCast(dataGrid.SelectedItem, Brand)
+            If brand Is Nothing Then Return
 
-            ' Passes data to pop up
-            addBrandWindow.TxtBrand.Text = brand.Name
-            addBrandWindow.brandID = Convert.ToInt32(brand.ID)
-            addBrandWindow.manageBrands = Me
+            Dim editBrandWindow As New DPC.Components.Forms.EditBrand()
 
-            ' Handle the BrandAdded event
-            AddHandler addBrandWindow.BrandAdded, AddressOf OnBrandAdded
+            ' Set all properties BEFORE calling LoadData()
+            editBrandWindow.TxtBrand.Text = brand.Name
+            editBrandWindow.brandID = Convert.ToInt32(brand.ID)
+            editBrandWindow.manageBrands = Me
+            editBrandWindow.CategoryName = brand.Category
+            editBrandWindow.SubCategoryName = brand.SubCategory
 
-            popup.Child = addBrandWindow
+            ' Loads combos and pre-selects the correct category/subcategory
+            editBrandWindow.LoadData()
+
+            AddHandler editBrandWindow.BrandAdded, AddressOf OnBrandAdded
+
+            popup.Child = editBrandWindow
 
             AddHandler popup.Closed, Sub()
                                          recentlyClosed = True
@@ -288,7 +260,6 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
 
             Dim deleteBrandWindow As New DPC.Components.Forms.DeleteBrandPopup()
 
-            ' Converts selected row items into brand model
             Dim brand As Brand = TryCast(dataGrid.SelectedItem, Brand)
 
             deleteBrandWindow.brandName.Text = brand.Name
@@ -304,8 +275,6 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
 
             popup.IsOpen = True
         End Sub
-
-
 
     End Class
 End Namespace

@@ -132,8 +132,8 @@ Namespace DPC.Data.Controllers
         End Function
 
 
-        ''' Searches quotes based on search criteria
-        Public Shared Function SearchQuotes(searchText As String, limit As Integer, quoteType As String) As ObservableCollection(Of QuotesModel)
+        ''' Searches quotes based on search criteria and optional date range
+        Public Shared Function SearchQuotes(searchText As String, limit As Integer, quoteType As String, Optional startDate As Nullable(Of DateTime) = Nothing, Optional endDate As Nullable(Of DateTime) = Nothing) As ObservableCollection(Of QuotesModel)
             Dim quotes As New ObservableCollection(Of QuotesModel)
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
@@ -145,12 +145,22 @@ Namespace DPC.Data.Controllers
                         filterClause = "AND QuoteNumber NOT LIKE 'GPCE-%'"
                     End If
 
+                    ' Build date filtering clause conditionally
+                    Dim dateClause As String = String.Empty
+                    If startDate.HasValue Then
+                        dateClause &= " AND QuoteDate >= @startDate"
+                    End If
+                    If endDate.HasValue Then
+                        dateClause &= " AND QuoteDate <= @endDate"
+                    End If
+
                     ' ✅ Fixed: Added table name "quotes" after FROM
                     ' ✅ Fixed: Moved filterClause before the search conditions using WHERE 1=1
                     Dim query As String = $"
                 SELECT * FROM quotes
                 WHERE 1=1
                     {filterClause}
+                    {dateClause}
                     AND (
                         QuoteNumber LIKE @searchText 
                         OR ReferenceNo LIKE @searchText
@@ -163,6 +173,18 @@ Namespace DPC.Data.Controllers
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@searchText", "%" & searchText & "%")
                         cmd.Parameters.AddWithValue("@limit", limit)
+
+                        ' Add date parameters only if provided
+                        If startDate.HasValue Then
+                            ' Use Date (time = 00:00:00) - inclusive lower bound
+                            cmd.Parameters.AddWithValue("@startDate", startDate.Value.Date)
+                        End If
+                        If endDate.HasValue Then
+                            ' Make endDate inclusive to the last tick of the day
+                            Dim inclusiveEnd As DateTime = endDate.Value
+                            cmd.Parameters.AddWithValue("@endDate", inclusiveEnd)
+                        End If
+
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
                                 Dim itemList = ParseOrderItems(reader("OrderItems").ToString())

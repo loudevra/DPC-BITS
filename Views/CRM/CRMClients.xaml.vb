@@ -69,7 +69,7 @@ Namespace DPC.Views.CRM
 
         Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
             ' Check if DataGrid has data
-            If dataGrid.Items.Count = 0 Then
+            If dataGrid.Items.Count = 3 Then
                 MessageBox.Show("No data to export!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Exit Sub
             End If
@@ -221,45 +221,67 @@ Namespace DPC.Views.CRM
                 If button Is Nothing Then Return
 
                 ' Get the data context (the client object) from the button
-                Dim client As Client = TryCast(button.DataContext, Client)
-                If client Is Nothing Then Return
+                Dim clientPreview As Client = TryCast(button.DataContext, Client)
+                If clientPreview Is Nothing Then Return
 
-                System.Diagnostics.Debug.WriteLine($"DEBUG: Clicked edit for ClientID = {client.ClientID}")
-                System.Diagnostics.Debug.WriteLine($"DEBUG: ClientID Type = {client.ClientID.GetType()}")
-
-                ' Get the full client details from database
-                Dim clientIDString As String = client.ClientID.ToString()
-                System.Diagnostics.Debug.WriteLine($"DEBUG: Calling GetClientByID with: {clientIDString}")
-
+                ' Retrieve full client from DB
+                Dim clientIDString As String = clientPreview.ClientID.ToString()
                 Dim fullClient As Client = ClientController.GetClientByID(clientIDString)
 
                 If fullClient Is Nothing Then
-                    System.Diagnostics.Debug.WriteLine($"DEBUG: GetClientByID returned NULL for ID: {clientIDString}")
                     MessageBox.Show($"Failed to load client details. ClientID: {clientIDString}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
                     Return
-                Else
-                    System.Diagnostics.Debug.WriteLine($"DEBUG: Got client: {fullClient.Name}")
                 End If
 
-                ' Determine client type and navigate accordingly
-                If client.ClientType = "Residential" Then
-                    System.Diagnostics.Debug.WriteLine($"DEBUG: Creating edit form for Residential client with ID: {clientIDString}")
+                ' Populate shared module so the editor instance created by ViewLoader will pick up values
+                PopulateResidentialClientDetails(fullClient)
 
-                    ' Create the edit form
-                    Dim editForm As New CRMEditResidentialClient()
+                ' Navigate to the residential client edit form by creating the instance,
+                ' setting the client id, then assigning it to the main window CurrentView.
+                Try
+                    ' Find main application window (DPC.Base)
+                    Dim mainWindow As DPC.Base = Nothing
+                    For Each w As Window In Application.Current.Windows
+                        If TypeOf w Is DPC.Base Then
+                            mainWindow = DirectCast(w, DPC.Base)
+                            Exit For
+                        End If
+                    Next
 
-                    ' Set the ClientID before navigation
-                    editForm.SetClientID(clientIDString)
+                    If mainWindow IsNot Nothing Then
+                        ' Create the edit view instance, set client id before it loads
+                        Dim editView As New CRM.CRMEditResidentialClient()
+                        editView.SetClientID(clientIDString)
 
-                    System.Diagnostics.Debug.WriteLine($"DEBUG: Navigating to editresidentialclient")
+                        ' Assign the prepared instance as CurrentView (this will trigger Loaded)
+                        mainWindow.CurrentView = editView
 
-                    ' Navigate to the residential client edit form
-                    ViewLoader.DynamicView.NavigateToView("editresidentialclient", editForm)
+                        ' Close parent popup if present (same behavior as existing navigation)
+                        Dim current As DependencyObject = TryCast(sender, DependencyObject)
+                        While current IsNot Nothing
+                            Dim parentPopup = TryCast(current, Popup)
+                            If parentPopup IsNot Nothing Then
+                                parentPopup.IsOpen = False
+                                Exit While
+                            End If
 
-                ElseIf client.ClientType = "Corporate" Then
-                    MessageBox.Show("Corporate client editing is not yet implemented.", "Info", MessageBoxButton.OK, MessageBoxImage.Information)
-                End If
-
+                            Dim fe = TryCast(current, FrameworkElement)
+                            If fe IsNot Nothing AndAlso fe.Parent IsNot Nothing Then
+                                current = fe.Parent
+                            ElseIf VisualTreeHelper.GetParent(current) IsNot Nothing Then
+                                current = VisualTreeHelper.GetParent(current)
+                            Else
+                                current = Nothing
+                            End If
+                        End While
+                    Else
+                        ' Fallback to original navigation if main window cannot be found
+                        ViewLoader.DynamicView.NavigateToView("editresidentialclient", Me)
+                    End If
+                Catch ex As Exception
+                    System.Diagnostics.Debug.WriteLine($"Error navigating to edit view: {ex.Message}")
+                    ViewLoader.DynamicView.NavigateToView("editresidentialclient", Me)
+                End Try
             Catch ex As Exception
                 System.Diagnostics.Debug.WriteLine($"DEBUG: Exception in OpenEditCRMclient: {ex.Message}")
                 System.Diagnostics.Debug.WriteLine($"DEBUG: StackTrace: {ex.StackTrace}")

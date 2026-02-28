@@ -3,9 +3,13 @@ Imports System.Windows
 Imports System.Windows.Controls
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Models
+Imports DPC.Data.Helpers.ViewLoader
+
 Namespace DPC.Views.CRM
 
+
     Partial Public Class CRMEditResidentialClientBillingAddress
+        Implements IClientEditor
         Private _clientID As String = ""
 
         Public Sub New()
@@ -42,6 +46,31 @@ Namespace DPC.Views.CRM
                 MessageBox.Show($"Error loading data: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Sub
+
+        Public Sub LoadFromClient(client As Client) Implements IClientEditor.LoadFromClient
+            If client Is Nothing Then Return
+            Try
+                _clientID = client.ClientID.ToString()
+                Dim billingParts As String() = If(String.IsNullOrEmpty(client.BillingAddress),
+                                              New String() {},
+                                              client.BillingAddress.Split(New String() {", "}, StringSplitOptions.None))
+                txtAddress.Text = If(billingParts.Length > 0, billingParts(0), "")
+                txtCity.Text = If(billingParts.Length > 1, billingParts(1), "")
+                txtRegion.Text = If(billingParts.Length > 2, billingParts(2), "")
+                txtCountry.Text = If(billingParts.Length > 3, billingParts(3), "")
+                txtZipCode.Text = If(billingParts.Length > 4, billingParts(4), "")
+
+                ' Update shared module for compatibility
+                ResidentialClientDetails.BillAddress = txtAddress.Text
+                ResidentialClientDetails.BillCity = txtCity.Text
+                ResidentialClientDetails.BillRegion = txtRegion.Text
+                ResidentialClientDetails.BillCountry = txtCountry.Text
+                ResidentialClientDetails.BillZipCode = txtZipCode.Text
+            Catch ex As Exception
+                System.Diagnostics.Debug.WriteLine($"Error in LoadFromClient (Billing): {ex.Message}")
+            End Try
+        End Sub
+
 
         Private Sub UpdateCRMClient(sender As Object, e As RoutedEventArgs)
             If ValidateInput() Then

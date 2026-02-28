@@ -1,4 +1,5 @@
-﻿Imports DPC.DPC.Data.Controllers
+﻿'AddCategory.xaml.vb
+Imports DPC.DPC.Data.Controllers
 Imports MySql.Data.MySqlClient
 Imports DPC.DPC.Data.Models
 Imports System.Windows.Controls.Primitives
@@ -44,11 +45,6 @@ Namespace DPC.Components.Forms
             .categoryDescription = categoryDescription
         }
 
-                If String.IsNullOrWhiteSpace(newCategory.categoryName) OrElse String.IsNullOrWhiteSpace(categoryDescription) Then
-                    'MessageBox.Show("Please fill out both category name and description.")
-                    Return
-                End If
-
                 If ProductCategoryController.InsertCategory(newCategory) Then
                     'MessageBox.Show("Category added successfully!")
 
@@ -71,6 +67,7 @@ Namespace DPC.Components.Forms
 
             Dim categoryBorder As New Border() With {.Style = CType(Application.Current.TryFindResource("RoundedBorderStyle"), Style), .Margin = New Thickness(0, 0, 0, 15)}
             Dim txtName As New TextBox() With {.Style = CType(Application.Current.TryFindResource("RoundedTextboxStyle"), Style), .Name = "TxtName"}
+            AddHandler txtName.TextChanged, AddressOf TxtToUpper_TextChanged
             categoryNameTextBoxes.Add(txtName)
             categoryBorder.Child = txtName
 
@@ -84,6 +81,7 @@ Namespace DPC.Components.Forms
 
             Dim descriptionBorder As New Border() With {.Style = CType(Application.Current.TryFindResource("RoundedBorderStyle"), Style), .Margin = New Thickness(0, 0, 0, 15)}
             Dim txtDescription As New TextBox() With {.Style = CType(Application.Current.TryFindResource("RoundedTextboxStyle"), Style), .Name = "TxtDescription"}
+            AddHandler txtDescription.TextChanged, AddressOf TxtToUpper_TextChanged
             categoryDescriptionTextBoxes.Add(txtDescription)
             descriptionBorder.Child = txtDescription
 
@@ -95,6 +93,24 @@ Namespace DPC.Components.Forms
 
             MainContent.Children.Add(categoryPanel)
             MainContent.Children.Add(descriptionPanel)
+        End Sub
+
+        ' Ensure typed text is converted to uppercase while preserving caret position
+        Private Sub TxtToUpper_TextChanged(sender As Object, e As Windows.Controls.TextChangedEventArgs)
+            Dim tb = TryCast(sender, TextBox)
+            If tb Is Nothing Then Return
+
+            Dim originalSelectionStart = tb.SelectionStart
+            Dim originalSelectionLength = tb.SelectionLength
+            Dim originalText = tb.Text
+
+            Dim upperText = originalText.ToUpperInvariant()
+            If Not String.Equals(originalText, upperText, StringComparison.Ordinal) Then
+                tb.Text = upperText
+                Dim newSelectionStart = Math.Min(originalSelectionStart, tb.Text.Length)
+                tb.SelectionStart = newSelectionStart
+                tb.SelectionLength = originalSelectionLength
+            End If
         End Sub
 
         Private Sub RemoveCategoryPanel()

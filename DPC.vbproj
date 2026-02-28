@@ -768,6 +768,7 @@
     <Compile Include="Data\Helpers\ViewLoader\ViewLoader.vb" />
     <Compile Include="Data\Helpers\ViewLoader\ViewNavigation.vb" />
     <Compile Include="Data\Models\Account.vb" />
+    <Compile Include="Data\Models\Brand.vb" />
     <Compile Include="Data\Models\BusinessLocation.vb" />
     <Compile Include="Data\Models\CashAdvanceRequestModel.vb" />
     <Compile Include="Data\Models\Client.vb" />
@@ -785,6 +786,7 @@
     <Compile Include="Data\Models\PromoCode.vb" />
     <Compile Include="Data\Models\PurchaseOrderModel.vb" />
     <Compile Include="Data\Models\QuotesModel.vb" />
+    <Compile Include="Data\Models\ResidentialClientDetails.vb" />
     <Compile Include="Data\Models\SoftwareUpdate\GithubRelease.vb" />
     <Compile Include="Data\Models\Supplier.vb" />
     <Compile Include="Data\Models\UpdatedClient.vb" />
@@ -963,6 +965,7 @@
     <Compile Include="Views\CRM\CRMCorporationalTabStructured.xaml.vb">
       <DependentUpon>CRMCorporationalTabStructured.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CRM\IClientEditor.vb" />
     <Compile Include="Views\CRM\SelectClients.xaml.vb">
       <DependentUpon>SelectClients.xaml</DependentUpon>
     </Compile>
@@ -1194,6 +1197,9 @@
     <Compile Include="Views\Stocks\ItemManager\Consumables\Consumables.xaml.vb">
       <DependentUpon>Consumables.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Stocks\ItemManager\Consumables\EditConsumables.xaml.vb">
+      <DependentUpon>EditConsumables.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stocks\ItemManager\NewProduct\ProductBatchEdit.xaml.vb">
       <DependentUpon>ProductBatchEdit.xaml</DependentUpon>
     </Compile>
@@ -1208,6 +1214,9 @@
     </Compile>
     <Compile Include="Views\Stocks\ProductsLabel\LabelPrintPreview.xaml.vb">
       <DependentUpon>LabelPrintPreview.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Stocks\PurchaseOrder\Delivery\ManageDeliveryReceipt.xaml.vb">
+      <DependentUpon>ManageDeliveryReceipt.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Stocks\PurchaseOrder\Delivery\NewDelivery.xaml.vb">
       <DependentUpon>NewDelivery.xaml</DependentUpon>
@@ -2192,6 +2201,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Stocks\ItemManager\Consumables\EditConsumables.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Stocks\ItemManager\NewProduct\ProductBatchEdit.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2207,6 +2220,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Stocks\ProductsLabel\LabelPrintPreview.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\PurchaseOrder\Delivery\ManageDeliveryReceipt.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

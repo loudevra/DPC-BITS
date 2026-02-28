@@ -7,8 +7,8 @@ Imports DPC.DPC.Data.Model
 Imports MySql.Data.MySqlClient
 Imports System.Collections.ObjectModel
 
-Namespace DPC.Views.Sales.Quotes
-    Public Class Quote
+Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
+    Public Class ManageDeliveryReceipt
         ' Add SingleCalendar ViewModels for both pickers
         Private startDateViewModel As New CalendarController.SingleCalendar()
         Private dueDateViewModel As New CalendarController.SingleCalendar()

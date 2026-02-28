@@ -12,6 +12,12 @@ Namespace DPC.Views.Accounts.Accounts.ManageAccounts
             InitializeComponent()
             SetupControllerReferences() ' Ensures viewmodel is connected
             LoadData()
+
+            ' Attach uppercase handlers
+            AddHandler Contact.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler Code.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler Amount.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler Note.TextChanged, AddressOf TxtToUpper_TextChanged
         End Sub
 
         Private Sub LoadData()
@@ -21,6 +27,24 @@ Namespace DPC.Views.Accounts.Accounts.ManageAccounts
             cmbAccounts.DisplayMemberPath = "Value"
             cmbAccounts.SelectedValuePath = "Key"
 
+        End Sub
+
+        Private Sub TxtToUpper_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim tb = TryCast(sender, TextBox)
+            If tb Is Nothing Then Return
+
+            Dim originalSelectionStart = tb.SelectionStart
+            Dim originalSelectionLength = tb.SelectionLength
+            Dim originalText = tb.Text
+
+            Dim upperText = originalText.ToUpperInvariant()
+            If Not String.Equals(originalText, upperText, StringComparison.Ordinal) Then
+                RemoveHandler tb.TextChanged, AddressOf TxtToUpper_TextChanged
+                tb.Text = upperText
+                tb.SelectionStart = Math.Min(originalSelectionStart, tb.Text.Length)
+                tb.SelectionLength = originalSelectionLength
+                AddHandler tb.TextChanged, AddressOf TxtToUpper_TextChanged
+            End If
         End Sub
 
 

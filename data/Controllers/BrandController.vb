@@ -7,7 +7,13 @@ Namespace DPC.Data.Controllers
     Public Class BrandController
         Public Shared Function GetBrands() As ObservableCollection(Of Brand)
             Dim brandList As New ObservableCollection(Of Brand)()
-            Dim query As String = "SELECT brandID, brandname FROM brand;"
+            Dim query As String = "SELECT b.brandID, b.BrandName, 
+                            c.CategoryName AS Category,
+                            s.SubCategoryName AS SubCategory,
+                            (SELECT COUNT(*) FROM supplier WHERE brandID = b.brandID) AS TotalSupplier
+                            FROM brand b
+                            LEFT JOIN category c ON b.categoryID = c.categoryID
+                            LEFT JOIN subcategory s ON b.subcategoryID = s.subcategoryID"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
@@ -16,8 +22,11 @@ Namespace DPC.Data.Controllers
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
                                 brandList.Add(New Brand With {
-                                    .ID = reader.GetInt32("brandid"), ' Changed to GetInt32 for auto-increment
-                                    .Name = reader.GetString("brandname")
+                                    .ID = reader.GetInt32("brandID"),
+                                    .Name = reader.GetString("BrandName"),
+                                    .Category = If(reader.IsDBNull(reader.GetOrdinal("Category")), "", reader.GetString("Category")),
+                                    .SubCategory = If(reader.IsDBNull(reader.GetOrdinal("SubCategory")), "", reader.GetString("SubCategory")),
+                                    .TotalSupplier = reader.GetInt32("TotalSupplier")
                                 })
                             End While
                         End Using
@@ -30,7 +39,7 @@ Namespace DPC.Data.Controllers
             Return brandList
         End Function
 
-        Public Shared Sub InsertBrand(brandName As String)
+        Public Shared Sub InsertBrand(brandName As String, categoryID As Integer, Optional subcategoryID As Integer = 0)
             If String.IsNullOrWhiteSpace(brandName) Then
                 MessageBox.Show("Brand name cannot be empty.")
                 Return
@@ -44,21 +53,20 @@ Namespace DPC.Data.Controllers
                     Dim checkQuery As String = "SELECT COUNT(*) FROM brand WHERE brandName = @BrandName"
                     Using checkCmd As New MySqlCommand(checkQuery, conn)
                         checkCmd.Parameters.AddWithValue("@BrandName", brandName)
-
-                        ' Safely check for NULL and convert to Int32
                         Dim result As Object = checkCmd.ExecuteScalar()
                         Dim count As Integer = If(result IsNot DBNull.Value, Convert.ToInt32(result), 0)
-
                         If count > 0 Then
                             MessageBox.Show("Brand already exists.")
                             Return
                         End If
                     End Using
 
-                    ' Insert brand without BrandID
-                    Dim query As String = "INSERT INTO brand (BrandName) VALUES (@BrandName)"
+                    ' Insert brand with categoryID and subcategoryID
+                    Dim query As String = "INSERT INTO brand (BrandName, categoryID, subcategoryID) VALUES (@BrandName, @CategoryID, @SubCategoryID)"
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@BrandName", brandName)
+                        cmd.Parameters.AddWithValue("@CategoryID", categoryID)
+                        cmd.Parameters.AddWithValue("@SubCategoryID", If(subcategoryID = 0, DBNull.Value, CObj(subcategoryID)))
                         cmd.ExecuteNonQuery()
                     End Using
 
@@ -69,7 +77,6 @@ Namespace DPC.Data.Controllers
             End Try
         End Sub
 
-        ' Method to save brand (insert or update)
         Public Shared Sub SaveBrand(brandName As String, Optional brandId As Integer? = Nothing)
             If String.IsNullOrWhiteSpace(brandName) Then
                 MessageBox.Show("Brand name cannot be empty.")
@@ -82,7 +89,6 @@ Namespace DPC.Data.Controllers
 
                     If brandId.HasValue AndAlso brandId.Value > 0 Then
                         ' UPDATE MODE
-                        ' Check if brand exists
                         Dim existsQuery As String = "SELECT COUNT(*) FROM brand WHERE BrandID = @BrandID"
                         Using existsCmd As New MySqlCommand(existsQuery, conn)
                             existsCmd.Parameters.AddWithValue("@BrandID", brandId.Value)
@@ -94,7 +100,6 @@ Namespace DPC.Data.Controllers
                             End If
                         End Using
 
-                        ' Check for duplicate brand name (excluding current brand)
                         Dim checkQuery As String = "SELECT COUNT(*) FROM brand WHERE brandName = @BrandName AND BrandID <> @BrandID"
                         Using checkCmd As New MySqlCommand(checkQuery, conn)
                             checkCmd.Parameters.AddWithValue("@BrandName", brandName)
@@ -107,13 +112,11 @@ Namespace DPC.Data.Controllers
                             End If
                         End Using
 
-                        ' Update brand
                         Dim updateQuery As String = "UPDATE brand SET BrandName = @BrandName WHERE BrandID = @BrandID"
                         Using updateCmd As New MySqlCommand(updateQuery, conn)
                             updateCmd.Parameters.AddWithValue("@BrandName", brandName)
                             updateCmd.Parameters.AddWithValue("@BrandID", brandId.Value)
                             Dim rowsAffected As Integer = updateCmd.ExecuteNonQuery()
-
                             If rowsAffected > 0 Then
                                 MessageBox.Show("Brand updated successfully!")
                             Else
@@ -122,7 +125,6 @@ Namespace DPC.Data.Controllers
                         End Using
                     Else
                         ' INSERT MODE
-                        ' Check for duplicate brand
                         Dim checkQuery As String = "SELECT COUNT(*) FROM brand WHERE brandName = @BrandName"
                         Using checkCmd As New MySqlCommand(checkQuery, conn)
                             checkCmd.Parameters.AddWithValue("@BrandName", brandName)
@@ -134,7 +136,6 @@ Namespace DPC.Data.Controllers
                             End If
                         End Using
 
-                        ' Insert brand
                         Dim insertQuery As String = "INSERT INTO brand (BrandName) VALUES (@BrandName)"
                         Using insertCmd As New MySqlCommand(insertQuery, conn)
                             insertCmd.Parameters.AddWithValue("@BrandName", brandName)
@@ -146,9 +147,7 @@ Namespace DPC.Data.Controllers
             Catch ex As Exception
                 MessageBox.Show($"An error occurred: {ex.Message}")
             End Try
-
         End Sub
-
 
     End Class
 End Namespace

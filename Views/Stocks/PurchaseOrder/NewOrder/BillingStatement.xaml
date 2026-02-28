@@ -89,7 +89,7 @@
                                 <Grid>
 
                                     <Grid.Background>
-                                        <ImageBrush ImageSource="/Assets/images/watermark.png" Opacity="0.1" Stretch="UniformToFill"/>
+                                        <ImageBrush ImageSource="/Assets/images/DREAMPCBUILD LOGO WATERMARK SLANTED SPACED.png" Stretch="UniformToFill" Opacity="0.05"/>
                                     </Grid.Background>
 
                                     <Grid.RowDefinitions>

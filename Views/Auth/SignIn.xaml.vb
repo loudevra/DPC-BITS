@@ -40,7 +40,6 @@ Namespace DPC.Views.Auth
 
         ' Handle Sign-In Process
         Private Sub BtnSignIn_Click(sender As Object, e As RoutedEventArgs)
-
             PerformSignIn()
         End Sub
 
@@ -127,7 +126,7 @@ Namespace DPC.Views.Auth
                                 Dim roleLower = Role.ToLower()
                                 If roleLower.Contains("sales") Then
                                     If SalesPerm Then
-                                        landingView = "salesnewinvoice" ' Sales person -> New Invoice
+                                        landingView = "walkinorder" ' Sales -> Walk-In New Order
                                     End If
                                 ElseIf roleLower.Contains("manager") AndAlso roleLower.Contains("business") Then
                                     If ProjectPerm Then
@@ -137,12 +136,14 @@ Namespace DPC.Views.Auth
                                     If AccountsPerm Then
                                         landingView = "manageaccounts" ' Business Owner -> Manage Accounts
                                     End If
+                                ElseIf roleLower.Contains("admin") Then
+                                    landingView = "permissions" ' Admin -> Permissions
                                 End If
 
                                 ' Fallback: if preferred role mapping not usable, pick first available important module
                                 If landingView = "dashboard" Then
                                     If SalesPerm Then
-                                        landingView = "salesnewinvoice"
+                                        landingView = "walkinorder"
                                     ElseIf ProjectPerm Then
                                         landingView = "manageproject"
                                     ElseIf AccountsPerm Then

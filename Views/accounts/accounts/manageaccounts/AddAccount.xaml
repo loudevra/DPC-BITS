@@ -30,25 +30,25 @@
                     <!-- Account Number -->
                     <TextBlock Text="Account No:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                     <Border Style="{StaticResource RoundedBorderStyle}" Width="768">
-                        <TextBox x:Name="txtAccountNo" Height="30" Margin="18,5,19,5" Style="{StaticResource RoundedTextboxStyle}" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
+                        <TextBox x:Name="txtAccountNo" Height="30" Margin="18,5,19,5" Style="{StaticResource RoundedTextboxStyle}" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747" TextChanged="TxtToUpper_TextChanged"/>
                     </Border>
 
                     <!-- Name -->
                     <TextBlock Text="Name:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                     <Border Style="{StaticResource RoundedBorderStyle}" Width="768">
-                        <TextBox x:Name="txtName" Height="30" Margin="0,5,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="735" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
+                        <TextBox x:Name="txtName" Height="30" Margin="0,5,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="735" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747" TextChanged="TxtToUpper_TextChanged"/>
                     </Border>
 
                     <!-- Initial Balance -->
                     <TextBlock Text="Initial Balance:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                     <Border Style="{StaticResource RoundedBorderStyle}" Width="768">
-                        <TextBox x:Name="txtInitialBalance" Height="30" Margin="18,5,19,5" Style="{StaticResource RoundedTextboxStyle}" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
+                        <TextBox x:Name="txtInitialBalance" Height="30" Margin="18,5,19,5" Style="{StaticResource RoundedTextboxStyle}" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747" TextChanged="TxtToUpper_TextChanged"/>
                     </Border>
 
                     <!-- Note -->
                     <TextBlock Text="Note:" Margin="0,10,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                     <Border Style="{StaticResource RoundedBorderStyle}" Width="768">
-                        <TextBox x:Name="txtNote" Height="30" Margin="18,5,19,5" Style="{StaticResource RoundedTextboxStyle}" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
+                        <TextBox x:Name="txtNote" Height="30" Margin="18,5,19,5" Style="{StaticResource RoundedTextboxStyle}" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747" TextChanged="TxtToUpper_TextChanged"/>
                     </Border>
 
                     <!-- Business Location -->
