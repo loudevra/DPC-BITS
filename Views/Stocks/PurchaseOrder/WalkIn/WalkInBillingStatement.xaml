@@ -87,7 +87,8 @@
                                     </Button>
                                 </Border>
 
-                                <Rectangle Width="auto"
+                                <Rectangle Grid.Row="1"
+                                           Width="auto"
                                            Height="2" 
                                            Stroke="#AEAEAE"
                                            StrokeThickness="1"
@@ -381,10 +382,24 @@
                                                                 <TextBlock x:Name="Subtotal" Text="₱ 0.00" FontWeight="SemiBold" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBox  x:Name="Delivery"  FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
+                                                                <Grid>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <TextBlock Grid.Column="0" Text="₱" FontWeight="SemiBold" FontSize="11" Foreground="#090909" HorizontalAlignment="Center" Margin="5,0,0,0" FontFamily="{StaticResource Lexend}"/>
+                                                                    <TextBox Grid.Column="1" x:Name="Delivery" Text="0.00"  FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" FontFamily="{StaticResource Lexend}"/>
+                                                                </Grid>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBox  x:Name="Installation" TextChanged="Installation_TextChanged" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
+                                                                <Grid>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <TextBlock Grid.Column="0" Text="₱" FontWeight="SemiBold" FontSize="11" Foreground="#090909" HorizontalAlignment="Center" Margin="5,0,0,0" FontFamily="{StaticResource Lexend}"/>
+                                                                    <TextBox Grid.Column="1" x:Name="Installation" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" FontFamily="{StaticResource Lexend}"/>
+                                                                </Grid>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
                                                                 <TextBlock  x:Name="VAT12" Text="₱ 0.00" FontWeight="SemiBold" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
