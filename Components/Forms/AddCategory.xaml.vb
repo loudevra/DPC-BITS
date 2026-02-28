@@ -1,4 +1,5 @@
-﻿Imports DPC.DPC.Data.Controllers
+﻿'AddCategory.xaml.vb
+Imports DPC.DPC.Data.Controllers
 Imports MySql.Data.MySqlClient
 Imports DPC.DPC.Data.Models
 Imports System.Windows.Controls.Primitives
@@ -43,11 +44,6 @@ Namespace DPC.Components.Forms
             .categoryName = categoryName,
             .categoryDescription = categoryDescription
         }
-
-                If String.IsNullOrWhiteSpace(newCategory.categoryName) OrElse String.IsNullOrWhiteSpace(categoryDescription) Then
-                    'MessageBox.Show("Please fill out both category name and description.")
-                    Return
-                End If
 
                 If ProductCategoryController.InsertCategory(newCategory) Then
                     'MessageBox.Show("Category added successfully!")
