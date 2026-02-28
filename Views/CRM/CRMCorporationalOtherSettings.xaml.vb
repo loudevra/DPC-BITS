@@ -38,15 +38,7 @@ Namespace DPC.Views.CRM
             AddHandler cmbLanguage.KeyUp, AddressOf SaveToMemory
         End Sub
 
-        ' --- FIX: Updated Validation to allow Letters and Numbers ---
-        Private Sub txtInput_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
-            ' Allow Alphanumeric (A-Z, 0-9), Dashes (-), and Spaces
-            Dim pattern As String = "^[a-zA-Z0-9\-\s]*$"
-
-            If Not System.Text.RegularExpressions.Regex.IsMatch(e.Text, pattern) Then
-                e.Handled = True ' Block input if it doesn't match
-            End If
-        End Sub
+        ' --- NOTE: Regex Validation Sub has been removed to allow all characters ---
 
         Private Sub LoadCustomerGroups()
             Dim customerGroups = ClientGroupController.GetCustomerGroup()
@@ -56,41 +48,49 @@ Namespace DPC.Views.CRM
         End Sub
 
         ' --- MEMORY MANAGEMENT ---
+        ' --- MEMORY MANAGEMENT ---
         Private Sub SaveToMemory(sender As Object, e As RoutedEventArgs)
-            ' 1. Save TIN
-            _savedTinID = txtTinID.Text
+            Try
+                ' 1. Save TIN
+                _savedTinID = txtTinID.Text
 
-            ' 2. Save Group
-            If cmbCustomerGroup.SelectedItem IsNot Nothing Then
-                _savedClientGroupID = CInt(cmbCustomerGroup.SelectedValue)
+                ' 2. Save Group
+                If cmbCustomerGroup IsNot Nothing AndAlso cmbCustomerGroup.SelectedItem IsNot Nothing Then
+                    If cmbCustomerGroup.SelectedValue IsNot Nothing Then
+                        _savedClientGroupID = CInt(cmbCustomerGroup.SelectedValue)
 
-                ' Safe Cast (Value Type fix)
-                Dim selectedGroup As KeyValuePair(Of Integer, String) =
+                        ' Safe Cast
+                        Dim selectedGroup As KeyValuePair(Of Integer, String) =
                     CType(cmbCustomerGroup.SelectedItem, KeyValuePair(Of Integer, String))
+                        _savedCustomerGroup = selectedGroup.Value
+                    End If
+                Else
+                    _savedClientGroupID = Nothing
+                    _savedCustomerGroup = ""
+                End If
 
-                _savedCustomerGroup = selectedGroup.Value
-            Else
-                _savedClientGroupID = Nothing
-                _savedCustomerGroup = ""
-            End If
-
-            ' 3. Save Language
-            If cmbLanguage.SelectedItem IsNot Nothing Then
-                Dim selectedItem As ComboBoxItem = TryCast(cmbLanguage.SelectedItem, ComboBoxItem)
-                If selectedItem IsNot Nothing Then
-                    _savedLanguage = selectedItem.Content.ToString()
+                ' 3. Save Language
+                If cmbLanguage IsNot Nothing AndAlso cmbLanguage.SelectedItem IsNot Nothing Then
+                    Dim selectedItem As ComboBoxItem = TryCast(cmbLanguage.SelectedItem, ComboBoxItem)
+                    If selectedItem IsNot Nothing Then
+                        _savedLanguage = selectedItem.Content.ToString()
+                    Else
+                        _savedLanguage = cmbLanguage.Text
+                    End If
                 Else
                     _savedLanguage = cmbLanguage.Text
                 End If
-            Else
-                _savedLanguage = cmbLanguage.Text
-            End If
 
-            ' 4. Update Global Model
-            CorporationalClientDetails.TinID = _savedTinID
-            CorporationalClientDetails.ClientGroupID = _savedClientGroupID
-            CorporationalClientDetails.CustomerGroup = _savedCustomerGroup
-            CorporationalClientDetails.CustomerLanguage = _savedLanguage
+                ' 4. Update Global Model
+                ' FIX: Removed the "If CorporationalClientDetails IsNot Nothing" check
+                CorporationalClientDetails.TinID = _savedTinID
+                CorporationalClientDetails.ClientGroupID = _savedClientGroupID
+                CorporationalClientDetails.CustomerGroup = _savedCustomerGroup
+                CorporationalClientDetails.CustomerLanguage = _savedLanguage
+
+            Catch ex As Exception
+                Debug.WriteLine("Error saving memory: " & ex.Message)
+            End Try
         End Sub
 
         ' --- ADD CLIENT BUTTON ---
@@ -170,3 +170,4 @@ Namespace DPC.Views.CRM
         End Sub
     End Class
 End Namespace
+
