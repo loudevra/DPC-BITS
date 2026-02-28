@@ -138,5 +138,8 @@ Namespace DPC.Views.Project
             ViewLoader.DynamicView.NavigateToView("addproject3", Me)
         End Sub
 
+        Private Sub Button_Click(sender As Object, e As RoutedEventArgs)
+
+        End Sub
     End Class
 End Namespace

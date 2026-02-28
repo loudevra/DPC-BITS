@@ -309,32 +309,32 @@
                     <DataGridTemplateColumn Header="Actions" Width="Auto" MinWidth="100">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Border BorderBrush="#D9D9D9" BorderThickness="1" CornerRadius="4" Background="White">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button x:Name="btnEdit"
+                                Style="{StaticResource IconButton}"
+                                Width="32" Height="32"
+                                ToolTip="Edit"
+                                Click="BtnEdit_Click">
+                                                <materialDesign:PackIcon Kind="SquareEditOutline"
+                                                     Width="16" Height="16" 
+                                                     Foreground="#52C69D"/>
+                                            </Button>
 
-                                    <Button x:Name="btnEdit"
-                                            Style="{StaticResource IconButton}"
-                                            ToolTip="Edit"
-                                            Tag="{Binding}"
-                                            Margin="5,0"
-                                            Click="BtnEdit_Click">
-                                        <materialDesign:PackIcon Kind="PencilOutline"
-                                                                 Width="20"
-                                                                 Height="20"
-                                                                 Foreground="#52C69D"/>
-                                    </Button>
+                                            <Border Width="1" Background="#D9D9D9" Height="20" VerticalAlignment="Center"/>
 
-                                    <Button x:Name="btnDelete"
-                                            Style="{StaticResource IconButton}"
-                                            ToolTip="Delete"
-                                            Tag="{Binding}"
-                                            Margin="5,0"
-                                            Click="BtnDelete_Click">
-                                        <materialDesign:PackIcon Kind="DeleteOutline"
-                                                                 Width="20"
-                                                                 Height="20"
-                                                                 Foreground="#D32F2F"/>
-                                    </Button>
-
+                                            <Button x:Name="btnDelete"
+                                Style="{StaticResource IconButton}"
+                                Width="32" Height="32"
+                                ToolTip="Delete"
+                                Click="BtnDelete_Click">
+                                                <materialDesign:PackIcon Kind="DeleteOutline"
+                                                     Width="16" Height="16" 
+                                                     Foreground="#F27272"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </Border>
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
