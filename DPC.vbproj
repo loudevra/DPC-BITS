@@ -696,6 +696,7 @@
     <Compile Include="Data\Cache\EditCashAdvanceRequestCache.vb" />
     <Compile Include="Data\Controllers\Account\AccountController.vb" />
     <Compile Include="Data\Controllers\AuthController.vb" />
+    <Compile Include="Data\Controllers\BIllingController.vb" />
     <Compile Include="Data\Controllers\BrandController.vb" />
     <Compile Include="Data\Controllers\BuissnessLocationController.vb" />
     <Compile Include="Data\Controllers\ClientController.vb" />
@@ -744,6 +745,8 @@
     <Compile Include="Data\Converters\RetainCacheSupplier\CacheUserLoggedIn.vb" />
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
+    <Compile Include="Data\DataModules\BillingDetails.vb" />
+    <Compile Include="Data\Models\BillingModel.vb" />
     <Compile Include="Data\DataModules\CostEstimateDetails.vb" />
     <Compile Include="Data\DataModules\DeliveryDetails.vb" />
     <Compile Include="Data\DataModules\FolderDetails.vb" />
@@ -2407,7 +2410,6 @@
     <Folder Include="Views\DataReports\GraphicalReports\" />
     <Folder Include="Views\DataReports\SummaryReports\" />
     <Folder Include="Views\HRM\Payroll\" />
-    <Folder Include="Views\Stocks\PurchaseOrder\NewFolder1\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ILLink\ILLink.Descriptors.LibraryBuild.xml" />

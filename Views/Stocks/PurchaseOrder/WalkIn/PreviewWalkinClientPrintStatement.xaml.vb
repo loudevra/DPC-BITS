@@ -37,13 +37,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             CompanyRep.Text = BLCompanyRep
 
             SalesRep.Text = CacheOnLoggedInName
-            cmbApproved.Text = BLApproved
+            txtApproved.Text = BLApproved
 
             ' Check if the terms is enabled
             If BLisCustomTerm = True Then
-                cmbTerms.Text = BLpaymentTerms
+                txtApproved.Text = BLpaymentTerms
             Else
-                cmbTerms.Text = BLpaymentTerms
+                txtTerms.Text = BLpaymentTerms
             End If
 
 

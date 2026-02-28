@@ -72,12 +72,13 @@
                         </StackPanel>
 
                         <Border Background="White" CornerRadius="10,10, 0, 0">
-                            <Grid Grid.Row="1"  Margin="0,0,0,0"  >
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
                                 
-                                
-
-                                <!--view-->
-                                <Border HorizontalAlignment="Right" CornerRadius="10,10,10, 0 " Background="White" >
+                                <Border Grid.Row="0" HorizontalAlignment="Right" CornerRadius="10,10,10, 0 " Background="White" >
                                     <Button Click="PrintPreview" Style="{StaticResource IconButton}">
                                         <StackPanel>
                                             <materialDesign:PackIcon Kind="FolderEyeOutline" Width="30" Height="30" Margin="10,10,10,0" Foreground="#555555"/>
@@ -86,10 +87,18 @@
                                     </Button>
                                 </Border>
 
+                                <Rectangle Grid.Row="1"
+                                           Width="auto"
+                                           Height="2" 
+                                           Stroke="#AEAEAE"
+                                           StrokeThickness="1"
+                                           Fill="Transparent"
+                                           VerticalAlignment="Top"
+                                           Margin="10,10"/>
                             </Grid>
                         </Border>
                         <StackPanel Grid.Row="1" Margin="0,0,0,0" >
-                            <Border Height="1121.28" Background="White" CornerRadius="0,0,10,10"  BorderThickness="0" Padding="10">
+                            <Border Height="1344" Width="816" Background="White" CornerRadius="0,0,10,10"  BorderThickness="0" Padding="40">
                                 <Grid>
 
                                    
@@ -108,15 +117,6 @@
 
                                     </Grid.RowDefinitions>
 
-                                    <!--Rectangle as line-->
-                                    <Rectangle Grid.Row="0"
-                                       Width="auto"
-                                       Height="1" 
-                                       Stroke="#AEAEAE"
-                                       StrokeThickness="1"
-                                       Fill="Transparent"
-                                       VerticalAlignment="Top"
-                                       Margin="10,0"/>
 
                                     <!--DPC Logo Side Bar-->
                                     <StackPanel Grid.Row="0" Height="Auto" Width="232" HorizontalAlignment="Left" Orientation="Horizontal" Margin="0,10,0,17" Background="Transparent" Grid.RowSpan="2">
@@ -245,7 +245,7 @@
                                                       AutoGenerateColumns="False"
                                                       CanUserAddRows="False"
                                                       HeadersVisibility="Column"
-                                                      GridLinesVisibility="None"
+                                                      GridLinesVisibility="All"
                                                       Background="Transparent"
                                                       RowBackground="Transparent"
                                                       BorderThickness="0, 1, 0, 0"
@@ -264,6 +264,7 @@
                                                         <Setter Property="Padding" Value="2"/>
                                                         <Setter Property="Height" Value="Auto"/>
                                                         <Setter Property="MinHeight" Value="15"/>
+                                                        <Setter Property="Padding" Value="0,5"/>
                                                     </Style>
                                                 </DataGrid.RowStyle>
 
@@ -282,7 +283,7 @@
 
                                                 <DataGrid.CellStyle>
                                                     <Style TargetType="DataGridCell">
-                                                        <Setter Property="Padding" Value="5,2"/>
+                                                        <Setter Property="Padding" Value="5,10"/>
                                                         <Setter Property="FontSize" Value="12"/>
                                                         <Setter Property="Template">
                                                             <Setter.Value>
@@ -383,10 +384,24 @@
                                                                 <TextBlock x:Name="Subtotal" Text="₱ 0.00" FontWeight="SemiBold" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBox  x:Name="Delivery"  FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
+                                                                <Grid>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <TextBlock Grid.Column="0" Text="₱" FontWeight="SemiBold" FontSize="11" Foreground="#090909" HorizontalAlignment="Center" Margin="5,0,0,0" FontFamily="{StaticResource Lexend}"/>
+                                                                    <TextBox Grid.Column="1" x:Name="Delivery" Text="0.00"  FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" FontFamily="{StaticResource Lexend}"/>
+                                                                </Grid>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBox  x:Name="Installation" TextChanged="Installation_TextChanged" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
+                                                                <Grid>
+                                                                    <Grid.ColumnDefinitions>
+                                                                        <ColumnDefinition Width="Auto"/>
+                                                                        <ColumnDefinition Width="*"/>
+                                                                    </Grid.ColumnDefinitions>
+                                                                    <TextBlock Grid.Column="0" Text="₱" FontWeight="SemiBold" FontSize="11" Foreground="#090909" HorizontalAlignment="Center" Margin="5,0,0,0" FontFamily="{StaticResource Lexend}"/>
+                                                                    <TextBox Grid.Column="1" x:Name="Installation" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" FontFamily="{StaticResource Lexend}"/>
+                                                                </Grid>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
                                                                 <TextBlock  x:Name="VAT12" Text="₱ 0.00" FontWeight="SemiBold" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>

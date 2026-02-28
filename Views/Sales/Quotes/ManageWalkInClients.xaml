@@ -374,7 +374,7 @@ IsReadOnly="True">
                                 </DataGrid.CellStyle>
 
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Quote No." Binding="{Binding QuoteNumber}" Width="170">
+                                    <DataGridTextColumn Header="Billing No." Binding="{Binding BillingNumber}" Width="170">
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="FontFamily" Value="Lexend"/>
@@ -383,7 +383,7 @@ IsReadOnly="True">
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Ref No." Binding="{Binding Reference}" Width="120">
+                                    <DataGridTextColumn Header="DR No." Binding="{Binding DRNo}" Width="120">
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="FontFamily" Value="Lexend"/>
@@ -392,7 +392,7 @@ IsReadOnly="True">
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Date" Binding="{Binding QuoteDate}" Width="120">
+                                    <DataGridTextColumn Header="Date" Binding="{Binding BillingDate}" Width="120">
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="FontFamily" Value="Lexend"/>
@@ -401,7 +401,7 @@ IsReadOnly="True">
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Valid Until" Binding="{Binding Validity}" Width="120">
+                                    <DataGridTextColumn Header="Terms" Binding="{Binding PaymentTerms}" Width="120">
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="FontFamily" Value="Lexend"/>
@@ -410,7 +410,7 @@ IsReadOnly="True">
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Tax" Binding="{Binding Tax}" Width="120">
+                                    <DataGridTextColumn Header="Tax" Binding="{Binding TotalTax, StringFormat='N2'}" Width="120">
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="FontFamily" Value="Lexend"/>
@@ -419,7 +419,7 @@ IsReadOnly="True">
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Discount" Binding="{Binding Discount}" Width="120">
+                                    <DataGridTextColumn Header="Discount" Binding="{Binding TotalDiscount, StringFormat='N2'}" Width="120">
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="FontFamily" Value="Lexend"/>
@@ -428,16 +428,7 @@ IsReadOnly="True">
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Client" Binding="{Binding ClientName}" Width="120">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="FontFamily" Value="Lexend"/>
-                                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Warehouse" Binding="{Binding WarehouseName}" Width="120">
+                                    <DataGridTextColumn Header="Total Amount" Binding="{Binding TotalAmount, StringFormat='₱#,##0.00'}" Width="120">
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="FontFamily" Value="Lexend"/>
@@ -455,42 +446,15 @@ IsReadOnly="True">
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Total Tax" Binding="{Binding TotalTax}" Width="120">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="FontFamily" Value="Lexend"/>
-                                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Total Discount" Binding="{Binding TotalDiscount}" Width="120">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="FontFamily" Value="Lexend"/>
-                                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Header="Total Price" Binding="{Binding TotalPrice}" Width="120">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="FontFamily" Value="Lexend"/>
-                                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
 
                                     <DataGridTemplateColumn Header="Settings" Width="80">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                    <Button Width="27" Height="27" Background="Transparent" Margin="0, 0, 2, 0" ToolTip="Edit" Click="OpenEditQuote" Cursor="Hand">
+                                                    <Button Width="27" Height="27" Background="Transparent" Margin="0, 0, 2, 0" ToolTip="Edit" Click="OpenEditStatement" Cursor="Hand">
                                                         <materialDesign:PackIcon Kind="SquareEditOutline" Width="16" Height="16" Foreground="#52C69D"/>
                                                     </Button>
-                                                    <Button Width="27" Height="27" Background="Transparent" Margin="0" ToolTip="Delete" Cursor="Hand" Click="DeleteQuote">
+                                                    <Button Width="27" Height="27" Background="Transparent" Margin="0" ToolTip="Delete" Cursor="Hand" Click="DeleteStatement">
                                                         <materialDesign:PackIcon Kind="DeleteOutline" Width="16" Height="16" Foreground="#E65E5E"/>
                                                     </Button>
                                                 </StackPanel>

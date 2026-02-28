@@ -1,8 +1,12 @@
 ﻿Imports System.Collections.ObjectModel
 Imports System.IO
+Imports System.Linq
+Imports System.Web.UI.WebControls.Expressions
 Imports System.Windows.Controls.Primitives
 Imports System.Windows.Threading
 Imports DocumentFormat.OpenXml.Bibliography
+Imports DocumentFormat.OpenXml.Math
+Imports DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing
 Imports DPC.DPC.Components.Forms
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
@@ -11,9 +15,7 @@ Imports DPC.DPC.Data.Models
 Imports DPC.DPC.Views.Stocks
 Imports MySql.Data.MySqlClient
 Imports Newtonsoft.Json
-Imports System.Linq
-Imports DocumentFormat.OpenXml.Math
-Imports System.Web.UI.WebControls.Expressions
+Imports SharpCompress.Readers.Tar
 
 Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
     Public Class WalkInNewOrder
@@ -65,8 +67,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             }
 
             ' For Tax Selection
-            _TaxSelection = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString() = "Inclusive"
-            _SelectedTax = If(_TaxSelection, 0.12D, Nothing)
+            If _TaxSelection Then
+                txtTaxSelection.SelectedItem = txtTaxSelection.Items.Cast(Of ComboBoxItem)().FirstOrDefault(Function(i) i.Content.ToString() = "Exclusive")
+            Else
+                txtTaxSelection.SelectedItem = txtTaxSelection.Items.Cast(Of ComboBoxItem)().FirstOrDefault(Function(i) i.Content.ToString() = "Inclusive")
+            End If
 
             AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
             AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
@@ -258,22 +263,33 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         End Sub
 
         Private Sub txtTaxSelection_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
-            _TaxSelection = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString() = "Inclusive"
-            _SelectedTax = If(_TaxSelection, 0.12D, Nothing)
+            _TaxSelection = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString() = "Exclusive"
             Debug.WriteLine($"Tax Selection - {_TaxSelection}")
-            Debug.WriteLine($"Tax Value In Billing Properties - {_SelectedTax}")
 
-            ' Update all tax percent fields to be editable or readonly
             For Each kvp In _productTextBoxes
                 If kvp.Key.StartsWith("txtTaxPercent_") Then
                     If _TaxSelection Then
-                        kvp.Value.Text = (_SelectedTax * 100).ToString()
-                        kvp.Value.IsReadOnly = True
-                    Else
+                        ' Exclusive: Allow user to edit and clear the value
+                        kvp.Value.Text = "0" ' Let user type any percent
                         kvp.Value.IsReadOnly = False
-                        kvp.Value.Text = "" ' Optionally clear the value for user input
+                        CEtaxSelection = True
+                        TaxHeader.Header = "Tax(%)"
+                        'ShowVatExBtn.Visibility = Visibility.Visible
+                    Else
+                        ' Inclusive: Set to 12 and make it readonly
+                        kvp.Value.Text = ""
+                        kvp.Value.IsReadOnly = True
+                        CEtaxSelection = False
+                        TaxHeader.Header = "Tax(12%)"
+                        'ShowVatExBtn.Visibility = Visibility.Collapsed
+                        CEisVatExInclude = False
                     End If
                 End If
+            Next
+
+            ' Call CalculateAmount method for each row
+            For i As Integer = 0 To rowCount - 1
+                CalculateAmount(i)
             Next
         End Sub
 #End Region
@@ -887,30 +903,36 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             If taxPercentBox IsNot Nothing Then Decimal.TryParse(taxPercentBox.Text, taxPercent)
             If discountPercentBox IsNot Nothing Then Decimal.TryParse(discountPercentBox.Text, discountPercent)
 
-            ' Base + tax 
-            If quantity > 1000 Then
-                MessageBox.Show("Quantity cannot exceed to 999.")
+            Dim baseAmount = quantity * rate
+            Dim taxValue As Decimal = 0
+            'Dim amountWithTax As Decimal
+
+            If _TaxSelection Then
+                ' Tax Exclusive: add tax to amount
+                'amountWithTax = baseAmount + taxValue
+                taxValue = baseAmount * (taxPercent / 100)
             Else
-                Dim baseAmount = quantity * rate
-                Dim taxValue = baseAmount * (taxPercent / 100)
-                Dim amountBeforeDiscount = baseAmount + taxValue
+                ' Tax Inclusive: 12% is already in the base amount, calculate for display only
+                taxValue = baseAmount * 0.12D
+                'amountWithTax = baseAmount + taxValue
 
-                ' Discount based on taxed amount
-                Dim discountValue = amountBeforeDiscount * (discountPercent / 100)
-                Dim finalAmount = amountBeforeDiscount - discountValue
-                ' Output values
-                If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("F2")
-                If discountBox IsNot Nothing Then discountBox.Text = discountValue.ToString("F2")
-                amountBox.Text = "₱" & finalAmount.ToString("F2")
-
-                Debug.WriteLine($"[Row {rowIndex}] Base: {baseAmount}, Tax: {taxValue}, Discount: {discountValue}, Total: {finalAmount}")
-
-                UpdateGrandTotal()
-                UpdateTotalTax()
-                UpdateTotalDiscount()
+                ' Update tax value display
+                If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
             End If
 
+            Dim discountValue = baseAmount * (discountPercent / 100)
+            Dim finalAmount = baseAmount - discountValue
 
+            ' Update all display boxes
+            If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
+            If discountBox IsNot Nothing Then discountBox.Text = discountValue.ToString("N2")
+            amountBox.Text = "₱" & finalAmount.ToString("N2")
+
+            Debug.WriteLine($"[Row {rowIndex}] Base: {baseAmount}, Tax: {taxValue}, Discount: {discountValue}, Total: {finalAmount}")
+
+            UpdateGrandTotal()
+            UpdateTotalTax()
+            UpdateTotalDiscount()
         End Sub
 
 
@@ -931,41 +953,64 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         End Function
 
         Public Sub UpdateGrandTotal()
-            Dim grandTotal As Decimal = 0
+            Dim subtotalAmount As Decimal = 0
+            Dim totalTaxAmount As Decimal = 0
 
-            ' Loop through all entries in the dynamic amount textboxes
-            For Each name As String In LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
-            SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
-            Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtAmount_")).
-            Select(Function(txt) txt.Name).Distinct()
+            ' 1. Get all Amount TextBoxes and sanitize them
+            Dim amountTextBoxNames = LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
+        SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
+        Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtAmount_")).
+        Select(Function(txt) txt.Name).Distinct()
 
+            For Each name As String In amountTextBoxNames
                 Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
                 If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
-                    Dim rawText = txtBox.Text.Replace("₱", "").Trim()
+                    ' CLEANING: Remove Peso sign and Commas
+                    Dim rawText = txtBox.Text.Replace("₱", "").Replace(",", "").Trim()
                     Dim amount As Decimal
                     If Decimal.TryParse(rawText, amount) Then
-                        grandTotal += amount
+                        subtotalAmount += amount
                     End If
                 End If
             Next
 
-            ' Update the grand total display
-            txtGrandTotal.Text = "₱" & grandTotal.ToString("N2")
+            ' 2. Ensure Tax is also sanitized
+            UpdateTotalTax()
+            Dim rawTax = txtTotalTax.Text.Replace("₱", "").Replace(",", "").Trim()
+            Decimal.TryParse(rawTax, totalTaxAmount)
+
+            Dim finalGrandTotal As Decimal = 0
+
+            ' 3. Calculate based on Tax Selection
+            If _TaxSelection Then
+                ' Tax Exclusive logic: Total = Subtotal + Tax
+                finalGrandTotal = subtotalAmount + totalTaxAmount
+            Else
+                ' Tax Inclusive logic: Total = Subtotal (Tax is already inside)
+                finalGrandTotal = subtotalAmount
+            End If
+
+            BLSubtotalAmountCache = (subtotalAmount).ToString("F2")
+            ' 4. Format outputs for UI display
+            txtGrandTotal.Text = "₱" & finalGrandTotal.ToString("N2")
+
+            ' 5. Pass CLEAN values to Cache (It's better to store as Decimal or clean String)
+            StatementDetails.TotalCostCache = finalGrandTotal.ToString("F2")
         End Sub
 
         ' This function is for updating the value of tax whenever there is changes
         Public Sub UpdateTotalTax()
             Dim totalTax As Decimal = 0
-
-            ' Loop through all textboxes with names starting with txtTaxValue_
-            For Each name As String In LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
+            Dim taxValueNames = LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
         SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
         Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtTaxValue_")).
         Select(Function(txt) txt.Name).Distinct()
 
+            For Each name As String In taxValueNames
                 Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
                 If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
-                    Dim rawText = txtBox.Text.Replace("₱", "").Trim()
+                    ' CLEANING
+                    Dim rawText = txtBox.Text.Replace("₱", "").Replace(",", "").Trim()
                     Dim tax As Decimal
                     If Decimal.TryParse(rawText, tax) Then
                         totalTax += tax
@@ -973,8 +1018,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 End If
             Next
 
-            ' Example output target: you should declare this in your XAML like you did with txtGrandTotal
-            txtTotalTax.Text = "₱ " & totalTax.ToString("N2")
+            txtTotalTax.Text = "₱" & totalTax.ToString("N2")
         End Sub
 
         Public Sub UpdateTotalDiscount()
@@ -1112,7 +1156,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
 #Region "Generate the Quote Before saving"
         ' Once Done All of the Data Will Be pass to another form for generating invoice
-        Private Sub GenerateCostEstimate_Click(sender As Object, e As RoutedEventArgs)
+        Private Sub GenerateBilling_Click(sender As Object, e As RoutedEventArgs)
             Dim productItemsJson As String = SubmitAllProductInputs()
 
             If productItemsJson Is Nothing Then
