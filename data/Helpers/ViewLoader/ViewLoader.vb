@@ -245,6 +245,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Stocks.ProductsLabel.CustomLabel.CustomLabel()
                     Case "addstandardlabel"
                         Return New Stocks.ProductsLabel.StandardLabel.StandardLabel()
+                    Case "managedeliveryreceipt"
+                        Return New Stocks.PurchaseOrder.Delivery.ManageDeliveryReceipt()
 
                     Case "editsuppliers"
                         Return New Stocks.Suppliers.NewSupplier.EditSuppliers()
@@ -363,6 +365,8 @@ Namespace DPC.Data.Helpers.ViewLoader
 
             ElseIf typeName = "hrmmanagecostestimatefiles" Then
                 Return "hrmmanagecostestimatefiles"
+            ElseIf typeName = "managedeliveryreceipt" Then
+                Return "managedeliveryreceipt"
 
 
 

@@ -1212,6 +1212,9 @@
     <Compile Include="Views\Stocks\ProductsLabel\LabelPrintPreview.xaml.vb">
       <DependentUpon>LabelPrintPreview.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Stocks\PurchaseOrder\Delivery\ManageDeliveryReceipt.xaml.vb">
+      <DependentUpon>ManageDeliveryReceipt.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stocks\PurchaseOrder\Delivery\NewDelivery.xaml.vb">
       <DependentUpon>NewDelivery.xaml</DependentUpon>
     </Compile>
@@ -2214,6 +2217,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Stocks\ProductsLabel\LabelPrintPreview.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Stocks\PurchaseOrder\Delivery\ManageDeliveryReceipt.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

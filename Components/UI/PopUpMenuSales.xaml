@@ -328,7 +328,7 @@
         </TextBlock.ToolTip>
     </TextBlock>
                             <TextBlock Margin="10,3,0,3">
-        <Hyperlink >
+        <Hyperlink  Click="NavigateToManageDeliveryReceipt">
             <TextBlock Text="Manage Delivery Receipt" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
         </Hyperlink>
         <TextBlock.ToolTip>
