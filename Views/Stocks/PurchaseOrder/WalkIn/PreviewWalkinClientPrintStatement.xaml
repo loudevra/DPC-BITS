@@ -260,7 +260,7 @@
 
                                                     <DataGrid.CellStyle>
                                                         <Style TargetType="DataGridCell">
-                                                            <Setter Property="Padding" Value="5,2"/>
+                                                            <Setter Property="Padding" Value="5,10"/>
                                                             <Setter Property="FontSize" Value="12"/>
                                                             <Setter Property="Template">
                                                                 <Setter.Value>

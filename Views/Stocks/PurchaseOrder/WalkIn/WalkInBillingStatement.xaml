@@ -244,7 +244,7 @@
                                                       AutoGenerateColumns="False"
                                                       CanUserAddRows="False"
                                                       HeadersVisibility="Column"
-                                                      GridLinesVisibility="None"
+                                                      GridLinesVisibility="All"
                                                       Background="Transparent"
                                                       RowBackground="Transparent"
                                                       BorderThickness="0, 1, 0, 0"
@@ -263,6 +263,7 @@
                                                         <Setter Property="Padding" Value="2"/>
                                                         <Setter Property="Height" Value="Auto"/>
                                                         <Setter Property="MinHeight" Value="15"/>
+                                                        <Setter Property="Padding" Value="0,5"/>
                                                     </Style>
                                                 </DataGrid.RowStyle>
 
@@ -281,7 +282,7 @@
 
                                                 <DataGrid.CellStyle>
                                                     <Style TargetType="DataGridCell">
-                                                        <Setter Property="Padding" Value="5,2"/>
+                                                        <Setter Property="Padding" Value="5,10"/>
                                                         <Setter Property="FontSize" Value="12"/>
                                                         <Setter Property="Template">
                                                             <Setter.Value>
