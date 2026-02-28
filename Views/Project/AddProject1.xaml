@@ -151,84 +151,98 @@
                 <DockPanel LastChildFill="True" Margin="0,0,0,10">
                     <Border DockPanel.Dock="Top" Background="#A9A9A9" Padding="4" CornerRadius="12,12,0,0" BorderThickness="1,1,1,0" BorderBrush="#545454">
                         <UniformGrid Columns="24">
-                            <Button ToolTip="Bold" Padding="0">
+                            <Button ToolTip="Bold" Padding="0" Click="Format_Bold_Click">
                                 <materialDesign:PackIcon Kind="FormatBold" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-                            <Button ToolTip="Italic" Padding="0">
+                            <Button ToolTip="Italic" Padding="0" Click="Format_Italic_Click">
                                 <materialDesign:PackIcon Kind="FormatItalic" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-                            <Button ToolTip="Underline" Padding="0">
+                            <Button ToolTip="Underline" Padding="0" Click="Format_Underline_Click">
                                 <materialDesign:PackIcon Kind="FormatUnderline" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-                            <Button ToolTip="Strikethrough" Padding="0">
+                            <Button ToolTip="Strikethrough" Padding="0" Click="Format_Strike_Click">
                                 <materialDesign:PackIcon Kind="FormatStrikethroughVariant" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-                            <Button ToolTip="Subscript" Padding="0">
+                            <Button ToolTip="Subscript" Padding="0" Click="Format_Subscript_Click">
                                 <materialDesign:PackIcon Kind="FormatSubscript" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-                            <Button ToolTip="Superscript" Padding="0">
+                            <Button ToolTip="Superscript" Padding="0" Click="Format_Superscript_Click">
                                 <materialDesign:PackIcon Kind="FormatSuperscript" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-                            <ComboBox Height="22" Padding="2" FontSize="10">
-                                <ComboBoxItem Content="14"/>
+
+                            <ComboBox x:Name="cmbFontSize" Height="22" Padding="2" FontSize="10" SelectionChanged="FontSize_SelectionChanged">
+                                <ComboBoxItem Content="14" IsSelected="True"/>
                                 <ComboBoxItem Content="16"/>
                                 <ComboBoxItem Content="18"/>
+                                <ComboBoxItem Content="24"/>
                             </ComboBox>
-                            <Button ToolTip="Font Color" Padding="0">
+
+                            <Button ToolTip="Font Color" Padding="0" Click="Format_TextColor_Click">
                                 <materialDesign:PackIcon Kind="Palette" Width="18" Height="18" Foreground="#A070C0"/>
                             </Button>
-                            <Button ToolTip="Highlight" Padding="0">
+                            <Button ToolTip="Highlight" Padding="0" Click="Format_Highlight_Click">
                                 <materialDesign:PackIcon Kind="Marker" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-                            <Button ToolTip="Clear" Padding="0">
+                            <Button ToolTip="Clear" Padding="0" Click="Format_Clear_Click">
                                 <materialDesign:PackIcon Kind="Eraser" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-                            <Button ToolTip="Undo" Padding="0">
+
+                            <Button ToolTip="Undo" Padding="0" Command="ApplicationCommands.Undo" CommandTarget="{Binding ElementName=EditorBox}">
                                 <materialDesign:PackIcon Kind="Undo" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-                            <Button ToolTip="Redo" Padding="0">
+                            <Button ToolTip="Redo" Padding="0" Command="ApplicationCommands.Redo" CommandTarget="{Binding ElementName=EditorBox}">
                                 <materialDesign:PackIcon Kind="Redo" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-                            <Button ToolTip="List" Padding="0">
+
+                            <Button ToolTip="List" Padding="0" Click="Format_List_Click">
                                 <materialDesign:PackIcon Kind="FormatListBulleted" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-                            <Button ToolTip="Left" Padding="0">
+                            <Button ToolTip="Left" Padding="0" Click="Format_AlignLeft_Click">
                                 <materialDesign:PackIcon Kind="FormatAlignLeft" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-                            <Button ToolTip="Center" Padding="0">
+                            <Button ToolTip="Center" Padding="0" Click="Format_AlignCenter_Click">
                                 <materialDesign:PackIcon Kind="FormatAlignCenter" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-                            <Button ToolTip="Right" Padding="0">
+                            <Button ToolTip="Right" Padding="0" Click="Format_AlignRight_Click">
                                 <materialDesign:PackIcon Kind="FormatAlignRight" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-                            <Button ToolTip="Justify" Padding="0">
+                            <Button ToolTip="Justify" Padding="0" Click="Format_AlignJustify_Click">
                                 <materialDesign:PackIcon Kind="FormatAlignJustify" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-                            <Button ToolTip="Indent" Padding="0">
+
+                            <Button ToolTip="Indent" Padding="0" Click="Format_IndentInc_Click">
                                 <materialDesign:PackIcon Kind="FormatIndentIncrease" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-                            <Button ToolTip="Outdent" Padding="0">
+                            <Button ToolTip="Outdent" Padding="0" Click="Format_IndentDec_Click">
                                 <materialDesign:PackIcon Kind="FormatIndentDecrease" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-                            <Button ToolTip="Quote" Padding="0">
+
+                            <Button ToolTip="Quote" Padding="0" Click="Insert_Quote_Click">
                                 <materialDesign:PackIcon Kind="FormatQuoteClose" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-                            <Button ToolTip="Link" Padding="0">
+                            <Button ToolTip="Link" Padding="0" Click="Insert_Link_Click">
                                 <materialDesign:PackIcon Kind="LinkVariant" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-                            <Button ToolTip="Image" Padding="0">
+                            <Button ToolTip="Image" Padding="0" Click="Insert_Image_Click">
                                 <materialDesign:PackIcon Kind="ImageOutline" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-                            <Button ToolTip="Code" Padding="0">
+                            <Button ToolTip="Code" Padding="0" Click="Insert_Code_Click">
                                 <materialDesign:PackIcon Kind="CodeBraces" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-                            <Button ToolTip="Fullscreen" Padding="0">
+                            <Button ToolTip="Fullscreen" Padding="0" Click="Toggle_Fullscreen_Click">
                                 <materialDesign:PackIcon Kind="Fullscreen" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
                         </UniformGrid>
                     </Border>
                     <Border Background="White" CornerRadius="0,0,12,12" BorderBrush="#545454" BorderThickness="1,0,1,1" ClipToBounds="True">
-                        <RichTextBox x:Name="EditorBox" Background="White" BorderThickness="0" Padding="10" FontSize="14" Height="250" VerticalScrollBarVisibility="Auto"/>
+                        <RichTextBox x:Name="EditorBox" 
+             IsDocumentEnabled="True"
+             Background="White" 
+             BorderThickness="0" 
+             Padding="10" 
+             FontSize="14" 
+             Height="250" 
+             VerticalScrollBarVisibility="Auto"/>
                     </Border>
                 </DockPanel>
 
