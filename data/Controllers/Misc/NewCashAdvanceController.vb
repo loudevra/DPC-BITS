@@ -255,7 +255,7 @@ Namespace DPC.Data.Controllers.Misc
                 .Padding = New Thickness(0, 10, 0, 10),
                 .BorderThickness = New Thickness(0),
                 .Text = "",
-                .Name = "TxtReasonCashAdvance" & Guid.NewGuid().ToString("N")
+                .Name = "TxtReasonCashAdvance" & Guid.NewGuid().ToString("N"), .CharacterCasing = CharacterCasing.Upper
             }
 
 

@@ -18,7 +18,6 @@ Namespace DPC.Views.HRM.Employees.Employees
             LoadDepartments()
 
             AddHandler txtCity.TextChanged, AddressOf CityCheck
-
             AddHandler txtPhone.TextChanged, Sub(s, e)
                                                  AllowDigit(s, e)
                                              End Sub
@@ -28,6 +27,30 @@ Namespace DPC.Views.HRM.Employees.Employees
             AddHandler txtSalesCommission.TextChanged, Sub(s, e)
                                                            AllowDigit(s, e)
                                                        End Sub
+
+            ' Wire up uppercase enforcement
+            AddHandler txtName.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler txtStreetAddress.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler txtCity.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler txtRegion.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler txtCountry.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler txtPostalCode.TextChanged, AddressOf TxtToUpper_TextChanged
+        End Sub
+
+        Private Sub TxtToUpper_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim tb = TryCast(sender, TextBox)
+            If tb Is Nothing Then Return
+            Dim originalSelectionStart = tb.SelectionStart
+            Dim originalSelectionLength = tb.SelectionLength
+            Dim originalText = tb.Text
+            Dim upperText = originalText.ToUpperInvariant()
+            If Not String.Equals(originalText, upperText, StringComparison.Ordinal) Then
+                RemoveHandler tb.TextChanged, AddressOf TxtToUpper_TextChanged
+                tb.Text = upperText
+                tb.SelectionStart = Math.Min(originalSelectionStart, tb.Text.Length)
+                tb.SelectionLength = originalSelectionLength
+                AddHandler tb.TextChanged, AddressOf TxtToUpper_TextChanged
+            End If
         End Sub
 
         Private Sub AllowDigit(s As Object, e As TextChangedEventArgs)
