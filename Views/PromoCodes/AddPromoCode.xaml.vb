@@ -7,17 +7,12 @@ Namespace DPC.Views.PromoCodes
         Public Property StartDate As New CalendarController.SingleCalendar()
         Public Sub New()
             InitializeComponent()
-
             StartDate.SelectedDate = Date.Today
-
             DataContext = Me
-            ' Add Sidebar to SidebarContainer
-            'Dim sidebar As New Sidebar()
-            ' SidebarContainer.Child = sidebar
 
-            ' Add TopNavBar to TopNavBarContainer
-            '  Dim topNavBar As New TopNavBar()
-            ' TopNavBarContainer.Child = topNavBar
+            AddHandler txtCode.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler txtQuantity.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler txtNote.TextChanged, AddressOf TxtToUpper_TextChanged
         End Sub
 
         ' Ensure typed text is converted to uppercase while preserving caret position

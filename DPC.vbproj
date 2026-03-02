@@ -1960,6 +1960,7 @@
     </Page>
     <Page Include="Views\HRM\Employees\Employees\AddEmployee.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\HRM\Employees\Employees\EditEmployee.xaml">
       <SubType>Designer</SubType>

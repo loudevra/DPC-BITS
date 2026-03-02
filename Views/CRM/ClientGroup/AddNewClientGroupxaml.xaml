@@ -4,7 +4,6 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              FontFamily="{StaticResource Lexend}"
              Background="Transparent" Width="350" Height="300">
-
     <materialDesign:Card Width="350" Height="300" Padding="20" Background="White"
                             HorizontalAlignment="Center" VerticalAlignment="Center"
                             UniformCornerRadius="20">
@@ -15,12 +14,10 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-
             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20">
                 <materialDesign:PackIcon Kind="AccountPlus" Width="40" Height="40" Margin="0,0,15,0" VerticalAlignment="Center" Foreground="#474747"/>
-                <TextBlock FontSize="22" Foreground="#474747" FontWeight="Bold" Text="Add New Client Group" Margin="0,0,0,0" VerticalAlignment="Center"/>
+                <TextBlock x:Name="txtHeader" FontSize="22" Foreground="#474747" FontWeight="Bold" Text="Add New Client Group" Margin="0,0,0,0" VerticalAlignment="Center"/>
             </StackPanel>
-
             <!--Group Name-->
             <StackPanel Grid.Row="1">
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
@@ -30,7 +27,6 @@
                     <TextBox x:Name="txtGroupName" Style="{StaticResource RoundedTextboxStyle}" Foreground="#555555" FontSize="14" FontWeight="SemiBold" />
                 </Border>
             </StackPanel>
-
             <!--Description-->
             <StackPanel Grid.Row="2">
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
@@ -40,13 +36,11 @@
                     <TextBox x:Name="txtDescription" Style="{StaticResource RoundedTextboxStyle}" Foreground="#555555" FontSize="14" FontWeight="SemiBold" />
                 </Border>
             </StackPanel>
-
             <StackPanel Grid.Row="3" HorizontalAlignment="Right">
-                <Button Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#52C69D" Width="150">
-                    <TextBlock Text="Add Group" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Lexend" FontWeight="SemiBold" Foreground="#FDFDFD" FontSize="15"/>
+                <Button Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#52C69D" Width="150" Click="BtnAddGroup_Click">
+                    <TextBlock x:Name="txtBtnLabel" Text="Add Group" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Lexend" FontWeight="SemiBold" Foreground="#FDFDFD" FontSize="15"/>
                 </Button>
             </StackPanel>
-
         </Grid>
     </materialDesign:Card>
 </UserControl>
