@@ -99,35 +99,51 @@ Namespace DPC.Views.Project
             DueDateButton.DataContext = dueDateViewModel
         End Sub
 
-        Private Sub AddProject1_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
-            Dim cbAssignTextBox As TextBox = CType(cmbAssign.Template.FindName("PART_EditableTextBox", cmbAssign), TextBox)
-            If cbAssignTextBox IsNot Nothing Then
-                Dim assignTimer As New DispatcherTimer With {.Interval = TimeSpan.FromMilliseconds(300)}
+        Private Sub Button_Click_1(sender As Object, e As RoutedEventArgs)
+            ' Validate required fields
+            If String.IsNullOrWhiteSpace(txtName.Text) Then
+                MessageBox.Show("Project Name is required.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Return
+            End If
 
-                AddHandler assignTimer.Tick, Sub(src, args)
-                                                 assignTimer.Stop()
-                                                 Dim view = CollectionViewSource.GetDefaultView(cmbAssign.Items)
-                                                 If view IsNot Nothing Then
-                                                     view.Refresh()
-                                                     If Not view.IsEmpty Then cmbAssign.IsDropDownOpen = True
-                                                 End If
-                                             End Sub
+            ' Get note as plain text from RichTextBox
+            Dim noteText As String = New TextRange(EditorBox.Document.ContentStart, EditorBox.Document.ContentEnd).Text.Trim()
 
-                AddHandler cbAssignTextBox.PreviewMouseLeftButtonDown, Sub(src, args)
-                                                                           cmbAssign.IsDropDownOpen = True
-                                                                       End Sub
+            ' Get selected assignee
+            Dim selectedAssignee = TryCast(cmbAssign.SelectedItem, ComboBoxItem)
+            Dim assigneeID As String = Nothing
+            If selectedAssignee IsNot Nothing AndAlso selectedAssignee.Tag IsNot Nothing Then
+                assigneeID = selectedAssignee.Tag.ToString()  ' no Convert.ToInt32
+            End If
 
-                AddHandler cbAssignTextBox.TextChanged, Sub(s, args)
-                                                            If Not cbAssignTextBox.IsFocused Then Return
-                                                            Dim selectedItem = TryCast(cmbAssign.SelectedItem, ComboBoxItem)
-                                                            If selectedItem IsNot Nothing AndAlso selectedItem.Content?.ToString() = cbAssignTextBox.Text Then
-                                                                cmbAssign.IsDropDownOpen = False
-                                                                Return
-                                                            End If
-                                                            cmbAssign.IsDropDownOpen = True
-                                                            assignTimer.Stop()
-                                                            assignTimer.Start()
-                                                        End Sub
+            ' Get selected status
+            Dim selectedStatus = TryCast(cmbStatus.SelectedItem, StatusItem)
+
+            ' Parse budget
+            Dim rawBudget As Long
+            Long.TryParse(txtBudget.Text.Replace(",", ""), rawBudget)
+
+            ' Build the project model
+            Dim proj As New DPC.Data.Model.Project With {
+                .ProjectName = txtName.Text,
+                .Status = If(selectedStatus IsNot Nothing, selectedStatus.Label, Nothing),
+                .Customer = txtCustomer.Text,
+                .Budget = rawBudget,
+                .StartDate = StartDatePicker.SelectedDate,
+                .DueDate = DueDatePicker.SelectedDate,
+                .CalculationMode = If(RadBtnDueDateOnly.IsChecked, "Due Date Only", "Start to Due Date"),
+                .LinkToCalendar = False,
+                .AssignedTo = assigneeID,  ' <-- here
+                .Note = noteText
+}
+
+            ' Save to database
+            Dim success As Boolean = DPC.Data.Controllers.ProjectController.CreateProject(proj)
+
+            If success Then
+                MessageBox.Show("Project added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                ' Optionally navigate away
+                ' ViewLoader.DynamicView.NavigateToView("projectlist", Me)
             End If
         End Sub
 
@@ -201,26 +217,6 @@ Namespace DPC.Views.Project
                 End If
             End If
         End Sub
-
-        ' =========================================================
-        ' SECTION 3: SUBMIT LOGIC
-        ' =========================================================
-
-        Private Sub Button_Click_1(sender As Object, e As RoutedEventArgs)
-            ' Collect field values
-            Dim projectName = txtName.Text
-            Dim customer = txtCustomer.Text
-
-            ' Parse budget (strip commas before saving)
-            Dim rawBudget As Long
-            Long.TryParse(txtBudget.Text.Replace(",", ""), rawBudget)
-
-            Dim selectedStatus = TryCast(cmbStatus.SelectedItem, StatusItem)
-            Dim statusLabel = selectedStatus?.Label
-
-            ' ... Save to database ...
-        End Sub
-
         Private Sub cmbStatus_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles cmbStatus.SelectionChanged
 
         End Sub

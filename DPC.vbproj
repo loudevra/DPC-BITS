@@ -723,6 +723,7 @@
     <Compile Include="Data\Controllers\Product\RenderProduct.vb" />
     <Compile Include="Data\Controllers\Product\UpdateProduct.vb" />
     <Compile Include="Data\Controllers\Product\UploadProduct.vb" />
+    <Compile Include="Data\Controllers\ProjectController.vb" />
     <Compile Include="Data\Controllers\PromoCodeController.vb" />
     <Compile Include="Data\Controllers\PullOutFormController.vb" />
     <Compile Include="Data\Controllers\PurchaseOrder\PurchaseOrderController.vb" />
@@ -783,6 +784,7 @@
     <Compile Include="Data\Models\PermissionItem.vb" />
     <Compile Include="Data\Models\Product.vb" />
     <Compile Include="Data\Models\ProductCategory.vb" />
+    <Compile Include="Data\Models\Project.vb" />
     <Compile Include="Data\Models\PromoCode.vb" />
     <Compile Include="Data\Models\PurchaseOrderModel.vb" />
     <Compile Include="Data\Models\QuotesModel.vb" />
@@ -2388,6 +2390,7 @@
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
     </EmbeddedResource>
+    <None Include="Data\Models\.editorconfig" />
     <None Include="DPC_TemporaryKey.pfx" />
     <None Include="My Project\app.manifest" />
     <None Include="OpenTK.dll.config" />

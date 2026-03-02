@@ -134,6 +134,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New HRM.Employees.Employees.EmployeesView()
                     Case "hrmeditemployee"
                         Return New HRM.Employees.Employees.EditEmployee()
+                    Case "addproject"
+                        Return New Views.Project.AddProject1()
 
 
                          ' Sales Module Navigation
