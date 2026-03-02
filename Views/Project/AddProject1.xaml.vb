@@ -1,12 +1,15 @@
-﻿Imports System.Windows.Controls.Primitives
+﻿' AddProject1.xaml.vb
+Imports System.Windows.Controls.Primitives
 Imports System.Windows.Data
-Imports DPC.DPC.Data.Helpers
-Imports DPC.DPC.Data.Controllers
 Imports System.Windows.Documents
 Imports System.Windows.Media
 Imports System.Windows.Media.Imaging
-Imports Microsoft.Win32 ' Required for OpenFileDialog
 Imports System.Windows.Navigation
+Imports System.Windows.Threading
+Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Helpers
+Imports Microsoft.Win32 ' Required for OpenFileDialog
+Imports MySql.Data.MySqlClient
 
 Namespace DPC.Views.Project
     Partial Public Class AddProject1
@@ -18,17 +21,40 @@ Namespace DPC.Views.Project
 
         Public Sub New()
             InitializeComponent()
-            SetupDatePickers() ' Initialize the date picker contexts
+            SetupDatePickers()
+            LoadAssignees()  ' <-- add this
 
-            ' Populate Status ComboBox with colored indicators
             Dim statuses As New List(Of StatusItem) From {
-                New StatusItem With {.Label = "Pending", .Color = New SolidColorBrush(Color.FromRgb(255, 193, 7))},   ' Amber
-                New StatusItem With {.Label = "In Progress", .Color = New SolidColorBrush(Color.FromRgb(33, 150, 243))},  ' Blue
-                New StatusItem With {.Label = "Completed", .Color = New SolidColorBrush(Color.FromRgb(76, 175, 80))},   ' Green
-                New StatusItem With {.Label = "Cancelled", .Color = New SolidColorBrush(Color.FromRgb(244, 67, 54))}    ' Red
+                New StatusItem With {.Label = "Pending", .Color = New SolidColorBrush(Color.FromRgb(255, 193, 7))},
+                New StatusItem With {.Label = "In Progress", .Color = New SolidColorBrush(Color.FromRgb(33, 150, 243))},
+                New StatusItem With {.Label = "Completed", .Color = New SolidColorBrush(Color.FromRgb(76, 175, 80))},
+                New StatusItem With {.Label = "Cancelled", .Color = New SolidColorBrush(Color.FromRgb(244, 67, 54))}
             }
+
             cmbStatus.ItemsSource = statuses
             cmbStatus.SelectedIndex = -1
+        End Sub
+
+        Private Sub LoadAssignees()
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "SELECT EmployeeID, Name FROM employee ORDER BY Name ASC"
+                    Using cmd As New MySqlCommand(query, conn)
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            cmbAssign.Items.Clear()
+                            While reader.Read()
+                                Dim item As New ComboBoxItem()
+                                item.Content = reader("Name").ToString()
+                                item.Tag = reader("EmployeeID").ToString()
+                                cmbAssign.Items.Add(item)
+                            End While
+                        End Using
+                    End Using
+                End Using
+            Catch ex As Exception
+                MessageBox.Show("Error loading employees: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
         End Sub
 
         ' =========================================================
@@ -71,6 +97,38 @@ Namespace DPC.Views.Project
 
             DueDatePicker.DataContext = dueDateViewModel
             DueDateButton.DataContext = dueDateViewModel
+        End Sub
+
+        Private Sub AddProject1_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
+            Dim cbAssignTextBox As TextBox = CType(cmbAssign.Template.FindName("PART_EditableTextBox", cmbAssign), TextBox)
+            If cbAssignTextBox IsNot Nothing Then
+                Dim assignTimer As New DispatcherTimer With {.Interval = TimeSpan.FromMilliseconds(300)}
+
+                AddHandler assignTimer.Tick, Sub(src, args)
+                                                 assignTimer.Stop()
+                                                 Dim view = CollectionViewSource.GetDefaultView(cmbAssign.Items)
+                                                 If view IsNot Nothing Then
+                                                     view.Refresh()
+                                                     If Not view.IsEmpty Then cmbAssign.IsDropDownOpen = True
+                                                 End If
+                                             End Sub
+
+                AddHandler cbAssignTextBox.PreviewMouseLeftButtonDown, Sub(src, args)
+                                                                           cmbAssign.IsDropDownOpen = True
+                                                                       End Sub
+
+                AddHandler cbAssignTextBox.TextChanged, Sub(s, args)
+                                                            If Not cbAssignTextBox.IsFocused Then Return
+                                                            Dim selectedItem = TryCast(cmbAssign.SelectedItem, ComboBoxItem)
+                                                            If selectedItem IsNot Nothing AndAlso selectedItem.Content?.ToString() = cbAssignTextBox.Text Then
+                                                                cmbAssign.IsDropDownOpen = False
+                                                                Return
+                                                            End If
+                                                            cmbAssign.IsDropDownOpen = True
+                                                            assignTimer.Stop()
+                                                            assignTimer.Start()
+                                                        End Sub
+            End If
         End Sub
 
         Private Sub txtBudget_TextChanged(sender As Object, e As TextChangedEventArgs)
@@ -383,6 +441,10 @@ Namespace DPC.Views.Project
             Else
                 EditorBox.Height = 250
             End If
+        End Sub
+
+        Private Sub cmbAssign_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles cmbAssign.SelectionChanged
+
         End Sub
     End Class
 
