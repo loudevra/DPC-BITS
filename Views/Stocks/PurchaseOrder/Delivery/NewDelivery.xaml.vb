@@ -21,10 +21,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         Private _serialCounters As New Dictionary(Of Integer, Integer)
         Private popupEditSerial As Popup
         Private recentlyClosedSerial As Boolean = False
+        Private _isInitialized As Boolean = False
 
         Public Sub New()
             InitializeComponent()
             InitializeFields()
+            _isInitialized = True
         End Sub
 
         Public Sub InitializeFields()
@@ -175,6 +177,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     .Height = 50,
                     .Margin = New Thickness(5, 0, 5, 5)
                 }
+
+                qtyBorder.Name = $"qtyBorder_{i - 1}"
+                If Me.FindName(qtyBorder.Name) IsNot Nothing Then Me.UnregisterName(qtyBorder.Name)
+                Me.RegisterName(qtyBorder.Name, qtyBorder)
+
                 Dim txtQty As New TextBox With {
                     .Text = item("Quantity"),
                     .IsReadOnly = True,
@@ -182,9 +189,17 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     .Background = Brushes.Transparent,
                     .VerticalContentAlignment = VerticalAlignment.Center,
                     .HorizontalContentAlignment = HorizontalAlignment.Center,
-                    .Padding = New Thickness(10, 0, 10, 0),
-                    .FontFamily = New FontFamily("Lexend")
+                    .FontFamily = New FontFamily("Lexend"),
+                    .Tag = item("Quantity")
                 }
+
+                AddHandler txtQty.TextChanged, AddressOf Quantity_TextChanged
+
+                txtQty.Name = $"txtQuantity_{i - 1}"
+                If Me.FindName(txtQty.Name) IsNot Nothing Then Me.UnregisterName(txtQty.Name)
+                Me.RegisterName(txtQty.Name, txtQty)
+                _productTextBoxes.Add(txtQty.Name, txtQty)
+
                 qtyBorder.Child = txtQty
                 Grid.SetRow(qtyBorder, 0)
                 Grid.SetColumn(qtyBorder, 1)
@@ -207,7 +222,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     .VerticalContentAlignment = VerticalAlignment.Center,
                     .Padding = New Thickness(10, 0, 10, 0),
                     .FontFamily = New FontFamily("Lexend"),
-                    .Tag = i - 1 ' Crucial for identifying the row
+                    .Tag = i - 1
                 }
 
                 txtSerial.Name = $"txtSerialInput_{i - 1}"
@@ -308,15 +323,16 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                                                       Dim input = DirectCast(sender, TextBox)
                                                       Dim idx As Integer = CInt(input.Tag)
                                                       Dim val = input.Text.Trim()
-                                                      Dim total As Integer = 0
-                                                      Integer.TryParse(item("Quantity"), total)
 
-                                                      If Not String.IsNullOrEmpty(val) AndAlso _serialCounters(idx) < total Then
+                                                      Dim currentQty As Integer = 0
+                                                      Integer.TryParse(itemDataSource(idx)("Quantity"), currentQty)
+
+                                                      If Not String.IsNullOrEmpty(val) AndAlso _serialCounters(idx) < currentQty Then
                                                           _serialCounters(idx) += 1
                                                           Dim entry = $"({_serialCounters(idx)}) {val}"
                                                           txtSerialList.Text &= If(String.IsNullOrEmpty(txtSerialList.Text), entry, $"  {entry}")
 
-                                                          Dim remCount = total - _serialCounters(idx)
+                                                          Dim remCount = currentQty - _serialCounters(idx)
                                                           lblRemaining.Text = If(remCount <= 0, "COMPLETE", $"Remaining: {remCount}")
 
                                                           If remCount <= 0 Then
@@ -431,6 +447,73 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             popupEditSerial.IsOpen = True
         End Sub
 
+        Private Sub DeliveryMode_Checked(sender As Object, e As RoutedEventArgs)
+            If rbPartialDelivery Is Nothing OrElse rbFullDelivery Is Nothing Then Return
+            Dim isPartial As Boolean = rbPartialDelivery.IsChecked = True
+
+
+            For Each kvp In _productTextBoxes
+                If kvp.Key.StartsWith("txtQuantity_") Then
+                    Dim qtyBox = kvp.Value
+                    Dim index = kvp.Key.Split("_"c).Last()
+                    Dim parentBorder As Border = TryCast(Me.FindName($"qtyBorder_{index}"), Border)
+
+                    If isPartial Then
+                        If qtyBox.Tag Is Nothing Then qtyBox.Tag = qtyBox.Text
+                        qtyBox.IsReadOnly = False
+
+                        If parentBorder IsNot Nothing Then
+                            parentBorder.Background = Brushes.White
+                        End If
+                    Else
+                        If qtyBox.Tag IsNot Nothing Then qtyBox.Text = qtyBox.Tag.ToString()
+                        qtyBox.IsReadOnly = True
+
+                        If parentBorder IsNot Nothing Then
+                            parentBorder.Background = CType(New BrushConverter().ConvertFrom("#F5F5F5"), Brush)
+                        End If
+                    End If
+                End If
+            Next
+        End Sub
+
+        Private Sub Quantity_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim tb = DirectCast(sender, TextBox)
+            Dim indexString = tb.Name.Split("_"c).Last()
+            Dim index As Integer = CInt(indexString)
+
+            Dim newQty As Integer = 0
+            If Not Integer.TryParse(tb.Text, newQty) Then Exit Sub
+
+            itemDataSource(index)("Quantity") = newQty.ToString()
+            _serialCounters(index) = 0
+            itemDataSource(index)("SerialNumber") = ""
+
+            Dim lblRemaining As TextBlock = TryCast(Me.FindName($"lblRemaining_{index}"), TextBlock)
+            Dim txtSerialList As TextBlock = TryCast(Me.FindName($"txtSerialList_{index}"), TextBlock)
+            Dim txtSerialInput As TextBox = TryCast(Me.FindName($"txtSerialInput_{index}"), TextBox)
+            Dim serialBorder As Border = TryCast(Me.FindName($"serialBorder_{index}"), Border)
+
+            If txtSerialList IsNot Nothing Then txtSerialList.Text = ""
+
+            If txtSerialInput IsNot Nothing Then
+                txtSerialInput.IsReadOnly = False
+                txtSerialInput.Clear()
+                If serialBorder IsNot Nothing Then serialBorder.Background = Brushes.White
+            End If
+
+            If lblRemaining IsNot Nothing Then
+                If newQty <= 0 Then
+                    lblRemaining.Text = "COMPLETE"
+                    lblRemaining.Foreground = Brushes.Green
+                    lblRemaining.FontWeight = FontWeights.Bold
+                Else
+                    lblRemaining.Text = $"Remaining: {newQty}"
+                    lblRemaining.Foreground = Brushes.Gray
+                    lblRemaining.FontWeight = FontWeights.Normal
+                End If
+            End If
+        End Sub
 #Region "Helpers"
         Private Sub UpdateClientDetails(client As Client)
             Dim txtClientDetails As TextBox = TryCast(FindName("txtClientDetails"), TextBox)
