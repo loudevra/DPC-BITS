@@ -94,9 +94,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         ''' </summary>
         Private Sub OpenEditDeliveryReceipt(sender As Object, e As RoutedEventArgs)
             Dim receipt As DeliveryReceiptModel = TryCast(dataGrid.SelectedItem, DeliveryReceiptModel)
+            DeliveryDetails.ClearDeliveryDetails()
 
             If receipt IsNot Nothing Then
-                ' Set global details for the delivery receipt cache
                 DeliveryDetails.DRNumber = receipt.DRNumber
                 DeliveryDetails.DRReferenceInvoice = receipt.ReferenceInvoice
                 DeliveryDetails.DRClientName = receipt.ClientName
@@ -107,7 +107,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 DeliveryDetails.DRApprovedBy = receipt.ApprovedBy
                 DeliveryDetails.DRPaymentTerm = receipt.PaymentTerm
 
-                ' Navigate to the delivery receipt form view
                 ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
             End If
         End Sub

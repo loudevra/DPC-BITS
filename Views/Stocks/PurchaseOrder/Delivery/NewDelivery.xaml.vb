@@ -31,12 +31,22 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
         Public Sub InitializeFields()
 
-            If WalkinBillingStatementDetails.BLItemsCache IsNot Nothing Then
+            txtClientName.Text = If(Not String.IsNullOrEmpty(WalkinBillingStatementDetails.BLClientName),
+                            WalkinBillingStatementDetails.BLClientName,
+                            DeliveryDetails.DRClientName)
+
+            txtInvoiceNumber.Text = If(Not String.IsNullOrEmpty(WalkinBillingStatementDetails.BLNumberCache),
+                               WalkinBillingStatementDetails.BLNumberCache,
+                               DeliveryDetails.DRReferenceInvoice)
+
+            If WalkinBillingStatementDetails.BLItemsCache IsNot Nothing AndAlso WalkinBillingStatementDetails.BLItemsCache.Count > 0 Then
                 DeliveryDetails.DRDeliveryItems = New List(Of Dictionary(Of String, String))(WalkinBillingStatementDetails.BLItemsCache)
+            ElseIf DeliveryDetails.DRDeliveryItems IsNot Nothing AndAlso DeliveryDetails.DRDeliveryItems.Count > 0 Then
+                ' Already has items (perhaps from an Edit session), keep them
+            Else
+                FetchItemsFromInvoice(txtInvoiceNumber.Text)
             End If
 
-            txtClientName.Text = WalkinBillingStatementDetails.BLClientName
-            txtInvoiceNumber.Text = WalkinBillingStatementDetails.BLNumberCache
             txtDeliveryNumber.Text = GenerateDeliveryId(txtInvoiceNumber.Text)
 
             dtDate.SelectedDate = DateTime.Today
@@ -48,6 +58,14 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
             If Not String.IsNullOrEmpty(DeliveryDetails.DRDeliveryNotes) Then
                 txtDeliveryNote.Text = DeliveryDetails.DRDeliveryNotes
+            End If
+
+            If Not String.IsNullOrEmpty(DeliveryDetails.DRApprovedBy) Then
+                cmbApprovedBy.Text = DeliveryDetails.DRApprovedBy
+            End If
+
+            If Not String.IsNullOrEmpty(DeliveryDetails.DRPaymentTerm) Then
+                cmbPaymentTerm.Text = DeliveryDetails.DRPaymentTerm
             End If
 
             GetClientInfo()
@@ -597,6 +615,27 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 txtSelectedDate.Text = dtDate.SelectedDate.Value.ToString("MMM dd, yyyy")
             End If
         End Sub
+
+        Private Sub FetchItemsFromInvoice(invoiceNo As String)
+            If String.IsNullOrEmpty(invoiceNo) OrElse invoiceNo = "-" Then Return
+
+            Try
+                Dim results = BillingController.SearchBillingStatements(invoiceNo, 1, "Private")
+
+                If results.Count > 0 Then
+                    Dim originalStatement = results(0)
+
+                    Dim items = Newtonsoft.Json.JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(originalStatement.OrderItems)
+
+                    If items IsNot Nothing Then
+                        DeliveryDetails.DRDeliveryItems = items
+                    End If
+                End If
+            Catch ex As Exception
+                Debug.WriteLine("Direct Fetch Error: " & ex.Message)
+            End Try
+        End Sub
+
 #End Region
     End Class
 End Namespace
