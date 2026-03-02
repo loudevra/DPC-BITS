@@ -42,10 +42,10 @@ Namespace DPC.Views.Project
 
             Dim filtered = _allProjects.Where(Function(p)
                                                   Return (p.ProjectName?.ToLower().Contains(keyword)) OrElse
-                                                         (p.Status?.ToLower().Contains(keyword)) OrElse
-                                                         (p.Customer?.ToLower().Contains(keyword)) OrElse
-                                                         (p.AssignedTo?.ToLower().Contains(keyword)) OrElse
-                                                         (p.ProjectID.ToString().Contains(keyword))
+                                                  (p.Status?.ToLower().Contains(keyword)) OrElse
+                                                  (p.Customer?.ToLower().Contains(keyword)) OrElse
+                                                  (p.AssignedToName?.ToLower().Contains(keyword)) OrElse
+                                                  (p.ProjectID.ToString().Contains(keyword))
                                               End Function).ToList()
 
             ProjectDataGrid.ItemsSource = New ObservableCollection(Of DPC.Data.Model.Project)(filtered)
