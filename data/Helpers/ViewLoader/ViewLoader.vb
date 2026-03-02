@@ -279,6 +279,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         'Misc - Cash Advance Navigation
                     Case "cashadvancenewrequest"
                         Return New Views.Misc.CashAdvance.CashAdvanceNewRequest()
+                    Case "overtimeform"
+                        Return New Views.Misc.CashAdvance.OvertimeRequestForm()
 
                     Case "managecashadvancerequests"
                         Return New Views.Misc.CashAdvance.ManageCashAdvanceRequests()
@@ -509,6 +511,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "printpreview"
             ElseIf typeName = "cashadvancenewrequest" Then
                 Return "cashadvancenewrequest"
+            ElseIf typeName = "overtimerequestform" Then
+                Return "overtimerequestform"
             ElseIf typeName = "managecashadvancerequests" Then
                 Return "managecashadvancerequests"
             ElseIf typeName = "editcashadvancerequest" Then
