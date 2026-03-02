@@ -278,7 +278,36 @@
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="#"             Binding="{Binding ProjectID}"        Width="60"/>
                                         <DataGridTextColumn Header="Project Name"  Binding="{Binding ProjectName}"      Width="180"/>
-                                        <DataGridTextColumn Header="Status"        Binding="{Binding Status}"           Width="110"/>
+                                        <DataGridTemplateColumn Header="Status" Width="110">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                        <Ellipse Width="10" Height="10" VerticalAlignment="Center" Margin="0,0,6,0">
+                                                            <Ellipse.Style>
+                                                                <Style TargetType="Ellipse">
+                                                                    <Setter Property="Fill" Value="Gray"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding Status}" Value="Pending">
+                                                                            <Setter Property="Fill" Value="#FFC107"/>
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding Status}" Value="In Progress">
+                                                                            <Setter Property="Fill" Value="#2196F3"/>
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding Status}" Value="Completed">
+                                                                            <Setter Property="Fill" Value="#4CAF50"/>
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding Status}" Value="Cancelled">
+                                                                            <Setter Property="Fill" Value="#F44336"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Ellipse.Style>
+                                                        </Ellipse>
+                                                        <TextBlock Text="{Binding Status}" VerticalAlignment="Center" FontFamily="Lexend" FontSize="12"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
                                         <DataGridTextColumn Header="Customer"      Binding="{Binding Customer}"         Width="140"/>
                                         <DataGridTextColumn Header="ABC"           Binding="{Binding Budget, StringFormat='{}{0:N0}'}" Width="100"/>
                                         <DataGridTextColumn Header="Start Date"    Binding="{Binding StartDate, StringFormat='{}{0:MMM dd, yyyy}'}"  Width="110"/>
