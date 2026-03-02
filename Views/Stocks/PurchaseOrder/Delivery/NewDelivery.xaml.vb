@@ -39,15 +39,25 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                                WalkinBillingStatementDetails.BLNumberCache,
                                DeliveryDetails.DRReferenceInvoice)
 
-            If WalkinBillingStatementDetails.BLItemsCache IsNot Nothing AndAlso WalkinBillingStatementDetails.BLItemsCache.Count > 0 Then
+            If DeliveryDetails.DRDeliveryItems IsNot Nothing AndAlso DeliveryDetails.DRDeliveryItems.Count > 0 Then
+
+            ElseIf WalkinBillingStatementDetails.BLItemsCache IsNot Nothing AndAlso WalkinBillingStatementDetails.BLItemsCache.Count > 0 Then
                 DeliveryDetails.DRDeliveryItems = New List(Of Dictionary(Of String, String))(WalkinBillingStatementDetails.BLItemsCache)
-            ElseIf DeliveryDetails.DRDeliveryItems IsNot Nothing AndAlso DeliveryDetails.DRDeliveryItems.Count > 0 Then
-                ' Already has items (perhaps from an Edit session), keep them
             Else
                 FetchItemsFromInvoice(txtInvoiceNumber.Text)
             End If
 
-            txtDeliveryNumber.Text = GenerateDeliveryId(txtInvoiceNumber.Text)
+            GetClientInfo()
+            LoadItems()
+
+            If String.IsNullOrEmpty(DeliveryDetails.DRNumber) Then
+                txtDeliveryNumber.Text = GenerateDeliveryId(txtInvoiceNumber.Text)
+            Else
+                txtDeliveryNumber.Text = DeliveryDetails.DRNumber
+                rbPartialDelivery.IsChecked = True
+                rbFullDelivery.IsChecked = False
+                rbFullDelivery.IsEnabled = False
+            End If
 
             dtDate.SelectedDate = DateTime.Today
             txtSelectedDate.Text = dtDate.SelectedDate.Value.ToString("MMM dd, yyyy")
@@ -67,9 +77,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             If Not String.IsNullOrEmpty(DeliveryDetails.DRPaymentTerm) Then
                 cmbPaymentTerm.Text = DeliveryDetails.DRPaymentTerm
             End If
-
-            GetClientInfo()
-            LoadItems()
         End Sub
 
         Private Sub GetClientInfo()
@@ -201,6 +208,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 If Me.FindName(qtyBorder.Name) IsNot Nothing Then Me.UnregisterName(qtyBorder.Name)
                 Me.RegisterName(qtyBorder.Name, qtyBorder)
 
+                Dim maxRemaining = If(item.ContainsKey("MaxAllowed"), item("MaxAllowed"), item("Quantity"))
+
                 Dim txtQty As New TextBox With {
                     .Text = item("Quantity"),
                     .IsReadOnly = True,
@@ -209,7 +218,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     .VerticalContentAlignment = VerticalAlignment.Center,
                     .HorizontalContentAlignment = HorizontalAlignment.Center,
                     .FontFamily = New FontFamily("Lexend"),
-                    .Tag = item("Quantity")
+                    .Tag = maxRemaining
                 }
 
                 AddHandler txtQty.TextChanged, AddressOf Quantity_TextChanged
@@ -470,7 +479,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             If rbPartialDelivery Is Nothing OrElse rbFullDelivery Is Nothing Then Return
             Dim isPartial As Boolean = rbPartialDelivery.IsChecked = True
 
-            txtDeliveryNumber.Text = GenerateDeliveryId(txtInvoiceNumber.Text)
+            txtDeliveryNumber.Text = If(String.IsNullOrEmpty(DeliveryDetails.DRNumber),
+                            GenerateDeliveryId(txtInvoiceNumber.Text),
+                            DeliveryDetails.DRNumber)
 
             For Each kvp In _productTextBoxes
                 If kvp.Key.StartsWith("txtQuantity_") Then
@@ -499,23 +510,26 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
         Private Sub Quantity_TextChanged(sender As Object, e As TextChangedEventArgs)
             Dim tb = DirectCast(sender, TextBox)
+            If tb Is Nothing OrElse String.IsNullOrWhiteSpace(tb.Text) Then Exit Sub
+
             Dim indexString = tb.Name.Split("_"c).Last()
-            Dim index As Integer = CInt(indexString)
+            Dim index As Integer
+            If Not Integer.TryParse(indexString, index) Then Exit Sub
 
             Dim newQty As Integer = 0
             If Not Integer.TryParse(tb.Text, newQty) Then Exit Sub
-            Dim originalQty As Integer = 0
-            Integer.TryParse(tb.Tag?.ToString(), originalQty)
 
-            If newQty > originalQty Then
-                MessageBox.Show($"Quantity cannot exceed the original invoiced amount ({originalQty}).",
+            Dim maxAllowed As Integer = 0
+            Integer.TryParse(tb.Tag?.ToString(), maxAllowed)
+
+            If newQty > maxAllowed Then
+                MessageBox.Show($"Quantity cannot exceed the remaining balance ({maxAllowed}).",
                         "Invalid Quantity", MessageBoxButton.OK, MessageBoxImage.Warning)
 
-                tb.Text = originalQty.ToString()
+                tb.Text = maxAllowed.ToString()
                 tb.SelectionStart = tb.Text.Length
                 Exit Sub
             End If
-
 
             itemDataSource(index)("Quantity") = newQty.ToString()
             _serialCounters(index) = 0
@@ -529,9 +543,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             If txtSerialList IsNot Nothing Then txtSerialList.Text = ""
 
             If txtSerialInput IsNot Nothing Then
-                txtSerialInput.IsReadOnly = False
+                txtSerialInput.IsReadOnly = (newQty <= 0)
                 txtSerialInput.Clear()
-                If serialBorder IsNot Nothing Then serialBorder.Background = Brushes.White
+
+                If serialBorder IsNot Nothing Then
+                    serialBorder.Background = If(newQty <= 0, CType(New BrushConverter().ConvertFrom("#F5F5F5"), Brush), Brushes.White)
+                End If
             End If
 
             If lblRemaining IsNot Nothing Then

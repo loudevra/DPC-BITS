@@ -383,6 +383,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             Dim productFields = New Dictionary(Of String, String) From {
         {"txtProductName_", "ProductName"},
         {"txtQuantity_", "Quantity"},
+        {"delivered", "delivered"},
         {"txtRate_", "Rate"},
         {"txtTaxPercent_", "TaxPercent"},
         {"txtTaxValue_", "Tax"},
@@ -1191,6 +1192,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 If productPanel Is Nothing OrElse productPanel.Children.Count < 8 Then Continue For
 
                 Dim productData As New Dictionary(Of String, Object)
+                productData("Delivered") = "0"
                 Dim fieldNames = {"ProductName", "Quantity", "Rate", "TaxPercent", "Tax", "Discount"}
 
                 For j As Integer = 0 To 5

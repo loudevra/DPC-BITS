@@ -139,11 +139,11 @@ Namespace DPC.Data.Controllers
                     cmd.Parameters.AddWithValue("@inv", invoiceNo)
                     Using reader = cmd.ExecuteReader()
                         While reader.Read()
-                            ' Parse each DR's JSON list
                             Dim items = Newtonsoft.Json.JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(reader("OrderItems").ToString())
                             For Each itm In items
                                 Dim name = itm("ProductName")
-                                Dim qty = CInt(itm("Quantity"))
+                                Dim qty = 0
+                                Integer.TryParse(itm("Quantity"), qty)
 
                                 If totals.ContainsKey(name) Then
                                     totals(name) += qty

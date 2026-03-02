@@ -97,7 +97,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             DeliveryDetails.ClearDeliveryDetails()
 
             If receipt IsNot Nothing Then
-                DeliveryDetails.DRNumber = receipt.DRNumber
                 DeliveryDetails.DRReferenceInvoice = receipt.ReferenceInvoice
                 DeliveryDetails.DRClientName = receipt.ClientName
                 DeliveryDetails.DRClientDetails = receipt.ClientDetails
@@ -158,7 +157,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
                     For Each masterItem In masterItems
                         Dim pName = masterItem("ProductName")
-                        Dim originalQty = CInt(masterItem("Quantity"))
+                        Dim originalQty = 0
+                        Integer.TryParse(masterItem("Quantity"), originalQty)
 
                         Dim deliveredSoFar = If(historyTotals.ContainsKey(pName), historyTotals(pName), 0)
                         Dim balance = originalQty - deliveredSoFar
@@ -171,6 +171,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                         End If
                     Next
 
+                    ' Save to Global Cache
                     DeliveryDetails.DRDeliveryItems = remainingList
                 End If
 
