@@ -298,28 +298,22 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
 #Region "This Loads every data if its available for updating"
         Private Sub InitializeProductUI()
-            'If HasCachedItems() Then
-            '    If _typingTimer Is Nothing Then
-            '        _typingTimer = New DispatcherTimer()
-            '        _typingTimer.Interval = TimeSpan.FromMilliseconds(300)
-            '        AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
-            '    End If
+            If Application.Current.Properties.Contains("BillingCache") OrElse HasCachedItems() Then
 
-            '    FillClientsField()
-            '    LoadCachedBillingItems()
-            'Else
-            '    AddProductInputUI()
-            'End If
+                If _typingTimer Is Nothing Then
+                    _typingTimer = New DispatcherTimer()
+                    _typingTimer.Interval = TimeSpan.FromMilliseconds(300)
+                    AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
+                End If
 
-            AddProductInputUI()
+                LoadCachedBillingData()
+            Else
+                rowCount = 0
+                AddProductInputUI()
 
-            If _typingTimer Is Nothing Then
-                _typingTimer = New DispatcherTimer()
-                _typingTimer.Interval = TimeSpan.FromMilliseconds(300)
-                AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
+                Dim billingID As String = WalkInController.GenerateBillingID()
+                txtBillingNumber.Text = billingID
             End If
-
-
         End Sub
 
         Private Function HasCachedItems() As Boolean
@@ -378,7 +372,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
             ' Continue setting other fields
             If Not String.IsNullOrWhiteSpace(BLClientDetailsCache) Then TxtClientDetails.Text = BLClientDetailsCache
-            If Not String.IsNullOrWhiteSpace(BLNumberCache) Then txtBillingNumber.Text = BLNumberCache
+            'If Not String.IsNullOrWhiteSpace(BLNumberCache) Then txtBillingNumber.Text = BLNumberCache
             'If Not String.IsNullOrWhiteSpace(CEReferenceNumber) Then txtReferenceNumber.Text = CEReferenceNumber
             If Not String.IsNullOrWhiteSpace(BLnoteTxt) Then txtBillingNote.Text = BLnoteTxt
 
