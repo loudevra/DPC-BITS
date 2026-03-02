@@ -624,7 +624,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
                 If results.Count > 0 Then
                     Dim originalStatement = results(0)
-
                     Dim items = Newtonsoft.Json.JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(originalStatement.OrderItems)
 
                     If items IsNot Nothing Then

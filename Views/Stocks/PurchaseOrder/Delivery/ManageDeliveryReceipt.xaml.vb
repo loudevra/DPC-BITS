@@ -111,6 +111,73 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             End If
         End Sub
 
+        Private Sub OpenContinueDeliveryReceipt(sender As Object, e As RoutedEventArgs)
+            Dim receipt As DeliveryReceiptModel = TryCast(dataGrid.SelectedItem, DeliveryReceiptModel)
+
+            DeliveryDetails.ClearDeliveryDetails()
+
+            If receipt IsNot Nothing Then
+                Dim currentDR As String = receipt.DRNumber
+                Dim nextDR As String = ""
+
+                If currentDR.Contains("(P") Then
+                    Try
+                        Dim parts = currentDR.Split(New String() {"(P"}, StringSplitOptions.None)
+                        Dim baseDR = parts(0)
+                        Dim numPart = parts(1).Replace(")", "").Trim()
+                        Dim versionNum As Integer = 0
+
+                        If Integer.TryParse(numPart, versionNum) Then
+                            nextDR = $"{baseDR}(P{versionNum + 1})"
+                        Else
+                            nextDR = currentDR & "(P1)"
+                        End If
+                    Catch
+                        nextDR = currentDR & "(P1)"
+                    End Try
+                Else
+                    nextDR = currentDR & "(P1)"
+                End If
+
+                DeliveryDetails.DRNumber = nextDR
+                DeliveryDetails.DRReferenceInvoice = receipt.ReferenceInvoice
+                DeliveryDetails.DRClientName = receipt.ClientName
+                DeliveryDetails.DRClientDetails = receipt.ClientDetails
+                DeliveryDetails.DRDate = receipt.DRDate
+                DeliveryDetails.DRShippingMethod = receipt.ShippingMethod
+                DeliveryDetails.DRDeliveryNotes = receipt.DeliveryNotes
+                DeliveryDetails.DRApprovedBy = receipt.ApprovedBy
+                DeliveryDetails.DRPaymentTerm = receipt.PaymentTerm
+
+                Dim historyTotals = DeliveryReceiptController.GetAccumulatedDeliveryTotals(receipt.ReferenceInvoice)
+                Dim billingResults = BillingController.SearchBillingStatements(receipt.ReferenceInvoice, 1, "Private")
+
+                If billingResults.Count > 0 Then
+                    Dim masterItems = Newtonsoft.Json.JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(billingResults(0).OrderItems)
+                    Dim remainingList As New List(Of Dictionary(Of String, String))
+
+                    For Each masterItem In masterItems
+                        Dim pName = masterItem("ProductName")
+                        Dim originalQty = CInt(masterItem("Quantity"))
+
+                        Dim deliveredSoFar = If(historyTotals.ContainsKey(pName), historyTotals(pName), 0)
+                        Dim balance = originalQty - deliveredSoFar
+
+                        If balance > 0 Then
+                            Dim newItem = New Dictionary(Of String, String)(masterItem)
+                            newItem("Quantity") = balance.ToString()
+                            newItem("MaxAllowed") = balance.ToString()
+                            remainingList.Add(newItem)
+                        End If
+                    Next
+
+                    DeliveryDetails.DRDeliveryItems = remainingList
+                End If
+
+                ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
+            End If
+        End Sub
+
         ''' <summary>
         ''' Logic for the "Delete" button inside the DataGrid rows
         ''' </summary>

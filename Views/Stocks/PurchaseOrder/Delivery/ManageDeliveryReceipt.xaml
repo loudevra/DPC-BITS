@@ -410,6 +410,23 @@
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                    <Button Width="30" Height="30" 
+                                                            Background="Transparent" 
+                                                            ToolTip="Continue Partial Delivery" 
+                                                            Click="OpenContinueDeliveryReceipt" 
+                                                            BorderThickness="0">
+                                                        <Button.Style>
+                                                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding DeliveryStatus}" Value="PARTIAL DELIVERY">
+                                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Button.Style>
+                                                        <materialDesign:PackIcon Kind="ProgressCheck" Foreground="#52C69D"/>
+                                                    </Button>
                                                     <Button Width="30" Height="30" Background="Transparent" ToolTip="Edit" Click="OpenEditDeliveryReceipt" BorderThickness="0">
                                                         <materialDesign:PackIcon Kind="SquareEditOutline" Foreground="#52C69D"/>
                                                     </Button>

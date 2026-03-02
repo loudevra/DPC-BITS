@@ -128,5 +128,34 @@ Namespace DPC.Data.Controllers
         Public Shared Function SearchDeliveryReceipts()
             Return New ObservableCollection(Of DeliveryReceiptModel)()
         End Function
+
+        Public Shared Function GetAccumulatedDeliveryTotals(invoiceNo As String) As Dictionary(Of String, Integer)
+            Dim totals As New Dictionary(Of String, Integer)
+            Dim query As String = "SELECT OrderItems FROM deliveryreceipts WHERE ReferenceInvoice = @inv"
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                conn.Open()
+                Using cmd As New MySqlCommand(query, conn)
+                    cmd.Parameters.AddWithValue("@inv", invoiceNo)
+                    Using reader = cmd.ExecuteReader()
+                        While reader.Read()
+                            ' Parse each DR's JSON list
+                            Dim items = Newtonsoft.Json.JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(reader("OrderItems").ToString())
+                            For Each itm In items
+                                Dim name = itm("ProductName")
+                                Dim qty = CInt(itm("Quantity"))
+
+                                If totals.ContainsKey(name) Then
+                                    totals(name) += qty
+                                Else
+                                    totals(name) = qty
+                                End If
+                            Next
+                        End While
+                    End Using
+                End Using
+            End Using
+            Return totals
+        End Function
     End Class
 End Namespace
