@@ -394,9 +394,18 @@
                                                     <Trigger Property="Text" Value="FULL DELIVERY">
                                                         <Setter Property="Foreground" Value="#456B2E"/>
                                                     </Trigger>
-                                                    <Trigger Property="Text" Value="PARTIAL DELIVERY">
+
+                                                    <DataTrigger Binding="{Binding DeliveryStatus}" Value="PARTIAL DELIVERY">
                                                         <Setter Property="Foreground" Value="#FFA500"/>
-                                                    </Trigger>
+                                                    </DataTrigger>
+
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding DeliveryStatus}" Value="PARTIAL DELIVERY"/>
+                                                            <Condition Binding="{Binding IsFullyDelivered}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Foreground" Value="#456B2E"/>
+                                                    </MultiDataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
@@ -419,9 +428,13 @@
                                                             <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                                                                 <Setter Property="Visibility" Value="Collapsed"/>
                                                                 <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding DeliveryStatus}" Value="PARTIAL DELIVERY">
+                                                                    <MultiDataTrigger>
+                                                                        <MultiDataTrigger.Conditions>
+                                                                            <Condition Binding="{Binding DeliveryStatus}" Value="PARTIAL DELIVERY"/>
+                                                                            <Condition Binding="{Binding IsFullyDelivered}" Value="False"/>
+                                                                        </MultiDataTrigger.Conditions>
                                                                         <Setter Property="Visibility" Value="Visible"/>
-                                                                    </DataTrigger>
+                                                                    </MultiDataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>
                                                         </Button.Style>

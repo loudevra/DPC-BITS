@@ -25,5 +25,6 @@
         ' Audit Trail & UI Helpers
         Public Property DateAdded As DateTime
         Public Property DateAddedDisplay As String
+        Public Property IsFullyDelivered As Boolean = False
     End Class
 End Namespace

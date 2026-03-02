@@ -71,7 +71,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         Private Shared Sub FormatDeliveryReceiptsForDisplay(receipts As ObservableCollection(Of DeliveryReceiptModel))
             Try
                 For Each receipt In receipts
-                    ' Format Delivery Receipt Date
+                    ' 1. Format Dates (Your existing code)
                     If Not String.IsNullOrEmpty(receipt.DRDate) AndAlso receipt.DRDate <> "-" Then
                         Dim dt As DateTime
                         If DateTime.TryParse(receipt.DRDate, dt) Then
@@ -79,10 +79,36 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                         End If
                     End If
 
-                    ' Format the system timestamp if a display property is available
                     If receipt.DateAdded <> DateTime.MinValue Then
                         receipt.DateAddedDisplay = receipt.DateAdded.ToString("MMM d, yyyy")
                     End If
+
+                    Dim historyTotals = DeliveryReceiptController.GetAccumulatedDeliveryTotals(receipt.ReferenceInvoice)
+                    Dim billingResults = BillingController.SearchBillingStatements(receipt.ReferenceInvoice, 1, "Private")
+
+                    Dim isFinished As Boolean = True
+
+                    If billingResults.Count > 0 Then
+                        Dim masterItems = Newtonsoft.Json.JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(billingResults(0).OrderItems)
+
+                        If masterItems IsNot Nothing Then
+                            For Each item In masterItems
+                                Dim pName = item("ProductName")
+                                Dim originalQty As Integer = 0
+                                Integer.TryParse(item("Quantity"), originalQty)
+
+                                Dim deliveredSoFar = If(historyTotals.ContainsKey(pName), historyTotals(pName), 0)
+
+                                If originalQty - deliveredSoFar > 0 Then
+                                    isFinished = False
+                                    Exit For
+                                End If
+                            Next
+                        End If
+                    End If
+
+                    ' Assign to the model property used by your XAML DataTrigger
+                    receipt.IsFullyDelivered = isFinished
                 Next
             Catch ex As Exception
                 Debug.WriteLine($"Error formatting delivery receipts: {ex.Message}")
@@ -165,7 +191,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
                         If balance > 0 Then
                             Dim newItem = New Dictionary(Of String, String)(masterItem)
-                            newItem("Quantity") = balance.ToString()
+                            newItem("Quantity") = balance.ToString() 
                             newItem("MaxAllowed") = balance.ToString()
                             remainingList.Add(newItem)
                         End If
