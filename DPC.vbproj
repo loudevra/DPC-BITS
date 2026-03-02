@@ -693,6 +693,7 @@
       <DependentUpon>PopUpOptionFolder.xaml</DependentUpon>
     </Compile>
     <Compile Include="Data.vb" />
+    <Compile Include="Data\Cache\CacheNewProject.vb" />
     <Compile Include="Data\Cache\EditCashAdvanceRequestCache.vb" />
     <Compile Include="Data\Controllers\Account\AccountController.vb" />
     <Compile Include="Data\Controllers\AuthController.vb" />

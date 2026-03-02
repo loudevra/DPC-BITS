@@ -10,6 +10,7 @@
         Public Property CalculationMode As String
         Public Property LinkToCalendar As Boolean
         Public Property AssignedTo As String
+        Public Property AssignedToName As String
         Public Property Note As String
         Public Property CreatedAt As DateTime
         Public Property UpdatedAt As DateTime
