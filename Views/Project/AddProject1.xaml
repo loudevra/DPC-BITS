@@ -39,13 +39,31 @@
 
                 <TextBlock Text="Status:" Margin="0,20,0,10" FontWeight="SemiBold" Foreground="#474747"/>
                 <Border Style="{StaticResource RoundedBorderStyle}">
-                    <ComboBox x:Name="cmbStatus" 
-                              Style="{StaticResource RoundedComboBoxStyle}" 
-                              HorizontalAlignment="Stretch" 
-                              Height="40" 
-                              SelectedIndex="0" 
-                              Background="Transparent" 
-                              BorderThickness="0"/>
+                    <ComboBox x:Name="cmbStatus"
+              Style="{StaticResource RoundedComboBoxStyle}"
+              HorizontalAlignment="Stretch"
+              Height="40"
+              SelectedIndex="0"
+              Background="Transparent"
+              BorderThickness="0">
+
+                        <!-- Custom display for the selected item -->
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Ellipse Width="10" Height="10"
+                             Fill="{Binding Color}"
+                             Margin="4,0,10,0"
+                             VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Label}"
+                               FontFamily="Lexend"
+                               FontSize="13"
+                               Foreground="#474747"
+                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
                 </Border>
 
                 <TextBlock Text="Customer:" Margin="0,20,0,10" FontWeight="SemiBold" Foreground="#474747"/>
@@ -61,13 +79,14 @@
 
                 <TextBlock Text="ABC:" Margin="0,20,0,10" FontWeight="SemiBold" Foreground="#474747"/>
                 <Border Style="{StaticResource RoundedBorderStyle}">
-                    <ComboBox x:Name="cmbBudget" 
-                              Style="{StaticResource RoundedComboBoxStyle}" 
-                              HorizontalAlignment="Stretch" 
-                              Height="40" 
-                              SelectedIndex="0"
-                              Background="Transparent" 
-                              BorderThickness="0"/>
+                    <TextBox x:Name="txtBudget" 
+                             Height="40" 
+                             Style="{StaticResource RoundedTextboxStyle}" 
+                             HorizontalAlignment="Stretch"
+                             VerticalContentAlignment="Center"
+                             Background="Transparent" 
+                             BorderThickness="0"
+                             TextChanged="txtBudget_TextChanged"/>
                 </Border>
 
                 <Grid Margin="0,20,0,0">

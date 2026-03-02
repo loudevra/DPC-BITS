@@ -19,6 +19,16 @@ Namespace DPC.Views.Project
         Public Sub New()
             InitializeComponent()
             SetupDatePickers() ' Initialize the date picker contexts
+
+            ' Populate Status ComboBox with colored indicators
+            Dim statuses As New List(Of StatusItem) From {
+                New StatusItem With {.Label = "Pending", .Color = New SolidColorBrush(Color.FromRgb(255, 193, 7))},   ' Amber
+                New StatusItem With {.Label = "In Progress", .Color = New SolidColorBrush(Color.FromRgb(33, 150, 243))},  ' Blue
+                New StatusItem With {.Label = "Completed", .Color = New SolidColorBrush(Color.FromRgb(76, 175, 80))},   ' Green
+                New StatusItem With {.Label = "Cancelled", .Color = New SolidColorBrush(Color.FromRgb(244, 67, 54))}    ' Red
+            }
+            cmbStatus.ItemsSource = statuses
+            cmbStatus.SelectedIndex = -1
         End Sub
 
         ' =========================================================
@@ -63,6 +73,40 @@ Namespace DPC.Views.Project
             DueDateButton.DataContext = dueDateViewModel
         End Sub
 
+        Private Sub txtBudget_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim tb = TryCast(sender, TextBox)
+            If tb Is Nothing Then Return
+
+            ' Detach handler to prevent infinite loop
+            RemoveHandler tb.TextChanged, AddressOf txtBudget_TextChanged
+
+            ' Strip everything except digits
+            Dim rawText As String = tb.Text.Replace(",", "").Trim()
+
+            ' Handle empty or non-numeric input gracefully
+            Dim number As Long
+            If rawText = "" Then
+                tb.Text = ""
+            ElseIf Long.TryParse(rawText, number) Then
+                ' Format with commas
+                Dim formatted As String = number.ToString("N0")
+                Dim caretOffset As Integer = tb.Text.Length - tb.CaretIndex
+
+                tb.Text = formatted
+
+                ' Restore caret position intelligently
+                Dim newCaret As Integer = Math.Max(0, formatted.Length - caretOffset)
+                tb.CaretIndex = newCaret
+            Else
+                ' Non-numeric character typed — revert to last valid value
+                tb.Text = tb.Text.Remove(tb.Text.Length - 1)
+                tb.CaretIndex = tb.Text.Length
+            End If
+
+            ' Re-attach handler
+            AddHandler tb.TextChanged, AddressOf txtBudget_TextChanged
+        End Sub
+
         ' Open the hidden DatePicker dropdown when the custom button is clicked
         Private Sub StartDateButton_Click(sender As Object, e As RoutedEventArgs) Handles StartDateButton.Click
             StartDatePicker.IsDropDownOpen = True
@@ -105,14 +149,18 @@ Namespace DPC.Views.Project
         ' =========================================================
 
         Private Sub Button_Click_1(sender As Object, e As RoutedEventArgs)
-            ' Logic for adding the project goes here
-            ' Example: 
-            ' Dim projectName = txtName.Text
-            ' Dim customer = txtCustomer.Text
-            ' ... Save to database ...
+            ' Collect field values
+            Dim projectName = txtName.Text
+            Dim customer = txtCustomer.Text
 
-            ' Navigate away after saving (Optional)
-            ' ViewLoader.DynamicView.NavigateToView("projectlist", Me)
+            ' Parse budget (strip commas before saving)
+            Dim rawBudget As Long
+            Long.TryParse(txtBudget.Text.Replace(",", ""), rawBudget)
+
+            Dim selectedStatus = TryCast(cmbStatus.SelectedItem, StatusItem)
+            Dim statusLabel = selectedStatus?.Label
+
+            ' ... Save to database ...
         End Sub
 
         Private Sub cmbStatus_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles cmbStatus.SelectionChanged
@@ -337,4 +385,10 @@ Namespace DPC.Views.Project
             End If
         End Sub
     End Class
+
+    Public Class StatusItem
+        Public Property Label As String
+        Public Property Color As SolidColorBrush
+    End Class
+
 End Namespace
