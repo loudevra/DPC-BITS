@@ -125,10 +125,14 @@ Namespace DPC.Views.Sales.Quotes
                 Dim _prefix As String
 
                 Select Case CEType
-                    Case 2
+                    Case 0
                         _prefix = "WICE #:"
-                    Case 3
+                    Case 1
                         _prefix = "HHCE #:"
+                    Case 2
+                        _prefix = "GPCE #:"
+                    Case 3
+                        _prefix = "BCCE #:"
                     Case Else
                         _prefix = "CE #:" ' Fail Safe if doesnt work
                 End Select
@@ -147,10 +151,14 @@ Namespace DPC.Views.Sales.Quotes
                 Dim _prefix As String
 
                 Select Case CEType
-                    Case 2
+                    Case 0
                         _prefix = "WICE #:"
-                    Case 3
+                    Case 1
                         _prefix = "HHCE #:"
+                    Case 2
+                        _prefix = "GPCE #:"
+                    Case 3
+                        _prefix = "BCCE #:"
                     Case Else
                         _prefix = "CE #:" ' Fail Safe if doesnt work
                 End Select
@@ -189,6 +197,10 @@ Namespace DPC.Views.Sales.Quotes
                     _prefix = "WICE #:"
                 Case 1
                     _prefix = "HHCE #:"
+                Case 2
+                    _prefix = "GPCE #:"
+                Case 3
+                    _prefix = "BCCE #:"
                 Case Else
                     _prefix = "CE #:" ' Fail Safe if doesnt work
             End Select
