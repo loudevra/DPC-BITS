@@ -77,5 +77,56 @@ Namespace DPC.Data.Controllers
                 Return False
             End Try
         End Function
+
+        Public Shared Function GetDeliveryReceipts(limit As Integer) As ObservableCollection(Of DeliveryReceiptModel)
+            Dim receipts As New ObservableCollection(Of DeliveryReceiptModel)
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "
+                SELECT 
+                    DRNumber, ReferenceInvoice, DRDate, ClientName, 
+                    ClientDetails, DeliveryNotes, ShippingMethod, 
+                    DeliveryStatus, ApprovedBy, PaymentTerm, 
+                    OrderItems, Username, DateAdded 
+                FROM deliveryreceipts 
+                ORDER BY DateAdded DESC 
+                LIMIT @limit"
+
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@limit", limit)
+
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            While reader.Read()
+                                receipts.Add(New DeliveryReceiptModel() With {
+                            .DRNumber = reader("DRNumber").ToString(),
+                            .ReferenceInvoice = reader("ReferenceInvoice").ToString(),
+                            .DRDate = If(reader("DRDate") Is DBNull.Value, "-", reader("DRDate").ToString()),
+                            .ClientName = reader("ClientName").ToString(),
+                            .ClientDetails = If(reader("ClientDetails") Is DBNull.Value, String.Empty, reader("ClientDetails").ToString()),
+                            .DeliveryNotes = If(reader("DeliveryNotes") Is DBNull.Value, String.Empty, reader("DeliveryNotes").ToString()),
+                            .ShippingMethod = reader("ShippingMethod").ToString(),
+                            .DeliveryStatus = reader("DeliveryStatus").ToString(),
+                            .ApprovedBy = If(reader("ApprovedBy") Is DBNull.Value, "-", reader("ApprovedBy").ToString()),
+                            .PaymentTerm = If(reader("PaymentTerm") Is DBNull.Value, "-", reader("PaymentTerm").ToString()),
+                            .OrderItems = reader("OrderItems").ToString(),
+                            .Username = reader("Username").ToString(),
+                            .DateAdded = If(reader("DateAdded") Is DBNull.Value, DateTime.MinValue, Convert.ToDateTime(reader("DateAdded")))
+                        })
+                            End While
+                        End Using
+                    End Using
+                End Using
+
+            Catch ex As Exception
+                Debug.WriteLine("Error in GetDeliveryReceipts: " & ex.Message)
+            End Try
+
+            Return receipts
+        End Function
+
+        Public Shared Function SearchDeliveryReceipts()
+            Return New ObservableCollection(Of DeliveryReceiptModel)()
+        End Function
     End Class
 End Namespace
