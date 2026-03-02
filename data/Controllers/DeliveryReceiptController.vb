@@ -17,6 +17,7 @@ Namespace DPC.Data.Controllers
                                             ClientDetails As String,
                                             DeliveryNotes As String,
                                             ShippingMethod As String,
+                                            DeliveryStatus As String,
                                             ApprovedBy As String,
                                             PaymentTerm As String,
                                             OrderItems As String,
@@ -24,8 +25,8 @@ Namespace DPC.Data.Controllers
             Try
                 Dim checkDuplicateQuery As String = "SELECT COUNT(*) FROM deliveryreceipts WHERE DRNumber = @DRNumber"
 
-                Dim addQuery As String = "INSERT INTO deliveryreceipts (DRNumber, ReferenceInvoice, DRDate, ClientName, ClientDetails, DeliveryNotes, ShippingMethod, ApprovedBy, PaymentTerm, OrderItems, Username, DateAdded) " &
-                                         "VALUES (@DRNumber, @ReferenceInvoice, @DRDate, @ClientName, @ClientDetails, @DeliveryNotes, @ShippingMethod, @ApprovedBy, @PaymentTerm, @OrderItems, @Username, NOW())"
+                Dim addQuery As String = "INSERT INTO deliveryreceipts (DRNumber, ReferenceInvoice, DRDate, ClientName, ClientDetails, DeliveryNotes, ShippingMethod, DeliveryStatus, ApprovedBy, PaymentTerm, OrderItems, Username, DateAdded) " &
+                                         "VALUES (@DRNumber, @ReferenceInvoice, @DRDate, @ClientName, @ClientDetails, @DeliveryNotes, @ShippingMethod, @DeliveryStatus, @ApprovedBy, @PaymentTerm, @OrderItems, @Username, NOW())"
 
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
@@ -51,6 +52,7 @@ Namespace DPC.Data.Controllers
                                 addCmd.Parameters.AddWithValue("@ClientDetails", ClientDetails)
                                 addCmd.Parameters.AddWithValue("@DeliveryNotes", DeliveryNotes)
                                 addCmd.Parameters.AddWithValue("@ShippingMethod", If(ShippingMethod Is Nothing, "", ShippingMethod))
+                                addCmd.Parameters.AddWithValue("@DeliveryStatus", DeliveryStatus)
                                 addCmd.Parameters.AddWithValue("@ApprovedBy", ApprovedBy)
                                 addCmd.Parameters.AddWithValue("@PaymentTerm", PaymentTerm)
                                 addCmd.Parameters.AddWithValue("@OrderItems", OrderItems)

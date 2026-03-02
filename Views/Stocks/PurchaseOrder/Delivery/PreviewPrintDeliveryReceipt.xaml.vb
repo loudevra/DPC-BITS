@@ -429,6 +429,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 DeliveryDetails.DRClientDetails,
                 DeliveryDetails.DRDeliveryNotes,
                 DeliveryDetails.DRShippingMethod,
+                DeliveryDetails.DRDeliveryStatus,
                 DeliveryDetails.DRApprovedBy,
                 DeliveryDetails.DRPaymentTerm,
                 json,

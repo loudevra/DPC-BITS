@@ -486,6 +486,18 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
             Dim newQty As Integer = 0
             If Not Integer.TryParse(tb.Text, newQty) Then Exit Sub
+            Dim originalQty As Integer = 0
+            Integer.TryParse(tb.Tag?.ToString(), originalQty)
+
+            If newQty > originalQty Then
+                MessageBox.Show($"Quantity cannot exceed the original invoiced amount ({originalQty}).",
+                        "Invalid Quantity", MessageBoxButton.OK, MessageBoxImage.Warning)
+
+                tb.Text = originalQty.ToString()
+                tb.SelectionStart = tb.Text.Length
+                Exit Sub
+            End If
+
 
             itemDataSource(index)("Quantity") = newQty.ToString()
             _serialCounters(index) = 0
@@ -555,20 +567,20 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             Dim baseId As String = invoiceNumber.Trim().Replace("BL", "DR").Replace(" ", "")
 
             If rbPartialDelivery IsNot Nothing AndAlso rbPartialDelivery.IsChecked = True Then
-                If baseId.Contains("/P") Then
+                If baseId.Contains("(P") Then
                     Try
-                        Dim parts = baseId.Split(New String() {"/P"}, StringSplitOptions.None)
+                        Dim parts = baseId.Split(New String() {"(P"}, StringSplitOptions.None)
                         Dim prefix = parts(0)
                         Dim currentNum As Integer = 0
 
                         If Integer.TryParse(parts(1), currentNum) Then
-                            Return $"{prefix}/P{currentNum + 1}"
+                            Return $"{prefix}(P{currentNum + 1})"
                         End If
                     Catch
-                        Return baseId & "/P1"
+                        Return baseId & "(P1)"
                     End Try
                 Else
-                    Return baseId & "/P1"
+                    Return baseId & "(P1)"
                 End If
             End If
 
