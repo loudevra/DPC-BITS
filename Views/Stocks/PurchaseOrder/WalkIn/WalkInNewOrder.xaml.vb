@@ -93,6 +93,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             Dim billingID As String = WalkInController.GenerateBillingID()
             txtBillingNumber.Text = billingID
 
+            LoadCachedBillingData()
+
             Debug.WriteLine($"Tax Selection - {_TaxSelection}")
             Debug.WriteLine($"Tax Value In Billing Properties - {_SelectedTax}")
         End Sub
@@ -316,6 +318,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 _typingTimer.Interval = TimeSpan.FromMilliseconds(300)
                 AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
             End If
+
+
         End Sub
 
         Private Function HasCachedItems() As Boolean
@@ -323,6 +327,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         End Function
 
         Private Sub LoadCachedBillingItems()
+            ClearAllRows()
+            rowCount = 0
+
             For Each item In BLItemsCache
                 rowCount += 1
                 AddProductInputUI()
@@ -330,7 +337,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 Dim inputPanel = GetLatestInputPanel()
                 If inputPanel Is Nothing Then Continue For
 
-                FillClientsField()
                 FillProductFields(item, rowCount)
                 FillDescriptionField(inputPanel, item)
             Next
@@ -1362,6 +1368,36 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
         Private Sub BtnAddClient_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddClient.Click
             ViewLoader.DynamicView.NavigateToView("newwalkinclient", Me)
+        End Sub
+
+        Private Sub LoadCachedBillingData()
+            If Application.Current.Properties.Contains("BillingCache") Then
+                Dim cachedData As BillingModel = DirectCast(Application.Current.Properties("BillingCache"), BillingModel)
+                txtBillingNumber.Text = cachedData.BillingNumber
+                txtSearchCustomer.Text = cachedData.ClientID
+
+                If Not String.IsNullOrEmpty(cachedData.ClientID) Then
+                    Dim clientList = ClientController.SearchClient(cachedData.ClientID)
+                    Dim targetClient = clientList.FirstOrDefault(Function(c) c.ClientID = cachedData.ClientID)
+
+                    If targetClient IsNot Nothing Then
+                        RemoveHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
+                        txtSearchCustomer.Text = targetClient.Name
+
+                        _selectedClient = targetClient
+                        UpdateSupplierDetails(_selectedClient)
+
+                        AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
+                    End If
+                End If
+
+                If Not String.IsNullOrEmpty(cachedData.OrderItems) Then
+                    ClearAllRows()
+                    BLItemsCache = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(cachedData.OrderItems)
+                    LoadCachedBillingItems()
+                End If
+                Application.Current.Properties.Remove("BillingCache")
+            End If
         End Sub
 #End Region
     End Class
