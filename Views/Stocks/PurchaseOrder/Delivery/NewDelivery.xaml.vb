@@ -88,6 +88,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             DeliveryDetails.DRClientName = txtClientName.Text
             DeliveryDetails.DRClientDetails = txtClientDetails.Text
             DeliveryDetails.DRDeliveryNotes = txtDeliveryNote.Text
+            DeliveryDetails.DRDeliveryStatus = If(rbFullDelivery.IsChecked = True, "FULL DELIVERY", If(rbPartialDelivery.IsChecked = True, "PARTIAL DELIVERY", "Not Specified"))
 
             Dim selectedMethod As ComboBoxItem = TryCast(cmbShippingMethod.SelectedItem, ComboBoxItem)
             If selectedMethod IsNot Nothing Then
@@ -451,6 +452,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             If rbPartialDelivery Is Nothing OrElse rbFullDelivery Is Nothing Then Return
             Dim isPartial As Boolean = rbPartialDelivery.IsChecked = True
 
+            txtDeliveryNumber.Text = GenerateDeliveryId(txtInvoiceNumber.Text)
 
             For Each kvp In _productTextBoxes
                 If kvp.Key.StartsWith("txtQuantity_") Then
@@ -550,7 +552,27 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Function
 
         Private Function GenerateDeliveryId(invoiceNumber As String) As String
-            Return invoiceNumber.Trim().Replace("BL", "DR").Replace(" ", "")
+            Dim baseId As String = invoiceNumber.Trim().Replace("BL", "DR").Replace(" ", "")
+
+            If rbPartialDelivery IsNot Nothing AndAlso rbPartialDelivery.IsChecked = True Then
+                If baseId.Contains("/P") Then
+                    Try
+                        Dim parts = baseId.Split(New String() {"/P"}, StringSplitOptions.None)
+                        Dim prefix = parts(0)
+                        Dim currentNum As Integer = 0
+
+                        If Integer.TryParse(parts(1), currentNum) Then
+                            Return $"{prefix}/P{currentNum + 1}"
+                        End If
+                    Catch
+                        Return baseId & "/P1"
+                    End Try
+                Else
+                    Return baseId & "/P1"
+                End If
+            End If
+
+            Return baseId
         End Function
 
         Private Sub btnOpenCalendar_Click(sender As Object, e As RoutedEventArgs)
