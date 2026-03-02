@@ -89,10 +89,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 CEWarehouseNameCache = selectedWarehouse.Content.ToString()
             End If
 
-            ' Generate Billing ID
-            Dim billingID As String = WalkInController.GenerateBillingID()
-            txtBillingNumber.Text = billingID
-
             LoadCachedBillingData()
 
             Debug.WriteLine($"Tax Selection - {_TaxSelection}")
@@ -1367,30 +1363,32 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         Private Sub LoadCachedBillingData()
             If Application.Current.Properties.Contains("BillingCache") Then
                 Dim cachedData As BillingModel = DirectCast(Application.Current.Properties("BillingCache"), BillingModel)
+
                 txtBillingNumber.Text = cachedData.BillingNumber
-                txtSearchCustomer.Text = cachedData.ClientID
+                RemoveHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
 
                 If Not String.IsNullOrEmpty(cachedData.ClientID) Then
                     Dim clientList = ClientController.SearchClient(cachedData.ClientID)
                     Dim targetClient = clientList.FirstOrDefault(Function(c) c.ClientID = cachedData.ClientID)
 
                     If targetClient IsNot Nothing Then
-                        RemoveHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
                         txtSearchCustomer.Text = targetClient.Name
 
                         _selectedClient = targetClient
                         UpdateSupplierDetails(_selectedClient)
-
-                        AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
                     End If
                 End If
+                AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
 
                 If Not String.IsNullOrEmpty(cachedData.OrderItems) Then
                     ClearAllRows()
                     BLItemsCache = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(cachedData.OrderItems)
                     LoadCachedBillingItems()
                 End If
+
                 Application.Current.Properties.Remove("BillingCache")
+
+                AutoCompletePopup.IsOpen = False
             End If
         End Sub
 #End Region
