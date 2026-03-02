@@ -719,15 +719,15 @@ Namespace DPC.Views.Sales.Quotes
                                                                 Dim selectedProductName = selectedProduct.ProductName.Trim().ToLower()
 
                                                                 ' Check duplicates in other TextBoxes BEFORE setting the text
-                                                                Dim duplicateExists = _productTextBoxes.Values.Any(Function(tb) tb IsNot textBox AndAlso tb.Text.Trim().ToLower() = selectedProductName)
+                                                                'Dim duplicateExists = _productTextBoxes.Values.Any(Function(tb) tb IsNot textBox AndAlso tb.Text.Trim().ToLower() = selectedProductName)
 
-                                                                If duplicateExists Then
-                                                                    MessageBox.Show("This product is already added in another row.", "Duplicate Product", MessageBoxButton.OK, MessageBoxImage.Warning)
-                                                                    textBox.Clear()
-                                                                    popup.IsOpen = False
-                                                                    suggestionList.SelectedItem = Nothing
-                                                                    Return
-                                                                End If
+                                                                'If duplicateExists Then
+                                                                '    MessageBox.Show("This product is already added in another row.", "Duplicate Product", MessageBoxButton.OK, MessageBoxImage.Warning)
+                                                                '    textBox.Clear()
+                                                                '    popup.IsOpen = False
+                                                                '    suggestionList.SelectedItem = Nothing
+                                                                '    Return
+                                                                'End If
 
                                                                 ' No duplicate - now safe to proceed
                                                                 textBox.Text = selectedProduct.ProductName
