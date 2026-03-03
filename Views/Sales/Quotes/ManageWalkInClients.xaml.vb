@@ -100,8 +100,13 @@ Namespace DPC.Views.Sales.Quotes
                 ' Assign billing-specific fields to cache
                 cache.BillingNumber = statement.BillingNumber
                 cache.ClientID = statement.ClientID
+                cache.CompanyRep = statement.CompanyRep
                 cache.BillingDate = statement.BillingDate
                 cache.OrderItems = statement.OrderItems
+                cache.WarehouseID = statement.WarehouseID
+                cache.TotalDiscount = statement.TotalDiscount
+                cache.TotalAmount = statement.TotalAmount
+                cache.DateAdded = statement.DateAdded
                 ' Add other fields as necessary...
 
                 ' Set global details for the billing form view

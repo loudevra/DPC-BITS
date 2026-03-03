@@ -1,12 +1,15 @@
-﻿Imports System.Windows.Controls.Primitives
+﻿' AddProject1.xaml.vb
+Imports System.Windows.Controls.Primitives
 Imports System.Windows.Data
-Imports DPC.DPC.Data.Helpers
-Imports DPC.DPC.Data.Controllers
 Imports System.Windows.Documents
 Imports System.Windows.Media
 Imports System.Windows.Media.Imaging
-Imports Microsoft.Win32 ' Required for OpenFileDialog
 Imports System.Windows.Navigation
+Imports System.Windows.Threading
+Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Helpers
+Imports Microsoft.Win32 ' Required for OpenFileDialog
+Imports MySql.Data.MySqlClient
 
 Namespace DPC.Views.Project
     Partial Public Class AddProject1
@@ -18,7 +21,40 @@ Namespace DPC.Views.Project
 
         Public Sub New()
             InitializeComponent()
-            SetupDatePickers() ' Initialize the date picker contexts
+            SetupDatePickers()
+            LoadAssignees()  ' <-- add this
+
+            Dim statuses As New List(Of StatusItem) From {
+                New StatusItem With {.Label = "Pending", .Color = New SolidColorBrush(Color.FromRgb(255, 193, 7))},
+                New StatusItem With {.Label = "In Progress", .Color = New SolidColorBrush(Color.FromRgb(33, 150, 243))},
+                New StatusItem With {.Label = "Completed", .Color = New SolidColorBrush(Color.FromRgb(76, 175, 80))},
+                New StatusItem With {.Label = "Cancelled", .Color = New SolidColorBrush(Color.FromRgb(244, 67, 54))}
+            }
+
+            cmbStatus.ItemsSource = statuses
+            cmbStatus.SelectedIndex = -1
+        End Sub
+
+        Private Sub LoadAssignees()
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "SELECT EmployeeID, Name FROM employee ORDER BY Name ASC"
+                    Using cmd As New MySqlCommand(query, conn)
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            cmbAssign.Items.Clear()
+                            While reader.Read()
+                                Dim item As New ComboBoxItem()
+                                item.Content = reader("Name").ToString()
+                                item.Tag = reader("EmployeeID").ToString()
+                                cmbAssign.Items.Add(item)
+                            End While
+                        End Using
+                    End Using
+                End Using
+            Catch ex As Exception
+                MessageBox.Show("Error loading employees: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
         End Sub
 
         ' =========================================================
@@ -63,6 +99,88 @@ Namespace DPC.Views.Project
             DueDateButton.DataContext = dueDateViewModel
         End Sub
 
+        Private Sub Button_Click_1(sender As Object, e As RoutedEventArgs)
+            ' Validate required fields
+            If String.IsNullOrWhiteSpace(txtName.Text) Then
+                MessageBox.Show("Project Name is required.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Return
+            End If
+
+            ' Get note as plain text from RichTextBox
+            Dim noteText As String = New TextRange(EditorBox.Document.ContentStart, EditorBox.Document.ContentEnd).Text.Trim()
+
+            ' Get selected assignee
+            Dim selectedAssignee = TryCast(cmbAssign.SelectedItem, ComboBoxItem)
+            Dim assigneeID As String = Nothing
+            If selectedAssignee IsNot Nothing AndAlso selectedAssignee.Tag IsNot Nothing Then
+                assigneeID = selectedAssignee.Tag.ToString()  ' no Convert.ToInt32
+            End If
+
+            ' Get selected status
+            Dim selectedStatus = TryCast(cmbStatus.SelectedItem, StatusItem)
+
+            ' Parse budget
+            Dim rawBudget As Long
+            Long.TryParse(txtBudget.Text.Replace(",", ""), rawBudget)
+
+            ' Build the project model
+            Dim proj As New DPC.Data.Model.Project With {
+                .ProjectName = txtName.Text,
+                .Status = If(selectedStatus IsNot Nothing, selectedStatus.Label, Nothing),
+                .Customer = txtCustomer.Text,
+                .Budget = rawBudget,
+                .StartDate = StartDatePicker.SelectedDate,
+                .DueDate = DueDatePicker.SelectedDate,
+                .CalculationMode = If(RadBtnDueDateOnly.IsChecked, "Due Date Only", "Start to Due Date"),
+                .LinkToCalendar = False,
+                .AssignedTo = assigneeID,  ' <-- here
+                .Note = noteText
+}
+
+            ' Save to database
+            Dim success As Boolean = DPC.Data.Controllers.ProjectController.CreateProject(proj)
+
+            If success Then
+                MessageBox.Show("Project added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                ' Optionally navigate away
+                ' ViewLoader.DynamicView.NavigateToView("projectlist", Me)
+            End If
+        End Sub
+
+        Private Sub txtBudget_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim tb = TryCast(sender, TextBox)
+            If tb Is Nothing Then Return
+
+            ' Detach handler to prevent infinite loop
+            RemoveHandler tb.TextChanged, AddressOf txtBudget_TextChanged
+
+            ' Strip everything except digits
+            Dim rawText As String = tb.Text.Replace(",", "").Trim()
+
+            ' Handle empty or non-numeric input gracefully
+            Dim number As Long
+            If rawText = "" Then
+                tb.Text = ""
+            ElseIf Long.TryParse(rawText, number) Then
+                ' Format with commas
+                Dim formatted As String = number.ToString("N0")
+                Dim caretOffset As Integer = tb.Text.Length - tb.CaretIndex
+
+                tb.Text = formatted
+
+                ' Restore caret position intelligently
+                Dim newCaret As Integer = Math.Max(0, formatted.Length - caretOffset)
+                tb.CaretIndex = newCaret
+            Else
+                ' Non-numeric character typed — revert to last valid value
+                tb.Text = tb.Text.Remove(tb.Text.Length - 1)
+                tb.CaretIndex = tb.Text.Length
+            End If
+
+            ' Re-attach handler
+            AddHandler tb.TextChanged, AddressOf txtBudget_TextChanged
+        End Sub
+
         ' Open the hidden DatePicker dropdown when the custom button is clicked
         Private Sub StartDateButton_Click(sender As Object, e As RoutedEventArgs) Handles StartDateButton.Click
             StartDatePicker.IsDropDownOpen = True
@@ -99,22 +217,6 @@ Namespace DPC.Views.Project
                 End If
             End If
         End Sub
-
-        ' =========================================================
-        ' SECTION 3: SUBMIT LOGIC
-        ' =========================================================
-
-        Private Sub Button_Click_1(sender As Object, e As RoutedEventArgs)
-            ' Logic for adding the project goes here
-            ' Example: 
-            ' Dim projectName = txtName.Text
-            ' Dim customer = txtCustomer.Text
-            ' ... Save to database ...
-
-            ' Navigate away after saving (Optional)
-            ' ViewLoader.DynamicView.NavigateToView("projectlist", Me)
-        End Sub
-
         Private Sub cmbStatus_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles cmbStatus.SelectionChanged
 
         End Sub
@@ -336,5 +438,15 @@ Namespace DPC.Views.Project
                 EditorBox.Height = 250
             End If
         End Sub
+
+        Private Sub cmbAssign_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles cmbAssign.SelectionChanged
+
+        End Sub
     End Class
+
+    Public Class StatusItem
+        Public Property Label As String
+        Public Property Color As SolidColorBrush
+    End Class
+
 End Namespace

@@ -14,6 +14,8 @@
     Public DRApprovedBy As String = ""
     Public DRPaymentTerm As String = ""
 
+    Public DRDeliveryStatus As String = ""
+
     ' Product Data (Cached from the Billing Table)
     Public Property DRDeliveryItems As List(Of Dictionary(Of String, String))
 

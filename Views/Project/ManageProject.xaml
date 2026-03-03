@@ -254,9 +254,36 @@
                                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
                                     <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Width="250" Height="36">
                                         <Grid>
-                                            <TextBox BorderThickness="0" Background="Transparent" FontFamily="Lexend"  Name="txtSearch" Style="{StaticResource RoundedTextboxStyle}" Height="23" Margin="20,0,20,0" VerticalAlignment="Center"/>
-                                            <TextBox Text="Search" Foreground="#AEAEAE" FontSize="16" VerticalAlignment="Center" Margin="7,0,0,0" FontWeight="SemiBold" BorderThickness="0"/>
-                                            <materialDesign:PackIcon Kind="Magnify" Width="25" Height="26" Foreground="#AEAEAE" Margin="210,0,0,0"/>
+                                            <TextBox x:Name="txtSearch"
+                 BorderThickness="0"
+                 Background="Transparent"
+                 FontFamily="Lexend"
+                 Height="23"
+                 Margin="10,0,30,0"
+                 VerticalAlignment="Center"
+                 Style="{StaticResource RoundedTextboxStyle}"/>
+                                            <TextBlock Text="Search"
+                   Foreground="#AEAEAE"
+                   FontSize="14"
+                   FontFamily="Lexend"
+                   VerticalAlignment="Center"
+                   Margin="12,0,0,0"
+                   IsHitTestVisible="False"
+                   Panel.ZIndex="-1">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Text, ElementName=txtSearch}" Value="">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <materialDesign:PackIcon Kind="Magnify" Width="25" Height="26" Foreground="#AEAEAE" 
+                                 HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"
+                                 IsHitTestVisible="False"/>
                                         </Grid>
                                     </Border>
                                 </StackPanel>
@@ -268,61 +295,95 @@
                             <StackPanel>
                                 <!-- Data Grid -->
                                 <DataGrid x:Name="ProjectDataGrid"
-                                   AutoGenerateColumns="False"
-                                   CanUserAddRows="False"
-                                   HeadersVisibility="Column"
-                                   GridLinesVisibility="None"
-                                   RowBackground="White"
-                                   AlternatingRowBackground="WhiteSmoke"
-                                   BorderThickness="0">
+          AutoGenerateColumns="False"
+          CanUserAddRows="False"
+          HeadersVisibility="Column"
+          GridLinesVisibility="None"
+          RowBackground="White"
+          AlternatingRowBackground="WhiteSmoke"
+          BorderThickness="0">
                                     <DataGrid.Columns>
-                                        <DataGridTextColumn Header="#" Binding="{Binding ProjectID}" Width="150"/>
-                                        <DataGridTextColumn Header="Subject" Binding="{Binding Task}" Width="200"/>
-                                        <DataGridTextColumn Header="Added" Binding="{Binding DueDate}" Width="200"/>
-                                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="200"/>
+                                        <DataGridTextColumn Header="#"             Binding="{Binding ProjectID}"        Width="60"/>
+                                        <DataGridTextColumn Header="Project Name"  Binding="{Binding ProjectName}"      Width="180"/>
+                                        <DataGridTemplateColumn Header="Status" Width="110">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                        <Ellipse Width="10" Height="10" VerticalAlignment="Center" Margin="0,0,6,0">
+                                                            <Ellipse.Style>
+                                                                <Style TargetType="Ellipse">
+                                                                    <Setter Property="Fill" Value="Gray"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding Status}" Value="Pending">
+                                                                            <Setter Property="Fill" Value="#FFC107"/>
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding Status}" Value="In Progress">
+                                                                            <Setter Property="Fill" Value="#2196F3"/>
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding Status}" Value="Completed">
+                                                                            <Setter Property="Fill" Value="#4CAF50"/>
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding Status}" Value="Cancelled">
+                                                                            <Setter Property="Fill" Value="#F44336"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Ellipse.Style>
+                                                        </Ellipse>
+                                                        <TextBlock Text="{Binding Status}" VerticalAlignment="Center" FontFamily="Lexend" FontSize="12"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTextColumn Header="Customer"      Binding="{Binding Customer}"         Width="140"/>
+                                        <DataGridTextColumn Header="ABC"           Binding="{Binding Budget, StringFormat='{}{0:N0}'}" Width="100"/>
+                                        <DataGridTextColumn Header="Start Date"    Binding="{Binding StartDate, StringFormat='{}{0:MMM dd, yyyy}'}"  Width="110"/>
+                                        <DataGridTextColumn Header="Due Date"      Binding="{Binding DueDate, StringFormat='{}{0:MMM dd, yyyy}'}"    Width="110"/>
+                                        <DataGridTextColumn Header="Assigned To" Binding="{Binding AssignedToName}" Width="110"/>
+                                        <!-- Settings Column -->
+                                        <DataGridTemplateColumn Header="Actions" Width="100">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                        <Button Content="Edit"
+                                Width="40" Height="24"
+                                Margin="0,0,5,0"
+                                Background="#474747"
+                                Foreground="White"
+                                FontFamily="Lexend"
+                                FontSize="11"
+                                Tag="{Binding ProjectID}"
+                                Click="BtnEdit_Click">
+                                                            <Button.Template>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border Background="{TemplateBinding Background}" CornerRadius="5">
+                                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    </Border>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                        </Button>
+                                                        <Button Content="Del"
+                                Width="35" Height="24"
+                                Background="#C0392B"
+                                Foreground="White"
+                                FontFamily="Lexend"
+                                FontSize="11"
+                                Tag="{Binding ProjectID}"
+                                Click="BtnDelete_Click">
+                                                            <Button.Template>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border Background="{TemplateBinding Background}" CornerRadius="5">
+                                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    </Border>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
+                                                        </Button>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
                                     </DataGrid.Columns>
-                                    <DataGrid.RowStyle>
-                                        <Style TargetType="DataGridRow">
-                                            <Setter Property="FontFamily" Value="Lexend"/>
-                                            <Setter Property="Margin" Value="0,5,0,5"/>
-                                            <Setter Property="Padding" Value="5"/>
-                                            <Setter Property="Height" Value="Auto"/>
-                                            <Setter Property="MinHeight" Value="40"/>
-                                        </Style>
-                                    </DataGrid.RowStyle>
-
-                                    <DataGrid.ColumnHeaderStyle>
-                                        <Style TargetType="DataGridColumnHeader">
-                                            <Setter Property="FontFamily" Value="Lexend"/>
-                                            <Setter Property="FontSize" Value="13"/>
-                                            <Setter Property="FontWeight" Value="SemiBold"/>
-                                            <Setter Property="Foreground" Value="#474747"/>
-                                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
-                                            <Setter Property="Padding" Value="10,5"/>
-                                            <Setter Property="Background" Value="White"/>
-                                        </Style>
-                                    </DataGrid.ColumnHeaderStyle>
-
-                                    <DataGrid.CellStyle>
-                                        <Style TargetType="DataGridCell">
-                                            <Setter Property="Padding" Value="10,5"/>
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="DataGridCell">
-                                                        <Border Padding="{TemplateBinding Padding}" 
-                                     BorderBrush="{TemplateBinding BorderBrush}" 
-                                     BorderThickness="{TemplateBinding BorderThickness}" 
-                                     Background="{TemplateBinding Background}">
-                                                            <ContentPresenter VerticalAlignment="Center"/>
-                                                        </Border>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                            <Setter Property="TextBlock.TextWrapping" Value="NoWrap"/>
-                                            <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis"/>
-                                        </Style>
-                                    </DataGrid.CellStyle>
+                                    <!-- keep your existing RowStyle, ColumnHeaderStyle, CellStyle here -->
                                 </DataGrid>
                             </StackPanel>
                         </Border>

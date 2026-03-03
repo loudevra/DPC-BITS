@@ -186,7 +186,7 @@
                                        Foreground="#555555"
                                        VerticalAlignment="Center"/>
                             <StackPanel VerticalAlignment="Center">
-                                <Button x:Name="BtnAddQuote" HorizontalAlignment="Right" Style="{StaticResource AddQuoteButtonStyle}" Margin="20,0,0,0" Height="35" Width="152" Click="NavigateToQuotes">
+                                <Button x:Name="BtnAddQuote" HorizontalAlignment="Right" Style="{StaticResource AddQuoteButtonStyle}" Margin="20,0,0,0" Height="35" Width="152" Click="NavigateToNewDelivery">
                                     <StackPanel Orientation="Horizontal">
                                         <materialDesign:PackIcon Kind="Plus" Width="25" Height="25" Foreground="#FDFDFD"/>
                                         <TextBlock Text="Add Quote" FontSize="17" Foreground="#FDFDFD"/>
@@ -287,7 +287,7 @@
                                                                      Margin="0,0,5,0"/>
 
                                             <!-- Clear dates button -->
-                                            <Button Grid.Column="4" x:Name="BtnClearDates" Width="26" Height="26" Margin="2,0,5,0" ToolTip="Clear dates" Click="ClearDateFilters_Click"
+                                            <Button Grid.Column="4" x:Name="BtnClearDates" Width="26" Height="26" Margin="2,0,5,0" ToolTip="Clear dates"
                                                     Background="Transparent" BorderThickness="0" HorizontalAlignment="Right" VerticalAlignment="Center">
                                                 <materialDesign:PackIcon Kind="Close" Width="16" Height="16" Foreground="#AEAEAE"/>
                                             </Button>
@@ -383,34 +383,73 @@
                                 </DataGrid.CellStyle>
 
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Quote No." Binding="{Binding QuoteNumber}" Width="170"/>
-                                    <DataGridTextColumn Header="Ref No." Binding="{Binding Reference}" Width="120"/>
-                                    <DataGridTextColumn Header="Date" Binding="{Binding QuoteDate}" Width="120"/>
-                                    <DataGridTextColumn Header="Valid Until" Binding="{Binding Validity}" Width="120"/>
-                                    <DataGridTextColumn Header="Tax" Binding="{Binding Tax}" Width="120"/>
-                                    <DataGridTextColumn Header="Discount" Binding="{Binding Discount}" Width="120"/>
-                                    <DataGridTextColumn Header="Client" Binding="{Binding ClientName}" Width="120"/>
-                                    <DataGridTextColumn Header="Warehouse" Binding="{Binding WarehouseName}" Width="120"/>
-                                    <DataGridTextColumn Header="Items" Binding="{Binding OrderItems}" Width="120"/>
-                                    <DataGridTextColumn Header="Total Tax" Binding="{Binding TotalTax}" Width="120"/>
-                                    <DataGridTextColumn Header="Total Discount" Binding="{Binding TotalDiscount}" Width="120"/>
-                                    <DataGridTextColumn Header="Total Price" Binding="{Binding TotalPrice}" Width="120"/>
+                                    <DataGridTextColumn Header="DR Number" Binding="{Binding DRNumber}" Width="150"/>
+                                    <DataGridTextColumn Header="Invoice Ref" Binding="{Binding ReferenceInvoice}" Width="130"/>
+                                    <DataGridTextColumn Header="DR Date" Binding="{Binding DRDate}" Width="120"/>
+                                    <DataGridTextColumn Header="Status" Binding="{Binding DeliveryStatus}" Width="140">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                <Style.Triggers>
+                                                    <Trigger Property="Text" Value="FULL DELIVERY">
+                                                        <Setter Property="Foreground" Value="#456B2E"/>
+                                                    </Trigger>
 
-                                    <DataGridTemplateColumn Header="Settings" Width="80">
+                                                    <DataTrigger Binding="{Binding DeliveryStatus}" Value="PARTIAL DELIVERY">
+                                                        <Setter Property="Foreground" Value="#FFA500"/>
+                                                    </DataTrigger>
+
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding DeliveryStatus}" Value="PARTIAL DELIVERY"/>
+                                                            <Condition Binding="{Binding IsFullyDelivered}" Value="True"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Foreground" Value="#456B2E"/>
+                                                    </MultiDataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+                                    <DataGridTextColumn Header="Client Name" Binding="{Binding ClientName}" Width="180"/>
+                                    <DataGridTextColumn Header="Shipping" Binding="{Binding ShippingMethod}" Width="120"/>
+                                    <DataGridTextColumn Header="Prepared By" Binding="{Binding Username}" Width="120"/>
+                                    <DataGridTextColumn Header="System Date" Binding="{Binding DateAddedDisplay}" Width="120"/>
+
+                                    <DataGridTemplateColumn Header="Actions" Width="100">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                    <Button Width="27" Height="27" Background="Transparent" Margin="0, 0, 2, 0" ToolTip="Edit" Click="OpenEditQuote" Cursor="Hand">
-                                                        <materialDesign:PackIcon Kind="SquareEditOutline" Width="16" Height="16" Foreground="#52C69D"/>
+                                                    <Button Width="30" Height="30" 
+                                                            Background="Transparent" 
+                                                            ToolTip="Continue Partial Delivery" 
+                                                            Click="OpenContinueDeliveryReceipt" 
+                                                            BorderThickness="0">
+                                                        <Button.Style>
+                                                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                                <Style.Triggers>
+                                                                    <MultiDataTrigger>
+                                                                        <MultiDataTrigger.Conditions>
+                                                                            <Condition Binding="{Binding DeliveryStatus}" Value="PARTIAL DELIVERY"/>
+                                                                            <Condition Binding="{Binding IsFullyDelivered}" Value="False"/>
+                                                                        </MultiDataTrigger.Conditions>
+                                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                                    </MultiDataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Button.Style>
+                                                        <materialDesign:PackIcon Kind="ProgressCheck" Foreground="#52C69D"/>
                                                     </Button>
-                                                    <Button Width="27" Height="27" Background="Transparent" Margin="0" ToolTip="Delete" Cursor="Hand" Click="DeleteQuote">
-                                                        <materialDesign:PackIcon Kind="DeleteOutline" Width="16" Height="16" Foreground="#E65E5E"/>
+                                                    <Button Width="30" Height="30" Background="Transparent" ToolTip="Edit" Click="OpenEditDeliveryReceipt" BorderThickness="0">
+                                                        <materialDesign:PackIcon Kind="SquareEditOutline" Foreground="#52C69D"/>
+                                                    </Button>
+                                                    <Button Width="30" Height="30" Background="Transparent" ToolTip="Delete" Click="DeleteDeliveryReceipt" BorderThickness="0">
+                                                        <materialDesign:PackIcon Kind="DeleteOutline" Foreground="#E65E5E"/>
                                                     </Button>
                                                 </StackPanel>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
-
                                 </DataGrid.Columns>
                             </DataGrid>
                         </ScrollViewer>

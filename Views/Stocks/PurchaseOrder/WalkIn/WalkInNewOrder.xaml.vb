@@ -89,9 +89,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 CEWarehouseNameCache = selectedWarehouse.Content.ToString()
             End If
 
-            ' Generate Billing ID
-            Dim billingID As String = WalkInController.GenerateBillingID()
-            txtBillingNumber.Text = billingID
+            LoadCachedBillingData()
 
             Debug.WriteLine($"Tax Selection - {_TaxSelection}")
             Debug.WriteLine($"Tax Value In Billing Properties - {_SelectedTax}")
@@ -296,25 +294,21 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
 #Region "This Loads every data if its available for updating"
         Private Sub InitializeProductUI()
-            'If HasCachedItems() Then
-            '    If _typingTimer Is Nothing Then
-            '        _typingTimer = New DispatcherTimer()
-            '        _typingTimer.Interval = TimeSpan.FromMilliseconds(300)
-            '        AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
-            '    End If
+            If Application.Current.Properties.Contains("BillingCache") OrElse HasCachedItems() Then
 
-            '    FillClientsField()
-            '    LoadCachedBillingItems()
-            'Else
-            '    AddProductInputUI()
-            'End If
+                If _typingTimer Is Nothing Then
+                    _typingTimer = New DispatcherTimer()
+                    _typingTimer.Interval = TimeSpan.FromMilliseconds(300)
+                    AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
+                End If
 
-            AddProductInputUI()
+                LoadCachedBillingData()
+            Else
+                rowCount = 0
+                AddProductInputUI()
 
-            If _typingTimer Is Nothing Then
-                _typingTimer = New DispatcherTimer()
-                _typingTimer.Interval = TimeSpan.FromMilliseconds(300)
-                AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
+                Dim billingID As String = WalkInController.GenerateBillingID()
+                txtBillingNumber.Text = billingID
             End If
         End Sub
 
@@ -323,6 +317,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         End Function
 
         Private Sub LoadCachedBillingItems()
+            ClearAllRows()
+            rowCount = 0
+
             For Each item In BLItemsCache
                 rowCount += 1
                 AddProductInputUI()
@@ -330,7 +327,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 Dim inputPanel = GetLatestInputPanel()
                 If inputPanel Is Nothing Then Continue For
 
-                FillClientsField()
                 FillProductFields(item, rowCount)
                 FillDescriptionField(inputPanel, item)
             Next
@@ -372,7 +368,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
             ' Continue setting other fields
             If Not String.IsNullOrWhiteSpace(BLClientDetailsCache) Then TxtClientDetails.Text = BLClientDetailsCache
-            If Not String.IsNullOrWhiteSpace(BLNumberCache) Then txtBillingNumber.Text = BLNumberCache
+            'If Not String.IsNullOrWhiteSpace(BLNumberCache) Then txtBillingNumber.Text = BLNumberCache
             'If Not String.IsNullOrWhiteSpace(CEReferenceNumber) Then txtReferenceNumber.Text = CEReferenceNumber
             If Not String.IsNullOrWhiteSpace(BLnoteTxt) Then txtBillingNote.Text = BLnoteTxt
 
@@ -387,6 +383,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             Dim productFields = New Dictionary(Of String, String) From {
         {"txtProductName_", "ProductName"},
         {"txtQuantity_", "Quantity"},
+        {"delivered", "delivered"},
         {"txtRate_", "Rate"},
         {"txtTaxPercent_", "TaxPercent"},
         {"txtTaxValue_", "Tax"},
@@ -605,15 +602,15 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                                                                 Dim selectedProductName = selectedProduct.ProductName.Trim().ToLower()
 
                                                                 ' Check duplicates in other TextBoxes BEFORE setting the text
-                                                                Dim duplicateExists = _productTextBoxes.Values.Any(Function(tb) tb IsNot textBox AndAlso tb.Text.Trim().ToLower() = selectedProductName)
+                                                                'Dim duplicateExists = _productTextBoxes.Values.Any(Function(tb) tb IsNot textBox AndAlso tb.Text.Trim().ToLower() = selectedProductName)
 
-                                                                If duplicateExists Then
-                                                                    MessageBox.Show("This product is already added in another row.", "Duplicate Product", MessageBoxButton.OK, MessageBoxImage.Warning)
-                                                                    textBox.Clear()
-                                                                    popup.IsOpen = False
-                                                                    suggestionList.SelectedItem = Nothing
-                                                                    Return
-                                                                End If
+                                                                'If duplicateExists Then
+                                                                '    MessageBox.Show("This product is already added in another row.", "Duplicate Product", MessageBoxButton.OK, MessageBoxImage.Warning)
+                                                                '    textBox.Clear()
+                                                                '    popup.IsOpen = False
+                                                                '    suggestionList.SelectedItem = Nothing
+                                                                '    Return
+                                                                'End If
 
                                                                 ' No duplicate - now safe to proceed
                                                                 textBox.Text = selectedProduct.ProductName
@@ -1195,6 +1192,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 If productPanel Is Nothing OrElse productPanel.Children.Count < 8 Then Continue For
 
                 Dim productData As New Dictionary(Of String, Object)
+                productData("Delivered") = "0"
                 Dim fieldNames = {"ProductName", "Quantity", "Rate", "TaxPercent", "Tax", "Discount"}
 
                 For j As Integer = 0 To 5
@@ -1362,6 +1360,38 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
         Private Sub BtnAddClient_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddClient.Click
             ViewLoader.DynamicView.NavigateToView("newwalkinclient", Me)
+        End Sub
+
+        Private Sub LoadCachedBillingData()
+            If Application.Current.Properties.Contains("BillingCache") Then
+                Dim cachedData As BillingModel = DirectCast(Application.Current.Properties("BillingCache"), BillingModel)
+
+                txtBillingNumber.Text = cachedData.BillingNumber
+                RemoveHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
+
+                If Not String.IsNullOrEmpty(cachedData.ClientID) Then
+                    Dim clientList = ClientController.SearchClient(cachedData.ClientID)
+                    Dim targetClient = clientList.FirstOrDefault(Function(c) c.ClientID = cachedData.ClientID)
+
+                    If targetClient IsNot Nothing Then
+                        txtSearchCustomer.Text = targetClient.Name
+
+                        _selectedClient = targetClient
+                        UpdateSupplierDetails(_selectedClient)
+                    End If
+                End If
+                AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
+
+                If Not String.IsNullOrEmpty(cachedData.OrderItems) Then
+                    ClearAllRows()
+                    BLItemsCache = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(cachedData.OrderItems)
+                    LoadCachedBillingItems()
+                End If
+
+                Application.Current.Properties.Remove("BillingCache")
+
+                AutoCompletePopup.IsOpen = False
+            End If
         End Sub
 #End Region
     End Class
