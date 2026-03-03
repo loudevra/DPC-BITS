@@ -1,4 +1,5 @@
-﻿Imports System.IO
+﻿' AddNewProducts.xaml.vb
+Imports System.IO
 Imports System.Text
 Imports System.Windows.Controls.Primitives
 Imports System.Windows.Threading

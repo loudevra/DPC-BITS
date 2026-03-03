@@ -6,7 +6,6 @@
     Background="Transparent">
 
     <UserControl.Resources>
-        <!-- Hyperlink Styling -->
         <Style TargetType="Hyperlink">
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="TextDecorations" Value="{x:Null}"/>
@@ -18,14 +17,12 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Submenu Item Style -->
         <Style x:Key="SubmenuItemStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="#d4d4d4"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="Margin" Value="25,3,0,3"/>
         </Style>
 
-        <!-- Main Menu Item Style -->
         <Style x:Key="MainMenuItemStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontSize" Value="14"/>
@@ -34,7 +31,6 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
 
-        <!-- Vertical Line Style -->
         <Style x:Key="VerticalLineStyle" TargetType="Border">
             <Setter Property="Width" Value="1"/>
             <Setter Property="Background" Value="#444444"/>
@@ -43,7 +39,6 @@
         </Style>
     </UserControl.Resources>
 
-    <!-- Main Grid to center the content -->
     <Grid Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -56,10 +51,9 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- The Card is now in the center column/row -->
         <materialDesign:Card Grid.Column="1" Grid.Row="1" Background="#0F0F0F" UniformCornerRadius="0" Margin="0" Width="285">
             <StackPanel Orientation="Vertical" Margin="35,0,0,0">
-                <!-- Notes Section -->
+
                 <StackPanel>
                     <Grid Margin="0,8,0,0">
                         <Grid.ColumnDefinitions>
@@ -74,43 +68,39 @@
                         </TextBlock>
                     </Grid>
 
-                    <!-- Submenu items with vertical lines -->
                     <Grid Margin="24,3,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Vertical line -->
                         <Rectangle Width="1" Fill="#444444" HorizontalAlignment="Left" Margin="0,0,0,0"/>
 
-                        <!-- Submenu items -->
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToCreateNote">
                                     <TextBlock Text="Create Note" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
-                                                                                            <TextBlock.ToolTip>
-<ToolTip Content="Write and save a new quick note." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="Write and save a new quick note." 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageNotes">
                                     <TextBlock Text="Manage Notes" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
-                                                                                            <TextBlock.ToolTip>
-<ToolTip Content=" Edit, categorize, or delete saved notes." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content=" Edit, categorize, or delete saved notes." 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
                 </StackPanel>
 
-                <!-- Calendar Section -->
                 <StackPanel>
                     <Grid Margin="0,8,0,0">
                         <Grid.ColumnDefinitions>
@@ -125,45 +115,39 @@
                         </TextBlock>
                     </Grid>
 
-                    <!-- Submenu items with vertical lines -->
                     <Grid Margin="24,3,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Vertical line -->
                         <Rectangle Width="1" Fill="#444444" HorizontalAlignment="Left" Margin="0,0,0,0"/>
 
-                        <!-- Submenu items -->
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToViewCalendar">
                                     <TextBlock Text="View Calendar" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
-                                                                                            <TextBlock.ToolTip>
-<ToolTip Content="See upcoming schedules, deadlines, and events.
-
-" 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="See upcoming schedules, deadlines, and events." 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToAddEvent">
                                     <TextBlock Text="Add Event" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
-                                                                                            <TextBlock.ToolTip>
-<ToolTip Content="Schedule and add new events to the calendar." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="Schedule and add new events to the calendar." 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
                 </StackPanel>
 
-                <!-- Documents Section -->
                 <StackPanel>
                     <Grid Margin="0,8,0,0">
                         <Grid.ColumnDefinitions>
@@ -178,54 +162,50 @@
                         </TextBlock>
                     </Grid>
 
-                    <!-- Submenu items with vertical lines -->
                     <Grid Margin="24,3,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Vertical line -->
                         <Rectangle Width="1" Fill="#444444" HorizontalAlignment="Left" Margin="0,0,0,0"/>
 
-                        <!-- Submenu items -->
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToUploadDocument">
                                     <TextBlock Text="Upload Document" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
-                                                                                            <TextBlock.ToolTip>
-<ToolTip Content="Upload files and company documents." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="Upload files and company documents." 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToViewDocuments">
                                     <TextBlock Text="View Documents" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
-                                                                                            <TextBlock.ToolTip>
-<ToolTip Content="Access and view uploaded documents." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="Access and view uploaded documents." 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToViewPOR">
                                     <TextBlock Text="Pull Out Form" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
-                                                                                            <TextBlock.ToolTip>
-<ToolTip Content=" Generate a form to withdraw or request documents." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content=" Generate a form to withdraw or request documents." 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
                 </StackPanel>
 
 
-                <!-- Cash Advance Section -->
                 <StackPanel>
                     <Grid Margin="0,8,0,0">
                         <Grid.ColumnDefinitions>
@@ -240,55 +220,53 @@
                         </TextBlock>
                     </Grid>
 
-                    <!-- Submenu items with vertical lines -->
                     <Grid Margin="24,3,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-
-                        <!-- Vertical line -->
                         <Rectangle Width="1" Fill="#444444" HorizontalAlignment="Left" Margin="0,0,0,0"/>
 
-                        <!-- Submenu items -->
-                        <StackPanel Grid.Column="1" Grid.Row="0">
+                        <StackPanel Grid.Column="1">
+
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToCashAdvanceNewRequest">
                                     <TextBlock Text="Cash Advance Request" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
-                                                                                            <TextBlock.ToolTip>
-<ToolTip Content="Submit a new cash advance request." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="Submit a new cash advance request." 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
                             </TextBlock>
-                        </StackPanel> 
-                        
-                        <!-- Vertical line -->
-                        <Rectangle Grid.Row="1" Width="1" Fill="#444444" HorizontalAlignment="Left" Margin="0,0,0,0"/>
 
-                        <!-- Submenu items -->
-                        <StackPanel Grid.Column="1" Grid.Row="1">
+                            <TextBlock Margin="10,3,0,3">
+                                <Hyperlink Click="NavigateToOvertimeRequestForm">
+                                    <TextBlock Text="Overtime Request Form" Foreground="#d4d4d4" FontSize="13"/>
+                                </Hyperlink>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="Submit a request for overtime work." 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
+                            </TextBlock>
+
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageCashAdvanceRequests">
                                     <TextBlock Text="Manage Cash Advance Requests" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
-                                                                                            <TextBlock.ToolTip>
-<ToolTip Content="Approve, reject, or track cash advance requests." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="Approve, reject, or track cash advance requests." 
+                                             Style="{StaticResource SpeechBubbleToolTip}"
+                                             Placement="Top"/>
+                                </TextBlock.ToolTip>
                             </TextBlock>
+
                         </StackPanel>
                     </Grid>
                 </StackPanel>
-                
-                
+
             </StackPanel>
         </materialDesign:Card>
     </Grid>

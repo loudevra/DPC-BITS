@@ -693,6 +693,7 @@
       <DependentUpon>PopUpOptionFolder.xaml</DependentUpon>
     </Compile>
     <Compile Include="Data.vb" />
+    <Compile Include="Data\Cache\CacheNewProject.vb" />
     <Compile Include="Data\Cache\EditCashAdvanceRequestCache.vb" />
     <Compile Include="Data\Controllers\Account\AccountController.vb" />
     <Compile Include="Data\Controllers\AuthController.vb" />
@@ -723,6 +724,7 @@
     <Compile Include="Data\Controllers\Product\RenderProduct.vb" />
     <Compile Include="Data\Controllers\Product\UpdateProduct.vb" />
     <Compile Include="Data\Controllers\Product\UploadProduct.vb" />
+    <Compile Include="Data\Controllers\ProjectController.vb" />
     <Compile Include="Data\Controllers\PromoCodeController.vb" />
     <Compile Include="Data\Controllers\PullOutFormController.vb" />
     <Compile Include="Data\Controllers\PurchaseOrder\PurchaseOrderController.vb" />
@@ -784,6 +786,7 @@
     <Compile Include="Data\Models\PermissionItem.vb" />
     <Compile Include="Data\Models\Product.vb" />
     <Compile Include="Data\Models\ProductCategory.vb" />
+    <Compile Include="Data\Models\Project.vb" />
     <Compile Include="Data\Models\PromoCode.vb" />
     <Compile Include="Data\Models\PurchaseOrderModel.vb" />
     <Compile Include="Data\Models\QuotesModel.vb" />
@@ -1071,6 +1074,9 @@
     </Compile>
     <Compile Include="Views\Misc\Documents\PullOutForm.xaml.vb">
       <DependentUpon>PullOutForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc\Overtime\OvertimeForm.xaml.vb">
+      <DependentUpon>OvertimeForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\POS\CreditPayment.xaml.vb">
       <DependentUpon>CreditPayment.xaml</DependentUpon>
@@ -2036,6 +2042,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Misc\Overtime\OvertimeForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\POS\CreditPayment.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2389,6 +2399,7 @@
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
     </EmbeddedResource>
+    <None Include="Data\Models\.editorconfig" />
     <None Include="DPC_TemporaryKey.pfx" />
     <None Include="My Project\app.manifest" />
     <None Include="OpenTK.dll.config" />

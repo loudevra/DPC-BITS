@@ -1,4 +1,5 @@
-﻿Imports System.Collections.ObjectModel
+﻿' EmployeesView.xaml.vb
+Imports System.Collections.ObjectModel
 Imports System.Data
 Imports System.Windows.Controls.Primitives
 Imports DPC.DPC.Data.Controllers
