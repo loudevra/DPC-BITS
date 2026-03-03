@@ -1,4 +1,5 @@
-﻿Imports System.Collections.ObjectModel
+﻿' ManageProject.xaml.vb
+Imports System.Collections.ObjectModel
 Imports System.Windows.Controls
 Imports DPC.DPC.Data.Helpers
 Imports MySql.Data.MySqlClient
