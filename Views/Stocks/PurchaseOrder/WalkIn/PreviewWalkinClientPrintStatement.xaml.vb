@@ -438,46 +438,34 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             Dim appDir As String = AppDomain.CurrentDomain.BaseDirectory
             Dim tempImagePath As String = System.IO.Path.Combine(appDir, Guid.NewGuid().ToString() & ".png")
             Dim tempPdfPath As String = System.IO.Path.Combine(appDir, docName & ".pdf")
+            Dim gridFS As GridFSBucket = SplashScreen.GetGridFSConnection()
+            Dim billingNo As String = BillingNumber.Text
 
             Try
-                ' Save temp image file
-                Using fs As New FileStream(tempImagePath, FileMode.Create, FileAccess.Write)
-                    stream.CopyTo(fs)
-                End Using
+                Dim filter = Builders(Of GridFSFileInfo).Filter.Eq(Function(x) x.Metadata("billiingNumber"), billingNo)
+                Dim existingFiles = Await gridFS.Find(filter).ToListAsync()
 
-                ' Create PDF
-                Dim pdf As New PdfDocument()
-                Dim page = pdf.AddPage()
-                page.Width = XUnit.FromInch(layoutWidth / 96)
-                page.Height = XUnit.FromInch(layoutHeight / 96)
+                For Each oldFile In existingFiles
+                    Await gridFS.DeleteAsync(oldFile.Id)
+                Next
 
-                Dim gfx = XGraphics.FromPdfPage(page)
-                Using image = XImage.FromFile(tempImagePath)
-                    gfx.DrawImage(image, 0, 0, page.Width, page.Height)
-                End Using
-
-                ' Save PDF to temp file
-                pdf.Save(tempPdfPath)
-
-                ' Upload PDF to MongoDB GridFS
-                Dim gridFS As GridFSBucket = SplashScreen.GetGridFSConnection()
-
-                Using FileStream As New FileStream(tempPdfPath, FileMode.Open, FileAccess.Read)
+                Using fileStream As New FileStream(tempPdfPath, FileMode.Open, FileAccess.Read)
                     Dim options As New GridFSUploadOptions() With {
-            .Metadata = New BsonDocument From {
-                {"uploadedBy", CacheOnLoggedInName},
-                {"uploadedAt", BsonDateTime.Create(DateTime.UtcNow)},
-                {"source", "cost-estimate/quote"},
-                {"billiingNumber", BillingNumber.Text},
-                {"pdfFilePath", tempPdfPath}
+                .Metadata = New BsonDocument From {
+                    {"uploadedBy", CacheOnLoggedInName},
+                    {"uploadedAt", BsonDateTime.Create(DateTime.UtcNow)},
+                    {"source", "cost-estimate/quote"},
+                    {"billiingNumber", billingNo},
+                    {"pdfFilePath", tempPdfPath}
+                }
             }
-        }
 
-                    gridFS.UploadFromStream(Path.GetFileName(tempPdfPath), FileStream, options)
+                    ' Note: Using UploadFromStreamAsync since this is an Async Sub
+                    Await gridFS.UploadFromStreamAsync(Path.GetFileName(tempPdfPath), fileStream, options)
                 End Using
 
-                'MessageBox.Show("PDF uploaded to MongoDB.")
-
+            Catch ex As Exception
+                Debug.WriteLine("MongoDB Upload Error: " & ex.Message)
             Finally
                 ' Delete the temp files
                 If File.Exists(tempImagePath) Then
