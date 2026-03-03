@@ -1,4 +1,5 @@
-﻿Imports System.Windows
+﻿' Sidebar.xaml.vb
+Imports System.Windows
 Imports System.Windows.Controls
 Imports System.Windows.Media.Animation
 Imports DPC.DPC.Components.UI

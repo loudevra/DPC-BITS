@@ -1,8 +1,10 @@
-﻿Imports System.Collections.ObjectModel
+﻿' ManageProject.xaml.vb (UPDATED: restore Cancelled count to tbTotal)
+Imports System.Collections.ObjectModel
 Imports System.Windows.Controls
 Imports System.Linq
 Imports DPC.DPC.Data.Helpers
 Imports MySql.Data.MySqlClient
+Imports System.Windows.Media
 
 Namespace DPC.Views.Project
     Public Class ManageProject
@@ -20,7 +22,6 @@ Namespace DPC.Views.Project
             LoadData()
         End Sub
 
-        ' ── Load Data ─────────────────────────────────────────────────
         Public Sub LoadData()
             Try
                 _allProjects = DPC.Data.Controllers.ProjectController.GetProjects()
@@ -36,7 +37,6 @@ Namespace DPC.Views.Project
             End Try
         End Sub
 
-        ' ── Update Status Box Counts ───────────────────────────────────
         Private Sub UpdateStatusCounts()
             If _filteredProjects Is Nothing Then
                 tbWaiting.Text = "0"
@@ -54,10 +54,11 @@ Namespace DPC.Views.Project
             tbWaiting.Text = waiting.ToString()
             tbProcessing.Text = processing.ToString()
             tbSolved.Text = solved.ToString()
+
+            ' Keep your original behavior: tbTotal shows Cancelled count
             tbTotal.Text = cancelled.ToString()
         End Sub
 
-        ' ── Pagination ────────────────────────────────────────────────
         Private Sub ApplyPagination()
             If _filteredProjects Is Nothing Then Return
 
@@ -94,7 +95,6 @@ Namespace DPC.Views.Project
                     btn.Foreground = New SolidColorBrush(Color.FromRgb(85, 85, 85))
                 End If
 
-                ' Apply rounded template
                 Dim factory As New FrameworkElementFactory(GetType(Border))
                 factory.SetBinding(Border.BackgroundProperty, New Binding("Background") With {.RelativeSource = New RelativeSource(RelativeSourceMode.TemplatedParent)})
                 factory.SetValue(Border.CornerRadiusProperty, New CornerRadius(15))
@@ -131,7 +131,6 @@ Namespace DPC.Views.Project
             End If
         End Sub
 
-        ' ── Search ────────────────────────────────────────────────────
         Private Sub TxtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
             If _allProjects Is Nothing Then Return
 
@@ -154,7 +153,6 @@ Namespace DPC.Views.Project
             UpdateStatusCounts()
         End Sub
 
-        ' ── Edit Button ───────────────────────────────────────────────
         Private Sub BtnEdit_Click(sender As Object, e As RoutedEventArgs)
             Dim btn = TryCast(sender, Button)
             If btn Is Nothing Then Return
@@ -175,7 +173,6 @@ Namespace DPC.Views.Project
             End If
         End Sub
 
-        ' ── Delete Button ─────────────────────────────────────────────
         Private Sub BtnDelete_Click(sender As Object, e As RoutedEventArgs)
             Dim btn = TryCast(sender, Button)
             If btn Is Nothing Then Return

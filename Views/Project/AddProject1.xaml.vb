@@ -1,4 +1,4 @@
-﻿' AddProject1.xaml.vb
+﻿' AddProject1.xaml.vb (FULL FILE, COMPILE-FIXED)
 Imports System.Windows.Controls.Primitives
 Imports System.Windows.Data
 Imports System.Windows.Documents
@@ -8,21 +8,22 @@ Imports System.Windows.Navigation
 Imports System.Windows.Threading
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
-Imports Microsoft.Win32 ' Required for OpenFileDialog
+Imports Microsoft.Win32
 Imports MySql.Data.MySqlClient
 
 Namespace DPC.Views.Project
     Partial Public Class AddProject1
         Inherits UserControl
 
-        ' ViewModels for the custom date pickers
         Private startDateViewModel As New CalendarController.SingleCalendar()
         Private dueDateViewModel As New CalendarController.SingleCalendar()
+
+        ' Store EmployeeID for saving (fits VARCHAR(20))
+        Private AssignedEmployeeID As String = Nothing
 
         Public Sub New()
             InitializeComponent()
             SetupDatePickers()
-            LoadAssignees()
 
             Dim statuses As New List(Of StatusItem) From {
                 New StatusItem With {.Label = "Waiting", .Color = New SolidColorBrush(Color.FromRgb(229, 209, 142))},
@@ -33,34 +34,63 @@ Namespace DPC.Views.Project
 
             cmbStatus.ItemsSource = statuses
             cmbStatus.SelectedIndex = -1
+
+            AddHandler Me.Loaded, AddressOf AddProject1_Loaded
         End Sub
 
-        Private Sub LoadAssignees()
+        Private Sub AddProject1_Loaded(sender As Object, e As RoutedEventArgs)
+            ' Display full name (whatever sidebar cache has)
+            txtAssignTo.Text = CacheOnLoggedInName
+
+            ' Resolve EmployeeID to save
+            ResolveAssignedEmployeeID()
+        End Sub
+
+        ' Prefer Email; fallback to Name.
+        Private Sub ResolveAssignedEmployeeID()
+            AssignedEmployeeID = Nothing
+
+            Dim email As String = CacheOnLoggedInEmail
+            Dim nm As String = CacheOnLoggedInName
+
+            If String.IsNullOrWhiteSpace(email) AndAlso String.IsNullOrWhiteSpace(nm) Then Return
+
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "SELECT EmployeeID, Name FROM employee ORDER BY Name ASC"
-                    Using cmd As New MySqlCommand(query, conn)
-                        Using reader As MySqlDataReader = cmd.ExecuteReader()
-                            cmbAssign.Items.Clear()
-                            While reader.Read()
-                                Dim item As New ComboBoxItem()
-                                item.Content = reader("Name").ToString()
-                                item.Tag = reader("EmployeeID").ToString()
-                                cmbAssign.Items.Add(item)
-                            End While
+
+                    If Not String.IsNullOrWhiteSpace(email) Then
+                        Dim q1 As String = "SELECT EmployeeID FROM employee WHERE Email = @e LIMIT 1"
+                        Using cmd As New MySqlCommand(q1, conn)
+                            cmd.Parameters.AddWithValue("@e", email.Trim())
+                            Dim result = cmd.ExecuteScalar()
+                            If result IsNot Nothing AndAlso result IsNot DBNull.Value Then
+                                AssignedEmployeeID = result.ToString()
+                                Return
+                            End If
                         End Using
-                    End Using
+                    End If
+
+                    If Not String.IsNullOrWhiteSpace(nm) Then
+                        Dim q2 As String = "SELECT EmployeeID FROM employee WHERE Name = @n LIMIT 1"
+                        Using cmd As New MySqlCommand(q2, conn)
+                            cmd.Parameters.AddWithValue("@n", nm.Trim())
+                            Dim result = cmd.ExecuteScalar()
+                            If result IsNot Nothing AndAlso result IsNot DBNull.Value Then
+                                AssignedEmployeeID = result.ToString()
+                                Return
+                            End If
+                        End Using
+                    End If
                 End Using
             Catch ex As Exception
-                MessageBox.Show("Error loading employees: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                ' optional: MessageBox.Show(ex.Message)
             End Try
         End Sub
 
         ' =========================================================
         ' SECTION 1: TEXT HANDLING (Uppercase Project Name)
         ' =========================================================
-
         Private Sub TxtToUpper_TextChanged(sender As Object, e As TextChangedEventArgs) Handles txtName.TextChanged
             Dim tb = TryCast(sender, TextBox)
             If tb Is Nothing Then Return
@@ -83,7 +113,6 @@ Namespace DPC.Views.Project
         ' =========================================================
         ' SECTION 2: DATE PICKER LOGIC
         ' =========================================================
-
         Public Sub SetupDatePickers()
             startDateViewModel.SelectedDate = Nothing
             dueDateViewModel.SelectedDate = Nothing
@@ -98,32 +127,27 @@ Namespace DPC.Views.Project
         ' =========================================================
         ' SECTION 3: SAVE AND CLEAR LOGIC
         ' =========================================================
-
         Private Sub Button_Click_1(sender As Object, e As RoutedEventArgs)
-            ' Validate required fields
             If String.IsNullOrWhiteSpace(txtName.Text) Then
                 MessageBox.Show("Project Name is required.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Return
             End If
 
-            ' Get note as plain text from RichTextBox
-            Dim noteText As String = New TextRange(EditorBox.Document.ContentStart, EditorBox.Document.ContentEnd).Text.Trim()
-
-            ' Get selected assignee
-            Dim selectedAssignee = TryCast(cmbAssign.SelectedItem, ComboBoxItem)
-            Dim assigneeID As String = Nothing
-            If selectedAssignee IsNot Nothing AndAlso selectedAssignee.Tag IsNot Nothing Then
-                assigneeID = selectedAssignee.Tag.ToString()
+            If String.IsNullOrWhiteSpace(AssignedEmployeeID) Then
+                ResolveAssignedEmployeeID()
             End If
 
-            ' Get selected status
+            If String.IsNullOrWhiteSpace(AssignedEmployeeID) Then
+                MessageBox.Show("Cannot determine EmployeeID for: " & txtAssignTo.Text, "Validation", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Return
+            End If
+
+            Dim noteText As String = New TextRange(EditorBox.Document.ContentStart, EditorBox.Document.ContentEnd).Text.Trim()
             Dim selectedStatus = TryCast(cmbStatus.SelectedItem, StatusItem)
 
-            ' Parse budget
             Dim rawBudget As Long
             Long.TryParse(txtBudget.Text.Replace(",", ""), rawBudget)
 
-            ' Build the project model
             Dim proj As New DPC.Data.Model.Project With {
                 .ProjectName = txtName.Text,
                 .Status = If(selectedStatus IsNot Nothing, selectedStatus.Label, Nothing),
@@ -133,53 +157,42 @@ Namespace DPC.Views.Project
                 .DueDate = DueDatePicker.SelectedDate,
                 .CalculationMode = If(RadBtnDueDateOnly.IsChecked, "Due Date Only", "Start to Due Date"),
                 .LinkToCalendar = False,
-                .AssignedTo = assigneeID,
+                .AssignedTo = AssignedEmployeeID,
                 .Note = noteText
             }
 
-            ' Save to database
             Dim success As Boolean = DPC.Data.Controllers.ProjectController.CreateProject(proj)
 
             If success Then
                 MessageBox.Show("Project added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
-                ' CLEAR ALL FIELDS AFTER SUCCESS
                 ClearFields()
             End If
         End Sub
 
-        ''' <summary>
-        ''' Resets all input fields to their default state
-        ''' </summary>
         Private Sub ClearFields()
-            ' Clear TextBoxes
             txtName.Clear()
             txtCustomer.Clear()
             txtBudget.Clear()
 
-            ' Reset ComboBoxes
             cmbStatus.SelectedIndex = -1
-            cmbAssign.SelectedIndex = -1
 
-            ' Reset DatePickers and their ViewModels
             startDateViewModel.SelectedDate = Nothing
             dueDateViewModel.SelectedDate = Nothing
             StartDatePicker.SelectedDate = Nothing
             DueDatePicker.SelectedDate = Nothing
 
-            ' Clear RichTextBox content
             EditorBox.Document.Blocks.Clear()
-
-            ' Reset RadioButtons (Optional: set default selection)
             RadBtnDueDateOnly.IsChecked = True
 
-            ' Set focus back to project name for next entry
+            txtAssignTo.Text = CacheOnLoggedInName
+            ResolveAssignedEmployeeID()
+
             txtName.Focus()
         End Sub
 
         ' =========================================================
         ' SECTION 4: FORMATTING & UI EVENTS
         ' =========================================================
-
         Private Sub txtBudget_TextChanged(sender As Object, e As TextChangedEventArgs)
             Dim tb = TryCast(sender, TextBox)
             If tb Is Nothing Then Return
@@ -239,7 +252,6 @@ Namespace DPC.Views.Project
             End If
         End Sub
 
-        ' --- Rich Text Editor Commands ---
         Private Sub Format_Bold_Click(sender As Object, e As RoutedEventArgs)
             EditingCommands.ToggleBold.Execute(Nothing, EditorBox)
         End Sub
@@ -318,6 +330,11 @@ Namespace DPC.Views.Project
             EditingCommands.DecreaseIndentation.Execute(Nothing, EditorBox)
         End Sub
 
+        Private Sub Insert_Quote_Click(sender As Object, e As RoutedEventArgs)
+            EditingCommands.IncreaseIndentation.Execute(Nothing, EditorBox)
+            EditingCommands.ToggleItalic.Execute(Nothing, EditorBox)
+        End Sub
+
         Private Sub Insert_Link_Click(sender As Object, e As RoutedEventArgs)
             Dim url As String = Microsoft.VisualBasic.Interaction.InputBox("Enter the URL:", "Insert Link", "http://")
             If String.IsNullOrWhiteSpace(url) Then Return
@@ -377,11 +394,6 @@ Namespace DPC.Views.Project
             End If
         End Sub
 
-        Private Sub Insert_Quote_Click(sender As Object, e As RoutedEventArgs)
-            EditingCommands.IncreaseIndentation.Execute(Nothing, EditorBox)
-            EditingCommands.ToggleItalic.Execute(Nothing, EditorBox)
-        End Sub
-
         Private Sub Insert_Code_Click(sender As Object, e As RoutedEventArgs)
             Dim range As New TextRange(EditorBox.Selection.Start, EditorBox.Selection.End)
             range.ApplyPropertyValue(TextElement.FontFamilyProperty, New FontFamily("Consolas"))
@@ -400,17 +412,12 @@ Namespace DPC.Views.Project
             End If
         End Sub
 
-        Private Sub cmbAssign_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles cmbAssign.SelectionChanged
-        End Sub
-
         Private Sub cmbStatus_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles cmbStatus.SelectionChanged
         End Sub
-
     End Class
 
     Public Class StatusItem
         Public Property Label As String
         Public Property Color As SolidColorBrush
     End Class
-
 End Namespace
