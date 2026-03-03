@@ -210,12 +210,12 @@
                             <Border Grid.Column="3" Background="White" CornerRadius="8" Padding="15,5,15,5" Width="Auto" Margin="5,0,5,0" Height="80">
                                 <Grid>
                                     <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
-                                        <TextBlock x:Name="tbTotal" Text="0" FontSize="32" FontWeight="Bold" Foreground="#D6AEED"/>
-                                        <TextBlock Text="Total" FontSize="14" FontWeight="SemiBold" Foreground="#D6AEED"/>
+                                        <TextBlock x:Name="tbTotal" Text="0" FontSize="32" FontWeight="Bold" Foreground="#E65E5E"/>
+                                        <TextBlock Text="Cancelled" FontSize="14" FontWeight="SemiBold" Foreground="#E65E5E"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                                        <Ellipse Width="55" Height="55" Fill="#EDD7FA" VerticalAlignment="Center"/>
-                                        <materialDesign:PackIcon Kind="ChartPieOutline" Width="40" Height="40" Foreground="#D6AEED" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="-54,0,0,0"/>
+                                        <Ellipse Width="55" Height="55" Fill="#FFCDD2" VerticalAlignment="Center"/>
+                                        <materialDesign:PackIcon Kind="ChartPieOutline" Width="40" Height="40" Foreground="#E65E5E" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="-54,0,0,0"/>
                                     </StackPanel>
                                 </Grid>
                             </Border>
@@ -314,17 +314,17 @@
                                                                 <Style TargetType="Ellipse">
                                                                     <Setter Property="Fill" Value="Gray"/>
                                                                     <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding Status}" Value="Pending">
-                                                                            <Setter Property="Fill" Value="#FFC107"/>
+                                                                        <DataTrigger Binding="{Binding Status}" Value="Waiting">
+                                                                            <Setter Property="Fill" Value="#E5D18E"/>
                                                                         </DataTrigger>
-                                                                        <DataTrigger Binding="{Binding Status}" Value="In Progress">
-                                                                            <Setter Property="Fill" Value="#2196F3"/>
+                                                                        <DataTrigger Binding="{Binding Status}" Value="Processing">
+                                                                            <Setter Property="Fill" Value="#86BCD5"/>
                                                                         </DataTrigger>
-                                                                        <DataTrigger Binding="{Binding Status}" Value="Completed">
-                                                                            <Setter Property="Fill" Value="#4CAF50"/>
+                                                                        <DataTrigger Binding="{Binding Status}" Value="Solved">
+                                                                            <Setter Property="Fill" Value="#89AC74"/>
                                                                         </DataTrigger>
                                                                         <DataTrigger Binding="{Binding Status}" Value="Cancelled">
-                                                                            <Setter Property="Fill" Value="#F44336"/>
+                                                                            <Setter Property="Fill" Value="#E65E5E"/>
                                                                         </DataTrigger>
                                                                     </Style.Triggers>
                                                                 </Style>
@@ -341,43 +341,54 @@
                                         <DataGridTextColumn Header="Due Date"      Binding="{Binding DueDate, StringFormat='{}{0:MMM dd, yyyy}'}"    Width="110"/>
                                         <DataGridTextColumn Header="Assigned To" Binding="{Binding AssignedToName}" Width="110"/>
                                         <!-- Settings Column -->
-                                        <DataGridTemplateColumn Header="Actions" Width="100">
+                                        <DataGridTemplateColumn Header="Actions" Width="90">
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                                        <Button Content="Edit"
-                                Width="40" Height="24"
-                                Margin="0,0,5,0"
-                                Background="#474747"
-                                Foreground="White"
-                                FontFamily="Lexend"
-                                FontSize="11"
-                                Tag="{Binding ProjectID}"
-                                Click="BtnEdit_Click">
+
+                                                        <!-- EDIT ICON BUTTON -->
+                                                        <Button Width="30" Height="30"
+                                                                Background="White"
+                                                                Margin="0,0,5,0"
+                                                                Tag="{Binding ProjectID}"
+                                                                Click="BtnEdit_Click">
                                                             <Button.Template>
                                                                 <ControlTemplate TargetType="Button">
-                                                                    <Border Background="{TemplateBinding Background}" CornerRadius="5">
-                                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    <Border Background="{TemplateBinding Background}" 
+                                                                            CornerRadius="5"
+                                                                            BorderBrush="#AEAEAE"
+                                                                            BorderThickness="1">
+                                                                        <materialDesign:PackIcon Kind="SquareEditOutline" 
+                                                                                                 Width="16" Height="16"
+                                                                                                 Foreground="#52C69D"
+                                                                                                 HorizontalAlignment="Center" 
+                                                                                                 VerticalAlignment="Center"/>
                                                                     </Border>
                                                                 </ControlTemplate>
                                                             </Button.Template>
                                                         </Button>
-                                                        <Button Content="Del"
-                                Width="35" Height="24"
-                                Background="#C0392B"
-                                Foreground="White"
-                                FontFamily="Lexend"
-                                FontSize="11"
-                                Tag="{Binding ProjectID}"
-                                Click="BtnDelete_Click">
+
+                                                        <!-- DELETE ICON BUTTON -->
+                                                        <Button Width="30" Height="30"
+                                                                Background="White"
+                                                                Tag="{Binding ProjectID}"
+                                                                Click="BtnDelete_Click">
                                                             <Button.Template>
                                                                 <ControlTemplate TargetType="Button">
-                                                                    <Border Background="{TemplateBinding Background}" CornerRadius="5">
-                                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    <Border Background="{TemplateBinding Background}" 
+                                                                            CornerRadius="5"
+                                                                            BorderBrush="#AEAEAE"
+                                                                            BorderThickness="1">
+                                                                        <materialDesign:PackIcon Kind="TrashCanOutline" 
+                                                                                                 Width="16" Height="16"
+                                                                                                 Foreground="#C0392B"
+                                                                                                 HorizontalAlignment="Center" 
+                                                                                                 VerticalAlignment="Center"/>
                                                                     </Border>
                                                                 </ControlTemplate>
                                                             </Button.Template>
                                                         </Button>
+
                                                     </StackPanel>
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>

@@ -25,10 +25,10 @@ Namespace DPC.Views.Project
             LoadAssignees()  ' <-- add this
 
             Dim statuses As New List(Of StatusItem) From {
-                New StatusItem With {.Label = "Pending", .Color = New SolidColorBrush(Color.FromRgb(255, 193, 7))},
-                New StatusItem With {.Label = "In Progress", .Color = New SolidColorBrush(Color.FromRgb(33, 150, 243))},
-                New StatusItem With {.Label = "Completed", .Color = New SolidColorBrush(Color.FromRgb(76, 175, 80))},
-                New StatusItem With {.Label = "Cancelled", .Color = New SolidColorBrush(Color.FromRgb(244, 67, 54))}
+                New StatusItem With {.Label = "Waiting", .Color = New SolidColorBrush(Color.FromRgb(229, 209, 142))},
+                New StatusItem With {.Label = "Processing", .Color = New SolidColorBrush(Color.FromRgb(134, 188, 213))},
+                New StatusItem With {.Label = "Solved", .Color = New SolidColorBrush(Color.FromRgb(137, 172, 116))},
+                New StatusItem With {.Label = "Cancelled", .Color = New SolidColorBrush(Color.FromRgb(230, 94, 94))}
             }
 
             cmbStatus.ItemsSource = statuses
