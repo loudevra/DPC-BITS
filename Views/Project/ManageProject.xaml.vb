@@ -9,6 +9,9 @@ Namespace DPC.Views.Project
 
         Private _projectID As String
         Private _allProjects As List(Of DPC.Data.Model.Project)
+        Private _filteredProjects As List(Of DPC.Data.Model.Project)
+        Private _currentPage As Integer = 1
+        Private _pageSize As Integer = 10
 
         Public Sub New()
             InitializeComponent()
@@ -23,10 +26,85 @@ Namespace DPC.Views.Project
                 If _allProjects Is Nothing Then
                     _allProjects = New List(Of DPC.Data.Model.Project)()
                 End If
-                ProjectDataGrid.ItemsSource = New ObservableCollection(Of DPC.Data.Model.Project)(_allProjects)
+                _filteredProjects = _allProjects
+                _currentPage = 1
+                ApplyPagination()
             Catch ex As Exception
                 MessageBox.Show("Error retrieving project data: " & ex.Message, "Data Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
+        End Sub
+
+        ' ── Pagination ────────────────────────────────────────────────
+        Private Sub ApplyPagination()
+            If _filteredProjects Is Nothing Then Return
+
+            Dim totalPages As Integer = Math.Max(1, Math.Ceiling(_filteredProjects.Count / _pageSize))
+            If _currentPage > totalPages Then _currentPage = totalPages
+            If _currentPage < 1 Then _currentPage = 1
+
+            Dim paged = _filteredProjects.Skip((_currentPage - 1) * _pageSize).Take(_pageSize).ToList()
+            ProjectDataGrid.ItemsSource = New ObservableCollection(Of DPC.Data.Model.Project)(paged)
+
+            UpdatePageButtons(totalPages)
+        End Sub
+
+        Private Sub UpdatePageButtons(totalPages As Integer)
+            PageButtonsPanel.Items.Clear()
+
+            For i As Integer = 1 To totalPages
+                Dim pageNum = i
+                Dim btn As New Button()
+                btn.Content = pageNum.ToString()
+                btn.FontSize = 14
+                btn.Width = 30
+                btn.Height = 30
+                btn.FontFamily = New FontFamily("Lexend")
+                btn.Margin = New Thickness(3, 0, 3, 0)
+                btn.Tag = pageNum
+
+                If pageNum = _currentPage Then
+                    btn.Background = New SolidColorBrush(Color.FromRgb(85, 85, 85))
+                    btn.Foreground = Brushes.White
+                Else
+                    btn.Background = Brushes.Transparent
+                    btn.Foreground = New SolidColorBrush(Color.FromRgb(85, 85, 85))
+                End If
+
+                ' Apply rounded template
+                Dim factory As New FrameworkElementFactory(GetType(Border))
+                factory.SetBinding(Border.BackgroundProperty, New Binding("Background") With {.RelativeSource = New RelativeSource(RelativeSourceMode.TemplatedParent)})
+                factory.SetValue(Border.CornerRadiusProperty, New CornerRadius(15))
+                Dim cp As New FrameworkElementFactory(GetType(ContentPresenter))
+                cp.SetValue(ContentPresenter.HorizontalAlignmentProperty, HorizontalAlignment.Center)
+                cp.SetValue(ContentPresenter.VerticalAlignmentProperty, VerticalAlignment.Center)
+                factory.AppendChild(cp)
+                btn.Template = New ControlTemplate(GetType(Button)) With {.VisualTree = factory}
+
+                AddHandler btn.Click, AddressOf BtnPage_Click
+                PageButtonsPanel.Items.Add(btn)
+            Next
+        End Sub
+
+        Private Sub BtnPage_Click(sender As Object, e As RoutedEventArgs)
+            Dim btn = TryCast(sender, Button)
+            If btn Is Nothing Then Return
+            _currentPage = CInt(btn.Tag)
+            ApplyPagination()
+        End Sub
+
+        Private Sub BtnPrev_Click(sender As Object, e As RoutedEventArgs)
+            If _currentPage > 1 Then
+                _currentPage -= 1
+                ApplyPagination()
+            End If
+        End Sub
+
+        Private Sub BtnNext_Click(sender As Object, e As RoutedEventArgs)
+            Dim totalPages As Integer = Math.Max(1, Math.Ceiling(_filteredProjects.Count / _pageSize))
+            If _currentPage < totalPages Then
+                _currentPage += 1
+                ApplyPagination()
+            End If
         End Sub
 
         ' ── Search ────────────────────────────────────────────────────
@@ -36,19 +114,19 @@ Namespace DPC.Views.Project
             Dim keyword = txtSearch.Text.ToLower().Trim()
 
             If String.IsNullOrEmpty(keyword) Then
-                ProjectDataGrid.ItemsSource = New ObservableCollection(Of DPC.Data.Model.Project)(_allProjects)
-                Return
+                _filteredProjects = _allProjects
+            Else
+                _filteredProjects = _allProjects.Where(Function(p)
+                                                           Return (p.ProjectName?.ToLower().Contains(keyword)) OrElse
+                                                                  (p.Status?.ToLower().Contains(keyword)) OrElse
+                                                                  (p.Customer?.ToLower().Contains(keyword)) OrElse
+                                                                  (p.AssignedToName?.ToLower().Contains(keyword)) OrElse
+                                                                  (p.ProjectID.ToString().Contains(keyword))
+                                                       End Function).ToList()
             End If
 
-            Dim filtered = _allProjects.Where(Function(p)
-                                                  Return (p.ProjectName?.ToLower().Contains(keyword)) OrElse
-                                                  (p.Status?.ToLower().Contains(keyword)) OrElse
-                                                  (p.Customer?.ToLower().Contains(keyword)) OrElse
-                                                  (p.AssignedToName?.ToLower().Contains(keyword)) OrElse
-                                                  (p.ProjectID.ToString().Contains(keyword))
-                                              End Function).ToList()
-
-            ProjectDataGrid.ItemsSource = New ObservableCollection(Of DPC.Data.Model.Project)(filtered)
+            _currentPage = 1
+            ApplyPagination()
         End Sub
 
         ' ── Edit Button ───────────────────────────────────────────────
@@ -60,7 +138,6 @@ Namespace DPC.Views.Project
             Dim project = _allProjects?.FirstOrDefault(Function(p) p.ProjectID.ToString() = projectID)
 
             If project IsNot Nothing Then
-                ' Populate cache for EditProject to read on load
                 CacheProjectID = project.ProjectID.ToString()
                 CacheProjectName = project.ProjectName
                 CacheProjectStatus = project.Status
@@ -69,7 +146,6 @@ Namespace DPC.Views.Project
                 CacheProjectStartDate = project.StartDate
                 CacheProjectDueDate = project.DueDate
                 CacheProjectAssignedTo = project.AssignedTo
-
                 ViewLoader.DynamicView.NavigateToView("editproject", Me)
             End If
         End Sub

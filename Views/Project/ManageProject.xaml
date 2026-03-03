@@ -1,4 +1,5 @@
-﻿<UserControl x:Class="DPC.Views.Project.ManageProject"
+﻿<!--- ManageProject.xaml -->
+    <UserControl x:Class="DPC.Views.Project.ManageProject"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -403,102 +404,44 @@
                         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,15"/>
 
                         <!-- Pagination Controls -->
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
                             <Border Background="White" CornerRadius="30" Padding="10,5" BorderThickness="2" BorderBrush="#adadad">
-                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" >
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
 
-                                    <!-- Previous Page -->
-                                    <Button Content="&lt;" FontSize="14" Width="30" Height="30" Background="Transparent" BorderBrush="Transparent" FontFamily="Lexend" Foreground="#adadad">
+                                    <!-- Previous -->
+                                    <Button x:Name="btnPrev" Content="&lt;" FontSize="14" Width="30" Height="30"
+                    Background="Transparent" BorderBrush="Transparent"
+                    FontFamily="Lexend" Foreground="#adadad" Click="BtnPrev_Click">
                                         <Button.Template>
                                             <ControlTemplate TargetType="Button">
-                                                <Border Background="{TemplateBinding Background}" 
-                                                        CornerRadius="15">
-                                                    <!-- Half of Width/Height for full circle -->
+                                                <Border Background="{TemplateBinding Background}" CornerRadius="15">
                                                     <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 </Border>
                                             </ControlTemplate>
                                         </Button.Template>
                                     </Button>
 
-                                    <!-- Page Numbers -->
-                                    <Button Content="1" FontSize="14" Width="30" Height="30" Background="Transparent" BorderBrush="#474747" FontFamily="Lexend" Foreground="#555555">
+                                    <!-- Dynamic Page Buttons -->
+                                    <ItemsControl x:Name="PageButtonsPanel">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Horizontal"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                    </ItemsControl>
+
+                                    <!-- Next -->
+                                    <Button x:Name="btnNext" Content="&gt;" FontSize="14" Width="30" Height="30"
+                    Background="Transparent" BorderBrush="Transparent"
+                    FontFamily="Lexend" Foreground="#555555" FontWeight="Bold" Click="BtnNext_Click">
                                         <Button.Template>
                                             <ControlTemplate TargetType="Button">
-                                                <Border Background="{TemplateBinding Background}" 
-                                                        CornerRadius="15">
-                                                    <!-- Half of Width/Height for full circle -->
+                                                <Border Background="{TemplateBinding Background}" CornerRadius="15">
                                                     <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 </Border>
                                             </ControlTemplate>
                                         </Button.Template>
                                     </Button>
-
-                                    <Button Content="2" FontSize="14" Width="30" Height="30" Background="Transparent" BorderBrush="#474747" Margin="5" FontFamily="Lexend" Foreground="#555555">
-                                        <Button.Template>
-                                            <ControlTemplate TargetType="Button">
-                                                <Border Background="{TemplateBinding Background}" 
-                                                        CornerRadius="15">
-                                                    <!-- Half of Width/Height for full circle -->
-                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Button.Template>
-                                    </Button>
-
-                                    <!-- Current Page -->
-
-                                    <Button Content="3" FontSize="14" Width="30" Height="30" Foreground="White" Background="#555555" Margin="5" FontFamily="Lexend">
-                                        <Button.Template>
-                                            <ControlTemplate TargetType="Button">
-                                                <Border Background="{TemplateBinding Background}" 
-                                                        CornerRadius="15">
-                                                    <!-- Half of Width/Height for full circle -->
-                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Button.Template>
-                                    </Button>
-
-                                    <Button Content="4" FontSize="14" Width="30" Height="30" Background="Transparent" BorderBrush="#474747" Margin="5" FontFamily="Lexend" Foreground="#555555">
-                                        <Button.Template>
-                                            <ControlTemplate TargetType="Button">
-                                                <Border Background="{TemplateBinding Background}" 
-                                                        CornerRadius="15">
-                                                    <!-- Half of Width/Height for full circle -->
-                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Button.Template>
-                                    </Button>
-
-                                    <Button Content="5" FontSize="14" Width="30" Height="30" Background="Transparent" BorderBrush="#474747" Margin="5" FontFamily="Lexend" Foreground="#555555">
-                                        <Button.Template>
-                                            <ControlTemplate TargetType="Button">
-                                                <Border Background="{TemplateBinding Background}" 
-                    CornerRadius="15">
-                                                    <!-- Half of Width/Height for full circle -->
-                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Button.Template>
-                                    </Button>
-
-                                    <!-- Ellipsis -->
-                                    <TextBlock Text="..." VerticalAlignment="Center" FontSize="16" Margin="10,0" Foreground="#555555"/>
-
-                                    <!-- Next Arrow -->
-                                    <Button Content="&gt;" FontSize="14" Width="30" Height="30" Background="Transparent" BorderBrush="Transparent" FontFamily="Lexend" Foreground="#555555" FontWeight="Bold">
-                                        <Button.Template>
-                                            <ControlTemplate TargetType="Button">
-                                                <Border Background="{TemplateBinding Background}" 
-                    CornerRadius="15">
-                                                    <!-- Half of Width/Height for full circle -->
-                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Border>
-                                            </ControlTemplate>
-                                        </Button.Template>
-                                    </Button>
-
 
                                 </StackPanel>
                             </Border>
