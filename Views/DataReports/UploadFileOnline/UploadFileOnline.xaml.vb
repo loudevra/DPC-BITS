@@ -6,6 +6,7 @@ Imports Microsoft.Win32
 Imports MongoDB.Bson
 Imports MongoDB.Driver
 Imports MySql.Data.MySqlClient
+Imports DPC.DPC.Data.Controllers
 
 Namespace DPC.Views.DataReports.UploadFileOnline
 
@@ -191,6 +192,10 @@ Namespace DPC.Views.DataReports.UploadFileOnline
                 Dim database As IMongoDatabase = SplashScreen.GetMongoDatabaseConnection()
                 Dim collection As IMongoCollection(Of BsonDocument) = database.GetCollection(Of BsonDocument)(collectionName)
 
+                ' Get current logged-in user (adjust this based on your authentication system)
+                Dim currentUserId As String = GetCurrentUserId()
+                Dim currentUsername As String = GetCurrentUsername()
+
                 ' Create document to insert
                 Dim document As New BsonDocument From {
                     {"_folderId", folderId},
@@ -199,7 +204,9 @@ Namespace DPC.Views.DataReports.UploadFileOnline
                     {"fileSize", fileSize},
                     {"uploadDate", DateTime.Now},
                     {"fileData", base64Data},
-                    {"contentType", GetContentType(fileExtension)}
+                    {"contentType", GetContentType(fileExtension)},
+                    {"uploadedBy_UserId", currentUserId},
+                    {"uploadedBy_Username", currentUsername}
                 }
 
                 ' Insert into MongoDB
@@ -215,11 +222,18 @@ Namespace DPC.Views.DataReports.UploadFileOnline
                 txtStatus.Text = "Loading files..."
                 files.Clear()
 
+                ' Get current logged-in user
+                Dim currentUserId As String = GetCurrentUserId()
+
                 ' Get database connection
                 Dim database As IMongoDatabase = SplashScreen.GetMongoDatabaseConnection()
                 Dim collection As IMongoCollection(Of BsonDocument) = database.GetCollection(Of BsonDocument)(collectionName)
 
-                Dim filter = Builders(Of BsonDocument).Filter.Eq(Of Long)("_folderId", currentFolderId)
+                ' Filter by both folder ID AND user ID
+                Dim filter = Builders(Of BsonDocument).Filter.And(
+            Builders(Of BsonDocument).Filter.Eq(Of Long)("_folderId", currentFolderId),
+            Builders(Of BsonDocument).Filter.Eq(Of String)("uploadedBy_UserId", currentUserId)
+        )
 
                 ' Get all documents (excluding the file data to improve performance)
                 Dim projection = Builders(Of BsonDocument).Projection.Exclude("fileData")
@@ -231,15 +245,17 @@ Namespace DPC.Views.DataReports.UploadFileOnline
                     Dim fileSize As Long = If(doc.Contains("fileSize"), doc("fileSize").ToInt64(), 0)
 
                     Dim fileItem As New MediaFileItem With {
-                        .Id = doc("_id").ToString(),
-                        .FileName = If(doc.Contains("fileName"), doc("fileName").AsString, "Unknown"),
-                        .FileExtension = If(doc.Contains("fileExtension"), doc("fileExtension").AsString, ""),
-                        .FileSize = fileSize,
-                        .FileSizeFormatted = FormatFileSize(fileSize),
-                        .UploadDate = If(doc.Contains("uploadDate"), doc("uploadDate").ToUniversalTime(), DateTime.MinValue),
-                        .ContentType = If(doc.Contains("contentType"), doc("contentType").AsString, ""),
-                        .FolderId = If(doc.Contains("_folderId"), CInt(doc("_folderId").AsInt64), 0)
-                    }
+                .Id = doc("_id").ToString(),
+                .FileName = If(doc.Contains("fileName"), doc("fileName").AsString, "Unknown"),
+                .FileExtension = If(doc.Contains("fileExtension"), doc("fileExtension").AsString, ""),
+                .FileSize = fileSize,
+                .FileSizeFormatted = FormatFileSize(fileSize),
+                .UploadDate = If(doc.Contains("uploadDate"), doc("uploadDate").ToUniversalTime(), DateTime.MinValue),
+                .ContentType = If(doc.Contains("contentType"), doc("contentType").AsString, ""),
+                .FolderId = If(doc.Contains("_folderId"), CInt(doc("_folderId").AsInt64), 0),
+                .UploadedByUserId = If(doc.Contains("uploadedBy_UserId"), doc("uploadedBy_UserId").AsString, ""),
+                .UploadedByUsername = If(doc.Contains("uploadedBy_Username"), doc("uploadedBy_Username").AsString, "")
+            }
 
                     files.Add(fileItem)
                 Next
@@ -381,16 +397,19 @@ Namespace DPC.Views.DataReports.UploadFileOnline
 
         Private Async Function FileExistsInFolder(fileName As String, fileExt As String, folderId As Long) As Task(Of Boolean)
             Try
+                Dim currentUserId As String = GetCurrentUserId()
                 Dim database As IMongoDatabase = SplashScreen.GetMongoDatabaseConnection()
                 Dim collection = database.GetCollection(Of BsonDocument)(collectionName)
 
+                ' Check if file exists for THIS user in THIS folder
                 Dim filter = Builders(Of BsonDocument).Filter.And(
                     Builders(Of BsonDocument).Filter.Eq(Of String)("fileName", fileName),
                     Builders(Of BsonDocument).Filter.Eq(Of String)("fileExtension", fileExt),
-                    Builders(Of BsonDocument).Filter.Eq(Of Long)("_folderId", folderId)
+                    Builders(Of BsonDocument).Filter.Eq(Of Long)("_folderId", folderId),
+                    Builders(Of BsonDocument).Filter.Eq(Of String)("uploadedBy_UserId", currentUserId)
                 )
 
-                ' Count documents that match all three criteria
+                ' Count documents that match all criteria
                 Dim count = Await collection.CountDocumentsAsync(filter)
                 Return count > 0
             Catch ex As Exception
@@ -441,6 +460,25 @@ Namespace DPC.Views.DataReports.UploadFileOnline
         Private Sub LoadFoldersAsync()
             Folders_Load()
         End Sub
+
+        ' Added these helper functions to your class
+        Private Function GetCurrentUserId() As String
+            ' Global cache variable from AuthController
+            If Not String.IsNullOrEmpty(CacheOnEmployeeID) Then
+                Return CacheOnEmployeeID
+            Else
+                Throw New InvalidOperationException("User not logged in")
+            End If
+        End Function
+
+        Private Function GetCurrentUsername() As String
+            ' Global cache variable from AuthController
+            If Not String.IsNullOrEmpty(CacheOnLoggedInName) Then
+                Return CacheOnLoggedInName
+            Else
+                Throw New InvalidOperationException("User not logged in")
+            End If
+        End Function
     End Class
 
     ' MediaFileItem class
@@ -453,6 +491,8 @@ Namespace DPC.Views.DataReports.UploadFileOnline
         Public Property UploadDate As DateTime
         Public Property ContentType As String
         Public Property FolderId As Long
+        Public Property UploadedByUserId As String
+        Public Property UploadedByUsername As String
 
         Public ReadOnly Property UploadDateFormatted As String
             Get
