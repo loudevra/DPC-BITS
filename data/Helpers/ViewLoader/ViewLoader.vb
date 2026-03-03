@@ -279,13 +279,21 @@ Namespace DPC.Data.Helpers.ViewLoader
                         'Misc - Cash Advance Navigation
                     Case "cashadvancenewrequest"
                         Return New Views.Misc.CashAdvance.CashAdvanceNewRequest()
-
                     Case "managecashadvancerequests"
                         Return New Views.Misc.CashAdvance.ManageCashAdvanceRequests()
                     Case "editcashadvancerequest"
                         Return New Views.Misc.CashAdvance.EditCashAdvanceRequest()
                     Case "previewprintcashadvancerequestform"
                         Return New Views.Misc.CashAdvance.PreviewPrintCashAdvanceRequestForm()
+
+                        'Misc - Overtime Navigation
+                    Case "overtimerequestform"
+                        Return New Views.Misc.OverTime.OverTimeRequestForm()
+                    Case "manageovertimerequests"
+                        Return New Views.Misc.OverTime.ManageTimeoutRequests()
+                    Case "editovertime"
+                        Return New Views.Misc.OverTime.EditOverTime()
+
 
                     Case Else
                         ' Return a placeholder UserControl with error text
