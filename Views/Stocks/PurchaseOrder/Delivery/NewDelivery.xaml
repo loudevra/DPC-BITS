@@ -114,8 +114,13 @@
                         </Border>
 
                         <TextBlock Grid.Row="3" Text="Related Billing (Invoice):" Margin="0,0,0,5"/>
-                        <Border Grid.Row="4" Style="{StaticResource RoundedBorderStyle}" Background="#F5F5F5" Height="35" Margin="0,0,0,15">
-                            <TextBox x:Name="txtInvoiceNumber" IsReadOnly="True" BorderThickness="0" Background="Transparent" VerticalContentAlignment="Center" Padding="10,0"/>
+                        <Border Grid.Row="4" Style="{StaticResource RoundedBorderStyle}" Height="35" Margin="0,0,0,15">
+                            <TextBox x:Name="txtInvoiceNumber" 
+                                     TextChanged="txtInvoiceNumber_TextChanged" 
+                                     BorderThickness="0" 
+                                     Background="Transparent" 
+                                     VerticalContentAlignment="Center" 
+                                     Padding="10,0"/>
                         </Border>
 
                         <TextBlock Grid.Row="5" Text="Delivery Date:" Margin="0,0,0,5"/>
