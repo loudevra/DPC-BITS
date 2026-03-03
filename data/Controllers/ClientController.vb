@@ -91,9 +91,9 @@ Namespace DPC.Data.Controllers
             client.ClientID = GenerateClientID()
 
             Dim query As String = "INSERT INTO client (ClientID, ClientGroupID, Name, Phone, Email, BillingAddress, ShippingAddress, " &
-                                  "CustomerGroup, Language, CreatedAt, UpdatedAt, ClientType) " &
+                                  "CustomerGroup, Language, TinId, CreatedAt, UpdatedAt, ClientType) " &
                                   "VALUES (@ClientID, @ClientGroupID, @Name, @Phone, @Email, @BillingAddress, @ShippingAddress, " &
-                                  "@CustomerGroup, @Language, @CreatedAt, @UpdatedAt, @ClientType)"
+                                  "@CustomerGroup, @Language, @TinId, @CreatedAt, @UpdatedAt, @ClientType)"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
@@ -108,6 +108,7 @@ Namespace DPC.Data.Controllers
                         cmd.Parameters.AddWithValue("@ShippingAddress", client.ShippingAddress)
                         cmd.Parameters.AddWithValue("@CustomerGroup", client.CustomerGroup)
                         cmd.Parameters.AddWithValue("@Language", client.ClientLanguage)
+                        cmd.Parameters.AddWithValue("@TinId", client.TinId)
                         cmd.Parameters.AddWithValue("@CreatedAt", DateTime.Now)
                         cmd.Parameters.AddWithValue("@UpdatedAt", DateTime.Now)
                         cmd.Parameters.AddWithValue("@ClientType", client.ClientType)
