@@ -75,7 +75,8 @@
                              HorizontalAlignment="Stretch"
                              VerticalContentAlignment="Center"
                              Background="Transparent" 
-                             BorderThickness="0"/>
+                             BorderThickness="0"
+                             TextChanged="TxtToUpper_TextChanged"/>
                 </Border>
 
                 <TextBlock Text="ABC:" Margin="0,20,0,10" FontWeight="SemiBold" Foreground="#474747"/>
