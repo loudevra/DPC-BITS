@@ -1074,6 +1074,9 @@
     <Compile Include="Views\Misc\Documents\PullOutForm.xaml.vb">
       <DependentUpon>PullOutForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Misc\Overtime\OvertimeForm.xaml.vb">
+      <DependentUpon>OvertimeForm.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\POS\CreditPayment.xaml.vb">
       <DependentUpon>CreditPayment.xaml</DependentUpon>
     </Compile>
@@ -2035,6 +2038,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Misc\Documents\PullOutForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Misc\Overtime\OvertimeForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
