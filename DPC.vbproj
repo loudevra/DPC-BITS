@@ -746,6 +746,7 @@
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
     <Compile Include="Data\DataModules\BillingDetails.vb" />
+    <Compile Include="Data\Models\DeliveryReceiptModel.vb" />
     <Compile Include="Data\Models\BillingModel.vb" />
     <Compile Include="Data\DataModules\CostEstimateDetails.vb" />
     <Compile Include="Data\DataModules\DeliveryDetails.vb" />

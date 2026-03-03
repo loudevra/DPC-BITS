@@ -38,6 +38,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             txtShippingMethod.Text = DeliveryDetails.DRShippingMethod
             txtApprovedBy.Text = DeliveryDetails.DRApprovedBy
             txtPaymentTerm.Text = DeliveryDetails.DRPaymentTerm
+            txtDeliveryStatus.Text = DeliveryDetails.DRDeliveryStatus
 
             'LoadTestPlaceholderData()
             LoadPage()
@@ -428,6 +429,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 DeliveryDetails.DRClientDetails,
                 DeliveryDetails.DRDeliveryNotes,
                 DeliveryDetails.DRShippingMethod,
+                DeliveryDetails.DRDeliveryStatus,
                 DeliveryDetails.DRApprovedBy,
                 DeliveryDetails.DRPaymentTerm,
                 json,

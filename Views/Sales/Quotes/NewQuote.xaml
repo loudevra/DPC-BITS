@@ -244,6 +244,8 @@
                                                           Padding="5" Height="34">
                                                     <ComboBoxItem Content="Walk-In CE (Walk In)"/>
                                                     <ComboBoxItem Content="Household CE (Residential)"/>
+                                                    <ComboBoxItem Content="Government Project CE (Government)"/>
+                                                    <ComboBoxItem Content="Business CE (Corporate)"/>
                                                 </ComboBox>
                                             </StackPanel>
 

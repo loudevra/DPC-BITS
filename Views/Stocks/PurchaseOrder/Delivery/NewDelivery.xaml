@@ -70,6 +70,26 @@
                         <ComboBoxItem Content="30 Days PDC"/>
                         <ComboBoxItem Content="Upon Completion"/>
                     </ComboBox>
+                    <TextBlock Text="Delivery Status:" FontWeight="SemiBold" Margin="0,15,0,5"/>
+                    <StackPanel
+                            Margin="4"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Center">
+                        <RadioButton
+                            x:Name="rbFullDelivery"
+                            Margin="4"
+                            Content="FULL DELIVERY"
+                            IsChecked="True"
+                            Checked="DeliveryMode_Checked"
+                            Style="{StaticResource MaterialDesignTabRadioButton}" />
+                        <RadioButton
+                            x:Name="rbPartialDelivery"
+                            Margin="4"
+                            Content="PARTIAL DELIVERY"
+                            IsChecked="False"
+                            Checked="DeliveryMode_Checked"
+                            Style="{StaticResource MaterialDesignTabRadioButton}" />
+                    </StackPanel>
                 </StackPanel>
 
                 <Border Grid.Column="1" Grid.Row="0" Background="White" CornerRadius="15" Padding="20" BorderBrush="#AEAEAE" BorderThickness="1" Margin="15,0,0,0">
