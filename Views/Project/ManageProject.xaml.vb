@@ -1,6 +1,6 @@
-﻿' ManageProject.xaml.vb
-Imports System.Collections.ObjectModel
+﻿Imports System.Collections.ObjectModel
 Imports System.Windows.Controls
+Imports System.Linq
 Imports DPC.DPC.Data.Helpers
 Imports MySql.Data.MySqlClient
 
@@ -30,9 +30,31 @@ Namespace DPC.Views.Project
                 _filteredProjects = _allProjects
                 _currentPage = 1
                 ApplyPagination()
+                UpdateStatusCounts()
             Catch ex As Exception
                 MessageBox.Show("Error retrieving project data: " & ex.Message, "Data Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
+        End Sub
+
+        ' ── Update Status Box Counts ───────────────────────────────────
+        Private Sub UpdateStatusCounts()
+            If _filteredProjects Is Nothing Then
+                tbWaiting.Text = "0"
+                tbProcessing.Text = "0"
+                tbSolved.Text = "0"
+                tbTotal.Text = "0"
+                Return
+            End If
+
+            Dim waiting = _filteredProjects.Where(Function(p) String.Equals(p.Status, "Waiting", StringComparison.OrdinalIgnoreCase)).Count()
+            Dim processing = _filteredProjects.Where(Function(p) String.Equals(p.Status, "Processing", StringComparison.OrdinalIgnoreCase)).Count()
+            Dim solved = _filteredProjects.Where(Function(p) String.Equals(p.Status, "Solved", StringComparison.OrdinalIgnoreCase)).Count()
+            Dim cancelled = _filteredProjects.Where(Function(p) String.Equals(p.Status, "Cancelled", StringComparison.OrdinalIgnoreCase)).Count()
+
+            tbWaiting.Text = waiting.ToString()
+            tbProcessing.Text = processing.ToString()
+            tbSolved.Text = solved.ToString()
+            tbTotal.Text = cancelled.ToString()
         End Sub
 
         ' ── Pagination ────────────────────────────────────────────────
@@ -47,6 +69,7 @@ Namespace DPC.Views.Project
             ProjectDataGrid.ItemsSource = New ObservableCollection(Of DPC.Data.Model.Project)(paged)
 
             UpdatePageButtons(totalPages)
+            UpdateStatusCounts()
         End Sub
 
         Private Sub UpdatePageButtons(totalPages As Integer)
@@ -128,6 +151,7 @@ Namespace DPC.Views.Project
 
             _currentPage = 1
             ApplyPagination()
+            UpdateStatusCounts()
         End Sub
 
         ' ── Edit Button ───────────────────────────────────────────────
@@ -176,6 +200,7 @@ Namespace DPC.Views.Project
                 End Using
                 ProjectDataGrid.ItemsSource = Nothing
                 LoadData()
+                UpdateStatusCounts()
             Catch ex As Exception
                 MessageBox.Show("Error deleting project: " & ex.Message)
             End Try
