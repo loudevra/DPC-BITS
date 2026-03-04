@@ -17,7 +17,7 @@ Namespace DPC.Data.Helpers.ViewLoader
         ''' </summary>
         ''' <param name="viewName">Name of the view to navigate to</param>
         ''' <param name="senderControl">The control that initiated the navigation</param>
-        Public Shared Sub NavigateToView(viewName As String, senderControl As DependencyObject)
+        Public Shared Sub NavigateToCachedView(viewName As String, senderControl As DependencyObject)
             If _isNavigating Then Return
 
             Try
@@ -28,7 +28,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Dim targetName = viewName.ToLower()
                     Dim currentViewName = ViewLoader.GetViewName(mainWindow.CurrentView)
 
-                    If currentViewName <> targetName Then
+                    If currentViewName <> targetName OrElse Not _viewCache.ContainsKey(targetName) Then
+
                         Dim targetView As Object = Nothing
 
                         If _viewCache.ContainsKey(targetName) Then
@@ -57,44 +58,11 @@ Namespace DPC.Data.Helpers.ViewLoader
             End Try
         End Sub
 
-        Public Shared Sub ClearViewCache(viewName As String, senderControl As DependencyObject)
+        Public Shared Sub NavigateToView(viewName As String, senderControl As DependencyObject)
             Dim key = viewName.ToLower()
             If _viewCache.ContainsKey(key) Then _viewCache.Remove(key)
 
-            Try
-                _isNavigating = True
-                Dim mainWindow As DPC.Base = FindMainWindow()
-
-                If mainWindow IsNot Nothing Then
-                    Dim targetName = viewName.ToLower()
-                    Dim currentViewName = ViewLoader.GetViewName(mainWindow.CurrentView)
-
-                    If currentViewName <> targetName Then
-                        Dim targetView As Object = Nothing
-
-                        If _viewCache.ContainsKey(targetName) Then
-                            targetView = _viewCache(targetName)
-                        Else
-                            targetView = ViewLoader.Load(viewName)
-                            _viewCache(targetName) = targetView
-                        End If
-
-                        mainWindow.CurrentView = targetView
-                    End If
-
-                    If senderControl IsNot Nothing Then
-                        Application.Current.Dispatcher.BeginInvoke(
-                            New Action(Sub() CloseParentPopup(senderControl)),
-                            System.Windows.Threading.DispatcherPriority.Background)
-                    End If
-                Else
-                    MessageBox.Show("Cannot find the main application window.")
-                End If
-            Catch ex As Exception
-                MessageBox.Show($"Error navigating to {viewName}: {ex.Message}")
-            Finally
-                _isNavigating = False
-            End Try
+            NavigateToCachedView(viewName, senderControl)
         End Sub
 
         ''' <summary>

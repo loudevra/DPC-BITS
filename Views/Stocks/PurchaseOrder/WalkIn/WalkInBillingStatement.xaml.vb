@@ -345,7 +345,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 WalkinBillingStatementDetails.BLpaymentTerms = cmbTerms.Text
             End If
             Debug.WriteLine($"Approved - {WalkinBillingStatementDetails.BLApproved}")
-            ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
+            ViewLoader.DynamicView.NavigateToCachedView("walkinorder", Me)
         End Sub
 
         Private Sub PrintPreview(sender As Object, e As RoutedEventArgs)

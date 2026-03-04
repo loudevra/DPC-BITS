@@ -286,9 +286,9 @@ Namespace DPC.Views.Sales.Quotes
                 CostEstimateDetails.CETotalAmountCache = TotalCost.Text
 
                 If _isEditingExistingQuote Then
-                    ViewLoader.DynamicView.NavigateToView("editquote", Me)
+                    ViewLoader.DynamicView.NavigateToCachedView("editquote", Me)
                 Else
-                    ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
+                    ViewLoader.DynamicView.NavigateToCachedView("salesnewquote", Me)
                 End If
             Catch ex As Exception
                 MessageBox.Show("Error navigating: " & ex.Message)

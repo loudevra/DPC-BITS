@@ -16,13 +16,13 @@ Namespace DPC.Data.Helpers.ViewLoader
         End Function
 
         Public Shared Sub NavigateToCachedView(viewName As String, senderControl As DependencyObject)
-            ViewNavigation.NavigateToView(viewName, senderControl)
+            ViewNavigation.NavigateToCachedView(viewName, senderControl)
         End Sub
         ''' <summary>
         ''' Navigate to the specified view
         ''' </summary>
         Public Shared Sub NavigateToView(viewName As String, senderControl As DependencyObject)
-            ViewNavigation.ClearViewCache(viewName, senderControl)
+            ViewNavigation.NavigateToView(viewName, senderControl)
         End Sub
     End Class
 End Namespace

@@ -128,43 +128,43 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <!--Bill To Column-->
-                            <StackPanel Grid.Column="0" Orientation="Vertical" Margin="0,0,0,10" Width="350">
-                                <!--Header-->
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="2*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
+                            <Grid Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
 
-                                    <!--Bill To Label-->
-                                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                                        <TextBlock Text="Billing Statement" FontWeight="SemiBold" FontFamily="Lexend" FontSize="24" Foreground="#555555" VerticalAlignment="Center"/>
-                                    </StackPanel>
+                                <!--Bill To Label-->
+                                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="Billing Statement" FontWeight="SemiBold" FontFamily="Lexend" FontSize="24" Foreground="#555555" VerticalAlignment="Center"/>
+                                </StackPanel>
 
-                                    <!-- Add Client Button -->
-                                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                                        <Button
+                                <!-- Add Client Button -->
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                    <Button
                                            x:Name="BtnAddClient" Width="100"
                                                  Click="BtnAddClient_Click"
                                            Style="{StaticResource ButtonStyle}">
-                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                                <materialDesign:PackIcon Kind="AccountPlus" Width="20" Height="20" Foreground="#FDFDFD" Margin="0,0,5,0"/>
-                                                <TextBlock Text="Client" FontSize="16" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#FDFDFD" Margin="0,0,5,0"/>
-                                            </StackPanel>
-                                        </Button>
-                                        <!--<Button
-                                            x:Name="BtnClearView" Width="100"
-                                                    Click="BtnClearView_click"
-                                            Style="{StaticResource ButtonStyle}">
-                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                                <materialDesign:PackIcon Kind="Reload" Width="20" Height="20" Foreground="#FDFDFD" Margin="0,0,5,0"/>
-                                                <TextBlock Text="Reset" FontSize="16" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#FDFDFD" Margin="0,0,5,0"/>
-                                            </StackPanel>
-                                        </Button>-->
-                                    </StackPanel>
-                                </Grid>
-                                
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <materialDesign:PackIcon Kind="AccountPlus" Width="20" Height="20" Foreground="#FDFDFD" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Client" FontSize="16" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#FDFDFD" Margin="0,0,5,0"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button
+                                        x:Name="BtnReset" Width="100"
+                                                Click="BtnReset_Click"
+                                                Style="{StaticResource ButtonStyle}"
+                                                Margin="10,0,0,0">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <materialDesign:PackIcon Kind="Reload" Width="20" Height="20" Foreground="#FDFDFD" Margin="0,0,5,0"/>
+                                            <TextBlock Text="Reset" FontSize="16" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#FDFDFD" Margin="0,0,5,0"/>
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                            
+                            <!--Bill To Column-->
+                            <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical" Margin="0,0,15,0">
                                 <!--Search Client-->
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock Text="Search Client:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,10,20,10"/>
@@ -237,9 +237,8 @@
                             </StackPanel>
 
                             <!--Billing Column-->
-                            <StackPanel Grid.Column="1" Orientation="Vertical" Margin="10,0,5,5" Width="350" Height="Auto">
-                                <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Margin="0,0,0,10"
-                                            Padding="15,15,15,15" Width="Auto" Height="450" BorderThickness="0">
+                            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical" Margin="0,0,15,0" Height="Auto">
+                                <Border Style="{StaticResource RoundedGridStyle}" Background="White" CornerRadius="15" Padding="20" BorderBrush="#AEAEAE" BorderThickness="1" Margin="15,0,0,0">
                                     <ScrollViewer VerticalScrollBarVisibility="Hidden">
                                         <StackPanel Orientation="Vertical" Margin="5" >
                                             <!--Header Label: Billing Note-->
