@@ -311,6 +311,10 @@ Namespace DPC.Data.Controllers
                     prefix = "WICE-"
                 Case 1
                     prefix = "HHCE-"
+                Case 2
+                    prefix = "GPCE-"
+                Case 3
+                    prefix = "BCCE-"
                 Case Else
                     prefix = "CE-"
             End Select

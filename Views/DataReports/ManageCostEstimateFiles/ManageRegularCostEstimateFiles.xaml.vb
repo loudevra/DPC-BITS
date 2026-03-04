@@ -38,11 +38,6 @@ Namespace DPC.Views.DataReports.ManageRegularCostEstimateFiles
         Private Sub Initialize()
             Try
                 ' Initialize MongoDB connections
-                ' Replace "DbConnection" with the actual class name where your connection methods are
-                ' For example, if it's in a class called "DatabaseHelper", use:
-                ' _mongoDatabase = DatabaseHelper.GetMongoDatabaseConnection()
-                ' _gridFS = DatabaseHelper.GetGridFSConnection()
-
                 _mongoDatabase = DPC.SplashScreen.GetMongoDatabaseConnection()
                 _gridFS = DPC.SplashScreen.GetGridFSConnection()
 
@@ -98,16 +93,42 @@ Namespace DPC.Views.DataReports.ManageRegularCostEstimateFiles
             Try
                 ' Build filter for fs.files collection
                 Dim filterBuilder = Builders(Of BsonDocument).Filter
-                Dim filter As FilterDefinition(Of BsonDocument) = filterBuilder.Empty
+                Dim filters As New List(Of FilterDefinition(Of BsonDocument))()
 
+                ' Exclude files starting with "GPCE-"
                 Dim exclusionFilter = filterBuilder.Regex("filename", New BsonRegularExpression("^(?!GPCE-)"))
+                filters.Add(exclusionFilter)
 
+                ' Get selected file code filter
+                Dim selectedFileCode As String = String.Empty
+                Dispatcher.Invoke(Sub()
+                                      If cboFileCode IsNot Nothing AndAlso cboFileCode.SelectedItem IsNot Nothing Then
+                                          Dim selectedItem = TryCast(cboFileCode.SelectedItem, ComboBoxItem)
+                                          If selectedItem IsNot Nothing Then
+                                              selectedFileCode = selectedItem.Content.ToString()
+                                          End If
+                                      End If
+                                  End Sub)
+
+                ' Add file code filter if not "All"
+                If Not String.IsNullOrEmpty(selectedFileCode) AndAlso selectedFileCode <> "All" Then
+                    ' Filter files that start with the selected code (e.g., "BL-", "PO-", etc.)
+                    Dim fileCodeFilter = filterBuilder.Regex("filename", New BsonRegularExpression($"^{selectedFileCode}-", "i"))
+                    filters.Add(fileCodeFilter)
+                End If
+
+                ' Add search filter if search text is provided
                 If Not String.IsNullOrWhiteSpace(_searchText) Then
                     Dim searchFilter = filterBuilder.Regex("filename", New BsonRegularExpression(_searchText, "i"))
+                    filters.Add(searchFilter)
+                End If
 
-                    filter = filterBuilder.And(exclusionFilter, searchFilter)
+                ' Combine all filters
+                Dim filter As FilterDefinition(Of BsonDocument)
+                If filters.Count > 1 Then
+                    filter = filterBuilder.And(filters)
                 Else
-                    filter = exclusionFilter
+                    filter = filters(0)
                 End If
 
                 ' Get total count for pagination
@@ -405,6 +426,16 @@ Namespace DPC.Views.DataReports.ManageRegularCostEstimateFiles
         ''' </summary>
         Private Sub NavigateToPage(pageNumber As Integer)
             _currentPage = pageNumber
+            LoadCostEstimateFiles()
+        End Sub
+
+        ''' <summary>
+        ''' Handles file code filter selection change
+        ''' </summary>
+        Private Sub CboFileCode_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles cboFileCode.SelectionChanged
+            ' Reset to first page when filter changes
+            _currentPage = 1
+            ' Reload files with the current filter
             LoadCostEstimateFiles()
         End Sub
 

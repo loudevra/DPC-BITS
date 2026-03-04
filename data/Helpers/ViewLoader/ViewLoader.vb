@@ -134,6 +134,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New HRM.Employees.Employees.EmployeesView()
                     Case "hrmeditemployee"
                         Return New HRM.Employees.Employees.EditEmployee()
+                    Case "addproject"
+                        Return New Views.Project.AddProject1()
 
 
                          ' Sales Module Navigation
@@ -279,6 +281,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                         'Misc - Cash Advance Navigation
                     Case "cashadvancenewrequest"
                         Return New Views.Misc.CashAdvance.CashAdvanceNewRequest()
+                    Case "overtimeform"
+                        Return New Views.Misc.CashAdvance.OvertimeRequestForm()
+
                     Case "managecashadvancerequests"
                         Return New Views.Misc.CashAdvance.ManageCashAdvanceRequests()
                     Case "editcashadvancerequest"
@@ -517,6 +522,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "printpreview"
             ElseIf typeName = "cashadvancenewrequest" Then
                 Return "cashadvancenewrequest"
+            ElseIf typeName = "overtimerequestform" Then
+                Return "overtimerequestform"
             ElseIf typeName = "managecashadvancerequests" Then
                 Return "managecashadvancerequests"
             ElseIf typeName = "editcashadvancerequest" Then

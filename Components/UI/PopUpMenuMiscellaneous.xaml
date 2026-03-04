@@ -53,7 +53,6 @@
 
         <materialDesign:Card Grid.Column="1" Grid.Row="1" Background="#0F0F0F" UniformCornerRadius="0" Margin="0" Width="285">
             <StackPanel Orientation="Vertical" Margin="35,0,0,20">
-
                 <StackPanel>
                     <Grid Margin="0,8,0,0">
                         <Grid.ColumnDefinitions>
@@ -81,7 +80,8 @@
                                 </Hyperlink>
                                 <TextBlock.ToolTip>
                                     <ToolTip Content="Write and save a new quick note." 
-                                             Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
+                                            Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
+
                                 </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
@@ -91,6 +91,7 @@
                                 <TextBlock.ToolTip>
                                     <ToolTip Content=" Edit, categorize, or delete saved notes." 
                                              Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
+
                                 </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
@@ -117,6 +118,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Rectangle Width="1" Fill="#444444" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToViewCalendar">
@@ -125,6 +127,7 @@
                                 <TextBlock.ToolTip>
                                     <ToolTip Content="See upcoming schedules, deadlines, and events." 
                                              Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
+
                                 </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
@@ -134,6 +137,7 @@
                                 <TextBlock.ToolTip>
                                     <ToolTip Content="Schedule and add new events to the calendar." 
                                              Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
+
                                 </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
@@ -160,6 +164,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Rectangle Width="1" Fill="#444444" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToUploadDocument">
@@ -168,6 +173,7 @@
                                 <TextBlock.ToolTip>
                                     <ToolTip Content="Upload files and company documents." 
                                              Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
+
                                 </TextBlock.ToolTip>
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
@@ -186,12 +192,12 @@
                                 <TextBlock.ToolTip>
                                     <ToolTip Content=" Generate a form to withdraw or request documents." 
                                              Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
+
                                 </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
                 </StackPanel>
-
                 <StackPanel>
                     <Grid Margin="0,8,0,0">
                         <Grid.ColumnDefinitions>
@@ -213,15 +219,18 @@
                         </Grid.ColumnDefinitions>
                         <Rectangle Width="1" Fill="#444444" HorizontalAlignment="Left" Margin="0,0,0,0"/>
                         <StackPanel Grid.Column="1">
+
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToCashAdvanceNewRequest">
                                     <TextBlock Text="Cash Advance Request" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
                                 <TextBlock.ToolTip>
                                     <ToolTip Content="Submit a new cash advance request." 
+
                                              Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
                                 </TextBlock.ToolTip>
                             </TextBlock>
+
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageCashAdvanceRequests">
                                     <TextBlock Text="Manage Cash Advance Requests" Foreground="#d4d4d4" FontSize="13"/>
@@ -272,8 +281,10 @@
                                 <TextBlock.ToolTip>
                                     <ToolTip Content="Approve, reject, or track overtime requests." 
                                              Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
+
                                 </TextBlock.ToolTip>
                             </TextBlock>
+
                         </StackPanel>
                     </Grid>
                 </StackPanel>

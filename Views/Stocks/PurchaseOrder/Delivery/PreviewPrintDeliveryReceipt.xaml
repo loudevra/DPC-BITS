@@ -127,6 +127,7 @@
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
                                             </Grid.RowDefinitions>
 
                                             <TextBlock Grid.Row="0" Grid.Column="0" Text="CLIENT NAME/COMPANY NAME: " FontWeight="Bold" FontSize="11" FontFamily="Lexend"/>
@@ -140,6 +141,9 @@
 
                                             <TextBlock Grid.Row="3" Grid.Column="0" Text="COMPANY REPRESENTATIVE: " FontWeight="Bold" FontSize="11" FontFamily="Lexend" Margin="0,5,0,0"/>
                                             <TextBlock Grid.Row="3" Grid.Column="1" x:Name="txtDeliveryRep" Text="ANGONO MINICIPALITY" FontSize="11" FontFamily="Lexend" Margin="5,5,5,0"/>
+
+                                            <TextBlock Grid.Row="4" Grid.Column="0" Text="DELIVERY STATUS: " FontWeight="Bold" FontSize="11" FontFamily="Lexend" Margin="0,5,0,0"/>
+                                            <TextBlock Grid.Row="4" Grid.Column="1" x:Name="txtDeliveryStatus" Text="FULL DELIVERY" FontSize="11" FontFamily="Lexend" Margin="5,5,5,0"/>
                                         </Grid>
                                     </StackPanel>
 
