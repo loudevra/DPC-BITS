@@ -230,8 +230,6 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Views.Misc.OverTime.ManageTimeoutRequests()
                     Case "editovertime"
                         Return New Views.Misc.OverTime.EditOverTime()
-                    Case "overtimereceiptview"
-                        Return New Views.Misc.OverTime.OvertimeReceiptView()
 
                     Case Else
                         Dim errorContent As New TextBlock With {
