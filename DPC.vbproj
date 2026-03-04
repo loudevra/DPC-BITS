@@ -1075,8 +1075,15 @@
     <Compile Include="Views\Misc\Documents\PullOutForm.xaml.vb">
       <DependentUpon>PullOutForm.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Misc\Overtime\OvertimeForm.xaml.vb">
-      <DependentUpon>OvertimeForm.xaml</DependentUpon>
+    <Compile Include="Views\Misc\OverTimeForm\EditOverTime.xaml.vb">
+      <DependentUpon>EditOverTime.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc\OverTimeForm\ManageTimeoutRequests.xaml.vb">
+      <DependentUpon>ManageTimeoutRequests.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc\OverTimeForm\OverTimeRequestForm.xaml.vb">
+      <DependentUpon>OverTimeRequestForm.xaml</DependentUpon>
+
     </Compile>
     <Compile Include="Views\POS\CreditPayment.xaml.vb">
       <DependentUpon>CreditPayment.xaml</DependentUpon>
@@ -2042,7 +2049,16 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Misc\Overtime\OvertimeForm.xaml">
+    <Page Include="Views\Misc\OverTimeForm\EditOverTime.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Misc\OverTimeForm\ManageTimeoutRequests.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Misc\OverTimeForm\OverTimeRequestForm.xaml">
+
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

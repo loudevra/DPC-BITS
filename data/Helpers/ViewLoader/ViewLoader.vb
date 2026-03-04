@@ -291,6 +291,15 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "previewprintcashadvancerequestform"
                         Return New Views.Misc.CashAdvance.PreviewPrintCashAdvanceRequestForm()
 
+                        'Misc - Overtime Navigation
+                    Case "overtimerequestform"
+                        Return New Views.Misc.OverTime.OverTimeRequestForm()
+                    Case "manageovertimerequests"
+                        Return New Views.Misc.OverTime.ManageTimeoutRequests()
+                    Case "editovertime"
+                        Return New Views.Misc.OverTime.EditOverTime()
+
+
                     Case Else
                         ' Return a placeholder UserControl with error text
                         Dim errorContent As New TextBlock With {
