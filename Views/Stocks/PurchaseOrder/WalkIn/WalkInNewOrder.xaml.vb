@@ -1362,10 +1362,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             ViewLoader.DynamicView.NavigateToView("newwalkinclient", Me)
         End Sub
 
-        Private Sub BtnClearView_click(sender As Object, e As RoutedEventArgs) Handles BtnAddClient.Click
-            ViewLoader.DynamicView.NavigateToCleanView("walkinorder", Me)
-        End Sub
-
         Private Sub LoadCachedBillingData()
             If Application.Current.Properties.Contains("BillingCache") Then
                 Dim cachedData As BillingModel = DirectCast(Application.Current.Properties("BillingCache"), BillingModel)
