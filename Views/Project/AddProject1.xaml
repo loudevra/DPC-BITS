@@ -1,5 +1,8 @@
-﻿<!-- AddProject1.xaml -->
-    <UserControl x:Class="DPC.Views.Project.AddProject1"
+﻿<!-- AddProject1.xaml (FULL FILE, UPDATED)
+     - Removes the Assign-to dropdown
+     - Displays FULL logged-in name in a read-only TextBox
+-->
+<UserControl x:Class="DPC.Views.Project.AddProject1"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -19,8 +22,8 @@
             </StackPanel>
         </Border>
 
-        <ScrollViewer Grid.Row="1" 
-                      VerticalScrollBarVisibility="Auto" 
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Auto"
                       PanningMode="Both">
 
@@ -28,12 +31,12 @@
 
                 <TextBlock Text="Project Name:" Margin="0,0,0,10" FontWeight="SemiBold" Foreground="#474747"/>
                 <Border Style="{StaticResource RoundedBorderStyle}">
-                    <TextBox x:Name="txtName" 
-                             Height="40" 
-                             Style="{StaticResource RoundedTextboxStyle}" 
-                             HorizontalAlignment="Stretch" 
+                    <TextBox x:Name="txtName"
+                             Height="40"
+                             Style="{StaticResource RoundedTextboxStyle}"
+                             HorizontalAlignment="Stretch"
                              VerticalContentAlignment="Center"
-                             Background="Transparent" 
+                             Background="Transparent"
                              BorderThickness="0"
                              TextChanged="TxtToUpper_TextChanged"/>
                 </Border>
@@ -41,26 +44,25 @@
                 <TextBlock Text="Status:" Margin="0,20,0,10" FontWeight="SemiBold" Foreground="#474747"/>
                 <Border Style="{StaticResource RoundedBorderStyle}">
                     <ComboBox x:Name="cmbStatus"
-              Style="{StaticResource RoundedComboBoxStyle}"
-              HorizontalAlignment="Stretch"
-              Height="40"
-              SelectedIndex="0"
-              Background="Transparent"
-              BorderThickness="0">
+                              Style="{StaticResource RoundedComboBoxStyle}"
+                              HorizontalAlignment="Stretch"
+                              Height="40"
+                              SelectedIndex="0"
+                              Background="Transparent"
+                              BorderThickness="0">
 
-                        <!-- Custom display for the selected item -->
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <Ellipse Width="10" Height="10"
-                             Fill="{Binding Color}"
-                             Margin="4,0,10,0"
-                             VerticalAlignment="Center"/>
+                                             Fill="{Binding Color}"
+                                             Margin="4,0,10,0"
+                                             VerticalAlignment="Center"/>
                                     <TextBlock Text="{Binding Label}"
-                               FontFamily="Lexend"
-                               FontSize="13"
-                               Foreground="#474747"
-                               VerticalAlignment="Center"/>
+                                               FontFamily="Lexend"
+                                               FontSize="13"
+                                               Foreground="#474747"
+                                               VerticalAlignment="Center"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
@@ -69,23 +71,24 @@
 
                 <TextBlock Text="Customer:" Margin="0,20,0,10" FontWeight="SemiBold" Foreground="#474747"/>
                 <Border Style="{StaticResource RoundedBorderStyle}">
-                    <TextBox x:Name="txtCustomer" 
-                             Height="40" 
-                             Style="{StaticResource RoundedTextboxStyle}" 
+                    <TextBox x:Name="txtCustomer"
+                             Height="40"
+                             Style="{StaticResource RoundedTextboxStyle}"
                              HorizontalAlignment="Stretch"
                              VerticalContentAlignment="Center"
-                             Background="Transparent" 
-                             BorderThickness="0"/>
+                             Background="Transparent"
+                             BorderThickness="0"
+                             TextChanged="TxtToUpper_TextChanged"/>
                 </Border>
 
                 <TextBlock Text="ABC:" Margin="0,20,0,10" FontWeight="SemiBold" Foreground="#474747"/>
                 <Border Style="{StaticResource RoundedBorderStyle}">
-                    <TextBox x:Name="txtBudget" 
-                             Height="40" 
-                             Style="{StaticResource RoundedTextboxStyle}" 
+                    <TextBox x:Name="txtBudget"
+                             Height="40"
+                             Style="{StaticResource RoundedTextboxStyle}"
                              HorizontalAlignment="Stretch"
                              VerticalContentAlignment="Center"
-                             Background="Transparent" 
+                             Background="Transparent"
                              BorderThickness="0"
                              TextChanged="txtBudget_TextChanged"/>
                 </Border>
@@ -163,19 +166,19 @@
                     <CheckBox Content="Link to Calendar" Grid.Row="3" Grid.ColumnSpan="3" Margin="0,20,0,0" FontWeight="SemiBold" Foreground="#474747"/>
                 </Grid>
 
+                <!-- FULL NAME DISPLAY (no dropdown) -->
                 <TextBlock Text="Assign to:" Margin="0,20,0,10" FontWeight="SemiBold" Foreground="#474747"/>
-                <ComboBox x:Name="cmbAssign"
-                          Style="{StaticResource RoundedComboBoxStyle}"
-                          HorizontalAlignment="Stretch"
-                          Height="40"
-                          FontFamily="Lexend"
-                          Foreground="#474747"
-                          IsEditable="True"
-                          IsReadOnly="False"
-                          IsTextSearchEnabled="True"
-                          TextSearch.TextPath="Content"
-                          DisplayMemberPath="Content"
-                          StaysOpenOnEdit="True"/> 
+                <Border Style="{StaticResource RoundedBorderStyle}">
+                    <TextBox x:Name="txtAssignTo"
+                             Height="40"
+                             Style="{StaticResource RoundedTextboxStyle}"
+                             HorizontalAlignment="Stretch"
+                             VerticalContentAlignment="Center"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             IsReadOnly="True"
+                             Foreground="#474747"/>
+                </Border>
 
                 <TextBlock Text="Note:" Margin="0,20,0,5" FontWeight="SemiBold" Foreground="#474747"/>
 
@@ -266,14 +269,14 @@
                         </UniformGrid>
                     </Border>
                     <Border Background="White" CornerRadius="0,0,12,12" BorderBrush="#545454" BorderThickness="1,0,1,1" ClipToBounds="True">
-                        <RichTextBox x:Name="EditorBox" 
-             IsDocumentEnabled="True"
-             Background="White" 
-             BorderThickness="0" 
-             Padding="10" 
-             FontSize="14" 
-             Height="250" 
-             VerticalScrollBarVisibility="Auto"/>
+                        <RichTextBox x:Name="EditorBox"
+                                     IsDocumentEnabled="True"
+                                     Background="White"
+                                     BorderThickness="0"
+                                     Padding="10"
+                                     FontSize="14"
+                                     Height="250"
+                                     VerticalScrollBarVisibility="Auto"/>
                     </Border>
                 </DockPanel>
 
@@ -285,7 +288,7 @@
 
                     <Button Grid.Column="1"
                             Content="Add Project"
-                            Width="140" Height="40" 
+                            Width="140" Height="40"
                             FontSize="16"
                             Background="#444"
                             Foreground="White"
