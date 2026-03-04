@@ -160,6 +160,10 @@ Namespace DPC.Components.UI
         Private Sub NavigateToManageOvertimeRequests(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("manageovertimerequests", Me)
         End Sub
+        Private Sub NavigateToPreviewPrintOverTimeRequestForm(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("previewprintovertimerequestform", Me)
+        End Sub
+
 
     End Class
 End Namespace
