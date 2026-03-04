@@ -1083,7 +1083,9 @@
     </Compile>
     <Compile Include="Views\Misc\OverTimeForm\OverTimeRequestForm.xaml.vb">
       <DependentUpon>OverTimeRequestForm.xaml</DependentUpon>
-
+    </Compile>
+    <Compile Include="Views\Misc\OverTimeForm\OvertimeReceiptView.xaml.vb">
+      <DependentUpon>OvertimeReceiptView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\POS\CreditPayment.xaml.vb">
       <DependentUpon>CreditPayment.xaml</DependentUpon>
@@ -2058,7 +2060,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Misc\OverTimeForm\OverTimeRequestForm.xaml">
-
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Misc\OverTimeForm\OvertimeReceiptView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

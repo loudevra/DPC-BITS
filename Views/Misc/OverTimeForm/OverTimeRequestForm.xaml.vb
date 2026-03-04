@@ -1,4 +1,5 @@
-﻿Imports System.ComponentModel
+﻿' OverTimeRequestForm.xaml 
+Imports System.ComponentModel
 Imports System.Windows
 Imports System.Windows.Controls
 Imports System.Windows.Input
@@ -133,12 +134,12 @@ Namespace DPC.Views.Misc.OverTime
                 Return
             End If
 
-            ' 1. Package ALL the form data using the matched x:Names
+            ' 1. Package ALL the form data
             Dim newRecord As New OvertimeRequestModel With {
         .OvertimeID = "OT-" & (ManageTimeoutRequests.GlobalOvertimeList.Count + 1).ToString("D3"),
         .EmployeeName = AutoCompleteTextBox.Text,
         .JobTitle = JobTitle.Text,
-        .Department = hourlyRate.Text, ' <-- Updated
+        .Department = hourlyRate.Text,
         .TotalHours = totalHours,
         .RequestDate = rawDate.Value.ToString("MMM dd, yyyy"),
         .Status = "Pending",
@@ -151,11 +152,43 @@ Namespace DPC.Views.Misc.OverTime
         .RequestedBy = TxtRequestedBy.Text
     }
 
-            ' 2. Add to Shared List
-            ManageTimeoutRequests.GlobalOvertimeList.Add(newRecord)
+            ' 2. Save to Database
+            Dim connStr As String = SplashScreen.GetDatabaseConnection().ConnectionString()
+            Try
+                Using conn As New MySqlConnection(connStr)
+                    conn.Open()
+                    Dim cmd As New MySqlCommand(
+                "INSERT INTO overtime_requests 
+                (OvertimeID, EmployeeName, EmployeeID, JobTitle, Department, Supervisor,
+                 StartTime, EndTime, TotalHours, Reason, Remarks, RequestedBy, RequestDate, Status)
+                VALUES
+                (@OvertimeID, @EmployeeName, @EmployeeID, @JobTitle, @Department, @Supervisor,
+                 @StartTime, @EndTime, @TotalHours, @Reason, @Remarks, @RequestedBy, @RequestDate, @Status)", conn)
 
-            MessageBox.Show("Request Submitted Successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
-            DPC.Data.Helpers.ViewLoader.DynamicView.NavigateToView("manageovertimerequests", Me)
+                    cmd.Parameters.AddWithValue("@OvertimeID", newRecord.OvertimeID)
+                    cmd.Parameters.AddWithValue("@EmployeeName", newRecord.EmployeeName)
+                    cmd.Parameters.AddWithValue("@EmployeeID", newRecord.EmployeeID)
+                    cmd.Parameters.AddWithValue("@JobTitle", newRecord.JobTitle)
+                    cmd.Parameters.AddWithValue("@Department", newRecord.Department)
+                    cmd.Parameters.AddWithValue("@Supervisor", newRecord.Supervisor)
+                    cmd.Parameters.AddWithValue("@StartTime", newRecord.StartTime)
+                    cmd.Parameters.AddWithValue("@EndTime", newRecord.EndTime)
+                    cmd.Parameters.AddWithValue("@TotalHours", newRecord.TotalHours)
+                    cmd.Parameters.AddWithValue("@Reason", newRecord.Reason)
+                    cmd.Parameters.AddWithValue("@Remarks", newRecord.Remarks)
+                    cmd.Parameters.AddWithValue("@RequestedBy", newRecord.RequestedBy)
+                    cmd.Parameters.AddWithValue("@RequestDate", newRecord.RequestDate)
+                    cmd.Parameters.AddWithValue("@Status", newRecord.Status)
+
+                    cmd.ExecuteNonQuery()
+                End Using
+
+                MessageBox.Show("Request Submitted Successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                DPC.Data.Helpers.ViewLoader.DynamicView.NavigateToView("manageovertimerequests", Me)
+
+            Catch ex As Exception
+                MessageBox.Show("Error saving request: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
         End Sub
         ' ==========================================
         ' TIME CALCULATION LOGIC
@@ -170,7 +203,7 @@ Namespace DPC.Views.Misc.OverTime
             Dim startT As DateTime
             Dim endT As DateTime
 
-            ' Only calculate if both textboxes have valid time formats (like "8:00 AM" and "5:00 PM")
+            ' Only calculate if both textboxes have valid time formats (like "8:00 AM" xand "5:00 PM")
             If DateTime.TryParse(txtStartTime.Text, startT) AndAlso DateTime.TryParse(txtEndTime.Text, endT) Then
 
                 Dim duration As TimeSpan = endT - startT
