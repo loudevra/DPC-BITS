@@ -128,6 +128,10 @@ Namespace DPC.Components.UI
             ViewLoader.DynamicView.NavigateToView("managewalkin", Me)
         End Sub
 
+        Private Sub NavigateToNewDeliveryReceipt(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
+        End Sub
+
         Private Sub NavigateToManageDeliveryReceipt(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("managedeliveryreceipt", Me)
         End Sub

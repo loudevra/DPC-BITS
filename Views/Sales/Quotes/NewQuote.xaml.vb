@@ -430,6 +430,10 @@ Namespace DPC.Views.Sales.Quotes
             Return CEQuoteItemsCache IsNot Nothing AndAlso CEQuoteItemsCache.Count > 0
         End Function
 
+        Private Sub BtnAddClient_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddClient.Click
+            ViewLoader.DynamicView.NavigateToView("newwalkinclient", Me)
+        End Sub
+
         Private Sub LoadCachedQuoteItems()
             For Each item In CEQuoteItemsCache
                 rowCount += 1

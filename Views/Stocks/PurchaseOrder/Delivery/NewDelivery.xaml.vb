@@ -1,5 +1,7 @@
 ﻿Imports System.Collections.ObjectModel
 Imports System.IO
+Imports System.Windows.Controls.Primitives
+Imports System.Windows.Threading
 Imports DocumentFormat.OpenXml.Office2013.Drawing.ChartStyle
 Imports DPC.DPC.Components.Forms
 Imports DPC.DPC.Data.Controllers
@@ -8,7 +10,6 @@ Imports DPC.DPC.Data.Models
 Imports MaterialDesignThemes.Wpf
 Imports Microsoft.Win32
 Imports NuGet.Protocol.Plugins
-Imports System.Windows.Controls.Primitives
 
 Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
@@ -22,9 +23,16 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         Private popupEditSerial As Popup
         Private recentlyClosedSerial As Boolean = False
         Private _isInitialized As Boolean = False
+        Private _billingTypingTimer As DispatcherTimer
 
         Public Sub New()
             InitializeComponent()
+
+            _billingTypingTimer = New DispatcherTimer With {
+                .Interval = TimeSpan.FromMilliseconds(500) ' Wait for 500ms of no typing
+            }
+            AddHandler _billingTypingTimer.Tick, AddressOf OnBillingTypingTimerTick
+
             InitializeFields()
             _isInitialized = True
         End Sub
@@ -562,6 +570,101 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     lblRemaining.FontWeight = FontWeights.Normal
                 End If
             End If
+        End Sub
+
+        Private Sub txtInvoiceNumber_TextChanged(sender As Object, e As TextChangedEventArgs)
+            If Not _isInitialized Then Return
+
+            _billingTypingTimer.Stop()
+            _billingTypingTimer.Start()
+        End Sub
+
+        Private Sub OnBillingTypingTimerTick(sender As Object, e As EventArgs)
+            _billingTypingTimer.Stop()
+
+            Dim searchText = txtInvoiceNumber.Text.Trim()
+
+            ' 1. Basic validation: If cleared or too short, reset the whole form
+            If searchText.Length < 3 Then
+                ClearDeliveryForm()
+                Return
+            End If
+
+            ' 2. Search for the Billing Statement
+            Dim results = BillingController.SearchBillingStatements(searchText, 1, "Private")
+
+            If results.Count > 0 Then
+                Dim billing = results(0)
+
+                Dim clientList = ClientController.SearchClients(billing.ClientID)
+
+                Dim clientMatch = clientList.FirstOrDefault(Function(c) c.ClientID = billing.ClientID)
+
+                If clientMatch IsNot Nothing Then
+                    _selectedClient = clientMatch
+                    txtClientName.Text = _selectedClient.Name
+                    UpdateClientDetails(_selectedClient)
+                Else
+                    txtClientName.Text = billing.ClientID
+                End If
+
+                cmbPaymentTerm.Text = billing.PaymentTerms
+
+                DeliveryDetails.DRClientName = txtClientName.Text
+                DeliveryDetails.DRReferenceInvoice = billing.BillingNumber
+
+                Dim historyTotals = DeliveryReceiptController.GetAccumulatedDeliveryTotals(billing.BillingNumber)
+                Dim masterItems = Newtonsoft.Json.JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(billing.OrderItems)
+
+                Dim remainingList As New List(Of Dictionary(Of String, String))
+
+                If masterItems IsNot Nothing Then
+                    For Each masterItem In masterItems
+                        Dim pName = masterItem("ProductName")
+                        Dim originalQty = 0
+                        Integer.TryParse(masterItem("Quantity"), originalQty)
+
+                        Dim deliveredSoFar = If(historyTotals.ContainsKey(pName), historyTotals(pName), 0)
+                        Dim balance = originalQty - deliveredSoFar
+
+                        If balance > 0 Then
+                            Dim newItem As New Dictionary(Of String, String)(masterItem)
+                            newItem("Quantity") = balance.ToString()
+                            newItem("MaxAllowed") = balance.ToString()
+                            remainingList.Add(newItem)
+                        End If
+                    Next
+                End If
+
+                DeliveryDetails.DRDeliveryItems = remainingList
+                LoadItems()
+                txtDeliveryNumber.Text = GenerateDeliveryId(billing.BillingNumber)
+            Else
+                ClearDeliveryForm()
+            End If
+        End Sub
+
+        Private Sub ClearDeliveryForm()
+            ' 1. Clear UI Header Fields
+            txtClientName.Clear()
+            txtClientDetails.Clear()
+            cmbPaymentTerm.SelectedIndex = -1
+            cmbShippingMethod.SelectedIndex = -1
+            txtDeliveryNote.Clear()
+
+            ' 2. Reset the Delivery ID to default (base invoice ref or empty)
+            txtDeliveryNumber.Text = "-"
+
+            ' 3. Clear the Item List and Data Source
+            itemDataSource.Clear()
+            MainContainer.Children.Clear()
+            _productTextBoxes.Clear()
+            _serialCounters.Clear()
+
+            ' 4. Clear Global Delivery Cache
+            DeliveryDetails.DRClientName = ""
+            DeliveryDetails.DRReferenceInvoice = ""
+            DeliveryDetails.DRDeliveryItems = New List(Of Dictionary(Of String, String))()
         End Sub
 #Region "Helpers"
         Private Sub UpdateClientDetails(client As Client)

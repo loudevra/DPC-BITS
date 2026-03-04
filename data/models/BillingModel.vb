@@ -6,6 +6,7 @@
 
         ' Client & Representative Information
         Public Property ClientID As String
+        Public Property ClientName As String
         Public Property CompanyRep As String ' Maps to companyRep
         Public Property SalesRep As String ' Maps to salesRep
 

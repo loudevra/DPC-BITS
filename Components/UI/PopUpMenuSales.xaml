@@ -320,7 +320,7 @@
                         <!-- Submenu items -->
                         <StackPanel Grid.Column="1" Grid.ColumnSpan="2">
                             <TextBlock Margin="10,3,0,3">
-        <Hyperlink >
+        <Hyperlink Click="NavigateToNewDeliveryReceipt">
             <TextBlock Text="New Delivery Receipt" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
         </Hyperlink>
         <TextBlock.ToolTip>
