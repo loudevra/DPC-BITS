@@ -434,6 +434,10 @@ Namespace DPC.Views.Sales.Quotes
             ViewLoader.DynamicView.NavigateToView("newwalkinclient", Me)
         End Sub
 
+        Private Sub BtnReset_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddClient.Click
+            ViewLoader.DynamicView.NavigateToView("newquote", Me)
+        End Sub
+
         Private Sub LoadCachedQuoteItems()
             For Each item In CEQuoteItemsCache
                 rowCount += 1

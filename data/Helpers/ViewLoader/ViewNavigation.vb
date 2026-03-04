@@ -11,44 +11,37 @@ Namespace DPC.Data.Helpers.ViewLoader
     Public Class ViewNavigation
         ' Flag to prevent recursive navigation
         Private Shared _isNavigating As Boolean = False
-
+        Private Shared _viewCache As New Dictionary(Of String, Object)
         ''' <summary>
         ''' Navigate to the specified view
         ''' </summary>
         ''' <param name="viewName">Name of the view to navigate to</param>
         ''' <param name="senderControl">The control that initiated the navigation</param>
-        Public Shared Sub NavigateToView(viewName As String, senderControl As DependencyObject)
-            ' Prevent reentrancy which could cause freezing
+        Public Shared Sub NavigateToCachedView(viewName As String, senderControl As DependencyObject)
             If _isNavigating Then Return
 
             Try
                 _isNavigating = True
-
-                ' Check if we're in design mode
-                If System.ComponentModel.DesignerProperties.GetIsInDesignMode(New DependencyObject()) Then
-                    _isNavigating = False
-                    Return ' Exit if in design mode
-                End If
-
-                ' Find the main window
                 Dim mainWindow As DPC.Base = FindMainWindow()
 
                 If mainWindow IsNot Nothing Then
-                    ' Get the currently displayed view for comparison
-                    Dim currentView = mainWindow.CurrentView
-                    Dim currentViewName = ViewLoader.GetViewName(currentView)
+                    Dim targetName = viewName.ToLower()
+                    Dim currentViewName = ViewLoader.GetViewName(mainWindow.CurrentView)
 
-                    ' Only navigate if we're going to a different view
-                    If currentViewName <> viewName.ToLower() Then
-                        ' Load the new view
-                        Dim newView = ViewLoader.Load(viewName)
+                    If currentViewName <> targetName OrElse Not _viewCache.ContainsKey(targetName) Then
 
-                        ' Navigate to the requested view
-                        mainWindow.CurrentView = newView
+                        Dim targetView As Object = Nothing
+
+                        If _viewCache.ContainsKey(targetName) Then
+                            targetView = _viewCache(targetName)
+                        Else
+                            targetView = ViewLoader.Load(viewName)
+                            _viewCache(targetName) = targetView
+                        End If
+
+                        mainWindow.CurrentView = targetView
                     End If
 
-                    ' Close the popup if we're in one, but do this with a slight delay
-                    ' to prevent UI thread blocking
                     If senderControl IsNot Nothing Then
                         ' Use Dispatcher to add a delay
                         Application.Current.Dispatcher.BeginInvoke(
@@ -63,6 +56,13 @@ Namespace DPC.Data.Helpers.ViewLoader
             Finally
                 _isNavigating = False
             End Try
+        End Sub
+
+        Public Shared Sub NavigateToView(viewName As String, senderControl As DependencyObject)
+            Dim key = viewName.ToLower()
+            If _viewCache.ContainsKey(key) Then _viewCache.Remove(key)
+
+            NavigateToCachedView(viewName, senderControl)
         End Sub
 
         ''' <summary>

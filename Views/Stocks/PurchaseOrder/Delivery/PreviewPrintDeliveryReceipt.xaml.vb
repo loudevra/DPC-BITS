@@ -252,7 +252,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Sub
 
         Private Sub CancelButton(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
+            ViewLoader.DynamicView.NavigateToCachedView("newdelivery", Me)
         End Sub
         Private Sub PreviousPage_Click(sender As Object, e As RoutedEventArgs)
             If _currentPageIndex > 0 Then

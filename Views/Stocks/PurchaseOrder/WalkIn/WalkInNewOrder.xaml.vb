@@ -1361,6 +1361,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         Private Sub BtnAddClient_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddClient.Click
             ViewLoader.DynamicView.NavigateToView("newwalkinclient", Me)
         End Sub
+        Private Sub BtnReset_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddClient.Click
+            ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
+        End Sub
 
         Private Sub LoadCachedBillingData()
             If Application.Current.Properties.Contains("BillingCache") Then
