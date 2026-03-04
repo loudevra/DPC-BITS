@@ -50,12 +50,12 @@ Namespace DPC.Views.Misc.OverTime
             DPC.Data.Helpers.ViewLoader.DynamicView.NavigateToView("manageovertimerequests", Me)
         End Sub
 
-        Private Sub BtnPrint_Click(sender As Object, e As RoutedEventArgs)
-            Dim printDialog As New PrintDialog()
-            If printDialog.ShowDialog() = True Then
-                printDialog.PrintVisual(Me, "Overtime Request Receipt - " & TargetRecord.OvertimeID)
-            End If
-        End Sub
+        'Private Sub BtnPrint_Click(sender As Object, e As RoutedEventArgs)
+        'Dim printDialog As New PrintDialog()
+        'If printDialog.ShowDialog() = True Then
+        'printDialog.PrintVisual(Me, "Overtime Request Receipt - " & TargetRecord.OvertimeID)
+        'End If
+        'End Sub
 
     End Class
 End Namespace

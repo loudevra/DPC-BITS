@@ -134,20 +134,6 @@ Namespace DPC.Views.Misc.OverTime
         End Sub
 
         ' ==========================================
-        ' HANDLER BUTTON LOGIC
-        ' ==========================================
-        Private Sub ViewReceipt_Click(sender As Object, e As RoutedEventArgs)
-            Dim btn As Button = TryCast(sender, Button)
-            If btn Is Nothing Then Return
-
-            Dim selectedRecord As OvertimeRequestModel = TryCast(btn.DataContext, OvertimeRequestModel)
-            If selectedRecord IsNot Nothing Then
-                ' Pass the selected record to the receipt view
-                OvertimeReceiptView.TargetRecord = selectedRecord
-                DPC.Data.Helpers.ViewLoader.DynamicView.NavigateToView("overtimereceiptview", Me)
-            End If
-        End Sub
-        ' ==========================================
         ' SEARCH FILTER LOGIC
         ' ==========================================
         Private Sub txtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
