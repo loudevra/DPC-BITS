@@ -15,8 +15,8 @@ Namespace DPC.Data.Helpers.ViewLoader
             Return ViewLoader.Load(viewName)
         End Function
 
-        Public Shared Sub ResetView(viewName As String)
-            ViewNavigation.ClearViewCache(viewName)
+        Public Shared Sub NavigateToCleanView(viewName As String, senderControl As DependencyObject)
+            ViewNavigation.ClearViewCache(viewName, senderControl)
         End Sub
         ''' <summary>
         ''' Navigate to the specified view

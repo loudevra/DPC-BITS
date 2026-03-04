@@ -153,6 +153,15 @@
                                                 <TextBlock Text="Client" FontSize="16" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#FDFDFD" Margin="0,0,5,0"/>
                                             </StackPanel>
                                         </Button>
+                                        <!--<Button
+                                            x:Name="BtnClearView" Width="100"
+                                                    Click="BtnClearView_click"
+                                            Style="{StaticResource ButtonStyle}">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <materialDesign:PackIcon Kind="Reload" Width="20" Height="20" Foreground="#FDFDFD" Margin="0,0,5,0"/>
+                                                <TextBlock Text="Reset" FontSize="16" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#FDFDFD" Margin="0,0,5,0"/>
+                                            </StackPanel>
+                                        </Button>-->
                                     </StackPanel>
                                 </Grid>
                                 
