@@ -137,9 +137,9 @@ Namespace DPC.Components.UI
         Private Sub NavigateToCashAdvanceNewRequest(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("cashadvancenewrequest", Me)
         End Sub
-        Private Sub NavigateToOvertimeRequestForm(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("overtimeform", Me)
-        End Sub
+        'Private Sub NavigateToOvertimeRequestForm(sender As Object, e As RoutedEventArgs)
+        '   ViewLoader.DynamicView.NavigateToView("overtimeform", Me)
+        ' End Sub
 
         Private Sub NavigateToManageCashAdvanceRequests(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("managecashadvancerequests", Me)
