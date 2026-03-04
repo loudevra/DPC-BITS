@@ -1,5 +1,5 @@
-﻿Imports System.Windows.Controls.Primitives
-Imports System.Windows
+﻿Imports System.Windows
+Imports System.Windows.Controls.Primitives
 Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Components.UI
@@ -120,11 +120,6 @@ Namespace DPC.Components.UI
 
         Private Sub NavigateToAddEvent(sender As Object, e As RoutedEventArgs)
             ' Implementation for navigating to Add Event
-
-        End Sub
-
-        Private Sub NavigateToUploadDocument(sender As Object, e As RoutedEventArgs)
-            ' Implementation for navigating to Upload Document
 
         End Sub
 

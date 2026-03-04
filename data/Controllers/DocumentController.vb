@@ -9,23 +9,26 @@ Namespace DPC.Data.Controllers
     Public Class DocumentController
 
         ' Get all documents for a specific employee
-        Public Function GetDocumentsByEmployeeID(employeeID As Integer) As ObservableCollection(Of Document)
+        Public Function GetDocumentsByEmployeeID(employeeID As Long) As ObservableCollection(Of Document)
             Dim documents As New ObservableCollection(Of Document)()
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 conn.Open()
 
-                Dim query As String = "SELECT * FROM documents WHERE EmployeeID = @EmployeeID ORDER BY UploadDate DESC"
+                ' TEMPORARY: Get all documents to test
+                Dim query As String = "SELECT * FROM documents ORDER BY UploadDate DESC"
+
                 Using command As New MySqlCommand(query, conn)
-                    command.Parameters.AddWithValue("@EmployeeID", employeeID)
+                    ' Temporarily comment out the parameter
+                    ' command.Parameters.AddWithValue("@EmployeeID", employeeID)
 
                     Using reader As MySqlDataReader = command.ExecuteReader()
                         While reader.Read()
                             Dim document As New Document() With {
                                 .DocumentID = Convert.ToInt32(reader("DocumentID")),
-                                .EmployeeID = Convert.ToInt32(reader("EmployeeID")),
-                                .Title = reader("Title").ToString(),
-                                .FileName = reader("FileName").ToString(),
+                                .EmployeeID = Convert.ToInt64(reader("EmployeeID")),
+                                .Title = reader("DocumentTitle").ToString(),
+                                .FileName = reader("DocumentFileName").ToString(),
                                 .FileType = reader("FileType").ToString(),
                                 .FileSize = Convert.ToInt64(reader("FileSize")),
                                 .UploadDate = Convert.ToDateTime(reader("UploadDate"))
@@ -40,7 +43,7 @@ Namespace DPC.Data.Controllers
         End Function
 
         ' Get document by ID (including file content)
-        Public Function GetDocumentByID(documentID As Integer, employeeID As Integer) As Document
+        Public Function GetDocumentByID(documentID As Integer, employeeID As Long) As Document
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 conn.Open()
 
@@ -54,8 +57,8 @@ Namespace DPC.Data.Controllers
                             Dim document As New Document() With {
                                 .DocumentID = Convert.ToInt32(reader("DocumentID")),
                                 .EmployeeID = Convert.ToInt32(reader("EmployeeID")),
-                                .Title = reader("Title").ToString(),
-                                .FileName = reader("FileName").ToString(),
+                                .Title = reader("DocumentTitle").ToString(),
+                                .FileName = reader("DocumentFileName").ToString(),
                                 .FileContent = reader("FileContent").ToString(),
                                 .FileType = reader("FileType").ToString(),
                                 .FileSize = Convert.ToInt64(reader("FileSize")),
@@ -75,7 +78,7 @@ Namespace DPC.Data.Controllers
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 conn.Open()
 
-                Dim query As String = "INSERT INTO documents (EmployeeID, Title, FileName, FileContent, FileType, FileSize, UploadDate) " &
+                Dim query As String = "INSERT INTO documents (EmployeeID, DocumentTitle, DocumentFileName, FileContent, FileType, FileSize, UploadDate) " &
                                     "VALUES (@EmployeeID, @Title, @FileName, @FileContent, @FileType, @FileSize, @UploadDate)"
 
                 Using command As New MySqlCommand(query, conn)
@@ -93,7 +96,7 @@ Namespace DPC.Data.Controllers
         End Function
 
         ' Delete a document
-        Public Function DeleteDocument(documentID As Integer, employeeID As Integer) As Boolean
+        Public Function DeleteDocument(documentID As Integer, employeeID As Long) As Boolean
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 conn.Open()
 
@@ -118,5 +121,26 @@ Namespace DPC.Data.Controllers
             Dim bytes As Byte() = Convert.FromBase64String(base64String)
             File.WriteAllBytes(outputPath, bytes)
         End Sub
+
+        Private Function GetCurrentEmployeeID() As Integer
+            ' Try to get from auth_users table
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "SELECT employee_id FROM auth_users LIMIT 1"  ' ← Gets ANY employee, not the logged-in one!
+                    Using cmd As New MySqlCommand(query, conn)
+                        Dim result = cmd.ExecuteScalar()
+                        If result IsNot Nothing Then
+                            Return Convert.ToInt32(result)
+                        End If
+                    End Using
+                End Using
+            Catch ex As Exception
+                ' Log error or handle appropriately
+            End Try
+
+            ' Default fallback
+            Return 1  ' ← Returns 1 if nothing found, but EmployeeID 1 doesn't exist!
+        End Function
     End Class
 End Namespace

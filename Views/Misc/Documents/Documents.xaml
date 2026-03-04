@@ -1,178 +1,240 @@
-﻿<Window x:Class="DPC.Views.Misc.Documents.Documents"
+﻿<UserControl x:Class="DPC.Views.Misc.Documents.Documents"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Title="Documents"
-        Height="800" Width="1200"
-        Background="#F5F5F5"
-        WindowStartupLocation="CenterScreen">
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
+        mc:Ignorable="d"
+        Background="#D9D9D9">
 
-    <Grid>
-        <!-- Define Columns for Sidebar and Main Content Wrapper -->
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <!-- Sidebar -->
-            <ColumnDefinition Width="*"/>
-            <!-- Content Wrapper -->
-        </Grid.ColumnDefinitions>
+    <Grid x:Name="mainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Header Section -->
+            <RowDefinition Height="Auto"/>
+            <!-- Options Bar -->
+            <RowDefinition Height="*"/>
+            <!-- DataGrid Section -->
+            <RowDefinition Height="Auto"/>
+            <!-- Pagination Section -->
+        </Grid.RowDefinitions>
 
-        <!-- Sidebar -->
-        <Border x:Name="SidebarContainer" Grid.Row="0" Grid.Column="0" Background="Black"/>
+        <!-- Title and Add Button - Static at top -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20,20,20,10">
+            <TextBlock Text="Manage Pull Out Forms"
+                       FontWeight="SemiBold"
+                       FontFamily="Lexend"
+                       FontSize="25"
+                       Foreground="#474747"
+                       VerticalAlignment="Center"/>
+            <Button x:Name="BtnAddNew" Style="{StaticResource RoundedButtonStyle}" Margin="20,0,0,0" Background="Transparent" Click="BtnAddNew_Click">
+                <Grid Margin="15,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <materialDesign:PackIcon Kind="Plus" Width="20" Height="20" Grid.Column="0" VerticalAlignment="Center"/>
+                    <TextBlock Text="Add New" FontSize="14" FontWeight="SemiBold" Foreground="#474747" Grid.Column="1" Margin="5,0" VerticalAlignment="Center"/>
+                </Grid>
+            </Button>
+        </StackPanel>
 
-        <!-- Wrapper for TopNavBar + Content -->
-        <Grid Grid.Column="1">
-            <!-- Define Rows for Top Navigation and Main Content -->
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <!-- Top Navigation -->
-                <RowDefinition Height="*"/>
-                <!-- Main Content -->
-            </Grid.RowDefinitions>
-
-            <!-- Top Navigation Bar -->
-            <Border x:Name="TopNavBarContainer" Grid.Row="0" Background="White" Height="Auto" MinHeight="50"/>
-
-            <!-- Main Content with Scroll -->
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                <StackPanel Margin="20">
-                    <!-- Documents Header with Add Button -->
-                    <Grid Margin="0,0,0,20">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Grid.Column="0" Text="Documents" FontSize="24" FontWeight="Bold" VerticalAlignment="Center"/>
-
-                        <Button x:Name="BtnAddNew" Grid.Column="1" Content="Add new" Background="#26a69a" Foreground="White" 
-                                Padding="10,5" Click="BtnAddNew_Click"/>
-                    </Grid>
-
-                    <!-- Export Button -->
-                    <Grid Margin="0,0,0,10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Button x:Name="BtnExcel"
-                                Grid.Column="0"
-                                Background="#4CAF50"
-                                Foreground="White"
-                                Padding="10,5"
-                                Click="BtnExcel_Click">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <materialDesign:PackIcon Kind="MicrosoftExcel" Width="20" Height="20" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                            </StackPanel>
+        <!-- Options Bar - Static with controls -->
+        <StackPanel VerticalAlignment="Center" Grid.Row="1" Margin="20,10">
+            <Border Style="{StaticResource RoundedBorderStyle}" BorderThickness="0" Background="white" Padding="10" CornerRadius="10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width=".20*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width=".5*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button x:Name="BtnExcel" Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" BorderThickness="0" Margin="0" Click="BtnExcel_Click">
+                            <materialDesign:PackIcon Kind="MicrosoftExcel" Width="25" Height="25" Foreground="White" Margin="25,0"/>
                         </Button>
-
-                        <!-- Search Field -->
-                        <Grid Grid.Column="2">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="250"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="Search:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-                            <TextBox x:Name="TxtSearch" Grid.Column="1" TextChanged="TxtSearch_TextChanged"/>
-                        </Grid>
-                    </Grid>
-
-                    <!-- Entries Selector -->
-                    <Grid Margin="0,0,0,10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="60"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Grid.Column="0" Text="Show " VerticalAlignment="Center"/>
-                        <ComboBox x:Name="CmbEntriesCount" Grid.Column="1" SelectedIndex="0" SelectionChanged="CmbEntriesCount_SelectionChanged">
-                            <ComboBoxItem Content="10"/>
-                            <ComboBoxItem Content="25"/>
-                            <ComboBoxItem Content="50"/>
-                            <ComboBoxItem Content="100"/>
-                        </ComboBox>
-                        <TextBlock Grid.Column="2" Text=" entries" VerticalAlignment="Center"/>
-                    </Grid>
-
-                    <!-- Documents Table -->
-                    <Border Background="White" CornerRadius="8" Padding="0" Margin="0,0,0,10">
-                        <DataGrid x:Name="DocumentsDataGrid" AutoGenerateColumns="False" IsReadOnly="True" 
-                                  HeadersVisibility="Column" BorderThickness="0" 
-                                  RowBackground="White" AlternatingRowBackground="#F5F5F5">
-                            <DataGrid.Columns>
-                                <DataGridTextColumn Header="#" Binding="{Binding DocumentID}" Width="50"/>
-                                <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="*"/>
-                                <DataGridTextColumn Header="Added" Binding="{Binding UploadDate, StringFormat=\{0:dd-MM-yyyy\}}" Width="120"/>
-                                <DataGridTemplateColumn Header="Action" Width="120">
-                                    <DataGridTemplateColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
-                                                <Button x:Name="BtnView" Style="{StaticResource MaterialDesignFlatButton}" 
-                                                        Foreground="#26a69a" Margin="0" Padding="5"
-                                                        Click="BtnView_Click" Tag="{Binding DocumentID}">
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <materialDesign:PackIcon Kind="Eye" VerticalAlignment="Center"/>
-                                                        <TextBlock Text="View" Margin="3,0,0,0"/>
-                                                    </StackPanel>
-                                                </Button>
-                                                <Button x:Name="BtnDelete" Style="{StaticResource MaterialDesignFlatButton}" 
-                                                        Foreground="Red" Margin="0" Padding="5"
-                                                        Click="BtnDelete_Click" Tag="{Binding DocumentID}">
-                                                    <materialDesign:PackIcon Kind="Delete" VerticalAlignment="Center"/>
-                                                </Button>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </DataGridTemplateColumn.CellTemplate>
-                                </DataGridTemplateColumn>
-                            </DataGrid.Columns>
-                        </DataGrid>
-                    </Border>
-
-                    <!-- Pagination -->
-                    <Grid Margin="0,10,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock x:Name="TxtPaginationInfo" Grid.Column="0" 
-                                   Text="Showing 1 to 5 of 5 entries" VerticalAlignment="Center"/>
-
-                        <StackPanel Grid.Column="2" Orientation="Horizontal">
-                            <Button x:Name="BtnPrevious" Content="Previous" 
-                                    Style="{StaticResource MaterialDesignFlatButton}"
-                                    Click="BtnPrevious_Click"/>
-                            <Border Background="#26a69a" CornerRadius="0" 
-                                    Width="30" Height="30" Margin="5,0">
-                                <TextBlock Text="1" HorizontalAlignment="Center" 
-                                           VerticalAlignment="Center" Foreground="White"/>
-                            </Border>
-                            <Button x:Name="BtnNext" Content="Next" 
-                                    Style="{StaticResource MaterialDesignFlatButton}"
-                                    Click="BtnNext_Click"/>
-                        </StackPanel>
-                    </Grid>
-
-                    <!-- Empty State Panel (Initially Hidden) -->
-                    <StackPanel x:Name="EmptyStatePanel" 
-                                Visibility="Collapsed"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Margin="0,50,0,0">
-                        <TextBlock Text="📄" 
-                                  FontSize="48" 
-                                  HorizontalAlignment="Center"/>
-                        <TextBlock Text="No documents found" 
-                                  FontSize="18" 
-                                  Margin="0,10,0,0" 
-                                  HorizontalAlignment="Center"/>
                     </StackPanel>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="10,0">
+                        <TextBlock Text="Show" FontSize="14" FontWeight="SemiBold" Foreground="#474747" Grid.Column="1" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <ComboBox x:Name="CmbEntriesCount" Style="{StaticResource RoundedComboBoxStyle}" Grid.Column="2" VerticalAlignment="Center" Margin="0" SelectionChanged="CmbEntriesCount_SelectionChanged">
+                        <ComboBoxItem Content="10" IsSelected="True"/>
+                        <ComboBoxItem Content="25"/>
+                        <ComboBoxItem Content="50"/>
+                        <ComboBoxItem Content="100"/>
+                    </ComboBox>
+                    <StackPanel Grid.Column="4">
+                        <Border Style="{StaticResource RoundedBorderStyle}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width=".25*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0" Style="{StaticResource RoundedTextboxStyle}" Margin="20,0,0,0" Name="TxtSearch" TextChanged="TxtSearch_TextChanged"/>
+                                <materialDesign:PackIcon Kind="Magnify" Width="20" Height="20" Foreground="Black" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </StackPanel>
+
+        <!-- DataGrid Section - Scrollable Content -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="20,0">
+            <StackPanel>
+                <DataGrid x:Name="DocumentsDataGrid"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          HeadersVisibility="Column"
+                          GridLinesVisibility="None"
+                          RowBackground="White"
+                          AlternatingRowBackground="WhiteSmoke"
+                          BorderThickness="0"
+                          FontFamily="Lexend" 
+                          CanUserResizeRows="False" 
+                          CanUserResizeColumns="False" 
+                          CanUserReorderColumns="False" 
+                          IsReadOnly="True">
+
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Margin" Value="0,5,0,5"/>
+                            <Setter Property="Padding" Value="5"/>
+                            <Setter Property="Height" Value="Auto"/>
+                            <Setter Property="MinHeight" Value="40"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="Foreground" Value="Black"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="FontFamily" Value="Lexend"/>
+                            <Setter Property="FontSize" Value="13"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                            <Setter Property="Foreground" Value="#474747"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="10,5"/>
+                            <Setter Property="Background" Value="White"/>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+
+                    <DataGrid.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Padding" Value="10,5"/>
+                            <Setter Property="FontFamily" Value="Lexend"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="DataGridCell">
+                                        <Border Padding="{TemplateBinding Padding}" 
+                                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                                BorderThickness="{TemplateBinding BorderThickness}" 
+                                                Background="{TemplateBinding Background}">
+                                            <ContentPresenter VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="TextBlock.TextWrapping" Value="NoWrap"/>
+                            <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="Foreground" Value="Black"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.CellStyle>
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="#" Binding="{Binding DocumentID}" Width="80">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontFamily" Value="Lexend"/>
+                                    <Setter Property="TextWrapping" Value="NoWrap"/>
+                                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="*">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontFamily" Value="Lexend"/>
+                                    <Setter Property="TextWrapping" Value="NoWrap"/>
+                                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                    <Setter Property="ToolTip" Value="{Binding Title}"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Header="Added" Binding="{Binding UploadDate, StringFormat=\{0:dd-MM-yyyy\}}" Width="150">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="FontFamily" Value="Lexend"/>
+                                    <Setter Property="TextWrapping" Value="NoWrap"/>
+                                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTemplateColumn Header="Action" Width="Auto">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="Auto">
+                                        <Button x:Name="BtnView" Width="30" Height="30" Background="Transparent" Margin="0" ToolTip="View" Cursor="Hand" Click="BtnView_Click" Tag="{Binding DocumentID}" BorderThickness="0">
+                                            <materialDesign:PackIcon Kind="Eye" Width="20" Height="20" Foreground="#26a69a"/>
+                                        </Button>
+                                        <Button x:Name="BtnDelete" Width="30" Height="30" Background="Transparent" Margin="2,0,0,0" ToolTip="Delete" Cursor="Hand" Click="BtnDelete_Click" Tag="{Binding DocumentID}" BorderThickness="0">
+                                            <materialDesign:PackIcon Kind="DeleteOutline" Width="20" Height="20" Foreground="Red"/>
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <!-- Empty State Panel (Initially Hidden) -->
+                <StackPanel x:Name="EmptyStatePanel" 
+                            Visibility="Collapsed"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Margin="0,50,0,0">
+                    <TextBlock Text="📄" 
+                              FontSize="48" 
+                              HorizontalAlignment="Center"/>
+                    <TextBlock Text="No documents found" 
+                              FontSize="18" 
+                              FontFamily="Lexend"
+                              Foreground="#474747"
+                              Margin="0,10,0,0" 
+                              HorizontalAlignment="Center"/>
                 </StackPanel>
-            </ScrollViewer>
-        </Grid>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Pagination Section - Fixed at bottom -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,20">
+            <Button x:Name="BtnPrevious" Content="Previous" 
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    FontFamily="Lexend"
+                    Click="BtnPrevious_Click"/>
+            <Border Background="#26a69a" CornerRadius="0" 
+                    Width="30" Height="30" Margin="5,0">
+                <TextBlock x:Name="TxtCurrentPage" Text="1" HorizontalAlignment="Center" 
+                           VerticalAlignment="Center" Foreground="White" FontFamily="Lexend"/>
+            </Border>
+            <Button x:Name="BtnNext" Content="Next" 
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    FontFamily="Lexend"
+                    Click="BtnNext_Click"/>
+        </StackPanel>
     </Grid>
-</Window>
+</UserControl>

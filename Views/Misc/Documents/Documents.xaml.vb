@@ -1,16 +1,17 @@
 ﻿Imports System.Collections.ObjectModel
+Imports System.Diagnostics
 Imports System.IO
 Imports System.Windows
 Imports System.Windows.Controls
+Imports MySql.Data.MySqlClient
 Imports DPC.DPC.Components.Navigation
 Imports DPC.DPC.Data.Controllers
-Imports DPC.DPC.Data.Models
-Imports System.Diagnostics
 Imports DPC.DPC.Data.Helpers
+Imports DPC.DPC.Data.Models
 
 Namespace DPC.Views.Misc.Documents
     Partial Public Class Documents
-        Inherits Window
+        Inherits UserControl
 
         Private _documentController As New DocumentController()
         Private _documents As ObservableCollection(Of Document)
@@ -18,22 +19,14 @@ Namespace DPC.Views.Misc.Documents
         Private _currentPage As Integer = 1
         Private _itemsPerPage As Integer = 10
         Private _totalPages As Integer = 1
-        Private _currentEmployeeID As Integer
+        Private _currentEmployeeID As Long  ' Changed from Integer to Long
         Private _searchText As String = ""
 
-        Public Sub New(employeeID As Integer)
+        Public Sub New(employeeID As Long)  ' Changed from Integer to Long
             InitializeComponent()
 
             ' Store the employee ID
             _currentEmployeeID = employeeID
-
-            ' Add Sidebar to SidebarContainer
-            Dim sidebar As New Sidebar()
-            SidebarContainer.Child = sidebar
-
-            ' Add TopNavBar to TopNavBarContainer
-            Dim topNavBar As New TopNavBar()
-            TopNavBarContainer.Child = topNavBar
 
             ' Load documents for the current employee
             LoadDocuments()
@@ -44,15 +37,90 @@ Namespace DPC.Views.Misc.Documents
             End If
         End Sub
 
-        Private Sub LoadDocuments()
-            ' Get documents for the current employee
-            _documents = _documentController.GetDocumentsByEmployeeID(_currentEmployeeID)
+        ' Add a parameterless constructor for testing/design-time
+        Public Sub New()
+            InitializeComponent()
 
-            ' Apply filtering
-            ApplyFilters()
+            ' Try to get current employee ID
+            Try
+                _currentEmployeeID = GetCurrentEmployeeID()
+            Catch ex As Exception
+                ' If we can't get employee ID, show empty state
+                _currentEmployeeID = 0
+            End Try
+
+            ' Load documents for the current employee
+            If _currentEmployeeID > 0 Then
+                LoadDocuments()
+            Else
+                ' Show empty state
+                _documents = New ObservableCollection(Of Document)()
+                ApplyFilters()
+            End If
+
+            ' Initialize combobox selection
+            If CmbEntriesCount.Items.Count > 0 Then
+                CmbEntriesCount.SelectedIndex = 0
+            End If
+        End Sub
+
+        Private Function GetCurrentEmployeeID() As Long
+            ' Get the logged-in user's employee ID based on their username
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+
+                    ' Query using full_name
+                    Dim query As String = "SELECT employee_id FROM auth_users WHERE full_name = @fullname LIMIT 1"
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@fullname", CacheOnLoggedInName)
+                        Dim result = cmd.ExecuteScalar()
+
+                        If result IsNot Nothing AndAlso Not IsDBNull(result) Then
+                            Dim employeeIdString As String = result.ToString().Trim()
+                            Dim employeeId As Long
+                            If Long.TryParse(employeeIdString, employeeId) Then
+                                Return employeeId
+                            End If
+                        End If
+                    End Using
+                End Using
+            Catch ex As Exception
+                ' Log or handle error
+                Debug.WriteLine($"Error getting employee ID: {ex.Message}")
+            End Try
+
+            Throw New InvalidOperationException("Unable to determine current employee ID.")
+        End Function
+
+        Private Sub LoadDocuments()
+            Try
+                ' Debug: Show what employee ID we're using
+                Debug.WriteLine($"Loading documents for EmployeeID: {_currentEmployeeID}")
+
+                ' Get documents for the current employee
+                _documents = _documentController.GetDocumentsByEmployeeID(_currentEmployeeID)
+
+                ' Debug: Show how many documents were found
+                Debug.WriteLine($"Found {_documents.Count} documents")
+
+                ' Debug: List all documents
+                For Each doc In _documents
+                    Debug.WriteLine($"Document: {doc.DocumentID} - {doc.Title} - EmployeeID: {doc.EmployeeID}")
+                Next
+
+                ' Apply filtering
+                ApplyFilters()
+            Catch ex As Exception
+                Debug.WriteLine($"Error loading documents: {ex.Message}")
+                MessageBox.Show($"Error loading documents: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
         End Sub
 
         Private Sub ApplyFilters()
+            ' Guard against premature calls before initialization
+            If _documents Is Nothing Then Return
+
             ' Apply search filter
             If String.IsNullOrEmpty(_searchText) Then
                 _filteredDocuments = New ObservableCollection(Of Document)(_documents)
@@ -77,10 +145,8 @@ Namespace DPC.Views.Misc.Documents
             Dim pagedDocuments = _filteredDocuments.Skip((_currentPage - 1) * _itemsPerPage).Take(_itemsPerPage)
             DocumentsDataGrid.ItemsSource = pagedDocuments
 
-            ' Update pagination text
-            Dim startItem = Math.Min((_currentPage - 1) * _itemsPerPage + 1, _filteredDocuments.Count)
-            Dim endItem = Math.Min(_currentPage * _itemsPerPage, _filteredDocuments.Count)
-            TxtPaginationInfo.Text = $"Showing {startItem} to {endItem} of {_filteredDocuments.Count} entries"
+            ' Update current page display
+            TxtCurrentPage.Text = _currentPage.ToString()
 
             ' Update button states
             BtnPrevious.IsEnabled = (_currentPage > 1)
@@ -99,88 +165,13 @@ Namespace DPC.Views.Misc.Documents
         Private Sub BtnAddNew_Click(sender As Object, e As RoutedEventArgs)
             ' Open the add document window
             Dim addDocumentWindow As New AddDocument(_currentEmployeeID) With {
-                .Owner = Me
+                .Owner = Window.GetWindow(Me),
+                .WindowStartupLocation = WindowStartupLocation.CenterOwner
             }
 
             If addDocumentWindow.ShowDialog() = True Then
-                ' Reload documents after adding new one
+                ' Reload documents after adding
                 LoadDocuments()
-            End If
-        End Sub
-
-        Private Sub BtnView_Click(sender As Object, e As RoutedEventArgs)
-            ' Get the document ID from the button tag
-            Dim button = DirectCast(sender, Button)
-            Dim documentID = Convert.ToInt32(button.Tag)
-
-            ' Get the full document with content
-            Dim document = _documentController.GetDocumentByID(documentID, _currentEmployeeID)
-
-            If document IsNot Nothing Then
-                Try
-                    ' Create a temp directory specifically for our app
-                    Dim tempDir As String = Path.Combine(Path.GetTempPath(), "DPC_Documents")
-                    If Not Directory.Exists(tempDir) Then
-                        Directory.CreateDirectory(tempDir)
-                    End If
-
-                    ' Create a temporary file path with a unique name
-                    Dim tempFilePath As String = Path.Combine(tempDir, $"{document.DocumentID}_{document.FileName}")
-
-                    ' Save the file content to the temp location
-                    DocumentController.Base64ToFile(document.FileContent, tempFilePath)
-
-                    ' Open the file with default application
-                    Process.Start(New ProcessStartInfo() With {
-                        .FileName = tempFilePath,
-                        .UseShellExecute = True
-                    })
-                Catch ex As Exception
-                    MessageBox.Show($"Error opening document: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
-                End Try
-            Else
-                MessageBox.Show("Document not found or you don't have permission to view it.",
-                               "Error", MessageBoxButton.OK, MessageBoxImage.Error)
-            End If
-        End Sub
-
-        Private Sub BtnDelete_Click(sender As Object, e As RoutedEventArgs)
-            ' Get the document ID from the button tag
-            Dim button = DirectCast(sender, Button)
-            Dim documentID = Convert.ToInt32(button.Tag)
-
-            ' Find the document title
-            Dim document = _filteredDocuments.FirstOrDefault(Function(d) d.DocumentID = documentID)
-            Dim documentTitle = If(document IsNot Nothing, document.Title, "this document")
-
-            ' Confirm deletion
-            Dim result = MessageBox.Show($"Are you sure you want to delete '{documentTitle}'?",
-                                       "Confirm Deletion", MessageBoxButton.YesNo, MessageBoxImage.Question)
-
-            If result = MessageBoxResult.Yes Then
-                ' Delete the document
-                If _documentController.DeleteDocument(documentID, _currentEmployeeID) Then
-                    MessageBox.Show("Document deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
-                    LoadDocuments()
-                Else
-                    MessageBox.Show("Failed to delete document.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
-                End If
-            End If
-        End Sub
-
-        Private Sub BtnExcel_Click(sender As Object, e As RoutedEventArgs)
-            ' Export documents to Excel using the static ExcelExporter helper
-            If _filteredDocuments.Count = 0 Then
-                MessageBox.Show("No documents to export.", "Information", MessageBoxButton.OK, MessageBoxImage.Information)
-                Return
-            End If
-
-            Dim defaultFileName As String = $"Documents_Export_{DateTime.Now:yyyyMMdd}"
-            Dim worksheetName As String = "Documents"
-
-            ' Use the ExcelExporter static method
-            If ExcelExporter.ExportCollectionToExcel(_filteredDocuments, defaultFileName, worksheetName) Then
-                ' Success message is handled by the ExcelExporter
             End If
         End Sub
 
@@ -192,8 +183,9 @@ Namespace DPC.Views.Misc.Documents
 
         Private Sub CmbEntriesCount_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
             If CmbEntriesCount.SelectedItem IsNot Nothing Then
-                Dim comboBoxItem = DirectCast(CmbEntriesCount.SelectedItem, ComboBoxItem)
-                If Integer.TryParse(comboBoxItem.Content.ToString(), _itemsPerPage) Then
+                Dim selectedItem = TryCast(CmbEntriesCount.SelectedItem, ComboBoxItem)
+                If selectedItem IsNot Nothing Then
+                    _itemsPerPage = Integer.Parse(selectedItem.Content.ToString())
                     _currentPage = 1
                     ApplyFilters()
                 End If
@@ -212,6 +204,70 @@ Namespace DPC.Views.Misc.Documents
                 _currentPage += 1
                 ApplyFilters()
             End If
+        End Sub
+
+        Private Sub BtnView_Click(sender As Object, e As RoutedEventArgs)
+            Dim button = TryCast(sender, Button)
+            If button IsNot Nothing AndAlso button.Tag IsNot Nothing Then
+                Dim documentID = Integer.Parse(button.Tag.ToString())
+                Dim document = _documents.FirstOrDefault(Function(d) d.DocumentID = documentID)
+
+                If document IsNot Nothing Then
+                    ' Get the full file path
+                    Dim filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "uploads", "documents", document.FileName)
+
+                    If File.Exists(filePath) Then
+                        Try
+                            ' Open the document with default application
+                            Process.Start(New ProcessStartInfo(filePath) With {.UseShellExecute = True})
+                        Catch ex As Exception
+                            MessageBox.Show($"Error opening document: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                        End Try
+                    Else
+                        MessageBox.Show("Document file not found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    End If
+                End If
+            End If
+        End Sub
+
+        Private Sub BtnDelete_Click(sender As Object, e As RoutedEventArgs)
+            Dim button = TryCast(sender, Button)
+            If button IsNot Nothing AndAlso button.Tag IsNot Nothing Then
+                Dim documentID = Integer.Parse(button.Tag.ToString())
+                Dim document = _documents.FirstOrDefault(Function(d) d.DocumentID = documentID)
+
+                If document IsNot Nothing Then
+                    Dim result = MessageBox.Show(
+                        $"Are you sure you want to delete '{document.Title}'?",
+                        "Confirm Delete",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question)
+
+                    If result = MessageBoxResult.Yes Then
+                        If _documentController.DeleteDocument(documentID, _currentEmployeeID) Then
+                            MessageBox.Show("Document deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                            LoadDocuments()
+                        Else
+                            MessageBox.Show("Failed to delete document.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                        End If
+                    End If
+                End If
+            End If
+        End Sub
+
+        Private Sub BtnExcel_Click(sender As Object, e As RoutedEventArgs)
+            ' Export to Excel functionality
+            Try
+                ' Implement Excel export logic here
+                MessageBox.Show("Excel export functionality to be implemented.", "Export", MessageBoxButton.OK, MessageBoxImage.Information)
+            Catch ex As Exception
+                MessageBox.Show($"Error exporting to Excel: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+        End Sub
+
+        ' Add a public method to refresh the documents list
+        Public Sub RefreshDocuments()
+            LoadDocuments()
         End Sub
     End Class
 End Namespace

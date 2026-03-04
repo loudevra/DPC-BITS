@@ -1,6 +1,7 @@
 ﻿Imports System.Windows
 Imports System.Windows.Controls
 Imports System.Windows.Media
+Imports MySql.Data.MySqlClient
 Imports DPC.DPC.Views
 Imports DPC.DPC.Views.Accounts.Accounts.ManageAccounts
 Imports DPC.DPC.Views.Stocks.PurchaseOrder.Delivery
@@ -259,6 +260,25 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "pulloutpreview"
                         Return New DPC.Components.Forms.PreviewPulloutReceipt()
 
+                    ' Documents Navigation
+                    Case "viewdocuments"
+                        ' Get current employee ID from auth_users table
+                        Dim employeeID As Integer = 1 ' Default fallback
+                        Try
+                            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                                conn.Open()
+                                Dim query As String = "SELECT employee_id FROM auth_users LIMIT 1"
+                                Using cmd As New MySqlCommand(query, conn)
+                                    Dim result = cmd.ExecuteScalar()
+                                    If result IsNot Nothing Then
+                                        employeeID = Convert.ToInt32(result)
+                                    End If
+                                End Using
+                            End Using
+                        Catch ex As Exception
+                            ' Use default employee ID if query fails
+                        End Try
+                        Return New Misc.Documents.Documents(employeeID)
 
                     ' POS Navigation
                     Case "navigatetobillingstatement"

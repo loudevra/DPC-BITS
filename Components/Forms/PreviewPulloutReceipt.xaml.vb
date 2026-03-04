@@ -9,6 +9,9 @@ Imports MongoDB.Driver.GridFS
 Imports Newtonsoft.Json
 Imports PdfSharp.Drawing
 Imports PdfSharp.Pdf
+Imports MySql.Data.MySqlClient
+Imports DPC.DPC.Data.Models
+Imports DPC.DPC.Data.Controllers
 
 Namespace DPC.Components.Forms
     Public Class PreviewPulloutReceipt
@@ -192,8 +195,9 @@ Namespace DPC.Components.Forms
             End If
         End Sub
 
-        Private Async Sub SaveToMongo(docName As String)
+        Private Function SaveToMongo(docName As String) As String
             Dim dpi As Integer = 300
+            Dim pdfFileName As String = docName & ".pdf"
 
             ' Prepare layout
             Dim layoutWidth = PrintPreview.ActualWidth
@@ -218,7 +222,7 @@ Namespace DPC.Components.Forms
             ' Paths
             Dim appDir As String = AppDomain.CurrentDomain.BaseDirectory
             Dim tempImagePath As String = System.IO.Path.Combine(appDir, Guid.NewGuid().ToString() & ".png")
-            Dim tempPdfPath As String = System.IO.Path.Combine(appDir, docName & ".pdf")
+            Dim tempPdfPath As String = System.IO.Path.Combine(appDir, pdfFileName)
 
             Try
                 ' Save temp image file
@@ -245,19 +249,19 @@ Namespace DPC.Components.Forms
 
                 Using FileStream As New FileStream(tempPdfPath, FileMode.Open, FileAccess.Read)
                     Dim options As New GridFSUploadOptions() With {
-            .Metadata = New BsonDocument From {
-                {"uploadedBy", CacheOnLoggedInName},
-                {"uploadedAt", BsonDateTime.Create(DateTime.UtcNow)},
-                {"source", "pullout-receipt/por"},
-                {"billiingNumber", PORDetails.PORNumber},
-                {"pdfFilePath", tempPdfPath}
-            }
-        }
+                        .Metadata = New BsonDocument From {
+                            {"uploadedBy", CacheOnLoggedInName},
+                            {"uploadedAt", BsonDateTime.Create(DateTime.UtcNow)},
+                            {"source", "pullout-receipt/por"},
+                            {"billiingNumber", PORDetails.PORNumber},
+                            {"pdfFilePath", tempPdfPath}
+                        }
+                    }
 
                     gridFS.UploadFromStream(Path.GetFileName(tempPdfPath), FileStream, options)
                 End Using
 
-                'MessageBox.Show("PDF uploaded to MongoDB.")
+                Return pdfFileName
 
             Finally
                 ' Delete the temp files
@@ -268,7 +272,7 @@ Namespace DPC.Components.Forms
                     Try : File.Delete(tempPdfPath) : Catch : End Try
                 End If
             End Try
-        End Sub
+        End Function
 
         Private Sub SaveToDB()
             _itemsSave.Clear()
@@ -288,12 +292,87 @@ Namespace DPC.Components.Forms
             Dim pullouto As String = PORDetails.PulloutTo
             Dim PORNmber As String = PORDetails.PORNumber
 
-            If PullOutFormController.SavePullOut(PORNumber, pullouto, _itemsSave) Then
-                SaveToMongo(PORNmber)
+            If PullOutFormController.SavePullOut(PORNmber, pullouto, _itemsSave) Then
+                ' Save to MongoDB GridFS
+                Dim pdfFileName As String = SaveToMongo(PORNmber)
+
+                ' NEW: Save document record to documents table
+                If Not String.IsNullOrEmpty(pdfFileName) Then
+                    SaveDocumentRecord(PORNmber, pdfFileName)
+                End If
+
                 MessageBox.Show("Pullout saved successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
                 ViewLoader.DynamicView.NavigateToView("pulloutreceipt", Me)
             Else
                 MessageBox.Show("Failed to save pullout.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End If
+        End Sub
+
+        Private Function GetCurrentEmployeeID() As Long  ' Changed from Integer to Long
+            ' CacheOnLoggedInName contains the full_name from auth_users
+            ' We need to get the employee_id that matches this full_name
+
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+
+                    ' Query using full_name
+                    Dim query As String = "SELECT employee_id FROM auth_users WHERE full_name = @fullname LIMIT 1"
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@fullname", CacheOnLoggedInName)
+                        Dim result = cmd.ExecuteScalar()
+
+                        If result IsNot Nothing AndAlso Not IsDBNull(result) Then
+                            ' Since employee_id is varchar(16), convert to string first
+                            Dim employeeIdString As String = result.ToString().Trim()
+
+                            ' Validate it's a valid long integer
+                            Dim employeeId As Long
+                            If Long.TryParse(employeeIdString, employeeId) Then
+                                Return employeeId
+                            Else
+                                Throw New InvalidOperationException($"Invalid employee_id format: '{employeeIdString}' for user '{CacheOnLoggedInName}'")
+                            End If
+                        End If
+                    End Using
+                End Using
+            Catch ex As MySqlException
+                MessageBox.Show("Database error: " & ex.Message & vbCrLf & vbCrLf +
+                               "Please contact support.", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                Throw
+            Catch ex As Exception
+                MessageBox.Show("Error retrieving employee ID: " & ex.Message & vbCrLf & vbCrLf +
+                               "User: " & CacheOnLoggedInName & vbCrLf +
+                               "Please contact support.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                Throw
+            End Try
+
+            ' If we get here, the user wasn't found
+            Throw New InvalidOperationException("Unable to determine current employee ID. User '" & CacheOnLoggedInName & "' not found in database.")
+        End Function
+
+        Private Sub SaveDocumentRecord(porNumber As String, pdfFileName As String)
+            ' Get current employee ID from cache or auth_users
+            Dim employeeID As Long = GetCurrentEmployeeID()  ' Changed from Integer to Long
+
+            ' Create document object
+            Dim document As New DPC.Data.Models.Document() With {
+                .EmployeeID = employeeID,
+                .Title = "Pull Out Receipt - " & porNumber,
+                .FileName = pdfFileName,
+                .FileContent = "", ' Empty since file is in MongoDB GridFS
+                .FileType = "application/pdf",
+                .FileSize = 0, ' You can calculate actual size if needed
+                .UploadDate = DateTime.Now
+            }
+
+            ' Save to documents table using DocumentController
+            Dim docController As New DPC.Data.Controllers.DocumentController()
+            If Not docController.AddDocument(document) Then
+                MessageBox.Show("Warning: Document was saved but failed to add to documents list.",
+                               "Warning",
+                               MessageBoxButton.OK,
+                               MessageBoxImage.Warning)
             End If
         End Sub
     End Class

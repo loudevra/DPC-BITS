@@ -3,7 +3,7 @@
 Namespace DPC.Data.Models
     Public Class Document
         Public Property DocumentID As Integer
-        Public Property EmployeeID As String
+        Public Property EmployeeID As Long  ' Changed from Integer to Long
         Public Property Title As String
         Public Property FileName As String
         Public Property FileContent As String  ' Base64 encoded content
@@ -15,7 +15,7 @@ Namespace DPC.Data.Models
             UploadDate = DateTime.Now
         End Sub
 
-        Public Sub New(employeeID As Integer, title As String, fileName As String, fileContent As String, fileType As String, fileSize As Integer)
+        Public Sub New(employeeID As Long, title As String, fileName As String, fileContent As String, fileType As String, fileSize As Integer)
             Me.EmployeeID = employeeID
             Me.Title = title
             Me.FileName = fileName
