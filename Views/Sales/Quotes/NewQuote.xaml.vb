@@ -1582,6 +1582,7 @@ Namespace DPC.Views.Sales.Quotes
                 ' Debugging 
                 Dim selectedTaxType As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
 
+
                 If selectedTaxType = "Exclusive" Then
                     CostEstimateDetails.CEVatLabel = $"VAT Exclusive"
                     CostEstimateDetails.CESubtotalLabel = "Subtotal Vat Ex."

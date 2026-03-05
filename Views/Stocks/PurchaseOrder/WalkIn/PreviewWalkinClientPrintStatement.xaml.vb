@@ -93,6 +93,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             BankDetailBox.Text = BLBankDetails
             AccNameBox.Text = BLAccountName
             AccNoBox.Text = BLAccountNumber
+            lblSubtotal.Text = WalkinBillingStatementDetails.BLSubtotalLabel
+            lblVat.Text = WalkinBillingStatementDetails.BLVatLabel
 
 
             remarksBox.Text = WalkinBillingStatementDetails.BLremarksTxt

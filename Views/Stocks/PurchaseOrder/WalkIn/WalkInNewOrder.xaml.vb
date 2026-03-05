@@ -1357,6 +1357,16 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 Dim selectedWarehouse As String = Warehouse.Content.ToString()
                 WalkinBillingStatementDetails.BLWarehouseNameCache = selectedWarehouse
 
+                Dim selectedTaxType As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
+
+                If selectedTaxType = "Exclusive" Then
+                    WalkinBillingStatementDetails.BLVatLabel = $"VAT Exclusive"
+                    WalkinBillingStatementDetails.BLSubtotalLabel = "Subtotal Vat Ex."
+                ElseIf selectedTaxType = "Inclusive" Then
+                    WalkinBillingStatementDetails.BLVatLabel = "VAT 12%"
+                    WalkinBillingStatementDetails.BLSubtotalLabel = "Subtotal Vat In."
+                End If
+
                 ViewLoader.DynamicView.NavigateToView("navigatetobillingstatement", Me)
             Catch ex As Exception
                 MessageBox.Show("Please Fill up all of the Fields")
