@@ -62,7 +62,7 @@ Namespace DPC.Data.Helpers.ViewLoader
             Dim key = viewName.ToLower()
             If _viewCache.ContainsKey(key) Then _viewCache.Remove(key)
 
-            If key Is "salesnewquote" Then
+            If key = "salesnewquote" Then
                 CostEstimateDetails.ClearAllCECache()
             End If
 
