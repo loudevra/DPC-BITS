@@ -158,9 +158,9 @@
                                             <ColumnDefinition Width="385*"/>
                                         </Grid.ColumnDefinitions>
 
-                                        <Grid.Background>
+                                        <!--<Grid.Background>
                                             <ImageBrush ImageSource="/Assets/images/DREAMPCBUILD LOGO WATERMARK SLANTED SPACED.png" Stretch="UniformToFill" Opacity="0.05"/>
-                                        </Grid.Background>
+                                        </Grid.Background>-->
 
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
