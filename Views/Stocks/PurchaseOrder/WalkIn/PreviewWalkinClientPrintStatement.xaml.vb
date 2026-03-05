@@ -400,6 +400,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 ' Handle the response
                 If result = MessageBoxResult.Yes Then
                     _showDelivery = True
+                    DeliveryDetails.DRReferenceInvoice = WalkinBillingStatementDetails.BLNumberCache
+                    DeliveryDetails.DRClientName = WalkinBillingStatementDetails.BLClientName
+                    WalkinBillingStatementDetails.ClearAllBLCache()
                     ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
                 Else
                     Debug.WriteLine("User declined Delivery Receipt creation.")
