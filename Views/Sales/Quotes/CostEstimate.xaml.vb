@@ -302,6 +302,7 @@ Namespace DPC.Views.Sales.Quotes
             CostEstimateDetails.CEGrandTotalCost = TotalCost.Text
             CostEstimateDetails.CEApproved = cmbApproved.Text
             CostEstimateDetails.CEWarranty = Warranty.Text
+            CostEstimateDetails.CEDeliveryMobilization = cmbDeliveryMobilization.Text
 
             Dim deliv As Decimal = 0
             Dim install As Decimal = 0
