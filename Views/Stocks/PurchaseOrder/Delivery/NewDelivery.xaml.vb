@@ -608,8 +608,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     txtClientName.Text = billing.ClientID
                 End If
 
-                cmbPaymentTerm.Text = billing.PaymentTerms
-
                 DeliveryDetails.DRClientName = txtClientName.Text
                 DeliveryDetails.DRReferenceInvoice = billing.BillingNumber
 
@@ -650,6 +648,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             txtClientDetails.Clear()
             cmbPaymentTerm.SelectedIndex = -1
             cmbShippingMethod.SelectedIndex = -1
+            cmbApprovedBy.SelectedIndex = -1
             txtDeliveryNote.Clear()
 
             ' 2. Reset the Delivery ID to default (base invoice ref or empty)

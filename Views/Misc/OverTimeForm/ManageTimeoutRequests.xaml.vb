@@ -1,8 +1,9 @@
-﻿
+﻿' ManageTimeoutRequests.xaml.vb
 Imports System.Collections.ObjectModel
 Imports System.Windows
 Imports System.Windows.Controls
 Imports DPC.DPC.Data.Helpers.ViewLoader
+Imports MySql.Data.MySqlClient
 
 Namespace DPC.Views.Misc.OverTime
 
@@ -16,6 +17,7 @@ Namespace DPC.Views.Misc.OverTime
         Public Property RequestDate As String
         Public Property Status As String
 
+        ' --- ADD THESE MISSING FIELDS ---
         Public Property EmployeeID As String
         Public Property Supervisor As String
         Public Property StartTime As String
@@ -23,8 +25,6 @@ Namespace DPC.Views.Misc.OverTime
         Public Property Reason As String
         Public Property Remarks As String
         Public Property RequestedBy As String
-
-        ' --- ADD THESE TWO NEW FIELDS ---
         Public Property ApprovedBy As String
         Public Property ApprovalDate As String
     End Class
@@ -38,41 +38,57 @@ Namespace DPC.Views.Misc.OverTime
 
         Public Sub New()
             InitializeComponent()
+            LoadOvertimeRequests()
+        End Sub
 
-            ' Add one default row so the grid isn't totally empty
-            If GlobalOvertimeList.Count = 0 Then
-                GlobalOvertimeList.Add(New OvertimeRequestModel With {
-                    .OvertimeID = "OT-001",
-                    .EmployeeName = "John Doe",
-                    .JobTitle = "Developer",
-                    .Department = "IT",
-                    .TotalHours = "4",
-                    .RequestDate = "Oct 25, 2025",
-                    .Status = "Pending"
-                })
-            End If
+        Private Sub LoadOvertimeRequests()
+            GlobalOvertimeList.Clear()
 
-            ' 3. Bind the DataGrid to the Master List
+            Dim connStr As String = SplashScreen.GetDatabaseConnection().ConnectionString()
+            Try
+                Using conn As New MySqlConnection(connStr)
+                    conn.Open()
+                    Dim cmd As New MySqlCommand("SELECT * FROM overtime_requests", conn)
+                    Using reader As MySqlDataReader = cmd.ExecuteReader()
+                        While reader.Read()
+                            GlobalOvertimeList.Add(New OvertimeRequestModel With {
+                        .OvertimeID = reader("OvertimeID").ToString(),
+                        .EmployeeName = reader("EmployeeName").ToString(),
+                        .EmployeeID = reader("EmployeeID").ToString(),
+                        .JobTitle = reader("JobTitle").ToString(),
+                        .Department = reader("Department").ToString(),
+                        .Supervisor = reader("Supervisor").ToString(),
+                        .StartTime = reader("StartTime").ToString(),
+                        .EndTime = reader("EndTime").ToString(),
+                        .TotalHours = reader("TotalHours").ToString(),
+                        .Reason = reader("Reason").ToString(),
+                        .Remarks = reader("Remarks").ToString(),
+                        .RequestedBy = reader("RequestedBy").ToString(),
+                        .RequestDate = reader("RequestDate").ToString(),
+                        .Status = reader("Status").ToString()
+                    })
+                        End While
+                    End Using
+                End Using
+            Catch ex As Exception
+                MessageBox.Show("Error loading overtime requests: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+
             dataGrid.ItemsSource = GlobalOvertimeList
         End Sub
 
-        Private Sub NavigateToPreviewPrintOverTimeRequestForm(sender As Object, e As RoutedEventArgs)
-            ' 1. Identify which button was clicked
-            Dim btn As Button = TryCast(sender, Button)
-            If btn Is Nothing Then Return
-
-            ' 2. Get the data from the exact row the user clicked
-            Dim selectedRecord As OvertimeRequestModel = TryCast(btn.DataContext, OvertimeRequestModel)
-
-            If selectedRecord IsNot Nothing Then
-                ' 3. Send that row's data to our Print Preview screen's shared variable
-                DPC.Views.Misc.OverTime.PreviewPrintOverTimeRequestForm.TargetPrintRecord = selectedRecord
-
-                ' 4. Instantly switch the view to the Overtime Print Preview!
-                DPC.Data.Helpers.ViewLoader.DynamicView.NavigateToView("previewprintovertimerequestform", Me)
-            End If
+        ' ==========================================
+        ' NAVIGATION & ACTIONS
+        ' ==========================================
+        Private Sub NavigateToNewRequest(sender As Object, e As RoutedEventArgs)
+            DynamicView.NavigateToView("overtimerequestform", Me)
         End Sub
 
+        Private Sub NavigateToPrintPreview(sender As Object, e As RoutedEventArgs)
+            ' Placeholder for print preview navigation
+        End Sub
+        ' Inside ManageTimeoutRequests.xaml.vb
+        ' Place this inside your ManageOvertimeRequests.xaml.vb file
         Private Sub BtnEdit_Click(sender As Object, e As RoutedEventArgs)
             ' 1. Get the clicked row's data
             Dim selectedRecord As OvertimeRequestModel = CType(CType(sender, Button).DataContext, OvertimeRequestModel)
@@ -95,15 +111,30 @@ Namespace DPC.Views.Misc.OverTime
 
             Dim itemToDelete As OvertimeRequestModel = TryCast(btn.DataContext, OvertimeRequestModel)
             If itemToDelete IsNot Nothing Then
-                ' Ask for confirmation
                 Dim result = MessageBox.Show($"Are you sure you want to delete request {itemToDelete.OvertimeID}?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning)
 
                 If result = MessageBoxResult.Yes Then
-                    ' Delete it from the list (Instantly updates the UI)
-                    GlobalOvertimeList.Remove(itemToDelete)
+                    Dim connStr As String = SplashScreen.GetDatabaseConnection().ConnectionString()
+                    Try
+                        Using conn As New MySqlConnection(connStr)
+                            conn.Open()
+                            Dim cmd As New MySqlCommand(
+                        "DELETE FROM overtime_requests WHERE OvertimeID = @OvertimeID", conn)
+                            cmd.Parameters.AddWithValue("@OvertimeID", itemToDelete.OvertimeID)
+                            cmd.ExecuteNonQuery()
+                        End Using
+
+                        ' Remove from list and refresh
+                        GlobalOvertimeList.Remove(itemToDelete)
+                        MessageBox.Show("Request deleted successfully.", "Deleted", MessageBoxButton.OK, MessageBoxImage.Information)
+
+                    Catch ex As Exception
+                        MessageBox.Show("Error deleting request: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    End Try
                 End If
             End If
         End Sub
+
         ' ==========================================
         ' SEARCH FILTER LOGIC
         ' ==========================================
@@ -144,11 +175,5 @@ Namespace DPC.Views.Misc.OverTime
         Private Sub dataGrid_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles dataGrid.SelectionChanged
 
         End Sub
-        Private Sub NavigateToNewRequest(sender As Object, e As RoutedEventArgs)
-            ' Navigates to the Overtime Request Form when "Add New" is clicked
-            DPC.Data.Helpers.ViewLoader.DynamicView.NavigateToView("overtimerequestform", Me)
-        End Sub
-
-
     End Class
 End Namespace
