@@ -160,8 +160,6 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Sales.CreditNotes.CreditNotes()
                     Case "newsubscriptioninvoice"
                         Return New Sales.Subscriptions.NewSubscriptionInvoice()
-                    Case "newquote"
-                        Return New Sales.Quotes.NewQuote()
                     Case "salesnewposinvoice"
                         Return New Views.POS.SalesNewInvoice()
                     Case "salesnewposinvoicemobile"

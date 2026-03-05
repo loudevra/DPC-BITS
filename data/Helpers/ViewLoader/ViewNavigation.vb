@@ -29,12 +29,12 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Dim currentViewName = ViewLoader.GetViewName(mainWindow.CurrentView)
 
                     If currentViewName <> targetName OrElse Not _viewCache.ContainsKey(targetName) Then
-
                         Dim targetView As Object = Nothing
 
                         If _viewCache.ContainsKey(targetName) Then
                             targetView = _viewCache(targetName)
                         Else
+
                             targetView = ViewLoader.Load(viewName)
                             _viewCache(targetName) = targetView
                         End If

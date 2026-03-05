@@ -435,7 +435,7 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Sub BtnReset_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddClient.Click
-            ViewLoader.DynamicView.NavigateToView("newquote", Me)
+            ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
         End Sub
 
         Private Sub LoadCachedQuoteItems()
