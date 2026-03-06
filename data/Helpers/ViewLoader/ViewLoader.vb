@@ -1,11 +1,11 @@
-﻿
-Imports System.Windows
+﻿Imports System.Windows
 Imports System.Windows.Controls
 Imports System.Windows.Media
 Imports DPC.DPC.Views
 Imports DPC.DPC.Views.Accounts.Accounts.ManageAccounts
 Imports DPC.DPC.Views.Stocks.PurchaseOrder.Delivery
 Imports DPC.DPC.Views.Stocks.Suppliers.NewSupplier
+Imports DPC.Views.Misc.EmployeeLeave
 
 Namespace DPC.Data.Helpers.ViewLoader
     ''' <summary>
@@ -67,7 +67,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Stocks.StockReturn.CustomersRecords.CustomersRecords()
                     Case "suppliersrecords"
                         Return New Stocks.StockReturn.SupplierRecords.SuppliersRecords()
-                        ' Promo Codes Navigation
+
+                    ' Promo Codes Navigation
                     Case "promocodes"
                         Return New PromoCodes.ManagePromoCodes()
                     Case "addpromocode"
@@ -82,7 +83,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Stocks.PurchaseOrder.Delivery.PreviewEditableDeliveryReceipt()
                     Case "previewprintdeliveryreceipt"
                         Return New Stocks.PurchaseOrder.Delivery.PreviewPrintDeliveryReceipt()
-                         ' CRM Navigation
+
+                    ' CRM Navigation
                     Case "clientgroups"
                         Return New CRM.ClientGroup.ClientGroups()
                     Case "addnewclientgroup"
@@ -105,16 +107,16 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "generatestatement"
                         Return New DPC.Views.DataReports.Statements.DTRTabStructured()
 
-                        ' Employees Navigation
+                    ' Employees Navigation
                     Case "permissions"
                         Return New HRM.Employees.Permissions.PermissionsEmployee()
-                        'Holidays Navigation
+                    'Holidays Navigation
                     Case "holidays"
                         Return New HRM.Employees.Holidays.EmployeeHolidays()
-                           'Payroll Navigation
+                    'Payroll Navigation
                     Case "payrolltransaction"
                         Return New HRM.Employees.Payroll.PayrollTransaction()
-                        'Salaries Navigation
+                    'Salaries Navigation
                     Case "salaries"
                         Return New HRM.Employees.Salaries.EmployeeSalaries()
                     Case "addnewsalaries"
@@ -123,10 +125,10 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New DPC.Views.PromoCodes.AddPromoCode()
                     Case "editbrand"
                         Return New DPC.Components.Forms.EditBrand()
-                        'Departments Navigation
+                    'Departments Navigation
                     Case "departments"
                         Return New HRM.Departments.DepartmentsView()
-                         'Attendance Navigation
+                    'Attendance Navigation
                     Case "attendance"
                         Return New HRM.Employees.Attendance.AttendanceEmployee()
                     Case "addnewemployee"
@@ -138,8 +140,7 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "addproject"
                         Return New Views.Project.AddProject1()
 
-
-                         ' Sales Module Navigation
+                    ' Sales Module Navigation
                     Case "salesnewinvoice"
                         Return New Views.Sales.Saless.SalesNewInvoice()
                     Case "manageposinvoices"
@@ -167,8 +168,7 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "salesnewposinvoicemobile"
                         Return New Views.POS.SalesNewInvoiceMobile()
 
-
-                        ' Accounts Navigation
+                    ' Accounts Navigation
                     Case "manageaccounts"
                         Return New Accounts.Accounts.ManageAccounts.ManageAccounts()
                     Case "accountsexpense"
@@ -188,13 +188,11 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "clienttransactions"
                         Return New Accounts.Transactions.ClientsTransactions()
                     Case "navaddaccount"
-                        'path of the design you want to see
                         Return New Accounts.Accounts.ManageAccounts.AddAccount()
                     Case "addclienttabs"
-                        'path of the design you want to see
                         Return New Accounts.Transactions.ClientAddTabs.AddClientTabs()
 
-                        ' Project Navigation
+                    ' Project Navigation
                     Case "newproject"
                         Return New Project.AddProject1()
                     Case "addproject2"
@@ -206,7 +204,7 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "todolist"
                         Return New Project.ToDoList()
 
-                         ' Sales Cost Estimate Navigation
+                    ' Sales Cost Estimate Navigation
                     Case "costestimate"
                         Return New Sales.Quotes.CostEstimate()
                     Case "costestimategovernment"
@@ -217,19 +215,19 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "previewprintquoteeditedquote"
                         Return New DPC.Components.Forms.PreviewPrintEditedQuote()
 
-                         ' Sales Billing Estimate Navigation
+                    ' Sales Billing Estimate Navigation
                     Case "billingestimate"
                         Return New Sales.Quotes.BillingStatement()
-                        ' New Quote Navigation
+                    ' New Quote Navigation
                     Case "navigatetoquotes"
                         Return New Sales.Quotes.NewQuote()
-                        ' Print Preview for Quotes
+                    ' Print Preview for Quotes
                     Case "printpreviewquotes"
                         Return New DPC.Components.Forms.PreviewPrintQuote()
-                        ' Print Preview for Quotes Government
+                    ' Print Preview for Quotes Government
                     Case "printpreviewquotesgovernment"
                         Return New DPC.Components.Forms.PreviewPrintQuoteGovernment()
-                        ' New Subscription Navigation
+                    ' New Subscription Navigation
                     Case "newsubscriptions"
                         Return New Sales.Subscriptions.NewSubscriptionInvoice()
                     ' Subscription Navigation
@@ -260,7 +258,6 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "pulloutpreview"
                         Return New DPC.Components.Forms.PreviewPulloutReceipt()
 
-
                     ' POS Navigation
                     Case "navigatetobillingstatement"
                         Return New Stocks.PurchaseOrder.WalkIn.WalkInBillingStatement()
@@ -271,7 +268,7 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "navigatetocostestimate"
                         Return New Sales.Quotes.CostEstimate()
 
-                     'DataReports - Upload Files Navigation
+                    'DataReports - Upload Files Navigation
                     Case "hrmuploadfiles"
                         Return New Views.DataReports.UploadFileOnline.UploadFileOnline()
                     Case "hrmmanageregularcostestimatefiles"
@@ -279,12 +276,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "hrmmanagegovernmentcostestimatefiles"
                         Return New Views.DataReports.ManageGovernmentCostEstimateFiles.ManageGovernmentCostEstimateFiles()
 
-                        'Misc - Cash Advance Navigation
+                    'Misc - Cash Advance Navigation
                     Case "cashadvancenewrequest"
                         Return New Views.Misc.CashAdvance.CashAdvanceNewRequest()
-                   ' Case "overtimeform"
-                       ' Return New Views.Misc.CashAdvance.OvertimeRequestForm()
-
                     Case "managecashadvancerequests"
                         Return New Views.Misc.CashAdvance.ManageCashAdvanceRequests()
                     Case "editcashadvancerequest"
@@ -292,7 +286,7 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "previewprintcashadvancerequestform"
                         Return New Views.Misc.CashAdvance.PreviewPrintCashAdvanceRequestForm()
 
-                        'Misc - Overtime Navigation
+                    'Misc - Overtime Navigation
                     Case "overtimerequestform"
                         Return New Views.Misc.OverTime.OverTimeRequestForm()
                     Case "manageovertimerequests"
@@ -302,7 +296,17 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "previewprintovertimerequestform"
                         Return New Views.Misc.OverTime.PreviewPrintOverTimeRequestForm()
 
-
+                    ' ==========================================
+                    ' Misc - Employee Leave Navigation
+                    ' ==========================================
+                    Case "employeeleaverequestform"
+                        Return New DPC.Views.Misc.EmployeeLeave.EmployeeLeaveRequestForm()
+                    Case "manageemployeeleaverequests"
+                        Return New DPC.Views.Misc.EmployeeLeave.ManageEmployeeLeaveRequests()
+                    Case "editemployeeleave"
+                        Return New DPC.Views.Misc.EmployeeLeave.EditEmployeeLeave()
+                    Case "previewprintemployeeleave"
+                        Return New DPC.Views.Misc.EmployeeLeave.PreviewPrintEmployeeLeave()
 
                     Case Else
                         ' Return a placeholder UserControl with error text
@@ -384,8 +388,6 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "hrmmanagecostestimatefiles"
             ElseIf typeName = "managedeliveryreceipt" Then
                 Return "managedeliveryreceipt"
-
-
 
                 ' Promo Codes Navigation
             ElseIf typeName = "promocodes" Then
@@ -526,14 +528,29 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "printpreview"
             ElseIf typeName = "cashadvancenewrequest" Then
                 Return "cashadvancenewrequest"
-            ElseIf typeName = "overtimerequestform" Then
-                Return "overtimerequestform"
             ElseIf typeName = "managecashadvancerequests" Then
                 Return "managecashadvancerequests"
             ElseIf typeName = "editcashadvancerequest" Then
                 Return "editcashadvancerequest"
             ElseIf typeName = "previewprintcashadvancerequestform" Then
                 Return "previewprintcashadvancerequestform"
+
+            ElseIf typeName = "overtimerequestform" Then
+                Return "overtimerequestform"
+            ElseIf typeName = "manageovertimerequests" Then
+                Return "manageovertimerequests"
+            ElseIf typeName = "editovertime" Then
+                Return "editovertime"
+            ElseIf typeName = "previewprintovertimerequestform" Then
+                Return "previewprintovertimerequestform"
+
+                ' ==========================================
+                ' Misc - Employee Leave Navigation
+                ' ==========================================
+            ElseIf typeName = "employeeleaverequestform" Then
+                Return "employeeleaverequestform"
+            ElseIf typeName = "manageemployeeleaverequests" Then
+                Return "manageemployeeleaverequests"
 
             ElseIf typeName = "pulloutreceipt" Then
                 Return "pulloutreceipt"

@@ -164,6 +164,16 @@ Namespace DPC.Components.UI
             ViewLoader.DynamicView.NavigateToView("previewprintovertimerequestform", Me)
         End Sub
 
+        ' ==========================================
+        ' EMPLOYEE LEAVE NAVIGATION EVENTS
+        ' ==========================================
+        Private Sub NavigateToEmployeeLeaveRequestForm(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("employeeleaverequestform", Me)
+        End Sub
+
+        Private Sub NavigateToManageEmployeeLeaveRequests(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("manageemployeeleaverequests", Me)
+        End Sub
 
     End Class
 End Namespace
