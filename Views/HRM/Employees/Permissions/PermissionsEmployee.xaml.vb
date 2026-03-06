@@ -302,7 +302,7 @@ Namespace DPC.Views.HRM.Employees.Permissions
         Private Sub NavigateToAddEmployee()
             Try
                 ' Option 1: If DynamicView has shared/static methods
-                ViewLoader.DynamicView.NavigateToView("addnewemployee", Me)
+                ViewLoader.DynamicView.NavigateToView("dashboard", Me)
 
                 ' Option 2: If you need to create an instance (uncomment if needed)
                 ' Dim dynamicView As New ViewLoader.DynamicView()
