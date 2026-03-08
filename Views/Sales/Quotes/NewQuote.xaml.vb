@@ -1584,11 +1584,11 @@ Namespace DPC.Views.Sales.Quotes
 
 
                 If selectedTaxType = "Exclusive" Then
-                    CostEstimateDetails.CEVatLabel = $"VAT Exclusive"
-                    CostEstimateDetails.CESubtotalLabel = "Subtotal Vat Ex."
+                    CostEstimateDetails.CEVatLabel = $"VAT EXCLUSIVE"
+                    CostEstimateDetails.CESubtotalLabel = "SUBTOTAL VAT EX."
                 ElseIf selectedTaxType = "Inclusive" Then
                     CostEstimateDetails.CEVatLabel = "VAT 12%"
-                    CostEstimateDetails.CESubtotalLabel = "Subtotal Vat In."
+                    CostEstimateDetails.CESubtotalLabel = "SUBTOTAL VAT IN."
                 End If
 
                 Debug.WriteLine($"QuoteNumber: {CEQuoteNumberCache}, QuoteDate: {CEQuoteDateCache}, ValidityDate: {CEQuoteValidityDateCache}, Tax: {CETaxValueCache}, TotalAmount: {CETotalAmountCache}, Note: {CEnoteTxt}, Remarks: {CEremarksTxt}, Items: {JsonConvert.SerializeObject(CEQuoteItemsCache)}, Signature: {CEsignature}, Image: {CEImageCache}, Path: {CEPathCache}, ClientName: {CEClientName}, Phone: {CEPhone}, Email: {CEEmail}, Term1: {CETerm1}, Term2: {CETerm2}, Term3: {CETerm3}, Term4: {CETerm4}, Term5: {CETerm5}, Term6: {CETerm6}, Term7: {CETerm7}, Term8: {CETerm8}, Term9: {CETerm9}, Term10: {CETerm10}, Term11: {CETerm11}, Term12: {CETerm12}")
