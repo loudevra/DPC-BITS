@@ -133,6 +133,11 @@ Namespace DPC.Components.UI
             ViewLoader.DynamicView.NavigateToView("viewdocuments", Me)
         End Sub
 
+        Private Sub NavigateToManagePullOutForm(sender As Object, e As RoutedEventArgs)
+            ' Implementation for navigating to pull out form
+
+        End Sub
+
 
         Private Sub NavigateToCashAdvanceNewRequest(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("cashadvancenewrequest", Me)
