@@ -256,21 +256,30 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
             For Each kvp In _productTextBoxes
                 If kvp.Key.StartsWith("txtTaxPercent_") Then
+                    Dim txt = kvp.Value
+                    Dim border = TryCast(txt.Parent, Border)
+
                     If _TaxSelection Then
                         ' Exclusive: Allow user to edit and clear the value
-                        kvp.Value.Text = "0" ' Let user type any percent
+                        kvp.Value.Text = "0" '
                         kvp.Value.IsReadOnly = False
                         CEtaxSelection = True
-                        TaxHeader.Header = "Tax(%)"
-                        'ShowVatExBtn.Visibility = Visibility.Visible
+                        TaxHeader.Header = "TAX(%)"
+                        If border IsNot Nothing Then
+                            border.BorderThickness = New Thickness(1)
+                            border.BorderBrush = CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush)
+                        End If
                     Else
                         ' Inclusive: Set to 12 and make it readonly
                         kvp.Value.Text = ""
                         kvp.Value.IsReadOnly = True
                         CEtaxSelection = False
-                        TaxHeader.Header = "Tax(12%)"
-                        'ShowVatExBtn.Visibility = Visibility.Collapsed
+                        TaxHeader.Header = "TAX(12%)"
                         CEisVatExInclude = False
+                        If Border IsNot Nothing Then
+                            Border.BorderThickness = New Thickness(0)
+                            Border.BorderBrush = Brushes.Transparent
+                        End If
                     End If
                 End If
             Next
@@ -512,7 +521,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             .TextWrapping = TextWrapping.Wrap,
             .Padding = New Thickness(5),
             .BorderThickness = New Thickness(0),
-            .Width = width
+            .MinWidth = width,
+            .MaxWidth = width
         }
 
             ' ListBox for suggestions
@@ -524,7 +534,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
             ' Template to show product name
             Dim factory As New FrameworkElementFactory(GetType(TextBlock))
-            factory.SetBinding(TextBlock.TextProperty, New Binding("ProductName")) ' Bind to property of ProductDataModel
+            factory.SetBinding(TextBlock.TextProperty, New Binding("ProductName"))
             suggestionList.ItemTemplate = New DataTemplate() With {.VisualTree = factory}
 
             ' Popup setup
@@ -719,7 +729,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
         ' Rate Textbox
         Private Function CreateRateBox(rowIndex As Integer) As Border
-            Dim box = CreateInputBox("", 80, False, $"txtRate_{rowIndex}", HorizontalAlignment.Center)
+            Dim box = CreateInputBox("", 90, False, $"txtRate_{rowIndex}", HorizontalAlignment.Center)
             Dim txt = TryCast(box.Child, TextBox)
             If txt IsNot Nothing Then
                 AddHandler txt.TextChanged, AddressOf Quantity_TextChanged
@@ -728,23 +738,40 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             Return box
         End Function
 
-        ' Update Tax Value Box
-        Private Function CreateTaxValueBox(rowIndex As Integer) As Border
-            Return CreateInputBox("", 70, True, $"txtTaxValue_{rowIndex}", HorizontalAlignment.Center)
-        End Function
-
-        ' Update Discount Box
-        Private Function CreateDiscountBox(rowIndex As Integer) As Border
-            Return CreateInputBox("", 80, True, $"txtDiscount_{rowIndex}", HorizontalAlignment.Center)
-        End Function
-
-        ' If you want the Percentages centered too:
+        ' Tax Percent Textbox
         Private Function CreateTaxPercentBox(rowIndex As Integer) As Border
-            Return CreateInputBox("", 70, False, $"txtTaxPercent_{rowIndex}", HorizontalAlignment.Center)
+            Dim defaultTaxPercent As String = If(Not CEtaxSelection, "", "0")
+
+            ' Create the textbox with the default value and readonly behavior
+            Dim box = CreateInputBox(defaultTaxPercent, 60, Not _TaxSelection, $"txtTaxPercent_{rowIndex}", HorizontalAlignment.Center)
+            Dim txt = TryCast(box.Child, TextBox)
+            If txt IsNot Nothing Then
+                AddHandler txt.TextChanged, AddressOf TaxPercent_TextChanged
+                AddHandler txt.PreviewTextInput, AddressOf TaxPercent_PreviewTextInput
+            End If
+
+            Return box
         End Function
 
+        ' Tax Value Box
+        Private Function CreateTaxValueBox(rowIndex As Integer) As Border
+            Return CreateInputBox("0.00", 70, True, $"txtTaxValue_{rowIndex}", HorizontalAlignment.Center)
+        End Function
+
+        ' Discount Percent
         Private Function CreateDiscountPercentBox(rowIndex As Integer) As Border
-            Return CreateInputBox("", 70, False, $"txtDiscountPercent_{rowIndex}", HorizontalAlignment.Center)
+            Dim box = CreateInputBox("", 75, False, $"txtDiscountPercent_{rowIndex}", HorizontalAlignment.Center)
+            Dim txt = TryCast(box.Child, TextBox)
+            If txt IsNot Nothing Then
+                AddHandler txt.TextChanged, AddressOf DiscountPercent_TextChanged
+                AddHandler txt.PreviewTextInput, AddressOf DiscountPercent_PreviewTextInput
+            End If
+            Return box
+        End Function
+
+        ' Discount Box
+        Private Function CreateDiscountBox(rowIndex As Integer) As Border
+            Return CreateInputBox("0.00", 75, True, $"txtDiscount_{rowIndex}", HorizontalAlignment.Center)
         End Function
 
         ' Amount Box
@@ -1109,7 +1136,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 Return False
             End If
 
-            If Not billingDate.SelectedDate.HasValue Then
+            If OrderDateVM.SelectedDate = DateTime.MinValue OrElse Not OrderDateVM.SelectedDate.HasValue Then
                 MessageBox.Show("Billing Date is required.")
                 Return False
             End If
@@ -1324,7 +1351,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 BLNumberCache = txtBillingNumber.Text
                 BLDiscountProperty = txtDiscountSelection.Text
                 BLTaxProperty = txtTaxSelection.Text
-                BLDateCache = billingDate.SelectedDate.Value.ToString("yyyy-MM-dd")
+                BLDateCache = OrderDateVM.SelectedDate.Value.ToString("yyyy-MM-dd")
                 BLTotalTaxValueCache = txtTotalTax.Text
                 BLTotalDiscountValueCache = txtTotalDiscount.Text
                 BLTotalAmountCache = txtGrandTotal.Text

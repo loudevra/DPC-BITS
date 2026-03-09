@@ -152,25 +152,18 @@
                 </Border>
 
                 <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Margin="0,25,0,0">
-                    <DataGrid x:Name="HeaderDataGrid" 
-                              Background="Transparent"
-                              BorderThickness="0"
-                              AutoGenerateColumns="False" 
-                              CanUserAddRows="False"
-                              IsReadOnly="True"
-                              HeadersVisibility="Column"
-                              GridLinesVisibility="None"
-                              ColumnHeaderStyle="{StaticResource ModernDataGridHeaderStyle}"
-                              Padding="0,0,5,0">
+                    <DataGrid x:Name="HeaderDataGrid" Background="Transparent" BorderThickness="0" AutoGenerateColumns="False" 
+          CanUserAddRows="False" IsReadOnly="True" HeadersVisibility="Column" GridLinesVisibility="None"
+          ColumnHeaderStyle="{StaticResource ModernDataGridHeaderStyle}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Item Description" Width="160"/>
-                            <DataGridTextColumn Header="Qty" Width="60"/>
-                            <DataGridTextColumn Header="Unit Price" Width="95"/>
-                            <DataGridTextColumn x:Name="TaxHeader" Header="Tax (%)" Width="75"/>
-                            <DataGridTextColumn Header="Tax Value" Width="75"/>
-                            <DataGridTextColumn Header="Discount (%)" Width="85"/>
-                            <DataGridTextColumn Header="Discount" Width="85"/>
-                            <DataGridTextColumn Header="Total" Width="100"/>
+                            <DataGridTextColumn Header="ITEM DESCRIPTION" Width="160"/>
+                            <DataGridTextColumn Header="QTY" Width="60"/>
+                            <DataGridTextColumn Header="UNIT PRICE" Width="95"/>
+                            <DataGridTextColumn x:Name="TaxHeader" Header="TAX (%)" Width="75"/>
+                            <DataGridTextColumn Header="TAX VALUE" Width="75"/>
+                            <DataGridTextColumn Header="DISC (%)" Width="85"/>
+                            <DataGridTextColumn Header="DISCOUNT" Width="85"/>
+                            <DataGridTextColumn Header="TOTAL" Width="100"/>
                             <DataGridTextColumn Header="" Width="50"/>
                         </DataGrid.Columns>
                     </DataGrid>
