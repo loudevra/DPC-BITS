@@ -104,7 +104,7 @@
                     <StackPanel Grid.Column="1" Margin="10">
                         <TextBlock Text="DEPARTMENT" FontFamily="{StaticResource Lexend}" FontWeight="Bold" FontSize="16" TextAlignment="Left" Margin="10,0,0,5"/>
                         <Border Style="{StaticResource RoundedBorderStyle}">
-                            <TextBox FontFamily="{StaticResource Lexend}" x:Name="Department" Height="35" Style="{StaticResource RoundedTextboxStyle}" FontSize="14" TextAlignment="Center"/>
+                            <TextBox FontFamily="{StaticResource Lexend}" x:Name="hourlyRate" Height="35" Style="{StaticResource RoundedTextboxStyle}" FontSize="14" TextAlignment="Center"/>
                         </Border>
                     </StackPanel>
                 </Grid>

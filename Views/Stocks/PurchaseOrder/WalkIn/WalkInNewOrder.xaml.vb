@@ -1246,7 +1246,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                         If descBorder IsNot Nothing Then
                             Dim descTextBox = TryCast(descBorder.Child, TextBox)
                             If descTextBox IsNot Nothing Then
-                                productData("Description") = descTextBox.Text
+                                Dim rawDescription As String = descTextBox.Text.Trim()
+                                If rawDescription = "Enter product description (Optional)" OrElse String.IsNullOrWhiteSpace(rawDescription) Then
+                                    productData("Description") = "No Description Available"
+                                Else
+                                    productData("Description") = rawDescription
+                                End If
                             End If
                         End If
                     End If
