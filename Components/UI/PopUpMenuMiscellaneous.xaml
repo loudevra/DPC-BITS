@@ -77,7 +77,7 @@
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToCreateNote">
-                                    <TextBlock Text="Create Note" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Create Note" Foreground="#d4d4d4" FontSize="13" Visibility="Hidden"/>
                                 </Hyperlink>
                                 <TextBlock.ToolTip>
                                     <ToolTip Content="Write and save a new quick note." 
@@ -86,7 +86,7 @@
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageNotes">
-                                    <TextBlock Text="Manage Notes" Foreground="#d4d4d4" FontSize="13"/>
+                                    <TextBlock Text="Manage Notes" Foreground="#d4d4d4" FontSize="13" Visibility="Hidden"/>
                                 </Hyperlink>
                                 <TextBlock.ToolTip>
                                     <ToolTip Content="Edit, categorize, or delete saved notes." 
@@ -164,15 +164,6 @@
 
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
-                                <Hyperlink Click="NavigateToUploadDocument">
-                                    <TextBlock Text="Upload Document" Foreground="#d4d4d4" FontSize="13"/>
-                                </Hyperlink>
-                                <TextBlock.ToolTip>
-                                    <ToolTip Content="Upload files and company documents." 
-                                             Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
-                                </TextBlock.ToolTip>
-                            </TextBlock>
-                            <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToViewDocuments">
                                     <TextBlock Text="View Documents" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
@@ -181,12 +172,47 @@
                                              Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
                                 </TextBlock.ToolTip>
                             </TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+
+                <StackPanel>
+                    <Grid Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <materialDesign:PackIcon Kind="FileDocumentEditOutline" Foreground="White" Width="20" Height="20" Margin="10,0,0,0"/>
+                        <TextBlock Grid.Column="1">
+                            <Hyperlink>
+                                <TextBlock Text="Pull Out Forms" Style="{StaticResource MainMenuItemStyle}"/>
+                            </Hyperlink>
+                        </TextBlock>
+                    </Grid>
+
+                    <Grid Margin="24,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Rectangle Width="1" Fill="#444444" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+
+                        <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToViewPOR">
                                     <TextBlock Text="Pull Out Form" Foreground="#d4d4d4" FontSize="13"/>
                                 </Hyperlink>
                                 <TextBlock.ToolTip>
                                     <ToolTip Content="Generate a form to withdraw or request documents." 
+                                             Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
+                                </TextBlock.ToolTip>
+                            </TextBlock>
+                            <TextBlock Margin="10,3,0,3">
+                                <Hyperlink Click="NavigateToManagePullOutForm">
+                                    <TextBlock Text="Manage Pull Out Form" Foreground="#d4d4d4" FontSize="13"/>
+                                </Hyperlink>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="View, edit, or track pull out form requests." 
                                              Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
                                 </TextBlock.ToolTip>
                             </TextBlock>
