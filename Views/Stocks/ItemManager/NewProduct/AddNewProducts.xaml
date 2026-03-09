@@ -117,8 +117,11 @@
 
                                     <!-- Remove Image Button (Initially Hidden, Will Be Shown After Upload) -->
                                     <Button x:Name="BtnRemoveImage" Click="RemoveImage"
-                                        Style="{StaticResource RoundedButtonStyle}" Margin="50,5,50,0" Height="30" Visibility="Collapsed">
-                                        <TextBlock Text="Remove Image" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        Style="{StaticResource RoundedButtonStyle}" 
+        Width="120"
+        HorizontalContentAlignment="Center"
+        Margin="50,5,50,0" Height="30" Visibility="Visible">
+                                        <TextBlock Text="Remove Image" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Lexend"/>
                                     </Button>
                                 </StackPanel>
                             </Grid>
