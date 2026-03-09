@@ -32,6 +32,8 @@
     Public BLBankDetails As String
     Public BLAccountName As String
     Public BLAccountNumber As String
+    Public BLVatLabel As String
+    Public BLSubtotalLabel As String
 
 
     Public Sub ClearAllBLCache()

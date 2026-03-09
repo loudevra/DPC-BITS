@@ -76,16 +76,16 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
             Dim installationFee As Double
             If Double.TryParse(WalkinBillingStatementDetails.BLInstallation, installationFee) Then
-                Installation.Text = "₱ " & installationFee.ToString("N2")
+                Installation.Text = installationFee.ToString("N2")
             Else
-                Installation.Text = "₱ 0.00" ' fallback value if parsing fails
+                Installation.Text = "0.00" ' fallback value if parsing fails
             End If
 
             Dim deliveryFee As Double
             If Double.TryParse(WalkinBillingStatementDetails.BLDeliveryCost, deliveryFee) Then
-                Delivery.Text = "₱ " & deliveryFee.ToString("N2")
+                Delivery.Text = deliveryFee.ToString("N2")
             Else
-                Delivery.Text = "₱ 0.00" ' fallback value if parsing fails
+                Delivery.Text = "0.00" ' fallback value if parsing fails
             End If
             VAT12.Text = BLTotalTaxValueCache
             TotalCost.Text = BLTotalAmountCache
@@ -93,6 +93,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             BankDetailBox.Text = BLBankDetails
             AccNameBox.Text = BLAccountName
             AccNoBox.Text = BLAccountNumber
+            lblSubtotal.Text = WalkinBillingStatementDetails.BLSubtotalLabel
+            lblVat.Text = WalkinBillingStatementDetails.BLVatLabel
 
 
             remarksBox.Text = WalkinBillingStatementDetails.BLremarksTxt
@@ -400,6 +402,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 ' Handle the response
                 If result = MessageBoxResult.Yes Then
                     _showDelivery = True
+                    DeliveryDetails.DRReferenceInvoice = WalkinBillingStatementDetails.BLNumberCache
+                    DeliveryDetails.DRClientName = WalkinBillingStatementDetails.BLClientName
+                    WalkinBillingStatementDetails.ClearAllBLCache()
                     ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
                 Else
                     Debug.WriteLine("User declined Delivery Receipt creation.")

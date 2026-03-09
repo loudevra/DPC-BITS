@@ -53,13 +53,10 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
             ' Set a default date today and tomorrow
             OrderDateVM.SelectedDate = DateTime.Today
-            'OrderDueDateVM.SelectedDate = DateTime.Today.AddDays(1)
 
             ' Set Date to bind
             billingDate.DataContext = OrderDateVM
             BillingDateButton.DataContext = OrderDateVM
-            'QuoteValidityDate.DataContext = OrderDueDateVM
-            'QuoteValidityButton.DataContext = OrderDueDateVM
 
             ' Autocomplete part
             _typingTimer = New DispatcherTimer With {
@@ -90,9 +87,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             End If
 
             LoadCachedBillingData()
-
-            Debug.WriteLine($"Tax Selection - {_TaxSelection}")
-            Debug.WriteLine($"Tax Value In Billing Properties - {_SelectedTax}")
         End Sub
 #End Region
 
@@ -250,13 +244,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             billingDate.IsDropDownOpen = True
         End Sub
 
-        'Private Sub QuoteValidityButton_Click(sender As Object, e As RoutedEventArgs)
-        '    QuoteValidityDate.IsDropDownOpen = True
-        'End Sub
-
         Private Sub txtReferenceNumber_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
             If Not e.Text.All(AddressOf Char.IsDigit) Then
-                e.Handled = True ' block the input
+                e.Handled = True
             End If
         End Sub
 
@@ -313,7 +303,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         End Sub
 
         Private Function HasCachedItems() As Boolean
-            Return CEQuoteItemsCache IsNot Nothing AndAlso CEQuoteItemsCache.Count > 0
+            Return BLItemsCache IsNot Nothing AndAlso BLItemsCache.Count > 0
         End Function
 
         Private Sub LoadCachedBillingItems()
@@ -371,10 +361,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             'If Not String.IsNullOrWhiteSpace(BLNumberCache) Then txtBillingNumber.Text = BLNumberCache
             'If Not String.IsNullOrWhiteSpace(CEReferenceNumber) Then txtReferenceNumber.Text = CEReferenceNumber
             If Not String.IsNullOrWhiteSpace(BLnoteTxt) Then txtBillingNote.Text = BLnoteTxt
-
-            Dim parsedDate As DateTime
-            'If DateTime.TryParse(BLDateCache, parsedDate) Then BillingDate.SelectedDate = parsedDate
-            'If DateTime.TryParse(CEQuoteValidityDateCache, parsedDate) Then QuoteValidityDate.SelectedDate = parsedDate
 
             AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
         End Sub
@@ -1123,7 +1109,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             End If
 
             If Not billingDate.SelectedDate.HasValue Then
-                MessageBox.Show("Quote Date is required.")
+                MessageBox.Show("Billing Date is required.")
                 Return False
             End If
 
@@ -1143,7 +1129,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             End If
 
             If String.IsNullOrWhiteSpace(productItemsJson) Then
-                MessageBox.Show("No products found in the quote.")
+                MessageBox.Show("No products found in the Billing.")
                 Return False
             End If
 
@@ -1151,7 +1137,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         End Function
 #End Region
 
-#Region "Generate the Quote Before saving"
+#Region "Generate the Billing Before saving"
         ' Once Done All of the Data Will Be pass to another form for generating invoice
         Private Sub GenerateBilling_Click(sender As Object, e As RoutedEventArgs)
             Dim productItemsJson As String = SubmitAllProductInputs()
@@ -1267,10 +1253,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 #Region "Clearing all of the fields"
         Public Sub ClearAllFields()
             Me.UnregisterName(txtDiscountSelection.Name)
-            ' Clear all fields in the quote form
             txtBillingNumber.Clear()
-            Dim quoteID As String = QuotesController.GenerateQuoteID()
-            txtBillingNumber.Text = quoteID
+            Dim billingID As String = BillingController.GenerateBillingID(False)
+            txtBillingNumber.Text = billingID
             'txtReferenceNumber.Text = "Reference #"
             txtSearchCustomer.Clear()
             txtBillingNote.Text = "None"
@@ -1308,7 +1293,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         End Sub
 #End Region
 
-#Region "Getting All of the Data and Insert of this Quote"
+#Region "Getting All of the Data and Insert of this Billing"
         ' Whenever there is a change in WarehosueCombobox will also update the data
         Private Sub ComboBoxWarehouse_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
             Dim selectedItem As ComboBoxItem = TryCast(ComboBoxWarehouse.SelectedItem, ComboBoxItem)
@@ -1319,14 +1304,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             End If
         End Sub
 
-        ' Function for inserting the data into the quote table in the database
         Private Sub GetAllDataInBillingProperties(client As Client, productItemsJson As String)
             If Not ValidateBillingSubmission(client, productItemsJson) Then Exit Sub
             Try
                 Dim selectedTax As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
                 Dim selectedDiscount As String = CType(txtDiscountSelection.SelectedItem, ComboBoxItem).Content.ToString()
 
-                ' 07 - 04 - 2025 -- Moved the insert at the save and print button in previewprintquote.xaml.vb
 
 
                 BLNumberCache = txtBillingNumber.Text
@@ -1356,6 +1339,16 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 Dim Warehouse As ComboBoxItem = CType(ComboBoxWarehouse.SelectedItem, ComboBoxItem)
                 Dim selectedWarehouse As String = Warehouse.Content.ToString()
                 WalkinBillingStatementDetails.BLWarehouseNameCache = selectedWarehouse
+
+                Dim selectedTaxType As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
+
+                If selectedTaxType = "Exclusive" Then
+                    WalkinBillingStatementDetails.BLVatLabel = $"VAT EXCLUSIVE"
+                    WalkinBillingStatementDetails.BLSubtotalLabel = "SUBTOTAL VAT EX."
+                ElseIf selectedTaxType = "Inclusive" Then
+                    WalkinBillingStatementDetails.BLVatLabel = "VAT 12%"
+                    WalkinBillingStatementDetails.BLSubtotalLabel = "SUBTOTAL VAT IN."
+                End If
 
                 ViewLoader.DynamicView.NavigateToView("navigatetobillingstatement", Me)
             Catch ex As Exception

@@ -76,6 +76,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             ClientAddress.Text = BLAddress & ", " & BLCity & ", " & BLRegion & ", " & BLCountry
             ClientContact.Text = "+63 " & FormatPhoneWithSpaces(BLPhone)
             CompanyRep.Text = BLCompanyRep
+            lblSubtotal.Text = WalkinBillingStatementDetails.BLSubtotalLabel
+            lblVat.Text = WalkinBillingStatementDetails.BLVatLabel
 
             SalesRep.Text = CacheOnLoggedInName
             cmbApproved.Text = WalkinBillingStatementDetails.BLApproved

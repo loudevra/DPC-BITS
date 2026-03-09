@@ -39,21 +39,16 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
         Public Sub InitializeFields()
 
-            txtClientName.Text = If(Not String.IsNullOrEmpty(WalkinBillingStatementDetails.BLClientName),
-                            WalkinBillingStatementDetails.BLClientName,
-                            DeliveryDetails.DRClientName)
+            txtClientName.Text = DeliveryDetails.DRClientName
 
-            txtInvoiceNumber.Text = If(Not String.IsNullOrEmpty(WalkinBillingStatementDetails.BLNumberCache),
-                               WalkinBillingStatementDetails.BLNumberCache,
-                               DeliveryDetails.DRReferenceInvoice)
+            txtInvoiceNumber.Text = DeliveryDetails.DRReferenceInvoice
 
             If DeliveryDetails.DRDeliveryItems IsNot Nothing AndAlso DeliveryDetails.DRDeliveryItems.Count > 0 Then
 
-            ElseIf WalkinBillingStatementDetails.BLItemsCache IsNot Nothing AndAlso WalkinBillingStatementDetails.BLItemsCache.Count > 0 Then
-                DeliveryDetails.DRDeliveryItems = New List(Of Dictionary(Of String, String))(WalkinBillingStatementDetails.BLItemsCache)
             Else
                 FetchItemsFromInvoice(txtInvoiceNumber.Text)
             End If
+
 
             GetClientInfo()
             LoadItems()

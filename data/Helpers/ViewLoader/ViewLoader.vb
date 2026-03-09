@@ -160,8 +160,7 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Sales.CreditNotes.CreditNotes()
                     Case "newsubscriptioninvoice"
                         Return New Sales.Subscriptions.NewSubscriptionInvoice()
-                    Case "newquote"
-                        Return New Sales.Quotes.NewQuote()
+
                     Case "salesnewposinvoice"
                         Return New Views.POS.SalesNewInvoice()
                     Case "salesnewposinvoicemobile"
@@ -465,7 +464,7 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "salesinvoices"
             ElseIf typeName = "salesquote" Then
                 Return "salesquote"
-            ElseIf typeName = "salesnewquote" Then
+            ElseIf typeName = "newquote" Then
                 Return "salesnewquote"
             ElseIf typeName = "printpreviewquotes" Then
                 Return "printpreviewquotes"
@@ -479,6 +478,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "previewprintquoteeditedquote"
             ElseIf typeName = "quote" Then
                 Return "quote"
+            ElseIf typeName = "walkinneworder" Then
+                Return "walkinorder"
 
 
                 ' Accounts Navigation
