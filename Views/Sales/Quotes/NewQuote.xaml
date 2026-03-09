@@ -138,7 +138,7 @@
                                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                                     <TextBlock x:Name="GovCETitle" Text="Cost Estimate" FontWeight="SemiBold" FontFamily="Lexend" FontSize="24" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,0"/>
                                 </StackPanel>
-                                
+
                                 <!-- Add Client Button -->
                                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
                                     <Button
@@ -389,7 +389,7 @@
                             Fill="Transparent"
                             Margin="0,0,0,20"/>
 
-                       <!--Product Info and DataGrid-->
+                        <!--Product Info and DataGrid-->
                         <StackPanel Width="Auto">
                             <!--Date Grid of the Product Info-->
                             <DataGrid x:Name="ProductInfoDataGrid" Margin="0,0,0,10"

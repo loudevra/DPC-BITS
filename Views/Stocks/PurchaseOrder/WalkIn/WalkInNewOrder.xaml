@@ -162,7 +162,7 @@
                                     </Button>
                                 </StackPanel>
                             </Grid>
-                            
+
                             <!--Bill To Column-->
                             <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical" Margin="0,0,15,0">
                                 <!--Search Client-->
@@ -259,7 +259,8 @@
                                                 </Border>
                                             </StackPanel>
 
-                                            <!--Reference--><!--
+                                            <!--Reference-->
+                                            <!--
                                             <StackPanel Orientation="Vertical">
                                                 <TextBlock Grid.Column="0" Text="Reference:" FontWeight="SemiBold" FontFamily="Lexend"
                                                         FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,5"/>
@@ -302,7 +303,8 @@
                                                 </Border>
                                             </StackPanel>
 
-                                            <!--Quote Validity--><!--
+                                            <!--Quote Validity-->
+                                            <!--
                                             <StackPanel Orientation="Vertical">
                                                 <TextBlock Grid.Column="0" Text="Quote Validity:" FontWeight="SemiBold" FontFamily="Lexend"
                                                             FontSize="16" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,5"/>

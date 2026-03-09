@@ -1,4 +1,5 @@
-﻿<UserControl x:Class="DPC.Views.Misc.OverTime.ManageTimeoutRequests"
+﻿<!-- ManageTimeoutRequests.xaml -->
+<UserControl x:Class="DPC.Views.Misc.OverTime.ManageTimeoutRequests"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -183,16 +184,12 @@
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="Auto">
 
-                                        <Button Width="30" Height="30" Background="Transparent" Margin="0" ToolTip="Edit" Cursor="Hand" Click="NavigateToEdit" BorderThickness="0">
+                                        <Button Width="30" Height="30" Background="Transparent" Margin="2,0,0,0" ToolTip="Edit" Cursor="Hand" Click="NavigateToEdit" BorderThickness="0">
                                             <materialDesign:PackIcon Kind="Pencil" Width="20" Height="20" Foreground="Orange"/>
                                         </Button>
 
                                         <Button Width="30" Height="30" Background="Transparent" Margin="2,0,0,0" ToolTip="Delete" Cursor="Hand" Click="DeleteRequest_Click" BorderThickness="0">
                                             <materialDesign:PackIcon Kind="DeleteOutline" Width="20" Height="20" Foreground="Red"/>
-                                        </Button>
-
-                                        <Button Width="30" Height="30" Background="Transparent" Margin="2,0,0,0" ToolTip="Print" Cursor="Hand" Click="NavigateToPreviewPrintOverTimeRequestForm" BorderThickness="0">
-                                            <materialDesign:PackIcon Kind="Printer" Width="20" Height="20" Foreground="Green"/>
                                         </Button>
 
                                     </StackPanel>
