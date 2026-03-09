@@ -159,11 +159,26 @@ Namespace DPC.Views.DataReports.ManageGovernmentCostEstimateFiles
 
                                           ' Get content type from metadata if exists
                                           Dim contentType As String = "Unknown"
-                                          If file.Contains("metadata") AndAlso file("metadata").IsBsonDocument Then
-                                              Dim metadata = file("metadata").AsBsonDocument
-                                              If metadata.Contains("contentType") Then
-                                                  contentType = metadata("contentType").AsString
-                                              End If
+
+                                          If file.Contains("filename") Then
+                                              Dim extension As String = System.IO.Path.GetExtension(fileName).ToLower()
+
+                                              Select Case extension
+                                                  Case ".pdf"
+                                                      contentType = "PDF Document"
+                                                  Case ".jpg", ".jpeg", ".png"
+                                                      contentType = "Image"
+                                                  Case ".xlsx", ".xls"
+                                                      contentType = "Excel Spreadsheet"
+                                                  Case ".docx", ".doc"
+                                                      contentType = "Word Document"
+                                                  Case ".txt"
+                                                      contentType = "Text Document"
+                                                  Case Else
+                                                      If Not String.IsNullOrEmpty(extension) Then
+                                                          contentType = extension.ToUpper().Replace(".", "") & " File"
+                                                      End If
+                                              End Select
                                           End If
 
                                           _costEstimateFiles.Add(New CostEstimateFileModel With {
