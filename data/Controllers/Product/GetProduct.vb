@@ -248,9 +248,9 @@ Namespace DPC.Data.Controllers
                                 End If
                             Else
                                 ' Hide UI elements if no subcategories found
-                                comboBox.Visibility = Visibility.Collapsed
-                                label.Visibility = Visibility.Collapsed
-                                stackPanel.Visibility = Visibility.Collapsed
+                                'comboBox.Visibility = Visibility.Collapsed
+                                'label.Visibility = Visibility.Collapsed
+                                'stackPanel.Visibility = Visibility.Collapsed
                             End If
                         End Using
                     End Using
