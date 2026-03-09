@@ -302,10 +302,15 @@
                                                                         SelectedDate="{Binding SelectedDate, Mode=TwoWay}" 
                                                                         DisplayDateStart="{Binding MinimumDate}" />
 
-                                                        <Button x:Name="QuoteDateButton" Click="QuoteDateButton_Click" Style="{StaticResource DateButtonStyle}" Margin="10,0" Background="Transparent" HorizontalAlignment="Stretch">
-                                                            <Grid HorizontalAlignment="Stretch">
-                                                                <TextBlock Text="{Binding FormattedDate}" Margin="0,0,30,0" Foreground="Black" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                                                                <materialDesign:PackIcon Kind="Calendar" Width="25" Height="25" Foreground="#474747" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                                        <Button x:Name="QuoteDateButton" Click="QuoteDateButton_Click" Style="{StaticResource DateButtonStyle}" Height="20" Grid.Row="1" Margin="10,0,10,0" Background="Transparent" HorizontalContentAlignment="Stretch">
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                </Grid.ColumnDefinitions>
+
+                                                                <TextBlock Text="{Binding FormattedDate}" Foreground="Black" Grid.Column="0"/>
+                                                                <materialDesign:PackIcon Grid.Column="1" Kind="Calendar" Width="25" Height="25" Foreground="#474747" VerticalAlignment="Center" Margin="10,0,0,0"/>
                                                             </Grid>
                                                         </Button>
                                                     </Grid>

@@ -292,11 +292,16 @@
                                                                         SelectedDate="{Binding SelectedDate, Mode=TwoWay}" 
                                                                         DisplayDateStart="{Binding MinimumDate}" />
 
-                                                        <Button x:Name="BillingDateButton" Click="BillingDateButton_Click" Style="{StaticResource DateButtonStyle}" Height="20" Grid.Row="1" Margin="10,0,10,-1" Background="Transparent">
-                                                            <StackPanel Orientation="Horizontal" >
-                                                                <TextBlock Text="{Binding FormattedDate}" Margin="0,0,5,0" Foreground="Black" Height="50"/>
-                                                                <materialDesign:PackIcon Grid.Column="0" Kind="Calendar" Width="25" Height="25" Foreground="#474747" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="180,0,0,0"/>
-                                                            </StackPanel>
+                                                        <Button x:Name="BillingDateButton" Click="BillingDateButton_Click" Style="{StaticResource DateButtonStyle}" Height="20" Grid.Row="1" Margin="10,0,10,0" Background="Transparent" HorizontalContentAlignment="Stretch">
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                </Grid.ColumnDefinitions>
+                                                                
+                                                                <TextBlock Text="{Binding FormattedDate}" Foreground="Black" Grid.Column="0"/>
+                                                                <materialDesign:PackIcon Grid.Column="1" Kind="Calendar" Width="25" Height="25" Foreground="#474747" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                                            </Grid>
                                                         </Button>
 
                                                     </Grid>
