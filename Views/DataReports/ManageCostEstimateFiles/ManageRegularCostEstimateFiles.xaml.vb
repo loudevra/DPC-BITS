@@ -277,13 +277,13 @@ Namespace DPC.Views.DataReports.ManageRegularCostEstimateFiles
                                        Using fileStream As New FileStream(openDialog.FileName, FileMode.Open, FileAccess.Read)
                                            ' Create metadata for the file
                                            Dim options As New GridFSUploadOptions With {
-                                               .Metadata = New BsonDocument From {
-                                                   {"contentType", Path.GetExtension(openDialog.FileName)},
-                                                   {"uploadedBy", Environment.UserName},
-                                                   {"uploadedDate", DateTime.UtcNow},
-                                                   {"originalPath", openDialog.FileName}
-                                               }
-                                           }
+    .Metadata = New BsonDocument From {
+        {"contentType", Path.GetExtension(openDialog.FileName)}, ' <--- THIS LINE GRABS THE FILE TYPE
+        {"uploadedBy", Environment.UserName},
+        {"uploadedDate", DateTime.UtcNow},
+        {"originalPath", openDialog.FileName}
+    }
+}
 
                                            ' Upload to GridFS (automatically stores in fs.files and fs.chunks)
                                            Await _gridFS.UploadFromStreamAsync(Path.GetFileName(openDialog.FileName), fileStream, options)

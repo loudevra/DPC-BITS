@@ -29,12 +29,12 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Dim currentViewName = ViewLoader.GetViewName(mainWindow.CurrentView)
 
                     If currentViewName <> targetName OrElse Not _viewCache.ContainsKey(targetName) Then
-
                         Dim targetView As Object = Nothing
 
                         If _viewCache.ContainsKey(targetName) Then
                             targetView = _viewCache(targetName)
                         Else
+
                             targetView = ViewLoader.Load(viewName)
                             _viewCache(targetName) = targetView
                         End If
@@ -61,6 +61,10 @@ Namespace DPC.Data.Helpers.ViewLoader
         Public Shared Sub NavigateToView(viewName As String, senderControl As DependencyObject)
             Dim key = viewName.ToLower()
             If _viewCache.ContainsKey(key) Then _viewCache.Remove(key)
+
+            If key = "salesnewquote" Then
+                CostEstimateDetails.ClearAllCECache()
+            End If
 
             NavigateToCachedView(viewName, senderControl)
         End Sub

@@ -1075,6 +1075,18 @@
     <Compile Include="Views\Misc\Documents\PullOutForm.xaml.vb">
       <DependentUpon>PullOutForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Misc\EmployeeLeave\EditEmployeeLeave.xaml.vb">
+      <DependentUpon>EditEmployeeLeave.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc\EmployeeLeave\EmployeeLeaveRequestForm.xaml.vb">
+      <DependentUpon>EmployeeLeaveRequestForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc\EmployeeLeave\ManageEmployeeLeaveRequests.xaml.vb">
+      <DependentUpon>ManageEmployeeLeaveRequests.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc\EmployeeLeave\PreviewPrintEmployeeLeave.xaml.vb">
+      <DependentUpon>PreviewPrintEmployeeLeave.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Misc\OverTimeForm\EditOverTime.xaml.vb">
       <DependentUpon>EditOverTime.xaml</DependentUpon>
     </Compile>
@@ -2048,6 +2060,22 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Misc\Documents\PullOutForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Misc\EmployeeLeave\EditEmployeeLeave.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Misc\EmployeeLeave\EmployeeLeaveRequestForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Misc\EmployeeLeave\ManageEmployeeLeaveRequests.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Misc\EmployeeLeave\PreviewPrintEmployeeLeave.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

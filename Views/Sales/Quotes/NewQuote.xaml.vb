@@ -435,7 +435,7 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Sub BtnReset_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddClient.Click
-            ViewLoader.DynamicView.NavigateToView("newquote", Me)
+            ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
         End Sub
 
         Private Sub LoadCachedQuoteItems()
@@ -1582,12 +1582,13 @@ Namespace DPC.Views.Sales.Quotes
                 ' Debugging 
                 Dim selectedTaxType As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
 
+
                 If selectedTaxType = "Exclusive" Then
-                    CostEstimateDetails.CEVatLabel = $"VAT Exclusive"
-                    CostEstimateDetails.CESubtotalLabel = "Subtotal Vat Ex."
+                    CostEstimateDetails.CEVatLabel = $"VAT EXCLUSIVE"
+                    CostEstimateDetails.CESubtotalLabel = "SUBTOTAL VAT EX."
                 ElseIf selectedTaxType = "Inclusive" Then
                     CostEstimateDetails.CEVatLabel = "VAT 12%"
-                    CostEstimateDetails.CESubtotalLabel = "Subtotal Vat In."
+                    CostEstimateDetails.CESubtotalLabel = "SUBTOTAL VAT IN."
                 End If
 
                 Debug.WriteLine($"QuoteNumber: {CEQuoteNumberCache}, QuoteDate: {CEQuoteDateCache}, ValidityDate: {CEQuoteValidityDateCache}, Tax: {CETaxValueCache}, TotalAmount: {CETotalAmountCache}, Note: {CEnoteTxt}, Remarks: {CEremarksTxt}, Items: {JsonConvert.SerializeObject(CEQuoteItemsCache)}, Signature: {CEsignature}, Image: {CEImageCache}, Path: {CEPathCache}, ClientName: {CEClientName}, Phone: {CEPhone}, Email: {CEEmail}, Term1: {CETerm1}, Term2: {CETerm2}, Term3: {CETerm3}, Term4: {CETerm4}, Term5: {CETerm5}, Term6: {CETerm6}, Term7: {CETerm7}, Term8: {CETerm8}, Term9: {CETerm9}, Term10: {CETerm10}, Term11: {CETerm11}, Term12: {CETerm12}")

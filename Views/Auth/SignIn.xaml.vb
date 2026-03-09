@@ -138,7 +138,7 @@ Namespace DPC.Views.Auth
                                         landingView = "manageaccounts" ' Business Owner -> Manage Accounts
                                     End If
                                 ElseIf roleLower.Contains("admin") Then
-                                    landingView = "permissions" ' Admin -> Permissions
+                                    landingView = "dashboard" ' Admin -> Permissions
                                 End If
 
                                 ' Fallback: if preferred role mapping not usable, pick first available important module

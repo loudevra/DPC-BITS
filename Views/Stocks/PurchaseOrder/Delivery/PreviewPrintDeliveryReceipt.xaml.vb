@@ -99,7 +99,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 .IsReadOnly = True,
                 .AutoGenerateColumns = False,
                 .HeadersVisibility = DataGridHeadersVisibility.Column,
-                .GridLinesVisibility = DataGridGridLinesVisibility.All,
+                .GridLinesVisibility = DataGridGridLinesVisibility.None,
                 .Background = Brushes.Transparent,
                 .ItemsSource = pageList,
                 .BorderThickness = New Thickness(0)

@@ -30,7 +30,7 @@ Namespace DPC.Data.Controllers
                     Dim query As String = $"
                         SELECT * FROM quotes 
                         {filterClause}
-                        ORDER BY QuoteNumber DESC
+                        ORDER BY QuoteDate DESC, QuoteNumber DESC
                         LIMIT @limit"
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@limit", limit)
@@ -167,7 +167,7 @@ Namespace DPC.Data.Controllers
                         OR ClientName LIKE @searchText
                         OR WarehouseName LIKE @searchText
                     )
-                ORDER BY QuoteNumber DESC
+                ORDER BY QuoteDate DESC, QuoteNumber DESC
                 LIMIT @limit"
 
                     Using cmd As New MySqlCommand(query, conn)
