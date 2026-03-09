@@ -86,7 +86,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 CEWarehouseNameCache = selectedWarehouse.Content.ToString()
             End If
 
-            LoadCachedBillingData()
+            'LoadCachedBillingData()
         End Sub
 #End Region
 
@@ -284,8 +284,10 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
 #Region "This Loads every data if its available for updating"
         Private Sub InitializeProductUI()
-            If Application.Current.Properties.Contains("BillingCache") OrElse HasCachedItems() Then
+            Dim hasAppCache As Boolean = Application.Current.Properties.Contains("BillingCache")
+            Dim hasItemsInList As Boolean = (BLItemsCache IsNot Nothing AndAlso BLItemsCache.Count > 0)
 
+            If hasAppCache OrElse hasItemsInList Then
                 If _typingTimer Is Nothing Then
                     _typingTimer = New DispatcherTimer()
                     _typingTimer.Interval = TimeSpan.FromMilliseconds(300)
@@ -295,16 +297,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 LoadCachedBillingData()
             Else
                 rowCount = 0
+                MainContainer.Children.Clear()
                 AddProductInputUI()
 
                 Dim billingID As String = WalkInController.GenerateBillingID()
                 txtBillingNumber.Text = billingID
             End If
         End Sub
-
-        Private Function HasCachedItems() As Boolean
-            Return BLItemsCache IsNot Nothing AndAlso BLItemsCache.Count > 0
-        End Function
 
         Private Sub LoadCachedBillingItems()
             ClearAllRows()
@@ -409,6 +408,14 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         Private Sub AddNewRow_Click(sender As Object, e As RoutedEventArgs)
             rowCount += 1 ' Make sure to increment rowCount here so new rows get unique names
             AddProductInputUI()
+
+            Dim scrollViewer As ScrollViewer = TryCast(MainContainer.Parent, ScrollViewer)
+
+            If scrollViewer IsNot Nothing Then
+                MainContainer.Dispatcher.BeginInvoke(Sub()
+                                                         scrollViewer.ScrollToBottom()
+                                                     End Sub, Windows.Threading.DispatcherPriority.Background)
+            End If
         End Sub
 
         ' The UI will Add ProductUI to the Interface
@@ -420,6 +427,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         .Background = CType(New BrushConverter().ConvertFrom("#FDFDFD"), Brush),
         .CornerRadius = New CornerRadius(15),
         .Padding = New Thickness(0),
+        .Margin = New Thickness(0, 5, 0, 5),
         .HorizontalAlignment = HorizontalAlignment.Stretch,
         .MinWidth = 300
     }
@@ -437,14 +445,14 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
     }
 
             ' This function will add all of the textbox to the MainContainer
-            productPanel.Children.Add(CreateProductSearchBox(125, rowIndex))   ' Item Name
-            productPanel.Children.Add(CreateQuantityBox(rowIndex))             ' Quantity
-            productPanel.Children.Add(CreateRateBox(rowIndex))                 ' Rate
-            productPanel.Children.Add(CreateTaxPercentBox(rowIndex))           ' Tax (%)
-            productPanel.Children.Add(CreateTaxValueBox(rowIndex))             ' Tax (readonly)
-            productPanel.Children.Add(CreateDiscountPercentBox(rowIndex))      ' Discount (%)
-            productPanel.Children.Add(CreateDiscountBox(rowIndex))             ' Discount
-            productPanel.Children.Add(CreateAmountBox("₱ 0.00", rowIndex))      ' Amount
+            productPanel.Children.Add(CreateProductSearchBox(125, rowIndex))
+            productPanel.Children.Add(CreateQuantityBox(rowIndex))
+            productPanel.Children.Add(CreateRateBox(rowIndex))
+            productPanel.Children.Add(CreateTaxPercentBox(rowIndex))
+            productPanel.Children.Add(CreateTaxValueBox(rowIndex))
+            productPanel.Children.Add(CreateDiscountPercentBox(rowIndex))
+            productPanel.Children.Add(CreateDiscountBox(rowIndex))
+            productPanel.Children.Add(CreateAmountBox("₱ 0.00", rowIndex))
 
             productPanel.Children.Add(CreateDeleteButton(mainBorder))
             mainStack.Children.Add(productPanel)
@@ -673,6 +681,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             If Not String.IsNullOrWhiteSpace(name) Then
                 txt.Name = name
                 _productTextBoxes(name) = txt
+
+                Dim existingElement As Object = Me.FindName(name)
+                If existingElement IsNot Nothing Then
+                    Me.UnregisterName(name)
+                End If
+
                 Me.RegisterName(txt.Name, txt)
                 ' 🔌 Attach Quantity_TextChanged if this is a Quantity TextBox
                 If name.StartsWith("txtQuantity_") Then
@@ -1239,7 +1253,15 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
 #Region "Clearing all of the fields"
         Public Sub ClearAllFields()
-            Me.UnregisterName(txtDiscountSelection.Name)
+            If Application.Current.Properties.Contains("BillingCache") Then
+                Application.Current.Properties.Remove("BillingCache")
+            End If
+
+            ' Clear the shared list of items
+            If BLItemsCache IsNot Nothing Then
+                BLItemsCache.Clear()
+            End If
+
             txtBillingNumber.Clear()
             Dim billingID As String = BillingController.GenerateBillingID(False)
             txtBillingNumber.Text = billingID
@@ -1346,7 +1368,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         Private Sub BtnAddClient_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddClient.Click
             ViewLoader.DynamicView.NavigateToView("newwalkinclient", Me)
         End Sub
-        Private Sub BtnReset_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddClient.Click
+        Private Sub BtnReset_Click(sender As Object, e As RoutedEventArgs) Handles BtnReset.Click
+            ClearAllFields()
             ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
         End Sub
 

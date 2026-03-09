@@ -160,7 +160,8 @@
                               IsReadOnly="True"
                               HeadersVisibility="Column"
                               GridLinesVisibility="None"
-                              ColumnHeaderStyle="{StaticResource ModernDataGridHeaderStyle}">
+                              ColumnHeaderStyle="{StaticResource ModernDataGridHeaderStyle}"
+                              Padding="0,0,5,0">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Item Description" Width="160"/>
                             <DataGridTextColumn Header="Qty" Width="60"/>
@@ -174,7 +175,9 @@
                         </DataGrid.Columns>
                     </DataGrid>
 
-                    <StackPanel x:Name="MainContainer" Orientation="Vertical" Background="Transparent"/>
+                    <ScrollViewer MaxHeight="1070" VerticalScrollBarVisibility="Hidden">
+                        <StackPanel x:Name="MainContainer" Orientation="Vertical" Background="Transparent"/>
+                    </ScrollViewer>
 
                     <Button Click="AddNewRow_Click" HorizontalAlignment="Center" Margin="0,10,0,0" Style="{StaticResource MaterialDesignOutlinedButton}" BorderBrush="#1D3242" Foreground="#1D3242" Height="35">
                         <StackPanel Orientation="Horizontal">
