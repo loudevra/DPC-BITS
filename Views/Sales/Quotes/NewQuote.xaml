@@ -135,10 +135,11 @@
                                 </Grid.ColumnDefinitions>
 
                                 <!--Bill To Label-->
-                                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                                    <TextBlock x:Name="GovCETitle" Text="Cost Estimate" FontWeight="SemiBold" FontFamily="Lexend" FontSize="24" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" >
+                                    <materialDesign:PackIcon Kind="Calculator" Width="30" Height="30" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                    <TextBlock Text="Cost Estimate" FontWeight="SemiBold" FontSize="25" Foreground="#474747" VerticalAlignment="Center"/>
                                 </StackPanel>
-
+                                
                                 <!-- Add Client Button -->
                                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
                                     <Button

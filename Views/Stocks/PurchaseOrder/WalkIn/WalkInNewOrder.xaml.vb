@@ -420,7 +420,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         .Background = CType(New BrushConverter().ConvertFrom("#FDFDFD"), Brush),
         .CornerRadius = New CornerRadius(15),
         .Padding = New Thickness(0),
-        .Margin = New Thickness(5),
         .HorizontalAlignment = HorizontalAlignment.Stretch,
         .MinWidth = 300
     }
@@ -445,7 +444,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             productPanel.Children.Add(CreateTaxValueBox(rowIndex))             ' Tax (readonly)
             productPanel.Children.Add(CreateDiscountPercentBox(rowIndex))      ' Discount (%)
             productPanel.Children.Add(CreateDiscountBox(rowIndex))             ' Discount
-            productPanel.Children.Add(CreateAmountBox("₱0.00", rowIndex))      ' Amount
+            productPanel.Children.Add(CreateAmountBox("₱ 0.00", rowIndex))      ' Amount
 
             productPanel.Children.Add(CreateDeleteButton(mainBorder))
             mainStack.Children.Add(productPanel)
@@ -656,7 +655,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         End Function
 
         ' Based Textbox for the other textbox 
-        Public Function CreateInputBox(text As String, width As Double, Optional isReadOnly As Boolean = False, Optional name As String = "") As Border
+        Public Function CreateInputBox(text As String, width As Double, Optional isReadOnly As Boolean = False, Optional name As String = "", Optional alignment As HorizontalAlignment = HorizontalAlignment.Left) As Border
             Dim txt As New TextBox With {
         .Text = text,
         .FontFamily = New FontFamily("Lexend"),
@@ -667,7 +666,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         .Padding = New Thickness(5),
         .BorderThickness = New Thickness(0),
         .IsReadOnly = isReadOnly,
-        .Width = width
+        .Width = width,
+        .HorizontalContentAlignment = alignment
     }
 
             If Not String.IsNullOrWhiteSpace(name) Then
@@ -686,12 +686,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             End If
 
             Dim border As New Border With {
-        .BorderBrush = If(isReadOnly, Brushes.Transparent, CType(New BrushConverter().ConvertFrom("#1D3242"), Brush)),
-        .BorderThickness = If(isReadOnly, New Thickness(0), New Thickness(2)),
+        .BorderBrush = If(isReadOnly, Brushes.Transparent, CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush)),
+        .BorderThickness = If(isReadOnly, New Thickness(0), New Thickness(1)),
         .Background = CType(New BrushConverter().ConvertFrom("#FDFDFD"), Brush),
-        .CornerRadius = New CornerRadius(15),
-        .Padding = New Thickness(5),
-        .Margin = New Thickness(0, 0, 5, 0),
+        .CornerRadius = New CornerRadius(5),
+        .Padding = New Thickness(2),
+        .Margin = New Thickness(2, 0, 2, 0),
         .Child = txt
     }
 
@@ -700,12 +700,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
         ' Quantity Textbox
         Private Function CreateQuantityBox(rowIndex As Integer) As Border
-            Return CreateInputBox("1", 50, False, $"txtQuantity_{rowIndex}")
+            Return CreateInputBox("1", 50, False, $"txtQuantity_{rowIndex}", HorizontalAlignment.Center)
         End Function
 
         ' Rate Textbox
         Private Function CreateRateBox(rowIndex As Integer) As Border
-            Dim box = CreateInputBox("", 70, False, $"txtRate_{rowIndex}")
+            Dim box = CreateInputBox("", 80, False, $"txtRate_{rowIndex}", HorizontalAlignment.Center)
             Dim txt = TryCast(box.Child, TextBox)
             If txt IsNot Nothing Then
                 AddHandler txt.TextChanged, AddressOf Quantity_TextChanged
@@ -714,41 +714,28 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             Return box
         End Function
 
-        ' Tax Percent Textbox
-        Private Function CreateTaxPercentBox(rowIndex As Integer) As Border
-            Dim box = CreateInputBox("", 60, False, $"txtTaxPercent_{rowIndex}")
-            Dim txt = TryCast(box.Child, TextBox)
-            If txt IsNot Nothing Then
-                AddHandler txt.TextChanged, AddressOf TaxPercent_TextChanged
-                AddHandler txt.PreviewTextInput, AddressOf TaxPercent_PreviewTextInput
-            End If
-            Return box
-        End Function
-
-        ' Tax Value Box
+        ' Update Tax Value Box
         Private Function CreateTaxValueBox(rowIndex As Integer) As Border
-            Return CreateInputBox("", 60, True, $"txtTaxValue_{rowIndex}")
+            Return CreateInputBox("", 70, True, $"txtTaxValue_{rowIndex}", HorizontalAlignment.Center)
         End Function
 
-        ' Discount Percent
-        Private Function CreateDiscountPercentBox(rowIndex As Integer) As Border
-            Dim box = CreateInputBox("", 60, False, $"txtDiscountPercent_{rowIndex}")
-            Dim txt = TryCast(box.Child, TextBox)
-            If txt IsNot Nothing Then
-                AddHandler txt.TextChanged, AddressOf DiscountPercent_TextChanged
-                AddHandler txt.PreviewTextInput, AddressOf DiscountPercent_PreviewTextInput
-            End If
-            Return box
-        End Function
-
-        ' Discount Box
+        ' Update Discount Box
         Private Function CreateDiscountBox(rowIndex As Integer) As Border
-            Return CreateInputBox("", 90, True, $"txtDiscount_{rowIndex}")
+            Return CreateInputBox("", 80, True, $"txtDiscount_{rowIndex}", HorizontalAlignment.Center)
+        End Function
+
+        ' If you want the Percentages centered too:
+        Private Function CreateTaxPercentBox(rowIndex As Integer) As Border
+            Return CreateInputBox("", 70, False, $"txtTaxPercent_{rowIndex}", HorizontalAlignment.Center)
+        End Function
+
+        Private Function CreateDiscountPercentBox(rowIndex As Integer) As Border
+            Return CreateInputBox("", 70, False, $"txtDiscountPercent_{rowIndex}", HorizontalAlignment.Center)
         End Function
 
         ' Amount Box
         Private Function CreateAmountBox(text As String, rowIndex As Integer) As Border
-            Return CreateInputBox(text, 70, True, $"txtAmount_{rowIndex}")
+            Return CreateInputBox(text, 90, True, $"txtAmount_{rowIndex}", HorizontalAlignment.Center)
         End Function
 
         ' Deleting the buttons
@@ -757,7 +744,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             .Background = Brushes.Transparent,
             .BorderBrush = Brushes.Transparent,
             .Padding = New Thickness(0),
-            .Width = 35,
+            .Width = 50,
             .Height = 40,
             .Cursor = Cursors.Hand,
             .VerticalAlignment = VerticalAlignment.Center
@@ -909,7 +896,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             ' Update all display boxes
             If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
             If discountBox IsNot Nothing Then discountBox.Text = discountValue.ToString("N2")
-            amountBox.Text = "₱" & finalAmount.ToString("N2")
+            amountBox.Text = "₱ " & finalAmount.ToString("N2")
 
             Debug.WriteLine($"[Row {rowIndex}] Base: {baseAmount}, Tax: {taxValue}, Discount: {discountValue}, Total: {finalAmount}")
 
@@ -975,7 +962,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
             BLSubtotalAmountCache = (subtotalAmount).ToString("F2")
             ' 4. Format outputs for UI display
-            txtGrandTotal.Text = "₱" & finalGrandTotal.ToString("N2")
+            txtGrandTotal.Text = "₱ " & finalGrandTotal.ToString("N2")
 
             ' 5. Pass CLEAN values to Cache (It's better to store as Decimal or clean String)
             StatementDetails.TotalCostCache = finalGrandTotal.ToString("F2")
@@ -1001,7 +988,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 End If
             Next
 
-            txtTotalTax.Text = "₱" & totalTax.ToString("N2")
+            txtTotalTax.Text = "₱ " & totalTax.ToString("N2")
         End Sub
 
         Public Sub UpdateTotalDiscount()
@@ -1262,7 +1249,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             txtTaxSelection.SelectedIndex = 0
             txtDiscountSelection.SelectedIndex = 0
             txtTotalTax.Text = "₱ 0.00"
-            txtTotalDiscount.Text = "₱0.00"
+            txtTotalDiscount.Text = "₱ 0.00"
             txtGrandTotal.Text = ""
             TxtClientDetails.Clear()
             ' Clear the client details
