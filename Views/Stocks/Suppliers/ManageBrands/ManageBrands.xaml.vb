@@ -60,6 +60,13 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
             LoadBrands()
         End Sub
 
+        ' =======================================================
+        ' NEW EVENT HANDLER: Auto-numbering the DataGrid rows
+        ' =======================================================
+        Private Sub dataGrid_LoadingRow(sender As Object, e As DataGridRowEventArgs) Handles dataGrid.LoadingRow
+            e.Row.Header = (e.Row.GetIndex() + 1).ToString()
+        End Sub
+
         Private Sub TxtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
             If _searchFilterHelper IsNot Nothing Then
                 _searchFilterHelper.SearchText = txtSearch.Text
@@ -275,6 +282,7 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
 
             popup.IsOpen = True
         End Sub
+
 
     End Class
 End Namespace
