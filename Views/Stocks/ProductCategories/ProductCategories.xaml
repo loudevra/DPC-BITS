@@ -4,12 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:local="namespace:DPC.Views.Stocks.ProductCategories"
+        xmlns:local="clr-namespace:DPC"
         mc:Ignorable="d"
         Background="#D9D9D9">
 
     <UserControl.Resources>
-        <!-- Button Style -->
+
+        <local:RowIndexConverter x:Key="RowIndexConverter" />
+
         <Style x:Key="RoundedButtonStyle" TargetType="Button">
             <Setter Property="Template">
                 <Setter.Value>
@@ -22,12 +24,10 @@
             </Setter>
         </Style>
 
-        <!-- Border Style -->
         <Style x:Key="RoundedBorderStyle" TargetType="Border">
             <Setter Property="CornerRadius" Value="15"/>
         </Style>
 
-        <!-- Textbox Style -->
         <Style x:Key="RoundedTextboxStyle" TargetType="TextBox">
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Background" Value="Transparent"/>
@@ -47,13 +47,11 @@
                     BorderBrush="{TemplateBinding BorderBrush}" 
                     BorderThickness="1">
                             <Grid>
-                                <!-- Define two columns, Content on left, Arrow on right -->
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="35" />
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Selected Item Content -->
                                 <ContentPresenter Name="ContentSite"
                                       IsHitTestVisible="False"
                                       Content="{TemplateBinding SelectionBoxItem}"
@@ -61,7 +59,6 @@
                                       VerticalAlignment="Center"
                                       Margin="10,0,5,0"/>
 
-                                <!-- Arrow Button (Right) -->
                                 <ToggleButton Name="ToggleButton" 
                                   Grid.Column="1"
                                   Focusable="False"
@@ -91,19 +88,16 @@
                                     </ToggleButton.Style>
                                 </ToggleButton>
 
-                                <!-- Dropdown Items -->
                                 <Popup Name="Popup"
                            Placement="Bottom"
                            IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
                            AllowsTransparency="True"
                            Focusable="False"
                            MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-                                    <!-- MATCH WIDTH -->
                                     <Border Style="{StaticResource RoundedBorderStyle}" 
                                 Background="White" 
                                 BorderBrush="Black"
                                 Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-                                        <!-- MATCH WIDTH -->
                                         <ScrollViewer>
                                             <StackPanel>
                                                 <ItemsPresenter/>
@@ -122,16 +116,11 @@
     <Grid x:Name="mainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Header Section -->
             <RowDefinition Height="Auto"/>
-            <!-- Options Bar -->
             <RowDefinition Height="*"/>
-            <!-- DataGrid Section -->
             <RowDefinition Height="Auto"/>
-            <!-- Pagination Section -->
         </Grid.RowDefinitions>
 
-        <!-- Title and Add Buttons - Static at top -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20,20,20,10">
             <TextBlock Text="Product Category"
                        FontWeight="SemiBold"
@@ -163,7 +152,6 @@
             </Button>
         </StackPanel>
 
-        <!-- Option Bar - Static with controls -->
         <StackPanel VerticalAlignment="Center" Grid.Row="1" Margin="20,10">
             <Border Style="{StaticResource RoundedBorderStyle}" BorderThickness="0" Background="white" Padding="10" CornerRadius="10">
                 <Grid>
@@ -233,8 +221,7 @@
             </Border>
         </StackPanel>
 
-        <!-- DataGrid Section - Scrollable Content -->
-        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="20,0" Style="{StaticResource ModernScrollViewerStyle}">
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="20,0">
             <DataGrid Name="dataGrid"
                       AutoGenerateColumns="False"
                       CanUserAddRows="False"
@@ -288,8 +275,10 @@
                 </DataGrid.CellStyle>
 
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="#" Binding="{Binding categoryID}" Width="120"/>
-                    <DataGridTextColumn Header="Name" Binding="{Binding categoryName}" Width="120">
+
+                    <DataGridTextColumn Header="#" Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Converter={StaticResource RowIndexConverter}}" Width="50"/>
+
+                    <DataGridTextColumn Header="Name" Binding="{Binding categoryName}" Width="1.5*">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="TextWrapping" Value="NoWrap"/>
@@ -298,7 +287,8 @@
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Description" Binding="{Binding categoryDescription}" Width="200">
+
+                    <DataGridTextColumn Header="Description" Binding="{Binding categoryDescription}" Width="2*">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="TextWrapping" Value="NoWrap"/>
@@ -308,8 +298,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <!-- Subcategories column with ListBox to display subcategories -->
-                    <DataGridTemplateColumn Header="Subcategories" Width="150">
+                    <DataGridTemplateColumn Header="Subcategories" Width="1.5*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <ListBox ItemsSource="{Binding subcategories}" DisplayMemberPath="subcategoryName" BorderThickness="0" Background="Transparent">
@@ -326,17 +315,19 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="Settings" Width="80">
+                    <DataGridTemplateColumn Header="Actions" Width="100">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <Button Width="30" Height="30" Background="Transparent" Margin="0,0,5,0" ToolTip="Edit"  Click="btnEditPopup_Click" >
-                                        <materialDesign:PackIcon Kind="CircleEditOutline" Width="16" Height="16" Foreground="#52C69D"/>
-                                    </Button>
-                                    <Button Width="30" Height="30" Background="Transparent" Margin="0" ToolTip="Delete" Click="btnDeletePopup_Click">
-                                        <materialDesign:PackIcon Kind="DeleteOutline" Width="16" Height="16" Foreground="#E65E5E"/>
-                                    </Button>
-                                </StackPanel>
+                                <Border BorderBrush="#D9D9D9" BorderThickness="1.5" CornerRadius="6" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="4,2">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Width="28" Height="28" Background="Transparent" Margin="0,0,5,0" ToolTip="Edit" Click="btnEditPopup_Click" Padding="0">
+                                            <materialDesign:PackIcon Kind="SquareEditOutline" Width="18" Height="18" Foreground="#52C69D"/>
+                                        </Button>
+                                        <Button Width="28" Height="28" Background="Transparent" Margin="0" ToolTip="Delete" Click="btnDeletePopup_Click" Padding="0">
+                                            <materialDesign:PackIcon Kind="TrashCanOutline" Width="18" Height="18" Foreground="#E65E5E"/>
+                                        </Button>
+                                    </StackPanel>
+                                </Border>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -344,9 +335,7 @@
             </DataGrid>
         </ScrollViewer>
 
-        <!-- Pagination Section - Fixed at bottom -->
         <StackPanel x:Name="paginationPanel" Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,20">
-            <!-- Pagination controls will be added here programmatically -->
         </StackPanel>
     </Grid>
 </UserControl>

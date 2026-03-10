@@ -10,6 +10,10 @@ Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
 Imports DPC.DPC.Data.Models
 Imports Microsoft.Win32
+Imports System.Globalization
+Imports System.Windows.Data
+Imports System.Windows.Controls
+Imports System.Windows
 
 Namespace DPC.Views.Stocks.ProductCategories
     ''' <summary>
@@ -236,8 +240,6 @@ Namespace DPC.Views.Stocks.ProductCategories
 
             If selectedProductCategory.subcategories IsNot Nothing AndAlso selectedProductCategory.subcategories.Count > 0 Then
                 For Each subcategory As Subcategory In selectedProductCategory.subcategories
-                    ' Debug PURPOSES - Just Incase it gives errors
-                    'Console.WriteLine($"Subcategory ID: {subcategory.subcategoryID}, Name: {subcategory.subcategoryName}")
                     editProductCategoryWindow.CreateSubCategoryPanel(subcategory.subcategoryName)
                 Next
             Else
@@ -294,18 +296,6 @@ Namespace DPC.Views.Stocks.ProductCategories
 
                 ' Initialize pagination helper with our DataGrid and pagination panel
                 _paginationHelper = New PaginationHelper(dataGrid, paginationPanel)
-
-                ' Set the items per page from the combo box if available
-                'If cboItemsPerPage IsNot Nothing Then
-                'Dim selectedItem = TryCast(cboItemsPerPage.SelectedItem, ComboBoxItem)
-                'If selectedItem IsNot Nothing Then
-                'Dim itemsPerPageText As String = TryCast(selectedItem.Content, String)
-                'Dim itemsPerPage As Integer
-                'If Integer.TryParse(itemsPerPageText, itemsPerPage) Then
-                '_paginationHelper.ItemsPerPage = itemsPerPage
-                'End If
-                'End If
-                'End If
 
                 ' Set the all items to the helper
                 _paginationHelper.AllItems = allBrands
@@ -371,3 +361,24 @@ Namespace DPC.Views.Stocks.ProductCategories
 
     End Class
 End Namespace
+
+' =========================================================================
+' ROW INDEX CONVERTER
+' Placed completely outside the Namespace block to avoid XAML resolving issues
+' =========================================================================
+Public Class RowIndexConverter
+    Implements IValueConverter
+
+    Public Function Convert(value As Object, targetType As Type, parameter As Object, culture As CultureInfo) As Object Implements IValueConverter.Convert
+        Dim row As DataGridRow = TryCast(value, DataGridRow)
+        If row IsNot Nothing Then
+            ' GetIndex() is 0-based, so we add 1
+            Return row.GetIndex() + 1
+        End If
+        Return ""
+    End Function
+
+    Public Function ConvertBack(value As Object, targetType As Type, parameter As Object, culture As CultureInfo) As Object Implements IValueConverter.ConvertBack
+        Throw New NotImplementedException()
+    End Function
+End Class
