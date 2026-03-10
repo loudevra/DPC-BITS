@@ -1,5 +1,8 @@
-﻿Imports System.Windows.Markup
+﻿' CRMResidentialClientPersonalInfo.xaml.vb
+Imports System.Windows.Markup
+Imports DPC.Data.Helpers.ViewLoader
 Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Helpers.ViewLoader
 Imports DPC.DPC.Data.Models
 
 Namespace DPC.Views.CRM
@@ -45,6 +48,10 @@ Namespace DPC.Views.CRM
             _cachedName = txtName.Text
             _cachedPhone = txtPhone.Text
             _cachedEmail = txtEmail.Text
+
+            ResidentialClientDetails.ClientName = txtName.Text
+            ResidentialClientDetails.Phone = txtPhone.Text
+            ResidentialClientDetails.Email = txtEmail.Text
         End Sub
 
         ' --- UPPERCASE FORMATTING LOGIC ---
@@ -74,38 +81,50 @@ Namespace DPC.Views.CRM
 
         ' --- SUBMIT BUTTON LOGIC ---
         Private Sub AddClient(sender As Object, e As RoutedEventArgs)
-            ' Check required fields
-            If String.IsNullOrEmpty(txtName.Text) OrElse
-               String.IsNullOrEmpty(txtPhone.Text) OrElse
-               String.IsNullOrEmpty(txtEmail.Text) Then
-                MessageBox.Show("Please fill in all required fields.", "Missing Information", MessageBoxButton.OK, MessageBoxImage.Warning)
+            If String.IsNullOrEmpty(ResidentialClientDetails.ClientName) OrElse
+               String.IsNullOrEmpty(ResidentialClientDetails.Phone) OrElse
+               String.IsNullOrEmpty(ResidentialClientDetails.Email) OrElse
+               String.IsNullOrEmpty(ResidentialClientDetails.BillAddress) Then
+
+                MessageBox.Show("Please fill in all required fields (Personal, Billing, etc.) before adding.", "Missing Information", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Exit Sub
             End If
 
-            ' Create the Client object (Make sure to use commas correctly!)
             Dim client As New Client With {
-                .Name = txtName.Text,
-                .Phone = txtPhone.Text,
-                .Email = txtEmail.Text,
+                .ClientGroupID = ResidentialClientDetails.ClientGroupID,
+                .Name = ResidentialClientDetails.ClientName,
+                .Phone = ResidentialClientDetails.Phone,
+                .Email = ResidentialClientDetails.Email,
+                .BillingAddress = $"{ResidentialClientDetails.BillAddress}, {ResidentialClientDetails.BillCity}, {ResidentialClientDetails.BillRegion}, {ResidentialClientDetails.BillCountry}, {ResidentialClientDetails.BillZipCode}",
+                .ShippingAddress = $"{ResidentialClientDetails.Address}, {ResidentialClientDetails.City}, {ResidentialClientDetails.Region}, {ResidentialClientDetails.Country}, {ResidentialClientDetails.ZipCode}",
+                .CustomerGroup = ResidentialClientDetails.CustomerGroup,
+                .ClientLanguage = ResidentialClientDetails.CustomerLanguage,
                 .ClientType = "Residential",
-                .BillingAddress = "",
-                .ShippingAddress = ""
+                .TinId = ""
             }
 
             Dim success As Boolean = ClientController.CreateClient(client)
 
             If success Then
                 MessageBox.Show("Client added successfully.")
+                ClearAllCache()
 
-                ' Clear the memory and the text boxes ONLY after success
-                _cachedName = ""
-                _cachedPhone = ""
-                _cachedEmail = ""
-
-                txtName.Text = ""
-                txtPhone.Text = ""
-                txtEmail.Text = ""
+                DynamicView.NavigateToView("manageclients", Me)
             End If
+        End Sub
+
+        Private Sub ClearAllCache()
+            _cachedName = ""
+            _cachedPhone = ""
+            _cachedEmail = ""
+
+            txtName.Text = ""
+            txtPhone.Text = ""
+            txtEmail.Text = ""
+
+            ResidentialClientDetails.ClientName = Nothing
+            ResidentialClientDetails.Phone = Nothing
+            ResidentialClientDetails.Email = Nothing
         End Sub
 
     End Class

@@ -25,6 +25,11 @@ Namespace DPC.Views.CRM
            }
 
             AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
+            AddHandler Me.Loaded, AddressOf OnViewLoaded
+        End Sub
+
+        Private Sub OnViewLoaded(sender As Object, e As RoutedEventArgs)
+            LoadClients()
         End Sub
 
         Private Sub LoadClients()

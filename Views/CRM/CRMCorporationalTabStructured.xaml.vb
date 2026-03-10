@@ -1,4 +1,5 @@
-﻿Namespace DPC.Views.CRM
+﻿' structure of corporate
+Namespace DPC.Views.CRM
     Public Class CRMCorporationalTabStructured
 
         Public Sub New()

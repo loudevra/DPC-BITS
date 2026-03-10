@@ -1,5 +1,8 @@
-﻿Imports System.Windows.Markup
+﻿' CRMResidentialClientOtherSettings.xaml.vb
+Imports System.Windows.Markup
+Imports DPC.Data.Helpers.ViewLoader
 Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Helpers.ViewLoader
 Imports DPC.DPC.Data.Models
 
 Namespace DPC.Views.CRM
@@ -70,7 +73,7 @@ Namespace DPC.Views.CRM
             End If
 
             ' 3. Update Global Model
-            ResidentialClientDetails.ClientGroupID = _savedClientGroupID
+            ResidentialClientDetails.ClientGroupID = If(_savedClientGroupID.HasValue, _savedClientGroupID.Value, 0)
             ResidentialClientDetails.CustomerGroup = _savedCustomerGroup
             ResidentialClientDetails.CustomerLanguage = _savedLanguage
         End Sub
@@ -102,7 +105,8 @@ Namespace DPC.Views.CRM
                 .ShippingAddress = $"{ResidentialClientDetails.Address}, {ResidentialClientDetails.City}, {ResidentialClientDetails.Region}, {ResidentialClientDetails.Country}, {ResidentialClientDetails.ZipCode}",
                 .CustomerGroup = ResidentialClientDetails.CustomerGroup,
                 .ClientLanguage = ResidentialClientDetails.CustomerLanguage,
-                .ClientType = "Residential"
+                .ClientType = "Residential",
+                .TinId = ""
             }
 
             Dim success As Boolean = ClientController.CreateClient(client)
@@ -110,6 +114,8 @@ Namespace DPC.Views.CRM
             If success Then
                 MessageBox.Show("Client added successfully.")
                 ClearCache()
+
+                DynamicView.NavigateToView("manageclients", Me)
             End If
         End Sub
 
@@ -120,7 +126,7 @@ Namespace DPC.Views.CRM
             _savedLanguage = ""
 
             ' Clear UI
-            cmbCustomerGroup.SelectedValue = Nothing
+            cmbCustomerGroup.SelectedIndex = -1
             cmbLanguage.SelectedIndex = -1
             cmbLanguage.Text = ""
 
@@ -138,7 +144,7 @@ Namespace DPC.Views.CRM
             ResidentialClientDetails.Region = Nothing
             ResidentialClientDetails.Country = Nothing
             ResidentialClientDetails.ZipCode = Nothing
-            ResidentialClientDetails.ClientGroupID = Nothing
+            ResidentialClientDetails.ClientGroupID = 0
             ResidentialClientDetails.CustomerGroup = Nothing
             ResidentialClientDetails.CustomerLanguage = Nothing
             ResidentialClientDetails.SameAsBilling = Nothing

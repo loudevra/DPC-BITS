@@ -1,5 +1,8 @@
-﻿Imports System.Windows.Markup
+﻿' CRMResidentialClientShippingAddress.xaml.vb
+Imports System.Windows.Markup
+Imports DPC.Data.Helpers.ViewLoader
 Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Helpers.ViewLoader
 Imports DPC.DPC.Data.Models
 
 Namespace DPC.Views.CRM
@@ -157,7 +160,8 @@ Namespace DPC.Views.CRM
                 .ShippingAddress = $"{txtAddress.Text}, {txtCity.Text}, {txtRegion.Text}, {txtCountry.Text}, {txtZipCode.Text}",
                 .CustomerGroup = ResidentialClientDetails.CustomerGroup,
                 .ClientLanguage = ResidentialClientDetails.CustomerLanguage,
-                .ClientType = "Residential"
+                .ClientType = "Residential",
+                .TinId = ""
             }
 
             Dim success As Boolean = ClientController.CreateClient(client)
@@ -165,6 +169,8 @@ Namespace DPC.Views.CRM
             If success Then
                 MessageBox.Show("Client added successfully.")
                 ClearCache()
+
+                DynamicView.NavigateToView("manageclients", Me)
             End If
         End Sub
 
