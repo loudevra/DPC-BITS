@@ -259,7 +259,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 ComboBoxSupplier.Items.Clear()  ' <-- Clears supplier dropdown
                 ComboBoxCategory.Items.Clear()
                 ComboBoxSubCategory.Items.Clear()
-                StackPanelSubCategory.Visibility = Visibility.Collapsed
+                'StackPanelSubCategory.Visibility = Visibility.Collapsed
             End If
         End Sub
         Private Sub StartDate_Click(sender As Object, e As RoutedEventArgs)
