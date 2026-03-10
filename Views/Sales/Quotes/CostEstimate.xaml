@@ -332,6 +332,17 @@
                                                    RowBackground="Transparent"
                                                    BorderThickness="0, 1, 0, 0"
                                                    BorderBrush="Black">
+                                                        <DataGrid.GroupStyle>
+                                                            <GroupStyle>
+                                                                <GroupStyle.HeaderTemplate>
+                                                                    <DataTemplate>
+                                                                        <Border Background="#F5F5F5" Padding="10,5">
+                                                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="#1D3242" FontSize="14"/>
+                                                                        </Border>
+                                                                    </DataTemplate>
+                                                                </GroupStyle.HeaderTemplate>
+                                                            </GroupStyle>
+                                                        </DataGrid.GroupStyle>
                                                         <DataGrid.Columns>
                                                             <!-- Image Column with Hover Zoom Effect -->
 
@@ -446,27 +457,26 @@
                                                                 <DataGridTemplateColumn.CellTemplate>
                                                                     <DataTemplate>
                                                                         <StackPanel Margin="8" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                                                            <TextBlock 
-                                                                                Text="{Binding Description}" 
-                                                                                FontSize="12" 
-                                                                                FontFamily="Lexend"
-                                                                                FontWeight="SemiBold"
-                                                                                MaxWidth="400"
-                                                                                TextWrapping="Wrap"
-                                                                                TextTrimming="CharacterEllipsis"
-                                                                                MaxHeight="36"/>
-                                                                            <TextBlock 
-                                                                                Text="{Binding ProductDescription}" 
-                                                                                FontSize="12" 
-                                                                                FontFamily="Lexend"
-                                                                                Foreground="Black"
-                                                                                Margin="0,3,0,0"
-                                                                                MaxWidth="400"       
-                                                                                TextWrapping="Wrap"
-                                                                                TextTrimming="CharacterEllipsis"
-                                                                                MaxHeight="20" 
-                                                                                Visibility="{Binding ProductDescriptionVisibility}"/>
+                                                                            <TextBlock x:Name="txtProductTitle"
+                                                                                        Text="{Binding Description}" 
+                                                                                        FontSize="12" 
+                                                                                        FontFamily="Lexend"/>
+
+                                                                            <TextBlock Text="{Binding ProductDescription}" 
+                                                                                       FontSize="11" 
+                                                                                       FontFamily="Lexend"
+                                                                                       Foreground="#555555"
+                                                                                       Margin="0,3,0,0"
+                                                                                       Visibility="{Binding ProductDescriptionVisibility}"/>
                                                                         </StackPanel>
+
+                                                                        <DataTemplate.Triggers>
+                                                                            <DataTrigger Binding="{Binding IsHeaderRow}" Value="True">
+                                                                                <Setter TargetName="txtProductTitle" Property="FontWeight" Value="Bold"/>
+                                                                                <Setter TargetName="txtProductTitle" Property="Text" Value="{Binding Description}"/>
+                                                                                <Setter TargetName="txtProductTitle" Property="FontSize" Value="13"/>
+                                                                            </DataTrigger>
+                                                                        </DataTemplate.Triggers>
                                                                     </DataTemplate>
                                                                 </DataGridTemplateColumn.CellTemplate>
                                                             </DataGridTemplateColumn>
@@ -511,6 +521,31 @@
                                                                 <Setter Property="Margin" Value="0"/>
                                                                 <Setter Property="Padding" Value="0"/>
                                                                 <Setter Property="MinHeight" Value="55"/>
+
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsHeaderRow}" Value="True">
+                                                                        <Setter Property="Background" Value="#F2F2F2"/>
+                                                                        <Setter Property="FontWeight" Value="Bold"/>
+                                                                        <Setter Property="Foreground" Value="#1D3242"/>
+                                                                        <Setter Property="MinHeight" Value="40"/>
+                                                                        <Setter Property="Template">
+                                                                            <Setter.Value>
+                                                                                <ControlTemplate TargetType="DataGridRow">
+                                                                                    <Border BorderBrush="Black" 
+                                                                                            BorderThickness="0,0,0,1" 
+                                                                                            Background="{TemplateBinding Background}" 
+                                                                                            Padding="10,5">
+                                                                                        <TextBlock Text="{Binding Description}" 
+                                                                                                   HorizontalAlignment="Center" 
+                                                                                                   VerticalAlignment="Center"
+                                                                                                   FontSize="14"
+                                                                                                   FontWeight="Bold"/>
+                                                                                    </Border>
+                                                                                </ControlTemplate>
+                                                                            </Setter.Value>
+                                                                        </Setter>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
                                                             </Style>
                                                         </DataGrid.RowStyle>
 
@@ -535,33 +570,20 @@
                                                                 <Setter Property="Background" Value="Transparent"/>
                                                                 <Setter Property="Padding" Value="3,0"/>
                                                                 <Setter Property="FontSize" Value="12"/>
-                                                                <Setter Property="TextBlock.TextWrapping" Value="NoWrap"/>
-                                                                <Setter Property="Foreground" Value="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Path=Foreground}"/>
-                                                                <Setter Property="TextBlock.TextTrimming" Value="CharacterEllipsis"/>
-                                                                <Setter Property="BorderThickness" Value="0, 0, 1, 1"/>
+                                                                <Setter Property="VerticalContentAlignment" Value="Center"/>
                                                                 <Setter Property="BorderBrush" Value="Black"/>
-
-                                                                <Setter Property="Template">
-                                                                    <Setter.Value>
-                                                                        <ControlTemplate TargetType="{x:Type DataGridCell}">
-                                                                            <Border Padding="{TemplateBinding Padding}"                                                                              
-                                                                                    Background="{TemplateBinding Background}"
-                                                                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                                                                    BorderThickness="{TemplateBinding BorderThickness}">
-                                                                                <ContentPresenter VerticalAlignment="Top"/>
-                                                                            </Border>
-                                                                        </ControlTemplate>
-                                                                    </Setter.Value>
-                                                                </Setter>
+                                                                <Setter Property="BorderThickness" Value="0, 0, 1, 1"/>
 
                                                                 <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsHeaderRow}" Value="True">
+                                                                        <Setter Property="BorderThickness" Value="0, 0, 0, 1"/>
+                                                                        <Setter Property="Background" Value="#F2F2F2"/>
+                                                                        <Setter Property="FontWeight" Value="Bold"/>
+                                                                        <Setter Property="Padding" Value="3,0"/>
+                                                                    </DataTrigger>
+
                                                                     <DataTrigger Binding="{Binding IsSubtotalRow}" Value="True">
                                                                         <Setter Property="BorderThickness" Value="0, 0, 0, 0"/>
-                                                                        <Setter Property="BorderBrush" Value="Black"/>
-                                                                    </DataTrigger>
-                                                                    <DataTrigger Binding="{Binding IsCategoryHeader}" Value="True">
-                                                                        <Setter Property="BorderThickness" Value="0, 0, 0, 0"/>
-                                                                        <Setter Property="BorderBrush" Value="Black"/>
                                                                     </DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>

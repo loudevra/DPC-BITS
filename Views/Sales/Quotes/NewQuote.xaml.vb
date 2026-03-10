@@ -1464,106 +1464,76 @@ Namespace DPC.Views.Sales.Quotes
 
         ' Function for converting all of the product inputs to JSON Format before saving it and print it
         Private Function SubmitAllProductInputs() As String
-            ' Ensure all amounts are up-to-date
-            For i As Integer = 0 To MainContainer.Children.Count - 1
-                CalculateAmount(i)
-            Next
+            ' We keep the type as String values to avoid breaking your CostEstimate logic
+            Dim flatList As New List(Of Dictionary(Of String, String))()
 
-            Dim productArray As New List(Of Dictionary(Of String, Object))()
+            ' 1. Loop through each Category Wrapper in the MainContainer
+            For Each categoryWrapper As StackPanel In MainContainer.Children.OfType(Of StackPanel)()
 
-            For i As Integer = 0 To MainContainer.Children.Count - 1
-                Dim border = TryCast(MainContainer.Children(i), Border)
-                If border Is Nothing Then Continue For
+                ' 2. Extract Category Name from the Header
+                ' Structure: categoryWrapper(0) = Border -> Grid -> TextBox
+                Dim headerBorder = TryCast(categoryWrapper.Children(0), Border)
+                Dim headerGrid = TryCast(headerBorder.Child, Grid)
+                Dim categoryNameTxt = TryCast(headerGrid.Children(0), TextBox)
+                Dim currentCategoryName = categoryNameTxt.Text.Trim()
 
-                Dim stack = TryCast(border.Child, StackPanel)
-                If stack Is Nothing OrElse stack.Children.Count < 1 Then Continue For
+                ' 3. CREATE A HEADER ROW MARKER
+                Dim headerRow As New Dictionary(Of String, String)()
+                headerRow("ProductName") = currentCategoryName
+                headerRow("IsCategoryHeader") = "True" ' This tells CostEstimate to style this row
+                flatList.Add(headerRow)
 
-                Dim productPanel = TryCast(stack.Children(0), StackPanel)
-                If productPanel Is Nothing OrElse productPanel.Children.Count < 8 Then Continue For
+                ' 4. Get the Product Items Panel (The second child of the wrapper)
+                Dim itemsPanel = TryCast(categoryWrapper.Children(1), StackPanel)
 
-                Dim productData As New Dictionary(Of String, Object)
-                Dim fieldNames = {"ProductName", "Quantity", "Rate", "TaxPercent", "TaxValue", "DiscountPercent", "Discount", "Amount"}
+                ' 5. Loop through each Product Row inside this category
+                For Each productBorder As Border In itemsPanel.Children.OfType(Of Border)()
+                    Dim outerStack = TryCast(productBorder.Child, StackPanel)
+                    If outerStack Is Nothing Then Continue For
 
-                For j As Integer = 0 To 7
-                    If j >= productPanel.Children.Count Then Exit For
+                    Dim productRow = TryCast(outerStack.Children(0), StackPanel)
+                    If productRow Is Nothing OrElse productRow.Children.Count < 8 Then Continue For
 
-                    Dim borderInput = TryCast(productPanel.Children(j), Border)
-                    If borderInput Is Nothing Then Continue For
+                    Dim itemData As New Dictionary(Of String, String)()
+                    itemData("IsCategoryHeader") = "False"
 
-                    Dim value As String = ""
+                    ' Extract data using your index-based logic
+                    itemData("ProductName") = GetInputVal(productRow, 0)
+                    itemData("Quantity") = GetInputVal(productRow, 1)
+                    itemData("Rate") = GetInputVal(productRow, 2)
+                    itemData("TaxPercent") = GetInputVal(productRow, 3)
+                    itemData("TaxValue") = GetInputVal(productRow, 4)
+                    itemData("DiscountPercent") = GetInputVal(productRow, 5)
+                    itemData("Discount") = GetInputVal(productRow, 6)
+                    itemData("Amount") = GetInputVal(productRow, 7).Replace("₱", "").Trim()
 
-                    If j = 0 Then
-                        ' ProductName: might be inside a Grid
-                        Dim grid = TryCast(borderInput.Child, Grid)
-                        If grid IsNot Nothing AndAlso grid.Children.Count > 0 Then
-                            Dim txtBox = TryCast(grid.Children(0), TextBox)
-                            If txtBox IsNot Nothing Then value = txtBox.Text.Trim()
-                        End If
-                    Else
-                        ' Other fields: Border -> TextBox
-                        Dim txtBox = TryCast(borderInput.Child, TextBox)
-                        If txtBox IsNot Nothing Then value = txtBox.Text.Trim()
-                    End If
+                    ' Extract Description (Second child of outerStack)
+                    Dim descStack = TryCast(outerStack.Children(1), StackPanel)
+                    Dim descTxt = TryCast(TryCast(descStack.Children(0), Border).Child, TextBox)
+                    Dim cleanDesc = descTxt.Text.Trim()
+                    itemData("Description") = If(cleanDesc.Contains("Optional"), "", cleanDesc)
 
-                    If (fieldNames(j) = "ProductName" OrElse fieldNames(j) = "Quantity" OrElse fieldNames(j) = "Rate") AndAlso
-       String.IsNullOrWhiteSpace(value) Then
-                        MessageBox.Show($"Please fill in all required fields in row {i + 1}.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
+                    ' Get Image Base64
+                    Try
+                        Dim b64 = GetProduct.GetProductImageBase64(itemData("ProductName"))
+                        itemData("ProductImageBase64") = If(String.IsNullOrEmpty(b64), "", b64)
+                    Catch
+                        itemData("ProductImageBase64") = ""
+                    End Try
+
+                    ' Validation Check
+                    If String.IsNullOrWhiteSpace(itemData("ProductName")) OrElse
+               String.IsNullOrWhiteSpace(itemData("Quantity")) Then
+                        MessageBox.Show("Please fill in required fields for: " & itemData("ProductName"))
                         Return Nothing
                     End If
 
-                    productData(fieldNames(j)) = value
+                    flatList.Add(itemData)
                 Next
-
-                ' Amount (child index 7)
-                If productPanel.Children.Count > 7 Then
-                    Dim amountBorder = TryCast(productPanel.Children(7), Border)
-                    If amountBorder IsNot Nothing Then
-                        Dim amountTextBox = TryCast(amountBorder.Child, TextBox)
-                        If amountTextBox IsNot Nothing Then
-                            Dim amountValue = amountTextBox.Text.Replace("₱", "").Trim()
-                            productData("Amount") = amountValue
-                        End If
-                    End If
-                End If
-
-                ' Description field
-                If stack.Children.Count > 1 Then
-                    Dim descriptionPanel = TryCast(stack.Children(1), StackPanel)
-                    If descriptionPanel IsNot Nothing AndAlso descriptionPanel.Children.Count > 0 Then
-                        Dim descBorder = TryCast(descriptionPanel.Children(0), Border)
-                        If descBorder IsNot Nothing Then
-                            Dim descTextBox = TryCast(descBorder.Child, TextBox)
-                            If descTextBox IsNot Nothing Then
-                                ' Store the description, filtering out placeholder text
-                                Dim descText = descTextBox.Text.Trim()
-                                If descText = "Enter product description (Optional)" Then
-                                    descText = ""
-                                End If
-                                productData("Description") = descText
-                            End If
-                        End If
-                    End If
-                End If
-
-                ' ========== ADD THIS NEW SECTION ==========
-                ' Get product image from database
-                Dim productName As String = productData("ProductName").ToString()
-                Dim imageBase64 As String = Nothing
-
-                Try
-                    ' Use GetProduct controller to retrieve image
-                    imageBase64 = GetProduct.GetProductImageBase64(productName)
-                Catch ex As Exception
-                    Debug.WriteLine($"Error getting image for {productName}: {ex.Message}")
-                End Try
-
-                productData("ProductImageBase64") = If(String.IsNullOrEmpty(imageBase64), "", imageBase64)
-                ' ========== END OF NEW SECTION ==========
-
-                productArray.Add(productData)
             Next
 
-            Return JsonConvert.SerializeObject(productArray, Formatting.None)
+            ' Serialize the flat list - no nested objects, just one long list
+            Return JsonConvert.SerializeObject(flatList, Formatting.None)
         End Function
 #End Region
 
@@ -1733,6 +1703,22 @@ Namespace DPC.Views.Sales.Quotes
                 MessageBox.Show($"Vat Selection - {CEisVatExInclude}")
             End If
         End Sub
+
+        Private Function GetInputVal(parent As StackPanel, index As Integer) As String
+            Dim borderInput = TryCast(parent.Children(index), Border)
+            If borderInput Is Nothing Then Return ""
+
+            Dim txt = TryCast(borderInput.Child, TextBox)
+            If txt IsNot Nothing Then Return txt.Text.Trim()
+
+            ' Handle ProductName Grid
+            Dim grid = TryCast(borderInput.Child, Grid)
+            If grid IsNot Nothing Then
+                Dim gridTxt = TryCast(grid.Children(0), TextBox)
+                Return If(gridTxt IsNot Nothing, gridTxt.Text.Trim(), "")
+            End If
+            Return ""
+        End Function
 
         'Private Sub btnExclusiveVatShow_Click(sender As Object, e As RoutedEventArgs)
         '    If ChangeVATColumn.Text = "Show Vat 12%" Then
