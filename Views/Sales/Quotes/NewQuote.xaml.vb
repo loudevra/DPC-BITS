@@ -1,18 +1,19 @@
 ﻿Imports System.Collections.ObjectModel
 Imports System.IO
+Imports System.Linq
 Imports System.Windows.Controls.Primitives
 Imports System.Windows.Threading
 Imports DocumentFormat.OpenXml.Bibliography
+Imports DocumentFormat.OpenXml.Math
 Imports DPC.DPC.Components.Forms
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
 Imports DPC.DPC.Data.Models
+Imports DPC.DPC.Views.Sales.Quotes.NewQuoteGovernment
 Imports DPC.DPC.Views.Stocks
 Imports MySql.Data.MySqlClient
 Imports Newtonsoft.Json
-Imports System.Linq
-Imports DocumentFormat.OpenXml.Math
 
 Namespace DPC.Views.Sales.Quotes
     ' Note - The value of defau
@@ -46,6 +47,7 @@ Namespace DPC.Views.Sales.Quotes
         ' Set a fixed length for Cost Estimate
         Dim _FixedPrefixLength As Integer = 14
 
+        Private categoryCount As Integer = 0
 
 #Region "Initializiation once loaded the form"
         Public Sub New()
@@ -432,7 +434,7 @@ Namespace DPC.Views.Sales.Quotes
                 FillClientsField()
                 LoadCachedQuoteItems()
             Else
-                AddProductInputUI()
+                AddNewCategoryUI()
             End If
         End Sub
 
@@ -451,7 +453,7 @@ Namespace DPC.Views.Sales.Quotes
         Private Sub LoadCachedQuoteItems()
             For Each item In CEQuoteItemsCache
                 rowCount += 1
-                AddProductInputUI()
+                AddNewCategoryUI()
 
                 Dim inputPanel = GetLatestInputPanel()
                 If inputPanel Is Nothing Then Continue For
@@ -551,13 +553,149 @@ Namespace DPC.Views.Sales.Quotes
 
 #Region "Product Autocomplete"
         ' Add New Row Button Click Event in the UI to be able to put new product input
-        Private Sub AddNewRow_Click(sender As Object, e As RoutedEventArgs)
-            rowCount += 1 ' Make sure to increment rowCount here so new rows get unique names
-            AddProductInputUI()
+        'Private Sub AddNewRow_Click(sender As Object, e As RoutedEventArgs)
+        '    rowCount += 1 ' Make sure to increment rowCount here so new rows get unique names
+        '    AddProductInputUI()
+        'End Sub
+
+        Public Sub AddNewCategory_Click(sender As Object, e As RoutedEventArgs)
+            AddNewCategoryUI()
+        End Sub
+
+        Private Sub CategoryAddRow_Click(sender As Object, e As RoutedEventArgs)
+            Dim btn = TryCast(sender, Button)
+            If btn IsNot Nothing Then
+                Dim targetPanel = TryCast(btn.Tag, StackPanel)
+
+                If targetPanel IsNot Nothing Then
+                    rowCount += 1
+                    AddProductInputUI(targetPanel)
+                End If
+            End If
+        End Sub
+
+        Private Sub DeleteCategory_Click(sender As Object, e As RoutedEventArgs)
+            Dim btn = TryCast(sender, Button)
+            If btn IsNot Nothing Then
+                Dim wrapperToDelete = TryCast(btn.Tag, StackPanel)
+
+                If wrapperToDelete IsNot Nothing Then
+                    MainContainer.Children.Remove(wrapperToDelete)
+
+                    Dim allTextBoxes = FindVisualChildren(Of TextBox)(wrapperToDelete)
+                    For Each txt In allTextBoxes
+                        If Not String.IsNullOrEmpty(txt.Name) Then
+                            If Me.FindName(txt.Name) IsNot Nothing Then Me.UnregisterName(txt.Name)
+                            If _productTextBoxes.ContainsKey(txt.Name) Then _productTextBoxes.Remove(txt.Name)
+                        End If
+                    Next
+
+                    UpdateGrandTotal()
+                End If
+            End If
+        End Sub
+
+        Private Function CreateAddButtonContent() As StackPanel
+            Dim sp As New StackPanel With {.Orientation = Orientation.Horizontal}
+            Dim icon As New MaterialDesignThemes.Wpf.PackIcon With {
+                .Kind = MaterialDesignThemes.Wpf.PackIconKind.PlaylistAdd,
+                .Margin = New Thickness(0, 0, 5, 0)
+            }
+            Dim txt As New TextBlock With {.Text = "Add New Item Row"}
+            sp.Children.Add(icon)
+            sp.Children.Add(txt)
+            Return sp
+        End Function
+
+        Private Sub AddNewCategoryUI()
+            categoryCount += 1
+            Dim currentCatId = categoryCount
+
+            ' 1. THE MAIN WRAPPER (The Container for this specific group)
+            Dim categoryWrapper As New StackPanel With {
+        .Margin = New Thickness(0, 10, 0, 20)
+    }
+
+            ' 2. THE HEADER BORDER (Visual Background)
+            Dim headerBorder As New Border With {
+        .Background = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
+        .CornerRadius = New CornerRadius(10, 10, 0, 0),
+        .Padding = New Thickness(15, 8, 15, 8),
+        .Margin = New Thickness(0, 5, 0, 0)
+    }
+
+            ' 3. THE HEADER CONTENT (Grid with Text and Delete Button)
+            Dim headerGrid As New Grid()
+            headerGrid.ColumnDefinitions.Add(New ColumnDefinition() With {.Width = New GridLength(1, GridUnitType.Star)})
+            headerGrid.ColumnDefinitions.Add(New ColumnDefinition() With {.Width = GridLength.Auto})
+
+            Dim categoryHeader As New TextBox With {
+        .Text = "New Category Group",
+        .FontSize = 14,
+        .FontWeight = FontWeights.SemiBold,
+        .Foreground = Brushes.White,
+        .Background = Brushes.Transparent,
+        .BorderThickness = New Thickness(0),
+        .FontFamily = New FontFamily("Lexend"),
+        .VerticalAlignment = VerticalAlignment.Center
+    }
+
+            ' Unique instance of the Close Icon to avoid "Already a child" error
+            Dim closeIcon As New MaterialDesignThemes.Wpf.PackIcon With {
+        .Kind = MaterialDesignThemes.Wpf.PackIconKind.Close,
+        .Foreground = Brushes.White
+    }
+
+            Dim removeGroupBtn As New Button With {
+        .Content = closeIcon,
+        .Background = Brushes.Transparent,
+        .BorderThickness = New Thickness(0),
+        .Cursor = Cursors.Hand,
+        .Width = 30,
+        .Height = 30,
+        .Tag = categoryWrapper ' Links button to this specific section for deletion
+    }
+            AddHandler removeGroupBtn.Click, AddressOf DeleteCategory_Click
+
+            ' Assemble Header
+            headerGrid.Children.Add(categoryHeader)
+            Grid.SetColumn(categoryHeader, 0)
+            headerGrid.Children.Add(removeGroupBtn)
+            Grid.SetColumn(removeGroupBtn, 1)
+            headerBorder.Child = headerGrid
+
+            ' 4. THE ITEMS PANEL (Where product rows go)
+            Dim categoryItemsPanel As New StackPanel()
+
+            ' 5. THE ADD ROW BUTTON (Specific to this group)
+            ' Note: We call CreateAddButtonContent() here to get a NEW Icon instance
+            Dim addRowBtn As New Button With {
+        .Content = CreateAddButtonContent(),
+        .HorizontalAlignment = HorizontalAlignment.Center,
+        .Margin = New Thickness(0, 10, 0, 0),
+        .Style = DirectCast(Me.FindResource("MaterialDesignOutlinedButton"), System.Windows.Style),
+        .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
+        .Foreground = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
+        .Height = 35,
+        .Tag = categoryItemsPanel ' Crucial: Links button to its own row panel
+    }
+            AddHandler addRowBtn.Click, AddressOf CategoryAddRow_Click
+
+            ' 6. ASSEMBLE EVERYTHING INTO THE WRAPPER
+            categoryWrapper.Children.Add(headerBorder)
+            categoryWrapper.Children.Add(categoryItemsPanel)
+            categoryWrapper.Children.Add(addRowBtn)
+
+            ' 7. ADD TO MAIN UI
+            MainContainer.Children.Add(categoryWrapper)
+
+            ' 8. ADD INITIAL ROW
+            AddProductInputUI(categoryItemsPanel)
         End Sub
 
         ' The UI will Add ProductUI to the Interface
-        Private Sub AddProductInputUI()
+        Private Sub AddProductInputUI(targetPanel)
+            If targetPanel Is Nothing Then Exit Sub
             Dim rowIndex As Integer = rowCount
             Dim mainBorder As New Border With {
         .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
@@ -592,7 +730,7 @@ Namespace DPC.Views.Sales.Quotes
             productPanel.Children.Add(CreateDiscountBox(rowIndex))
             productPanel.Children.Add(CreateAmountBox("₱ 0.00", rowIndex))
 
-            productPanel.Children.Add(CreateDeleteButton(mainBorder))
+            productPanel.Children.Add(CreateDeleteButton(mainBorder, targetPanel))
             mainStack.Children.Add(productPanel)
 
             ' Description remains the same
@@ -630,7 +768,9 @@ Namespace DPC.Views.Sales.Quotes
 
             mainStack.Children.Add(descriptionStack)
             mainBorder.Child = mainStack
-            MainContainer.Children.Add(mainBorder)
+            productPanel.Children.Add(CreateDeleteButton(mainBorder, targetPanel))
+            targetPanel.Children.Add(mainBorder)
+            UpdateGrandTotal()
         End Sub
 
         ' Textbox for Product Search It also included inside the Popup Function
@@ -918,7 +1058,7 @@ Namespace DPC.Views.Sales.Quotes
         End Function
 
         ' Deleting the buttons
-        Private Function CreateDeleteButton(containerToRemoveFrom As UIElement) As Button
+        Private Function CreateDeleteButton(containerToRemoveFrom As UIElement, targetPanel As StackPanel) As Button
             Dim deleteButton As New Button With {
             .Background = Brushes.Transparent,
             .BorderBrush = Brushes.Transparent,
@@ -941,44 +1081,19 @@ Namespace DPC.Views.Sales.Quotes
             deleteButton.Content = icon
 
             AddHandler deleteButton.Click, Sub(sender As Object, e As RoutedEventArgs)
-                                               ' Remove the UI container
-                                               MainContainer.Children.Remove(containerToRemoveFrom)
+                                               targetPanel.Children.Remove(containerToRemoveFrom)
 
-                                               ' Clean up any registered names (e.g., txtAmount_0, txtQuantity_0, etc.)
+                                               ' CLEANUP: Unregister names so they can be reused
                                                Dim allTextBoxes = FindVisualChildren(Of TextBox)(containerToRemoveFrom)
-
                                                For Each txt In allTextBoxes
                                                    If Not String.IsNullOrEmpty(txt.Name) Then
-                                                       Try
-                                                           UnregisterName(txt.Name)
-                                                       Catch ex As ArgumentException
-                                                           ' Ignore if already unregistered
-                                                       End Try
-                                                       If _productTextBoxes.ContainsKey(txt.Name) Then
-                                                           _productTextBoxes.Remove(txt.Name)
-                                                       End If
+                                                       If Me.FindName(txt.Name) IsNot Nothing Then Me.UnregisterName(txt.Name)
+                                                       _productTextBoxes.Remove(txt.Name)
                                                    End If
                                                Next
 
-                                               ' Optionally remove popup/listbox from dictionaries
-                                               Dim amountBox = allTextBoxes.FirstOrDefault(Function(t) t.Name IsNot Nothing AndAlso t.Name.StartsWith("txtAmount_"))
-                                               If amountBox IsNot Nothing Then
-                                                   Dim rowIndex As Integer
-                                                   If Integer.TryParse(amountBox.Name.Split("_"c).Last(), rowIndex) Then
-                                                       Dim timerKey = $"ProductTimer_{rowIndex}"
-                                                       Dim popupKey = $"ProductPopup_{rowIndex}"
-                                                       Dim listKey = $"LstProducts_{rowIndex}"
-
-                                                       If _productTypingTimers.ContainsKey(timerKey) Then _productTypingTimers.Remove(timerKey)
-                                                       If _productPopups.ContainsKey(popupKey) Then _productPopups.Remove(popupKey)
-                                                       If _productListBoxes.ContainsKey(listKey) Then _productListBoxes.Remove(listKey)
-                                                   End If
-                                               End If
-
-                                               ' Update the grand total after removing a row
+                                               ' Recalculate totals
                                                UpdateGrandTotal()
-                                               UpdateTotalTax()
-                                               UpdateTotalDiscount()
                                            End Sub
             Return deleteButton
         End Function
