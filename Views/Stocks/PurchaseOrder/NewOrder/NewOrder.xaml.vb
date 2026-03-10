@@ -599,7 +599,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                 .Name = txtName,
                 .Style = CType(Me.FindResource("RoundedTextboxStyle"), Style),
                 .Margin = New Thickness(2, 0, 0, 0),
-                .Background = Brushes.Transparent
+                .Background = Brushes.Transparent,
+                .CharacterCasing = CharacterCasing.Upper
             }
 
             ' For product name field, adjust to allow more text
@@ -701,7 +702,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                 .Style = CType(Me.FindResource("RoundedTextboxStyle"), Style),
                 .Margin = New Thickness(2, 0, 0, 0),
                 .Background = Brushes.Transparent,
-                .Height = 75
+                .Height = 75,
+                .CharacterCasing = CharacterCasing.Upper
             }
 
             ' Create a Border and apply the existing style
