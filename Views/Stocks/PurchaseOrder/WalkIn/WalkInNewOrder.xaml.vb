@@ -86,7 +86,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 CEWarehouseNameCache = selectedWarehouse.Content.ToString()
             End If
 
-            LoadCachedBillingData()
+            'LoadCachedBillingData()
         End Sub
 #End Region
 
@@ -256,21 +256,30 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
             For Each kvp In _productTextBoxes
                 If kvp.Key.StartsWith("txtTaxPercent_") Then
+                    Dim txt = kvp.Value
+                    Dim border = TryCast(txt.Parent, Border)
+
                     If _TaxSelection Then
                         ' Exclusive: Allow user to edit and clear the value
-                        kvp.Value.Text = "0" ' Let user type any percent
+                        kvp.Value.Text = "0" '
                         kvp.Value.IsReadOnly = False
                         CEtaxSelection = True
-                        TaxHeader.Header = "Tax(%)"
-                        'ShowVatExBtn.Visibility = Visibility.Visible
+                        TaxHeader.Header = "TAX(%)"
+                        If border IsNot Nothing Then
+                            border.BorderThickness = New Thickness(1)
+                            border.BorderBrush = CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush)
+                        End If
                     Else
                         ' Inclusive: Set to 12 and make it readonly
                         kvp.Value.Text = ""
                         kvp.Value.IsReadOnly = True
                         CEtaxSelection = False
-                        TaxHeader.Header = "Tax(12%)"
-                        'ShowVatExBtn.Visibility = Visibility.Collapsed
+                        TaxHeader.Header = "TAX(12%)"
                         CEisVatExInclude = False
+                        If Border IsNot Nothing Then
+                            Border.BorderThickness = New Thickness(0)
+                            Border.BorderBrush = Brushes.Transparent
+                        End If
                     End If
                 End If
             Next
@@ -284,8 +293,10 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
 #Region "This Loads every data if its available for updating"
         Private Sub InitializeProductUI()
-            If Application.Current.Properties.Contains("BillingCache") OrElse HasCachedItems() Then
+            Dim hasAppCache As Boolean = Application.Current.Properties.Contains("BillingCache")
+            Dim hasItemsInList As Boolean = (BLItemsCache IsNot Nothing AndAlso BLItemsCache.Count > 0)
 
+            If hasAppCache OrElse hasItemsInList Then
                 If _typingTimer Is Nothing Then
                     _typingTimer = New DispatcherTimer()
                     _typingTimer.Interval = TimeSpan.FromMilliseconds(300)
@@ -295,16 +306,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 LoadCachedBillingData()
             Else
                 rowCount = 0
+                MainContainer.Children.Clear()
                 AddProductInputUI()
 
                 Dim billingID As String = WalkInController.GenerateBillingID()
                 txtBillingNumber.Text = billingID
             End If
         End Sub
-
-        Private Function HasCachedItems() As Boolean
-            Return BLItemsCache IsNot Nothing AndAlso BLItemsCache.Count > 0
-        End Function
 
         Private Sub LoadCachedBillingItems()
             ClearAllRows()
@@ -409,6 +417,14 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         Private Sub AddNewRow_Click(sender As Object, e As RoutedEventArgs)
             rowCount += 1 ' Make sure to increment rowCount here so new rows get unique names
             AddProductInputUI()
+
+            Dim scrollViewer As ScrollViewer = TryCast(MainContainer.Parent, ScrollViewer)
+
+            If scrollViewer IsNot Nothing Then
+                MainContainer.Dispatcher.BeginInvoke(Sub()
+                                                         scrollViewer.ScrollToBottom()
+                                                     End Sub, Windows.Threading.DispatcherPriority.Background)
+            End If
         End Sub
 
         ' The UI will Add ProductUI to the Interface
@@ -420,7 +436,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         .Background = CType(New BrushConverter().ConvertFrom("#FDFDFD"), Brush),
         .CornerRadius = New CornerRadius(15),
         .Padding = New Thickness(0),
-        .Margin = New Thickness(5),
+        .Margin = New Thickness(0, 5, 0, 5),
         .HorizontalAlignment = HorizontalAlignment.Stretch,
         .MinWidth = 300
     }
@@ -438,14 +454,14 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
     }
 
             ' This function will add all of the textbox to the MainContainer
-            productPanel.Children.Add(CreateProductSearchBox(125, rowIndex))   ' Item Name
-            productPanel.Children.Add(CreateQuantityBox(rowIndex))             ' Quantity
-            productPanel.Children.Add(CreateRateBox(rowIndex))                 ' Rate
-            productPanel.Children.Add(CreateTaxPercentBox(rowIndex))           ' Tax (%)
-            productPanel.Children.Add(CreateTaxValueBox(rowIndex))             ' Tax (readonly)
-            productPanel.Children.Add(CreateDiscountPercentBox(rowIndex))      ' Discount (%)
-            productPanel.Children.Add(CreateDiscountBox(rowIndex))             ' Discount
-            productPanel.Children.Add(CreateAmountBox("₱0.00", rowIndex))      ' Amount
+            productPanel.Children.Add(CreateProductSearchBox(125, rowIndex))
+            productPanel.Children.Add(CreateQuantityBox(rowIndex))
+            productPanel.Children.Add(CreateRateBox(rowIndex))
+            productPanel.Children.Add(CreateTaxPercentBox(rowIndex))
+            productPanel.Children.Add(CreateTaxValueBox(rowIndex))
+            productPanel.Children.Add(CreateDiscountPercentBox(rowIndex))
+            productPanel.Children.Add(CreateDiscountBox(rowIndex))
+            productPanel.Children.Add(CreateAmountBox("₱ 0.00", rowIndex))
 
             productPanel.Children.Add(CreateDeleteButton(mainBorder))
             mainStack.Children.Add(productPanel)
@@ -505,7 +521,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             .TextWrapping = TextWrapping.Wrap,
             .Padding = New Thickness(5),
             .BorderThickness = New Thickness(0),
-            .Width = width
+            .MinWidth = width,
+            .MaxWidth = width
         }
 
             ' ListBox for suggestions
@@ -517,7 +534,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
             ' Template to show product name
             Dim factory As New FrameworkElementFactory(GetType(TextBlock))
-            factory.SetBinding(TextBlock.TextProperty, New Binding("ProductName")) ' Bind to property of ProductDataModel
+            factory.SetBinding(TextBlock.TextProperty, New Binding("ProductName"))
             suggestionList.ItemTemplate = New DataTemplate() With {.VisualTree = factory}
 
             ' Popup setup
@@ -656,7 +673,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         End Function
 
         ' Based Textbox for the other textbox 
-        Public Function CreateInputBox(text As String, width As Double, Optional isReadOnly As Boolean = False, Optional name As String = "") As Border
+        Public Function CreateInputBox(text As String, width As Double, Optional isReadOnly As Boolean = False, Optional name As String = "", Optional alignment As HorizontalAlignment = HorizontalAlignment.Left) As Border
             Dim txt As New TextBox With {
         .Text = text,
         .FontFamily = New FontFamily("Lexend"),
@@ -667,12 +684,19 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         .Padding = New Thickness(5),
         .BorderThickness = New Thickness(0),
         .IsReadOnly = isReadOnly,
-        .Width = width
+        .Width = width,
+        .HorizontalContentAlignment = alignment
     }
 
             If Not String.IsNullOrWhiteSpace(name) Then
                 txt.Name = name
                 _productTextBoxes(name) = txt
+
+                Dim existingElement As Object = Me.FindName(name)
+                If existingElement IsNot Nothing Then
+                    Me.UnregisterName(name)
+                End If
+
                 Me.RegisterName(txt.Name, txt)
                 ' 🔌 Attach Quantity_TextChanged if this is a Quantity TextBox
                 If name.StartsWith("txtQuantity_") Then
@@ -686,12 +710,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             End If
 
             Dim border As New Border With {
-        .BorderBrush = If(isReadOnly, Brushes.Transparent, CType(New BrushConverter().ConvertFrom("#1D3242"), Brush)),
-        .BorderThickness = If(isReadOnly, New Thickness(0), New Thickness(2)),
+        .BorderBrush = If(isReadOnly, Brushes.Transparent, CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush)),
+        .BorderThickness = If(isReadOnly, New Thickness(0), New Thickness(1)),
         .Background = CType(New BrushConverter().ConvertFrom("#FDFDFD"), Brush),
-        .CornerRadius = New CornerRadius(15),
-        .Padding = New Thickness(5),
-        .Margin = New Thickness(0, 0, 5, 0),
+        .CornerRadius = New CornerRadius(5),
+        .Padding = New Thickness(2),
+        .Margin = New Thickness(2, 0, 2, 0),
         .Child = txt
     }
 
@@ -700,12 +724,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
         ' Quantity Textbox
         Private Function CreateQuantityBox(rowIndex As Integer) As Border
-            Return CreateInputBox("1", 50, False, $"txtQuantity_{rowIndex}")
+            Return CreateInputBox("1", 50, False, $"txtQuantity_{rowIndex}", HorizontalAlignment.Center)
         End Function
 
         ' Rate Textbox
         Private Function CreateRateBox(rowIndex As Integer) As Border
-            Dim box = CreateInputBox("", 70, False, $"txtRate_{rowIndex}")
+            Dim box = CreateInputBox("", 90, False, $"txtRate_{rowIndex}", HorizontalAlignment.Center)
             Dim txt = TryCast(box.Child, TextBox)
             If txt IsNot Nothing Then
                 AddHandler txt.TextChanged, AddressOf Quantity_TextChanged
@@ -716,23 +740,27 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
         ' Tax Percent Textbox
         Private Function CreateTaxPercentBox(rowIndex As Integer) As Border
-            Dim box = CreateInputBox("", 60, False, $"txtTaxPercent_{rowIndex}")
+            Dim defaultTaxPercent As String = If(Not CEtaxSelection, "", "0")
+
+            ' Create the textbox with the default value and readonly behavior
+            Dim box = CreateInputBox(defaultTaxPercent, 60, Not _TaxSelection, $"txtTaxPercent_{rowIndex}", HorizontalAlignment.Center)
             Dim txt = TryCast(box.Child, TextBox)
             If txt IsNot Nothing Then
                 AddHandler txt.TextChanged, AddressOf TaxPercent_TextChanged
                 AddHandler txt.PreviewTextInput, AddressOf TaxPercent_PreviewTextInput
             End If
+
             Return box
         End Function
 
         ' Tax Value Box
         Private Function CreateTaxValueBox(rowIndex As Integer) As Border
-            Return CreateInputBox("", 60, True, $"txtTaxValue_{rowIndex}")
+            Return CreateInputBox("0.00", 70, True, $"txtTaxValue_{rowIndex}", HorizontalAlignment.Center)
         End Function
 
         ' Discount Percent
         Private Function CreateDiscountPercentBox(rowIndex As Integer) As Border
-            Dim box = CreateInputBox("", 60, False, $"txtDiscountPercent_{rowIndex}")
+            Dim box = CreateInputBox("", 75, False, $"txtDiscountPercent_{rowIndex}", HorizontalAlignment.Center)
             Dim txt = TryCast(box.Child, TextBox)
             If txt IsNot Nothing Then
                 AddHandler txt.TextChanged, AddressOf DiscountPercent_TextChanged
@@ -743,12 +771,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
         ' Discount Box
         Private Function CreateDiscountBox(rowIndex As Integer) As Border
-            Return CreateInputBox("", 90, True, $"txtDiscount_{rowIndex}")
+            Return CreateInputBox("0.00", 75, True, $"txtDiscount_{rowIndex}", HorizontalAlignment.Center)
         End Function
 
         ' Amount Box
         Private Function CreateAmountBox(text As String, rowIndex As Integer) As Border
-            Return CreateInputBox(text, 70, True, $"txtAmount_{rowIndex}")
+            Return CreateInputBox(text, 90, True, $"txtAmount_{rowIndex}", HorizontalAlignment.Center)
         End Function
 
         ' Deleting the buttons
@@ -757,7 +785,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             .Background = Brushes.Transparent,
             .BorderBrush = Brushes.Transparent,
             .Padding = New Thickness(0),
-            .Width = 35,
+            .Width = 50,
             .Height = 40,
             .Cursor = Cursors.Hand,
             .VerticalAlignment = VerticalAlignment.Center
@@ -909,7 +937,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             ' Update all display boxes
             If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
             If discountBox IsNot Nothing Then discountBox.Text = discountValue.ToString("N2")
-            amountBox.Text = "₱" & finalAmount.ToString("N2")
+            amountBox.Text = "₱ " & finalAmount.ToString("N2")
 
             Debug.WriteLine($"[Row {rowIndex}] Base: {baseAmount}, Tax: {taxValue}, Discount: {discountValue}, Total: {finalAmount}")
 
@@ -975,7 +1003,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
             BLSubtotalAmountCache = (subtotalAmount).ToString("F2")
             ' 4. Format outputs for UI display
-            txtGrandTotal.Text = "₱" & finalGrandTotal.ToString("N2")
+            txtGrandTotal.Text = "₱ " & finalGrandTotal.ToString("N2")
 
             ' 5. Pass CLEAN values to Cache (It's better to store as Decimal or clean String)
             StatementDetails.TotalCostCache = finalGrandTotal.ToString("F2")
@@ -1001,7 +1029,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 End If
             Next
 
-            txtTotalTax.Text = "₱" & totalTax.ToString("N2")
+            txtTotalTax.Text = "₱ " & totalTax.ToString("N2")
         End Sub
 
         Public Sub UpdateTotalDiscount()
@@ -1108,7 +1136,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 Return False
             End If
 
-            If Not billingDate.SelectedDate.HasValue Then
+            If OrderDateVM.SelectedDate = DateTime.MinValue OrElse Not OrderDateVM.SelectedDate.HasValue Then
                 MessageBox.Show("Billing Date is required.")
                 Return False
             End If
@@ -1252,7 +1280,15 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
 #Region "Clearing all of the fields"
         Public Sub ClearAllFields()
-            Me.UnregisterName(txtDiscountSelection.Name)
+            If Application.Current.Properties.Contains("BillingCache") Then
+                Application.Current.Properties.Remove("BillingCache")
+            End If
+
+            ' Clear the shared list of items
+            If BLItemsCache IsNot Nothing Then
+                BLItemsCache.Clear()
+            End If
+
             txtBillingNumber.Clear()
             Dim billingID As String = BillingController.GenerateBillingID(False)
             txtBillingNumber.Text = billingID
@@ -1262,7 +1298,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             txtTaxSelection.SelectedIndex = 0
             txtDiscountSelection.SelectedIndex = 0
             txtTotalTax.Text = "₱ 0.00"
-            txtTotalDiscount.Text = "₱0.00"
+            txtTotalDiscount.Text = "₱ 0.00"
             txtGrandTotal.Text = ""
             TxtClientDetails.Clear()
             ' Clear the client details
@@ -1315,7 +1351,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 BLNumberCache = txtBillingNumber.Text
                 BLDiscountProperty = txtDiscountSelection.Text
                 BLTaxProperty = txtTaxSelection.Text
-                BLDateCache = billingDate.SelectedDate.Value.ToString("yyyy-MM-dd")
+                BLDateCache = OrderDateVM.SelectedDate.Value.ToString("yyyy-MM-dd")
                 BLTotalTaxValueCache = txtTotalTax.Text
                 BLTotalDiscountValueCache = txtTotalDiscount.Text
                 BLTotalAmountCache = txtGrandTotal.Text
@@ -1359,7 +1395,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         Private Sub BtnAddClient_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddClient.Click
             ViewLoader.DynamicView.NavigateToView("newwalkinclient", Me)
         End Sub
-        Private Sub BtnReset_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddClient.Click
+        Private Sub BtnReset_Click(sender As Object, e As RoutedEventArgs) Handles BtnReset.Click
+            ClearAllFields()
             ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
         End Sub
 
