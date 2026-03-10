@@ -20,12 +20,18 @@ Namespace DPC.Data.Controllers
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim filterClause As String
-                    If quoteType.Equals("Government", StringComparison.OrdinalIgnoreCase) Then
-                        filterClause = "WHERE QuoteNumber LIKE 'GPCE-%'"
-                    Else
-                        filterClause = "WHERE QuoteNumber NOT LIKE 'GPCE-%'"
-                    End If
+                    Dim filterClause As String = ""
+
+                    Select Case quoteType
+                        Case "Government"
+                            filterClause = "WHERE QuoteNumber LIKE 'GPCE-%'"
+                        Case "Private"
+                            filterClause = "WHERE QuoteNumber NOT LIKE 'GPCE-%'"
+                        Case "All"
+                            filterClause = ""
+                        Case Else
+                            filterClause = ""
+                    End Select
 
                     Dim query As String = $"
                         SELECT * FROM quotes 

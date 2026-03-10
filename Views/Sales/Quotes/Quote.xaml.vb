@@ -17,7 +17,7 @@ Namespace DPC.Views.Sales.Quotes
         Private _isInitialized As Boolean = False
         Private _dataTable As DataTable
         Private _QuoteNumber As String
-        Private _Type As String = "Private"
+        Private _Type As String = "All"
 
         Public Sub New()
             InitializeComponent()

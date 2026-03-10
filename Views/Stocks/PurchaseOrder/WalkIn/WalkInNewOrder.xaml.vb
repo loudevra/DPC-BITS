@@ -645,13 +645,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                                               If String.IsNullOrEmpty(currentText) Then Return
 
                                               ' Check if any other product TextBox already has this text (ignore current one)
-                                              Dim duplicates = _productTextBoxes.Where(Function(kvp) kvp.Value IsNot currentTextBox AndAlso kvp.Value.Text.Trim().ToLower() = currentText.ToLower())
+                                              'Dim duplicates = _productTextBoxes.Where(Function(kvp) kvp.Value IsNot currentTextBox AndAlso kvp.Value.Text.Trim().ToLower() = currentText.ToLower())
 
-                                              If duplicates.Any() Then
-                                                  MessageBox.Show("This product is already added in another row.", "Duplicate Product", MessageBoxButton.OK, MessageBoxImage.Warning)
-                                                  currentTextBox.Clear()
-                                                  currentTextBox.Focus()
-                                              End If
+                                              'If duplicates.Any() Then
+                                              '    MessageBox.Show("This product is already added in another row.", "Duplicate Product", MessageBoxButton.OK, MessageBoxImage.Warning)
+                                              '    currentTextBox.Clear()
+                                              '    currentTextBox.Focus()
+                                              'End If
                                           End Sub
 
             ' Assemble UI
