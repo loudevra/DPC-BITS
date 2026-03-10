@@ -71,9 +71,6 @@ Namespace DPC.Views.Sales.Quotes
             cmbCostEstimateValidty.Text = CostEstimateDetails.CEValidUntilDate
 
             TaxHeader.Header = If(_TaxSelection, "Tax(%)", "Tax(12%)")
-
-            Debug.WriteLine($"Tax Selection - {_TaxSelection}")
-            Debug.WriteLine($"Tax Value In Quote Properties - {_TaxSelection}")
         End Sub
 
         Private Sub InitializeCalendar()
@@ -479,9 +476,29 @@ Namespace DPC.Views.Sales.Quotes
         Private Sub CmbCostEstimateType_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
             Try
                 If cmbCostEstimateType.SelectedItem IsNot Nothing Then
-                    Dim selectedType = DirectCast(cmbCostEstimateType.SelectedItem, ComboBoxItem).Content.ToString()
-                    Debug.WriteLine($"Cost Estimate Type selected: {selectedType}")
-                    ' Add any logic needed when type changes
+                    Dim selectedItem = DirectCast(cmbCostEstimateType.SelectedItem, ComboBoxItem).Content.ToString()
+                    Dim currentQuoteNumber = txtQuoteNumber.Text.Trim()
+
+                    Dim newPrefix As String = ""
+                    Select Case cmbCostEstimateType.SelectedIndex
+                        Case 0 : newPrefix = "WICE"
+                        Case 1 : newPrefix = "HHCE"
+                        Case 2 : newPrefix = "GPCE"
+                        Case 3 : newPrefix = "BCCE"
+                        Case Else : newPrefix = "WICE"
+                    End Select
+
+                    If Not String.IsNullOrWhiteSpace(currentQuoteNumber) AndAlso currentQuoteNumber.Contains("-") Then
+                        Dim parts = currentQuoteNumber.Split("-"c)
+                        If parts.Length >= 2 Then
+                            Dim remainingPart = String.Join("-", parts.Skip(1))
+                            txtQuoteNumber.Text = $"{newPrefix}-{remainingPart}"
+                        End If
+                    Else
+                        txtQuoteNumber.Text = QuotesController.GenerateQuoteID(cmbCostEstimateType.SelectedIndex)
+                    End If
+
+                    CostEstimateDetails.CECNIndetifier = $"{newPrefix} #:"
                 End If
             Catch ex As Exception
                 Debug.WriteLine($"Error in CmbCostEstimateType_SelectionChanged: {ex.Message}")
@@ -1584,6 +1601,19 @@ Namespace DPC.Views.Sales.Quotes
                     Return
                 End If
 
+                If Not String.IsNullOrWhiteSpace(quoteNumber) Then
+                    ' NEW: Auto-select ComboBox based on prefix
+                    If quoteNumber.Length >= 4 Then
+                        Dim prefix As String = quoteNumber.Substring(0, 4).ToUpper()
+                        Select Case prefix
+                            Case "WICE" : cmbCostEstimateType.SelectedIndex = 0
+                            Case "HHCE" : cmbCostEstimateType.SelectedIndex = 1
+                            Case "GPCE" : cmbCostEstimateType.SelectedIndex = 2
+                            Case "BCCE" : cmbCostEstimateType.SelectedIndex = 3
+                        End Select
+                    End If
+                End If
+
                 ' Get full quote data from database
                 Dim quote = QuotesController.GetQuoteByNumber(quoteNumber)
 
@@ -1694,7 +1724,7 @@ Namespace DPC.Views.Sales.Quotes
                 End If
 
                 ' Set quote note
-                txtQuoteNote.Text = quote.QuoteNote
+                'txtQuoteNote.Text = quote.QuoteNote
 
                 ' Set tax and discount selections
                 If Not String.IsNullOrEmpty(quote.Tax) Then
