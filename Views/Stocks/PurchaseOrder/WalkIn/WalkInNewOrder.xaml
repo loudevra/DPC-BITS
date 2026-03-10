@@ -168,7 +168,7 @@
                         </DataGrid.Columns>
                     </DataGrid>
 
-                    <ScrollViewer MaxHeight="1070" VerticalScrollBarVisibility="Hidden">
+                    <ScrollViewer MaxHeight="1070" VerticalScrollBarVisibility="Auto">
                         <StackPanel x:Name="MainContainer" Orientation="Vertical" Background="Transparent"/>
                     </ScrollViewer>
 
@@ -216,21 +216,21 @@
                         <Border Background="White" CornerRadius="15" Padding="20" BorderBrush="#AEAEAE" BorderThickness="1">
                             <StackPanel>
                                 <Grid Margin="0,0,0,8">
-                                    <TextBlock Text="Subtotal Tax" Foreground="#555555"/>
+                                    <TextBlock Text="Total Tax" Foreground="#555555"/>
                                     <TextBlock x:Name="txtTotalTax" Text="₱ 0.00" HorizontalAlignment="Right" FontWeight="Bold"/>
                                 </Grid>
                                 <Grid Margin="0,0,0,8">
                                     <TextBlock Text="Total Discount" Foreground="#555555"/>
                                     <TextBlock x:Name="txtTotalDiscount" Text="₱ 0.00" HorizontalAlignment="Right" FontWeight="Bold" Foreground="#D23636"/>
                                 </Grid>
-                                <Grid Margin="0,0,0,8">
+                                <!--<Grid Margin="0,0,0,8">
                                     <TextBlock Text="Shipping Fee" Foreground="#555555"/>
                                     <TextBlock x:Name="txtShipping" Text="₱ 0.00" HorizontalAlignment="Right" FontWeight="Bold" Foreground="#1D3242"/>
-                                </Grid>
-                                <Grid Margin="0,0,0,8">
+                                </Grid>-->
+                                <!--<Grid Margin="0,0,0,8">
                                     <TextBlock Text="Extra Discount" Foreground="#555555"/>
                                     <TextBlock x:Name="txtExtraDiscount" Text="₱ 0.00" HorizontalAlignment="Right" FontWeight="Bold" Foreground="#D23636"/>
-                                </Grid>
+                                </Grid>-->
 
                                 <Separator Margin="0,10" Background="#AEAEAE"/>
                                 <Grid>
