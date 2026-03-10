@@ -171,7 +171,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                                                    StackPanelDiscountRate, StackPanelMarkup, BorderStocks, StackPanelAlertQuantity,
                                                    StackPanelStockUnits, OuterStackPanel)
             End If
-            CheckBoxSerialNumber.IsChecked = True
+            CheckBoxSerialNumber.IsChecked = False
             ProductController.SerialNumberChecker(CheckBoxSerialNumber, StackPanelSerialRow,
                                                   TxtStockUnits, BorderStockUnits)
             TxtDefaultTax.Text = "12"
@@ -253,10 +253,10 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Dim selectedBrandItem As ComboBoxItem = TryCast(ComboBoxBrand.SelectedItem, ComboBoxItem)
             If selectedBrandItem IsNot Nothing AndAlso selectedBrandItem.Tag IsNot Nothing Then
                 Dim brandID As Integer = Convert.ToInt32(selectedBrandItem.Tag)
-                ProductController.GetSuppliersByBrand(brandID, ComboBoxSupplier)
+                ProductController.GetSuppliersByBrand(brandID, ComboBoxSupplier)  ' <-- Populates supplier dropdown
                 ProductController.GetCategoryByBrand(brandID, ComboBoxCategory)
             Else
-                ComboBoxSupplier.Items.Clear()
+                ComboBoxSupplier.Items.Clear()  ' <-- Clears supplier dropdown
                 ComboBoxCategory.Items.Clear()
                 ComboBoxSubCategory.Items.Clear()
                 'StackPanelSubCategory.Visibility = Visibility.Collapsed
@@ -509,25 +509,30 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 popupAddSupplier.IsOpen = False
                 popupAddSupplier.Child = Nothing
             End If
+
             Dim addSupplierControl As New DPC.Views.Stocks.Supplier.NewSuppliers.NewSuppliers()
+
             AddHandler addSupplierControl.SupplierAdded, Sub()
                                                              ProductController.GetSuppliersByBrand(0, ComboBoxSupplier)
                                                          End Sub
             AddHandler addSupplierControl.ClosePopup, Sub()
                                                           popupAddSupplier.IsOpen = False
                                                       End Sub
+
             popupAddSupplier = New Popup With {
-                .Placement = PlacementMode.AbsolutePoint,
-                .StaysOpen = False,
-                .AllowsTransparency = True,
-                .Child = addSupplierControl
-            }
+        .Placement = PlacementMode.AbsolutePoint,
+        .StaysOpen = False,
+        .AllowsTransparency = True,
+        .Child = addSupplierControl
+    }
+
             AddHandler popupAddSupplier.Opened, Sub()
                                                     Dim screenWidth As Double = SystemParameters.PrimaryScreenWidth
                                                     Dim screenHeight As Double = SystemParameters.PrimaryScreenHeight
                                                     popupAddSupplier.HorizontalOffset = (screenWidth / 2) - (addSupplierControl.ActualWidth / 2)
                                                     popupAddSupplier.VerticalOffset = (screenHeight / 2) - (addSupplierControl.ActualHeight / 2)
                                                 End Sub
+
             popupAddSupplier.IsOpen = True
         End Sub
         Private Sub BtnAddCategory_Click(sender As Object, e As RoutedEventArgs)
