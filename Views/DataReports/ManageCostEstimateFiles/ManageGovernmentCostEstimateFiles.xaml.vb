@@ -159,11 +159,26 @@ Namespace DPC.Views.DataReports.ManageGovernmentCostEstimateFiles
 
                                           ' Get content type from metadata if exists
                                           Dim contentType As String = "Unknown"
-                                          If file.Contains("metadata") AndAlso file("metadata").IsBsonDocument Then
-                                              Dim metadata = file("metadata").AsBsonDocument
-                                              If metadata.Contains("contentType") Then
-                                                  contentType = metadata("contentType").AsString
-                                              End If
+
+                                          If file.Contains("filename") Then
+                                              Dim extension As String = System.IO.Path.GetExtension(fileName).ToLower()
+
+                                              Select Case extension
+                                                  Case ".pdf"
+                                                      contentType = "PDF Document"
+                                                  Case ".jpg", ".jpeg", ".png"
+                                                      contentType = "Image"
+                                                  Case ".xlsx", ".xls"
+                                                      contentType = "Excel Spreadsheet"
+                                                  Case ".docx", ".doc"
+                                                      contentType = "Word Document"
+                                                  Case ".txt"
+                                                      contentType = "Text Document"
+                                                  Case Else
+                                                      If Not String.IsNullOrEmpty(extension) Then
+                                                          contentType = extension.ToUpper().Replace(".", "") & " File"
+                                                      End If
+                                              End Select
                                           End If
 
                                           _costEstimateFiles.Add(New CostEstimateFileModel With {
@@ -277,13 +292,13 @@ Namespace DPC.Views.DataReports.ManageGovernmentCostEstimateFiles
                                        Using fileStream As New FileStream(openDialog.FileName, FileMode.Open, FileAccess.Read)
                                            ' Create metadata for the file
                                            Dim options As New GridFSUploadOptions With {
-                                               .Metadata = New BsonDocument From {
-                                                   {"contentType", Path.GetExtension(openDialog.FileName)},
-                                                   {"uploadedBy", Environment.UserName},
-                                                   {"uploadedDate", DateTime.UtcNow},
-                                                   {"originalPath", openDialog.FileName}
-                                               }
-                                           }
+    .Metadata = New BsonDocument From {
+        {"contentType", Path.GetExtension(openDialog.FileName)}, ' <--- THIS LINE GRABS THE FILE TYPE
+        {"uploadedBy", Environment.UserName},
+        {"uploadedDate", DateTime.UtcNow},
+        {"originalPath", openDialog.FileName}
+    }
+}
 
                                            ' Upload to GridFS (automatically stores in fs.files and fs.chunks)
                                            Await _gridFS.UploadFromStreamAsync(Path.GetFileName(openDialog.FileName), fileStream, options)

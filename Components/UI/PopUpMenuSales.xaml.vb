@@ -117,7 +117,7 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToNewQuote(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
+            ViewLoader.DynamicView.NavigateToCachedView("salesnewquote", Me)
         End Sub
 
         Private Sub NavigateToManageQuote(sender As Object, e As RoutedEventArgs)
@@ -126,6 +126,10 @@ Namespace DPC.Components.UI
 
         Private Sub NavigateToManageWalkInClients(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("managewalkin", Me)
+        End Sub
+
+        Private Sub NavigateToNewDeliveryReceipt(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
         End Sub
 
         Private Sub NavigateToManageDeliveryReceipt(sender As Object, e As RoutedEventArgs)
@@ -161,7 +165,7 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToWalkIn(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
+            ViewLoader.DynamicView.NavigateToCachedView("walkinorder", Me)
         End Sub
 
     End Class

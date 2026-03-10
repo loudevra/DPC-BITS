@@ -30,14 +30,22 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         End Sub
 
         Private Sub WalkInBillilingStatement_Loaded(sender As Object, e As RoutedEventArgs)
-            Dim priceString As String = WalkinBillingStatementDetails.BLTotalAmountCache
-            Dim subtotalString As String = WalkinBillingStatementDetails.BLSubtotalAmountCache
+
+            Dim priceString As String = If(WalkinBillingStatementDetails.BLTotalAmountCache, "0")
+            Dim subtotalString As String = If(WalkinBillingStatementDetails.BLSubtotalAmountCache, "0")
+
+            ' 2. Clean the strings with safety
             Dim cleanedSubtotal As String = subtotalString.Replace("₱", "").Replace(",", "").Trim()
             Dim cleaned As String = priceString.Replace("₱", "").Replace(",", "").Trim()
-            Dim numericValue As Double = Double.Parse(cleaned)
-            Dim numericSubtotal As Double = Double.Parse(cleanedSubtotal)
-            Dim vat As Double = (numericValue - (numericValue / 1.12))
 
+            Dim numericValue As Double = 0
+            Dim numericSubtotal As Double = 0
+
+            Double.TryParse(cleaned, numericValue)
+            Double.TryParse(cleanedSubtotal, numericSubtotal)
+
+            ' Now calculations are safe from NullReferenceExceptions
+            Dim vat As Double = (numericValue - (numericValue / 1.12))
             Dim subTot As Double = numericSubtotal
             Dim totCost As Double = numericValue
 
@@ -68,6 +76,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             ClientAddress.Text = BLAddress & ", " & BLCity & ", " & BLRegion & ", " & BLCountry
             ClientContact.Text = "+63 " & FormatPhoneWithSpaces(BLPhone)
             CompanyRep.Text = BLCompanyRep
+            lblSubtotal.Text = WalkinBillingStatementDetails.BLSubtotalLabel
+            lblVat.Text = WalkinBillingStatementDetails.BLVatLabel
 
             SalesRep.Text = CacheOnLoggedInName
             cmbApproved.Text = WalkinBillingStatementDetails.BLApproved
@@ -337,7 +347,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 WalkinBillingStatementDetails.BLpaymentTerms = cmbTerms.Text
             End If
             Debug.WriteLine($"Approved - {WalkinBillingStatementDetails.BLApproved}")
-            ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
+            ViewLoader.DynamicView.NavigateToCachedView("walkinorder", Me)
         End Sub
 
         Private Sub PrintPreview(sender As Object, e As RoutedEventArgs)

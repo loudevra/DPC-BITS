@@ -158,9 +158,9 @@
                                             <ColumnDefinition Width="385*"/>
                                         </Grid.ColumnDefinitions>
 
-                                        <Grid.Background>
+                                        <!--<Grid.Background>
                                             <ImageBrush ImageSource="/Assets/images/DREAMPCBUILD LOGO WATERMARK SLANTED SPACED.png" Stretch="UniformToFill" Opacity="0.05"/>
-                                        </Grid.Background>
+                                        </Grid.Background>-->
 
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
@@ -445,23 +445,27 @@
                                                             <DataGridTemplateColumn Header="Description" Width="*">
                                                                 <DataGridTemplateColumn.CellTemplate>
                                                                     <DataTemplate>
-                                                                        <StackPanel Margin="8" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                                        <StackPanel Margin="8" HorizontalAlignment="Left" VerticalAlignment="Center">
                                                                             <TextBlock 
-                                                                          Text="{Binding Description}" 
-                                                                          FontSize="12" 
-                                                                          FontFamily="Lexend"
-                                                                          FontWeight="SemiBold"
-                                                                          MaxWidth="400"
-                                                                          TextWrapping="Wrap"/>
+                                                                                Text="{Binding Description}" 
+                                                                                FontSize="12" 
+                                                                                FontFamily="Lexend"
+                                                                                FontWeight="SemiBold"
+                                                                                MaxWidth="400"
+                                                                                TextWrapping="Wrap"
+                                                                                TextTrimming="CharacterEllipsis"
+                                                                                MaxHeight="36"/>
                                                                             <TextBlock 
-                                                                          Text="{Binding ProductDescription}" 
-                                                                          FontSize="12" 
-                                                                          FontFamily="Lexend"
-                                                                          Foreground="Black"
-                                                                          TextWrapping="Wrap"
-                                                                          Margin="0,3,0,0"
-                                                                          MaxWidth="400"       
-                                                                          Visibility="{Binding ProductDescriptionVisibility}"/>
+                                                                                Text="{Binding ProductDescription}" 
+                                                                                FontSize="12" 
+                                                                                FontFamily="Lexend"
+                                                                                Foreground="Black"
+                                                                                Margin="0,3,0,0"
+                                                                                MaxWidth="400"       
+                                                                                TextWrapping="Wrap"
+                                                                                TextTrimming="CharacterEllipsis"
+                                                                                MaxHeight="20" 
+                                                                                Visibility="{Binding ProductDescriptionVisibility}"/>
                                                                         </StackPanel>
                                                                     </DataTemplate>
                                                                 </DataGridTemplateColumn.CellTemplate>

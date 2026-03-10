@@ -66,6 +66,7 @@ Namespace DPC.Views.Sales.Quotes
                 txtTaxSelection.SelectedItem = txtTaxSelection.Items.Cast(Of ComboBoxItem)().FirstOrDefault(Function(i) i.Content.ToString() = "Inclusive")
             End If
 
+
             ' Run the selection changed logic to update all rates/tax fields
             txtTaxSelection_SelectionChanged(txtTaxSelection, Nothing)
 
@@ -172,7 +173,7 @@ Namespace DPC.Views.Sales.Quotes
             If txtTaxSelection.Text = "Inclusive" Then
                 ShowVatExBtn.Visibility = Visibility.Collapsed
             Else
-                ShowVatExBtn.Visibility = Visibility.Visible
+                ShowVatExBtn.Visibility = Visibility.Collapsed
             End If
 
             ' Visibility for the Show/Hide VAT 12% button
@@ -180,7 +181,7 @@ Namespace DPC.Views.Sales.Quotes
 
             cmbCostEstimateValidty.Text = CostEstimateDetails.CEValidUntilDate
 
-            TaxHeader.Header = If(_TaxSelection, "Tax(%)", "Tax(12%)")
+            TaxHeader.Header = If(_TaxSelection, "TAX(%)", "TAX(12%)")
         End Sub
 #End Region
 
@@ -384,21 +385,30 @@ Namespace DPC.Views.Sales.Quotes
 
             For Each kvp In _productTextBoxes
                 If kvp.Key.StartsWith("txtTaxPercent_") Then
+                    Dim txt = kvp.Value
+                    Dim border = TryCast(txt.Parent, Border)
+
                     If _TaxSelection Then
                         ' Exclusive: Allow user to edit and clear the value
-                        kvp.Value.Text = "0" ' Let user type any percent
+                        kvp.Value.Text = "0" '
                         kvp.Value.IsReadOnly = False
                         CEtaxSelection = True
-                        TaxHeader.Header = "Tax(%)"
-                        ShowVatExBtn.Visibility = Visibility.Visible
+                        TaxHeader.Header = "TAX(%)"
+                        If border IsNot Nothing Then
+                            border.BorderThickness = New Thickness(1)
+                            border.BorderBrush = CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush)
+                        End If
                     Else
                         ' Inclusive: Set to 12 and make it readonly
                         kvp.Value.Text = ""
                         kvp.Value.IsReadOnly = True
                         CEtaxSelection = False
-                        TaxHeader.Header = "Tax(12%)"
-                        ShowVatExBtn.Visibility = Visibility.Collapsed
+                        TaxHeader.Header = "TAX(12%)"
                         CEisVatExInclude = False
+                        If border IsNot Nothing Then
+                            border.BorderThickness = New Thickness(0)
+                            border.BorderBrush = Brushes.Transparent
+                        End If
                     End If
                 End If
             Next
@@ -429,6 +439,14 @@ Namespace DPC.Views.Sales.Quotes
         Private Function HasCachedItems() As Boolean
             Return CEQuoteItemsCache IsNot Nothing AndAlso CEQuoteItemsCache.Count > 0
         End Function
+
+        Private Sub BtnAddClient_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddClient.Click
+            ViewLoader.DynamicView.NavigateToView("newwalkinclient", Me)
+        End Sub
+
+        Private Sub BtnReset_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddClient.Click
+            ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
+        End Sub
 
         Private Sub LoadCachedQuoteItems()
             For Each item In CEQuoteItemsCache
@@ -481,7 +499,7 @@ Namespace DPC.Views.Sales.Quotes
             ' Continue setting other fields
             If Not String.IsNullOrWhiteSpace(CEClientDetailsCache) Then TxtClientDetails.Text = CEClientDetailsCache
             If Not String.IsNullOrWhiteSpace(CEQuoteNumberCache) Then txtQuoteNumber.Text = CEQuoteNumberCache
-            If Not String.IsNullOrWhiteSpace(CEReferenceNumber) Then txtReferenceNumber.Text = CEReferenceNumber
+            'If Not String.IsNullOrWhiteSpace(CEReferenceNumber) Then txtReferenceNumber.Text = CEReferenceNumber
             If Not String.IsNullOrWhiteSpace(CEnoteTxt) Then txtQuoteNote.Text = CEnoteTxt
 
             Dim parsedDate As DateTime
@@ -547,7 +565,7 @@ Namespace DPC.Views.Sales.Quotes
         .Background = CType(New BrushConverter().ConvertFrom("#FDFDFD"), Brush),
         .CornerRadius = New CornerRadius(15),
         .Padding = New Thickness(0),
-        .Margin = New Thickness(5),
+        .Margin = New Thickness(0, 5, 0, 5),
         .HorizontalAlignment = HorizontalAlignment.Stretch,
         .MinWidth = 300
     }
@@ -565,55 +583,49 @@ Namespace DPC.Views.Sales.Quotes
     }
 
             ' This function will add all of the textbox to the MainContainer
-            productPanel.Children.Add(CreateProductSearchBox(125, rowIndex))   ' Item Name
-            productPanel.Children.Add(CreateQuantityBox(rowIndex))             ' Quantity
-            productPanel.Children.Add(CreateRateBox(rowIndex))                 ' Rate
-            productPanel.Children.Add(CreateTaxPercentBox(rowIndex))           ' Tax (%)
-            productPanel.Children.Add(CreateTaxValueBox(rowIndex))             ' Tax (readonly)
-            productPanel.Children.Add(CreateDiscountPercentBox(rowIndex))      ' Discount (%)
-            productPanel.Children.Add(CreateDiscountBox(rowIndex))             ' Discount
-            productPanel.Children.Add(CreateAmountBox("₱0.00", rowIndex))      ' Amount
+            productPanel.Children.Add(CreateProductSearchBox(125, rowIndex))
+            productPanel.Children.Add(CreateQuantityBox(rowIndex))
+            productPanel.Children.Add(CreateRateBox(rowIndex))
+            productPanel.Children.Add(CreateTaxPercentBox(rowIndex))
+            productPanel.Children.Add(CreateTaxValueBox(rowIndex))
+            productPanel.Children.Add(CreateDiscountPercentBox(rowIndex))
+            productPanel.Children.Add(CreateDiscountBox(rowIndex))
+            productPanel.Children.Add(CreateAmountBox("₱ 0.00", rowIndex))
 
             productPanel.Children.Add(CreateDeleteButton(mainBorder))
             mainStack.Children.Add(productPanel)
 
             ' Description remains the same
             Dim descriptionTextBox As New TextBox With {
-            .Text = "Enter product description (Optional)",
-            .BorderThickness = New Thickness(0),
-            .Background = Brushes.Transparent,
-            .FontFamily = New FontFamily("Lexend"),
-            .FontSize = 12,
-            .Foreground = Brushes.Black,
-            .FontWeight = FontWeights.SemiBold,
-            .Height = Double.NaN,
-            .MinHeight = 120,
-            .MaxHeight = 300,
-            .VerticalAlignment = VerticalAlignment.Top,
-            .HorizontalAlignment = HorizontalAlignment.Left,
-            .Width = Double.NaN,
-            .TextWrapping = TextWrapping.Wrap,
-            .AcceptsReturn = True,
-            .VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-            .MaxLength = 2000
-             }
+        .Text = "Enter product description (Optional)",
+        .BorderThickness = New Thickness(0),
+        .Background = Brushes.Transparent,
+        .FontFamily = New FontFamily("Lexend"),
+        .FontSize = 12,
+        .Foreground = Brushes.Black,
+        .FontWeight = FontWeights.SemiBold,
+        .Height = Double.NaN,
+        .VerticalAlignment = VerticalAlignment.Top,
+        .HorizontalAlignment = HorizontalAlignment.Left,
+        .Width = Double.NaN,
+        .TextWrapping = TextWrapping.Wrap
+    }
 
             Dim descriptionBorder As New Border With {
-            .Margin = New Thickness(10),
-            .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
-            .BorderThickness = New Thickness(2),
-            .CornerRadius = New CornerRadius(5),
-            .Padding = New Thickness(10),
-            .Width = Double.NaN,
-            .MinHeight = 120,
-            .MaxHeight = 300,
-            .Background = Brushes.Transparent,
-            .Child = descriptionTextBox
-             }
+        .Margin = New Thickness(10),
+        .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
+        .BorderThickness = New Thickness(2),
+        .CornerRadius = New CornerRadius(5),
+        .Padding = New Thickness(10),
+        .Width = Double.NaN,
+        .Height = 120,
+        .Background = Brushes.Transparent,
+        .Child = descriptionTextBox
+    }
 
             Dim descriptionStack As New StackPanel With {
         .Width = Double.NaN
-             }
+    }
             descriptionStack.Children.Add(descriptionBorder)
 
             mainStack.Children.Add(descriptionStack)
@@ -639,7 +651,7 @@ Namespace DPC.Views.Sales.Quotes
             .Padding = New Thickness(5),
             .BorderThickness = New Thickness(0),
             .MinWidth = width,
-            .MaxWidth = 150,
+            .MaxWidth = width,
             .Width = Double.NaN,
             .Height = Double.NaN,
             .MinHeight = 30,
@@ -771,13 +783,13 @@ Namespace DPC.Views.Sales.Quotes
                                               If String.IsNullOrEmpty(currentText) Then Return
 
                                               ' Check if any other product TextBox already has this text (ignore current one)
-                                              Dim duplicates = _productTextBoxes.Where(Function(kvp) kvp.Value IsNot currentTextBox AndAlso kvp.Value.Text.Trim().ToLower() = currentText.ToLower())
+                                              'Dim duplicates = _productTextBoxes.Where(Function(kvp) kvp.Value IsNot currentTextBox AndAlso kvp.Value.Text.Trim().ToLower() = currentText.ToLower())
 
-                                              If duplicates.Any() Then
-                                                  MessageBox.Show("This product is already added in another row.", "Duplicate Product", MessageBoxButton.OK, MessageBoxImage.Warning)
-                                                  currentTextBox.Clear()
-                                                  currentTextBox.Focus()
-                                              End If
+                                              'If duplicates.Any() Then
+                                              '    MessageBox.Show("This product is already added in another row.", "Duplicate Product", MessageBoxButton.OK, MessageBoxImage.Warning)
+                                              '    currentTextBox.Clear()
+                                              '    currentTextBox.Focus()
+                                              'End If
                                           End Sub
 
             ' Assemble UI
@@ -799,7 +811,7 @@ Namespace DPC.Views.Sales.Quotes
         End Function
 
         ' Based Textbox for the other textbox 
-        Public Function CreateInputBox(text As String, width As Double, Optional isReadOnly As Boolean = False, Optional name As String = "") As Border
+        Public Function CreateInputBox(text As String, width As Double, Optional isReadOnly As Boolean = False, Optional name As String = "", Optional alignment As HorizontalAlignment = HorizontalAlignment.Left) As Border
             Dim txt As New TextBox With {
         .Text = text,
         .FontFamily = New FontFamily("Lexend"),
@@ -810,12 +822,19 @@ Namespace DPC.Views.Sales.Quotes
         .Padding = New Thickness(5),
         .BorderThickness = New Thickness(0),
         .IsReadOnly = isReadOnly,
-        .Width = width
+        .Width = width,
+        .HorizontalContentAlignment = alignment
     }
 
             If Not String.IsNullOrWhiteSpace(name) Then
                 txt.Name = name
                 _productTextBoxes(name) = txt
+
+                Dim existingElement As Object = Me.FindName(name)
+                If existingElement IsNot Nothing Then
+                    Me.UnregisterName(name)
+                End If
+
                 Me.RegisterName(txt.Name, txt)
                 ' 🔌 Attach Quantity_TextChanged if this is a Quantity TextBox
                 If name.StartsWith("txtQuantity_") Then
@@ -829,12 +848,12 @@ Namespace DPC.Views.Sales.Quotes
             End If
 
             Dim border As New Border With {
-        .BorderBrush = If(isReadOnly, Brushes.Transparent, CType(New BrushConverter().ConvertFrom("#1D3242"), Brush)),
-        .BorderThickness = If(isReadOnly, New Thickness(0), New Thickness(2)),
+        .BorderBrush = If(isReadOnly, Brushes.Transparent, CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush)),
+        .BorderThickness = If(isReadOnly, New Thickness(0), New Thickness(1)),
         .Background = CType(New BrushConverter().ConvertFrom("#FDFDFD"), Brush),
-        .CornerRadius = New CornerRadius(15),
-        .Padding = New Thickness(5),
-        .Margin = New Thickness(0, 0, 5, 0),
+        .CornerRadius = New CornerRadius(5),
+        .Padding = New Thickness(2),
+        .Margin = New Thickness(2, 0, 2, 0),
         .Child = txt
     }
 
@@ -843,12 +862,12 @@ Namespace DPC.Views.Sales.Quotes
 
         ' Quantity Textbox
         Private Function CreateQuantityBox(rowIndex As Integer) As Border
-            Return CreateInputBox("1", 50, False, $"txtQuantity_{rowIndex}")
+            Return CreateInputBox("1", 50, False, $"txtQuantity_{rowIndex}", HorizontalAlignment.Center)
         End Function
 
         ' Rate Textbox
         Private Function CreateRateBox(rowIndex As Integer) As Border
-            Dim box = CreateInputBox("", 70, False, $"txtRate_{rowIndex}")
+            Dim box = CreateInputBox("", 90, False, $"txtRate_{rowIndex}", HorizontalAlignment.Center)
             Dim txt = TryCast(box.Child, TextBox)
             If txt IsNot Nothing Then
                 AddHandler txt.TextChanged, AddressOf Quantity_TextChanged
@@ -859,32 +878,27 @@ Namespace DPC.Views.Sales.Quotes
 
         ' Tax Percent Textbox
         Private Function CreateTaxPercentBox(rowIndex As Integer) As Border
-            ' Set the default value to "12" if the tax is inclusive
             Dim defaultTaxPercent As String = If(Not CEtaxSelection, "", "0")
 
             ' Create the textbox with the default value and readonly behavior
-            Dim box = CreateInputBox(defaultTaxPercent, 60, Not _TaxSelection, $"txtTaxPercent_{rowIndex}")
+            Dim box = CreateInputBox(defaultTaxPercent, 60, Not _TaxSelection, $"txtTaxPercent_{rowIndex}", HorizontalAlignment.Center)
             Dim txt = TryCast(box.Child, TextBox)
             If txt IsNot Nothing Then
                 AddHandler txt.TextChanged, AddressOf TaxPercent_TextChanged
                 AddHandler txt.PreviewTextInput, AddressOf TaxPercent_PreviewTextInput
             End If
 
-            ' Ensure the border is always visible
-            box.BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush)
-            box.BorderThickness = New Thickness(2)
-
             Return box
         End Function
 
         ' Tax Value Box
         Private Function CreateTaxValueBox(rowIndex As Integer) As Border
-            Return CreateInputBox("", 60, True, $"txtTaxValue_{rowIndex}")
+            Return CreateInputBox("0.00", 70, True, $"txtTaxValue_{rowIndex}", HorizontalAlignment.Center)
         End Function
 
         ' Discount Percent
         Private Function CreateDiscountPercentBox(rowIndex As Integer) As Border
-            Dim box = CreateInputBox("", 60, False, $"txtDiscountPercent_{rowIndex}")
+            Dim box = CreateInputBox("", 75, False, $"txtDiscountPercent_{rowIndex}", HorizontalAlignment.Center)
             Dim txt = TryCast(box.Child, TextBox)
             If txt IsNot Nothing Then
                 AddHandler txt.TextChanged, AddressOf DiscountPercent_TextChanged
@@ -895,12 +909,12 @@ Namespace DPC.Views.Sales.Quotes
 
         ' Discount Box
         Private Function CreateDiscountBox(rowIndex As Integer) As Border
-            Return CreateInputBox("", 90, True, $"txtDiscount_{rowIndex}")
+            Return CreateInputBox("0.00", 75, True, $"txtDiscount_{rowIndex}", HorizontalAlignment.Center)
         End Function
 
         ' Amount Box
         Private Function CreateAmountBox(text As String, rowIndex As Integer) As Border
-            Return CreateInputBox(text, 70, True, $"txtAmount_{rowIndex}")
+            Return CreateInputBox(text, 90, True, $"txtAmount_{rowIndex}", HorizontalAlignment.Center)
         End Function
 
         ' Deleting the buttons
@@ -909,7 +923,7 @@ Namespace DPC.Views.Sales.Quotes
             .Background = Brushes.Transparent,
             .BorderBrush = Brushes.Transparent,
             .Padding = New Thickness(0),
-            .Width = 35,
+            .Width = 50,
             .Height = 40,
             .Cursor = Cursors.Hand,
             .VerticalAlignment = VerticalAlignment.Center
@@ -1266,7 +1280,7 @@ Namespace DPC.Views.Sales.Quotes
                 Return False
             End If
 
-            If Not QuoteDate.SelectedDate.HasValue Then
+            If Not OrderDateVM.SelectedDate.HasValue Then
                 MessageBox.Show("Quote Date is required.")
                 Return False
             End If
@@ -1445,7 +1459,7 @@ Namespace DPC.Views.Sales.Quotes
             txtQuoteNumber.Clear()
             Dim quoteID As String = QuotesController.GenerateQuoteID()
             txtQuoteNumber.Text = quoteID
-            txtReferenceNumber.Text = "Reference #"
+            'txtReferenceNumber.Text = "Reference #"
             txtSearchCustomer.Clear()
             txtQuoteNote.Text = "None"
             txtTaxSelection.SelectedIndex = 0
@@ -1544,14 +1558,14 @@ Namespace DPC.Views.Sales.Quotes
                 CEQuoteNumberCache = txtQuoteNumber.Text
                 CEDiscountProperty = txtDiscountSelection.Text
                 CETaxProperty = txtTaxSelection.Text
-                CEQuoteDateCache = QuoteDate.SelectedDate.Value.ToString("yyyy-MM-dd")
+                CEQuoteDateCache = OrderDateVM.SelectedDate.Value.ToString("yyyy-MM-dd")
                 CEValidUntilDate = cmbCostEstimateValidty.Text ' Changed the value of the text instead
                 'CETotalTaxValueCache = txtTotalTax.Text ' Doesnt need since im calculating it in the preview
                 CETaxValueCache = txtTotalTax.Text
                 CETotalDiscountValueCache = txtTotalDiscount.Text
                 CETotalAmountCache = txtGrandTotal.Text
                 CEnoteTxt = txtQuoteNote.Text
-                CEReferenceNumber = txtReferenceNumber.Text
+                'CEReferenceNumber = txtReferenceNumber.Text
                 'CEpaymentTerms = "None"
                 CEQuoteItemsCache = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(productItemsJson)
                 CEsignature = False ' Assuming no signature for now
@@ -1574,12 +1588,13 @@ Namespace DPC.Views.Sales.Quotes
                 ' Debugging 
                 Dim selectedTaxType As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
 
+
                 If selectedTaxType = "Exclusive" Then
-                    CostEstimateDetails.CEVatLabel = $"VAT Exclusive"
-                    CostEstimateDetails.CESubtotalLabel = "Subtotal Vat Ex."
+                    CostEstimateDetails.CEVatLabel = $"VAT EXCLUSIVE"
+                    CostEstimateDetails.CESubtotalLabel = "SUBTOTAL VAT EX."
                 ElseIf selectedTaxType = "Inclusive" Then
                     CostEstimateDetails.CEVatLabel = "VAT 12%"
-                    CostEstimateDetails.CESubtotalLabel = "Subtotal Vat In."
+                    CostEstimateDetails.CESubtotalLabel = "SUBTOTAL VAT IN."
                 End If
 
                 Debug.WriteLine($"QuoteNumber: {CEQuoteNumberCache}, QuoteDate: {CEQuoteDateCache}, ValidityDate: {CEQuoteValidityDateCache}, Tax: {CETaxValueCache}, TotalAmount: {CETotalAmountCache}, Note: {CEnoteTxt}, Remarks: {CEremarksTxt}, Items: {JsonConvert.SerializeObject(CEQuoteItemsCache)}, Signature: {CEsignature}, Image: {CEImageCache}, Path: {CEPathCache}, ClientName: {CEClientName}, Phone: {CEPhone}, Email: {CEEmail}, Term1: {CETerm1}, Term2: {CETerm2}, Term3: {CETerm3}, Term4: {CETerm4}, Term5: {CETerm5}, Term6: {CETerm6}, Term7: {CETerm7}, Term8: {CETerm8}, Term9: {CETerm9}, Term10: {CETerm10}, Term11: {CETerm11}, Term12: {CETerm12}")

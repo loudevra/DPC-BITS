@@ -26,6 +26,13 @@ Namespace DPC.Views.CRM.ClientGroup
             LoadDetails()
         End Sub
 
+        ' =======================================================
+        ' NEW: Automatic Row Numbering Handler
+        ' =======================================================
+        Private Sub dataGrid_LoadingRow(sender As Object, e As DataGridRowEventArgs) Handles dataGrid.LoadingRow
+            e.Row.Header = (e.Row.GetIndex() + 1).ToString()
+        End Sub
+
         Private Sub LoadDetails()
             _allClientGroups = ClientGroupController.GetClientGroup()
             _currentPage = 1

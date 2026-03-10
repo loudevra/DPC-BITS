@@ -59,21 +59,18 @@ Namespace DPC.Views.Sales.Quotes
             AddHandler _typingTimer.Tick, AddressOf OnSearchTimerTick
             AddHandler Me.Loaded, AddressOf EditQuote_Loaded
 
-            If txtTaxSelection.Text = "Inclusive" Then
-                ShowVatExBtn.Visibility = Visibility.Collapsed
-            Else
-                ShowVatExBtn.Visibility = Visibility.Visible
-            End If
+            'If txtTaxSelection.Text = "Inclusive" Then
+            '    ShowVatExBtn.Visibility = Visibility.Collapsed
+            'Else
+            '    ShowVatExBtn.Visibility = Visibility.Visible
+            'End If
 
             ' Visibility for the Show/Hide VAT 12% button
-            VatExShowVat.Text = If(CEisVatExInclude, "Hide VAT 12%", "Show VAT 12%")
+            'VatExShowVat.Text = If(CEisVatExInclude, "Hide VAT 12%", "Show VAT 12%")
 
             cmbCostEstimateValidty.Text = CostEstimateDetails.CEValidUntilDate
 
             TaxHeader.Header = If(_TaxSelection, "Tax(%)", "Tax(12%)")
-
-            Debug.WriteLine($"Tax Selection - {_TaxSelection}")
-            Debug.WriteLine($"Tax Value In Quote Properties - {_TaxSelection}")
         End Sub
 
         Private Sub InitializeCalendar()
@@ -220,9 +217,9 @@ Namespace DPC.Views.Sales.Quotes
                     txtQuoteNumber.Text = CEQuoteNumberCache
                 End If
 
-                If Not String.IsNullOrWhiteSpace(CEReferenceNumber) Then
-                    txtReferenceNumber.Text = CEReferenceNumber
-                End If
+                'If Not String.IsNullOrWhiteSpace(CEReferenceNumber) Then
+                '    txtReferenceNumber.Text = CEReferenceNumber
+                'End If
 
                 If Not String.IsNullOrWhiteSpace(CEnoteTxt) Then
                     txtQuoteNote.Text = CEnoteTxt
@@ -479,9 +476,29 @@ Namespace DPC.Views.Sales.Quotes
         Private Sub CmbCostEstimateType_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
             Try
                 If cmbCostEstimateType.SelectedItem IsNot Nothing Then
-                    Dim selectedType = DirectCast(cmbCostEstimateType.SelectedItem, ComboBoxItem).Content.ToString()
-                    Debug.WriteLine($"Cost Estimate Type selected: {selectedType}")
-                    ' Add any logic needed when type changes
+                    Dim selectedItem = DirectCast(cmbCostEstimateType.SelectedItem, ComboBoxItem).Content.ToString()
+                    Dim currentQuoteNumber = txtQuoteNumber.Text.Trim()
+
+                    Dim newPrefix As String = ""
+                    Select Case cmbCostEstimateType.SelectedIndex
+                        Case 0 : newPrefix = "WICE"
+                        Case 1 : newPrefix = "HHCE"
+                        Case 2 : newPrefix = "GPCE"
+                        Case 3 : newPrefix = "BCCE"
+                        Case Else : newPrefix = "WICE"
+                    End Select
+
+                    If Not String.IsNullOrWhiteSpace(currentQuoteNumber) AndAlso currentQuoteNumber.Contains("-") Then
+                        Dim parts = currentQuoteNumber.Split("-"c)
+                        If parts.Length >= 2 Then
+                            Dim remainingPart = String.Join("-", parts.Skip(1))
+                            txtQuoteNumber.Text = $"{newPrefix}-{remainingPart}"
+                        End If
+                    Else
+                        txtQuoteNumber.Text = QuotesController.GenerateQuoteID(cmbCostEstimateType.SelectedIndex)
+                    End If
+
+                    CostEstimateDetails.CECNIndetifier = $"{newPrefix} #:"
                 End If
             Catch ex As Exception
                 Debug.WriteLine($"Error in CmbCostEstimateType_SelectionChanged: {ex.Message}")
@@ -544,13 +561,13 @@ Namespace DPC.Views.Sales.Quotes
                             kvp.Value.IsReadOnly = False
                             CEtaxSelection = True
                             TaxHeader.Header = "Tax(%)"
-                            ShowVatExBtn.Visibility = Visibility.Visible
+                            'ShowVatExBtn.Visibility = Visibility.Visible
                         Else
                             kvp.Value.Text = ""
                             kvp.Value.IsReadOnly = True
                             CEtaxSelection = False
                             TaxHeader.Header = "Tax(12%)"
-                            ShowVatExBtn.Visibility = Visibility.Collapsed
+                            'ShowVatExBtn.Visibility = Visibility.Collapsed
                             CEisVatExInclude = False
                         End If
                     End If
@@ -827,36 +844,40 @@ Namespace DPC.Views.Sales.Quotes
             End If
         End Function
 
+#Region "Product Autocomplete"
+        ' Add New Row Button Click Event in the UI to be able to put new product input
         Private Sub AddNewRow_Click(sender As Object, e As RoutedEventArgs)
-            rowCount += 1
+            rowCount += 1 ' Make sure to increment rowCount here so new rows get unique names
             AddProductInputUI()
         End Sub
 
+        ' The UI will Add ProductUI to the Interface
         Private Sub AddProductInputUI()
             Dim rowIndex As Integer = rowCount
             Dim mainBorder As New Border With {
-                .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
-                .BorderThickness = New Thickness(2),
-                .Background = CType(New BrushConverter().ConvertFrom("#FDFDFD"), Brush),
-                .CornerRadius = New CornerRadius(15),
-                .Padding = New Thickness(0),
-                .Margin = New Thickness(5),
-                .HorizontalAlignment = HorizontalAlignment.Stretch,
-                .MinWidth = 300
-            }
+        .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
+        .BorderThickness = New Thickness(2),
+        .Background = CType(New BrushConverter().ConvertFrom("#FDFDFD"), Brush),
+        .CornerRadius = New CornerRadius(15),
+        .Padding = New Thickness(0),
+        .Margin = New Thickness(0, 5, 0, 5),
+        .HorizontalAlignment = HorizontalAlignment.Stretch,
+        .MinWidth = 300
+    }
 
             Dim mainStack As New StackPanel With {
-                .Orientation = Orientation.Vertical,
-                .Width = Double.NaN
-            }
+        .Orientation = Orientation.Vertical,
+        .Width = Double.NaN
+    }
 
             Dim productPanel As New StackPanel With {
-                .Orientation = Orientation.Horizontal,
-                .Margin = New Thickness(10),
-                .HorizontalAlignment = HorizontalAlignment.Left,
-                .VerticalAlignment = VerticalAlignment.Top
-            }
+        .Orientation = Orientation.Horizontal,
+        .Margin = New Thickness(10),
+        .HorizontalAlignment = HorizontalAlignment.Left,
+        .VerticalAlignment = VerticalAlignment.Top
+    }
 
+            ' This function will add all of the textbox to the MainContainer
             productPanel.Children.Add(CreateProductSearchBox(125, rowIndex))
             productPanel.Children.Add(CreateQuantityBox(rowIndex))
             productPanel.Children.Add(CreateRateBox(rowIndex))
@@ -864,41 +885,42 @@ Namespace DPC.Views.Sales.Quotes
             productPanel.Children.Add(CreateTaxValueBox(rowIndex))
             productPanel.Children.Add(CreateDiscountPercentBox(rowIndex))
             productPanel.Children.Add(CreateDiscountBox(rowIndex))
-            productPanel.Children.Add(CreateAmountBox("₱0.00", rowIndex))
-            productPanel.Children.Add(CreateDeleteButton(mainBorder))
+            productPanel.Children.Add(CreateAmountBox("₱ 0.00", rowIndex))
 
+            productPanel.Children.Add(CreateDeleteButton(mainBorder))
             mainStack.Children.Add(productPanel)
 
+            ' Description remains the same
             Dim descriptionTextBox As New TextBox With {
-                .Text = "Enter product description (Optional)",
-                .BorderThickness = New Thickness(0),
-                .Background = Brushes.Transparent,
-                .FontFamily = New FontFamily("Lexend"),
-                .FontSize = 12,
-                .Foreground = Brushes.Black,
-                .FontWeight = FontWeights.SemiBold,
-                .Height = Double.NaN,
-                .VerticalAlignment = VerticalAlignment.Top,
-                .HorizontalAlignment = HorizontalAlignment.Left,
-                .Width = Double.NaN,
-                .TextWrapping = TextWrapping.Wrap
-            }
+        .Text = "Enter product description (Optional)",
+        .BorderThickness = New Thickness(0),
+        .Background = Brushes.Transparent,
+        .FontFamily = New FontFamily("Lexend"),
+        .FontSize = 12,
+        .Foreground = Brushes.Black,
+        .FontWeight = FontWeights.SemiBold,
+        .Height = Double.NaN,
+        .VerticalAlignment = VerticalAlignment.Top,
+        .HorizontalAlignment = HorizontalAlignment.Left,
+        .Width = Double.NaN,
+        .TextWrapping = TextWrapping.Wrap
+    }
 
             Dim descriptionBorder As New Border With {
-                .Margin = New Thickness(10),
-                .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
-                .BorderThickness = New Thickness(2),
-                .CornerRadius = New CornerRadius(5),
-                .Padding = New Thickness(10),
-                .Width = Double.NaN,
-                .Height = 120,
-                .Background = Brushes.Transparent,
-                .Child = descriptionTextBox
-            }
+        .Margin = New Thickness(10),
+        .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
+        .BorderThickness = New Thickness(2),
+        .CornerRadius = New CornerRadius(5),
+        .Padding = New Thickness(10),
+        .Width = Double.NaN,
+        .Height = 120,
+        .Background = Brushes.Transparent,
+        .Child = descriptionTextBox
+    }
 
             Dim descriptionStack As New StackPanel With {
-                .Width = Double.NaN
-            }
+        .Width = Double.NaN
+    }
             descriptionStack.Children.Add(descriptionBorder)
 
             mainStack.Children.Add(descriptionStack)
@@ -906,59 +928,78 @@ Namespace DPC.Views.Sales.Quotes
             MainContainer.Children.Add(mainBorder)
         End Sub
 
+        ' Textbox for Product Search It also included inside the Popup Function
         Public Function CreateProductSearchBox(width As Double, rowIndex As Integer) As Border
             Dim textBoxName As String = $"txtProductName_{rowIndex}"
             Dim popupKey As String = $"ProductPopup_{rowIndex}"
             Dim listBoxKey As String = $"LstProducts_{rowIndex}"
             Dim timerKey As String = $"ProductTimer_{rowIndex}"
 
+            ' TextBox
             Dim textBox As New TextBox With {
-                .Name = textBoxName,
-                .FontFamily = New FontFamily("Lexend"),
-                .FontSize = 12,
-                .Foreground = Brushes.Black,
-                .FontWeight = FontWeights.SemiBold,
-                .TextWrapping = TextWrapping.Wrap,
-                .Padding = New Thickness(5),
-                .BorderThickness = New Thickness(0),
-                .Width = width
-            }
+            .Name = textBoxName,
+            .FontFamily = New FontFamily("Lexend"),
+            .FontSize = 12,
+            .Foreground = Brushes.Black,
+            .FontWeight = FontWeights.SemiBold,
+            .TextWrapping = TextWrapping.Wrap,
+            .Padding = New Thickness(5),
+            .BorderThickness = New Thickness(0),
+            .MinWidth = width,
+            .MaxWidth = width,
+            .Width = Double.NaN,
+            .Height = Double.NaN,
+            .MinHeight = 30,
+            .MaxHeight = 150,
+            .AcceptsReturn = True,
+            .VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            .HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+            .MaxLength = 1000,
+            .VerticalAlignment = VerticalAlignment.Top
+        }
 
+            ' ListBox for suggestions
             Dim suggestionList As New ListBox With {
-                .Name = listBoxKey,
-                .MaxHeight = 150,
-                .MinWidth = width
-            }
+            .Name = listBoxKey,
+            .MaxHeight = 150,
+            .MinWidth = width
+        }
 
+            ' Template to show product name
             Dim factory As New FrameworkElementFactory(GetType(TextBlock))
-            factory.SetBinding(TextBlock.TextProperty, New Binding("ProductName"))
-            suggestionList.ItemTemplate = New DataTemplate With {.VisualTree = factory}
+            factory.SetBinding(TextBlock.TextProperty, New Binding("ProductName")) ' Bind to property of ProductDataModel
+            suggestionList.ItemTemplate = New DataTemplate() With {.VisualTree = factory}
 
+            ' Popup setup
             Dim popup As New Popup With {
-                .Name = popupKey,
-                .StaysOpen = False,
-                .AllowsTransparency = True,
-                .PopupAnimation = PopupAnimation.Fade,
-                .PlacementTarget = textBox,
-                .Placement = PlacementMode.Bottom,
-                .Child = New Border With {
-                    .Background = Brushes.White,
-                    .BorderBrush = Brushes.LightGray,
-                    .BorderThickness = New Thickness(1),
-                    .Child = suggestionList
-                }
+            .Name = popupKey,
+            .StaysOpen = False,
+            .AllowsTransparency = True,
+            .PopupAnimation = PopupAnimation.Fade,
+            .PlacementTarget = textBox,
+            .Placement = PlacementMode.Bottom,
+            .Child = New Border With {
+                .Background = Brushes.White,
+                .BorderBrush = Brushes.LightGray,
+                .BorderThickness = New Thickness(1),
+                .Child = suggestionList
             }
+        }
 
+            ' Store for cleanup or reference
             _productTextBoxes(textBoxName) = textBox
             _productListBoxes(listBoxKey) = suggestionList
             _productPopups(popupKey) = popup
 
+            ' Typing debounce timer
             Dim typingTimer As New DispatcherTimer With {.Interval = TimeSpan.FromMilliseconds(300)}
             _productTypingTimers(timerKey) = typingTimer
 
             AddHandler typingTimer.Tick, Sub()
                                              typingTimer.Stop()
+
                                              Dim keyword = textBox.Text.Trim()
+
                                              If keyword.Length >= 2 Then
                                                  If _selectedClient IsNot Nothing Then
                                                      If WarehouseID <= 0 Then
@@ -967,7 +1008,9 @@ Namespace DPC.Views.Sales.Quotes
                                                          suggestionList.Visibility = Visibility.Collapsed
                                                          Return
                                                      End If
+
                                                      Dim results = QuotesController.SearchProductsByName(keyword, WarehouseID)
+
                                                      suggestionList.ItemsSource = results
                                                      suggestionList.Visibility = If(results.Count > 0, Visibility.Visible, Visibility.Collapsed)
                                                      popup.IsOpen = results.Count > 0
@@ -982,84 +1025,113 @@ Namespace DPC.Views.Sales.Quotes
                                              End If
                                          End Sub
 
-            AddHandler textBox.TextChanged, Sub(s As Object, e As TextChangedEventArgs)
+            ' Trigger timer on text change
+            AddHandler textBox.TextChanged, Sub(sender As Object, e As TextChangedEventArgs)
                                                 typingTimer.Stop()
                                                 typingTimer.Start()
                                             End Sub
 
-            AddHandler suggestionList.SelectionChanged, Sub(s As Object, e As SelectionChangedEventArgs)
+            ' Handle selection
+            AddHandler suggestionList.SelectionChanged, Sub(sender As Object, e As SelectionChangedEventArgs)
                                                             If suggestionList.SelectedItem IsNot Nothing Then
                                                                 Dim selectedProduct = CType(suggestionList.SelectedItem, ProductDataModel)
                                                                 Dim selectedProductName = selectedProduct.ProductName.Trim().ToLower()
-                                                                Dim duplicateExists = _productTextBoxes.Values.Any(Function(tb) tb IsNot textBox AndAlso tb.Text.Trim().ToLower() = selectedProductName)
 
-                                                                If duplicateExists Then
-                                                                    MessageBox.Show("This product is already added in another row.", "Duplicate Product", MessageBoxButton.OK, MessageBoxImage.Warning)
-                                                                    textBox.Clear()
-                                                                    popup.IsOpen = False
-                                                                    suggestionList.SelectedItem = Nothing
-                                                                    Return
-                                                                End If
+                                                                ' Check duplicates in other TextBoxes BEFORE setting the text
+                                                                'Dim duplicateExists = _productTextBoxes.Values.Any(Function(tb) tb IsNot textBox AndAlso tb.Text.Trim().ToLower() = selectedProductName)
 
+                                                                'If duplicateExists Then
+                                                                '    MessageBox.Show("This product is already added in another row.", "Duplicate Product", MessageBoxButton.OK, MessageBoxImage.Warning)
+                                                                '    textBox.Clear()
+                                                                '    popup.IsOpen = False
+                                                                '    suggestionList.SelectedItem = Nothing
+                                                                '    Return
+                                                                'End If
+
+                                                                ' No duplicate - now safe to proceed
                                                                 textBox.Text = selectedProduct.ProductName
                                                                 popup.IsOpen = False
                                                                 suggestionList.SelectedItem = Nothing
 
+                                                                ' Call the warehouse-specific function
                                                                 Dim productInfo = QuotesController.GetProductDetailsByProductID(selectedProduct.ProductID, WarehouseID)
+
                                                                 If productInfo.Count > 0 Then
                                                                     Dim p = productInfo.First()
+                                                                    ' UI For setting the details
                                                                     SetProductDetails(rowIndex, p)
+                                                                    Debug.WriteLine("== Product Info Retrieved ==")
+                                                                    Debug.WriteLine("Name: " & p.ProductName)
+                                                                    Debug.WriteLine("Buying Price: " & p.BuyingPrice)
+                                                                    Debug.WriteLine("Tax: " & p.DefaultTax)
+                                                                    Debug.WriteLine("Stock Unit: " & p.StockUnits)
+                                                                Else
+                                                                    Debug.WriteLine("No matching product found in PNV or PVS.")
                                                                 End If
                                                             End If
                                                         End Sub
 
-            AddHandler textBox.LostFocus, Sub(s As Object, e As RoutedEventArgs)
-                                              Dim currentText = textBox.Text.Trim()
+            AddHandler textBox.LostFocus, Sub(sender As Object, e As RoutedEventArgs)
+                                              Dim currentTextBox = CType(sender, TextBox)
+                                              Dim currentText = currentTextBox.Text.Trim()
+
                                               If String.IsNullOrEmpty(currentText) Then Return
-                                              Dim duplicates = _productTextBoxes.Where(Function(kvp) kvp.Value IsNot textBox AndAlso kvp.Value.Text.Trim().ToLower() = currentText.ToLower())
+
+                                              ' Check if any other product TextBox already has this text (ignore current one)
+                                              Dim duplicates = _productTextBoxes.Where(Function(kvp) kvp.Value IsNot currentTextBox AndAlso kvp.Value.Text.Trim().ToLower() = currentText.ToLower())
+
                                               If duplicates.Any() Then
                                                   MessageBox.Show("This product is already added in another row.", "Duplicate Product", MessageBoxButton.OK, MessageBoxImage.Warning)
-                                                  textBox.Clear()
-                                                  textBox.Focus()
+                                                  currentTextBox.Clear()
+                                                  currentTextBox.Focus()
                                               End If
                                           End Sub
 
+            ' Assemble UI
             Dim grid As New Grid()
             grid.Children.Add(textBox)
             grid.Children.Add(popup)
 
             Dim border As New Border With {
-                .Child = grid,
-                .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
-                .BorderThickness = New Thickness(2),
-                .Background = CType(New BrushConverter().ConvertFrom("#FDFDFD"), Brush),
-                .CornerRadius = New CornerRadius(15),
-                .Padding = New Thickness(5),
-                .Margin = New Thickness(0, 0, 5, 0)
-            }
+            .Child = grid,
+            .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
+            .BorderThickness = New Thickness(2),
+            .Background = CType(New BrushConverter().ConvertFrom("#FDFDFD"), Brush),
+            .CornerRadius = New CornerRadius(15),
+            .Padding = New Thickness(5),
+            .Margin = New Thickness(0, 0, 5, 0)
+        }
 
             Return border
         End Function
 
-        Public Function CreateInputBox(text As String, width As Double, Optional isReadOnly As Boolean = False, Optional name As String = "") As Border
+        ' Based Textbox for the other textbox 
+        Public Function CreateInputBox(text As String, width As Double, Optional isReadOnly As Boolean = False, Optional name As String = "", Optional alignment As HorizontalAlignment = HorizontalAlignment.Left) As Border
             Dim txt As New TextBox With {
-                .Text = text,
-                .FontFamily = New FontFamily("Lexend"),
-                .FontSize = 12,
-                .Foreground = Brushes.Black,
-                .FontWeight = FontWeights.SemiBold,
-                .TextWrapping = TextWrapping.Wrap,
-                .Padding = New Thickness(5),
-                .BorderThickness = New Thickness(0),
-                .IsReadOnly = isReadOnly,
-                .Width = width
-            }
+        .Text = text,
+        .FontFamily = New FontFamily("Lexend"),
+        .FontSize = 12,
+        .Foreground = Brushes.Black,
+        .FontWeight = FontWeights.SemiBold,
+        .TextWrapping = TextWrapping.Wrap,
+        .Padding = New Thickness(5),
+        .BorderThickness = New Thickness(0),
+        .IsReadOnly = isReadOnly,
+        .Width = width,
+        .HorizontalContentAlignment = alignment
+    }
 
             If Not String.IsNullOrWhiteSpace(name) Then
                 txt.Name = name
                 _productTextBoxes(name) = txt
-                Me.RegisterName(txt.Name, txt)
 
+                Dim existingElement As Object = Me.FindName(name)
+                If existingElement IsNot Nothing Then
+                    Me.UnregisterName(name)
+                End If
+
+                Me.RegisterName(txt.Name, txt)
+                ' 🔌 Attach Quantity_TextChanged if this is a Quantity TextBox
                 If name.StartsWith("txtQuantity_") Then
                     AddHandler txt.TextChanged, AddressOf Quantity_TextChanged
                     AddHandler txt.PreviewTextInput, AddressOf Quantity_PreviewTextInput
@@ -1071,16 +1143,139 @@ Namespace DPC.Views.Sales.Quotes
             End If
 
             Dim border As New Border With {
-                .BorderBrush = If(isReadOnly, Brushes.Transparent, CType(New BrushConverter().ConvertFrom("#1D3242"), Brush)),
-                .BorderThickness = If(isReadOnly, New Thickness(0), New Thickness(2)),
-                .Background = CType(New BrushConverter().ConvertFrom("#FDFDFD"), Brush),
-                .CornerRadius = New CornerRadius(15),
-                .Padding = New Thickness(5),
-                .Margin = New Thickness(0, 0, 5, 0),
-                .Child = txt
-            }
+        .BorderBrush = If(isReadOnly, Brushes.Transparent, CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush)),
+        .BorderThickness = If(isReadOnly, New Thickness(0), New Thickness(1)),
+        .Background = CType(New BrushConverter().ConvertFrom("#FDFDFD"), Brush),
+        .CornerRadius = New CornerRadius(5),
+        .Padding = New Thickness(2),
+        .Margin = New Thickness(2, 0, 2, 0),
+        .Child = txt
+    }
 
             Return border
+        End Function
+
+        ' Quantity Textbox
+        Private Function CreateQuantityBox(rowIndex As Integer) As Border
+            Return CreateInputBox("1", 50, False, $"txtQuantity_{rowIndex}", HorizontalAlignment.Center)
+        End Function
+
+        ' Rate Textbox
+        Private Function CreateRateBox(rowIndex As Integer) As Border
+            Dim box = CreateInputBox("", 90, False, $"txtRate_{rowIndex}", HorizontalAlignment.Center)
+            Dim txt = TryCast(box.Child, TextBox)
+            If txt IsNot Nothing Then
+                AddHandler txt.TextChanged, AddressOf Quantity_TextChanged
+                AddHandler txt.PreviewTextInput, AddressOf Quantity_PreviewTextInput
+            End If
+            Return box
+        End Function
+
+        ' Tax Percent Textbox
+        Private Function CreateTaxPercentBox(rowIndex As Integer) As Border
+            Dim defaultTaxPercent As String = If(Not CEtaxSelection, "", "0")
+
+            ' Create the textbox with the default value and readonly behavior
+            Dim box = CreateInputBox(defaultTaxPercent, 60, Not _TaxSelection, $"txtTaxPercent_{rowIndex}", HorizontalAlignment.Center)
+            Dim txt = TryCast(box.Child, TextBox)
+            If txt IsNot Nothing Then
+                AddHandler txt.TextChanged, AddressOf TaxPercent_TextChanged
+                AddHandler txt.PreviewTextInput, AddressOf TaxPercent_PreviewTextInput
+            End If
+
+            Return box
+        End Function
+
+        ' Tax Value Box
+        Private Function CreateTaxValueBox(rowIndex As Integer) As Border
+            Return CreateInputBox("0.00", 70, True, $"txtTaxValue_{rowIndex}", HorizontalAlignment.Center)
+        End Function
+
+        ' Discount Percent
+        Private Function CreateDiscountPercentBox(rowIndex As Integer) As Border
+            Dim box = CreateInputBox("", 75, False, $"txtDiscountPercent_{rowIndex}", HorizontalAlignment.Center)
+            Dim txt = TryCast(box.Child, TextBox)
+            If txt IsNot Nothing Then
+                AddHandler txt.TextChanged, AddressOf DiscountPercent_TextChanged
+                AddHandler txt.PreviewTextInput, AddressOf DiscountPercent_PreviewTextInput
+            End If
+            Return box
+        End Function
+
+        ' Discount Box
+        Private Function CreateDiscountBox(rowIndex As Integer) As Border
+            Return CreateInputBox("0.00", 75, True, $"txtDiscount_{rowIndex}", HorizontalAlignment.Center)
+        End Function
+
+        ' Amount Box
+        Private Function CreateAmountBox(text As String, rowIndex As Integer) As Border
+            Return CreateInputBox(text, 90, True, $"txtAmount_{rowIndex}", HorizontalAlignment.Center)
+        End Function
+
+        ' Deleting the buttons
+        Private Function CreateDeleteButton(containerToRemoveFrom As UIElement) As Button
+            Dim deleteButton As New Button With {
+            .Background = Brushes.Transparent,
+            .BorderBrush = Brushes.Transparent,
+            .Padding = New Thickness(0),
+            .Width = 50,
+            .Height = 40,
+            .Cursor = Cursors.Hand,
+            .VerticalAlignment = VerticalAlignment.Center
+        }
+
+            Dim icon As New MaterialDesignThemes.Wpf.PackIcon With {
+            .Kind = MaterialDesignThemes.Wpf.PackIconKind.PlaylistRemove,
+            .Foreground = CType(New BrushConverter().ConvertFrom("#D23636"), Brush),
+            .Width = 35,
+            .Height = 35,
+            .HorizontalAlignment = HorizontalAlignment.Center,
+            .VerticalAlignment = VerticalAlignment.Center
+        }
+
+            deleteButton.Content = icon
+
+            AddHandler deleteButton.Click, Sub(sender As Object, e As RoutedEventArgs)
+                                               ' Remove the UI container
+                                               MainContainer.Children.Remove(containerToRemoveFrom)
+
+                                               ' Clean up any registered names (e.g., txtAmount_0, txtQuantity_0, etc.)
+                                               Dim allTextBoxes = FindVisualChildren(Of TextBox)(containerToRemoveFrom)
+
+                                               For Each txt In allTextBoxes
+                                                   If Not String.IsNullOrEmpty(txt.Name) Then
+                                                       Try
+                                                           UnregisterName(txt.Name)
+                                                       Catch ex As ArgumentException
+                                                           ' Ignore if already unregistered
+                                                       End Try
+                                                       If _productTextBoxes.ContainsKey(txt.Name) Then
+                                                           _productTextBoxes.Remove(txt.Name)
+                                                       End If
+                                                   End If
+                                               Next
+
+                                               ' Optionally remove popup/listbox from dictionaries
+                                               Dim amountBox = allTextBoxes.FirstOrDefault(Function(t) t.Name IsNot Nothing AndAlso t.Name.StartsWith("txtAmount_"))
+                                               If amountBox IsNot Nothing Then
+                                                   Dim rowIndex As Integer
+                                                   If Integer.TryParse(amountBox.Name.Split("_"c).Last(), rowIndex) Then
+                                                       Dim timerKey = $"ProductTimer_{rowIndex}"
+                                                       Dim popupKey = $"ProductPopup_{rowIndex}"
+                                                       Dim listKey = $"LstProducts_{rowIndex}"
+
+                                                       If _productTypingTimers.ContainsKey(timerKey) Then _productTypingTimers.Remove(timerKey)
+                                                       If _productPopups.ContainsKey(popupKey) Then _productPopups.Remove(popupKey)
+                                                       If _productListBoxes.ContainsKey(listKey) Then _productListBoxes.Remove(listKey)
+                                                   End If
+                                               End If
+
+                                               ' Update the grand total after removing a row
+                                               UpdateGrandTotal()
+                                               UpdateTotalTax()
+                                               UpdateTotalDiscount()
+                                           End Sub
+            Return deleteButton
         End Function
 
         Private Function GetValidityDate(validitySelection As String, baseDate As DateTime) As DateTime
@@ -1115,117 +1310,9 @@ Namespace DPC.Views.Sales.Quotes
                 Return baseDate.AddHours(48)
             End Try
         End Function
+#End Region
 
-
-        Private Function CreateQuantityBox(rowIndex As Integer) As Border
-            Return CreateInputBox("1", 50, False, $"txtQuantity_{rowIndex}")
-        End Function
-
-        Private Function CreateRateBox(rowIndex As Integer) As Border
-            Dim box = CreateInputBox("", 70, False, $"txtRate_{rowIndex}")
-            Dim txt = TryCast(box.Child, TextBox)
-            If txt IsNot Nothing Then
-                AddHandler txt.TextChanged, AddressOf Quantity_TextChanged
-                AddHandler txt.PreviewTextInput, AddressOf Quantity_PreviewTextInput
-            End If
-            Return box
-        End Function
-
-        Private Function CreateTaxPercentBox(rowIndex As Integer) As Border
-            Dim defaultTaxPercent As String = If(Not CEtaxSelection, "", "0")
-            Dim box = CreateInputBox(defaultTaxPercent, 60, Not _TaxSelection, $"txtTaxPercent_{rowIndex}")
-            Dim txt = TryCast(box.Child, TextBox)
-            If txt IsNot Nothing Then
-                AddHandler txt.TextChanged, AddressOf TaxPercent_TextChanged
-                AddHandler txt.PreviewTextInput, AddressOf TaxPercent_PreviewTextInput
-            End If
-            box.BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush)
-            box.BorderThickness = New Thickness(2)
-            Return box
-        End Function
-
-        Private Function CreateTaxValueBox(rowIndex As Integer) As Border
-            Return CreateInputBox("", 60, True, $"txtTaxValue_{rowIndex}")
-        End Function
-
-        Private Function CreateDiscountPercentBox(rowIndex As Integer) As Border
-            Dim box = CreateInputBox("", 60, False, $"txtDiscountPercent_{rowIndex}")
-            Dim txt = TryCast(box.Child, TextBox)
-            If txt IsNot Nothing Then
-                AddHandler txt.TextChanged, AddressOf DiscountPercent_TextChanged
-                AddHandler txt.PreviewTextInput, AddressOf DiscountPercent_PreviewTextInput
-            End If
-            Return box
-        End Function
-
-        Private Function CreateDiscountBox(rowIndex As Integer) As Border
-            Return CreateInputBox("", 90, True, $"txtDiscount_{rowIndex}")
-        End Function
-
-        Private Function CreateAmountBox(text As String, rowIndex As Integer) As Border
-            Return CreateInputBox(text, 70, True, $"txtAmount_{rowIndex}")
-        End Function
-
-        Private Function CreateDeleteButton(containerToRemoveFrom As UIElement) As Button
-            Dim deleteButton As New Button With {
-                .Background = Brushes.Transparent,
-                .BorderBrush = Brushes.Transparent,
-                .Padding = New Thickness(0),
-                .Width = 35,
-                .Height = 40,
-                .Cursor = Cursors.Hand,
-                .VerticalAlignment = VerticalAlignment.Center
-            }
-
-            Dim icon As New MaterialDesignThemes.Wpf.PackIcon With {
-                .Kind = MaterialDesignThemes.Wpf.PackIconKind.PlaylistRemove,
-                .Foreground = CType(New BrushConverter().ConvertFrom("#D23636"), Brush),
-                .Width = 35,
-                .Height = 35,
-                .HorizontalAlignment = HorizontalAlignment.Center,
-                .VerticalAlignment = VerticalAlignment.Center
-            }
-
-            deleteButton.Content = icon
-
-            AddHandler deleteButton.Click, Sub(sender As Object, e As RoutedEventArgs)
-                                               MainContainer.Children.Remove(containerToRemoveFrom)
-                                               Dim allTextBoxes = FindVisualChildren(Of TextBox)(containerToRemoveFrom)
-
-                                               For Each txt In allTextBoxes
-                                                   If Not String.IsNullOrEmpty(txt.Name) Then
-                                                       Try
-                                                           UnregisterName(txt.Name)
-                                                       Catch ex As ArgumentException
-                                                       End Try
-                                                       If _productTextBoxes.ContainsKey(txt.Name) Then
-                                                           _productTextBoxes.Remove(txt.Name)
-                                                       End If
-                                                   End If
-                                               Next
-
-                                               Dim amountBox = allTextBoxes.FirstOrDefault(Function(t) t.Name IsNot Nothing AndAlso t.Name.StartsWith("txtAmount_"))
-                                               If amountBox IsNot Nothing Then
-                                                   Dim rowIndex As Integer
-                                                   If Integer.TryParse(amountBox.Name.Split("_"c).Last(), rowIndex) Then
-                                                       Dim timerKey = $"ProductTimer_{rowIndex}"
-                                                       Dim popupKey = $"ProductPopup_{rowIndex}"
-                                                       Dim listKey = $"LstProducts_{rowIndex}"
-
-                                                       If _productTypingTimers.ContainsKey(timerKey) Then _productTypingTimers.Remove(timerKey)
-                                                       If _productPopups.ContainsKey(popupKey) Then _productPopups.Remove(popupKey)
-                                                       If _productListBoxes.ContainsKey(listKey) Then _productListBoxes.Remove(listKey)
-                                                   End If
-                                               End If
-
-                                               UpdateGrandTotal()
-                                               UpdateTotalTax()
-                                               UpdateTotalDiscount()
-                                           End Sub
-            Return deleteButton
-        End Function
-
-                Public Sub CalculateAmount(rowIndex As Integer)
+        Public Sub CalculateAmount(rowIndex As Integer)
             Dim quantityBox = FindTextBoxByName($"txtQuantity_{rowIndex}")
             Dim rateBox = FindTextBoxByName($"txtRate_{rowIndex}")
             Dim amountBox = FindTextBoxByName($"txtAmount_{rowIndex}")
@@ -1464,7 +1551,7 @@ Namespace DPC.Views.Sales.Quotes
                 CETotalDiscountValueCache = txtTotalDiscount.Text
                 CETotalAmountCache = txtGrandTotal.Text
                 CEnoteTxt = txtQuoteNote.Text
-                CEReferenceNumber = txtReferenceNumber.Text
+                'CEReferenceNumber = txtReferenceNumber.Text
                 'CEpaymentTerms = "None"
                 CEQuoteItemsCache = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(productItemsJson)
                 CEsignature = False ' Assuming no signature for now
@@ -1514,6 +1601,19 @@ Namespace DPC.Views.Sales.Quotes
                     Return
                 End If
 
+                If Not String.IsNullOrWhiteSpace(quoteNumber) Then
+                    ' NEW: Auto-select ComboBox based on prefix
+                    If quoteNumber.Length >= 4 Then
+                        Dim prefix As String = quoteNumber.Substring(0, 4).ToUpper()
+                        Select Case prefix
+                            Case "WICE" : cmbCostEstimateType.SelectedIndex = 0
+                            Case "HHCE" : cmbCostEstimateType.SelectedIndex = 1
+                            Case "GPCE" : cmbCostEstimateType.SelectedIndex = 2
+                            Case "BCCE" : cmbCostEstimateType.SelectedIndex = 3
+                        End Select
+                    End If
+                End If
+
                 ' Get full quote data from database
                 Dim quote = QuotesController.GetQuoteByNumber(quoteNumber)
 
@@ -1524,7 +1624,7 @@ Namespace DPC.Views.Sales.Quotes
 
                 ' Populate all fields
                 txtQuoteNumber.Text = quote.QuoteNumber
-                txtReferenceNumber.Text = quote.Reference
+                'txtReferenceNumber.Text = quote.Reference
                 TxtClientDetails.Text = cacheModule.ClientDetails
 
                 ' Set warehouse
@@ -1624,7 +1724,7 @@ Namespace DPC.Views.Sales.Quotes
                 End If
 
                 ' Set quote note
-                txtQuoteNote.Text = quote.QuoteNote
+                'txtQuoteNote.Text = quote.QuoteNote
 
                 ' Set tax and discount selections
                 If Not String.IsNullOrEmpty(quote.Tax) Then
@@ -1881,17 +1981,17 @@ Namespace DPC.Views.Sales.Quotes
             rowCount = 0
         End Sub
 
-        Private Sub IncExVatinExclusive_Click(sender As Object, e As RoutedEventArgs)
-            If VatExShowVat.Text = "Show VAT 12%" Then
-                CEisVatExInclude = True
-                VatExShowVat.Text = "Hide VAT 12%"
-                MessageBox.Show($"Vat Selection - {CEisVatExInclude}")
-            Else
-                CEisVatExInclude = False
-                VatExShowVat.Text = "Show VAT 12%"
-                MessageBox.Show($"Vat Selection - {CEisVatExInclude}")
-            End If
-        End Sub
+        'Private Sub IncExVatinExclusive_Click(sender As Object, e As RoutedEventArgs)
+        '    If VatExShowVat.Text = "Show VAT 12%" Then
+        '        CEisVatExInclude = True
+        '        'VatExShowVat.Text = "Hide VAT 12%"
+        '        MessageBox.Show($"Vat Selection - {CEisVatExInclude}")
+        '    Else
+        '        CEisVatExInclude = False
+        '        'VatExShowVat.Text = "Show VAT 12%"
+        '        MessageBox.Show($"Vat Selection - {CEisVatExInclude}")
+        '    End If
+        'End Sub
 
         Private Sub SaveUpdatedTaxToDatabase()
             Try

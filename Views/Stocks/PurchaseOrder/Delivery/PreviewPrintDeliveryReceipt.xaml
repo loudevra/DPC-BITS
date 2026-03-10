@@ -288,7 +288,7 @@
                                         </Grid>
                                     </Border>
                                     <Border Grid.Row="2" Grid.ColumnSpan="3" BorderBrush="Black" BorderThickness="1,0,1,1">
-                                        <TextBox Text="Placeholder" FontSize="10" HorizontalAlignment="Center" BorderThickness="0" Foreground="Gray"/>
+                                        <TextBox Text="" FontSize="10" HorizontalAlignment="Center" BorderThickness="0" Foreground="Gray"/>
                                     </Border>
                                     <Border Grid.Row="3" Grid.ColumnSpan="3" Padding="0,10,0,0" BorderBrush="Black" BorderThickness="1,0,1,1">
                                         <StackPanel >

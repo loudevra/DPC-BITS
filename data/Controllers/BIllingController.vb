@@ -17,7 +17,7 @@ Namespace DPC.Data.Controllers
                     ' Debug Print 1: Check Connection
                     Debug.WriteLine("MySQL: Connection opened successfully.")
 
-                    Dim query As String = "SELECT * FROM walkinbilling ORDER BY dateAdded DESC LIMIT @limit"
+                    Dim query As String = "SELECT * FROM walkinbilling ORDER BY dateAdded DESC, billingNumber DESC LIMIT @limit"
 
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@limit", limit)
@@ -117,7 +117,7 @@ Namespace DPC.Data.Controllers
 
         ''' Generates a unique Billing ID
         Public Shared Function GenerateBillingID(isGov As Boolean) As String
-            Dim prefix As String = If(isGov, "GB-", "B-")
+            Dim prefix As String = If(isGov, "GB-", "BL-")
             Dim datePart As String = DateTime.Now.ToString("MMddyyyy")
 
             Dim nextID As Integer = 1

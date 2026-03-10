@@ -179,7 +179,7 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0"
-                                       Text="Manage Delivery Receiptss"
+                                       Text="Manage Delivery Receipts"
                                        FontSize="32"
                                        FontWeight="SemiBold"
                                        FontFamily="Lexend"

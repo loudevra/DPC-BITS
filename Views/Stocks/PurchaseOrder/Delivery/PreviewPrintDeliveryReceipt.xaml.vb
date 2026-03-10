@@ -99,7 +99,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 .IsReadOnly = True,
                 .AutoGenerateColumns = False,
                 .HeadersVisibility = DataGridHeadersVisibility.Column,
-                .GridLinesVisibility = DataGridGridLinesVisibility.All,
+                .GridLinesVisibility = DataGridGridLinesVisibility.None,
                 .Background = Brushes.Transparent,
                 .ItemsSource = pageList,
                 .BorderThickness = New Thickness(0)
@@ -252,7 +252,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Sub
 
         Private Sub CancelButton(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
+            ViewLoader.DynamicView.NavigateToCachedView("newdelivery", Me)
         End Sub
         Private Sub PreviousPage_Click(sender As Object, e As RoutedEventArgs)
             If _currentPageIndex > 0 Then

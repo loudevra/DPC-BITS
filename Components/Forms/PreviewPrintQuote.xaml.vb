@@ -425,7 +425,7 @@ Namespace DPC.Components.Forms
             If QuotesController.InsertQuote(CEQuoteNumberCache, CEReferenceNumber, CEQuoteDateCache,
                                             CEQuoteValidityDateCache, CETaxProperty, CEDiscountProperty,
                                             CEClientIDCache, CEClientName, CEWarehouseIDCache, CEWarehouseNameCache,
-                                            json, CEQuoteNumberCache, CETotalTaxValueCache, CETotalDiscountValueCache,
+                                            json, CEnoteTxt, CETotalTaxValueCache, CETotalDiscountValueCache,
                                             CETotalAmountCache, CacheOnLoggedInName, CEApproved, CEpaymentTerms) Then
 
                 Dim f As New NewQuote()

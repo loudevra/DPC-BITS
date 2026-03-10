@@ -114,7 +114,7 @@ Namespace DPC.Views.Sales.CreditNotes
         End Sub
 
         Private Sub NavigateToNewQuote(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("newquote", Me)
+            ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
         End Sub
         Private Sub StartDate_Click(sender As Object, e As RoutedEventArgs)
             StartDatePicker.IsDropDownOpen = True

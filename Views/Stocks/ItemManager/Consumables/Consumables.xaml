@@ -313,25 +313,23 @@
                                     <Border BorderBrush="#D9D9D9" BorderThickness="1" CornerRadius="4" Background="White">
                                         <StackPanel Orientation="Horizontal">
                                             <Button x:Name="btnEdit"
-                                Style="{StaticResource IconButton}"
-                                Width="32" Height="32"
-                                ToolTip="Edit"
-                                Click="BtnEdit_Click">
+        Style="{StaticResource IconButton}"
+        Width="32" Height="32"
+        ToolTip="Edit"
+        Click="BtnEdit_Click">
                                                 <materialDesign:PackIcon Kind="SquareEditOutline"
-                                                     Width="16" Height="16" 
-                                                     Foreground="#52C69D"/>
+                             Width="16" Height="16" 
+                             Foreground="#52C69D"/>
                                             </Button>
 
-                                            <Border Width="1" Background="#D9D9D9" Height="20" VerticalAlignment="Center"/>
-
                                             <Button x:Name="btnDelete"
-                                Style="{StaticResource IconButton}"
-                                Width="32" Height="32"
-                                ToolTip="Delete"
-                                Click="BtnDelete_Click">
+        Style="{StaticResource IconButton}"
+        Width="32" Height="32"
+        ToolTip="Delete"
+        Click="BtnDelete_Click">
                                                 <materialDesign:PackIcon Kind="DeleteOutline"
-                                                     Width="16" Height="16" 
-                                                     Foreground="#F27272"/>
+                             Width="16" Height="16" 
+                             Foreground="#F27272"/>
                                             </Button>
                                         </StackPanel>
                                     </Border>

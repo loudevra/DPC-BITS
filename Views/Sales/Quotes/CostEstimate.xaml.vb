@@ -286,9 +286,9 @@ Namespace DPC.Views.Sales.Quotes
                 CostEstimateDetails.CETotalAmountCache = TotalCost.Text
 
                 If _isEditingExistingQuote Then
-                    ViewLoader.DynamicView.NavigateToView("editquote", Me)
+                    ViewLoader.DynamicView.NavigateToCachedView("editquote", Me)
                 Else
-                    ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
+                    ViewLoader.DynamicView.NavigateToCachedView("salesnewquote", Me)
                 End If
             Catch ex As Exception
                 MessageBox.Show("Error navigating: " & ex.Message)
@@ -302,6 +302,7 @@ Namespace DPC.Views.Sales.Quotes
             CostEstimateDetails.CEGrandTotalCost = TotalCost.Text
             CostEstimateDetails.CEApproved = cmbApproved.Text
             CostEstimateDetails.CEWarranty = Warranty.Text
+            CostEstimateDetails.CEDeliveryMobilization = cmbDeliveryMobilization.Text
 
             Dim deliv As Decimal = 0
             Dim install As Decimal = 0

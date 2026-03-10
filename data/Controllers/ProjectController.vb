@@ -1,4 +1,5 @@
-﻿Imports MySql.Data.MySqlClient
+﻿' ProjectController.vb (UPDATED: resolve AssignedToName whether AssignedTo stores ID or Name)
+Imports MySql.Data.MySqlClient
 Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Data.Controllers
@@ -21,7 +22,7 @@ Namespace DPC.Data.Controllers
                         cmd.Parameters.AddWithValue("@DueDate", If(proj.DueDate.HasValue, proj.DueDate.Value, DBNull.Value))
                         cmd.Parameters.AddWithValue("@CalculationMode", If(proj.CalculationMode, DBNull.Value))
                         cmd.Parameters.AddWithValue("@LinkToCalendar", proj.LinkToCalendar)
-                        cmd.Parameters.AddWithValue("@AssignedTo", If(String.IsNullOrEmpty(proj.AssignedTo), DBNull.Value, proj.AssignedTo))
+                        cmd.Parameters.AddWithValue("@AssignedTo", If(String.IsNullOrWhiteSpace(proj.AssignedTo), DBNull.Value, proj.AssignedTo))
                         cmd.Parameters.AddWithValue("@Note", If(proj.Note, DBNull.Value))
                         cmd.Parameters.AddWithValue("@CreatedAt", DateTime.Now)
                         cmd.Parameters.AddWithValue("@UpdatedAt", DateTime.Now)
@@ -37,12 +38,21 @@ Namespace DPC.Data.Controllers
 
         Public Shared Function GetProjects() As List(Of DPC.Data.Model.Project)
             Dim results As New List(Of DPC.Data.Model.Project)()
-            Dim query As String = "SELECT p.ProjectID, p.ProjectName, p.Status, p.Customer, p.Budget, " &
-                      "p.StartDate, p.DueDate, p.CalculationMode, p.LinkToCalendar, p.AssignedTo, " &
-                      "p.Note, IFNULL(e.Name, '') AS AssignedToName " &
-                      "FROM project p " &
-                      "LEFT JOIN employee e ON e.EmployeeID = p.AssignedTo " &
-                      "ORDER BY p.ProjectID DESC"
+
+            ' UPDATED LOGIC:
+            ' - If AssignedTo looks numeric => treat as EmployeeID and join by ID
+            ' - Else treat it as already being a name and use it directly
+            Dim query As String =
+                "SELECT p.ProjectID, p.ProjectName, p.Status, p.Customer, p.Budget, " &
+                "p.StartDate, p.DueDate, p.CalculationMode, p.LinkToCalendar, p.AssignedTo, p.Note, " &
+                "CASE " &
+                "  WHEN p.AssignedTo REGEXP '^[0-9]+$' THEN IFNULL(e.Name, '') " &
+                "  ELSE IFNULL(p.AssignedTo, '') " &
+                "END AS AssignedToName " &
+                "FROM project p " &
+                "LEFT JOIN employee e ON CAST(e.EmployeeID AS CHAR) = p.AssignedTo " &
+                "ORDER BY p.ProjectID DESC"
+
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
                     conn.Open()
@@ -70,6 +80,7 @@ Namespace DPC.Data.Controllers
                     MessageBox.Show("Error loading projects: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 End Try
             End Using
+
             Return results
         End Function
 

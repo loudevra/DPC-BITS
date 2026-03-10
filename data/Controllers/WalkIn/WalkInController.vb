@@ -178,133 +178,104 @@ Namespace DPC.Data.Controllers
         End Function
 
         Public Shared Function InsertBilling(
-                                            billingNumber As String,
-                                            billingDate As DateTime,
-                                            DRNo As String,
-                                            clientName As String,
-                                            companyRep As String,
-                                            salesRep As String,
-                                            preparedBy As String,
-                                            approvedBy As String,
-                                            paymentTerms As String,
-                                            OrderItems As String,
-                                            warehouseName As String,
-                                            base64Image As String,
-                                            tax As String,
-                                            discount As String,
-                                            totalTax As String,
-                                            totalDiscount As String,
-                                            totalAmount As String,
-                                            billingNote As String,
-                                            bankDetails As String,
-                                            accountName As String,
-                                            accountNumber As String,
-                                            remarks As String) As Boolean
+                                    billingNumber As String,
+                                    billingDate As DateTime,
+                                    DRNo As String,
+                                    clientName As String,
+                                    companyRep As String,
+                                    salesRep As String,
+                                    preparedBy As String,
+                                    approvedBy As String,
+                                    paymentTerms As String,
+                                    OrderItems As String,
+                                    warehouseName As String,
+                                    base64Image As String,
+                                    tax As String,
+                                    discount As String,
+                                    totalTax As String,
+                                    totalDiscount As String,
+                                    totalAmount As String,
+                                    billingNote As String,
+                                    bankDetails As String,
+                                    accountName As String,
+                                    accountNumber As String,
+                                    remarks As String) As Boolean
             Try
-                ' Query to check for duplicate billingNumber
-                Dim findclientIDquery As String = "SELECT 
-    ClientID
-FROM client
-WHERE Name = @clientName
 
-UNION
-
-SELECT 
-    ClientID
-FROM clientcorporational
-WHERE Company = @clientName
-"
+                Dim findclientIDquery As String = "SELECT ClientID FROM client WHERE Name = @clientName UNION SELECT ClientID FROM clientcorporational WHERE Company = @clientName"
                 Dim findwarehouseIDquery As String = "SELECT warehouseID FROM warehouse WHERE warehouseName = @warehouseName"
                 Dim checkDuplicateQuery As String = "SELECT COUNT(*) FROM walkinbilling WHERE billingNumber = @billingNumber"
 
-                ' Query to insert billing
-                Dim addQuery As String =
-                    "INSERT INTO walkinbilling (billingNumber, billingDate, DRNo, clientID, companyRep, salesRep, preparedBy, approvedBy, paymentTerms, orderItems, warehouseID, base64img, taxProperty, discountProperty, totalTax, totalDiscount, totalAmount, billingNote, bankDetails, accName, accNo, remarks, dateAdded) VALUES (@billnum, @billdate, @DRNo, @clientID ,@companyRep, @salesRep ,@preparedBy, @approvedBy, @paymentTerms, @orderItems, @warehouseID, @base64img, @taxProperty, @discountProperty, @totalTax, @totalDiscount, @totalAmount, @billingNote, @bankDetails, @accName, @accNo, @remarks, NOW())"
+                Dim insertQuery As String = "INSERT INTO walkinbilling (billingNumber, billingDate, DRNo, clientID, companyRep, salesRep, preparedBy, approvedBy, paymentTerms, orderItems, warehouseID, base64img, taxProperty, discountProperty, totalTax, totalDiscount, totalAmount, billingNote, bankDetails, accName, accNo, remarks, dateAdded) VALUES (@billnum, @billdate, @DRNo, @clientID ,@companyRep, @salesRep ,@preparedBy, @approvedBy, @paymentTerms, @orderItems, @warehouseID, @base64img, @taxProperty, @discountProperty, @totalTax, @totalDiscount, @totalAmount, @billingNote, @bankDetails, @accName, @accNo, @remarks, NOW())"
+
+
+                Dim updateQuery As String = "UPDATE walkinbilling SET billingDate=@billdate, DRNo=@DRNo, clientID=@clientID, companyRep=@companyRep, salesRep=@salesRep, preparedBy=@preparedBy, approvedBy=@approvedBy, paymentTerms=@paymentTerms, orderItems=@orderItems, warehouseID=@warehouseID, base64img=@base64img, taxProperty=@taxProperty, discountProperty=@discountProperty, totalTax=@totalTax, totalDiscount=@totalDiscount, totalAmount=@totalAmount, billingNote=@billingNote, bankDetails=@bankDetails, accName=@accName, accNo=@accNo, remarks=@remarks WHERE billingNumber=@billnum"
 
                 Dim clientID As String = ""
                 Dim warehouseID As String = ""
 
-                ' Find clientID based on clientName
-                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                    conn.Open()
-                    Using findClientCmd As New MySqlCommand(findclientIDquery, conn)
-                        findClientCmd.Parameters.AddWithValue("@clientName", clientName)
-                        Dim result As Object = findClientCmd.ExecuteScalar()
-                        If result IsNot Nothing AndAlso Not IsDBNull(result) Then
-                            clientID = result.ToString()
-                        Else
-                            MessageBox.Show("Client not found. Please add the client first.")
-                            Return False
-                        End If
-                    End Using
-
-                    ' Find warehouseID based on warehouse name
-                    Using findWarehouseCmd As New MySqlCommand(findwarehouseIDquery, conn)
-                        findWarehouseCmd.Parameters.AddWithValue("@warehouseName", warehouseName)
-                        Dim result As Object = findWarehouseCmd.ExecuteScalar()
-                        If result IsNot Nothing AndAlso Not IsDBNull(result) Then
-                            warehouseID = result.ToString()
-                        Else
-                            MessageBox.Show("Warehouse not found. Please add the warehouse first.")
-                            Return False
-                        End If
-                    End Using
-                End Using
-
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
 
-                    ' Check for duplicate billingNumber
+                    Using findCmd As New MySqlCommand(findclientIDquery, conn)
+                        findCmd.Parameters.AddWithValue("@clientName", clientName)
+                        Dim res = findCmd.ExecuteScalar()
+                        If res IsNot Nothing Then clientID = res.ToString() Else MessageBox.Show("Client not found.") : Return False
+                    End Using
+
+                    Using findWhCmd As New MySqlCommand(findwarehouseIDquery, conn)
+                        findWhCmd.Parameters.AddWithValue("@warehouseName", warehouseName)
+                        Dim res = findWhCmd.ExecuteScalar()
+                        If res IsNot Nothing Then warehouseID = res.ToString() Else MessageBox.Show("Warehouse not found.") : Return False
+                    End Using
+
+                    Dim isUpdate As Boolean = False
                     Using checkCmd As New MySqlCommand(checkDuplicateQuery, conn)
                         checkCmd.Parameters.AddWithValue("@billingNumber", billingNumber)
-                        Dim count As Integer = Convert.ToInt32(checkCmd.ExecuteScalar())
-                        If count > 0 Then
-                            MessageBox.Show("Billing Number already exists. Please use a different number.")
-                            Return False
-                        End If
+                        isUpdate = Convert.ToInt32(checkCmd.ExecuteScalar()) > 0
                     End Using
 
-                    ' Insert billing if no duplicate
                     Using transaction As MySqlTransaction = conn.BeginTransaction()
                         Try
-                            Using addbillingCmd As New MySqlCommand(addQuery, conn, transaction)
-                                addbillingCmd.Parameters.AddWithValue("@billnum", billingNumber)
-                                addbillingCmd.Parameters.AddWithValue("@billdate", billingDate)
-                                addbillingCmd.Parameters.AddWithValue("@DRNo", DRNo)
-                                addbillingCmd.Parameters.AddWithValue("@clientID", clientID)
-                                addbillingCmd.Parameters.AddWithValue("@companyRep", companyRep)
-                                addbillingCmd.Parameters.AddWithValue("@salesRep", salesRep)
-                                addbillingCmd.Parameters.AddWithValue("@preparedBy", preparedBy)
-                                addbillingCmd.Parameters.AddWithValue("@approvedBy", approvedBy)
-                                addbillingCmd.Parameters.AddWithValue("@paymentTerms", paymentTerms)
-                                addbillingCmd.Parameters.AddWithValue("@orderItems", OrderItems)
-                                addbillingCmd.Parameters.AddWithValue("@base64img", base64Image)
-                                addbillingCmd.Parameters.AddWithValue("@warehouseID", warehouseID)
-                                addbillingCmd.Parameters.AddWithValue("@taxProperty", tax)
-                                addbillingCmd.Parameters.AddWithValue("@discountProperty", discount)
-                                addbillingCmd.Parameters.AddWithValue("@totalTax", totalTax)
-                                addbillingCmd.Parameters.AddWithValue("@totalDiscount", totalDiscount)
-                                addbillingCmd.Parameters.AddWithValue("@totalAmount", totalAmount)
-                                addbillingCmd.Parameters.AddWithValue("@billingNote", billingNote)
-                                addbillingCmd.Parameters.AddWithValue("@bankDetails", bankDetails)
-                                addbillingCmd.Parameters.AddWithValue("@accName", accountName)
-                                addbillingCmd.Parameters.AddWithValue("@accNo", accountNumber)
-                                addbillingCmd.Parameters.AddWithValue("@remarks", remarks)
+                            Dim finalQuery As String = If(isUpdate, updateQuery, insertQuery)
+                            Using cmd As New MySqlCommand(finalQuery, conn, transaction)
+                                cmd.Parameters.AddWithValue("@billnum", billingNumber)
+                                cmd.Parameters.AddWithValue("@billdate", billingDate)
+                                cmd.Parameters.AddWithValue("@DRNo", DRNo)
+                                cmd.Parameters.AddWithValue("@clientID", clientID)
+                                cmd.Parameters.AddWithValue("@companyRep", companyRep)
+                                cmd.Parameters.AddWithValue("@salesRep", salesRep)
+                                cmd.Parameters.AddWithValue("@preparedBy", preparedBy)
+                                cmd.Parameters.AddWithValue("@approvedBy", approvedBy)
+                                cmd.Parameters.AddWithValue("@paymentTerms", paymentTerms)
+                                cmd.Parameters.AddWithValue("@orderItems", OrderItems)
+                                cmd.Parameters.AddWithValue("@base64img", base64Image)
+                                cmd.Parameters.AddWithValue("@warehouseID", warehouseID)
+                                cmd.Parameters.AddWithValue("@taxProperty", tax)
+                                cmd.Parameters.AddWithValue("@discountProperty", discount)
+                                cmd.Parameters.AddWithValue("@totalTax", totalTax)
+                                cmd.Parameters.AddWithValue("@totalDiscount", totalDiscount)
+                                cmd.Parameters.AddWithValue("@totalAmount", totalAmount)
+                                cmd.Parameters.AddWithValue("@billingNote", billingNote)
+                                cmd.Parameters.AddWithValue("@bankDetails", bankDetails)
+                                cmd.Parameters.AddWithValue("@accName", accountName)
+                                cmd.Parameters.AddWithValue("@accNo", accountNumber)
+                                cmd.Parameters.AddWithValue("@remarks", remarks)
 
-                                addbillingCmd.ExecuteNonQuery()
-                                transaction.Commit()
-                                MessageBox.Show($"Successfully Added the Billing With Number {billingNumber}")
-                                Return True
+                                cmd.ExecuteNonQuery()
                             End Using
+
+                            transaction.Commit()
+                            Dim msg As String = If(isUpdate, "Updated", "Added")
+                            MessageBox.Show($"Successfully {msg} the Billing With Number {billingNumber}")
+                            Return True
                         Catch ex As Exception
                             transaction.Rollback()
-                            MessageBox.Show("Failed to insert the data - " & ex.Message)
+                            MessageBox.Show("Database error - " & ex.Message)
                             Return False
                         End Try
                     End Using
                 End Using
-
-
             Catch ex As Exception
                 MessageBox.Show("Unexpected error - " & ex.Message)
                 Return False

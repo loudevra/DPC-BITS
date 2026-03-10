@@ -1075,8 +1075,29 @@
     <Compile Include="Views\Misc\Documents\PullOutForm.xaml.vb">
       <DependentUpon>PullOutForm.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Misc\Overtime\OvertimeForm.xaml.vb">
-      <DependentUpon>OvertimeForm.xaml</DependentUpon>
+    <Compile Include="Views\Misc\EmployeeLeave\EditEmployeeLeave.xaml.vb">
+      <DependentUpon>EditEmployeeLeave.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc\EmployeeLeave\EmployeeLeaveRequestForm.xaml.vb">
+      <DependentUpon>EmployeeLeaveRequestForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc\EmployeeLeave\ManageEmployeeLeaveRequests.xaml.vb">
+      <DependentUpon>ManageEmployeeLeaveRequests.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc\EmployeeLeave\PreviewPrintEmployeeLeave.xaml.vb">
+      <DependentUpon>PreviewPrintEmployeeLeave.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc\OverTimeForm\EditOverTime.xaml.vb">
+      <DependentUpon>EditOverTime.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc\OverTimeForm\ManageTimeoutRequests.xaml.vb">
+      <DependentUpon>ManageTimeoutRequests.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc\OverTimeForm\OverTimeRequestForm.xaml.vb">
+      <DependentUpon>OverTimeRequestForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc\OverTimeForm\PreviewPrintOverTimeRequestForm.xaml.vb">
+      <DependentUpon>PreviewPrintOverTimeRequestForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\POS\CreditPayment.xaml.vb">
       <DependentUpon>CreditPayment.xaml</DependentUpon>
@@ -2042,7 +2063,35 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Misc\Overtime\OvertimeForm.xaml">
+    <Page Include="Views\Misc\EmployeeLeave\EditEmployeeLeave.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Misc\EmployeeLeave\EmployeeLeaveRequestForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Misc\EmployeeLeave\ManageEmployeeLeaveRequests.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Misc\EmployeeLeave\PreviewPrintEmployeeLeave.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Misc\OverTimeForm\EditOverTime.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Misc\OverTimeForm\ManageTimeoutRequests.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Misc\OverTimeForm\OverTimeRequestForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Misc\OverTimeForm\PreviewPrintOverTimeRequestForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

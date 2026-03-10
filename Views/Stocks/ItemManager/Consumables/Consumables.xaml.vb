@@ -1,5 +1,7 @@
 ﻿Imports System.Collections.ObjectModel
 Imports System.Windows.Threading
+Imports System.Windows
+Imports System.Windows.Controls
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Controllers.Stocks
 Imports DPC.DPC.Views.ItemManager.Consumables
@@ -108,12 +110,36 @@ Namespace DPC.Views.Stocks.ItemManager.Consumables
 
         ' --- ROW ACTIONS (EDIT & DELETE) ---
 
+        ' Logic for deleting a specific row item
+        Private Async Sub BtnDelete_Click(sender As Object, e As RoutedEventArgs)
+            Dim btn = TryCast(sender, Button)
+            If btn IsNot Nothing Then
+                ' FIXED: Changed btn.Tag to btn.DataContext
+                Dim consumableModel = TryCast(btn.DataContext, ConsumableModels)
+
+                If consumableModel IsNot Nothing Then
+                    ' Confirmation dialog before deletion
+                    Dim result = MessageBox.Show($"Are you sure you want to delete {consumableModel.ProductName}?",
+                                         "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning)
+
+                    If result = MessageBoxResult.Yes Then
+                        ' Call async delete via the controller
+                        If Await PullOutFormController.DeleteConsumableAsync(consumableModel.ProductID) Then
+                            dataGrid.ItemsSource = Nothing
+                            LoadConsumables()
+                            MessageBox.Show("Consumable deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                        End If
+                    End If
+                End If
+            End If
+        End Sub
+
         ' Logic for editing a specific row item
         Private Sub BtnEdit_Click(sender As Object, e As RoutedEventArgs)
             Dim btn = TryCast(sender, Button)
             If btn IsNot Nothing Then
-                ' Retrieve the specific row data from the button's Tag
-                Dim consumableModel = TryCast(btn.Tag, ConsumableModels)
+                ' FIXED: Changed btn.Tag to btn.DataContext
+                Dim consumableModel = TryCast(btn.DataContext, ConsumableModels)
 
                 If consumableModel IsNot Nothing Then
                     Dim parentWindow As Window = Window.GetWindow(Me)
@@ -127,29 +153,6 @@ Namespace DPC.Views.Stocks.ItemManager.Consumables
                     If editForm.ShowDialog() = True Then
                         dataGrid.ItemsSource = Nothing
                         LoadConsumables()
-                    End If
-                End If
-            End If
-        End Sub
-
-        ' Logic for deleting a specific row item
-        Private Async Sub BtnDelete_Click(sender As Object, e As RoutedEventArgs)
-            Dim btn = TryCast(sender, Button)
-            If btn IsNot Nothing Then
-                Dim consumableModel = TryCast(btn.Tag, ConsumableModels)
-
-                If consumableModel IsNot Nothing Then
-                    ' Confirmation dialog before deletion
-                    Dim result = MessageBox.Show($"Are you sure you want to delete {consumableModel.ProductName}?",
-                                                 "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning)
-
-                    If result = MessageBoxResult.Yes Then
-                        ' Call async delete via the controller
-                        If Await PullOutFormController.DeleteConsumableAsync(consumableModel.ProductID) Then
-                            dataGrid.ItemsSource = Nothing
-                            LoadConsumables()
-                            MessageBox.Show("Consumable deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
-                        End If
                     End If
                 End If
             End If
