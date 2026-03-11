@@ -46,21 +46,17 @@ Namespace DPC.Views.CRM
 
         ' --- MEMORY MANAGEMENT ---
         Private Sub SaveToMemory(sender As Object, e As RoutedEventArgs)
-            ' 1. Save Group (Fix for BC30792)
             If cmbCustomerGroup.SelectedItem IsNot Nothing Then
                 _savedClientGroupID = CInt(cmbCustomerGroup.SelectedValue)
 
-                ' Correct way to cast KeyValuePair (Value Type)
                 Dim selectedGroup As KeyValuePair(Of Integer, String) =
                     CType(cmbCustomerGroup.SelectedItem, KeyValuePair(Of Integer, String))
-
                 _savedCustomerGroup = selectedGroup.Value
             Else
                 _savedClientGroupID = Nothing
                 _savedCustomerGroup = ""
             End If
 
-            ' 2. Save Language
             If cmbLanguage.SelectedItem IsNot Nothing Then
                 Dim selectedItem As ComboBoxItem = TryCast(cmbLanguage.SelectedItem, ComboBoxItem)
                 If selectedItem IsNot Nothing Then
@@ -72,7 +68,6 @@ Namespace DPC.Views.CRM
                 _savedLanguage = cmbLanguage.Text
             End If
 
-            ' 3. Update Global Model
             ResidentialClientDetails.ClientGroupID = If(_savedClientGroupID.HasValue, _savedClientGroupID.Value, 0)
             ResidentialClientDetails.CustomerGroup = _savedCustomerGroup
             ResidentialClientDetails.CustomerLanguage = _savedLanguage
@@ -80,7 +75,6 @@ Namespace DPC.Views.CRM
 
         ' --- ADD CLIENT BUTTON ---
         Private Sub AddClient(sender As Object, e As RoutedEventArgs)
-            ' Check Global Fields
             If String.IsNullOrEmpty(ResidentialClientDetails.ClientName) OrElse
                String.IsNullOrEmpty(ResidentialClientDetails.Phone) OrElse
                String.IsNullOrEmpty(ResidentialClientDetails.BillAddress) OrElse
@@ -90,7 +84,6 @@ Namespace DPC.Views.CRM
                 Exit Sub
             End If
 
-            ' Check Local Fields
             If _savedClientGroupID Is Nothing Then
                 MessageBox.Show("Please select a Customer Group.", "Missing Information", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Exit Sub
@@ -114,23 +107,21 @@ Namespace DPC.Views.CRM
             If success Then
                 MessageBox.Show("Client added successfully.")
                 ClearCache()
-
-                DynamicView.NavigateToView("manageclients", Me)
             End If
         End Sub
 
         Private Sub ClearCache()
-            ' Clear Local Memory
+            ' Layer 1 - Clear Local Memory
             _savedClientGroupID = Nothing
             _savedCustomerGroup = ""
             _savedLanguage = ""
 
-            ' Clear UI
+            ' Layer 2 - Clear UI
             cmbCustomerGroup.SelectedIndex = -1
             cmbLanguage.SelectedIndex = -1
             cmbLanguage.Text = ""
 
-            ' Clear Global Model
+            ' Layer 3 - Clear Global Model (ALL fields)
             ResidentialClientDetails.ClientName = Nothing
             ResidentialClientDetails.Phone = Nothing
             ResidentialClientDetails.Email = Nothing
@@ -149,5 +140,6 @@ Namespace DPC.Views.CRM
             ResidentialClientDetails.CustomerLanguage = Nothing
             ResidentialClientDetails.SameAsBilling = Nothing
         End Sub
+
     End Class
 End Namespace

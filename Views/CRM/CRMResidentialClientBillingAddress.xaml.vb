@@ -11,8 +11,7 @@ Namespace DPC.Views.CRM
         Inherits UserControl
 
         ' =========================================================
-        ' 1. INTERNAL MEMORY
-        ' These variables ensure data persists when you switch tabs
+        ' 1. INTERNAL MEMORY (Keeps data alive across tabs)
         ' =========================================================
         Private Shared _cachedAddress As String = ""
         Private Shared _cachedCity As String = ""
@@ -23,21 +22,21 @@ Namespace DPC.Views.CRM
         Public Sub New()
             InitializeComponent()
 
-            ' 1. RESTORE: Load saved data immediately when the page loads
+            ' 2. RESTORE DATA
             txtAddress.Text = _cachedAddress
             txtCity.Text = _cachedCity
             txtRegion.Text = _cachedRegion
             txtCountry.Text = _cachedCountry
             txtZipCode.Text = _cachedZipCode
 
-            ' 2. AUTO-SAVE: Save to memory every time you type
+            ' 3. AUTO-SAVE HANDLERS
             AddHandler txtAddress.TextChanged, AddressOf SaveToMemory
             AddHandler txtCity.TextChanged, AddressOf SaveToMemory
             AddHandler txtRegion.TextChanged, AddressOf SaveToMemory
             AddHandler txtCountry.TextChanged, AddressOf SaveToMemory
             AddHandler txtZipCode.TextChanged, AddressOf SaveToMemory
 
-            ' 3. FORMATTING: Uppercase logic
+            ' 4. FORMATTING (Uppercase)
             AddHandler txtAddress.TextChanged, AddressOf TxtToUpper_TextChanged
             AddHandler txtCity.TextChanged, AddressOf TxtToUpper_TextChanged
             AddHandler txtRegion.TextChanged, AddressOf TxtToUpper_TextChanged
@@ -53,7 +52,6 @@ Namespace DPC.Views.CRM
             _cachedCountry = txtCountry.Text
             _cachedZipCode = txtZipCode.Text
 
-            ' Optional: Sync with global model if needed for the Add button
             ResidentialClientDetails.BillAddress = txtAddress.Text
             ResidentialClientDetails.BillCity = txtCity.Text
             ResidentialClientDetails.BillRegion = txtRegion.Text
@@ -82,8 +80,6 @@ Namespace DPC.Views.CRM
 
         ' --- ADD CLIENT BUTTON ---
         Private Sub AddClient(sender As Object, e As RoutedEventArgs)
-            ' Note: This checks global ResidentialClientDetails for Name/Phone/Email. 
-            ' Ensure those are set in the other tabs for this check to pass.
             If String.IsNullOrEmpty(ResidentialClientDetails.ClientName) OrElse
                String.IsNullOrEmpty(ResidentialClientDetails.Phone) OrElse
                String.IsNullOrEmpty(ResidentialClientDetails.Email) OrElse
@@ -115,27 +111,25 @@ Namespace DPC.Views.CRM
             If success Then
                 MessageBox.Show("Client added successfully.")
                 ClearCache()
-
-                DynamicView.NavigateToView("manageclients", Me)
             End If
         End Sub
 
         Private Sub ClearCache()
-            ' Clear Local Memory
+            ' Layer 1 - Clear Local Memory
             _cachedAddress = ""
             _cachedCity = ""
             _cachedRegion = ""
             _cachedCountry = ""
             _cachedZipCode = ""
 
-            ' Clear UI
+            ' Layer 2 - Clear UI
             txtAddress.Text = ""
             txtCity.Text = ""
             txtRegion.Text = ""
             txtCountry.Text = ""
             txtZipCode.Text = ""
 
-            ' Clear Global Model (Optional)
+            ' Layer 3 - Clear Global Model (ALL fields)
             ResidentialClientDetails.ClientName = Nothing
             ResidentialClientDetails.Phone = Nothing
             ResidentialClientDetails.Email = Nothing
@@ -144,7 +138,15 @@ Namespace DPC.Views.CRM
             ResidentialClientDetails.BillRegion = Nothing
             ResidentialClientDetails.BillCountry = Nothing
             ResidentialClientDetails.BillZipCode = Nothing
-            ' ... (Clear other fields as needed)
+            ResidentialClientDetails.Address = Nothing
+            ResidentialClientDetails.City = Nothing
+            ResidentialClientDetails.Region = Nothing
+            ResidentialClientDetails.Country = Nothing
+            ResidentialClientDetails.ZipCode = Nothing
+            ResidentialClientDetails.ClientGroupID = 0
+            ResidentialClientDetails.CustomerGroup = Nothing
+            ResidentialClientDetails.CustomerLanguage = Nothing
+            ResidentialClientDetails.SameAsBilling = Nothing
         End Sub
 
     End Class

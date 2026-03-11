@@ -54,16 +54,13 @@ Namespace DPC.Views.CRM
         End Sub
 
         ' --- MEMORY MANAGEMENT ---
-        ' FIX: Updated "e" to TextChangedEventArgs to match the event type
         Private Sub SaveToMemory(sender As Object, e As TextChangedEventArgs)
-            ' FIX: Added .Text to all fields to prevent "TextBox to String" error
             _savedAddress = txtAddress.Text
             _savedCity = txtCity.Text
             _savedRegion = txtRegion.Text
             _savedCountry = txtCountry.Text
             _savedZipCode = txtZipCode.Text
 
-            ' Save to Global Model
             ResidentialClientDetails.Address = txtAddress.Text
             ResidentialClientDetails.City = txtCity.Text
             ResidentialClientDetails.Region = txtRegion.Text
@@ -80,7 +77,6 @@ Namespace DPC.Views.CRM
                 GetInfoBillAddress()
             Else
                 SetFieldsEnabled(True)
-                ' Clear fields
                 txtAddress.Text = ""
                 txtCity.Text = ""
                 txtRegion.Text = ""
@@ -90,7 +86,6 @@ Namespace DPC.Views.CRM
         End Sub
 
         Private Sub GetInfoBillAddress()
-            ' Pull from Billing Model
             txtAddress.Text = ResidentialClientDetails.BillAddress
             txtCity.Text = ResidentialClientDetails.BillCity
             txtRegion.Text = ResidentialClientDetails.BillRegion
@@ -99,7 +94,6 @@ Namespace DPC.Views.CRM
 
             SetFieldsEnabled(False)
 
-            ' Force save to memory
             _savedAddress = txtAddress.Text
             _savedCity = txtCity.Text
             _savedRegion = txtRegion.Text
@@ -134,7 +128,6 @@ Namespace DPC.Views.CRM
 
         ' --- ADD CLIENT BUTTON ---
         Private Sub AddClient(sender As Object, e As RoutedEventArgs)
-            ' Check Global Fields (Personal & Billing)
             If String.IsNullOrEmpty(ResidentialClientDetails.ClientName) OrElse
                String.IsNullOrEmpty(ResidentialClientDetails.BillAddress) Then
 
@@ -142,8 +135,6 @@ Namespace DPC.Views.CRM
                 Exit Sub
             End If
 
-            ' Check Local Fields (Shipping)
-            ' FIX: Added .Text
             If String.IsNullOrEmpty(txtAddress.Text) OrElse
                String.IsNullOrEmpty(txtCity.Text) Then
 
@@ -169,12 +160,11 @@ Namespace DPC.Views.CRM
             If success Then
                 MessageBox.Show("Client added successfully.")
                 ClearCache()
-
-                DynamicView.NavigateToView("manageclients", Me)
             End If
         End Sub
 
         Private Sub ClearCache()
+            ' Layer 1 - Clear Local Memory
             _savedAddress = ""
             _savedCity = ""
             _savedRegion = ""
@@ -182,6 +172,7 @@ Namespace DPC.Views.CRM
             _savedZipCode = ""
             _savedSameAsBilling = False
 
+            ' Layer 2 - Clear UI
             txtAddress.Text = ""
             txtCity.Text = ""
             txtRegion.Text = ""
@@ -189,6 +180,25 @@ Namespace DPC.Views.CRM
             txtZipCode.Text = ""
             billingCheckBox.IsChecked = False
             SetFieldsEnabled(True)
+
+            ' Layer 3 - Clear Global Model (ALL fields)
+            ResidentialClientDetails.ClientName = Nothing
+            ResidentialClientDetails.Phone = Nothing
+            ResidentialClientDetails.Email = Nothing
+            ResidentialClientDetails.BillAddress = Nothing
+            ResidentialClientDetails.BillCity = Nothing
+            ResidentialClientDetails.BillRegion = Nothing
+            ResidentialClientDetails.BillCountry = Nothing
+            ResidentialClientDetails.BillZipCode = Nothing
+            ResidentialClientDetails.Address = Nothing
+            ResidentialClientDetails.City = Nothing
+            ResidentialClientDetails.Region = Nothing
+            ResidentialClientDetails.Country = Nothing
+            ResidentialClientDetails.ZipCode = Nothing
+            ResidentialClientDetails.ClientGroupID = 0
+            ResidentialClientDetails.CustomerGroup = Nothing
+            ResidentialClientDetails.CustomerLanguage = Nothing
+            ResidentialClientDetails.SameAsBilling = Nothing
         End Sub
 
     End Class
