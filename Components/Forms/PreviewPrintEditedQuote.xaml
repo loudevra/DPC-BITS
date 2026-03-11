@@ -184,17 +184,16 @@
 
                                                     <StackPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Right">
                                                         <TextBlock Text="Client Name/Company Name:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                                        <TextBlock Text="Client Address" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,15"/>
-                                                        <TextBlock Text="Contact Number" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                                        <TextBlock Text="Company Representative" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                        <TextBlock Text="Client Address                         :" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,15"/>
+                                                        <TextBlock Text="Contact Number                     :" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                        <TextBlock Text="Client Email                             :" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
                                                     </StackPanel>
 
                                                     <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Right">
-                                                        <TextBlock x:Name="ClientNameBox" Text="Eli Clark" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                        <TextBlock x:Name="AddressLineOne" Text="Wales, Swansea" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                        <TextBlock x:Name="AddressLineTwo" Text="United Kingdom" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                        <TextBlock x:Name="PhoneBox" Text="+63966634982" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                        <TextBlock x:Name="RepresentativeBox" Text="brookerose@gmail.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                                        <TextBlock x:Name="SubmittedToClient" Text="Eli Clark" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                                        <TextBlock x:Name="SubmittedToAddress" Text="Wales, Swansea" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="270"/>
+                                                        <TextBlock x:Name="SubmittedToNumber" Text="+63966634982" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                                        <TextBlock x:Name="SubmittedToEmail" Text="brookerose@gmail.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
                                                     </StackPanel>
                                                 </Grid>
                                             </StackPanel>
