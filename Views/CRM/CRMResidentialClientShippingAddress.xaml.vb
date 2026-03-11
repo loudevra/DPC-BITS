@@ -19,6 +19,16 @@ Namespace DPC.Views.CRM
         Private Shared _savedZipCode As String = ""
         Private Shared _savedSameAsBilling As Boolean = False
 
+        ' Called by other tabs during ClearCache to wipe this tab's memory
+        Public Shared Sub ResetMemory()
+            _savedAddress = ""
+            _savedCity = ""
+            _savedRegion = ""
+            _savedCountry = ""
+            _savedZipCode = ""
+            _savedSameAsBilling = False
+        End Sub
+
         Public Sub New()
             InitializeComponent()
 
@@ -164,15 +174,13 @@ Namespace DPC.Views.CRM
         End Sub
 
         Private Sub ClearCache()
-            ' Layer 1 - Clear Local Memory
-            _savedAddress = ""
-            _savedCity = ""
-            _savedRegion = ""
-            _savedCountry = ""
-            _savedZipCode = ""
-            _savedSameAsBilling = False
+            ' Step 1 - Reset ALL tabs' shared memory (so switching tabs won't restore old data)
+            CRMResidentialClientPersonalInfo.ResetMemory()
+            CRMResidentialClientBillingAddress.ResetMemory()
+            CRMResidentialClientShippingAddress.ResetMemory()
+            CRMResidentialClientOtherSettings.ResetMemory()
 
-            ' Layer 2 - Clear UI
+            ' Step 2 - Clear own UI fields
             txtAddress.Text = ""
             txtCity.Text = ""
             txtRegion.Text = ""
@@ -181,7 +189,7 @@ Namespace DPC.Views.CRM
             billingCheckBox.IsChecked = False
             SetFieldsEnabled(True)
 
-            ' Layer 3 - Clear Global Model (ALL fields)
+            ' Step 3 - Clear Global Model (ALL fields)
             ResidentialClientDetails.ClientName = Nothing
             ResidentialClientDetails.Phone = Nothing
             ResidentialClientDetails.Email = Nothing
