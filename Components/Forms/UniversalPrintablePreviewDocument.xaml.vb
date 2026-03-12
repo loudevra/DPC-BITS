@@ -297,7 +297,7 @@ Namespace DPC.Components.Forms
             totalPages = 1
             base64Image = ""
 
-            ViewLoader.DynamicView.NavigateToCachedView("salesnewquote", Me)
+            ViewLoader.DynamicView.NavigateToCachedView($"{data.CreatePath}", Me)
         End Sub
 
         Private Sub UpdatePageInfo()

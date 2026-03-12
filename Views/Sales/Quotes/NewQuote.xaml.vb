@@ -1437,18 +1437,15 @@ Namespace DPC.Views.Sales.Quotes
 #End Region
 
 #Region "Generate the Quote Before saving"
-        ' Once Done All of the Data Will Be pass to another form for generating invoice
         Private Sub GenerateCostEstimate_Click(sender As Object, e As RoutedEventArgs)
             Dim productItemsJson As String = SubmitAllProductInputs()
 
             If productItemsJson Is Nothing Then
-                ' Validation failed inside SubmitAllProductInputs
                 Exit Sub
             End If
 
             Dim client As Client = _selectedClient
 
-            ' Optional: check if client is nothing
             If client Is Nothing Then
                 MessageBox.Show("Please select a client.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Exit Sub
@@ -1459,14 +1456,9 @@ Namespace DPC.Views.Sales.Quotes
 
         ' Function for converting all of the product inputs to JSON Format before saving it and print it
         Private Function SubmitAllProductInputs() As String
-            ' We keep the type as String values to avoid breaking your CostEstimate logic
             Dim flatList As New List(Of Dictionary(Of String, String))()
-
-            ' 1. Loop through each Category Wrapper in the MainContainer
             For Each categoryWrapper As StackPanel In MainContainer.Children.OfType(Of StackPanel)()
 
-                ' 2. Extract Category Name from the Header
-                ' Structure: categoryWrapper(0) = Border -> Grid -> TextBox
                 Dim headerBorder = TryCast(categoryWrapper.Children(0), Border)
                 Dim headerGrid = TryCast(headerBorder.Child, Grid)
                 Dim categoryNameTxt = TryCast(headerGrid.Children(0), TextBox)
@@ -1475,13 +1467,11 @@ Namespace DPC.Views.Sales.Quotes
                 ' 3. CREATE A HEADER ROW MARKER
                 Dim headerRow As New Dictionary(Of String, String)()
                 headerRow("ProductName") = currentCategoryName
-                headerRow("IsCategoryHeader") = "True" ' This tells CostEstimate to style this row
+                headerRow("IsCategoryHeader") = "True" '
                 flatList.Add(headerRow)
 
-                ' 4. Get the Product Items Panel (The second child of the wrapper)
                 Dim itemsPanel = TryCast(categoryWrapper.Children(1), StackPanel)
 
-                ' 5. Loop through each Product Row inside this category
                 For Each productBorder As Border In itemsPanel.Children.OfType(Of Border)()
                     Dim outerStack = TryCast(productBorder.Child, StackPanel)
                     If outerStack Is Nothing Then Continue For
@@ -1502,13 +1492,11 @@ Namespace DPC.Views.Sales.Quotes
                     itemData("Discount") = GetInputVal(productRow, 6)
                     itemData("Amount") = GetInputVal(productRow, 7).Replace("₱", "").Trim()
 
-                    ' Extract Description (Second child of outerStack)
                     Dim descStack = TryCast(outerStack.Children(1), StackPanel)
                     Dim descTxt = TryCast(TryCast(descStack.Children(0), Border).Child, TextBox)
                     Dim cleanDesc = descTxt.Text.Trim()
                     itemData("Description") = If(cleanDesc.Contains("Optional"), "", cleanDesc)
 
-                    ' Get Image Base64
                     Try
                         Dim b64 = GetProduct.GetProductImageBase64(itemData("ProductName"))
                         itemData("ProductImageBase64") = If(String.IsNullOrEmpty(b64), "", b64)
@@ -1516,7 +1504,6 @@ Namespace DPC.Views.Sales.Quotes
                         itemData("ProductImageBase64") = ""
                     End Try
 
-                    ' Validation Check
                     If String.IsNullOrWhiteSpace(itemData("ProductName")) OrElse
                String.IsNullOrWhiteSpace(itemData("Quantity")) Then
                         MessageBox.Show("Please fill in required fields for: " & itemData("ProductName"))
@@ -1527,7 +1514,6 @@ Namespace DPC.Views.Sales.Quotes
                 Next
             Next
 
-            ' Serialize the flat list - no nested objects, just one long list
             Return JsonConvert.SerializeObject(flatList, Formatting.None)
         End Function
 #End Region
