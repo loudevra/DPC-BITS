@@ -214,8 +214,10 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "previewprintquoteeditedquote"
                         Return New DPC.Components.Forms.PreviewPrintEditedQuote()
 
-                    Case "editablepreviewdocument"
-                        Return New DPC.Components.Forms.EditablePreviewDocument()
+                    Case "universaleditablepreviewdocument"
+                        Return New DPC.Components.Forms.UniversalEditablePreviewDocument()
+                    Case "universalprintablepreviewdocument"
+                        Return New DPC.Components.Forms.UniversalPrintablePreviewDocument()
 
                     ' Sales Billing Estimate Navigation
                     Case "billingestimate"

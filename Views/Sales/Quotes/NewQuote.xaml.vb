@@ -1686,7 +1686,7 @@ Namespace DPC.Views.Sales.Quotes
                 data.Notes = txtQuoteNote.Text
                 data.WarrantyText = "Dream PC Build and IT Solutions Inc. offers 1 year warranty for this cost estimate..."
 
-                ViewLoader.DynamicView.NavigateToView("editablepreviewdocument", Me)
+                ViewLoader.DynamicView.NavigateToView("universaleditablepreviewdocument", Me)
 
             Catch ex As Exception
                 MessageBox.Show("Error generating preview: " & ex.Message)

@@ -545,8 +545,8 @@
     <Compile Include="Components\Forms\ConvertToPopUp.xaml.vb">
       <DependentUpon>ConvertToPopUp.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\Forms\EditablePreviewDocument.xaml.vb">
-      <DependentUpon>EditablePreviewDocument.xaml</DependentUpon>
+    <Compile Include="Components\Forms\UniversalEditablePreviewDocument.xaml.vb">
+      <DependentUpon>UniversalEditablePreviewDocument.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\CostEstimatePrintPopUp.xaml.vb">
       <DependentUpon>CostEstimatePrintPopUp.xaml</DependentUpon>
@@ -634,6 +634,9 @@
     </Compile>
     <Compile Include="Components\Forms\PreviewPrintEditedQuoteFixing.xaml.vb">
       <DependentUpon>PreviewPrintEditedQuoteFixing.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\UniversalPrintablePreviewDocument.xaml.vb">
+      <DependentUpon>UniversalPrintablePreviewDocument.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\PreviewPrintQuote.xaml.vb">
       <DependentUpon>PreviewPrintQuote.xaml</DependentUpon>
@@ -1394,7 +1397,7 @@
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
-    <Page Include="Components\Forms\EditablePreviewDocument.xaml">
+    <Page Include="Components\Forms\UniversalEditablePreviewDocument.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1511,6 +1514,10 @@
       <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\PreviewPrintEditedQuoteFixing.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Components\Forms\UniversalPrintablePreviewDocument.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

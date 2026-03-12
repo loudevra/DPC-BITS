@@ -14,7 +14,7 @@ Imports SkiaSharp.Views.WPF
 Imports Newtonsoft.Json
 
 Namespace DPC.Components.Forms
-    Public Class EditablePreviewDocument
+    Public Class UniversalEditablePreviewDocument
 
 #Region "1. Variables & Constants"
         Private itemDataSource As New ObservableCollection(Of OrderItems)
@@ -47,7 +47,7 @@ Namespace DPC.Components.Forms
             InitializeComponent()
         End Sub
 
-        Private Sub CostEstimate_Loaded(sender As Object, e As RoutedEventArgs)
+        Private Sub EditablePreview_Loaded(sender As Object, e As RoutedEventArgs)
             DetectDocumentMode()
 
             txtPageInfo = TryCast(Me.FindName("txtPageInfo"), TextBlock)
@@ -310,7 +310,7 @@ Namespace DPC.Components.Forms
             '====================================================
             'WILL BE UPDATED AFTER PRINT PREVIEW IS IMPLEMENTED
             '====================================================
-            ViewLoader.DynamicView.NavigateToView("printablepreviewdocument", Me)
+            ViewLoader.DynamicView.NavigateToView("universalprintablepreviewdocument", Me)
 
         End Sub
 
