@@ -36,13 +36,13 @@
                         <StackPanel Margin="0,0,0,10">
                             <TextBlock Text="Group Name:" FontSize="14" FontWeight="SemiBold" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,0,5"/>
                             <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10" Width="Auto" BorderBrush="#555555" BorderThickness="3" Height="52" CornerRadius="30">
-                                <TextBox x:Name="ClientGroupName" Style="{StaticResource RoundedTextboxStyle}" FontSize="20px" Foreground="#AEAEAE" VerticalAlignment="Center"/>
+                                <TextBox x:Name="ClientGroupName" Style="{StaticResource RoundedTextboxStyle}" FontSize="20px" Foreground="#AEAEAE" VerticalAlignment="Center" TextChanged="TxtToUpper_TextChanged"/>
                             </Border>
                         </StackPanel>
                         <StackPanel Orientation="Vertical">
                             <TextBlock Text="Description:" FontSize="14" FontWeight="SemiBold" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,0,5"/>
                             <Border Style="{StaticResource RoundedBorderStyle}" Width="Auto" BorderBrush="#555555" BorderThickness="3" Height="52" CornerRadius="30">
-                                <TextBox x:Name="ClientGroupDescription" Style="{StaticResource RoundedTextboxStyle}" FontSize="20px" Foreground="#AEAEAE" VerticalAlignment="Center"/>
+                                <TextBox x:Name="ClientGroupDescription" Style="{StaticResource RoundedTextboxStyle}" FontSize="20px" Foreground="#AEAEAE" VerticalAlignment="Center" TextChanged="TxtToUpper_TextChanged"/>
                             </Border>
                         </StackPanel>
                     </StackPanel>

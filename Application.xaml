@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:DPC.DPC.Data.Converters"
     xmlns:local2="clr-namespace:DPC.DPC.Data.Converters.ValueConverter"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     StartupUri="SplashScreen.xaml">
     <Application.Resources>
         <ResourceDictionary>
@@ -13,7 +14,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/Generic.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml"/>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.TextBox.xaml"/>
-                
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.RadioButton.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Value Converters -->
@@ -95,15 +96,10 @@
                 <Setter Property="FontSize" Value="14"/>
                 <Setter Property="Foreground" Value="#474747"/>
                 <Setter Property="Padding" Value="10"/>
-                <Setter Property="Width" Value="Auto"/>
-                <Setter Property="Height" Value="35"/>
+                <Setter Property="Height" Value="40"/>
                 <Setter Property="BorderThickness" Value="2"/>
-                <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                <Setter Property="Margin" Value="0,0,0,10"/>
                 <Setter Property="Background" Value="White"/>
                 <Setter Property="BorderBrush" Value="#474747"/>
-
-                <!-- Control Template with No Hover Effect and Scrollable Dropdown -->
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="ComboBox">
@@ -111,24 +107,49 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="20"
-                        Padding="0">
+                        CornerRadius="20">
                                 <Grid>
-                                    <!-- ComboBox Content -->
-                                    <ContentPresenter Margin="10,0,30,0"
-                                          VerticalAlignment="Center"
+                                    <ContentPresenter x:Name="ContentSite"
+                                          IsHitTestVisible="False"
                                           Content="{TemplateBinding SelectionBoxItem}"
-                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"/>
+                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                          ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                          Margin="15,0,30,0"
+                                          VerticalAlignment="Center"
+                                          HorizontalAlignment="Left"/>
 
-                                    <!-- Dropdown Toggle Button -->
+                                    <TextBox x:Name="PART_EditableTextBox"
+                                 Style="{x:Null}" 
+                                 Focusable="True"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 IsReadOnly="{TemplateBinding IsReadOnly}"
+                                 Visibility="Hidden"
+                                 Margin="15,0,30,0"
+                                 VerticalAlignment="Center"
+                                 FontFamily="{TemplateBinding FontFamily}"
+                                 FontSize="{TemplateBinding FontSize}"/>
+
                                     <ToggleButton x:Name="ToggleButton"
-                                      IsChecked="{Binding Path=IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                      IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
                                       Focusable="False"
                                       Background="Transparent"
                                       BorderThickness="0"
-                                      Style="{StaticResource ComboBoxToggleButton}"/>
+                                      HorizontalContentAlignment="Right">
+                                        <ToggleButton.Template>
+                                            <ControlTemplate TargetType="ToggleButton">
+                                                <Border Background="Transparent">
+                                                    <materialDesign:PackIcon Kind="MenuDown" 
+                                                                 Width="25" Height="25" 
+                                                                 HorizontalAlignment="Right" 
+                                                                 VerticalAlignment="Center" 
+                                                                 Margin="0,0,10,0"
+                                                                 Foreground="#474747"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </ToggleButton.Template>
+                                    </ToggleButton>
 
-                                    <!-- Default Popup for Dropdown -->
                                     <Popup x:Name="Popup"
                                Placement="Bottom"
                                IsOpen="{TemplateBinding IsDropDownOpen}"
@@ -147,6 +168,13 @@
                                     </Popup>
                                 </Grid>
                             </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsEditable" Value="True">
+                                    <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible"/>
+                                    <Setter TargetName="ContentSite" Property="Visibility" Value="Hidden"/>
+                                    <Setter Property="IsTabStop" Value="False"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>

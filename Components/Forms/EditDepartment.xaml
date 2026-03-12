@@ -44,7 +44,7 @@
                     <TextBox x:Name="TxtDepartment" Style="{StaticResource RoundedTextboxStyle}"/>
                 </Border>
                 <Button Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#52C69D" Click="SaveDepartment_Click">
-                    <TextBlock Text="Save" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="15"/>
+                    <TextBlock Text="Update" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="15"/>
                 </Button>
             </StackPanel>
         </Grid>

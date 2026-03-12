@@ -1,20 +1,37 @@
-﻿Imports ClosedXML.Excel
+﻿Imports System.Windows.Markup
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Models
 
 Namespace DPC.Views.CRM
     Public Class CRMResidentialClientOtherSettings
-        Public Sub New()
+        Inherits UserControl
 
-            ' This call is required by the designer.
+        ' =========================================================
+        ' 1. INTERNAL MEMORY (Keeps data alive across tabs)
+        ' =========================================================
+        Private Shared _savedClientGroupID As Integer? = Nothing
+        Private Shared _savedCustomerGroup As String = ""
+        Private Shared _savedLanguage As String = ""
+
+        Public Sub New()
             InitializeComponent()
 
-            ' Add any initialization after the InitializeComponent() call.
+            ' 2. INITIALIZATION
             LoadCustomerGroups()
-            GetInfo()
 
-            AddHandler cmbCustomerGroup.SelectionChanged, AddressOf SetInfo
-            AddHandler cmbLanguage.SelectionChanged, AddressOf SetInfo
+            ' 3. RESTORE DATA
+            If _savedClientGroupID.HasValue Then
+                cmbCustomerGroup.SelectedValue = _savedClientGroupID.Value
+            End If
+
+            If Not String.IsNullOrEmpty(_savedLanguage) Then
+                cmbLanguage.Text = _savedLanguage
+            End If
+
+            ' 4. AUTO-SAVE HANDLERS
+            AddHandler cmbCustomerGroup.SelectionChanged, AddressOf SaveToMemory
+            AddHandler cmbLanguage.SelectionChanged, AddressOf SaveToMemory
+            AddHandler cmbLanguage.KeyUp, AddressOf SaveToMemory
         End Sub
 
         Private Sub LoadCustomerGroups()
@@ -24,49 +41,57 @@ Namespace DPC.Views.CRM
             cmbCustomerGroup.ItemsSource = customerGroups
         End Sub
 
-        Private Sub SetInfo()
-            Dim selectedGroup = CType(cmbCustomerGroup.SelectedItem, KeyValuePair(Of Integer, String))
-            Dim selectedItem As ComboBoxItem = TryCast(cmbLanguage.SelectedItem, ComboBoxItem)
+        ' --- MEMORY MANAGEMENT ---
+        Private Sub SaveToMemory(sender As Object, e As RoutedEventArgs)
+            ' 1. Save Group (Fix for BC30792)
+            If cmbCustomerGroup.SelectedItem IsNot Nothing Then
+                _savedClientGroupID = CInt(cmbCustomerGroup.SelectedValue)
 
-            ResidentialClientDetails.ClientGroupID = cmbCustomerGroup.SelectedValue
+                ' Correct way to cast KeyValuePair (Value Type)
+                Dim selectedGroup As KeyValuePair(Of Integer, String) =
+                    CType(cmbCustomerGroup.SelectedItem, KeyValuePair(Of Integer, String))
 
-            If String.IsNullOrWhiteSpace(selectedGroup.Value) Then
-                ResidentialClientDetails.CustomerGroup = ""
+                _savedCustomerGroup = selectedGroup.Value
             Else
-                ResidentialClientDetails.CustomerGroup = selectedGroup.Value.ToString()
+                _savedClientGroupID = Nothing
+                _savedCustomerGroup = ""
             End If
 
-            ResidentialClientDetails.CustomerLanguage = selectedItem?.Content.ToString()
+            ' 2. Save Language
+            If cmbLanguage.SelectedItem IsNot Nothing Then
+                Dim selectedItem As ComboBoxItem = TryCast(cmbLanguage.SelectedItem, ComboBoxItem)
+                If selectedItem IsNot Nothing Then
+                    _savedLanguage = selectedItem.Content.ToString()
+                Else
+                    _savedLanguage = cmbLanguage.Text
+                End If
+            Else
+                _savedLanguage = cmbLanguage.Text
+            End If
+
+            ' 3. Update Global Model
+            ResidentialClientDetails.ClientGroupID = _savedClientGroupID
+            ResidentialClientDetails.CustomerGroup = _savedCustomerGroup
+            ResidentialClientDetails.CustomerLanguage = _savedLanguage
         End Sub
 
-        Private Sub GetInfo()
-            cmbCustomerGroup.SelectedValue = ResidentialClientDetails.ClientGroupID
-            cmbLanguage.Text = ResidentialClientDetails.CustomerLanguage
-        End Sub
-
+        ' --- ADD CLIENT BUTTON ---
         Private Sub AddClient(sender As Object, e As RoutedEventArgs)
-            If ResidentialClientDetails.ClientName = Nothing OrElse
-   ResidentialClientDetails.Phone = Nothing OrElse
-   ResidentialClientDetails.Email = Nothing OrElse
-   ResidentialClientDetails.BillAddress = Nothing OrElse
-   ResidentialClientDetails.BillCity = Nothing OrElse
-   ResidentialClientDetails.BillRegion = Nothing OrElse
-   ResidentialClientDetails.BillCountry = Nothing OrElse
-   ResidentialClientDetails.BillZipCode = Nothing OrElse
-   ResidentialClientDetails.ClientGroupID = Nothing OrElse
-   ResidentialClientDetails.CustomerGroup = Nothing OrElse
-   ResidentialClientDetails.CustomerLanguage = Nothing OrElse
-   ResidentialClientDetails.Address = Nothing OrElse
-   ResidentialClientDetails.City = Nothing OrElse
-   ResidentialClientDetails.Region = Nothing OrElse
-   ResidentialClientDetails.Country = Nothing OrElse
-   ResidentialClientDetails.ZipCode = Nothing OrElse
-   ResidentialClientDetails.SameAsBilling = Nothing Then
+            ' Check Global Fields
+            If String.IsNullOrEmpty(ResidentialClientDetails.ClientName) OrElse
+               String.IsNullOrEmpty(ResidentialClientDetails.Phone) OrElse
+               String.IsNullOrEmpty(ResidentialClientDetails.BillAddress) OrElse
+               String.IsNullOrEmpty(ResidentialClientDetails.Address) Then
 
-                MessageBox.Show("Please fill in all required fields before adding a client.", "Missing Information", MessageBoxButton.OK, MessageBoxImage.Warning)
+                MessageBox.Show("Please fill in required fields in other tabs (Personal, Billing, Shipping).", "Missing Information", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Exit Sub
             End If
 
+            ' Check Local Fields
+            If _savedClientGroupID Is Nothing Then
+                MessageBox.Show("Please select a Customer Group.", "Missing Information", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Exit Sub
+            End If
 
             Dim client As New Client With {
                 .ClientGroupID = ResidentialClientDetails.ClientGroupID,
@@ -82,15 +107,24 @@ Namespace DPC.Views.CRM
 
             Dim success As Boolean = ClientController.CreateClient(client)
 
-            If success = True Then
+            If success Then
                 MessageBox.Show("Client added successfully.")
+                ClearCache()
             End If
-            cmbCustomerGroup.SelectedValue = Nothing
-            cmbLanguage.Text = Nothing
-            ClearCache()
         End Sub
 
         Private Sub ClearCache()
+            ' Clear Local Memory
+            _savedClientGroupID = Nothing
+            _savedCustomerGroup = ""
+            _savedLanguage = ""
+
+            ' Clear UI
+            cmbCustomerGroup.SelectedValue = Nothing
+            cmbLanguage.SelectedIndex = -1
+            cmbLanguage.Text = ""
+
+            ' Clear Global Model
             ResidentialClientDetails.ClientName = Nothing
             ResidentialClientDetails.Phone = Nothing
             ResidentialClientDetails.Email = Nothing
@@ -99,14 +133,14 @@ Namespace DPC.Views.CRM
             ResidentialClientDetails.BillRegion = Nothing
             ResidentialClientDetails.BillCountry = Nothing
             ResidentialClientDetails.BillZipCode = Nothing
-            ResidentialClientDetails.ClientGroupID = Nothing
-            ResidentialClientDetails.CustomerGroup = Nothing
-            ResidentialClientDetails.CustomerLanguage = Nothing
             ResidentialClientDetails.Address = Nothing
             ResidentialClientDetails.City = Nothing
             ResidentialClientDetails.Region = Nothing
             ResidentialClientDetails.Country = Nothing
             ResidentialClientDetails.ZipCode = Nothing
+            ResidentialClientDetails.ClientGroupID = Nothing
+            ResidentialClientDetails.CustomerGroup = Nothing
+            ResidentialClientDetails.CustomerLanguage = Nothing
             ResidentialClientDetails.SameAsBilling = Nothing
         End Sub
     End Class

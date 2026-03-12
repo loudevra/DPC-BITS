@@ -1,8 +1,12 @@
 ﻿Imports System.Collections.ObjectModel
 Imports System.IO
+Imports System.Linq
+Imports System.Web.UI.WebControls.Expressions
 Imports System.Windows.Controls.Primitives
 Imports System.Windows.Threading
 Imports DocumentFormat.OpenXml.Bibliography
+Imports DocumentFormat.OpenXml.Math
+Imports DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing
 Imports DPC.DPC.Components.Forms
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
@@ -11,9 +15,7 @@ Imports DPC.DPC.Data.Models
 Imports DPC.DPC.Views.Stocks
 Imports MySql.Data.MySqlClient
 Imports Newtonsoft.Json
-Imports System.Linq
-Imports DocumentFormat.OpenXml.Math
-Imports System.Web.UI.WebControls.Expressions
+Imports SharpCompress.Readers.Tar
 
 Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
     Public Class WalkInNewOrder
@@ -51,13 +53,10 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
             ' Set a default date today and tomorrow
             OrderDateVM.SelectedDate = DateTime.Today
-            'OrderDueDateVM.SelectedDate = DateTime.Today.AddDays(1)
 
             ' Set Date to bind
             billingDate.DataContext = OrderDateVM
             BillingDateButton.DataContext = OrderDateVM
-            'QuoteValidityDate.DataContext = OrderDueDateVM
-            'QuoteValidityButton.DataContext = OrderDueDateVM
 
             ' Autocomplete part
             _typingTimer = New DispatcherTimer With {
@@ -65,8 +64,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             }
 
             ' For Tax Selection
-            _TaxSelection = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString() = "Inclusive"
-            _SelectedTax = If(_TaxSelection, 0.12D, Nothing)
+            If _TaxSelection Then
+                txtTaxSelection.SelectedItem = txtTaxSelection.Items.Cast(Of ComboBoxItem)().FirstOrDefault(Function(i) i.Content.ToString() = "Exclusive")
+            Else
+                txtTaxSelection.SelectedItem = txtTaxSelection.Items.Cast(Of ComboBoxItem)().FirstOrDefault(Function(i) i.Content.ToString() = "Inclusive")
+            End If
 
             AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
             AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
@@ -84,12 +86,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 CEWarehouseNameCache = selectedWarehouse.Content.ToString()
             End If
 
-            ' Generate Billing ID
-            Dim billingID As String = WalkInController.GenerateBillingID()
-            txtBillingNumber.Text = billingID
-
-            Debug.WriteLine($"Tax Selection - {_TaxSelection}")
-            Debug.WriteLine($"Tax Value In Billing Properties - {_SelectedTax}")
+            'LoadCachedBillingData()
         End Sub
 #End Region
 
@@ -247,66 +244,80 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             billingDate.IsDropDownOpen = True
         End Sub
 
-        'Private Sub QuoteValidityButton_Click(sender As Object, e As RoutedEventArgs)
-        '    QuoteValidityDate.IsDropDownOpen = True
-        'End Sub
-
         Private Sub txtReferenceNumber_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
             If Not e.Text.All(AddressOf Char.IsDigit) Then
-                e.Handled = True ' block the input
+                e.Handled = True
             End If
         End Sub
 
         Private Sub txtTaxSelection_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
-            _TaxSelection = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString() = "Inclusive"
-            _SelectedTax = If(_TaxSelection, 0.12D, Nothing)
+            _TaxSelection = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString() = "Exclusive"
             Debug.WriteLine($"Tax Selection - {_TaxSelection}")
-            Debug.WriteLine($"Tax Value In Billing Properties - {_SelectedTax}")
 
-            ' Update all tax percent fields to be editable or readonly
             For Each kvp In _productTextBoxes
                 If kvp.Key.StartsWith("txtTaxPercent_") Then
+                    Dim txt = kvp.Value
+                    Dim border = TryCast(txt.Parent, Border)
+
                     If _TaxSelection Then
-                        kvp.Value.Text = (_SelectedTax * 100).ToString()
-                        kvp.Value.IsReadOnly = True
-                    Else
+                        ' Exclusive: Allow user to edit and clear the value
+                        kvp.Value.Text = "0" '
                         kvp.Value.IsReadOnly = False
-                        kvp.Value.Text = "" ' Optionally clear the value for user input
+                        CEtaxSelection = True
+                        TaxHeader.Header = "TAX(%)"
+                        If border IsNot Nothing Then
+                            border.BorderThickness = New Thickness(1)
+                            border.BorderBrush = CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush)
+                        End If
+                    Else
+                        ' Inclusive: Set to 12 and make it readonly
+                        kvp.Value.Text = ""
+                        kvp.Value.IsReadOnly = True
+                        CEtaxSelection = False
+                        TaxHeader.Header = "TAX(12%)"
+                        CEisVatExInclude = False
+                        If Border IsNot Nothing Then
+                            Border.BorderThickness = New Thickness(0)
+                            Border.BorderBrush = Brushes.Transparent
+                        End If
                     End If
                 End If
+            Next
+
+            ' Call CalculateAmount method for each row
+            For i As Integer = 0 To rowCount - 1
+                CalculateAmount(i)
             Next
         End Sub
 #End Region
 
 #Region "This Loads every data if its available for updating"
         Private Sub InitializeProductUI()
-            'If HasCachedItems() Then
-            '    If _typingTimer Is Nothing Then
-            '        _typingTimer = New DispatcherTimer()
-            '        _typingTimer.Interval = TimeSpan.FromMilliseconds(300)
-            '        AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
-            '    End If
+            Dim hasAppCache As Boolean = Application.Current.Properties.Contains("BillingCache")
+            Dim hasItemsInList As Boolean = (BLItemsCache IsNot Nothing AndAlso BLItemsCache.Count > 0)
 
-            '    FillClientsField()
-            '    LoadCachedBillingItems()
-            'Else
-            '    AddProductInputUI()
-            'End If
+            If hasAppCache OrElse hasItemsInList Then
+                If _typingTimer Is Nothing Then
+                    _typingTimer = New DispatcherTimer()
+                    _typingTimer.Interval = TimeSpan.FromMilliseconds(300)
+                    AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
+                End If
 
-            AddProductInputUI()
+                LoadCachedBillingData()
+            Else
+                rowCount = 0
+                MainContainer.Children.Clear()
+                AddProductInputUI()
 
-            If _typingTimer Is Nothing Then
-                _typingTimer = New DispatcherTimer()
-                _typingTimer.Interval = TimeSpan.FromMilliseconds(300)
-                AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
+                Dim billingID As String = WalkInController.GenerateBillingID()
+                txtBillingNumber.Text = billingID
             End If
         End Sub
 
-        Private Function HasCachedItems() As Boolean
-            Return CEQuoteItemsCache IsNot Nothing AndAlso CEQuoteItemsCache.Count > 0
-        End Function
-
         Private Sub LoadCachedBillingItems()
+            ClearAllRows()
+            rowCount = 0
+
             For Each item In BLItemsCache
                 rowCount += 1
                 AddProductInputUI()
@@ -314,7 +325,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 Dim inputPanel = GetLatestInputPanel()
                 If inputPanel Is Nothing Then Continue For
 
-                FillClientsField()
                 FillProductFields(item, rowCount)
                 FillDescriptionField(inputPanel, item)
             Next
@@ -356,13 +366,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
             ' Continue setting other fields
             If Not String.IsNullOrWhiteSpace(BLClientDetailsCache) Then TxtClientDetails.Text = BLClientDetailsCache
-            If Not String.IsNullOrWhiteSpace(BLNumberCache) Then txtBillingNumber.Text = BLNumberCache
+            'If Not String.IsNullOrWhiteSpace(BLNumberCache) Then txtBillingNumber.Text = BLNumberCache
             'If Not String.IsNullOrWhiteSpace(CEReferenceNumber) Then txtReferenceNumber.Text = CEReferenceNumber
             If Not String.IsNullOrWhiteSpace(BLnoteTxt) Then txtBillingNote.Text = BLnoteTxt
-
-            Dim parsedDate As DateTime
-            'If DateTime.TryParse(BLDateCache, parsedDate) Then BillingDate.SelectedDate = parsedDate
-            'If DateTime.TryParse(CEQuoteValidityDateCache, parsedDate) Then QuoteValidityDate.SelectedDate = parsedDate
 
             AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
         End Sub
@@ -371,6 +377,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             Dim productFields = New Dictionary(Of String, String) From {
         {"txtProductName_", "ProductName"},
         {"txtQuantity_", "Quantity"},
+        {"delivered", "delivered"},
         {"txtRate_", "Rate"},
         {"txtTaxPercent_", "TaxPercent"},
         {"txtTaxValue_", "Tax"},
@@ -410,6 +417,14 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         Private Sub AddNewRow_Click(sender As Object, e As RoutedEventArgs)
             rowCount += 1 ' Make sure to increment rowCount here so new rows get unique names
             AddProductInputUI()
+
+            Dim scrollViewer As ScrollViewer = TryCast(MainContainer.Parent, ScrollViewer)
+
+            If scrollViewer IsNot Nothing Then
+                MainContainer.Dispatcher.BeginInvoke(Sub()
+                                                         scrollViewer.ScrollToBottom()
+                                                     End Sub, Windows.Threading.DispatcherPriority.Background)
+            End If
         End Sub
 
         ' The UI will Add ProductUI to the Interface
@@ -421,7 +436,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         .Background = CType(New BrushConverter().ConvertFrom("#FDFDFD"), Brush),
         .CornerRadius = New CornerRadius(15),
         .Padding = New Thickness(0),
-        .Margin = New Thickness(5),
+        .Margin = New Thickness(0, 5, 0, 5),
         .HorizontalAlignment = HorizontalAlignment.Stretch,
         .MinWidth = 300
     }
@@ -439,14 +454,14 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
     }
 
             ' This function will add all of the textbox to the MainContainer
-            productPanel.Children.Add(CreateProductSearchBox(125, rowIndex))   ' Item Name
-            productPanel.Children.Add(CreateQuantityBox(rowIndex))             ' Quantity
-            productPanel.Children.Add(CreateRateBox(rowIndex))                 ' Rate
-            productPanel.Children.Add(CreateTaxPercentBox(rowIndex))           ' Tax (%)
-            productPanel.Children.Add(CreateTaxValueBox(rowIndex))             ' Tax (readonly)
-            productPanel.Children.Add(CreateDiscountPercentBox(rowIndex))      ' Discount (%)
-            productPanel.Children.Add(CreateDiscountBox(rowIndex))             ' Discount
-            productPanel.Children.Add(CreateAmountBox("₱0.00", rowIndex))      ' Amount
+            productPanel.Children.Add(CreateProductSearchBox(125, rowIndex))
+            productPanel.Children.Add(CreateQuantityBox(rowIndex))
+            productPanel.Children.Add(CreateRateBox(rowIndex))
+            productPanel.Children.Add(CreateTaxPercentBox(rowIndex))
+            productPanel.Children.Add(CreateTaxValueBox(rowIndex))
+            productPanel.Children.Add(CreateDiscountPercentBox(rowIndex))
+            productPanel.Children.Add(CreateDiscountBox(rowIndex))
+            productPanel.Children.Add(CreateAmountBox("₱ 0.00", rowIndex))
 
             productPanel.Children.Add(CreateDeleteButton(mainBorder))
             mainStack.Children.Add(productPanel)
@@ -506,7 +521,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             .TextWrapping = TextWrapping.Wrap,
             .Padding = New Thickness(5),
             .BorderThickness = New Thickness(0),
-            .Width = width
+            .MinWidth = width,
+            .MaxWidth = width
         }
 
             ' ListBox for suggestions
@@ -518,7 +534,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
             ' Template to show product name
             Dim factory As New FrameworkElementFactory(GetType(TextBlock))
-            factory.SetBinding(TextBlock.TextProperty, New Binding("ProductName")) ' Bind to property of ProductDataModel
+            factory.SetBinding(TextBlock.TextProperty, New Binding("ProductName"))
             suggestionList.ItemTemplate = New DataTemplate() With {.VisualTree = factory}
 
             ' Popup setup
@@ -589,15 +605,15 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                                                                 Dim selectedProductName = selectedProduct.ProductName.Trim().ToLower()
 
                                                                 ' Check duplicates in other TextBoxes BEFORE setting the text
-                                                                Dim duplicateExists = _productTextBoxes.Values.Any(Function(tb) tb IsNot textBox AndAlso tb.Text.Trim().ToLower() = selectedProductName)
+                                                                'Dim duplicateExists = _productTextBoxes.Values.Any(Function(tb) tb IsNot textBox AndAlso tb.Text.Trim().ToLower() = selectedProductName)
 
-                                                                If duplicateExists Then
-                                                                    MessageBox.Show("This product is already added in another row.", "Duplicate Product", MessageBoxButton.OK, MessageBoxImage.Warning)
-                                                                    textBox.Clear()
-                                                                    popup.IsOpen = False
-                                                                    suggestionList.SelectedItem = Nothing
-                                                                    Return
-                                                                End If
+                                                                'If duplicateExists Then
+                                                                '    MessageBox.Show("This product is already added in another row.", "Duplicate Product", MessageBoxButton.OK, MessageBoxImage.Warning)
+                                                                '    textBox.Clear()
+                                                                '    popup.IsOpen = False
+                                                                '    suggestionList.SelectedItem = Nothing
+                                                                '    Return
+                                                                'End If
 
                                                                 ' No duplicate - now safe to proceed
                                                                 textBox.Text = selectedProduct.ProductName
@@ -629,13 +645,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                                               If String.IsNullOrEmpty(currentText) Then Return
 
                                               ' Check if any other product TextBox already has this text (ignore current one)
-                                              Dim duplicates = _productTextBoxes.Where(Function(kvp) kvp.Value IsNot currentTextBox AndAlso kvp.Value.Text.Trim().ToLower() = currentText.ToLower())
+                                              'Dim duplicates = _productTextBoxes.Where(Function(kvp) kvp.Value IsNot currentTextBox AndAlso kvp.Value.Text.Trim().ToLower() = currentText.ToLower())
 
-                                              If duplicates.Any() Then
-                                                  MessageBox.Show("This product is already added in another row.", "Duplicate Product", MessageBoxButton.OK, MessageBoxImage.Warning)
-                                                  currentTextBox.Clear()
-                                                  currentTextBox.Focus()
-                                              End If
+                                              'If duplicates.Any() Then
+                                              '    MessageBox.Show("This product is already added in another row.", "Duplicate Product", MessageBoxButton.OK, MessageBoxImage.Warning)
+                                              '    currentTextBox.Clear()
+                                              '    currentTextBox.Focus()
+                                              'End If
                                           End Sub
 
             ' Assemble UI
@@ -657,7 +673,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         End Function
 
         ' Based Textbox for the other textbox 
-        Public Function CreateInputBox(text As String, width As Double, Optional isReadOnly As Boolean = False, Optional name As String = "") As Border
+        Public Function CreateInputBox(text As String, width As Double, Optional isReadOnly As Boolean = False, Optional name As String = "", Optional alignment As HorizontalAlignment = HorizontalAlignment.Left) As Border
             Dim txt As New TextBox With {
         .Text = text,
         .FontFamily = New FontFamily("Lexend"),
@@ -668,12 +684,19 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         .Padding = New Thickness(5),
         .BorderThickness = New Thickness(0),
         .IsReadOnly = isReadOnly,
-        .Width = width
+        .Width = width,
+        .HorizontalContentAlignment = alignment
     }
 
             If Not String.IsNullOrWhiteSpace(name) Then
                 txt.Name = name
                 _productTextBoxes(name) = txt
+
+                Dim existingElement As Object = Me.FindName(name)
+                If existingElement IsNot Nothing Then
+                    Me.UnregisterName(name)
+                End If
+
                 Me.RegisterName(txt.Name, txt)
                 ' 🔌 Attach Quantity_TextChanged if this is a Quantity TextBox
                 If name.StartsWith("txtQuantity_") Then
@@ -687,12 +710,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             End If
 
             Dim border As New Border With {
-        .BorderBrush = If(isReadOnly, Brushes.Transparent, CType(New BrushConverter().ConvertFrom("#1D3242"), Brush)),
-        .BorderThickness = If(isReadOnly, New Thickness(0), New Thickness(2)),
+        .BorderBrush = If(isReadOnly, Brushes.Transparent, CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush)),
+        .BorderThickness = If(isReadOnly, New Thickness(0), New Thickness(1)),
         .Background = CType(New BrushConverter().ConvertFrom("#FDFDFD"), Brush),
-        .CornerRadius = New CornerRadius(15),
-        .Padding = New Thickness(5),
-        .Margin = New Thickness(0, 0, 5, 0),
+        .CornerRadius = New CornerRadius(5),
+        .Padding = New Thickness(2),
+        .Margin = New Thickness(2, 0, 2, 0),
         .Child = txt
     }
 
@@ -701,12 +724,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
         ' Quantity Textbox
         Private Function CreateQuantityBox(rowIndex As Integer) As Border
-            Return CreateInputBox("1", 50, False, $"txtQuantity_{rowIndex}")
+            Return CreateInputBox("1", 50, False, $"txtQuantity_{rowIndex}", HorizontalAlignment.Center)
         End Function
 
         ' Rate Textbox
         Private Function CreateRateBox(rowIndex As Integer) As Border
-            Dim box = CreateInputBox("", 70, False, $"txtRate_{rowIndex}")
+            Dim box = CreateInputBox("", 90, False, $"txtRate_{rowIndex}", HorizontalAlignment.Center)
             Dim txt = TryCast(box.Child, TextBox)
             If txt IsNot Nothing Then
                 AddHandler txt.TextChanged, AddressOf Quantity_TextChanged
@@ -717,23 +740,27 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
         ' Tax Percent Textbox
         Private Function CreateTaxPercentBox(rowIndex As Integer) As Border
-            Dim box = CreateInputBox("", 60, False, $"txtTaxPercent_{rowIndex}")
+            Dim defaultTaxPercent As String = If(Not CEtaxSelection, "", "0")
+
+            ' Create the textbox with the default value and readonly behavior
+            Dim box = CreateInputBox(defaultTaxPercent, 60, Not _TaxSelection, $"txtTaxPercent_{rowIndex}", HorizontalAlignment.Center)
             Dim txt = TryCast(box.Child, TextBox)
             If txt IsNot Nothing Then
                 AddHandler txt.TextChanged, AddressOf TaxPercent_TextChanged
                 AddHandler txt.PreviewTextInput, AddressOf TaxPercent_PreviewTextInput
             End If
+
             Return box
         End Function
 
         ' Tax Value Box
         Private Function CreateTaxValueBox(rowIndex As Integer) As Border
-            Return CreateInputBox("", 60, True, $"txtTaxValue_{rowIndex}")
+            Return CreateInputBox("0.00", 70, True, $"txtTaxValue_{rowIndex}", HorizontalAlignment.Center)
         End Function
 
         ' Discount Percent
         Private Function CreateDiscountPercentBox(rowIndex As Integer) As Border
-            Dim box = CreateInputBox("", 60, False, $"txtDiscountPercent_{rowIndex}")
+            Dim box = CreateInputBox("", 75, False, $"txtDiscountPercent_{rowIndex}", HorizontalAlignment.Center)
             Dim txt = TryCast(box.Child, TextBox)
             If txt IsNot Nothing Then
                 AddHandler txt.TextChanged, AddressOf DiscountPercent_TextChanged
@@ -744,12 +771,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
         ' Discount Box
         Private Function CreateDiscountBox(rowIndex As Integer) As Border
-            Return CreateInputBox("", 90, True, $"txtDiscount_{rowIndex}")
+            Return CreateInputBox("0.00", 75, True, $"txtDiscount_{rowIndex}", HorizontalAlignment.Center)
         End Function
 
         ' Amount Box
         Private Function CreateAmountBox(text As String, rowIndex As Integer) As Border
-            Return CreateInputBox(text, 70, True, $"txtAmount_{rowIndex}")
+            Return CreateInputBox(text, 90, True, $"txtAmount_{rowIndex}", HorizontalAlignment.Center)
         End Function
 
         ' Deleting the buttons
@@ -758,7 +785,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             .Background = Brushes.Transparent,
             .BorderBrush = Brushes.Transparent,
             .Padding = New Thickness(0),
-            .Width = 35,
+            .Width = 50,
             .Height = 40,
             .Cursor = Cursors.Hand,
             .VerticalAlignment = VerticalAlignment.Center
@@ -887,30 +914,36 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             If taxPercentBox IsNot Nothing Then Decimal.TryParse(taxPercentBox.Text, taxPercent)
             If discountPercentBox IsNot Nothing Then Decimal.TryParse(discountPercentBox.Text, discountPercent)
 
-            ' Base + tax 
-            If quantity > 1000 Then
-                MessageBox.Show("Quantity cannot exceed to 999.")
+            Dim baseAmount = quantity * rate
+            Dim taxValue As Decimal = 0
+            'Dim amountWithTax As Decimal
+
+            If _TaxSelection Then
+                ' Tax Exclusive: add tax to amount
+                'amountWithTax = baseAmount + taxValue
+                taxValue = baseAmount * (taxPercent / 100)
             Else
-                Dim baseAmount = quantity * rate
-                Dim taxValue = baseAmount * (taxPercent / 100)
-                Dim amountBeforeDiscount = baseAmount + taxValue
+                ' Tax Inclusive: 12% is already in the base amount, calculate for display only
+                taxValue = baseAmount * 0.12D
+                'amountWithTax = baseAmount + taxValue
 
-                ' Discount based on taxed amount
-                Dim discountValue = amountBeforeDiscount * (discountPercent / 100)
-                Dim finalAmount = amountBeforeDiscount - discountValue
-                ' Output values
-                If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("F2")
-                If discountBox IsNot Nothing Then discountBox.Text = discountValue.ToString("F2")
-                amountBox.Text = "₱" & finalAmount.ToString("F2")
-
-                Debug.WriteLine($"[Row {rowIndex}] Base: {baseAmount}, Tax: {taxValue}, Discount: {discountValue}, Total: {finalAmount}")
-
-                UpdateGrandTotal()
-                UpdateTotalTax()
-                UpdateTotalDiscount()
+                ' Update tax value display
+                If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
             End If
 
+            Dim discountValue = baseAmount * (discountPercent / 100)
+            Dim finalAmount = baseAmount - discountValue
 
+            ' Update all display boxes
+            If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
+            If discountBox IsNot Nothing Then discountBox.Text = discountValue.ToString("N2")
+            amountBox.Text = "₱ " & finalAmount.ToString("N2")
+
+            Debug.WriteLine($"[Row {rowIndex}] Base: {baseAmount}, Tax: {taxValue}, Discount: {discountValue}, Total: {finalAmount}")
+
+            UpdateGrandTotal()
+            UpdateTotalTax()
+            UpdateTotalDiscount()
         End Sub
 
 
@@ -931,41 +964,64 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         End Function
 
         Public Sub UpdateGrandTotal()
-            Dim grandTotal As Decimal = 0
+            Dim subtotalAmount As Decimal = 0
+            Dim totalTaxAmount As Decimal = 0
 
-            ' Loop through all entries in the dynamic amount textboxes
-            For Each name As String In LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
-            SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
-            Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtAmount_")).
-            Select(Function(txt) txt.Name).Distinct()
+            ' 1. Get all Amount TextBoxes and sanitize them
+            Dim amountTextBoxNames = LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
+        SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
+        Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtAmount_")).
+        Select(Function(txt) txt.Name).Distinct()
 
+            For Each name As String In amountTextBoxNames
                 Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
                 If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
-                    Dim rawText = txtBox.Text.Replace("₱", "").Trim()
+                    ' CLEANING: Remove Peso sign and Commas
+                    Dim rawText = txtBox.Text.Replace("₱", "").Replace(",", "").Trim()
                     Dim amount As Decimal
                     If Decimal.TryParse(rawText, amount) Then
-                        grandTotal += amount
+                        subtotalAmount += amount
                     End If
                 End If
             Next
 
-            ' Update the grand total display
-            txtGrandTotal.Text = "₱" & grandTotal.ToString("N2")
+            ' 2. Ensure Tax is also sanitized
+            UpdateTotalTax()
+            Dim rawTax = txtTotalTax.Text.Replace("₱", "").Replace(",", "").Trim()
+            Decimal.TryParse(rawTax, totalTaxAmount)
+
+            Dim finalGrandTotal As Decimal = 0
+
+            ' 3. Calculate based on Tax Selection
+            If _TaxSelection Then
+                ' Tax Exclusive logic: Total = Subtotal + Tax
+                finalGrandTotal = subtotalAmount + totalTaxAmount
+            Else
+                ' Tax Inclusive logic: Total = Subtotal (Tax is already inside)
+                finalGrandTotal = subtotalAmount
+            End If
+
+            BLSubtotalAmountCache = (subtotalAmount).ToString("F2")
+            ' 4. Format outputs for UI display
+            txtGrandTotal.Text = "₱ " & finalGrandTotal.ToString("N2")
+
+            ' 5. Pass CLEAN values to Cache (It's better to store as Decimal or clean String)
+            StatementDetails.TotalCostCache = finalGrandTotal.ToString("F2")
         End Sub
 
         ' This function is for updating the value of tax whenever there is changes
         Public Sub UpdateTotalTax()
             Dim totalTax As Decimal = 0
-
-            ' Loop through all textboxes with names starting with txtTaxValue_
-            For Each name As String In LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
+            Dim taxValueNames = LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
         SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
         Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtTaxValue_")).
         Select(Function(txt) txt.Name).Distinct()
 
+            For Each name As String In taxValueNames
                 Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
                 If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
-                    Dim rawText = txtBox.Text.Replace("₱", "").Trim()
+                    ' CLEANING
+                    Dim rawText = txtBox.Text.Replace("₱", "").Replace(",", "").Trim()
                     Dim tax As Decimal
                     If Decimal.TryParse(rawText, tax) Then
                         totalTax += tax
@@ -973,7 +1029,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 End If
             Next
 
-            ' Example output target: you should declare this in your XAML like you did with txtGrandTotal
             txtTotalTax.Text = "₱ " & totalTax.ToString("N2")
         End Sub
 
@@ -1081,8 +1136,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 Return False
             End If
 
-            If Not billingDate.SelectedDate.HasValue Then
-                MessageBox.Show("Quote Date is required.")
+            If OrderDateVM.SelectedDate = DateTime.MinValue OrElse Not OrderDateVM.SelectedDate.HasValue Then
+                MessageBox.Show("Billing Date is required.")
                 Return False
             End If
 
@@ -1102,7 +1157,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             End If
 
             If String.IsNullOrWhiteSpace(productItemsJson) Then
-                MessageBox.Show("No products found in the quote.")
+                MessageBox.Show("No products found in the Billing.")
                 Return False
             End If
 
@@ -1110,9 +1165,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         End Function
 #End Region
 
-#Region "Generate the Quote Before saving"
+#Region "Generate the Billing Before saving"
         ' Once Done All of the Data Will Be pass to another form for generating invoice
-        Private Sub GenerateCostEstimate_Click(sender As Object, e As RoutedEventArgs)
+        Private Sub GenerateBilling_Click(sender As Object, e As RoutedEventArgs)
             Dim productItemsJson As String = SubmitAllProductInputs()
 
             If productItemsJson Is Nothing Then
@@ -1151,6 +1206,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 If productPanel Is Nothing OrElse productPanel.Children.Count < 8 Then Continue For
 
                 Dim productData As New Dictionary(Of String, Object)
+                productData("Delivered") = "0"
                 Dim fieldNames = {"ProductName", "Quantity", "Rate", "TaxPercent", "Tax", "Discount"}
 
                 For j As Integer = 0 To 5
@@ -1204,7 +1260,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                         If descBorder IsNot Nothing Then
                             Dim descTextBox = TryCast(descBorder.Child, TextBox)
                             If descTextBox IsNot Nothing Then
-                                productData("Description") = descTextBox.Text
+                                Dim rawDescription As String = descTextBox.Text.Trim()
+                                If rawDescription = "Enter product description (Optional)" OrElse String.IsNullOrWhiteSpace(rawDescription) Then
+                                    productData("Description") = "No Description Available"
+                                Else
+                                    productData("Description") = rawDescription
+                                End If
                             End If
                         End If
                     End If
@@ -1219,18 +1280,25 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
 #Region "Clearing all of the fields"
         Public Sub ClearAllFields()
-            Me.UnregisterName(txtDiscountSelection.Name)
-            ' Clear all fields in the quote form
+            If Application.Current.Properties.Contains("BillingCache") Then
+                Application.Current.Properties.Remove("BillingCache")
+            End If
+
+            ' Clear the shared list of items
+            If BLItemsCache IsNot Nothing Then
+                BLItemsCache.Clear()
+            End If
+
             txtBillingNumber.Clear()
-            Dim quoteID As String = QuotesController.GenerateQuoteID()
-            txtBillingNumber.Text = quoteID
+            Dim billingID As String = BillingController.GenerateBillingID(False)
+            txtBillingNumber.Text = billingID
             'txtReferenceNumber.Text = "Reference #"
             txtSearchCustomer.Clear()
             txtBillingNote.Text = "None"
             txtTaxSelection.SelectedIndex = 0
             txtDiscountSelection.SelectedIndex = 0
             txtTotalTax.Text = "₱ 0.00"
-            txtTotalDiscount.Text = "₱0.00"
+            txtTotalDiscount.Text = "₱ 0.00"
             txtGrandTotal.Text = ""
             TxtClientDetails.Clear()
             ' Clear the client details
@@ -1261,7 +1329,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         End Sub
 #End Region
 
-#Region "Getting All of the Data and Insert of this Quote"
+#Region "Getting All of the Data and Insert of this Billing"
         ' Whenever there is a change in WarehosueCombobox will also update the data
         Private Sub ComboBoxWarehouse_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
             Dim selectedItem As ComboBoxItem = TryCast(ComboBoxWarehouse.SelectedItem, ComboBoxItem)
@@ -1272,20 +1340,18 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             End If
         End Sub
 
-        ' Function for inserting the data into the quote table in the database
         Private Sub GetAllDataInBillingProperties(client As Client, productItemsJson As String)
             If Not ValidateBillingSubmission(client, productItemsJson) Then Exit Sub
             Try
                 Dim selectedTax As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
                 Dim selectedDiscount As String = CType(txtDiscountSelection.SelectedItem, ComboBoxItem).Content.ToString()
 
-                ' 07 - 04 - 2025 -- Moved the insert at the save and print button in previewprintquote.xaml.vb
 
 
                 BLNumberCache = txtBillingNumber.Text
                 BLDiscountProperty = txtDiscountSelection.Text
                 BLTaxProperty = txtTaxSelection.Text
-                BLDateCache = billingDate.SelectedDate.Value.ToString("yyyy-MM-dd")
+                BLDateCache = OrderDateVM.SelectedDate.Value.ToString("yyyy-MM-dd")
                 BLTotalTaxValueCache = txtTotalTax.Text
                 BLTotalDiscountValueCache = txtTotalDiscount.Text
                 BLTotalAmountCache = txtGrandTotal.Text
@@ -1310,6 +1376,16 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 Dim selectedWarehouse As String = Warehouse.Content.ToString()
                 WalkinBillingStatementDetails.BLWarehouseNameCache = selectedWarehouse
 
+                Dim selectedTaxType As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
+
+                If selectedTaxType = "Exclusive" Then
+                    WalkinBillingStatementDetails.BLVatLabel = $"VAT EXCLUSIVE"
+                    WalkinBillingStatementDetails.BLSubtotalLabel = "SUBTOTAL VAT EX."
+                ElseIf selectedTaxType = "Inclusive" Then
+                    WalkinBillingStatementDetails.BLVatLabel = "VAT 12%"
+                    WalkinBillingStatementDetails.BLSubtotalLabel = "SUBTOTAL VAT IN."
+                End If
+
                 ViewLoader.DynamicView.NavigateToView("navigatetobillingstatement", Me)
             Catch ex As Exception
                 MessageBox.Show("Please Fill up all of the Fields")
@@ -1318,6 +1394,42 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
         Private Sub BtnAddClient_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddClient.Click
             ViewLoader.DynamicView.NavigateToView("newwalkinclient", Me)
+        End Sub
+        Private Sub BtnReset_Click(sender As Object, e As RoutedEventArgs) Handles BtnReset.Click
+            ClearAllFields()
+            ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
+        End Sub
+
+        Private Sub LoadCachedBillingData()
+            If Application.Current.Properties.Contains("BillingCache") Then
+                Dim cachedData As BillingModel = DirectCast(Application.Current.Properties("BillingCache"), BillingModel)
+
+                txtBillingNumber.Text = cachedData.BillingNumber
+                RemoveHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
+
+                If Not String.IsNullOrEmpty(cachedData.ClientID) Then
+                    Dim clientList = ClientController.SearchClient(cachedData.ClientID)
+                    Dim targetClient = clientList.FirstOrDefault(Function(c) c.ClientID = cachedData.ClientID)
+
+                    If targetClient IsNot Nothing Then
+                        txtSearchCustomer.Text = targetClient.Name
+
+                        _selectedClient = targetClient
+                        UpdateSupplierDetails(_selectedClient)
+                    End If
+                End If
+                AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
+
+                If Not String.IsNullOrEmpty(cachedData.OrderItems) Then
+                    ClearAllRows()
+                    BLItemsCache = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(cachedData.OrderItems)
+                    LoadCachedBillingItems()
+                End If
+
+                Application.Current.Properties.Remove("BillingCache")
+
+                AutoCompletePopup.IsOpen = False
+            End If
         End Sub
 #End Region
     End Class

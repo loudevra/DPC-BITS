@@ -208,7 +208,7 @@
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToNewQuoteGovernment">
-                                    <TextBlock Text="New Gov Cost Estimate" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
+                                    <TextBlock Text="New Gov Cost Estimate" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend" Visibility="Collapsed" />
                                 </Hyperlink>
                                 <TextBlock.ToolTip>
                                     <ToolTip Content="Create a government cost estimate." Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
@@ -216,7 +216,7 @@
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageQuoteGovernment">
-                                    <TextBlock Text="Manage Gov Cost Estimate" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
+                                    <TextBlock Text="Manage Gov Cost Estimate" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend" Visibility="Collapsed" />
                                 </Hyperlink>
                                 <TextBlock.ToolTip>
                                     <ToolTip Content="Manage a government cost estimate." Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
@@ -225,6 +225,137 @@
                         </StackPanel>
                     </Grid>
                 </StackPanel>
+
+
+                <!-- Walk-In Starts here -->
+                <StackPanel>
+                    <Grid Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <materialDesign:PackIcon Kind="Phone" Foreground="White" Width="20" Height="20" Margin="10,0,0,0"/>
+                        <TextBlock Grid.Column="1">
+    <Hyperlink>
+        <TextBlock Text="Billing Statement" Style="{StaticResource MainMenuItemStyle}"/>
+    </Hyperlink>
+</TextBlock>
+                    </Grid>
+
+                    <!-- Submenu items with vertical lines -->
+                    <Grid Margin="24,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="62*"/>
+                            <ColumnDefinition Width="163*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Vertical line -->
+                        <Rectangle Width="1" Fill="#444444" HorizontalAlignment="Center"/>
+
+                        <!-- Submenu items -->
+                        <StackPanel Grid.Column="1" Grid.ColumnSpan="2">
+                            <TextBlock Margin="10,3,0,3">
+        <Hyperlink Click="NavigateToWalkIn">
+            <TextBlock Text="New Billing Statement" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
+        </Hyperlink>
+        <TextBlock.ToolTip>
+            <ToolTip Content="Create a new cost estimate for projects or services." Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
+        </TextBlock.ToolTip>
+    </TextBlock>
+                            <TextBlock Margin="10,3,0,3">
+        <Hyperlink Click="NavigateToManageWalkInClients">
+            <TextBlock Text="Manage Billing Statement" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
+        </Hyperlink>
+        <TextBlock.ToolTip>
+            <ToolTip Content="View and manage all cost estimates." Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
+        </TextBlock.ToolTip>
+    </TextBlock>
+                            <TextBlock Margin="10,3,0,3">
+        <Hyperlink >
+            <TextBlock Text="New Gov Cost Estimate" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend" Visibility="Collapsed" />
+        </Hyperlink>
+        <TextBlock.ToolTip>
+            <ToolTip Content="Create a government cost estimate." Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
+        </TextBlock.ToolTip>
+    </TextBlock>
+                            <TextBlock Margin="10,3,0,3">
+        <Hyperlink Click="NavigateToManageQuoteGovernment">
+            <TextBlock Text="Manage Gov Cost Estimate" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend" Visibility="Collapsed" />
+        </Hyperlink>
+        <TextBlock.ToolTip>
+            <ToolTip Content="Manage a government cost estimate." Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
+        </TextBlock.ToolTip>
+    </TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+
+                <!-- Delivery Receipt Starts here -->
+                <StackPanel>
+                    <Grid Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <materialDesign:PackIcon Kind="Phone" Foreground="White" Width="20" Height="20" Margin="10,0,0,0"/>
+                        <TextBlock Grid.Column="1">
+    <Hyperlink>
+        <TextBlock Text="Delivery Receipt" Style="{StaticResource MainMenuItemStyle}"/>
+    </Hyperlink>
+</TextBlock>
+                    </Grid>
+
+                    <!-- Submenu items with vertical lines -->
+                    <Grid Margin="24,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="62*"/>
+                            <ColumnDefinition Width="163*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Vertical line -->
+                        <Rectangle Width="1" Fill="#444444" HorizontalAlignment="Center"/>
+
+                        <!-- Submenu items -->
+                        <StackPanel Grid.Column="1" Grid.ColumnSpan="2">
+                            <TextBlock Margin="10,3,0,3">
+        <Hyperlink Click="NavigateToNewDeliveryReceipt">
+            <TextBlock Text="New Delivery Receipt" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
+        </Hyperlink>
+        <TextBlock.ToolTip>
+            <ToolTip Content="Create a new cost estimate for projects or services." Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
+        </TextBlock.ToolTip>
+    </TextBlock>
+                            <TextBlock Margin="10,3,0,3">
+        <Hyperlink  Click="NavigateToManageDeliveryReceipt">
+            <TextBlock Text="Manage Delivery Receipt" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
+        </Hyperlink>
+        <TextBlock.ToolTip>
+            <ToolTip Content="View and manage all cost estimates." Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
+        </TextBlock.ToolTip>
+    </TextBlock>
+                            <TextBlock Margin="10,3,0,3">
+        <Hyperlink Click="NavigateToNewQuoteGovernment">
+            <TextBlock Text="New Gov Cost Estimate" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend" Visibility="Collapsed" />
+        </Hyperlink>
+        <TextBlock.ToolTip>
+            <ToolTip Content="Create a government cost estimate." Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
+        </TextBlock.ToolTip>
+    </TextBlock>
+                            <TextBlock Margin="10,3,0,3">
+        <Hyperlink Click="NavigateToManageQuoteGovernment">
+            <TextBlock Text="Manage Gov Cost Estimate" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend" Visibility="Collapsed" />
+        </Hyperlink>
+        <TextBlock.ToolTip>
+            <ToolTip Content="Manage a government cost estimate." Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
+        </TextBlock.ToolTip>
+    </TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+
+
 
                 <!-- Subscription Section - HIDDEN -->
                 <StackPanel Visibility="Collapsed">

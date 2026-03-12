@@ -4,90 +4,149 @@ Imports DPC.DPC.Data.Models
 
 Namespace DPC.Views.CRM
     Public Class CRMResidentialClientShippingAddress
+        Inherits UserControl
+
+        ' =========================================================
+        ' 1. INTERNAL MEMORY (Keeps data alive across tabs)
+        ' =========================================================
+        Private Shared _savedAddress As String = ""
+        Private Shared _savedCity As String = ""
+        Private Shared _savedRegion As String = ""
+        Private Shared _savedCountry As String = ""
+        Private Shared _savedZipCode As String = ""
+        Private Shared _savedSameAsBilling As Boolean = False
+
         Public Sub New()
             InitializeComponent()
 
-            GetInfo()
+            ' 2. RESTORE DATA
+            txtAddress.Text = _savedAddress
+            txtCity.Text = _savedCity
+            txtRegion.Text = _savedRegion
+            txtCountry.Text = _savedCountry
+            txtZipCode.Text = _savedZipCode
+            billingCheckBox.IsChecked = _savedSameAsBilling
 
-            billingCheckBox.IsChecked = ResidentialClientDetails.SameAsBilling
-
-            If billingCheckBox.IsChecked = True Then
+            If _savedSameAsBilling Then
                 GetInfoBillAddress()
             End If
 
-            AddHandler txtAddress.TextChanged, AddressOf SetInfo
-            AddHandler txtCity.SelectionChanged, AddressOf SetInfo
-            AddHandler txtRegion.SelectionChanged, AddressOf SetInfo
-            AddHandler txtCountry.SelectionChanged, AddressOf SetInfo
-            AddHandler txtZipCode.TextChanged, AddressOf SetInfo
-            AddHandler billingCheckBox.Checked, AddressOf GetInfoBillAddress
-            AddHandler billingCheckBox.Unchecked, Sub()
-                                                      txtAddress.Text = Nothing
-                                                      txtCity.Text = Nothing
-                                                      txtRegion.Text = Nothing
-                                                      txtCountry.Text = Nothing
-                                                      txtZipCode.Text = Nothing
-                                                      txtAddress.IsEnabled = True
-                                                      txtCity.IsEnabled = True
-                                                      txtRegion.IsEnabled = True
-                                                      txtCountry.IsEnabled = True
-                                                      txtZipCode.IsEnabled = True
-                                                  End Sub
+            ' 3. AUTO-SAVE HANDLERS
+            AddHandler txtAddress.TextChanged, AddressOf SaveToMemory
+            AddHandler txtCity.TextChanged, AddressOf SaveToMemory
+            AddHandler txtRegion.TextChanged, AddressOf SaveToMemory
+            AddHandler txtCountry.TextChanged, AddressOf SaveToMemory
+            AddHandler txtZipCode.TextChanged, AddressOf SaveToMemory
+
+            ' 4. CHECKBOX LOGIC
+            AddHandler billingCheckBox.Checked, AddressOf CheckBox_Changed
+            AddHandler billingCheckBox.Unchecked, AddressOf CheckBox_Changed
+
+            ' 5. UPPERCASE FORMATTING
+            AddHandler txtAddress.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler txtCity.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler txtRegion.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler txtCountry.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler txtZipCode.TextChanged, AddressOf TxtToUpper_TextChanged
         End Sub
 
-        Private Sub GetInfoBillAddress()
-            txtAddress.Text = ResidentialClientDetails.BillAddress
-            txtCity.Text = ResidentialClientDetails.BillCity
-            txtRegion.Text = ResidentialClientDetails.BillRegion
-            txtCountry.Text = ResidentialClientDetails.BillCountry
-            txtZipCode.Text = ResidentialClientDetails.BillZipCode
-            txtAddress.IsEnabled = False
-            txtCity.IsEnabled = False
-            txtRegion.IsEnabled = False
-            txtCountry.IsEnabled = False
-            txtZipCode.IsEnabled = False
-        End Sub
+        ' --- MEMORY MANAGEMENT ---
+        ' FIX: Updated "e" to TextChangedEventArgs to match the event type
+        Private Sub SaveToMemory(sender As Object, e As TextChangedEventArgs)
+            ' FIX: Added .Text to all fields to prevent "TextBox to String" error
+            _savedAddress = txtAddress.Text
+            _savedCity = txtCity.Text
+            _savedRegion = txtRegion.Text
+            _savedCountry = txtCountry.Text
+            _savedZipCode = txtZipCode.Text
 
-        Private Sub SetInfo()
+            ' Save to Global Model
             ResidentialClientDetails.Address = txtAddress.Text
             ResidentialClientDetails.City = txtCity.Text
             ResidentialClientDetails.Region = txtRegion.Text
             ResidentialClientDetails.Country = txtCountry.Text
             ResidentialClientDetails.ZipCode = txtZipCode.Text
-            ResidentialClientDetails.SameAsBilling = billingCheckBox.IsChecked.Value
         End Sub
 
-        Private Sub GetInfo()
-            txtAddress.Text = ResidentialClientDetails.Address
-            txtCity.Text = ResidentialClientDetails.City
-            txtRegion.Text = ResidentialClientDetails.Region
-            txtCountry.Text = ResidentialClientDetails.Country
-            txtZipCode.Text = ResidentialClientDetails.ZipCode
+        ' --- CHECKBOX LOGIC ---
+        Private Sub CheckBox_Changed(sender As Object, e As RoutedEventArgs)
+            _savedSameAsBilling = billingCheckBox.IsChecked.GetValueOrDefault()
+            ResidentialClientDetails.SameAsBilling = _savedSameAsBilling
+
+            If _savedSameAsBilling Then
+                GetInfoBillAddress()
+            Else
+                SetFieldsEnabled(True)
+                ' Clear fields
+                txtAddress.Text = ""
+                txtCity.Text = ""
+                txtRegion.Text = ""
+                txtCountry.Text = ""
+                txtZipCode.Text = ""
+            End If
         End Sub
 
+        Private Sub GetInfoBillAddress()
+            ' Pull from Billing Model
+            txtAddress.Text = ResidentialClientDetails.BillAddress
+            txtCity.Text = ResidentialClientDetails.BillCity
+            txtRegion.Text = ResidentialClientDetails.BillRegion
+            txtCountry.Text = ResidentialClientDetails.BillCountry
+            txtZipCode.Text = ResidentialClientDetails.BillZipCode
+
+            SetFieldsEnabled(False)
+
+            ' Force save to memory
+            _savedAddress = txtAddress.Text
+            _savedCity = txtCity.Text
+            _savedRegion = txtRegion.Text
+            _savedCountry = txtCountry.Text
+            _savedZipCode = txtZipCode.Text
+        End Sub
+
+        Private Sub SetFieldsEnabled(isEnabled As Boolean)
+            txtAddress.IsEnabled = isEnabled
+            txtCity.IsEnabled = isEnabled
+            txtRegion.IsEnabled = isEnabled
+            txtCountry.IsEnabled = isEnabled
+            txtZipCode.IsEnabled = isEnabled
+        End Sub
+
+        ' --- FORMATTING ---
+        Private Sub TxtToUpper_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim tb = TryCast(sender, TextBox)
+            If tb Is Nothing Then Return
+
+            Dim originalSelectionStart = tb.SelectionStart
+            Dim originalText = tb.Text
+            Dim upperText = originalText.ToUpperInvariant()
+
+            If Not String.Equals(originalText, upperText, StringComparison.Ordinal) Then
+                RemoveHandler tb.TextChanged, AddressOf TxtToUpper_TextChanged
+                tb.Text = upperText
+                tb.SelectionStart = Math.Min(originalSelectionStart, tb.Text.Length)
+                AddHandler tb.TextChanged, AddressOf TxtToUpper_TextChanged
+            End If
+        End Sub
+
+        ' --- ADD CLIENT BUTTON ---
         Private Sub AddClient(sender As Object, e As RoutedEventArgs)
-            If ResidentialClientDetails.ClientName = Nothing OrElse
-   ResidentialClientDetails.Phone = Nothing OrElse
-   ResidentialClientDetails.Email = Nothing OrElse
-   ResidentialClientDetails.BillAddress = Nothing OrElse
-   ResidentialClientDetails.BillCity = Nothing OrElse
-   ResidentialClientDetails.BillRegion = Nothing OrElse
-   ResidentialClientDetails.BillCountry = Nothing OrElse
-   ResidentialClientDetails.BillZipCode = Nothing OrElse
-   ResidentialClientDetails.ClientGroupID = Nothing OrElse
-   ResidentialClientDetails.CustomerGroup = Nothing OrElse
-   ResidentialClientDetails.CustomerLanguage = Nothing OrElse
-   ResidentialClientDetails.Address = Nothing OrElse
-   ResidentialClientDetails.City = Nothing OrElse
-   ResidentialClientDetails.Region = Nothing OrElse
-   ResidentialClientDetails.Country = Nothing OrElse
-   ResidentialClientDetails.ZipCode = Nothing OrElse
-   ResidentialClientDetails.SameAsBilling = Nothing Then
+            ' Check Global Fields (Personal & Billing)
+            If String.IsNullOrEmpty(ResidentialClientDetails.ClientName) OrElse
+               String.IsNullOrEmpty(ResidentialClientDetails.BillAddress) Then
 
-                MessageBox.Show("Please fill in all required fields before adding a client.", "Missing Information", MessageBoxButton.OK, MessageBoxImage.Warning)
+                MessageBox.Show("Please fill in required fields in Personal Info and Billing tabs.", "Missing Information", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Exit Sub
             End If
 
+            ' Check Local Fields (Shipping)
+            ' FIX: Added .Text
+            If String.IsNullOrEmpty(txtAddress.Text) OrElse
+               String.IsNullOrEmpty(txtCity.Text) Then
+
+                MessageBox.Show("Please fill in all shipping address fields.", "Missing Information", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Exit Sub
+            End If
 
             Dim client As New Client With {
                 .ClientGroupID = ResidentialClientDetails.ClientGroupID,
@@ -95,7 +154,7 @@ Namespace DPC.Views.CRM
                 .Phone = ResidentialClientDetails.Phone,
                 .Email = ResidentialClientDetails.Email,
                 .BillingAddress = $"{ResidentialClientDetails.BillAddress}, {ResidentialClientDetails.BillCity}, {ResidentialClientDetails.BillRegion}, {ResidentialClientDetails.BillCountry}, {ResidentialClientDetails.BillZipCode}",
-                .ShippingAddress = $"{ResidentialClientDetails.Address}, {ResidentialClientDetails.City}, {ResidentialClientDetails.Region}, {ResidentialClientDetails.Country}, {ResidentialClientDetails.ZipCode}",
+                .ShippingAddress = $"{txtAddress.Text}, {txtCity.Text}, {txtRegion.Text}, {txtCountry.Text}, {txtZipCode.Text}",
                 .CustomerGroup = ResidentialClientDetails.CustomerGroup,
                 .ClientLanguage = ResidentialClientDetails.CustomerLanguage,
                 .ClientType = "Residential"
@@ -103,36 +162,28 @@ Namespace DPC.Views.CRM
 
             Dim success As Boolean = ClientController.CreateClient(client)
 
-            If success = True Then
+            If success Then
                 MessageBox.Show("Client added successfully.")
+                ClearCache()
             End If
-
-            txtAddress.Text = Nothing
-            txtCity.Text = Nothing
-            txtRegion.Text = Nothing
-            txtCountry.Text = Nothing
-            txtZipCode.Text = Nothing
-            ClearCache()
         End Sub
 
         Private Sub ClearCache()
-            ResidentialClientDetails.ClientName = Nothing
-            ResidentialClientDetails.Phone = Nothing
-            ResidentialClientDetails.Email = Nothing
-            ResidentialClientDetails.BillAddress = Nothing
-            ResidentialClientDetails.BillCity = Nothing
-            ResidentialClientDetails.BillRegion = Nothing
-            ResidentialClientDetails.BillCountry = Nothing
-            ResidentialClientDetails.BillZipCode = Nothing
-            ResidentialClientDetails.ClientGroupID = Nothing
-            ResidentialClientDetails.CustomerGroup = Nothing
-            ResidentialClientDetails.CustomerLanguage = Nothing
-            ResidentialClientDetails.Address = Nothing
-            ResidentialClientDetails.City = Nothing
-            ResidentialClientDetails.Region = Nothing
-            ResidentialClientDetails.Country = Nothing
-            ResidentialClientDetails.ZipCode = Nothing
-            ResidentialClientDetails.SameAsBilling = Nothing
+            _savedAddress = ""
+            _savedCity = ""
+            _savedRegion = ""
+            _savedCountry = ""
+            _savedZipCode = ""
+            _savedSameAsBilling = False
+
+            txtAddress.Text = ""
+            txtCity.Text = ""
+            txtRegion.Text = ""
+            txtCountry.Text = ""
+            txtZipCode.Text = ""
+            billingCheckBox.IsChecked = False
+            SetFieldsEnabled(True)
         End Sub
+
     End Class
 End Namespace

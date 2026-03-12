@@ -45,6 +45,24 @@ Namespace DPC.Views.Misc.Documents
 
             txtPOR.Text = PullOutFormController.GeneratePOR()
 
+            ' Wire up uppercase enforcement for static fields
+            AddHandler txtPORto.TextChanged, AddressOf TxtToUpper_TextChanged
+        End Sub
+
+        Private Sub TxtToUpper_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim tb = TryCast(sender, TextBox)
+            If tb Is Nothing Then Return
+            Dim originalSelectionStart = tb.SelectionStart
+            Dim originalSelectionLength = tb.SelectionLength
+            Dim originalText = tb.Text
+            Dim upperText = originalText.ToUpperInvariant()
+            If Not String.Equals(originalText, upperText, StringComparison.Ordinal) Then
+                RemoveHandler tb.TextChanged, AddressOf TxtToUpper_TextChanged
+                tb.Text = upperText
+                tb.SelectionStart = Math.Min(originalSelectionStart, tb.Text.Length)
+                tb.SelectionLength = originalSelectionLength
+                AddHandler tb.TextChanged, AddressOf TxtToUpper_TextChanged
+            End If
         End Sub
 
         Private Sub ProceedButton(sender As Object, e As RoutedEventArgs)
@@ -324,8 +342,6 @@ Namespace DPC.Views.Misc.Documents
                 txt.TextWrapping = TextWrapping.NoWrap
                 txt.MaxWidth = 500 ' Increase maximum width for product names
                 txt.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto ' Enable horizontal scrolling if needed
-
-
             End If
 
             Select Case column
@@ -361,6 +377,11 @@ Namespace DPC.Views.Misc.Documents
             If column = 0 Then
                 AddHandler txt.PreviewTextInput, AddressOf ValidateNumericInput
                 AddHandler txt.TextChanged, AddressOf ComputeStock
+            End If
+
+            ' Wire up uppercase enforcement for text columns
+            If column = 1 OrElse column = 2 Then
+                AddHandler txt.TextChanged, AddressOf TxtToUpper_TextChanged
             End If
 
             ' If this is the product search field, add autocomplete functionality
@@ -420,7 +441,6 @@ Namespace DPC.Views.Misc.Documents
             Dim allowedPattern As String = "^[0-9.]+$" ' Allow only digits and decimal point
 
             If Not System.Text.RegularExpressions.Regex.IsMatch(e.Text, allowedPattern) Then
-
                 e.Handled = True ' Reject input if it doesn't match
             End If
         End Sub
@@ -431,7 +451,6 @@ Namespace DPC.Views.Misc.Documents
             If parts.Length < 3 Then Return
 
             Dim row As Integer = parts(1)
-            'If Not Integer.TryParse(parts(1), row) Then Return
 
             Dim timerKey As String = $"ProductTimer_{row}"
 
@@ -440,8 +459,6 @@ Namespace DPC.Views.Misc.Documents
                 Dim timer As New DispatcherTimer With {
                     .Interval = TimeSpan.FromMilliseconds(300)
                 }
-
-
 
                 ' Add a closure to capture the row
                 Dim rowCaptured As Integer = row
@@ -459,7 +476,6 @@ Namespace DPC.Views.Misc.Documents
 
             ' Close popup if textbox is empty
             If String.IsNullOrWhiteSpace(textBox.Text) Then
-
                 If _productPopups.ContainsKey(popupKey) Then
                     _productPopups(popupKey).IsOpen = False
                 End If
@@ -468,7 +484,6 @@ Namespace DPC.Views.Misc.Documents
 
             ' Start timer
             _productTypingTimers(timerKey).Start()
-
         End Sub
 
         Private Sub OnProductTypingTimerTick(sender As Object, e As EventArgs, row As Integer)
@@ -493,7 +508,6 @@ Namespace DPC.Views.Misc.Documents
 
             If Not _productPopups.ContainsKey(popupKey) Or Not _productListBoxes.ContainsKey(listBoxKey) Then Return
 
-
             Dim popup As Popup = _productPopups(popupKey)
             Dim listBox As ListBox = _productListBoxes(listBoxKey)
             AddHandler listBox.SelectionChanged, Sub()
@@ -505,9 +519,6 @@ Namespace DPC.Views.Misc.Documents
                                                      End If
                                                  End Sub
 
-            ''Search for products from the supplier
-            'If ComboBoxWarehouse.S IsNot Nothing Then
-            ' Call product controller to search products by supplier ID and search text
             _products = PullOutFormController.SearchProducts(textBox.Text, _warehouseID)
 
             ' Update the ListBox
@@ -522,7 +533,6 @@ Namespace DPC.Views.Misc.Documents
             End If
 
             CType(popup.Child, Border).Width = textBox.ActualWidth
-            ''End If
         End Sub
 
         Private Sub ItemsFromWarehouse(sender As Object, e As SelectionChangedEventArgs)
@@ -565,8 +575,6 @@ Namespace DPC.Views.Misc.Documents
             _productListBoxes.Clear()
         End Sub
 
-
-
         Private Function CreateProductAutoCompletePopup(row As Integer) As Popup
             ' Create a ListBox for product items
             Dim lstProducts As New ListBox()
@@ -578,21 +586,21 @@ Namespace DPC.Views.Misc.Documents
 
             ' Create Border to contain the ListBox
             Dim border As New Border With {
-        .Background = Brushes.White,
-        .BorderBrush = Brushes.LightGray,
-        .BorderThickness = New Thickness(1),
-        .MaxHeight = 150
-    }
+                .Background = Brushes.White,
+                .BorderBrush = Brushes.LightGray,
+                .BorderThickness = New Thickness(1),
+                .MaxHeight = 150
+            }
             border.Child = lstProducts
 
             ' Create Popup
             Dim popup As New Popup With {
-        .StaysOpen = False,
-        .IsOpen = False,
-        .AllowsTransparency = True,
-        .PopupAnimation = PopupAnimation.Fade,
-        .Child = border
-    }
+                .StaysOpen = False,
+                .IsOpen = False,
+                .AllowsTransparency = True,
+                .PopupAnimation = PopupAnimation.Fade,
+                .Child = border
+            }
 
             ' Store references for later use - check if keys already exist first
             Dim popupKey As String = $"ProductPopup_{row}"
@@ -769,8 +777,6 @@ Namespace DPC.Views.Misc.Documents
             If quantityTextBox IsNot Nothing AndAlso String.IsNullOrWhiteSpace(quantityTextBox.Text) Then
                 quantityTextBox.Text = "1"
             End If
-
         End Sub
     End Class
 End Namespace
-

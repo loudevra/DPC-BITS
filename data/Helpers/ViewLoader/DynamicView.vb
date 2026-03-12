@@ -15,6 +15,9 @@ Namespace DPC.Data.Helpers.ViewLoader
             Return ViewLoader.Load(viewName)
         End Function
 
+        Public Shared Sub NavigateToCachedView(viewName As String, senderControl As DependencyObject)
+            ViewNavigation.NavigateToCachedView(viewName, senderControl)
+        End Sub
         ''' <summary>
         ''' Navigate to the specified view
         ''' </summary>

@@ -226,7 +226,7 @@
 
                     <Border Grid.Column="2" Style="{StaticResource RoundedBorderStyle}" Height="40">
                         <TextBox x:Name="Contact" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" Foreground="#474747"
-                                 Tag="Enter person name or mobile number (optional)"/>
+                                 Tag="Enter person name or mobile number (optional)" TextChanged="TxtToUpper_TextChanged"/>
                     </Border>
                 </Grid>
 
@@ -244,7 +244,7 @@
                     <StackPanel Grid.Column="0" Margin="0,0,10,0">
                         <TextBlock Text="C/O:" FontFamily="Lexend" FontWeight="Bold" FontSize="14" Foreground="#474747"/>
                         <Border Style="{StaticResource RoundedBorderStyle}" Height="40">
-                            <TextBox x:Name="Code"  Style="{StaticResource RoundedTextboxStyle}" Tag="Enter product code..." FontFamily="Lexend" Foreground="#474747"/>
+                            <TextBox x:Name="Code"  Style="{StaticResource RoundedTextboxStyle}" Tag="Enter product code..." FontFamily="Lexend" Foreground="#474747" TextChanged="TxtToUpper_TextChanged"/>
                         </Border>
                     </StackPanel>
 
@@ -258,7 +258,7 @@
                     <StackPanel Grid.Column="2">
                         <TextBlock Text="Amount:" FontFamily="Lexend" FontWeight="Bold" FontSize="14" Foreground="#474747"/>
                         <Border Style="{StaticResource RoundedBorderStyle}" Height="40">
-                            <TextBox x:Name="Amount" Style="{StaticResource RoundedTextboxStyle}" Tag="Enter amount..." FontFamily="Lexend" Foreground="#474747"/>
+                            <TextBox x:Name="Amount" Style="{StaticResource RoundedTextboxStyle}" Tag="Enter amount..." FontFamily="Lexend" Foreground="#474747" TextChanged="TxtToUpper_TextChanged"/>
                         </Border>
                     </StackPanel>
                 </Grid>
@@ -344,7 +344,7 @@ Style="{StaticResource SingleDatePickerStyle}"
                     <StackPanel Grid.Column="1">
                         <TextBlock Text="Note:" FontFamily="Lexend" FontWeight="Bold" FontSize="14" Foreground="#474747"/>
                         <Border Style="{StaticResource RoundedBorderStyle}" Height="40">
-                            <TextBox x:Name="Note" Style="{StaticResource RoundedTextboxStyle}" Tag="Optional note..." FontFamily="Lexend" Foreground="#474747"/>
+                            <TextBox x:Name="Note" Style="{StaticResource RoundedTextboxStyle}" Tag="Optional note..." FontFamily="Lexend" Foreground="#474747" TextChanged="TxtToUpper_TextChanged"/>
                         </Border>
                     </StackPanel>
                 </Grid>

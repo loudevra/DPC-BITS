@@ -4,6 +4,7 @@ Imports DPC.DPC.Data.Model
 Imports DPC.DPC.Views.Stocks.ItemManager.Consumables
 Imports MySql.Data.MySqlClient
 Imports Newtonsoft.Json
+Imports DPC.Views.HRM.Departments.DepartmentsView
 
 Namespace DPC.Data.Controllers.Stocks
     Public Class PullOutFormController
@@ -244,5 +245,112 @@ LIMIT 10;"
 
             Return False
         End Function
+        Public Shared Function UpdateConsumable(id As String, name As String, warehouseID As Integer, warehouseName As String, stock As String) As Boolean
+            Try
+                Dim query As String = "UPDATE consumables SET ProductName = @name, WarehouseID = @wID, WarehouseName = @wName, Stock = @stock WHERE ProductID = @id"
+                Dim connStr As String = SplashScreen.GetDatabaseConnection().ConnectionString
+
+                Using conn As New MySqlConnection(connStr)
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@name", name)
+                        cmd.Parameters.AddWithValue("@wID", warehouseID)
+                        cmd.Parameters.AddWithValue("@wName", warehouseName)
+                        cmd.Parameters.AddWithValue("@stock", stock)
+                        cmd.Parameters.AddWithValue("@id", id)
+
+                        Return cmd.ExecuteNonQuery() > 0
+                    End Using
+                End Using
+            Catch ex As Exception
+                MessageBox.Show("Error updating database: " & ex.Message)
+                Return False
+            End Try
+        End Function
+        ''' Deletes the consumable record asynchronously
+        Public Shared Async Function DeleteConsumableAsync(id As String) As Task(Of Boolean)
+            Try
+                Dim query As String = "DELETE FROM consumables WHERE ProductID = @id"
+                Dim connStr As String = SplashScreen.GetDatabaseConnection().ConnectionString
+
+                Using conn As New MySqlConnection(connStr)
+                    Await conn.OpenAsync()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@id", id)
+                        Return Await cmd.ExecuteNonQueryAsync() > 0
+                    End Using
+                End Using
+            Catch ex As Exception
+                MessageBox.Show("Delete failed: " & ex.Message)
+                Return False
+            End Try
+        End Function
+        ''' Retrieves a list of consumables with a specified display limit
+        Public Shared Function GetConsumables(limit As Integer) As ObservableCollection(Of ConsumableModels)
+            Dim results As New ObservableCollection(Of ConsumableModels)()
+            Try
+                ' SQL query to pull records from the consumables table
+                Dim query As String = "SELECT ProductID, ProductName, WarehouseName, Stock FROM consumables LIMIT @limit"
+                Dim connStr As String = SplashScreen.GetDatabaseConnection().ConnectionString
+
+                Using conn As New MySqlConnection(connStr)
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@limit", limit)
+
+                        Using reader = cmd.ExecuteReader()
+                            While reader.Read()
+                                ' Create a new model for each row found [cite: 75-76]
+                                Dim item As New ConsumableModels With {
+                                    .ProductID = reader("ProductID").ToString(),
+                                    .ProductName = reader("ProductName").ToString(),
+                                    .WarehouseName = reader("WarehouseName").ToString(),
+                                    .Stock = Convert.ToInt32(reader("Stock"))
+                                }
+                                results.Add(item)
+                            End While
+                        End Using
+                    End Using
+                End Using
+            Catch ex As Exception
+                MessageBox.Show("Error fetching consumables: " & ex.Message)
+            End Try
+
+            ' Returns the collection to avoid conversion errors [cite: 140-141]
+            Return results
+        End Function
+
+        ''' Searches for consumables based on a search term [cite: 154-155]
+        Public Shared Function SearchConsumables(searchTerm As String, limit As Integer) As ObservableCollection(Of ConsumableModels)
+            Dim results As New ObservableCollection(Of ConsumableModels)()
+            Try
+                ' Use LIKE for partial matches in Name or ID
+                Dim query As String = "SELECT * FROM consumables WHERE ProductName LIKE @search OR ProductID LIKE @search LIMIT @limit"
+                Dim connStr As String = SplashScreen.GetDatabaseConnection().ConnectionString
+
+                Using conn As New MySqlConnection(connStr)
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@search", "%" & searchTerm & "%")
+                        cmd.Parameters.AddWithValue("@limit", limit)
+
+                        Using reader = cmd.ExecuteReader()
+                            While reader.Read()
+                                results.Add(New ConsumableModels With {
+                                    .ProductID = reader("ProductID").ToString(),
+                                    .ProductName = reader("ProductName").ToString(),
+                                    .WarehouseName = reader("WarehouseName").ToString(),
+                                    .Stock = Convert.ToInt32(reader("Stock"))
+                                })
+                            End While
+                        End Using
+                    End Using
+                End Using
+            Catch ex As Exception
+                Debug.WriteLine("Search Error: " & ex.Message)
+            End Try
+            Return results
+        End Function
+
     End Class
 End Namespace

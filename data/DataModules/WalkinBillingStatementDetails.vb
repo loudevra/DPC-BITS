@@ -13,6 +13,7 @@
     Public BLTotalDiscountValueCache As String
     Public BLTaxValueCache As String
     Public BLTotalAmountCache As String
+    Public BLSubtotalAmountCache As String
     Public BLnoteTxt, BLremarksTxt, BLpaymentTerms As String ' Notes, remarks, and payment terms need to render when editing
     Public BLItemsCache As List(Of Dictionary(Of String, String)) ' Already Cached
     Public BLsignature, BLisCustomTerm As Boolean
@@ -31,6 +32,8 @@
     Public BLBankDetails As String
     Public BLAccountName As String
     Public BLAccountNumber As String
+    Public BLVatLabel As String
+    Public BLSubtotalLabel As String
 
 
     Public Sub ClearAllBLCache()

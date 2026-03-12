@@ -419,7 +419,7 @@ Namespace DPC.Views.Sales.Quotes
                 CostEstimateDetails.CETotalAmountCache = TotalCost.Text
 
                 If _isEditingExistingQuote Then
-                    ViewLoader.DynamicView.NavigateToView("editquote", Me)
+                    ViewLoader.DynamicView.NavigateToView("salesquotegovernment", Me)
                 Else
                     ViewLoader.DynamicView.NavigateToView("salesquotegovernment", Me)
                 End If

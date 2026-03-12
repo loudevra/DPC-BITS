@@ -38,11 +38,6 @@ Namespace DPC.Views.DataReports.ManageGovernmentCostEstimateFiles
         Private Sub Initialize()
             Try
                 ' Initialize MongoDB connections
-                ' Replace "DbConnection" with the actual class name where your connection methods are
-                ' For example, if it's in a class called "DatabaseHelper", use:
-                ' _mongoDatabase = DatabaseHelper.GetMongoDatabaseConnection()
-                ' _gridFS = DatabaseHelper.GetGridFSConnection()
-
                 _mongoDatabase = DPC.SplashScreen.GetMongoDatabaseConnection()
                 _gridFS = DPC.SplashScreen.GetGridFSConnection()
 
@@ -98,21 +93,47 @@ Namespace DPC.Views.DataReports.ManageGovernmentCostEstimateFiles
             Try
                 ' Build filter for fs.files collection
                 Dim filterBuilder = Builders(Of BsonDocument).Filter
-                Dim filter As FilterDefinition(Of BsonDocument) = filterBuilder.Empty
+                Dim filters As New List(Of FilterDefinition(Of BsonDocument))()
 
-                Dim prefixFilter = filterBuilder.Regex("filename", New BsonRegularExpression("^GPCE-"))
+                ' Exclude files starting with "GPCE-"
+                Dim exclusionFilter = filterBuilder.Regex("filename", New BsonRegularExpression("^(GPCE-)"))
+                filters.Add(exclusionFilter)
 
+                ' Get selected file code filter
+                Dim selectedFileCode As String = String.Empty
+                Dispatcher.Invoke(Sub()
+                                      If cboFileCode IsNot Nothing AndAlso cboFileCode.SelectedItem IsNot Nothing Then
+                                          Dim selectedItem = TryCast(cboFileCode.SelectedItem, ComboBoxItem)
+                                          If selectedItem IsNot Nothing Then
+                                              selectedFileCode = selectedItem.Content.ToString()
+                                          End If
+                                      End If
+                                  End Sub)
+
+                ' Add file code filter if not "All"
+                If Not String.IsNullOrEmpty(selectedFileCode) AndAlso selectedFileCode <> "All" Then
+                    ' Filter files that start with the selected code (e.g., "BL-", "PO-", etc.)
+                    Dim fileCodeFilter = filterBuilder.Regex("filename", New BsonRegularExpression($"^{selectedFileCode}-", "i"))
+                    filters.Add(fileCodeFilter)
+                End If
+
+                ' Add search filter if search text is provided
                 If Not String.IsNullOrWhiteSpace(_searchText) Then
                     Dim searchFilter = filterBuilder.Regex("filename", New BsonRegularExpression(_searchText, "i"))
+                    filters.Add(searchFilter)
+                End If
 
-                    filter = filterBuilder.And(prefixFilter, searchFilter)
+                ' Combine all filters
+                Dim filter As FilterDefinition(Of BsonDocument)
+                If filters.Count > 1 Then
+                    filter = filterBuilder.And(filters)
                 Else
-                    filter = prefixFilter
+                    filter = filters(0)
                 End If
 
                 ' Get total count for pagination
                 _totalRecords = CInt(Await _fsFilesCollection.CountDocumentsAsync(filter))
-                
+
                 ' Calculate skip value for pagination
                 Dim skip As Integer = (_currentPage - 1) * _pageSize
 
@@ -138,11 +159,26 @@ Namespace DPC.Views.DataReports.ManageGovernmentCostEstimateFiles
 
                                           ' Get content type from metadata if exists
                                           Dim contentType As String = "Unknown"
-                                          If file.Contains("metadata") AndAlso file("metadata").IsBsonDocument Then
-                                              Dim metadata = file("metadata").AsBsonDocument
-                                              If metadata.Contains("contentType") Then
-                                                  contentType = metadata("contentType").AsString
-                                              End If
+
+                                          If file.Contains("filename") Then
+                                              Dim extension As String = System.IO.Path.GetExtension(fileName).ToLower()
+
+                                              Select Case extension
+                                                  Case ".pdf"
+                                                      contentType = "PDF Document"
+                                                  Case ".jpg", ".jpeg", ".png"
+                                                      contentType = "Image"
+                                                  Case ".xlsx", ".xls"
+                                                      contentType = "Excel Spreadsheet"
+                                                  Case ".docx", ".doc"
+                                                      contentType = "Word Document"
+                                                  Case ".txt"
+                                                      contentType = "Text Document"
+                                                  Case Else
+                                                      If Not String.IsNullOrEmpty(extension) Then
+                                                          contentType = extension.ToUpper().Replace(".", "") & " File"
+                                                      End If
+                                              End Select
                                           End If
 
                                           _costEstimateFiles.Add(New CostEstimateFileModel With {
@@ -256,13 +292,13 @@ Namespace DPC.Views.DataReports.ManageGovernmentCostEstimateFiles
                                        Using fileStream As New FileStream(openDialog.FileName, FileMode.Open, FileAccess.Read)
                                            ' Create metadata for the file
                                            Dim options As New GridFSUploadOptions With {
-                                               .Metadata = New BsonDocument From {
-                                                   {"contentType", Path.GetExtension(openDialog.FileName)},
-                                                   {"uploadedBy", Environment.UserName},
-                                                   {"uploadedDate", DateTime.UtcNow},
-                                                   {"originalPath", openDialog.FileName}
-                                               }
-                                           }
+    .Metadata = New BsonDocument From {
+        {"contentType", Path.GetExtension(openDialog.FileName)}, ' <--- THIS LINE GRABS THE FILE TYPE
+        {"uploadedBy", Environment.UserName},
+        {"uploadedDate", DateTime.UtcNow},
+        {"originalPath", openDialog.FileName}
+    }
+}
 
                                            ' Upload to GridFS (automatically stores in fs.files and fs.chunks)
                                            Await _gridFS.UploadFromStreamAsync(Path.GetFileName(openDialog.FileName), fileStream, options)
@@ -405,6 +441,16 @@ Namespace DPC.Views.DataReports.ManageGovernmentCostEstimateFiles
         ''' </summary>
         Private Sub NavigateToPage(pageNumber As Integer)
             _currentPage = pageNumber
+            LoadCostEstimateFiles()
+        End Sub
+
+        ''' <summary>
+        ''' Handles file code filter selection change
+        ''' </summary>
+        Private Sub CboFileCode_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles cboFileCode.SelectionChanged
+            ' Reset to first page when filter changes
+            _currentPage = 1
+            ' Reload files with the current filter
             LoadCostEstimateFiles()
         End Sub
 

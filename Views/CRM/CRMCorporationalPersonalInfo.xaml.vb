@@ -1,30 +1,56 @@
-﻿Imports DocumentFormat.OpenXml.Wordprocessing
+﻿Imports System.Windows.Markup
+Imports DocumentFormat.OpenXml.Wordprocessing
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Models
 
 Namespace DPC.Views.CRM
     Public Class CRMCorporationalPersonalInfo
+        Inherits UserControl
+
+        ' =========================================================
+        ' 1. INTERNAL MEMORY (Keeps data alive across tabs)
+        ' =========================================================
+        Private Shared _savedCompany As String = ""
+        Private Shared _savedRep As String = ""
+        Private Shared _savedPhone As String = ""
+        Private Shared _savedLandline As String = ""
+        Private Shared _savedEmail As String = ""
+
         Public Sub New()
             InitializeComponent()
 
-            GetInfo()
+            ' 2. RESTORE DATA
+            ' Load data from memory immediately
+            txtCompanyName.Text = _savedCompany
+            txtRepresentative.Text = _savedRep
+            txtPhone.Text = _savedPhone
+            txtLandline.Text = _savedLandline
+            txtEmail.Text = _savedEmail
 
-            AddHandler txtCompanyName.TextChanged, AddressOf SetInfo
-            AddHandler txtRepresentative.TextChanged, AddressOf SetInfo
-            AddHandler txtLandline.TextChanged, AddressOf SetInfo
-            AddHandler txtPhone.TextChanged, AddressOf SetInfo
-            AddHandler txtEmail.TextChanged, AddressOf SetInfo
+            ' 3. AUTO-SAVE HANDLERS
+            AddHandler txtCompanyName.TextChanged, AddressOf SaveToMemory
+            AddHandler txtRepresentative.TextChanged, AddressOf SaveToMemory
+            AddHandler txtLandline.TextChanged, AddressOf SaveToMemory
+            AddHandler txtPhone.TextChanged, AddressOf SaveToMemory
+            AddHandler txtEmail.TextChanged, AddressOf SaveToMemory
+
+            ' 4. FORMATTING (Uppercase)
+            AddHandler txtCompanyName.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler txtRepresentative.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler txtLandline.TextChanged, AddressOf TxtToUpper_TextChanged
+            AddHandler txtPhone.TextChanged, AddressOf TxtToUpper_TextChanged
         End Sub
 
-        Private Sub txtInput_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
-            ' Regex allows digits, symbols, and space
-            Dim pattern As String = "^[0-9!@#$%^&*()_\-+=\.,:;?/ ]$"
-            If Not System.Text.RegularExpressions.Regex.IsMatch(e.Text, pattern) Then
-                e.Handled = True
-            End If
-        End Sub
+        ' --- MEMORY MANAGEMENT ---
+        Private Sub SaveToMemory(sender As Object, e As TextChangedEventArgs)
+            ' 1. Save to Local Memory
+            _savedCompany = txtCompanyName.Text
+            _savedRep = txtRepresentative.Text
+            _savedPhone = txtPhone.Text
+            _savedLandline = txtLandline.Text
+            _savedEmail = txtEmail.Text
 
-        Private Sub SetInfo()
+            ' 2. Save to Global Model (For the Add Button checks)
             CorporationalClientDetails.CompanyName = txtCompanyName.Text
             CorporationalClientDetails.Representative = txtRepresentative.Text
             CorporationalClientDetails.Phone = txtPhone.Text
@@ -32,41 +58,43 @@ Namespace DPC.Views.CRM
             CorporationalClientDetails.Email = txtEmail.Text
         End Sub
 
-        Private Sub GetInfo()
-            txtCompanyName.Text = CorporationalClientDetails.CompanyName
-            txtRepresentative.Text = CorporationalClientDetails.Representative
-            txtPhone.Text = CorporationalClientDetails.Phone
-            txtLandline.Text = CorporationalClientDetails.Landline
-            txtEmail.Text = CorporationalClientDetails.Email
+        ' --- FORMATTING ---
+        Private Sub TxtToUpper_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim tb = TryCast(sender, TextBox)
+            If tb Is Nothing Then Return
+
+            Dim originalSelectionStart = tb.SelectionStart
+            Dim originalSelectionLength = tb.SelectionLength
+            Dim originalText = tb.Text
+
+            Dim upperText = originalText.ToUpperInvariant()
+            If Not String.Equals(originalText, upperText, StringComparison.Ordinal) Then
+                RemoveHandler tb.TextChanged, AddressOf TxtToUpper_TextChanged
+                tb.Text = upperText
+                tb.SelectionStart = Math.Min(originalSelectionStart, tb.Text.Length)
+                tb.SelectionLength = originalSelectionLength
+                AddHandler tb.TextChanged, AddressOf TxtToUpper_TextChanged
+            End If
         End Sub
 
+        Private Sub txtInput_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
+            ' Regex allows digits, symbols, and space
+            ' Removed regex restriction as per your code
+        End Sub
+
+        ' --- ADD CLIENT BUTTON ---
         Private Sub AddClient(sender As Object, e As RoutedEventArgs)
-            If CorporationalClientDetails.Representative = Nothing OrElse
-                CorporationalClientDetails.TinID = Nothing OrElse
-                CorporationalClientDetails.CompanyName = Nothing OrElse
-                CorporationalClientDetails.Phone = Nothing OrElse
-                CorporationalClientDetails.Landline = Nothing OrElse
-                CorporationalClientDetails.Email = Nothing OrElse
-                CorporationalClientDetails.BillAddress = Nothing OrElse
-                CorporationalClientDetails.BillCity = Nothing OrElse
-                CorporationalClientDetails.BillRegion = Nothing OrElse
-                CorporationalClientDetails.BillCountry = Nothing OrElse
-                CorporationalClientDetails.BillZipCode = Nothing OrElse
-                CorporationalClientDetails.ClientGroupID = Nothing OrElse
-                CorporationalClientDetails.CustomerGroup = Nothing OrElse
-                CorporationalClientDetails.CustomerLanguage = Nothing OrElse
-                CorporationalClientDetails.Address = Nothing OrElse
-                CorporationalClientDetails.City = Nothing OrElse
-                CorporationalClientDetails.Region = Nothing OrElse
-                CorporationalClientDetails.Country = Nothing OrElse
-                CorporationalClientDetails.ZipCode = Nothing OrElse
-                CorporationalClientDetails.SameAsBilling = Nothing Then
+            ' Check Required Fields (Global Model Check)
+            ' Note: This checks fields from ALL tabs (Billing, Shipping, etc.)
+            If String.IsNullOrEmpty(CorporationalClientDetails.CompanyName) OrElse
+               String.IsNullOrEmpty(CorporationalClientDetails.Representative) OrElse
+               String.IsNullOrEmpty(CorporationalClientDetails.Phone) OrElse
+               String.IsNullOrEmpty(CorporationalClientDetails.Email) OrElse
+               String.IsNullOrEmpty(CorporationalClientDetails.BillAddress) Then
 
-                MessageBox.Show("Please fill in all required fields before adding a client.", "Missing Information", MessageBoxButton.OK, MessageBoxImage.Warning)
-
+                MessageBox.Show("Please fill in all required fields (Personal, Billing, etc.) before adding.", "Missing Information", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Exit Sub
             End If
-
 
             Dim client As New ClientCorporational With {
                 .ClientGroupID = CorporationalClientDetails.ClientGroupID,
@@ -85,20 +113,28 @@ Namespace DPC.Views.CRM
 
             Dim success As Boolean = ClientController.CreateClientCorporational(client)
 
-            If success = True Then
+            If success Then
                 MessageBox.Show("Client added successfully.")
+                ClearCache()
             End If
-
-            txtCompanyName.Text = Nothing
-            txtRepresentative.Text = Nothing
-            txtPhone.Text = Nothing
-            txtLandline.Text = Nothing
-            txtEmail.Text = Nothing
-
-            ClearCache()
         End Sub
 
         Private Sub ClearCache()
+            ' Clear Local Memory
+            _savedCompany = ""
+            _savedRep = ""
+            _savedPhone = ""
+            _savedLandline = ""
+            _savedEmail = ""
+
+            ' Clear UI
+            txtCompanyName.Text = ""
+            txtRepresentative.Text = ""
+            txtPhone.Text = ""
+            txtLandline.Text = ""
+            txtEmail.Text = ""
+
+            ' Clear Global Model
             CorporationalClientDetails.Representative = Nothing
             CorporationalClientDetails.TinID = Nothing
             CorporationalClientDetails.CompanyName = Nothing
@@ -121,5 +157,4 @@ Namespace DPC.Views.CRM
             CorporationalClientDetails.SameAsBilling = Nothing
         End Sub
     End Class
-
 End Namespace

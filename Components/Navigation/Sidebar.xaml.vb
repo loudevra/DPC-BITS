@@ -1,4 +1,5 @@
-﻿Imports System.Windows
+﻿' Sidebar.xaml.vb
+Imports System.Windows
 Imports System.Windows.Controls
 Imports System.Windows.Media.Animation
 Imports DPC.DPC.Components.UI
@@ -14,6 +15,13 @@ Namespace DPC.Components.Navigation
         Inherits UserControl
 
         Private Shared RoleName As String
+
+        Private Shared ReadOnly Property IsPrivileged As Boolean
+            Get
+                Return RoleName = "Administrator" OrElse RoleName = "Business Owner"
+            End Get
+        End Property
+
         Private IsExpanded As Boolean = True
         Public Event LogoButtonClick As RoutedEventHandler
         Public Event SidebarToggled(isExpanded As Boolean)
@@ -65,7 +73,7 @@ Namespace DPC.Components.Navigation
         ''' Items remain visible but are dimmed to indicate lack of permission.
         ''' </summary>
         Private Sub ApplyPermissionStyles()
-            Dim isAdmin As Boolean = RoleName = "Administrator"
+            Dim isAdmin As Boolean = IsPrivileged
 
             ' Helper to gray out a button's icon and text
             Dim GrayOutButton = Sub(btn As Button)
@@ -96,7 +104,7 @@ Namespace DPC.Components.Navigation
             If Not (Reports Or isAdmin) Then GrayOutButton(BtnDataReports)
             If Not (Employees Or isAdmin) Then GrayOutButton(BtnHRM)
             If Not (Miscellaneous Or isAdmin) Then GrayOutButton(BtnMiscellaneous)
-            ' Leave other buttons as-is (Dashboard, PromoCodes, SoftwareUpdates, Logout)
+            If Not (Project Or isAdmin) Then GrayOutButton(BtnPromoCodes)
         End Sub
 
         ''' <summary>
@@ -130,11 +138,8 @@ Namespace DPC.Components.Navigation
             ' Handle UI Visibility AFTER animation completes
             AddHandler sidebarAnimation.Completed, Sub()
                                                        If Not IsExpanded Then
-                                                           ' Collapsing Sidebar: Hide labels AFTER animation finishes
-
                                                            UserProfile.Visibility = Visibility.Collapsed
 
-                                                           ' Hide text inside buttons
                                                            For Each child As UIElement In SidebarMenu.Children
                                                                If TypeOf child Is Button Then
                                                                    Dim btn As Button = CType(child, Button)
@@ -144,15 +149,11 @@ Namespace DPC.Components.Navigation
                                                                End If
                                                            Next
 
-                                                           ' Update Sidebar Style for Collapsed Mode
                                                            SidebarContainer.Style = CType(FindResource("CollapsedSidebarStyle"), Style)
 
                                                        Else
-                                                           ' Expanding Sidebar: Show labels immediately
-
                                                            UserProfile.Visibility = Visibility.Visible
 
-                                                           ' Show text inside buttons
                                                            For Each child As UIElement In SidebarMenu.Children
                                                                If TypeOf child Is Button Then
                                                                    Dim btn As Button = CType(child, Button)
@@ -162,7 +163,6 @@ Namespace DPC.Components.Navigation
                                                                End If
                                                            Next
 
-                                                           ' Update Sidebar Style for Expanded Mode
                                                            SidebarContainer.Style = CType(FindResource("ExpandedSidebarStyle"), Style)
                                                        End If
                                                    End Sub
@@ -170,7 +170,6 @@ Namespace DPC.Components.Navigation
             ' Toggle state
             IsExpanded = Not IsExpanded
 
-            ' 🔥 Trigger the event so Base.xaml knows about the toggle
             RaiseEvent SidebarToggled(IsExpanded)
         End Sub
 
@@ -194,25 +193,20 @@ Namespace DPC.Components.Navigation
         End Sub
 
         ''' <summary>
-        ''' Opens the Dashboard and closes the current window.
+        ''' Opens the Dashboard.
         ''' </summary>
         Private Sub OpenDashboard(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("dashboard", Me)
         End Sub
 
-
         ''' <summary>
         ''' Opens the Sales popup menu.
         ''' </summary>
         Private Sub OpenSales(sender As Object, e As RoutedEventArgs)
-            If Sales = True Or RoleName = "Administrator" Then
+            If Sales = True Or IsPrivileged Then
                 Dim popupMenu As New PopUpMenuSales()
-
-                ' Get the position of the Stocks button
                 Dim button As Button = CType(sender, Button)
                 Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
-
-                ' Call the ShowPopup method to show the popup at the button's position
                 popupMenu.ShowPopup(Me, sender)
             Else
                 MessageBox.Show("Access not permitted. Consult with admin")
@@ -223,151 +217,112 @@ Namespace DPC.Components.Navigation
         ''' Opens the Stocks popup menu.
         ''' </summary>
         Private Sub OpenStocksPopup(sender As Object, e As RoutedEventArgs)
-            If Stock = True Or RoleName = "Administrator" Then
-                ' Create a new instance of the PopUpMenuStocks control
+            If Stock = True Or IsPrivileged Then
                 Dim popupMenu As New PopUpMenuStocks()
-
-                ' Get the position of the Stocks button
                 Dim button As Button = CType(sender, Button)
                 Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
-
-                ' Call the ShowPopup method to show the popup at the button's position
                 popupMenu.ShowPopup(Me, sender)
             Else
                 MessageBox.Show("Access not permitted. Consult with admin")
             End If
-
         End Sub
 
         ''' <summary>
         ''' Opens the CRM popup menu.
         ''' </summary>
         Private Sub OpenCRM(sender As Object, e As RoutedEventArgs)
-            If Crm = True Or RoleName = "Administrator" Then
+            If Crm = True Or IsPrivileged Then
                 Dim popupMenu As New PopUpMenuCRM()
-
-                ' Get the position of the Stocks button
                 Dim button As Button = CType(sender, Button)
                 Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
-
-                ' Call the ShowPopup method to show the popup at the button's position
                 popupMenu.ShowPopup(Me, sender)
             Else
                 MessageBox.Show("Access not permitted. Consult with admin")
             End If
-
         End Sub
 
         ''' <summary>
         ''' Opens the Projects popup menu.
         ''' </summary>
         Private Sub OpenProject(sender As Object, e As RoutedEventArgs)
-            ' Fix: previous condition included "AssignProject = False" which made the
-            ' condition always true. Require either Project permission or AssignProject
-            ' permission (or admin) to allow opening the Projects menu.
-            If Project = True Or AssignProject = True Or RoleName = "Administrator" Then
+            If Project = True Or AssignProject = True Or IsPrivileged Then
                 Dim popupMenu As New PopUpMenuProjects(AssignProject, RoleName)
-
-                ' Get the position of the Stocks button
                 Dim button As Button = CType(sender, Button)
                 Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
-
-                ' Call the ShowPopup method to show the popup at the button's position
                 popupMenu.ShowPopup(Me, sender)
             Else
                 MessageBox.Show("Access not permitted. Consult with admin")
             End If
-
         End Sub
 
         ''' <summary>
         ''' Opens the Promo Codes popup menu.
         ''' </summary>
         Private Sub OpenPromoCodes(sender As Object, e As RoutedEventArgs)
-            Dim popupMenu As New PopUpMenuPromoCodes()
-
-            ' Get the position of the Stocks button
-            Dim button As Button = CType(sender, Button)
-            Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
-
-            ' Call the ShowPopup method to show the popup at the button's position
-            popupMenu.ShowPopup(Me, sender)
+            If Project = True Or IsPrivileged Then
+                Dim popupMenu As New PopUpMenuPromoCodes()
+                Dim button As Button = CType(sender, Button)
+                Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
+                popupMenu.ShowPopup(Me, sender)
+            Else
+                MessageBox.Show("Access not permitted. Consult with admin")
+            End If
         End Sub
 
         ''' <summary>
         ''' Opens the Data Reports popup menu.
         ''' </summary>
         Private Sub OpenDataReports(sender As Object, e As RoutedEventArgs)
-            If Reports = True Or RoleName = "Administrator" Then
+            If Reports = True Or IsPrivileged Then
                 Dim popupMenu As New PopUpMenuDataReports()
-
-                ' Get the position of the Stocks button
                 Dim button As Button = CType(sender, Button)
                 Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
-
-                ' Call the ShowPopup method to show the popup at the button's position
                 popupMenu.ShowPopup(Me, sender)
             Else
                 MessageBox.Show("Access not permitted. Consult with admin")
             End If
-
         End Sub
 
         ''' <summary>
         ''' Opens the HRM popup menu.
         ''' </summary>
         Private Sub OpenHRM(sender As Object, e As RoutedEventArgs)
-            If Employees = True Or RoleName = "Administrator" Then
+            If Employees = True Or IsPrivileged Then
                 Dim popupMenu As New PopUpMenuHRM()
-
-                ' Get the position of the Stocks button
                 Dim button As Button = CType(sender, Button)
                 Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
-
-                ' Call the ShowPopup method to show the popup at the button's position
                 popupMenu.ShowPopup(Me, sender)
             Else
                 MessageBox.Show("Access not permitted. Consult with admin")
             End If
-
         End Sub
 
         ''' <summary>
         ''' Opens the Accounts popup menu.
         ''' </summary>
         Private Sub OpenAccounts(sender As Object, e As RoutedEventArgs)
-            If Accounts = True Or RoleName = "Administrator" Then
+            If Accounts = True Or IsPrivileged Then
                 Dim popupMenu As New PopUpMenuAccounts()
-
-                ' Get the position of the Stocks button
                 Dim button As Button = CType(sender, Button)
                 Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
-
-                ' Call the ShowPopup method to show the popup at the button's position
                 popupMenu.ShowPopup(Me, sender)
             Else
                 MessageBox.Show("Access not permitted. Consult with admin")
             End If
-
         End Sub
 
         ''' <summary>
         ''' Opens the Miscellaneous popup menu.
         ''' </summary>
         Private Sub OpenMiscellaneous(sender As Object, e As RoutedEventArgs)
-            If Miscellaneous = True Or RoleName = "Administrator" Then
+            If Miscellaneous = True Or IsPrivileged Then
                 Dim popupMenu As New PopUpMenuMiscelleneous()
-
-                ' Get the position of the Stocks button
                 Dim button As Button = CType(sender, Button)
                 Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
-
-                ' Call the ShowPopup method to show the popup at the button's position
                 popupMenu.ShowPopup(Me, sender)
             Else
                 MessageBox.Show("Access not permitted. Consult with admin")
             End If
-
         End Sub
 
         ''' <summary>
@@ -379,7 +334,6 @@ Namespace DPC.Components.Navigation
             Application.Current.MainWindow = mainWindow
             mainWindow.Show()
 
-            ' Close the current window
             Dim currentWindow As Window = Window.GetWindow(Me)
             If currentWindow IsNot Nothing Then currentWindow.Close()
         End Sub

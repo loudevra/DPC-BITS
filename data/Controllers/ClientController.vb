@@ -91,9 +91,9 @@ Namespace DPC.Data.Controllers
             client.ClientID = GenerateClientID()
 
             Dim query As String = "INSERT INTO client (ClientID, ClientGroupID, Name, Phone, Email, BillingAddress, ShippingAddress, " &
-                                  "CustomerGroup, Language, CreatedAt, UpdatedAt, ClientType) " &
+                                  "CustomerGroup, Language, TinId, CreatedAt, UpdatedAt, ClientType) " &
                                   "VALUES (@ClientID, @ClientGroupID, @Name, @Phone, @Email, @BillingAddress, @ShippingAddress, " &
-                                  "@CustomerGroup, @Language, @CreatedAt, @UpdatedAt, @ClientType)"
+                                  "@CustomerGroup, @Language, @TinId, @CreatedAt, @UpdatedAt, @ClientType)"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
@@ -108,6 +108,7 @@ Namespace DPC.Data.Controllers
                         cmd.Parameters.AddWithValue("@ShippingAddress", client.ShippingAddress)
                         cmd.Parameters.AddWithValue("@CustomerGroup", client.CustomerGroup)
                         cmd.Parameters.AddWithValue("@Language", client.ClientLanguage)
+                        cmd.Parameters.AddWithValue("@TinId", client.TinId)
                         cmd.Parameters.AddWithValue("@CreatedAt", DateTime.Now)
                         cmd.Parameters.AddWithValue("@UpdatedAt", DateTime.Now)
                         cmd.Parameters.AddWithValue("@ClientType", client.ClientType)
@@ -222,57 +223,57 @@ FROM clientcorporational;"
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "SELECT 
-    ClientID,
-    BillingAddress,
-    Email,
-    Phone,
-    Name,
-    NULL AS Company,
-    'client' AS Source
-FROM client
-WHERE Name LIKE @searchText 
-   OR ClientID LIKE @searchText 
-   OR Email LIKE @searchText
+                    Dim query As String = "
+                SELECT * FROM (
+                    SELECT 
+                        ClientID,
+                        BillingAddress,
+                        Email,
+                        Phone,
+                        Name AS DisplayName,
+                        Name AS Representative,
+                        'N/A' AS Company,
+                        'client' AS Source
+                    FROM client
+                    WHERE Name LIKE @searchText 
+                       OR ClientID LIKE @searchText 
+                       OR Email LIKE @searchText
 
-UNION
+                    UNION ALL
 
-SELECT 
-    ClientID,
-    BillingAddress,
-    Email,
-    Phone,
-    NULL AS Name,
-    Company,
-    'clientcorporational' AS Source
-FROM clientcorporational
-WHERE Company LIKE @searchText 
-   OR ClientID LIKE @searchText 
-   OR Email LIKE @searchText
-
-ORDER BY Name ASC
-LIMIT 10;"
+                    SELECT 
+                        ClientID,
+                        BillingAddress,
+                        Email,
+                        Phone,
+                        Company AS DisplayName,
+                        Representative,
+                        Company,
+                        'clientcorporational' AS Source
+                    FROM clientcorporational
+                    WHERE Company LIKE @searchText 
+                       OR ClientID LIKE @searchText 
+                       OR Email LIKE @searchText
+                ) AS CombinedClients
+                ORDER BY DisplayName ASC
+                LIMIT 10;"
 
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@searchText", "%" & _searchText & "%")
+
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
-                                Dim nameOrCompany As String = ""
-
-                                If Not IsDBNull(reader("Name")) AndAlso Not String.IsNullOrWhiteSpace(reader("Name").ToString()) Then
-                                    nameOrCompany = reader("Name").ToString()
-                                ElseIf Not IsDBNull(reader("Company")) AndAlso Not String.IsNullOrWhiteSpace(reader("Company").ToString()) Then
-                                    nameOrCompany = reader("Company").ToString()
-                                End If
-
                                 Dim source As String = reader("Source").ToString()
+
                                 Dim client As New Client With {
-                            .ClientID = reader("ClientID"),
-                            .Name = nameOrCompany,
+                            .ClientID = reader("ClientID").ToString(),
+                            .Name = reader("DisplayName").ToString(),
                             .Phone = reader("Phone").ToString(),
                             .Email = reader("Email").ToString(),
                             .BillingAddress = reader("BillingAddress").ToString(),
-                            .ClientType = GetClientType(source)
+                            .Representative = reader("Representative").ToString(),
+                            .Company = reader("Company").ToString(),
+                            .ClientType = If(source = "client", "Residential", "Corporational")
                         }
                                 clients.Add(client)
                             End While

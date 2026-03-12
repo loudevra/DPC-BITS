@@ -10,6 +10,7 @@
         Public Property ShippingAddress As String
         Public Property CustomerGroup As String
         Public Property ClientLanguage As String
+        Public Property TinId As String
         Public Property CreatedAt As DateTime
         Public Property UpdatedAt As DateTime
         Public Property ClientType As String

@@ -175,11 +175,6 @@
                     <TextBlock Text="Assign to:" Margin="0,20,0,10" FontWeight="SemiBold" Foreground="#474747"/>
                     <ComboBox x:Name="cmbAssign" Style="{StaticResource RoundedComboBoxStyle}" Width="773" Height="40" SelectedIndex="0" Margin="0,0,0,10"/>
 
-                    <!-- Phase -->
-                    <TextBlock Text="Phase:" Margin="0,0,0,10" FontWeight="SemiBold" Foreground="#474747"/>
-                    <Border Style="{StaticResource RoundedBorderStyle}" Width="768">
-                        <TextBox x:Name="txtPhase" Height="30" Margin="0,0,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="735"/>
-                    </Border>
 
                     <!-- Navigation Buttons -->
                     <Grid>
@@ -188,42 +183,7 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Back -->
-                        <Button Content="&lt; Back"
-                                Width="140" Height="38" Margin="0,24,0,0"
-                                FontSize="16"
-                                Background="#8a8a8a"
-                                Foreground="White"
-                                BorderBrush="Transparent"
-                                Grid.Column="0"
-                                HorizontalContentAlignment="Center">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border Background="{TemplateBinding Background}" CornerRadius="20" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0"/>
-                                    </Border>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
-
-                        <!-- Next -->
-                        <Button Content="Next  >"
-                                Width="140" Height="38" Margin="0,24,15,0"
-                                FontSize="16"
-                                Background="#444"
-                                Foreground="White"
-                                Click="NavigateToAddProj3"
-                                BorderBrush="Transparent"
-                                Grid.Column="1"
-                                HorizontalContentAlignment="Center">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border Background="{TemplateBinding Background}" CornerRadius="20" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0"/>
-                                    </Border>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
+                        
                     </Grid>
                 </StackPanel>
             </StackPanel>

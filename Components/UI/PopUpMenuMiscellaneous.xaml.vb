@@ -133,19 +133,52 @@ Namespace DPC.Components.UI
             ViewLoader.DynamicView.NavigateToView("viewdocuments", Me)
         End Sub
 
+        Private Sub NavigateToManagePullOutForm(sender As Object, e As RoutedEventArgs)
+            ' Implementation for navigating to pull out form
+
+        End Sub
+
 
         Private Sub NavigateToCashAdvanceNewRequest(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("cashadvancenewrequest", Me)
         End Sub
+        'Private Sub NavigateToOvertimeRequestForm(sender As Object, e As RoutedEventArgs)
+        '   ViewLoader.DynamicView.NavigateToView("overtimeform", Me)
+        ' End Sub
 
         Private Sub NavigateToManageCashAdvanceRequests(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("managecashadvancerequests", Me)
-
         End Sub
 
         Private Sub NavigateToViewPOR(sender As Object, e As RoutedEventArgs)
             ' Implementation for navigating to View Documents
             ViewLoader.DynamicView.NavigateToView("pulloutreceipt", Me)
         End Sub
+
+        ' ==========================================
+        ' OVERTIME NAVIGATION EVENTS
+        ' ==========================================
+        Private Sub NavigateToOvertimeRequestForm(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("overtimerequestform", Me)
+        End Sub
+
+        Private Sub NavigateToManageOvertimeRequests(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("manageovertimerequests", Me)
+        End Sub
+        Private Sub NavigateToPreviewPrintOverTimeRequestForm(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("previewprintovertimerequestform", Me)
+        End Sub
+
+        ' ==========================================
+        ' EMPLOYEE LEAVE NAVIGATION EVENTS
+        ' ==========================================
+        Private Sub NavigateToEmployeeLeaveRequestForm(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("employeeleaverequestform", Me)
+        End Sub
+
+        Private Sub NavigateToManageEmployeeLeaveRequests(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("manageemployeeleaverequests", Me)
+        End Sub
+
     End Class
 End Namespace

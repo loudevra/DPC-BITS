@@ -36,15 +36,14 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             ClientContact.Text = BLClientContact
             CompanyRep.Text = BLCompanyRep
 
-            SalesRep.Text = BLSalesRep
-            PreparedBy.Text = CacheOnLoggedInName
-            cmbApproved.Text = BLApproved
+            SalesRep.Text = CacheOnLoggedInName
+            txtApproved.Text = BLApproved
 
             ' Check if the terms is enabled
             If BLisCustomTerm = True Then
-                cmbTerms.Text = BLpaymentTerms
+                txtApproved.Text = BLpaymentTerms
             Else
-                cmbTerms.Text = BLpaymentTerms
+                txtTerms.Text = BLpaymentTerms
             End If
 
 
@@ -77,16 +76,16 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
             Dim installationFee As Double
             If Double.TryParse(WalkinBillingStatementDetails.BLInstallation, installationFee) Then
-                Installation.Text = "₱ " & installationFee.ToString("N2")
+                Installation.Text = installationFee.ToString("N2")
             Else
-                Installation.Text = "₱ 0.00" ' fallback value if parsing fails
+                Installation.Text = "0.00" ' fallback value if parsing fails
             End If
 
             Dim deliveryFee As Double
             If Double.TryParse(WalkinBillingStatementDetails.BLDeliveryCost, deliveryFee) Then
-                Delivery.Text = "₱ " & deliveryFee.ToString("N2")
+                Delivery.Text = deliveryFee.ToString("N2")
             Else
-                Delivery.Text = "₱ 0.00" ' fallback value if parsing fails
+                Delivery.Text = "0.00" ' fallback value if parsing fails
             End If
             VAT12.Text = BLTotalTaxValueCache
             TotalCost.Text = BLTotalAmountCache
@@ -94,6 +93,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             BankDetailBox.Text = BLBankDetails
             AccNameBox.Text = BLAccountName
             AccNoBox.Text = BLAccountNumber
+            lblSubtotal.Text = WalkinBillingStatementDetails.BLSubtotalLabel
+            lblVat.Text = WalkinBillingStatementDetails.BLVatLabel
 
 
             remarksBox.Text = WalkinBillingStatementDetails.BLremarksTxt
@@ -390,8 +391,26 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 ' Unregister all textbox names before clearing UI to avoid duplicate name errors
                 Dim WalkInForm As New DPC.Views.Stocks.PurchaseOrder.WalkIn.WalkInNewOrder()
                 WalkInForm.ClearAllFields()
-                WalkinBillingStatementDetails.ClearAllBLCache()
-                ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
+
+                Dim _showDelivery As Boolean = False
+
+                Dim result As MessageBoxResult = MessageBox.Show("Walk-in billing submitted successfully! Do you want to create a Delivery Receipt for this billing?",
+                                                 "Submission Successful",
+                                                 MessageBoxButton.YesNo,
+                                                 MessageBoxImage.Question)
+
+                ' Handle the response
+                If result = MessageBoxResult.Yes Then
+                    _showDelivery = True
+                    DeliveryDetails.DRReferenceInvoice = WalkinBillingStatementDetails.BLNumberCache
+                    DeliveryDetails.DRClientName = WalkinBillingStatementDetails.BLClientName
+                    WalkinBillingStatementDetails.ClearAllBLCache()
+                    ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
+                Else
+                    Debug.WriteLine("User declined Delivery Receipt creation.")
+                    WalkinBillingStatementDetails.ClearAllBLCache()
+                    ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
+                End If
             Else
                 MessageBox.Show("Failed to submit walk-in billing.")
             End If
@@ -424,46 +443,34 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             Dim appDir As String = AppDomain.CurrentDomain.BaseDirectory
             Dim tempImagePath As String = System.IO.Path.Combine(appDir, Guid.NewGuid().ToString() & ".png")
             Dim tempPdfPath As String = System.IO.Path.Combine(appDir, docName & ".pdf")
+            Dim gridFS As GridFSBucket = SplashScreen.GetGridFSConnection()
+            Dim billingNo As String = BillingNumber.Text
 
             Try
-                ' Save temp image file
-                Using fs As New FileStream(tempImagePath, FileMode.Create, FileAccess.Write)
-                    stream.CopyTo(fs)
-                End Using
+                Dim filter = Builders(Of GridFSFileInfo).Filter.Eq(Function(x) x.Metadata("billiingNumber"), billingNo)
+                Dim existingFiles = Await gridFS.Find(filter).ToListAsync()
 
-                ' Create PDF
-                Dim pdf As New PdfDocument()
-                Dim page = pdf.AddPage()
-                page.Width = XUnit.FromInch(layoutWidth / 96)
-                page.Height = XUnit.FromInch(layoutHeight / 96)
+                For Each oldFile In existingFiles
+                    Await gridFS.DeleteAsync(oldFile.Id)
+                Next
 
-                Dim gfx = XGraphics.FromPdfPage(page)
-                Using image = XImage.FromFile(tempImagePath)
-                    gfx.DrawImage(image, 0, 0, page.Width, page.Height)
-                End Using
-
-                ' Save PDF to temp file
-                pdf.Save(tempPdfPath)
-
-                ' Upload PDF to MongoDB GridFS
-                Dim gridFS As GridFSBucket = SplashScreen.GetGridFSConnection()
-
-                Using FileStream As New FileStream(tempPdfPath, FileMode.Open, FileAccess.Read)
+                Using fileStream As New FileStream(tempPdfPath, FileMode.Open, FileAccess.Read)
                     Dim options As New GridFSUploadOptions() With {
-            .Metadata = New BsonDocument From {
-                {"uploadedBy", CacheOnLoggedInName},
-                {"uploadedAt", BsonDateTime.Create(DateTime.UtcNow)},
-                {"source", "cost-estimate/quote"},
-                {"billiingNumber", BillingNumber.Text},
-                {"pdfFilePath", tempPdfPath}
+                .Metadata = New BsonDocument From {
+                    {"uploadedBy", CacheOnLoggedInName},
+                    {"uploadedAt", BsonDateTime.Create(DateTime.UtcNow)},
+                    {"source", "cost-estimate/quote"},
+                    {"billiingNumber", billingNo},
+                    {"pdfFilePath", tempPdfPath}
+                }
             }
-        }
 
-                    gridFS.UploadFromStream(Path.GetFileName(tempPdfPath), FileStream, options)
+                    ' Note: Using UploadFromStreamAsync since this is an Async Sub
+                    Await gridFS.UploadFromStreamAsync(Path.GetFileName(tempPdfPath), fileStream, options)
                 End Using
 
-                'MessageBox.Show("PDF uploaded to MongoDB.")
-
+            Catch ex As Exception
+                Debug.WriteLine("MongoDB Upload Error: " & ex.Message)
             Finally
                 ' Delete the temp files
                 If File.Exists(tempImagePath) Then

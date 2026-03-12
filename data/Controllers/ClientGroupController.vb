@@ -1,9 +1,11 @@
-﻿Imports MySql.Data.MySqlClient
+﻿' ClientGroupController.vb
+Imports MySql.Data.MySqlClient
 Imports DPC.DPC.Data.Models
 Imports System.Collections.ObjectModel
 
 Namespace DPC.Data.Controllers
     Public Class ClientGroupController
+
         Public Shared Function CreateClientGroup(group As ClientGroup) As Boolean
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
@@ -22,6 +24,29 @@ Namespace DPC.Data.Controllers
             End Try
         End Function
 
+        ' ── NEW ──────────────────────────────────────────────────────────────
+        Public Shared Function UpdateClientGroup(group As ClientGroup) As Boolean
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String =
+                        "UPDATE clientgroup SET GroupName = @GroupName, Description = @Description " &
+                        "WHERE ClientGroupID = @ClientGroupID"
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@GroupName", group.GroupName)
+                        cmd.Parameters.AddWithValue("@Description", group.Description)
+                        cmd.Parameters.AddWithValue("@ClientGroupID", group.ClientGroupID)
+                        cmd.ExecuteNonQuery()
+                    End Using
+                End Using
+                Return True
+            Catch ex As Exception
+                Console.WriteLine("Error updating ClientGroup: " & ex.Message)
+                Return False
+            End Try
+        End Function
+        ' ─────────────────────────────────────────────────────────────────────
+
         Public Shared Function DeleteClientGroup(group As ClientGroup) As Boolean
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
@@ -34,7 +59,7 @@ Namespace DPC.Data.Controllers
                 End Using
                 Return True
             Catch ex As Exception
-                Console.WriteLine("Error creating ClientGroup: " & ex.Message)
+                Console.WriteLine("Error deleting ClientGroup: " & ex.Message)
                 Return False
             End Try
         End Function
@@ -73,7 +98,8 @@ Namespace DPC.Data.Controllers
                     Using cmd As New MySqlCommand(query, conn)
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
-                                customerGroup.Add(New KeyValuePair(Of Integer, String)(reader.GetInt32("ClientGroupID"), reader.GetString("GroupName")))
+                                customerGroup.Add(New KeyValuePair(Of Integer, String)(
+                                    reader.GetInt32("ClientGroupID"), reader.GetString("GroupName")))
                             End While
                         End Using
                     End Using
@@ -83,7 +109,6 @@ Namespace DPC.Data.Controllers
             End Try
             Return customerGroup
         End Function
-
 
         Public Shared Function GetClientGroup() As ObservableCollection(Of ClientGroup)
             Dim _clientGroup As New ObservableCollection(Of ClientGroup)

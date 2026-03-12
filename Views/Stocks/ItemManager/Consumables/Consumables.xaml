@@ -110,6 +110,29 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <!-- Icon Button Style (for Download and Delete) -->
+        <Style x:Key="IconButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="6"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                         CornerRadius="6"
+                         Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#F0F0F0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
 
         <!-- TextBox Style  -->
         <Style x:Key="RoundedTextboxStyle" TargetType="TextBox">
@@ -195,6 +218,7 @@
                                     <TextBox
                                         Name="txtSearch"
                                         Style="{StaticResource RoundedTextboxStyle}"
+                                        TextChanged="txtSearch_TextChanged"
                                         VerticalAlignment="Center"
                                         FontFamily="Lexend"
                                         FontSize="12"
@@ -256,7 +280,6 @@
                         <Setter Property="Background" Value="White"/>
                     </Style>
                 </DataGrid.ColumnHeaderStyle>
-
                 <DataGrid.CellStyle>
                     <Style TargetType="DataGridCell">
                         <Setter Property="Padding" Value="10,5"/>
@@ -282,6 +305,38 @@
                     <DataGridTextColumn Header="Product Name" Binding="{Binding ProductName}" Width="*"/>
                     <DataGridTextColumn Header="Warehouse" Binding="{Binding WarehouseName}" Width="*"/>
                     <DataGridTextColumn Header="Stock" Binding="{Binding Stock}" Width="120"/>
+
+                    <DataGridTemplateColumn Header="Actions" Width="Auto" MinWidth="100">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Border BorderBrush="#D9D9D9" BorderThickness="1" CornerRadius="4" Background="White">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button x:Name="btnEdit"
+        Style="{StaticResource IconButton}"
+        Width="32" Height="32"
+        ToolTip="Edit"
+        Click="BtnEdit_Click">
+                                                <materialDesign:PackIcon Kind="SquareEditOutline"
+                             Width="16" Height="16" 
+                             Foreground="#52C69D"/>
+                                            </Button>
+
+                                            <Button x:Name="btnDelete"
+        Style="{StaticResource IconButton}"
+        Width="32" Height="32"
+        ToolTip="Delete"
+        Click="BtnDelete_Click">
+                                                <materialDesign:PackIcon Kind="DeleteOutline"
+                             Width="16" Height="16" 
+                             Foreground="#F27272"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
         </ScrollViewer>

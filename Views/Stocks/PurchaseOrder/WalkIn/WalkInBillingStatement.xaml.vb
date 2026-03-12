@@ -30,13 +30,24 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         End Sub
 
         Private Sub WalkInBillilingStatement_Loaded(sender As Object, e As RoutedEventArgs)
-            Dim priceString As String = WalkinBillingStatementDetails.BLTotalAmountCache
-            Dim cleaned As String = priceString.Replace("₱", "").Replace(",", "").Trim()
-            Dim numericValue As Double = Double.Parse(cleaned)
-            Dim vat As Double = (numericValue - (numericValue / 1.12))
 
-            Dim subTot As Double = (numericValue / 1.12)
-            Dim totCost As Double = vat + subTot
+            Dim priceString As String = If(WalkinBillingStatementDetails.BLTotalAmountCache, "0")
+            Dim subtotalString As String = If(WalkinBillingStatementDetails.BLSubtotalAmountCache, "0")
+
+            ' 2. Clean the strings with safety
+            Dim cleanedSubtotal As String = subtotalString.Replace("₱", "").Replace(",", "").Trim()
+            Dim cleaned As String = priceString.Replace("₱", "").Replace(",", "").Trim()
+
+            Dim numericValue As Double = 0
+            Dim numericSubtotal As Double = 0
+
+            Double.TryParse(cleaned, numericValue)
+            Double.TryParse(cleanedSubtotal, numericSubtotal)
+
+            ' Now calculations are safe from NullReferenceExceptions
+            Dim vat As Double = (numericValue - (numericValue / 1.12))
+            Dim subTot As Double = numericSubtotal
+            Dim totCost As Double = numericValue
 
 
             ' Check if important fields are initialized
@@ -52,9 +63,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
             Dim installationFee As Decimal
             If Decimal.TryParse(WalkinBillingStatementDetails.BLInstallation, installationFee) Then
-                Installation.Text = "₱ " & installationFee.ToString("N2")
+                Installation.Text = installationFee.ToString("N2")
             Else
-                Installation.Text = "₱ 0.00" ' fallback value if parsing fails
+                Installation.Text = "0.00" ' fallback value if parsing fails
             End If
 
             billingNumber.Text = BLNumberCache
@@ -65,9 +76,10 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             ClientAddress.Text = BLAddress & ", " & BLCity & ", " & BLRegion & ", " & BLCountry
             ClientContact.Text = "+63 " & FormatPhoneWithSpaces(BLPhone)
             CompanyRep.Text = BLCompanyRep
+            lblSubtotal.Text = WalkinBillingStatementDetails.BLSubtotalLabel
+            lblVat.Text = WalkinBillingStatementDetails.BLVatLabel
 
-            SalesRep.Text = BLSalesRep
-            PreparedBy.Text = CacheOnLoggedInName
+            SalesRep.Text = CacheOnLoggedInName
             cmbApproved.Text = WalkinBillingStatementDetails.BLApproved
             ' Check if the terms is enabled
             If WalkinBillingStatementDetails.BLisCustomTerm = True Then
@@ -106,11 +118,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             End If
 
             If BLTaxProperty = "Exclusive" Then
-                Subtotal.Text = "₱ " & totCost.ToString("N2")
+                Subtotal.Text = "₱ " & subTot.ToString("N2")
             Else
                 Subtotal.Text = "₱ " & subTot.ToString("N2")
             End If
-            Delivery.Text = "₱ " & WalkinBillingStatementDetails.BLDeliveryCost.ToString("N2")
+            Delivery.Text = WalkinBillingStatementDetails.BLDeliveryCost.ToString("N2")
             VAT12.Text = BLTotalTaxValueCache
             TotalCost.Text = "₱ " & totCost.ToString("N2")
 
@@ -134,94 +146,76 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 #Region "Computation Part"
 
         Private Sub Delivery_TextChanged(sender As Object, e As TextChangedEventArgs) Handles Delivery.TextChanged
-            '' Clean the text input to remove currency symbol and commas and compute the total costs
             ComputeCost(sender, e)
         End Sub
 
+        Private Sub Installation_TextChanged(sender As Object, e As TextChangedEventArgs) Handles Installation.TextChanged
+            ComputeCost(sender, e)
+        End Sub
 
         Private Sub Delivery_PreviewTextInput(sender As Object, e As TextCompositionEventArgs) Handles Delivery.PreviewTextInput
-            Dim tb = TryCast(sender, TextBox)
-            If tb IsNot Nothing Then
-                ' Simulate what the text will look like if the character is accepted
-                Dim futureText = tb.Text.Insert(tb.CaretIndex, e.Text)
-
-                ' Only allow digits and at most one decimal point
-                Dim isValid = futureText.All(Function(c) Char.IsDigit(c) OrElse c = "."c) AndAlso
-                      futureText.Count(Function(c) c = "."c) <= 1
-
-                ' Disallow starting with a decimal point
-                If futureText.StartsWith("."c) Then
-                    isValid = False
-                End If
-
-                e.Handled = Not isValid
-            End If
+            ValidateNumericInput(sender, e)
         End Sub
 
         Private Sub Delivery_LostFocus(sender As Object, e As RoutedEventArgs) Handles Delivery.LostFocus
-            ' Format the text as currency when the textbox loses focus
-            Dim tb = TryCast(sender, TextBox)
-            If tb IsNot Nothing Then
-                Dim value As Double
-                If Double.TryParse(tb.Text, value) Then
-                    tb.Text = "₱ " & value.ToString("N2") ' ₱ format
-                End If
-            End If
+            FormatToTwoDecimals(sender)
         End Sub
 
         Private Sub Installation_PreviewTextInput(sender As Object, e As TextCompositionEventArgs) Handles Installation.PreviewTextInput
-            '' Validate the input to allow only digits and at most one decimal point
-            Dim tb = TryCast(sender, TextBox)
-            If tb IsNot Nothing Then
-                ' Simulate what the text will look like if the character is accepted
-                Dim futureText = tb.Text.Insert(tb.CaretIndex, e.Text)
-
-                ' Only allow digits and at most one decimal point
-                Dim isValid = futureText.All(Function(c) Char.IsDigit(c) OrElse c = "."c) AndAlso
-                      futureText.Count(Function(c) c = "."c) <= 1
-
-                ' Disallow starting with a decimal point
-                If futureText.StartsWith("."c) Then
-                    isValid = False
-                End If
-
-                e.Handled = Not isValid
-            End If
+            ValidateNumericInput(sender, e)
         End Sub
 
         Private Sub Installation_LostFocus(sender As Object, e As RoutedEventArgs) Handles Installation.LostFocus
-            ' Format the text as currency when the textbox loses focus
+            FormatToTwoDecimals(sender)
+        End Sub
+
+        Private Sub ValidateNumericInput(sender As Object, e As TextCompositionEventArgs)
+            Dim tb = TryCast(sender, TextBox)
+            If tb Is Nothing Then Return
+
+            Dim text = tb.Text.Insert(tb.CaretIndex, e.Text)
+
+            Dim isValid = Regex.IsMatch(text, "^[0-9]*\.?[0-9]*$")
+
+            e.Handled = Not isValid
+        End Sub
+
+        Private Sub FormatToTwoDecimals(sender As Object)
             Dim tb = TryCast(sender, TextBox)
             If tb IsNot Nothing Then
-                Dim value As Double
-                If Double.TryParse(tb.Text, value) Then
-                    tb.Text = "₱ " & value.ToString("N2") ' ₱ format
+                If String.IsNullOrWhiteSpace(tb.Text) Then
+                    tb.Text = "0.00"
+                Else
+                    Dim value As Double
+                    If Double.TryParse(tb.Text, value) Then
+                        tb.Text = value.ToString("F2")
+                    Else
+                        tb.Text = "0.00"
+                    End If
                 End If
             End If
         End Sub
 
-
-        Private Sub Installation_TextChanged(sender As Object, e As TextChangedEventArgs)
-            '' Clean the text input to remove currency symbol and commas and compute the total costs
-            ComputeCost(sender, e)
-        End Sub
-
         Private Sub ComputeCost(s As Object, e As TextChangedEventArgs)
-            ' Only clean and compute — don't reset textbox text
+            Dim deliveryText As String = If(String.IsNullOrWhiteSpace(Delivery?.Text), "0", Delivery.Text)
+            Dim installationText As String = If(String.IsNullOrWhiteSpace(Installation?.Text), "0", Installation.Text)
+
+            Dim subtotalText As String = If(Subtotal?.Text, "0")
+
             Dim deliveryAmount As Double = 0
-            Double.TryParse(Delivery.Text.Replace("₱", "").Trim(), deliveryAmount)
-
             Dim installationAmount As Double = 0
-            Double.TryParse(Installation.Text.Replace("₱", "").Trim(), installationAmount)
+            Dim subtotalAmount As Double = 0
 
-            Dim subtotalAmount As Double = Convert.ToDouble(Subtotal.Text.Replace("₱", "").Replace(",", "").Trim())
-            Dim vat As Double = Convert.ToDouble(VAT12.Text.Replace("₱", "").Replace(",", "").Trim())
+            Double.TryParse(deliveryText, deliveryAmount)
+            Double.TryParse(installationText, installationAmount)
 
-            ' Total = subtotal + delivery + installation
-            Dim total = subtotalAmount + vat + deliveryAmount + installationAmount
+            Double.TryParse(subtotalText.Replace("₱", "").Replace(",", "").Trim(), subtotalAmount)
 
-            ' Update the TotalCost display
-            TotalCost.Text = "₱ " & total.ToString("N2")
+            Dim total = subtotalAmount + deliveryAmount + installationAmount
+
+            If TotalCost IsNot Nothing Then
+                TotalCost.Text = "₱ " & total.ToString("N2")
+            End If
         End Sub
 #End Region
 
@@ -339,10 +333,10 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 #Region "Navigation"
         ' Going back to the WalkinOrder View
         Private Sub BackToUI_Click(sender As Object, e As MouseButtonEventArgs)
-            If Decimal.TryParse(Installation.Text.Replace("₱", "").Trim(), BLInstallation) = False Then
+            If Decimal.TryParse(Installation.Text.Trim(), BLInstallation) = False Then
                 BLInstallation = 0D ' fallback value
             End If
-            If Decimal.TryParse(Delivery.Text.Replace("₱", "").Replace(",", "").Trim(), BLDeliveryCost) = False Then
+            If Decimal.TryParse(Delivery.Text.Trim(), BLDeliveryCost) = False Then
                 BLDeliveryCost = 0D ' fallback value if conversion fails
             End If
             WalkinBillingStatementDetails.BLApproved = cmbApproved.Text
@@ -353,15 +347,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 WalkinBillingStatementDetails.BLpaymentTerms = cmbTerms.Text
             End If
             Debug.WriteLine($"Approved - {WalkinBillingStatementDetails.BLApproved}")
-            ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
+            ViewLoader.DynamicView.NavigateToCachedView("walkinorder", Me)
         End Sub
 
         Private Sub PrintPreview(sender As Object, e As RoutedEventArgs)
 
-            If String.IsNullOrWhiteSpace(PreparedBy.Text) OrElse
-               String.IsNullOrWhiteSpace(SalesRep.Text) OrElse
-               cmbApproved.SelectedItem Is Nothing OrElse
-               cmbTerms.SelectedItem Is Nothing Then
+            If String.IsNullOrWhiteSpace(SalesRep.Text) OrElse
+               String.IsNullOrWhiteSpace(SalesRep.Text) Then
 
                 MessageBox.Show("Please fill in all required fields before proceeding to print.", "Missing Information", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Return

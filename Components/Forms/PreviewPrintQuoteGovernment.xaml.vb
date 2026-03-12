@@ -592,18 +592,28 @@ Namespace DPC.Components.Forms
         Private Shared Function SavePdfPathToMongoDB(path As String, qNum As String, user As String) As Boolean
             Try
                 Dim fs As GridFSBucket = SplashScreen.GetGridFSConnection()
+                Dim filter = Builders(Of GridFSFileInfo).Filter.Eq(Of String)("metadata.quoteNumber", qNum)
+                Dim existingFiles = fs.Find(filter).ToList()
+
+                For Each file In existingFiles
+                    fs.Delete(file.Id)
+                Next
+
                 Using s As New FileStream(path, FileMode.Open, FileAccess.Read)
                     Dim opts As New GridFSUploadOptions() With {
-                        .Metadata = New BsonDocument From {
-                            {"uploadedBy", user}, {"uploadedAt", BsonDateTime.Create(DateTime.UtcNow)},
-                            {"source", "cost-estimate/quote"}, {"quoteNumber", qNum}, {"pdfFilePath", path}
-                        }
-                    }
+                .Metadata = New BsonDocument From {
+                    {"uploadedBy", user},
+                    {"uploadedAt", BsonDateTime.Create(DateTime.UtcNow)},
+                    {"source", "cost-estimate/quote"},
+                    {"quoteNumber", qNum},
+                    {"pdfFilePath", path}
+                }
+            }
                     fs.UploadFromStream(System.IO.Path.GetFileName(path), s, opts)
                 End Using
                 Return True
             Catch ex As Exception
-                MessageBox.Show("Database Error: " & ex.Message)
+                MessageBox.Show("Database Error during file replace: " & ex.Message)
                 Return False
             End Try
         End Function
