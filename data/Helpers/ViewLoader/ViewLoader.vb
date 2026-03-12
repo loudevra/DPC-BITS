@@ -214,6 +214,9 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "previewprintquoteeditedquote"
                         Return New DPC.Components.Forms.PreviewPrintEditedQuote()
 
+                    Case "editablepreviewdocument"
+                        Return New DPC.Components.Forms.EditablePreviewDocument()
+
                     ' Sales Billing Estimate Navigation
                     Case "billingestimate"
                         Return New Sales.Quotes.BillingStatement()

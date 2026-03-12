@@ -1385,11 +1385,6 @@ Namespace DPC.Views.Sales.Quotes
                 Return False
             End If
 
-            'If String.IsNullOrWhiteSpace(txtReferenceNumber.Text) Then
-            '    MessageBox.Show("Reference Number is required.")
-            '    Return False
-            'End If
-
             If String.IsNullOrWhiteSpace(cmbCostEstimateValidty.Text) Then
                 MessageBox.Show("Select an Cost Estimate Validity Date.")
                 Return False
@@ -1630,68 +1625,95 @@ Namespace DPC.Views.Sales.Quotes
                 Exit Sub
             End If
 
-            Dim selectedValidityOption = DirectCast(cmbCostEstimateValidty.SelectedItem, ComboBoxItem).Content.ToString()
             Try
-                Dim selectedTax As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
-                Dim selectedDiscount As String = CType(txtDiscountSelection.SelectedItem, ComboBoxItem).Content.ToString()
-                ' Calculate actual validity date from selected option
-                Dim actualValidityDate = GetValidityDate(selectedValidityOption, OrderDateVM.SelectedDate)
-                CEValidUntilDate = selectedValidityOption
-                CEQuoteValidityDateCache = actualValidityDate.ToString("yyyy-MM-dd")
+                PreviewState.ResetPreview()
+                Dim data = PreviewState.CurrentPreview
 
-                ' 07 - 04 - 2025 -- Moved the insert at the save and print button in previewprintquote.xaml.vb
-                CEQuoteNumberCache = txtQuoteNumber.Text
-                CEDiscountProperty = txtDiscountSelection.Text
-                CETaxProperty = txtTaxSelection.Text
-                CEQuoteDateCache = OrderDateVM.SelectedDate.Value.ToString("yyyy-MM-dd")
-                CEValidUntilDate = cmbCostEstimateValidty.Text ' Changed the value of the text instead
-                'CETotalTaxValueCache = txtTotalTax.Text ' Doesnt need since im calculating it in the preview
-                CETaxValueCache = txtTotalTax.Text
-                CETotalDiscountValueCache = txtTotalDiscount.Text
-                CETotalAmountCache = txtGrandTotal.Text
-                CEnoteTxt = txtQuoteNote.Text
-                'CEReferenceNumber = txtReferenceNumber.Text
-                'CEpaymentTerms = "None"
-                CEQuoteItemsCache = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(productItemsJson)
-                CEsignature = False ' Assuming no signature for now
-                CEImageCache = "" ' Assuming no image for now
-                CEPathCache = "" ' Assuming no path for now
-                'ils
-                CECompanyName = client.Company ' Changed from Client Name to Company Name
-                Dim stringArray As List(Of String) = client.BillingAddress.Split(","c).Select(Function(s) s.Trim()).ToList()
+                Dim selectedValidityOption = DirectCast(cmbCostEstimateValidty.SelectedItem, ComboBoxItem).Content.ToString()
+                Dim actualValidityDate = GetValidityDate(selectedValidityOption, OrderDateVM.SelectedDate.Value)
 
-                CostEstimateDetails.CEAddress = stringArray(0)
-                CostEstimateDetails.CECity = stringArray(1)
-                CostEstimateDetails.CERegion = stringArray(2)
-                CostEstimateDetails.CECountry = stringArray(3)
-                CostEstimateDetails.CEClientDetailsCache = TxtClientDetails.Text
-                CEPhone = client.Phone
-                CEClientName = client.Name
-                CostEstimateDetails.CERepresentative = client.Representative
-                CostEstimateDetails.CEEmail = client.Email
+                data.DocumentTitle = "COST ESTIMATE"
+                data.BackButtonLabel = "Back to Quote"
+                data.CreatePath = "salesnewquote"
 
-                ' Debugging 
+                data.DocumentNumber = txtQuoteNumber.Text
+                data.DocumentDate = OrderDateVM.SelectedDate.Value.ToString("MMMM dd, yyyy")
+                data.DocumentValidity = actualValidityDate.ToString("MMMM dd, yyyy")
+                data.IsEditMode = QuotesController.QuoteNumberExists(txtQuoteNumber.Text)
+
+                data.ClientName = If(Not String.IsNullOrWhiteSpace(client.Company), client.Company, client.Name)
+                data.ClientAddress = client.BillingAddress
+                data.ClientContact = client.Phone
+                data.ClientEmail = client.Email
+                data.PreparedBy = CacheOnLoggedInName
+
+                Dim rawItems = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(productItemsJson)
+
+                For Each dict In rawItems
+                    Dim isHeader As Boolean = (dict("IsCategoryHeader") = "True")
+
+                    Dim newItem As New OrderItems With {
+                        .IsHeaderRow = isHeader,
+                        .Description = If(dict.ContainsKey("ProductName"), dict("ProductName"), ""),
+                        .ProductDescription = If(isHeader, "", If(dict.ContainsKey("Description"), dict("Description"), "")),
+                        .Quantity = If(isHeader, "", If(dict.ContainsKey("Quantity"), dict("Quantity"), "0")),
+                        .UnitPrice = If(isHeader, "", "₱ " & If(dict.ContainsKey("Rate"), dict("Rate"), "0.00")),
+                        .LinePrice = If(isHeader, "", "₱ " & If(dict.ContainsKey("Amount"), dict("Amount"), "0.00")),
+                        .ProductDescriptionVisibility = If(isHeader OrElse Not dict.ContainsKey("Description") OrElse String.IsNullOrEmpty(dict("Description")), Visibility.Collapsed, Visibility.Visible)
+                    }
+
+                    If Not isHeader AndAlso dict.ContainsKey("ProductImageBase64") Then
+                        newItem.ProductImage = Base64ToBitmapImage(dict("ProductImageBase64"))
+                    End If
+
+                    data.Items.Add(newItem)
+                Next
+
                 Dim selectedTaxType As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
 
+                data.Subtotal = "₱" & CostEstimateDetails.CETotalBaseAmount.Replace("₱", "").Trim()
+                data.VatValue = txtTotalTax.Text
+                data.TotalCost = txtGrandTotal.Text
 
                 If selectedTaxType = "Exclusive" Then
-                    CostEstimateDetails.CEVatLabel = $"VAT EXCLUSIVE"
-                    CostEstimateDetails.CESubtotalLabel = "SUBTOTAL VAT EX."
-                ElseIf selectedTaxType = "Inclusive" Then
-                    CostEstimateDetails.CEVatLabel = "VAT 12%"
-                    CostEstimateDetails.CESubtotalLabel = "SUBTOTAL VAT IN."
+                    data.VatLabel = "VAT EXCLUSIVE"
+                    data.SubtotalLabel = "SUBTOTAL VAT EX."
+                Else
+                    data.VatLabel = "VAT 12%"
+                    data.SubtotalLabel = "SUBTOTAL VAT IN."
                 End If
 
-                Debug.WriteLine($"QuoteNumber: {CEQuoteNumberCache}, QuoteDate: {CEQuoteDateCache}, ValidityDate: {CEQuoteValidityDateCache}, Tax: {CETaxValueCache}, TotalAmount: {CETotalAmountCache}, Note: {CEnoteTxt}, Remarks: {CEremarksTxt}, Items: {JsonConvert.SerializeObject(CEQuoteItemsCache)}, Signature: {CEsignature}, Image: {CEImageCache}, Path: {CEPathCache}, ClientName: {CEClientName}, Phone: {CEPhone}, Email: {CEEmail}, Term1: {CETerm1}, Term2: {CETerm2}, Term3: {CETerm3}, Term4: {CETerm4}, Term5: {CETerm5}, Term6: {CETerm6}, Term7: {CETerm7}, Term8: {CETerm8}, Term9: {CETerm9}, Term10: {CETerm10}, Term11: {CETerm11}, Term12: {CETerm12}")
-                ViewLoader.DynamicView.NavigateToView("costestimate", Me)
+                data.Notes = txtQuoteNote.Text
+                data.WarrantyText = "Dream PC Build and IT Solutions Inc. offers 1 year warranty for this cost estimate..."
+
+                ViewLoader.DynamicView.NavigateToView("editablepreviewdocument", Me)
+
             Catch ex As Exception
-                MessageBox.Show("Please Fill up all of the Fields: " & ex.Message)
+                MessageBox.Show("Error generating preview: " & ex.Message)
             End Try
         End Sub
 
-        ' If the user clicks the button to show or hide VAT in exclusive mode
-        ' If the Show VAT button is clicked, toggle the VAT display
-        ' If the Hide VAT button is clicked, toggle the collapsed VAT display
+        Private Function Base64ToBitmapImage(b64 As String) As BitmapImage
+            If String.IsNullOrEmpty(b64) Then Return Nothing
+            Try
+                If b64.Contains(",") Then b64 = b64.Split(","c)(1)
+
+                Dim bytes As Byte() = Convert.FromBase64String(b64)
+                Dim bmp As New BitmapImage()
+                Using ms As New MemoryStream(bytes)
+                    bmp.BeginInit()
+                    bmp.CacheOption = BitmapCacheOption.OnLoad
+                    bmp.StreamSource = ms
+                    bmp.EndInit()
+                End Using
+                bmp.Freeze()
+                Return bmp
+            Catch ex As Exception
+                Debug.WriteLine("Image conversion error: " & ex.Message)
+                Return Nothing
+            End Try
+        End Function
+
         Private Sub IncExVatinExclusive_Click(sender As Object, e As RoutedEventArgs)
             If VatExShowVat.Text = "Show VAT 12%" Then
                 CEisVatExInclude = True
@@ -1719,18 +1741,6 @@ Namespace DPC.Views.Sales.Quotes
             End If
             Return ""
         End Function
-
-        'Private Sub btnExclusiveVatShow_Click(sender As Object, e As RoutedEventArgs)
-        '    If ChangeVATColumn.Text = "Show Vat 12%" Then
-        '        CEVatShow = True
-        '        ChangeVATColumn.Text = "Hide Vat 12%"
-        '        MessageBox.Show($"Vat Show - {CEVatShow}")
-        '    Else
-        '        CEVatShow = False
-        '        ChangeVATColumn.Text = "Show Vat 12%"
-        '        MessageBox.Show($"Vat Show - {CEVatShow}")
-        '    End If
-        'End Sub
 #End Region
     End Class
 End Namespace
