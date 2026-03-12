@@ -78,6 +78,12 @@ Namespace DPC.Views.Stocks.ProductsLabel.CustomLabel
 
                 ' Store serial numbers
                 SerialNumberList = StocksLabelController.GetSerialNumber(_selectedProduct.ProductID)
+
+                ' DEBUG: Show what was retrieved
+                MessageBox.Show($"Product: {_selectedProduct.ProductName}" & vbCrLf &
+                               $"Product ID: {_selectedProduct.ProductID}" & vbCrLf &
+                               $"Serial Numbers Found: {If(SerialNumberList IsNot Nothing, SerialNumberList.Count.ToString(), "NULL")}",
+                               "Debug Info", MessageBoxButton.OK, MessageBoxImage.Information)
             End If
         End Sub
 
@@ -192,7 +198,21 @@ Namespace DPC.Views.Stocks.ProductsLabel.CustomLabel
         End Function
 
         Private Sub PrintBarcodes(sender As Object, e As RoutedEventArgs)
-            If SerialNumberList Is Nothing Then Exit Sub
+            ' Add validation with user feedback
+            If _selectedProduct Is Nothing Then
+                MessageBox.Show("Please select a product first.", "No Product Selected", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Exit Sub
+            End If
+
+            If SerialNumberList Is Nothing OrElse SerialNumberList.Count = 0 Then
+                MessageBox.Show("No serial numbers found for the selected product.", "No Serial Numbers", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Exit Sub
+            End If
+
+            If cmbWarehouses.SelectedValue Is Nothing Then
+                MessageBox.Show("Please select a warehouse.", "No Warehouse Selected", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Exit Sub
+            End If
 
             ' Clear UI
             wrapPanel.Children.Clear()
