@@ -456,9 +456,9 @@ Namespace DPC.Components.Forms
 
         Private Sub SaveToDb()
             Dim data = PreviewState.CurrentPreview
+            If data Is Nothing Then Exit Sub
 
             Dim json As String = JsonConvert.SerializeObject(data.Items)
-
             Dim docDate As DateTime
             Dim validityDate As DateTime
 
@@ -468,26 +468,30 @@ Namespace DPC.Components.Forms
             Dim mysqlDocDate As String = docDate.ToString("yyyy-MM-dd")
             Dim mysqlValidityDate As String = validityDate.ToString("yyyy-MM-dd")
 
-            If QuotesController.InsertQuote(data.DocumentNumber,
-                                "",
-                                mysqlDocDate,
-                                mysqlValidityDate,
-                                data.VatType,
-                                data.DiscountSelection,
-                                data.ClientId,
-                                data.ClientName,
-                                data.WarehouseID,
-                                data.WarehouseName,
-                                json,
-                                data.Notes,
-                                data.VatValue,
-                                data.DiscountValue,
-                                data.TotalCost,
-                                data.PreparedBy,
-                                data.ApprovedBy,
-                                data.PaymentTerms) Then
+            Dim success As Boolean = False
+            Dim quoteNum = data.DocumentNumber
 
-                MessageBox.Show("Quote saved successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+            If QuotesController.QuoteNumberExists(quoteNum) Then
+                ' UPDATE
+                success = QuotesController.UpdateQuote(
+            quoteNum, "", mysqlDocDate, mysqlValidityDate,
+            data.VatType, data.DiscountSelection,
+            data.ClientId.ToString(), data.ClientName,
+            data.WarehouseID.ToString(), data.WarehouseName,
+            json, data.Notes, data.VatValue, data.DiscountValue,
+            data.TotalCost, data.PreparedBy, data.ApprovedBy, data.PaymentTerms)
+            Else
+                ' INSERT
+                success = QuotesController.InsertQuote(
+            quoteNum, "", mysqlDocDate, mysqlValidityDate,
+            data.VatType, data.DiscountSelection,
+            data.ClientId.ToString(), data.ClientName,
+            data.WarehouseID.ToString(), data.WarehouseName,
+            json, data.Notes, data.VatValue, data.DiscountValue,
+            data.TotalCost, data.PreparedBy, data.ApprovedBy, data.PaymentTerms)
+            End If
+
+            If success Then
                 PreviewState.ResetPreview()
                 ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
             End If
