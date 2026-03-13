@@ -303,6 +303,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 LoadFromUniversalPreview(model)
             Else
                 AddNewCategoryUI()
+                txtBillingNumber.Text = BillingController.GenerateBillingID(False)
             End If
         End Sub
 
