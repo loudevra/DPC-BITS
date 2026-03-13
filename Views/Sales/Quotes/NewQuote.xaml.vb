@@ -101,59 +101,42 @@ Namespace DPC.Views.Sales.Quotes
                 CEWarehouseNameCache = selectedWarehouse.Content.ToString()
             End If
 
-            Console.WriteLine($"Selected Cost Estimate Type : {cmbCostEstimateType.SelectedIndex}")
             ' Checks the value of CEType
-            If CostEstimateDetails.CEType > 4 Then
-                cmbCostEstimateType.SelectedIndex = 0
-                CEType = 0
-                ' Generate Quote ID
-                Dim quoteID As String = QuotesController.GenerateQuoteID(CEType)
-                txtQuoteNumber.Text = quoteID
+            ' 1. Check the mode first
+            Dim model = PreviewState.CurrentPreview
+            Dim isEditing As Boolean = (model IsNot Nothing AndAlso model.IsEditMode)
 
-                Dim _prefix As String
+            If isEditing Then
+                txtQuoteNumber.IsReadOnly = True
+                txtQuoteNumber.Background = New SolidColorBrush(Color.FromRgb(240, 240, 240))
 
-                Select Case CEType
-                    Case 0
-                        _prefix = "WICE #:"
-                    Case 1
-                        _prefix = "HHCE #:"
-                    Case 2
-                        _prefix = "GPCE #:"
-                    Case 3
-                        _prefix = "BCCE #:"
-                    Case Else
-                        _prefix = "CE #:" ' Fail Safe if doesnt work
-                End Select
+                cmbCostEstimateType.IsEnabled = False
+                cmbCostEstimateType.SelectedIndex = -1
 
-                CostEstimateDetails.CECNIndetifier = _prefix
-
-                ' Make the loading CEtype false so it can now run smoothly
                 LoadingCEType = False
             Else
-                cmbCostEstimateType.SelectedIndex = CostEstimateDetails.CEType
-                CEType = CostEstimateDetails.CEType
-                ' Generate Quote ID
+                If CostEstimateDetails.CEType > 4 Then
+                    cmbCostEstimateType.SelectedIndex = 0
+                    CEType = 0
+                Else
+                    cmbCostEstimateType.SelectedIndex = CostEstimateDetails.CEType
+                    CEType = CostEstimateDetails.CEType
+                End If
+
+                ' Generate a BRAND NEW Quote ID
                 Dim quoteID As String = QuotesController.GenerateQuoteID(CEType)
                 txtQuoteNumber.Text = quoteID
 
                 Dim _prefix As String
-
                 Select Case CEType
-                    Case 0
-                        _prefix = "WICE #:"
-                    Case 1
-                        _prefix = "HHCE #:"
-                    Case 2
-                        _prefix = "GPCE #:"
-                    Case 3
-                        _prefix = "BCCE #:"
-                    Case Else
-                        _prefix = "CE #:" ' Fail Safe if doesnt work
+                    Case 0 : _prefix = "WICE #:"
+                    Case 1 : _prefix = "HHCE #:"
+                    Case 2 : _prefix = "GPCE #:"
+                    Case 3 : _prefix = "BCCE #:"
+                    Case Else : _prefix = "CE #:"
                 End Select
 
                 CostEstimateDetails.CECNIndetifier = _prefix
-
-                ' Make the loading CEtype false so it can now run smoothly
                 LoadingCEType = False
             End If
 
@@ -436,12 +419,13 @@ Namespace DPC.Views.Sales.Quotes
             txtSearchCustomer.Text = model.ClientName
             txtQuoteNote.Text = model.Notes
 
+
             If model.WarehouseID > 0 Then
                 ComboBoxWarehouse.SelectedValue = model.WarehouseID
                 WarehouseID = model.WarehouseID
             End If
 
-            'FillClientsFieldFromModel(model)
+            FillClientsFieldFromModel(model)
 
             MainContainer.Children.Clear()
             rowCount = 0
@@ -472,12 +456,23 @@ Namespace DPC.Views.Sales.Quotes
             RemoveHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
 
             txtSearchCustomer.Text = model.ClientName
-            TxtClientDetails.Text = $"Name: {model.ClientName}{Environment.NewLine}" &
-                           $"Contact: {model.ClientContact}{Environment.NewLine}" &
-                           $"Email: {model.ClientEmail}{Environment.NewLine}" &
-                           $"Address: {model.ClientAddress}"
 
+            Dim foundClients = ClientController.SearchClient(model.ClientName)
+            Dim match = foundClients.FirstOrDefault(Function(c) c.Name = model.ClientName OrElse c.Company = model.ClientName)
 
+            If match IsNot Nothing Then
+                _selectedClient = match
+                model.ClientId = _selectedClient.ClientID
+
+                UpdateSupplierDetails(_selectedClient)
+            Else
+                TxtClientDetails.Text = $"Name: {model.ClientName}{Environment.NewLine}" &
+                               $"Contact: {model.ClientContact}{Environment.NewLine}" &
+                               $"Email: {model.ClientEmail}{Environment.NewLine}" &
+                               $"Address: {model.ClientAddress}"
+            End If
+
+            ' 4. Re-enable the handler
             AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
         End Sub
 
@@ -1413,14 +1408,15 @@ Namespace DPC.Views.Sales.Quotes
         End Function
 
         Private Sub txtQuoteNumber_TextChanged(sender As Object, e As TextChangedEventArgs)
-            Dim currentQuoteID = txtQuoteNumber.Text.Trim()
+            Dim model = PreviewState.CurrentPreview
+            If model IsNot Nothing AndAlso model.IsEditMode Then Exit Sub
 
+            Dim currentQuoteID = txtQuoteNumber.Text.Trim()
             If String.IsNullOrEmpty(currentQuoteID) Then Exit Sub
 
             If QuotesController.QuoteNumberExists(currentQuoteID) Then
-                ' If the quote number already exists, generate a new one and set it
                 txtQuoteNumber.Text = QuotesController.GenerateQuoteID()
-                txtQuoteNumber.CaretIndex = txtQuoteNumber.Text.Length ' Keep cursor at end
+                txtQuoteNumber.CaretIndex = txtQuoteNumber.Text.Length
             End If
         End Sub
 #End Region
