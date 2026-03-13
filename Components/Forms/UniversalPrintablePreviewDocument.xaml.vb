@@ -351,9 +351,12 @@ Namespace DPC.Components.Forms
 
         Private Sub SaveDb_Click(sender As Object, e As RoutedEventArgs)
             Try
-                Dim path As String = SaveAsPDF(CEQuoteNumberCache)
+                Dim data = PreviewState.CurrentPreview
+                Dim docName As String = data.DocumentNumber
+
+                Dim path As String = SaveAsPDF(docName)
                 If Not String.IsNullOrEmpty(path) Then
-                    If Not SavePdfPathToMongoDB(path, CEQuoteNumberCache, CacheOnLoggedInName) Then Exit Sub
+                    If Not SavePdfPathToMongoDB(path, data.DocumentNumber, CacheOnLoggedInName) Then Exit Sub
                     SaveToDb()
                 End If
             Catch ex As Exception
@@ -456,16 +459,37 @@ Namespace DPC.Components.Forms
 
             Dim json As String = JsonConvert.SerializeObject(data.Items)
 
-            If QuotesController.InsertQuote(data.DocumentNumber, "", data.DocumentDate,
-                                    data.DocumentValidity, "", "",
-                                    0, data.ClientName, 0, "",
-                                    json, data.Notes, data.VatValue, "",
-                                    data.TotalCost, data.PreparedBy, data.ApprovedBy, data.PaymentTerms) Then
+            Dim docDate As DateTime
+            Dim validityDate As DateTime
 
+            If Not DateTime.TryParse(data.DocumentDate, docDate) Then docDate = DateTime.Now
+            If Not DateTime.TryParse(data.DocumentValidity, validityDate) Then validityDate = DateTime.Now
+
+            Dim mysqlDocDate As String = docDate.ToString("yyyy-MM-dd")
+            Dim mysqlValidityDate As String = validityDate.ToString("yyyy-MM-dd")
+
+            If QuotesController.InsertQuote(data.DocumentNumber,
+                                "",
+                                mysqlDocDate,
+                                mysqlValidityDate,
+                                data.VatType,
+                                data.DiscountSelection,
+                                data.ClientId,
+                                data.ClientName,
+                                data.WarehouseID,
+                                data.WarehouseName,
+                                json,
+                                data.Notes,
+                                data.VatValue,
+                                data.DiscountValue,
+                                data.TotalCost,
+                                data.PreparedBy,
+                                data.ApprovedBy,
+                                data.PaymentTerms) Then
+
+                MessageBox.Show("Quote saved successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
                 PreviewState.ResetPreview()
                 ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
-            Else
-                MessageBox.Show("Failed to submit document.")
             End If
         End Sub
 

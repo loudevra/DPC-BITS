@@ -442,7 +442,7 @@
                                                                     <DataTemplate>
                                                                         <StackPanel Margin="8" HorizontalAlignment="Left" VerticalAlignment="Center">
                                                                             <TextBlock x:Name="txtProductTitle"
-                                                            Text="{Binding Description}" 
+                                                            Text="{Binding ProductName}" 
                                                             FontSize="12" 
                                                             FontFamily="Lexend"/>
 
@@ -457,7 +457,7 @@
                                                                         <DataTemplate.Triggers>
                                                                             <DataTrigger Binding="{Binding IsHeaderRow}" Value="True">
                                                                                 <Setter TargetName="txtProductTitle" Property="FontWeight" Value="Bold"/>
-                                                                                <Setter TargetName="txtProductTitle" Property="Text" Value="{Binding Description}"/>
+                                                                                <Setter TargetName="txtProductTitle" Property="Text" Value="{Binding ProductName}"/>
                                                                                 <Setter TargetName="txtProductTitle" Property="FontSize" Value="13"/>
                                                                             </DataTrigger>
                                                                         </DataTemplate.Triggers>
@@ -519,7 +519,7 @@
                                                                 BorderThickness="0,0,0,1" 
                                                                 Background="{TemplateBinding Background}" 
                                                                 Padding="10,5">
-                                                                                        <TextBlock Text="{Binding Description}" 
+                                                                                        <TextBlock Text="{Binding ProductName}" 
                                                                        HorizontalAlignment="Center" 
                                                                        VerticalAlignment="Center"
                                                                        FontSize="14"

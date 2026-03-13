@@ -42,7 +42,7 @@
         <Grid Grid.Row="0" Margin="25,20,25,10">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                 <materialDesign:PackIcon Kind="Calculator" Width="30" Height="30" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                <TextBlock Text="Cost Estimate" FontWeight="SemiBold" FontSize="25" Foreground="#474747" VerticalAlignment="Center"/>
+                <TextBlock x:Name="lblPageTitle" Text="Cost Estimate" FontWeight="SemiBold" FontSize="25" Foreground="#474747" VerticalAlignment="Center"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -251,7 +251,7 @@
                         <Button x:Name="GenerateCostEstimate" Click="GenerateCostEstimate_Click" Margin="0,15,0,0" Height="55" Background="#1D5642" BorderBrush="#1D5642" Style="{StaticResource MaterialDesignRaisedButton}" materialDesign:ButtonAssist.CornerRadius="27">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="FileSend" Width="24" Height="24" Margin="0,0,10,0" VerticalAlignment="Center" Foreground="White"/>
-                                <TextBlock x:Name="GovCEButton" Text="GENERATE QUOTATION" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" Foreground="White"/>
+                                <TextBlock x:Name="lblButton" Text="GENERATE QUOTATION" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" Foreground="White"/>
                             </StackPanel>
                         </Button>
                     </StackPanel>

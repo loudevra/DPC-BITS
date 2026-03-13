@@ -11,8 +11,15 @@ Namespace DPC.Data.Models
         Public Property ValidityLabel As String = "Valid Until:"
         Public Property DocumentValidity As String = ""
         Public Property BackButtonLabel As String = "Back"
+        Public Property WarehouseName As String = ""
+        Public Property WarehouseID As String = ""
+
+        ' Editing Information
+        Public Property EditLabel As String = "EDIT DOCUMENT"
+        Public Property EditButtonLabel As String = "UPDATE DOCUMENT"
 
         ' Client Information
+        Public Property ClientId As String = ""
         Public Property ClientName As String = ""
         Public Property ClientAddress As String = ""
         Public Property ClientContact As String = ""
@@ -26,6 +33,9 @@ Namespace DPC.Data.Models
         Public Property Subtotal As String = "₱ 0.00"
         Public Property VatLabel As String = "VAT 12%"
         Public Property VatValue As String = "₱ 0.00"
+        Public Property VatType As String = ""
+        Public Property DiscountSelection As String = ""
+        Public Property DiscountValue As String = "% Discount After"
         Public Property DeliveryMobilizationLabel As String = ""
         Public Property InstallationFee As String = "₱ 0.00"
         Public Property DeliveryFee As String = "₱ 0.00"
