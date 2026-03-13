@@ -50,6 +50,15 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         Public Sub New()
             InitializeComponent()
 
+            ' Autocomplete part
+            _typingTimer = New DispatcherTimer With {
+                .Interval = TimeSpan.FromMilliseconds(300)
+            }
+
+            AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
+            AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
+            AddHandler LstItems.SelectionChanged, AddressOf LstItems_SelectionChanged
+
             InitializeProductUI()
             rowCount += 1
 
@@ -60,10 +69,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             billingDate.DataContext = OrderDateVM
             BillingDateButton.DataContext = OrderDateVM
 
-            ' Autocomplete part
-            _typingTimer = New DispatcherTimer With {
-                .Interval = TimeSpan.FromMilliseconds(300)
-            }
+
 
             ' For Tax Selection
             If _TaxSelection Then
@@ -71,10 +77,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             Else
                 txtTaxSelection.SelectedItem = txtTaxSelection.Items.Cast(Of ComboBoxItem)().FirstOrDefault(Function(i) i.Content.ToString() = "Inclusive")
             End If
-
-            AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
-            AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
-            AddHandler LstItems.SelectionChanged, AddressOf LstItems_SelectionChanged
 
             ' Event for Checking the Billing number
             'AddHandler txtBillingNumber.TextChanged, AddressOf txtBillingNumber_TextChanged
@@ -295,149 +297,152 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
 #Region "This Loads every data if its available for updating"
         Private Sub InitializeProductUI()
-            Dim hasAppCache As Boolean = Application.Current.Properties.Contains("BillingCache")
-            Dim hasItemsInList As Boolean = (BLItemsCache IsNot Nothing AndAlso BLItemsCache.Count > 0)
+            Dim model = PreviewState.CurrentPreview
 
-            If hasAppCache OrElse hasItemsInList Then
-                If _typingTimer Is Nothing Then
-                    _typingTimer = New DispatcherTimer()
-                    _typingTimer.Interval = TimeSpan.FromMilliseconds(300)
-                    AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
-                End If
-
-                LoadCachedBillingData()
+            If model IsNot Nothing AndAlso model.IsEditMode Then
+                LoadFromUniversalPreview(model)
             Else
-                rowCount = 0
-                categoryCount = 0
-                MainContainer.Children.Clear()
-
                 AddNewCategoryUI()
-
-                Dim billingID As String = WalkInController.GenerateBillingID()
-                txtBillingNumber.Text = billingID
             End If
         End Sub
 
-        Private Sub LoadCachedBillingItems()
-            ClearAllRows()
+        Private Sub BtnAddClient_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddClient.Click
+            ViewLoader.DynamicView.NavigateToView("newwalkinclient", Me)
+        End Sub
+
+        Private Sub BtnReset_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddClient.Click
+            PreviewState.ResetPreview()
+            lblPageTitle.Text = "Billing Statement"
+            lblButton.Text = "Generate Billing Statement"
+            ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
+        End Sub
+
+        Private Sub LoadFromUniversalPreview(model As UniversalPreviewModel)
+            lblPageTitle.Text = model.EditLabel
+            lblButton.Text = model.EditButtonLabel
+            txtBillingNumber.Text = model.DocumentNumber
+            txtBillingNote.Text = model.Notes
+
+
+            If model.WarehouseID > 0 Then
+                ComboBoxWarehouse.SelectedValue = model.WarehouseID
+                WarehouseID = model.WarehouseID
+            End If
+
+            FillClientsFieldFromModel(model)
+
             MainContainer.Children.Clear()
             rowCount = 0
-            categoryCount = 0
 
-            Dim currentCategoryPanel As StackPanel = Nothing
+            Dim currentTargetPanel As StackPanel = Nothing
 
-            For Each item In BLItemsCache
-                Dim isHeader As Boolean = False
-                If item.ContainsKey("IsCategoryHeader") Then
-                    isHeader = (item("IsCategoryHeader") = "True")
-                End If
-
-                If isHeader Then
-                    AddNewCategoryUI()
-
-                    Dim latestWrapper = TryCast(MainContainer.Children(MainContainer.Children.Count - 1), StackPanel)
-                    currentCategoryPanel = TryCast(latestWrapper.Children(1), StackPanel)
-
-                    Dim headerBorder = TryCast(latestWrapper.Children(0), Border)
-                    Dim headerGrid = TryCast(headerBorder.Child, Grid)
-                    Dim categoryTxt = TryCast(headerGrid.Children(0), TextBox)
-                    categoryTxt.Text = If(item.ContainsKey("ProductName"), item("ProductName"), "Category")
-
-                    currentCategoryPanel.Children.Clear()
+            For Each item As OrderItems In model.Items
+                If item.IsHeaderRow = True Then
+                    AddNewCategoryWithSpecificName(item.ProductName)
+                    currentTargetPanel = GetLatestItemsPanel()
                 Else
-                    If currentCategoryPanel IsNot Nothing Then
-                        rowCount += 1
-                        AddProductInputUI(currentCategoryPanel)
-                        FillProductFields(item, rowCount)
-                        FillDescriptionField(currentCategoryPanel, item)
+                    If currentTargetPanel Is Nothing Then
+                        AddNewCategoryWithSpecificName("")
+                        currentTargetPanel = GetLatestItemsPanel()
                     End If
+
+                    rowCount += 1
+                    AddProductInputUI(currentTargetPanel)
+
+                    PopulateDynamicRow(rowCount, item)
                 End If
             Next
 
-            ' Force total update after loading everything
             UpdateGrandTotal()
         End Sub
 
-        Private Function GetLatestInputPanel() As StackPanel
-            If MainContainer.Children.Count = 0 Then Return Nothing
-
-            Dim lastBorder = TryCast(MainContainer.Children(MainContainer.Children.Count - 1), Border)
-            If lastBorder Is Nothing Then Return Nothing
-
-            Dim outerStack = TryCast(lastBorder.Child, StackPanel)
-            If outerStack Is Nothing OrElse outerStack.Children.Count = 0 Then Return Nothing
-
-            Return TryCast(outerStack.Children(0), StackPanel)
-        End Function
-
-        Private Sub FillClientsField()
+        Private Sub FillClientsFieldFromModel(model As UniversalPreviewModel)
             RemoveHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
 
-            ' Fill client name first
-            If Not String.IsNullOrWhiteSpace(CEClientName) Then
-                txtSearchCustomer.Text = CEClientName
-            End If
+            Dim foundClients = ClientController.SearchClient(model.ClientId)
+            Dim match = foundClients.FirstOrDefault(Function(c) c.ClientID.ToString() = model.ClientId.ToString())
 
-            ' Load clients manually before trying to match
-            If _clients Is Nothing OrElse _clients.Count = 0 Then
-                _clients = ClientController.SearchClient(txtSearchCustomer.Text)
-            End If
+            If match IsNot Nothing Then
+                _selectedClient = match
+                txtSearchCustomer.Text = _selectedClient.Name
+                UpdateSupplierDetails(_selectedClient)
+            Else
+                Dim matchByName = foundClients.FirstOrDefault(Function(c) c.Name = model.ClientName OrElse c.Company = model.ClientName)
 
-            ' Now we can match safely
-            If _clients IsNot Nothing AndAlso _clients.Count > 0 Then
-                Dim match = _clients.FirstOrDefault(Function(c) c.Name = txtSearchCustomer.Text)
-                If match IsNot Nothing Then
-                    _selectedClient = match
+                If matchByName IsNot Nothing Then
+                    _selectedClient = matchByName
+                    txtSearchCustomer.Text = _selectedClient.Name
                     UpdateSupplierDetails(_selectedClient)
+                Else
+                    txtSearchCustomer.Text = model.ClientName
+                    TxtClientDetails.Text = $"Name: {model.ClientName}{Environment.NewLine}" &
+                                   $"Contact: {model.ClientContact}{Environment.NewLine}" &
+                                   $"Email: {model.ClientEmail}{Environment.NewLine}" &
+                                   $"Address: {model.ClientAddress}"
                 End If
             End If
-
-            ' Continue setting other fields
-            If Not String.IsNullOrWhiteSpace(BLClientDetailsCache) Then TxtClientDetails.Text = BLClientDetailsCache
-            'If Not String.IsNullOrWhiteSpace(BLNumberCache) Then txtBillingNumber.Text = BLNumberCache
-            'If Not String.IsNullOrWhiteSpace(CEReferenceNumber) Then txtReferenceNumber.Text = CEReferenceNumber
-            If Not String.IsNullOrWhiteSpace(BLnoteTxt) Then txtBillingNote.Text = BLnoteTxt
 
             AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
         End Sub
 
-        Private Sub FillProductFields(item As Dictionary(Of String, String), row As Integer)
-            Dim productFields = New Dictionary(Of String, String) From {
-        {"txtProductName_", "ProductName"},
-        {"txtQuantity_", "Quantity"},
-        {"delivered", "delivered"},
-        {"txtRate_", "Rate"},
-        {"txtTaxPercent_", "TaxPercent"},
-        {"txtTaxValue_", "Tax"},
-        {"txtDiscountPercent_", "Discount"},
-        {"txtDiscount_", "DiscountAmount"},
-        {"txtAmount_", "Amount"}
-    }
+        Private Sub PopulateDynamicRow(rowIdx As Integer, item As OrderItems)
+            ' 1. DEFINE KEYS
+            Dim nameKey = $"txtProductName_{rowIdx}"
+            Dim qtyKey = $"txtQuantity_{rowIdx}"
+            Dim rateKey = $"txtRate_{rowIdx}"
 
-            For Each field In productFields
-                Dim controlName = field.Key & row
-                If _productTextBoxes.ContainsKey(controlName) AndAlso item.ContainsKey(field.Value) Then
-                    _productTextBoxes(controlName).Text = item(field.Value)
+            If _productTextBoxes.ContainsKey(nameKey) Then
+                _productTextBoxes(nameKey).Text = item.ProductName
+            End If
+
+            If _productTextBoxes.ContainsKey(qtyKey) Then
+                _productTextBoxes(qtyKey).Text = item.Quantity
+            End If
+
+            If _productTextBoxes.ContainsKey(rateKey) Then
+                _productTextBoxes(rateKey).Text = item.UnitPrice.Replace("₱", "").Replace(",", "").Trim()
+            End If
+
+            Dim itemsPanel = GetLatestItemsPanel()
+            If itemsPanel IsNot Nothing AndAlso itemsPanel.Children.Count > 0 Then
+                Dim rowBorder = TryCast(itemsPanel.Children(itemsPanel.Children.Count - 1), Border)
+
+                If rowBorder IsNot Nothing Then
+                    Dim allTextBoxes = FindVisualChildren(Of TextBox)(rowBorder)
+                    Dim descBox = allTextBoxes.FirstOrDefault(Function(t) t.Text.Contains("Optional") OrElse String.IsNullOrEmpty(t.Name))
+
+                    If descBox IsNot Nothing Then
+                        descBox.Text = item.ProductDescription
+                    End If
                 End If
-            Next
+            End If
+
+            CalculateAmount(rowIdx)
         End Sub
 
-        Private Sub FillDescriptionField(productPanel As StackPanel, item As Dictionary(Of String, String))
-            Dim parentStack = TryCast(productPanel.Parent, StackPanel)
-            If parentStack Is Nothing OrElse parentStack.Children.Count < 2 Then Return
+        Private Sub AddNewCategoryWithSpecificName(catName As String)
+            AddNewCategoryUI()
 
-            Dim descPanel = TryCast(parentStack.Children(1), StackPanel)
-            If descPanel Is Nothing OrElse descPanel.Children.Count = 0 Then Return
+            Dim lastWrapper = TryCast(MainContainer.Children(MainContainer.Children.Count - 1), StackPanel)
+            If lastWrapper IsNot Nothing Then
+                Dim headerBorder = TryCast(lastWrapper.Children(0), Border)
+                Dim headerGrid = TryCast(headerBorder?.Child, Grid)
+                Dim nameTxt = TryCast(headerGrid?.Children(0), TextBox)
 
-            Dim descBorder = TryCast(descPanel.Children(0), Border)
-            If descBorder Is Nothing Then Return
-
-            Dim descTextBox = TryCast(descBorder.Child, TextBox)
-            If descTextBox IsNot Nothing AndAlso item.ContainsKey("Description") Then
-                descTextBox.Text = item("Description")
+                If nameTxt IsNot Nothing Then
+                    nameTxt.Text = If(String.IsNullOrWhiteSpace(catName), "New Category Group", catName)
+                End If
             End If
         End Sub
 
+        Private Function GetLatestItemsPanel() As StackPanel
+            If MainContainer.Children.Count = 0 Then Return Nothing
+
+            Dim lastWrapper = TryCast(MainContainer.Children(MainContainer.Children.Count - 1), StackPanel)
+            If lastWrapper Is Nothing OrElse lastWrapper.Children.Count < 2 Then Return Nothing
+
+            Return TryCast(lastWrapper.Children(1), StackPanel)
+        End Function
 #End Region
 
 #Region "Product Autocomplete"
@@ -573,7 +578,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             MainContainer.Children.Add(categoryWrapper)
 
             ' 8. ADD INITIAL ROW
-            AddProductInputUI(categoryItemsPanel)
+            'AddProductInputUI(categoryItemsPanel)
         End Sub
 
         ' The UI will Add ProductUI to the Interface
@@ -1322,17 +1327,19 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         ' Function for converting all of the product inputs to JSON Format before saving it and print it
         Private Function SubmitAllProductInputs() As String
             Dim flatList As New List(Of Dictionary(Of String, String))()
+
             For Each categoryWrapper As StackPanel In MainContainer.Children.OfType(Of StackPanel)()
 
                 Dim headerBorder = TryCast(categoryWrapper.Children(0), Border)
-                Dim headerGrid = TryCast(headerBorder.Child, Grid)
-                Dim categoryNameTxt = TryCast(headerGrid.Children(0), TextBox)
-                Dim currentCategoryName = categoryNameTxt.Text.Trim()
+                Dim headerGrid = TryCast(headerBorder?.Child, Grid)
+                Dim categoryNameTxt = TryCast(headerGrid?.Children(0), TextBox)
+                Dim currentCategoryName = If(categoryNameTxt IsNot Nothing, categoryNameTxt.Text.Trim(), "")
 
-                ' 3. CREATE A HEADER ROW MARKER
                 Dim headerRow As New Dictionary(Of String, String)()
                 headerRow("ProductName") = currentCategoryName
-                headerRow("IsCategoryHeader") = "True" '
+                headerRow("IsHeaderRow") = "True"
+                headerRow("IsCategoryHeader") = "True"
+                headerRow("ProductDescription") = ""
                 flatList.Add(headerRow)
 
                 Dim itemsPanel = TryCast(categoryWrapper.Children(1), StackPanel)
@@ -1345,33 +1352,33 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                     If productRow Is Nothing OrElse productRow.Children.Count < 8 Then Continue For
 
                     Dim itemData As New Dictionary(Of String, String)()
+                    itemData("IsHeaderRow") = "False"
                     itemData("IsCategoryHeader") = "False"
 
-                    ' Extract data using your index-based logic
+                    ' --- PRODUCT DATA ---
                     itemData("ProductName") = GetInputVal(productRow, 0)
                     itemData("Quantity") = GetInputVal(productRow, 1)
-                    itemData("Rate") = GetInputVal(productRow, 2)
+                    itemData("UnitPrice") = GetInputVal(productRow, 2)
                     itemData("TaxPercent") = GetInputVal(productRow, 3)
                     itemData("TaxValue") = GetInputVal(productRow, 4)
                     itemData("DiscountPercent") = GetInputVal(productRow, 5)
                     itemData("Discount") = GetInputVal(productRow, 6)
-                    itemData("Amount") = GetInputVal(productRow, 7).Replace("₱", "").Trim()
+                    itemData("LinePrice") = GetInputVal(productRow, 7).Replace("₱", "").Trim()
 
+                    ' --- DESCRIPTION DATA ---
                     Dim descStack = TryCast(outerStack.Children(1), StackPanel)
-                    Dim descTxt = TryCast(TryCast(descStack.Children(0), Border).Child, TextBox)
-                    Dim cleanDesc = descTxt.Text.Trim()
-                    itemData("Description") = If(cleanDesc.Contains("Optional"), "", cleanDesc)
+                    Dim descBorder = TryCast(descStack?.Children(0), Border)
+                    Dim descTxt = TryCast(descBorder?.Child, TextBox)
+                    Dim cleanDesc = If(descTxt IsNot Nothing, descTxt.Text.Trim(), "")
 
-                    Try
-                        Dim b64 = GetProduct.GetProductImageBase64(itemData("ProductName"))
-                        itemData("ProductImageBase64") = If(String.IsNullOrEmpty(b64), "", b64)
-                    Catch
-                        itemData("ProductImageBase64") = ""
-                    End Try
+                    itemData("ProductDescription") = If(cleanDesc.Contains("Optional"), "", cleanDesc)
 
+                    itemData("Description") = itemData("ProductDescription")
+
+                    ' Validation
                     If String.IsNullOrWhiteSpace(itemData("ProductName")) OrElse
                String.IsNullOrWhiteSpace(itemData("Quantity")) Then
-                        MessageBox.Show("Please fill in required fields for: " & itemData("ProductName"))
+                        MessageBox.Show("Please fill in the product name and quantity.")
                         Return Nothing
                     End If
 
@@ -1450,14 +1457,15 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 PreviewState.ResetPreview()
                 Dim data = PreviewState.CurrentPreview
 
-                data.DocumentTitle = "BILLING STATEMENTS"
-                data.BackButtonLabel = "Back to Billing"
+                data.DocumentTitle = "BILLING STATEMENT"
+                data.BackButtonLabel = "Back to Billing Statement"
                 data.CreatePath = "walkinorder"
 
                 data.DocumentNumber = txtBillingNumber.Text
                 data.DocumentDate = OrderDateVM.SelectedDate.Value.ToString("MMMM dd, yyyy")
                 data.IsEditMode = QuotesController.QuoteNumberExists(txtBillingNumber.Text)
 
+                data.ClientId = client.ClientID
                 data.ClientName = If(Not String.IsNullOrWhiteSpace(client.Company), client.Company, client.Name)
                 data.ClientAddress = client.BillingAddress
                 data.ClientContact = client.Phone
@@ -1471,11 +1479,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
                     Dim newItem As New OrderItems With {
                         .IsHeaderRow = isHeader,
-                        .Description = If(dict.ContainsKey("ProductName"), dict("ProductName"), ""),
+                        .ProductName = If(dict.ContainsKey("ProductName"), dict("ProductName"), ""),
                         .ProductDescription = If(isHeader, "", If(dict.ContainsKey("Description"), dict("Description"), "")),
                         .Quantity = If(isHeader, "", If(dict.ContainsKey("Quantity"), dict("Quantity"), "0")),
-                        .UnitPrice = If(isHeader, "", "₱ " & If(dict.ContainsKey("Rate"), dict("Rate"), "0.00")),
-                        .LinePrice = If(isHeader, "", "₱ " & If(dict.ContainsKey("Amount"), dict("Amount"), "0.00")),
+                        .UnitPrice = If(isHeader, "", "₱ " & If(dict.ContainsKey("UnitPrice"), dict("UnitPrice"), "0.00")),
+                        .LinePrice = If(isHeader, "", "₱ " & If(dict.ContainsKey("LinePrice"), dict("LinePrice"), "0.00")),
                         .ProductDescriptionVisibility = If(isHeader OrElse Not dict.ContainsKey("Description") OrElse String.IsNullOrEmpty(dict("Description")), Visibility.Collapsed, Visibility.Visible)
                     }
 
@@ -1488,9 +1496,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
                 Dim selectedTaxType As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
 
-                data.Subtotal = "₱" & BLSubtotalAmountCache.Replace("₱", "").Trim()
+                data.Subtotal = "₱" & WalkinBillingStatementDetails.BLSubtotalAmountCache.Replace("₱", "").Trim()
                 data.VatValue = txtTotalTax.Text
                 data.TotalCost = txtGrandTotal.Text
+                data.DiscountValue = txtTotalDiscount.Text
+                data.DiscountSelection = txtDiscountSelection.Text
 
                 If selectedTaxType = "Exclusive" Then
                     data.VatLabel = "VAT EXCLUSIVE"
@@ -1500,8 +1510,17 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                     data.SubtotalLabel = "SUBTOTAL VAT IN."
                 End If
 
+                data.VatType = selectedTaxType
                 data.Notes = txtBillingNote.Text
                 data.WarrantyText = "Dream PC Build and IT Solutions Inc. offers 1 year warranty for this cost estimate..."
+                data.WarehouseName = ComboBoxWarehouse.Text
+
+                'Currently Hardcoded (Subject to Change)
+                If ComboBoxWarehouse.SelectedIndex >= 0 Then
+                    data.WarehouseID = If(ComboBoxWarehouse.SelectedIndex = 0, 12, 13)
+                Else
+                    data.WarehouseID = data.WarehouseID
+                End If
 
                 ViewLoader.DynamicView.NavigateToView("universaleditablepreviewdocument", Me)
 
@@ -1530,46 +1549,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 Return Nothing
             End Try
         End Function
-
-        Private Sub BtnAddClient_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddClient.Click
-            ViewLoader.DynamicView.NavigateToView("newwalkinclient", Me)
-        End Sub
-        Private Sub BtnReset_Click(sender As Object, e As RoutedEventArgs) Handles BtnReset.Click
-            ClearAllFields()
-            ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
-        End Sub
-
-        Private Sub LoadCachedBillingData()
-            If Application.Current.Properties.Contains("BillingCache") Then
-                Dim cachedData As BillingModel = DirectCast(Application.Current.Properties("BillingCache"), BillingModel)
-
-                txtBillingNumber.Text = cachedData.BillingNumber
-                RemoveHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
-
-                If Not String.IsNullOrEmpty(cachedData.ClientID) Then
-                    Dim clientList = ClientController.SearchClient(cachedData.ClientID)
-                    Dim targetClient = clientList.FirstOrDefault(Function(c) c.ClientID = cachedData.ClientID)
-
-                    If targetClient IsNot Nothing Then
-                        txtSearchCustomer.Text = targetClient.Name
-
-                        _selectedClient = targetClient
-                        UpdateSupplierDetails(_selectedClient)
-                    End If
-                End If
-                AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
-
-                If Not String.IsNullOrEmpty(cachedData.OrderItems) Then
-                    ClearAllRows()
-                    BLItemsCache = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(cachedData.OrderItems)
-                    LoadCachedBillingItems()
-                End If
-
-                Application.Current.Properties.Remove("BillingCache")
-
-                AutoCompletePopup.IsOpen = False
-            End If
-        End Sub
 #End Region
 
         Private Function GetInputVal(parent As StackPanel, index As Integer) As String

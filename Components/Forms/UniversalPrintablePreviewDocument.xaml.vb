@@ -7,6 +7,7 @@ Imports DocumentFormat.OpenXml.Bibliography
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
+Imports DPC.DPC.Data.Models
 Imports DPC.DPC.Views.Sales.Quotes
 Imports MaterialDesignThemes.Wpf
 Imports MongoDB.Bson
@@ -469,31 +470,60 @@ Namespace DPC.Components.Forms
             Dim mysqlValidityDate As String = validityDate.ToString("yyyy-MM-dd")
 
             Dim success As Boolean = False
-            Dim quoteNum = data.DocumentNumber
+            Dim docNum = data.DocumentNumber
 
-            If QuotesController.QuoteNumberExists(quoteNum) Then
-                ' UPDATE
-                success = QuotesController.UpdateQuote(
-            quoteNum, "", mysqlDocDate, mysqlValidityDate,
-            data.VatType, data.DiscountSelection,
-            data.ClientId.ToString(), data.ClientName,
-            data.WarehouseID.ToString(), data.WarehouseName,
-            json, data.Notes, data.VatValue, data.DiscountValue,
-            data.TotalCost, data.PreparedBy, data.ApprovedBy, data.PaymentTerms)
+            If docNum.StartsWith("BL-") OrElse docNum.StartsWith("GB-") Then
+                ' --- BILLING STATEMENT BRANCH ---
+                Dim bm As New BillingModel With {
+                    .BillingNumber = docNum,
+                    .DRNo = "",
+                    .BillingDate = mysqlDocDate,
+                    .ClientID = data.ClientId.ToString(),
+                    .ClientName = data.ClientName,
+                    .OrderItems = json,
+                    .WarehouseID = data.WarehouseID.ToString(),
+                    .WarehouseName = data.WarehouseName,
+                    .TaxProperty = data.VatType,
+                    .DiscountProperty = data.DiscountSelection,
+                    .TotalTax = data.VatValue,
+                    .TotalDiscount = data.DiscountValue,
+                    .TotalAmount = data.TotalCost,
+                    .PreparedBy = data.PreparedBy,
+                    .ApprovedBy = data.ApprovedBy,
+                    .BillingNote = data.Notes,
+                    .PaymentTerms = data.PaymentTerms
+                }
+
+                If BillingController.BillingNumberExists(docNum) Then
+                    success = BillingController.UpdateBillingStatement(bm)
+                Else
+                    success = BillingController.InsertBillingStatement(bm)
+                End If
             Else
-                ' INSERT
-                success = QuotesController.InsertQuote(
-            quoteNum, "", mysqlDocDate, mysqlValidityDate,
-            data.VatType, data.DiscountSelection,
-            data.ClientId.ToString(), data.ClientName,
-            data.WarehouseID.ToString(), data.WarehouseName,
-            json, data.Notes, data.VatValue, data.DiscountValue,
-            data.TotalCost, data.PreparedBy, data.ApprovedBy, data.PaymentTerms)
+                Dim validityStr As String = validityDate.ToString("yyyy-MM-dd")
+
+                If QuotesController.QuoteNumberExists(docNum) Then
+                    success = QuotesController.UpdateQuote(
+                    docNum, "", mysqlDocDate, mysqlDocDate,
+                    data.VatType, data.DiscountSelection,
+                    data.ClientId.ToString(), data.ClientName,
+                    data.WarehouseID.ToString(), data.WarehouseName,
+                    json, data.Notes, data.VatValue, data.DiscountValue,
+                    data.TotalCost, data.PreparedBy, data.ApprovedBy, data.PaymentTerms)
+                Else
+                    success = QuotesController.InsertQuote(
+                    docNum, "", mysqlDocDate, mysqlDocDate,
+                    data.VatType, data.DiscountSelection,
+                    data.ClientId.ToString(), data.ClientName,
+                    data.WarehouseID.ToString(), data.WarehouseName,
+                    json, data.Notes, data.VatValue, data.DiscountValue,
+                    data.TotalCost, data.PreparedBy, data.ApprovedBy, data.PaymentTerms)
+                End If
             End If
 
             If success Then
                 PreviewState.ResetPreview()
-                ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
+                ViewLoader.DynamicView.NavigateToView(data.CreatePath, Me)
             End If
         End Sub
 

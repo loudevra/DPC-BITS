@@ -21,9 +21,9 @@
         ' Financial Details
         Public Property TaxProperty As String
         Public Property DiscountProperty As String
-        Public Property TotalTax As Decimal
-        Public Property TotalDiscount As Decimal
-        Public Property TotalAmount As Decimal
+        Public Property TotalTax As String
+        Public Property TotalDiscount As String
+        Public Property TotalAmount As String
 
         ' Bank & Account Details
         Public Property BankDetails As String
@@ -32,6 +32,7 @@
 
         ' Items, Logistics & Images
         Public Property OrderItems As String
+        Public Property WarehouseName As String
         Public Property WarehouseID As Integer
         Public Property Base64img As String ' For the signature/stamp
 

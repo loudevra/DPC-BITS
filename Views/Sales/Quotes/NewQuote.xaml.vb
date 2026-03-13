@@ -416,7 +416,6 @@ Namespace DPC.Views.Sales.Quotes
             lblPageTitle.Text = model.EditLabel
             lblButton.Text = model.EditButtonLabel
             txtQuoteNumber.Text = model.DocumentNumber
-            txtSearchCustomer.Text = model.ClientName
             txtQuoteNote.Text = model.Notes
 
 
@@ -455,24 +454,29 @@ Namespace DPC.Views.Sales.Quotes
         Private Sub FillClientsFieldFromModel(model As UniversalPreviewModel)
             RemoveHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
 
-            txtSearchCustomer.Text = model.ClientName
-
-            Dim foundClients = ClientController.SearchClient(model.ClientName)
-            Dim match = foundClients.FirstOrDefault(Function(c) c.Name = model.ClientName OrElse c.Company = model.ClientName)
+            Dim foundClients = ClientController.SearchClient(model.ClientId)
+            Dim match = foundClients.FirstOrDefault(Function(c) c.ClientID.ToString() = model.ClientId.ToString())
 
             If match IsNot Nothing Then
                 _selectedClient = match
-                model.ClientId = _selectedClient.ClientID
-
+                txtSearchCustomer.Text = _selectedClient.Name
                 UpdateSupplierDetails(_selectedClient)
             Else
-                TxtClientDetails.Text = $"Name: {model.ClientName}{Environment.NewLine}" &
-                               $"Contact: {model.ClientContact}{Environment.NewLine}" &
-                               $"Email: {model.ClientEmail}{Environment.NewLine}" &
-                               $"Address: {model.ClientAddress}"
+                Dim matchByName = foundClients.FirstOrDefault(Function(c) c.Name = model.ClientName OrElse c.Company = model.ClientName)
+
+                If matchByName IsNot Nothing Then
+                    _selectedClient = matchByName
+                    txtSearchCustomer.Text = _selectedClient.Name
+                    UpdateSupplierDetails(_selectedClient)
+                Else
+                    txtSearchCustomer.Text = model.ClientName
+                    TxtClientDetails.Text = $"Name: {model.ClientName}{Environment.NewLine}" &
+                                   $"Contact: {model.ClientContact}{Environment.NewLine}" &
+                                   $"Email: {model.ClientEmail}{Environment.NewLine}" &
+                                   $"Address: {model.ClientAddress}"
+                End If
             End If
 
-            ' 4. Re-enable the handler
             AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
         End Sub
 
@@ -1614,6 +1618,7 @@ Namespace DPC.Views.Sales.Quotes
                 data.DocumentValidity = actualValidityDate.ToString("MMMM dd, yyyy")
                 data.IsEditMode = QuotesController.QuoteNumberExists(txtQuoteNumber.Text)
 
+                data.ClientId = client.ClientID
                 data.ClientName = If(Not String.IsNullOrWhiteSpace(client.Company), client.Company, client.Name)
                 data.ClientAddress = client.BillingAddress
                 data.ClientContact = client.Phone

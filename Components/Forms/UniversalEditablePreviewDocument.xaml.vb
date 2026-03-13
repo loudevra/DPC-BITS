@@ -306,6 +306,7 @@ Namespace DPC.Components.Forms
             data.InstallationFee = Installation.Text
             data.TotalCost = TotalCost.Text
             data.ApprovedBy = cmbApproved.Text
+            data.PaymentTerms = If(String.IsNullOrWhiteSpace(cmbTerms.Text), "None", cmbTerms.Text)
 
             '====================================================
             'WILL BE UPDATED AFTER PRINT PREVIEW IS IMPLEMENTED
