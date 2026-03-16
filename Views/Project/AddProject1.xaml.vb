@@ -169,6 +169,14 @@ Namespace DPC.Views.Project
             End If
         End Sub
 
+        Private Sub EditorBox_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim box As RichTextBox = sender
+            Dim range As New TextRange(box.Document.ContentStart, box.Document.ContentEnd)
+            Dim pos = box.CaretPosition
+            range.Text = range.Text.ToUpper()
+            box.CaretPosition = pos
+        End Sub
+
         Private Sub ClearFields()
             txtName.Clear()
             txtCustomer.Clear()
