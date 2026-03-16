@@ -183,8 +183,9 @@
                         </Grid>
                     </Border>
 
-                    <StackPanel x:Name="MainContainer" Orientation="Vertical">
-                    </StackPanel>
+                    <ScrollViewer MaxHeight="1070" VerticalScrollBarVisibility="Auto">
+                        <StackPanel x:Name="MainContainer" Background="Transparent"/>
+                    </ScrollViewer>
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
