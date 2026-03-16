@@ -101,13 +101,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
         Private Sub GenerateDeliveryReceipt_Click(sender As Object, e As RoutedEventArgs)
 
-            If Not AreAllSerialsCompleted() Then
-                MessageBox.Show("Some items have missing serial numbers. Please ensure all items are 'COMPLETE' before generating the receipt.",
-                        "Incomplete Serials",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Warning)
-                Return
-            End If
+            'If Not AreAllSerialsCompleted() Then
+            '    MessageBox.Show("Some items have missing serial numbers. Please ensure all items are 'COMPLETE' before generating the receipt.",
+            '            "Incomplete Serials",
+            '            MessageBoxButton.OK,
+            '            MessageBoxImage.Warning)
+            '    Return
+            'End If
 
             DeliveryDetails.DRReferenceInvoice = txtInvoiceNumber.Text
             DeliveryDetails.DRNumber = txtDeliveryNumber.Text

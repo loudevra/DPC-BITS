@@ -3,6 +3,7 @@ Imports System.Globalization
 Imports System.IO
 Imports System.Windows
 Imports System.Windows.Controls.Primitives
+Imports System.Windows.Data
 Imports DPC.DPC.Components.Forms
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
@@ -10,6 +11,7 @@ Imports DPC.DPC.Data.Model
 Imports MaterialDesignThemes.Wpf
 Imports Microsoft.Win32
 Imports SkiaSharp.Views.WPF
+Imports Newtonsoft.Json
 
 Namespace DPC.Views.Sales.Quotes
     Public Class CostEstimate
@@ -36,6 +38,8 @@ Namespace DPC.Views.Sales.Quotes
         Private Const BaseItemHeight As Double = 55
         Private Const DescriptionLineHeight As Double = 15
         Private Const ReservedSpaceForDescription As Double = 30
+        Private categorizedItems As List(Of Dictionary(Of String, Object))
+        Private Const CategoryHeaderHeight As Double = 40
 #End Region
 
 #Region "2. Initialization & Loading"
@@ -160,6 +164,9 @@ Namespace DPC.Views.Sales.Quotes
         Private Sub RecalculatePagination()
             _paginatedPages.Clear()
 
+            ' Ensure allItems is fresh from the cache
+            allItems = CostEstimateDetails.CEQuoteItemsCache
+
             If allItems Is Nothing OrElse allItems.Count = 0 Then
                 _paginatedPages.Add(New List(Of Integer))
                 totalPages = 1
@@ -169,17 +176,18 @@ Namespace DPC.Views.Sales.Quotes
             Dim pageIndices As New List(Of Integer)
             Dim currentHeight As Double = 0
 
-            ' LOOP DIRECTLY THROUGH ALL ITEMS
+            ' Loop through all entries (Headers and Products) in one single list
             For i As Integer = 0 To allItems.Count - 1
                 Dim h As Double = CalculateItemHeight(allItems(i))
 
+                ' Check for Page Break
                 If currentHeight + h > PageMaxHeight Then
                     _paginatedPages.Add(New List(Of Integer)(pageIndices))
                     pageIndices.Clear()
-                    currentHeight = h
-                Else
-                    currentHeight += h
+                    currentHeight = 0
                 End If
+
+                currentHeight += h
                 pageIndices.Add(i)
             Next
 
@@ -187,7 +195,7 @@ Namespace DPC.Views.Sales.Quotes
                 _paginatedPages.Add(pageIndices)
             End If
 
-            ' Check if Footer (250px) clips
+            ' Safety check: If total items fit but footer doesn't, add one more page
             If currentHeight > (PageMaxHeight - FooterSectionHeight) Then
                 _paginatedPages.Add(New List(Of Integer))
             End If
@@ -196,6 +204,10 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Function CalculateItemHeight(item As Dictionary(Of String, String)) As Double
+            If item.ContainsKey("IsCategoryHeader") AndAlso item("IsCategoryHeader") = "True" Then
+                Return CategoryHeaderHeight
+            End If
+
             Dim h As Double = BaseItemHeight
             If item.ContainsKey("Description") AndAlso Not String.IsNullOrWhiteSpace(item("Description")) Then
                 Dim text As String = item("Description").Trim()
@@ -212,14 +224,17 @@ Namespace DPC.Views.Sales.Quotes
             currentPageIndex = index
             itemDataSource.Clear()
 
-            ' Just add the items for this page index
+            ' Simply get the indices stored for this page
             Dim indices = _paginatedPages(index)
+
             For Each idx In indices
+                ' CreateVisualItem already handles the check for IsCategoryHeader
                 itemDataSource.Add(CreateVisualItem(allItems(idx)))
             Next
 
             dataGrid.ItemsSource = itemDataSource
 
+            ' Standard UI Updates
             Dim isLastPage As Boolean = (currentPageIndex = totalPages - 1)
             SetFooterVisibility(isLastPage)
 
@@ -242,36 +257,60 @@ Namespace DPC.Views.Sales.Quotes
 
 #Region "4. Item & Group Processing"
         Private Function CreateVisualItem(item As Dictionary(Of String, String)) As OrderItems
+            ' 1. Check if this is a Category Header first
+            Dim isHeader As Boolean = item.ContainsKey("IsCategoryHeader") AndAlso item("IsCategoryHeader") = "True"
+
+            ' 2. Initialize variables with defaults
             Dim rate As Decimal = 0
             Dim linePrice As Decimal = 0
-            Decimal.TryParse(item("Rate").Replace("₱", "").Replace(",", "").Trim(), rate)
-            Decimal.TryParse(item("Amount").Replace("₱", "").Replace(",", "").Trim(), linePrice)
-
+            Dim qty As String = ""
+            Dim prodName As String = If(item.ContainsKey("ProductName"), item("ProductName"), "")
+            Dim desc As String = ""
+            Dim vis As Visibility = Visibility.Collapsed
             Dim img As BitmapImage = Nothing
-            If showProductImages Then
-                If item.ContainsKey("ProductImageBase64") AndAlso Not String.IsNullOrEmpty(item("ProductImageBase64")) Then
-                    img = Base64ToBitmapImage(item("ProductImageBase64"))
-                Else
-                    img = GetProductImageFromDatabase(item("ProductName"))
+
+            ' 3. ONLY parse prices and images if it's NOT a header
+            If Not isHeader Then
+                ' Safety parsing for Rate
+                If item.ContainsKey("Rate") Then
+                    Decimal.TryParse(item("Rate").Replace("₱", "").Replace(",", "").Trim(), rate)
+                End If
+
+                ' Safety parsing for Amount
+                If item.ContainsKey("Amount") Then
+                    Decimal.TryParse(item("Amount").Replace("₱", "").Replace(",", "").Trim(), linePrice)
+                End If
+
+                ' Set Quantity
+                qty = If(item.ContainsKey("Quantity"), item("Quantity"), "0")
+
+                ' Handle Description
+                If item.ContainsKey("Description") AndAlso Not String.IsNullOrWhiteSpace(item("Description")) Then
+                    desc = item("Description").Trim()
+                    vis = Visibility.Visible
+                End If
+
+                ' Handle Image
+                If showProductImages Then
+                    If item.ContainsKey("ProductImageBase64") AndAlso Not String.IsNullOrEmpty(item("ProductImageBase64")) Then
+                        img = Base64ToBitmapImage(item("ProductImageBase64"))
+                    Else
+                        img = GetProductImageFromDatabase(prodName)
+                    End If
                 End If
             End If
 
-            Dim desc As String = ""
-            Dim vis As Visibility = Visibility.Collapsed
-            If item.ContainsKey("Description") AndAlso Not String.IsNullOrWhiteSpace(item("Description")) Then
-                desc = item("Description").Trim()
-                vis = Visibility.Visible
-            End If
-
+            ' 4. Return the object (Note: Ensure your OrderItems class has the IsHeaderRow property)
             Return New OrderItems With {
-                .Quantity = item("Quantity"),
-                .Description = item("ProductName"),
-                .ProductDescription = desc,
-                .ProductDescriptionVisibility = vis,
-                .UnitPrice = $"₱ {rate:N2}",
-                .LinePrice = $"₱ {linePrice:N2}",
-                .ProductImage = img
-            }
+            .Quantity = qty,
+            .Description = prodName,
+            .ProductDescription = desc,
+            .ProductDescriptionVisibility = vis,
+            .UnitPrice = If(isHeader, "", $"₱ {rate:N2}"),
+            .LinePrice = If(isHeader, "", $"₱ {linePrice:N2}"),
+            .ProductImage = img,
+            .IsHeaderRow = isHeader ' Add this property to your OrderItems class!
+        }
         End Function
 #End Region
 
@@ -577,5 +616,20 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 #End Region
 
+    End Class
+
+    Public Class StringToUpperConverter
+        Implements IValueConverter
+
+        Public Function Convert(value As Object, targetType As Type, parameter As Object, culture As CultureInfo) As Object Implements IValueConverter.Convert
+            If value IsNot Nothing Then
+                Return value.ToString().ToUpper()
+            End If
+            Return ""
+        End Function
+
+        Public Function ConvertBack(value As Object, targetType As Type, parameter As Object, culture As CultureInfo) As Object Implements IValueConverter.ConvertBack
+            Throw New NotImplementedException()
+        End Function
     End Class
 End Namespace

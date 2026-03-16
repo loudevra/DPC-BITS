@@ -54,7 +54,7 @@
                                     </Grid.ColumnDefinitions>
                                     <TextBox x:Name="TxtSupplier" Grid.Column="0"
                                              Style="{StaticResource RoundedTextboxStyle}" Margin="20,0,0,0"
-                                             VerticalAlignment="Top" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold" />
+                                             VerticalAlignment="Top" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold" CharacterCasing="Upper"/>
                                     <materialDesign:PackIcon Grid.Column="1" Kind="Search" Foreground="Black" Width="24" Height="24" Margin="0,0,5,0" VerticalAlignment="Center"/>
 
                                 </Grid>
@@ -100,7 +100,7 @@
                             <Border Style="{StaticResource RoundedBorderStyle}" Padding="20"/>
 
                             <!-- TextBox on top -->
-                            <TextBox x:Name="TxtSupplierDetails" Style="{StaticResource RoundedTextboxStyle}" Width="Auto" Height="130" Margin="15" VerticalContentAlignment="Top" IsReadOnly="True" TextWrapping="Wrap" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"/>
+                            <TextBox x:Name="TxtSupplierDetails" Style="{StaticResource RoundedTextboxStyle}" Width="Auto" Height="130" Margin="15" VerticalContentAlignment="Top" IsReadOnly="True" TextWrapping="Wrap" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold" CharacterCasing="Upper"/>
                         </Grid>
                     </StackPanel>
 
@@ -124,7 +124,7 @@
 
                                     <TextBlock Text="Invoice Number:" FontFamily="Lexend" FontSize="14" Foreground="#474747" FontWeight="SemiBold" Margin="0,0,0,5"/>
                                     <Border Style="{StaticResource RoundedBorderStyle}" Width="Auto" Margin="0,0,10,10" Padding="0,1">
-                                        <TextBox x:Name="InvoiceNumber" IsReadOnly="True" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747"/>
+                                        <TextBox x:Name="InvoiceNumber" IsReadOnly="True" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747" CharacterCasing="Upper"/>
                                     </Border>
 
                                     <TextBlock Text="Order Date:" FontFamily="Lexend" FontSize="14" FontWeight="SemiBold" Foreground="#474747" Margin="0,0,0,5"/>

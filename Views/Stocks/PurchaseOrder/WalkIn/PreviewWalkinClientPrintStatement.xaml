@@ -308,10 +308,14 @@
                                                     </Grid.ColumnDefinitions>
 
                                                     <!--Signature-->
-                                                    <Border Grid.Column="0" BorderBrush="#090909" BorderThickness="0,0,1,0">
-                                                        <TextBlock FontWeight="SemiBold" FontFamily="Lexend" Text="CLIENT PRINTED NAME AND SIGNATURE" FontSize="12" Foreground="#090909" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="4"/>
-
-
+                                                    <Border Grid.Column="0" BorderBrush="Black" BorderThickness="1,0,1,1" Padding="10">
+                                                        <TextBlock Text="CLIENT NAME AND SIGNATURE" 
+                                                                    FontWeight="Bold" 
+                                                                    FontSize="12" 
+                                                                    TextWrapping="Wrap" 
+                                                                    VerticalAlignment="Center" 
+                                                                    HorizontalAlignment="Center" 
+                                                                    TextAlignment="Center"/>
                                                     </Border>
 
                                                     <!--Upload Signature-->

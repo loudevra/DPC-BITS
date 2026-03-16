@@ -42,7 +42,7 @@
         <Grid Grid.Row="0" Margin="25,20,25,10">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                 <materialDesign:PackIcon Kind="Calculator" Width="30" Height="30" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                <TextBlock Text="Cost Estimate" FontWeight="SemiBold" FontSize="25" Foreground="#474747" VerticalAlignment="Center"/>
+                <TextBlock x:Name="lblPageTitle" Text="Cost Estimate" FontWeight="SemiBold" FontSize="25" Foreground="#474747" VerticalAlignment="Center"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -143,6 +143,9 @@
                             <ComboBoxItem Content="1 Week"/>
                             <ComboBoxItem Content="2 Weeks"/>
                             <ComboBoxItem Content="1 Month"/>
+                            <ComboBoxItem Content="2 Months"/>
+                            <ComboBoxItem Content="6 Months"/>
+                            <ComboBoxItem Content="1 Year"/>
                         </ComboBox>
 
                         <TextBlock Text="Note:" FontWeight="SemiBold" Margin="0,0,0,5"/>
@@ -173,10 +176,16 @@
                         <StackPanel x:Name="MainContainer" Background="Transparent"/>
                     </ScrollViewer>
 
-                    <Button Click="AddNewRow_Click" HorizontalAlignment="Center" Margin="0,15,0,0" Style="{StaticResource MaterialDesignOutlinedButton}" BorderBrush="#1D3242" Foreground="#1D3242" Height="35">
+                    <!--<Button Click="AddNewRow_Click" HorizontalAlignment="Center" Margin="0,15,0,0" Style="{StaticResource MaterialDesignOutlinedButton}" BorderBrush="#1D3242" Foreground="#1D3242" Height="35">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="PlaylistAdd" Margin="0,0,5,0"/>
                             <TextBlock Text="Add New Item Row"/>
+                        </StackPanelz
+                    </Button>-->
+                    <Button Click="AddNewCategory_Click" HorizontalAlignment="Center" Margin="0,15,0,0" Style="{StaticResource MaterialDesignOutlinedButton}" BorderBrush="#1D3242" Foreground="#1D3242" Height="35">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="CategoryPlusOutline" Margin="0,0,5,0"/>
+                            <TextBlock Text="New Category"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -242,7 +251,7 @@
                         <Button x:Name="GenerateCostEstimate" Click="GenerateCostEstimate_Click" Margin="0,15,0,0" Height="55" Background="#1D5642" BorderBrush="#1D5642" Style="{StaticResource MaterialDesignRaisedButton}" materialDesign:ButtonAssist.CornerRadius="27">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="FileSend" Width="24" Height="24" Margin="0,0,10,0" VerticalAlignment="Center" Foreground="White"/>
-                                <TextBlock x:Name="GovCEButton" Text="GENERATE QUOTATION" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" Foreground="White"/>
+                                <TextBlock x:Name="lblButton" Text="GENERATE QUOTATION" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" Foreground="White"/>
                             </StackPanel>
                         </Button>
                     </StackPanel>

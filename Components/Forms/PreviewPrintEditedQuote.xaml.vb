@@ -40,18 +40,18 @@ Namespace DPC.Components.Forms
             QuoteNumber.Text = CostEstimateDetails.CEQuoteNumberCache
             QuoteDate.Text = CostEstimateDetails.CEQuoteDateCache
             QuoteValidityDate.Text = CostEstimateDetails.CEValidUntilDate ' Changed the Cache name while the previous cache variable would be stay
-            Subtotal.Text = CostEstimateDetails.CESubTotalCache
+            Subtotal.Text = CostEstimateDetails.CETotalBaseAmount
             TotalCost.Text = CostEstimateDetails.CEGrandTotalCost
             VAT12.Text = CostEstimateDetails.CETotalTaxValueCache
             Delivery.Text = "₱ " & CostEstimateDetails.CEDeliveryCost.ToString("N2")
             itemOrder = CostEstimateDetails.CEQuoteItemsCache
             base64Image = CostEstimateDetails.CEImageCache
             tempImagePath = CostEstimateDetails.CEPathCache
-            ClientNameBox.Text = CostEstimateDetails.CEClientName
-            AddressLineOne.Text = CostEstimateDetails.CEAddress & ", " & CostEstimateDetails.CECity    ' -- important when editing
-            AddressLineTwo.Text = CostEstimateDetails.CERegion & ", " & CostEstimateDetails.CECountry    ' -- important when editing
-            PhoneBox.Text = "+63 " & FormatPhoneWithSpaces(CostEstimateDetails.CEPhone)
-            RepresentativeBox.Text = CostEstimateDetails.CERepresentative
+            'ClientNameBox.Text = CostEstimateDetails.CEClientName
+            'AddressLineOne.Text = CostEstimateDetails.CEAddress & ", " & CostEstimateDetails.CECity    ' -- important when editing
+            'AddressLineTwo.Text = CostEstimateDetails.CERegion & ", " & CostEstimateDetails.CECountry    ' -- important when editing
+            'PhoneBox.Text = "+63 " & FormatPhoneWithSpaces(CostEstimateDetails.CEPhone)
+            'RepresentativeBox.Text = CostEstimateDetails.CERepresentative
             noteBox.Text = CostEstimateDetails.CEnoteTxt
             remarksBox.Text = CostEstimateDetails.CEremarksTxt
             Term1.Text = CostEstimateDetails.CETerm1
@@ -75,6 +75,7 @@ Namespace DPC.Components.Forms
             Warranty.Text = CostEstimateDetails.CEWarranty
             DeliveryMobilization.Text = CostEstimateDetails.CEDeliveryMobilization
             CNIdentifier.Text = CostEstimateDetails.CECNIndetifier
+            PopulateHeaderDetails()
 
             ' Check if the terms is enabled
             If CostEstimateDetails.CEisCustomTerm = True Then
@@ -114,6 +115,33 @@ Namespace DPC.Components.Forms
 
             ' Display the data in the DataGrid
             dataGrid.ItemsSource = itemDataSource
+        End Sub
+
+        Private Sub PopulateHeaderDetails()
+            Try
+                Dim clientBlock = TryCast(Me.FindName("SubmittedToClient"), TextBlock)
+                Dim addressBlock = TryCast(Me.FindName("SubmittedToAddress"), TextBlock)
+                Dim emailBlock = TryCast(Me.FindName("SubmittedToEmail"), TextBlock)
+                Dim contactBlock = TryCast(Me.FindName("SubmittedToNumber"), TextBlock)
+
+                If clientBlock IsNot Nothing Then
+                    clientBlock.Text = If(Not String.IsNullOrWhiteSpace(CostEstimateDetails.CECompanyName), CostEstimateDetails.CECompanyName, CostEstimateDetails.CEClientName)
+                End If
+
+                If addressBlock IsNot Nothing Then
+                    Dim parts As New List(Of String)
+                    If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CEAddress) Then parts.Add(CostEstimateDetails.CEAddress)
+                    If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CECity) Then parts.Add(CostEstimateDetails.CECity)
+                    If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CERegion) Then parts.Add(CostEstimateDetails.CERegion)
+                    If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CECountry) Then parts.Add(CostEstimateDetails.CECountry)
+                    addressBlock.Text = String.Join(", ", parts)
+                End If
+
+                If emailBlock IsNot Nothing Then emailBlock.Text = CostEstimateDetails.CEEmail
+                If contactBlock IsNot Nothing Then contactBlock.Text = CostEstimateDetails.CEPhone
+            Catch ex As Exception
+                Debug.WriteLine("Header Error: " & ex.Message)
+            End Try
         End Sub
 
         Private Function FormatPhoneWithSpaces(raw As String) As String

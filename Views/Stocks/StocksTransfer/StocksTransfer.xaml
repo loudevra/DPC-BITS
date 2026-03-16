@@ -73,7 +73,7 @@
                         </StackPanel>
                         <Border Style="{StaticResource RoundedBorderStyle}">
                             <!--Product Name Value is here!-->
-                            <TextBox x:Name="TxtProductQty" Style="{StaticResource RoundedTextboxStyle}" PreviewTextInput="TxtProductQty_PreviewTextInput"/>
+                            <TextBox x:Name="TxtProductQty" Style="{StaticResource RoundedTextboxStyle}" PreviewTextInput="TxtProductQty_PreviewTextInput" CharacterCasing="Upper"/>
                         </Border>
                         <TextBlock x:Name="maxUnits" Margin="5,5,0,0"/>
                     </StackPanel>

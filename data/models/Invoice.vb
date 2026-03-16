@@ -6,7 +6,11 @@
     End Class
 
     Public Class OrderItems
-        Public Property Quantity As String        ' ✅ Changed from Integer to String
+        Public Property IsHeaderRow As Boolean = False
+        Public Property IsSubotalRow As Boolean = False
+        Public Property CategoryName As String
+        Public Property ProductName As String
+        Public Property Quantity As String
         Public Property Description As String
         Public Property UnitPrice As String
         Public Property LinePrice As String

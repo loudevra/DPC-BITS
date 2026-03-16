@@ -110,7 +110,7 @@
 
                         <TextBlock Grid.Row="1" Text="Delivery Number:" Margin="0,0,0,5"/>
                         <Border Grid.Row="2" Style="{StaticResource RoundedBorderStyle}" Height="35" Margin="0,0,0,15" BorderBrush="#AEAEAE" BorderThickness="1">
-                            <TextBox x:Name="txtDeliveryNumber" IsReadOnly="True" BorderThickness="0" Background="Transparent" VerticalContentAlignment="Center" Padding="10,0"/>
+                            <TextBox x:Name="txtDeliveryNumber" IsReadOnly="True" BorderThickness="0" Background="Transparent" VerticalContentAlignment="Center" Padding="10,0" />
                         </Border>
 
                         <TextBlock Grid.Row="3" Text="Related Billing (Invoice):" Margin="0,0,0,5"/>
@@ -120,6 +120,7 @@
                                      BorderThickness="0" 
                                      Background="Transparent" 
                                      VerticalContentAlignment="Center" 
+                                     CharacterCasing="Upper"
                                      Padding="10,0"/>
                         </Border>
 
@@ -151,7 +152,8 @@
                      Background="Transparent" 
                      Padding="10" 
                      VerticalContentAlignment="Top"
-                     VerticalAlignment="Stretch"/>
+                     VerticalAlignment="Stretch"
+                     CharacterCasing="Upper"/>
                         </Border>
                     </Grid>
                 </Border>

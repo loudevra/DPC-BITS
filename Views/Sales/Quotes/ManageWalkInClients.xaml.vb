@@ -7,6 +7,7 @@ Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
 Imports DPC.DPC.Data.Models
 Imports MySql.Data.MySqlClient
+Imports Newtonsoft.Json
 
 Namespace DPC.Views.Sales.Quotes
     Public Class ManageWalkInClients
@@ -93,25 +94,69 @@ Namespace DPC.Views.Sales.Quotes
         ''' Logic for the "Edit" button inside the DataGrid rows
         ''' </summary>
         Private Sub OpenEditStatement(sender As Object, e As RoutedEventArgs)
-            Dim statement As BillingModel = TryCast(dataGrid.SelectedItem, BillingModel)
+            Dim selectedQuote As BillingModel = TryCast(dataGrid.SelectedItem, BillingModel)
 
-            If statement IsNot Nothing Then
-                Dim cache = GetCacheModule()
-                ' Assign billing-specific fields to cache
-                cache.BillingNumber = statement.BillingNumber
-                cache.ClientID = statement.ClientID
-                cache.CompanyRep = statement.CompanyRep
-                cache.BillingDate = statement.BillingDate
-                cache.OrderItems = statement.OrderItems
-                cache.WarehouseID = statement.WarehouseID
-                cache.TotalDiscount = statement.TotalDiscount
-                cache.TotalAmount = statement.TotalAmount
-                cache.DateAdded = statement.DateAdded
-                ' Add other fields as necessary...
+            If selectedQuote IsNot Nothing Then
+                PreviewState.ResetPreview()
 
-                ' Set global details for the billing form view
-                BillingDetails.HeaderTitle = "Edit Billing Statement"
-                BillingDetails.SubmitButtonText = "Update Statement"
+                With PreviewState.CurrentPreview
+                    .EditLabel = "Edit Billing Statement"
+                    .EditButtonLabel = "Update Billing Statement"
+                    .DocumentNumber = selectedQuote.BillingNumber
+                    .ClientName = selectedQuote.ClientName
+                    .ClientId = selectedQuote.ClientID
+                    .DocumentDate = selectedQuote.BillingDate
+                    .Notes = selectedQuote.BillingNote
+                    .WarehouseName = selectedQuote.WarehouseName
+                    .WarehouseID = selectedQuote.WarehouseID.ToString()
+                    .IsEditMode = True
+
+                    Try
+                        Dim jsonString As String = If(selectedQuote.OrderItems IsNot Nothing, selectedQuote.OrderItems.ToString(), "[]")
+
+                        Dim rawData = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(jsonString)
+
+                        .Items.Clear()
+
+                        If rawData IsNot Nothing Then
+                            For Each dict In rawData
+                                Dim newItem As New OrderItems()
+
+                                newItem.ProductName = If(dict.ContainsKey("ProductName"), dict("ProductName"), "")
+                                newItem.Quantity = If(dict.ContainsKey("Quantity"), dict("Quantity"), "0")
+                                newItem.Description = If(dict.ContainsKey("Description"), dict("Description"), "")
+                                newItem.ProductDescription = If(dict.ContainsKey("ProductDescription"), dict("ProductDescription"), "")
+                                newItem.UnitPrice = If(dict.ContainsKey("UnitPrice"), dict("UnitPrice"),
+                                                    If(dict.ContainsKey("Rate"), dict("Rate"), "0.00"))
+
+                                newItem.LinePrice = If(dict.ContainsKey("LinePrice"), dict("LinePrice"),
+                                                    If(dict.ContainsKey("Amount"), dict("Amount"), "0.00"))
+
+                                Dim isHeaderVal As Boolean = False
+                                If dict.ContainsKey("IsHeaderRow") Then
+                                    Boolean.TryParse(dict("IsHeaderRow").ToString(), isHeaderVal)
+                                End If
+                                newItem.IsHeaderRow = isHeaderVal
+                                newItem.IsCategoryHeader = isHeaderVal
+
+                                Dim isSubtotalVal As Boolean = False
+                                If dict.ContainsKey("IsSubtotalRow") Then
+                                    Boolean.TryParse(dict("IsSubtotalRow").ToString(), isSubtotalVal)
+                                ElseIf dict.ContainsKey("IsSubotalRow") Then
+                                    Boolean.TryParse(dict("IsSubotalRow").ToString(), isSubtotalVal)
+                                End If
+                                newItem.IsSubtotalRow = isSubtotalVal
+
+                                newItem.ProductDescriptionVisibility = If(String.IsNullOrWhiteSpace(newItem.ProductDescription),
+                                                 Visibility.Collapsed, Visibility.Visible)
+
+                                .Items.Add(newItem)
+                            Next
+                        End If
+                    Catch ex As Exception
+                        MessageBox.Show("Error parsing quote items: " & ex.Message, "Mapping Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    End Try
+                End With
 
                 ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
             End If

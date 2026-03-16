@@ -47,7 +47,7 @@
         <Grid Grid.Row="0" Margin="25,20,25,10">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                 <materialDesign:PackIcon Kind="FileCheck" Width="30" Height="30" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                <TextBlock Text="Billing Statement" FontWeight="SemiBold" FontSize="25" Foreground="#474747" VerticalAlignment="Center"/>
+                <TextBlock x:Name="lblPageTitle" Text="Billing Statement" FontWeight="SemiBold" FontSize="25" Foreground="#474747" VerticalAlignment="Center"/>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -130,8 +130,12 @@
                         <TextBlock Grid.Row="3" Text="Billing Date:" FontWeight="SemiBold" Margin="0,0,0,5"/>
                         <Border Grid.Row="4" Style="{StaticResource RoundedBorderStyle}" Height="35" Margin="0,0,0,15">
                             <Grid>
-                                <DatePicker x:Name="billingDate" Visibility="Hidden"/>
-                                <Button x:Name="BillingDateButton" Click="BillingDateButton_Click" Style="{StaticResource DateButtonStyle}" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Stretch" Padding="10,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="49*"/>
+                                    <ColumnDefinition Width="422*"/>
+                                </Grid.ColumnDefinitions>
+                                <DatePicker x:Name="billingDate" Visibility="Hidden" Grid.ColumnSpan="2"/>
+                                <Button x:Name="BillingDateButton" Click="BillingDateButton_Click" Style="{StaticResource DateButtonStyle}" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Stretch" Padding="10,0" Grid.ColumnSpan="2">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*"/>
@@ -169,13 +173,13 @@
                     </DataGrid>
 
                     <ScrollViewer MaxHeight="1070" VerticalScrollBarVisibility="Auto">
-                        <StackPanel x:Name="MainContainer" Orientation="Vertical" Background="Transparent"/>
+                        <StackPanel x:Name="MainContainer" Background="Transparent"/>
                     </ScrollViewer>
 
-                    <Button Click="AddNewRow_Click" HorizontalAlignment="Center" Margin="0,10,0,0" Style="{StaticResource MaterialDesignOutlinedButton}" BorderBrush="#1D3242" Foreground="#1D3242" Height="35">
+                    <Button Click="AddNewCategory_Click" HorizontalAlignment="Center" Margin="0,15,0,0" Style="{StaticResource MaterialDesignOutlinedButton}" BorderBrush="#1D3242" Foreground="#1D3242" Height="35">
                         <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="PlaylistAdd" Margin="0,0,5,0"/>
-                            <TextBlock Text="Add New Item Row"/>
+                            <materialDesign:PackIcon Kind="CategoryPlusOutline" Margin="0,0,5,0"/>
+                            <TextBlock Text="New Category"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -243,7 +247,7 @@
                         <Button x:Name="GenerateCostEstimate" Click="GenerateBilling_Click" Margin="0,15,0,0" Height="55" Background="#1D5642" BorderBrush="#1D5642" Style="{StaticResource MaterialDesignRaisedButton}" materialDesign:ButtonAssist.CornerRadius="27">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="FileSend" Width="24" Height="24" Margin="0,0,10,0" VerticalAlignment="Center" Foreground="White"/>
-                                <TextBlock Text="GENERATE BILLING STATEMENT" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" Foreground="White"/>
+                                <TextBlock x:Name="lblButton" Text="GENERATE BILLING STATEMENT" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" Foreground="White"/>
                             </StackPanel>
                         </Button>
                     </StackPanel>
