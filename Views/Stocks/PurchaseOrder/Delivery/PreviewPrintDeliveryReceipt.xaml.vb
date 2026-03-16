@@ -15,6 +15,7 @@ Imports MongoDB.Driver.GridFS
 Imports PdfSharp.Drawing
 Imports PdfSharp.Pdf
 Imports SkiaSharp.Views.WPF
+Imports Newtonsoft.Json
 
 Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
     Public Class PreviewPrintDeliveryReceipt
@@ -29,55 +30,72 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Sub
 
         Public Sub IntializeFields()
-            txtDeliveryNumber.Text = DeliveryDetails.DRNumber
-            txtReferenceInvoice.Text = DeliveryDetails.DRReferenceInvoice
-            txtDeliveryDate.Text = DeliveryDetails.DRDate
+            Dim receipt = DeliveryState.CurrentReceipt
+            If receipt Is Nothing Then Return
+
+            txtDeliveryNumber.Text = receipt.DRNumber
+            txtReferenceInvoice.Text = receipt.ReferenceInvoice
+            txtDeliveryDate.Text = receipt.DRDate
             txtSalesRep.Text = CacheOnLoggedInName
-            txtDeliveryClientName.Text = DeliveryDetails.DRClientName
-            txtNotes.Text = DeliveryDetails.DRDeliveryNotes
-            txtShippingMethod.Text = DeliveryDetails.DRShippingMethod
-            txtApprovedBy.Text = DeliveryDetails.DRApprovedBy
-            txtPaymentTerm.Text = DeliveryDetails.DRPaymentTerm
-            txtDeliveryStatus.Text = DeliveryDetails.DRDeliveryStatus
+            txtDeliveryClientName.Text = receipt.ClientName
+            txtNotes.Text = receipt.DeliveryNotes
+            txtShippingMethod.Text = receipt.ShippingMethod
+            txtApprovedBy.Text = receipt.ApprovedBy
+            txtPaymentTerm.Text = receipt.PaymentTerm
+            txtDeliveryStatus.Text = receipt.DeliveryStatus
 
-            'LoadTestPlaceholderData()
-            LoadPage()
-
-            Dim clientDetails As String
-            clientDetails = DeliveryDetails.DRClientDetails
-
+            Dim clientDetails = receipt.ClientDetails
             If Not String.IsNullOrEmpty(clientDetails) Then
                 txtDeliveryRep.Text = Regex.Match(clientDetails, "Representative Name: (.*)").Groups(1).Value.Trim()
                 txtDeliveryContact.Text = Regex.Match(clientDetails, "Contact: (.*)").Groups(1).Value.Trim()
                 txtDeliveryAddress.Text = Regex.Match(clientDetails, "Delivery Address: (.*)").Groups(1).Value.Trim()
             End If
+
+            LoadPage()
         End Sub
 
         Private Sub LoadPage()
             _pageMap.Clear()
-
             Dim maxHeightPerPage As Double = 650
             Dim currentHeight As Double = 0
-            Dim currentPageItems As New List(Of Dictionary(Of String, String))
 
+            Dim rawItems = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(DeliveryState.CurrentReceipt.OrderItems)
+
+            Dim currentPageItems As New List(Of Dictionary(Of String, String))
             _pageMap.Add(currentPageItems)
 
-            For i As Integer = 0 To DeliveryDetails.DRDeliveryItems.Count - 1
-                Dim rawItem = DeliveryDetails.DRDeliveryItems(i)
-                Dim displayItem = CleanItemForDisplay(rawItem, i)
+            Dim productCounter As Integer = 1
+
+            For Each rawItem In rawItems
+                Dim isHeader = rawItem.ContainsKey("IsHeaderRow") AndAlso rawItem("IsHeaderRow").ToString().ToLower() = "true"
+
+                Dim displayItem = New Dictionary(Of String, String)(rawItem)
+
+                If isHeader Then
+                    displayItem("Number") = ""
+                Else
+                    displayItem("Number") = productCounter.ToString()
+                    productCounter += 1
+                End If
+
+
+                If displayItem.ContainsKey("SerialNumber") Then
+                    Dim raw = displayItem("SerialNumber")
+                    displayItem("SerialNumber") = Regex.Replace(raw, "\(\d+\)\s*", "").Replace("  ", ", ").Trim()
+                End If
 
                 Dim rowElement = CreateRowElement(displayItem)
                 rowElement.Measure(New Size(726, Double.PositiveInfinity))
                 Dim rowHeight = rowElement.DesiredSize.Height
 
-                If (currentHeight + rowHeight + 10) > maxHeightPerPage AndAlso currentPageItems.Count > 0 Then
+                If (currentHeight + rowHeight + 5) > maxHeightPerPage AndAlso currentPageItems.Count > 0 Then
                     currentPageItems = New List(Of Dictionary(Of String, String))
                     _pageMap.Add(currentPageItems)
                     currentHeight = 0
                 End If
 
                 currentPageItems.Add(displayItem)
-                currentHeight += rowHeight + 10
+                currentHeight += rowHeight + 5
             Next
 
             RenderPages(_currentPageIndex)
@@ -475,150 +493,5 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 Return False
             End Try
         End Function
-
-        ' FOR TESTING ONLY
-        Public Sub LoadTestPlaceholderData()
-            DeliveryDetails.DRDeliveryItems.Clear()
-
-            DeliveryDetails.DRDeliveryItems = New List(Of Dictionary(Of String, String))()
-
-            Dim item1 As New Dictionary(Of String, String) From {
-                {"Quantity", "1"},
-                {"ProductName", "HIKVISION - 2MP WEATHERPROOF IR IP CAMERA"},
-                {"Description", "High-definition outdoor security camera with night vision."},
-                {"Amount", "1881.60"},
-                {"SerialNumber", "SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831"}
-            }
-
-            Dim item2 As New Dictionary(Of String, String) From {
-                {"Quantity", "5"},
-                {"ProductName", "AEROCOOL UNITED POWER 500W (80+ WHITE)"},
-                {"Description", "Enter product description (Optional)"},
-                {"Amount", "2035.04"},
-                {"SerialNumber", "N/A"}
-            }
-
-            Dim item3 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
-            }
-
-            Dim item4 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
-            }
-
-            Dim item5 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
-            }
-
-            Dim item6 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
-            }
-
-            Dim item7 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
-            }
-
-            Dim item8 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
-            }
-
-            Dim item9 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
-            }
-
-            Dim item10 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
-            }
-
-            Dim item11 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
-            }
-
-            Dim item12 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
-            }
-
-            Dim item13 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
-            }
-
-            Dim item14 As New Dictionary(Of String, String) From {
-                {"Quantity", "12"},
-                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
-                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
-                {"Amount", "4500.00"},
-                {"SerialNumber", "SN-LOGI-7721"}
-            }
-
-            Dim item15 As New Dictionary(Of String, String) From {
-                {"Quantity", "1"},
-                {"ProductName", "HIKVISION - 2MP WEATHERPROOF IR IP CAMERA"},
-                {"Description", "High-definition outdoor security camera with night vision."},
-                {"Amount", "1881.60"},
-                {"SerialNumber", "SN-HK-992831"}
-            }
-
-            DeliveryDetails.DRDeliveryItems.Add(item1)
-            DeliveryDetails.DRDeliveryItems.Add(item2)
-            DeliveryDetails.DRDeliveryItems.Add(item3)
-            DeliveryDetails.DRDeliveryItems.Add(item4)
-            DeliveryDetails.DRDeliveryItems.Add(item5)
-            DeliveryDetails.DRDeliveryItems.Add(item6)
-            DeliveryDetails.DRDeliveryItems.Add(item7)
-            DeliveryDetails.DRDeliveryItems.Add(item8)
-            DeliveryDetails.DRDeliveryItems.Add(item9)
-            DeliveryDetails.DRDeliveryItems.Add(item10)
-            DeliveryDetails.DRDeliveryItems.Add(item11)
-            DeliveryDetails.DRDeliveryItems.Add(item12)
-            DeliveryDetails.DRDeliveryItems.Add(item13)
-            DeliveryDetails.DRDeliveryItems.Add(item14)
-            DeliveryDetails.DRDeliveryItems.Add(item15)
-
-            LoadPage()
-        End Sub
     End Class
 End Namespace
