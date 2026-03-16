@@ -180,94 +180,111 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Function
 
         Private Sub AddColumnsToGrid(dg As DataGrid)
+            ' --- 1. Global Header Style (Black Bar) ---
             Dim headerStyle As New Style(GetType(System.Windows.Controls.Primitives.DataGridColumnHeader))
-            headerStyle.Setters.Add(New Setter(Control.BackgroundProperty, Brushes.Black))
+            headerStyle.Setters.Add(New Setter(Control.BackgroundProperty, CType(New BrushConverter().ConvertFrom("#090909"), Brush)))
             headerStyle.Setters.Add(New Setter(Control.ForegroundProperty, Brushes.White))
-            headerStyle.Setters.Add(New Setter(Control.FontSizeProperty, 9.0))
-            headerStyle.Setters.Add(New Setter(Control.PaddingProperty, New Thickness(5)))
+            headerStyle.Setters.Add(New Setter(Control.FontSizeProperty, 10.0))
+            headerStyle.Setters.Add(New Setter(Control.FontWeightProperty, FontWeights.SemiBold))
+            headerStyle.Setters.Add(New Setter(Control.PaddingProperty, New Thickness(5, 3, 5, 3)))
             headerStyle.Setters.Add(New Setter(Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Center))
-            headerStyle.Setters.Add(New Setter(Control.BorderBrushProperty, Brushes.Black))
-            headerStyle.Setters.Add(New Setter(Control.BorderThicknessProperty, New Thickness(0, 0, 1, 0)))
+            headerStyle.Setters.Add(New Setter(Control.HeightProperty, 30.0))
 
+            ' --- 2. Row Style with Header Template Trigger ---
             Dim rowStyle As New Style(GetType(DataGridRow))
             rowStyle.Setters.Add(New Setter(DataGridRow.BackgroundProperty, Brushes.Transparent))
-            rowStyle.Setters.Add(New Setter(DataGridRow.BorderThicknessProperty, New Thickness(0)))
+            rowStyle.Setters.Add(New Setter(DataGridRow.MinHeightProperty, 55.0))
+            rowStyle.Setters.Add(New Setter(DataGridRow.VerticalAlignmentProperty, VerticalAlignment.Center))
+
+            ' The Trigger for Category Headers
+            Dim rowTrigger As New DataTrigger() With {.Binding = New Binding("[IsHeaderRow]"), .Value = "true"}
+            rowTrigger.Setters.Add(New Setter(DataGridRow.FontWeightProperty, FontWeights.Bold))
+            rowTrigger.Setters.Add(New Setter(DataGridRow.MinHeightProperty, 40.0))
+
+            ' Create the ControlTemplate for centered headers (Matches your XAML)
+            Dim rowTemplate As New ControlTemplate(GetType(DataGridRow))
+            Dim borderFactory = New FrameworkElementFactory(GetType(Border))
+            borderFactory.SetValue(Border.BorderBrushProperty, Brushes.Black)
+            borderFactory.SetValue(Border.BorderThicknessProperty, New Thickness(0, 0, 0, 1))
+            borderFactory.SetBinding(Border.BackgroundProperty, New Binding("Background") With {.RelativeSource = New RelativeSource(RelativeSourceMode.TemplatedParent)})
+            borderFactory.SetValue(Border.PaddingProperty, New Thickness(10, 5, 10, 5))
+
+            Dim textFactory = New FrameworkElementFactory(GetType(TextBlock))
+            textFactory.SetBinding(TextBlock.TextProperty, New Binding("[ProductName]"))
+            textFactory.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center)
+            textFactory.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center)
+            textFactory.SetValue(TextBlock.FontSizeProperty, 14.0)
+            textFactory.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold)
+
+            borderFactory.AppendChild(textFactory)
+            rowTemplate.VisualTree = borderFactory
+            rowTrigger.Setters.Add(New Setter(DataGridRow.TemplateProperty, rowTemplate))
+
+            rowStyle.Triggers.Add(rowTrigger)
             dg.RowStyle = rowStyle
 
+            ' --- 3. Cell Style with Border Logic ---
             Dim cellStyle As New Style(GetType(DataGridCell))
-            cellStyle.Setters.Add(New Setter(DataGridCell.BackgroundProperty, Brushes.Transparent))
-            cellStyle.Setters.Add(New Setter(DataGridCell.BorderThicknessProperty, New Thickness(0)))
-            cellStyle.Setters.Add(New Setter(DataGridCell.FocusVisualStyleProperty, Nothing))
+            cellStyle.Setters.Add(New Setter(DataGridCell.PaddingProperty, New Thickness(3, 0, 3, 0)))
+            cellStyle.Setters.Add(New Setter(DataGridCell.BorderBrushProperty, Brushes.Black))
+            cellStyle.Setters.Add(New Setter(DataGridCell.BorderThicknessProperty, New Thickness(0, 0, 1, 1)))
+
+            ' Trigger to hide side borders on headers
+            Dim cellTrigger As New DataTrigger() With {.Binding = New Binding("[IsHeaderRow]"), .Value = "true"}
+            cellTrigger.Setters.Add(New Setter(DataGridCell.BorderThicknessProperty, New Thickness(0, 0, 0, 1)))
+            cellStyle.Triggers.Add(cellTrigger)
             dg.CellStyle = cellStyle
 
-            Dim centeredStyle As New Style(GetType(TextBlock))
-            centeredStyle.Setters.Add(New Setter(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center))
-            centeredStyle.Setters.Add(New Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center))
-            centeredStyle.Setters.Add(New Setter(TextBlock.FontSizeProperty, 11.0))
-
+            ' --- 4. Define Columns ---
+            ' # Column
             dg.Columns.Add(New DataGridTextColumn With {
-                .Header = "#",
-                .Binding = New Binding("[Number]"),
-                .MinWidth = 60,
-                .Width = 60,
-                .HeaderStyle = headerStyle,
-                .ElementStyle = centeredStyle
-            })
+        .Header = "#", .Binding = New Binding("[Number]"), .Width = 40,
+        .HeaderStyle = headerStyle,
+        .ElementStyle = CreateCenteredTextStyle(11)
+    })
 
+            ' Product Description Column
             Dim colProduct As New DataGridTemplateColumn With {
-                .Header = "Product / Description",
-                .Width = New DataGridLength(2, DataGridLengthUnitType.Star),
-                .MinWidth = 303,
-                .HeaderStyle = headerStyle
-            }
+        .Header = "Description", .Width = New DataGridLength(1, DataGridLengthUnitType.Star),
+        .HeaderStyle = headerStyle
+    }
+            Dim productFactory = New FrameworkElementFactory(GetType(StackPanel))
+            productFactory.SetValue(StackPanel.MarginProperty, New Thickness(8))
 
-            Dim factory = New FrameworkElementFactory(GetType(StackPanel))
-            factory.SetValue(StackPanel.MarginProperty, New Thickness(5))
-            factory.SetValue(StackPanel.VerticalAlignmentProperty, VerticalAlignment.Center)
+            Dim titleTxt = New FrameworkElementFactory(GetType(TextBlock))
+            titleTxt.SetBinding(TextBlock.TextProperty, New Binding("[ProductName]"))
+            titleTxt.SetValue(TextBlock.FontSizeProperty, 12.0)
+            productFactory.AppendChild(titleTxt)
 
-            Dim txtName = New FrameworkElementFactory(GetType(TextBlock))
-            txtName.SetBinding(TextBlock.TextProperty, New Binding("[ProductName]"))
-            txtName.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold)
-            txtName.SetValue(TextBlock.FontSizeProperty, 11.0)
-            txtName.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap)
-
-            Dim txtDesc = New FrameworkElementFactory(GetType(TextBlock))
-            txtDesc.SetBinding(TextBlock.TextProperty, New Binding("[Description]"))
-            txtDesc.SetValue(TextBlock.FontSizeProperty, 11.0)
-            txtDesc.SetValue(TextBlock.ForegroundProperty, Brushes.DimGray)
-            txtDesc.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap)
-
-            factory.AppendChild(txtName)
-            factory.AppendChild(txtDesc)
-            colProduct.CellTemplate = New DataTemplate With {.VisualTree = factory}
+            colProduct.CellTemplate = New DataTemplate With {.VisualTree = productFactory}
             dg.Columns.Add(colProduct)
 
+            ' Qty Column
             dg.Columns.Add(New DataGridTextColumn With {
-                .Header = "Qty",
-                .Binding = New Binding("[Quantity]"),
-                .MinWidth = 60,
-                .Width = 60,
-                .HeaderStyle = headerStyle,
-                .ElementStyle = centeredStyle
-            })
+        .Header = "Quantity", .Binding = New Binding("[Quantity]"), .Width = 70,
+        .HeaderStyle = headerStyle,
+        .ElementStyle = CreateCenteredTextStyle(12)
+    })
 
-            Dim serialStyle As New Style(GetType(TextBlock))
-            serialStyle.Setters.Add(New Setter(TextBlock.TextWrappingProperty, TextWrapping.Wrap))
-            serialStyle.Setters.Add(New Setter(TextBlock.FontSizeProperty, 11.0))
-            serialStyle.Setters.Add(New Setter(TextBlock.PaddingProperty, New Thickness(5)))
-            serialStyle.Setters.Add(New Setter(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center))
-            serialStyle.Setters.Add(New Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center))
-            serialStyle.Setters.Add(New Setter(TextBlock.TextAlignmentProperty, TextAlignment.Center))
-
+            ' Serials Column
             dg.Columns.Add(New DataGridTextColumn With {
-                .Header = "Serial Numbers",
-                .Binding = New Binding("[SerialNumber]"),
-                .Width = New DataGridLength(2, DataGridLengthUnitType.Star),
-                .MinWidth = 303,
-                .HeaderStyle = headerStyle,
-                .ElementStyle = serialStyle
-            })
+        .Header = "Serial Numbers", .Binding = New Binding("[SerialNumber]"), .Width = 250,
+        .HeaderStyle = headerStyle,
+        .ElementStyle = CreateCenteredTextStyle(10, True)
+    })
         End Sub
+
+        ' Helper to keep code clean
+        Private Function CreateCenteredTextStyle(size As Double, Optional wrap As Boolean = False) As Style
+            Dim st As New Style(GetType(TextBlock))
+            st.Setters.Add(New Setter(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center))
+            st.Setters.Add(New Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center))
+            st.Setters.Add(New Setter(TextBlock.TextAlignmentProperty, TextAlignment.Center))
+            st.Setters.Add(New Setter(TextBlock.FontSizeProperty, size))
+            st.Setters.Add(New Setter(TextBlock.FontFamilyProperty, New FontFamily("Lexend")))
+            If wrap Then st.Setters.Add(New Setter(TextBlock.TextWrappingProperty, TextWrapping.Wrap))
+            Return st
+        End Function
 
         Private Sub CancelButton(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToCachedView("newdelivery", Me)
