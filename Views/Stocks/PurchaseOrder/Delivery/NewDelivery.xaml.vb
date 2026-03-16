@@ -687,6 +687,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             DeliveryDetails.DRReferenceInvoice = ""
             DeliveryDetails.DRDeliveryItems = New List(Of Dictionary(Of String, String))()
         End Sub
+
+        Private Sub BtnReset_Click(sender As Object, e As RoutedEventArgs) Handles BtnReset.Click
+            DeliveryState.ClearDeliveryState()
+            lblPageTitle.Text = "Delivery Form"
+            lblButton.Text = "GENERATE DELIVERY RECEIPT"
+            ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
+        End Sub
 #Region "Helpers"
         Private Sub UpdateClientDetails(client As Client)
             Dim txtClientDetails As TextBox = TryCast(FindName("txtClientDetails"), TextBox)
