@@ -48,15 +48,12 @@ Namespace DPC.Data.Controllers
             End Using
         End Function
 
-        ' Function to generate ClientID in format 40MMDDYYYYXXXX
+        ' Function to generate ClientID in format 50MMDDYYYYXXXX
         Private Shared Function GenerateClientIDCorporational() As String
             Dim prefix As String = "50"
             Dim datePart As String = DateTime.Now.ToString("MMddyyyy")
             Dim counter As Integer = GetNextClientCounterCorporational(datePart)
-
-            ' Format counter to be 4 digits (e.g., 0001, 0025)
             Dim counterPart As String = counter.ToString("D4")
-
             Return prefix & datePart & counterPart
         End Function
 
@@ -82,8 +79,6 @@ Namespace DPC.Data.Controllers
                 End Try
             End Using
         End Function
-
-
 
         ' Function to create a new client
         Public Shared Function CreateClient(client As Client) As Boolean
@@ -128,10 +123,7 @@ Namespace DPC.Data.Controllers
             Dim prefix As String = "40"
             Dim datePart As String = DateTime.Now.ToString("MMddyyyy")
             Dim counter As Integer = GetNextClientCounter(datePart)
-
-            ' Format counter to be 4 digits (e.g., 0001, 0025)
             Dim counterPart As String = counter.ToString("D4")
-
             Return prefix & datePart & counterPart
         End Function
 
@@ -158,7 +150,7 @@ Namespace DPC.Data.Controllers
             End Using
         End Function
 
-        ' Function to get all clients
+        ' Function to get all clients - newest first
         Public Shared Function GetAllClients() As ObservableCollection(Of Client)
             Dim clients As New ObservableCollection(Of Client)()
             Try
@@ -184,7 +176,8 @@ SELECT
     NULL AS Name,
     Company,
     'clientcorporational' AS Source
-FROM clientcorporational;"
+FROM clientcorporational
+ORDER BY ClientID DESC;"
 
                     Using cmd As New MySqlCommand(query, conn)
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
@@ -199,13 +192,13 @@ FROM clientcorporational;"
 
                                 Dim source As String = reader("Source").ToString()
                                 Dim client As New Client With {
-                            .ClientID = reader("ClientID"),
-                            .Name = nameOrCompany,
-                            .Phone = reader("Phone").ToString(),
-                            .Email = reader("Email").ToString(),
-                            .BillingAddress = reader("BillingAddress").ToString(),
-                            .ClientType = GetClientType(source)
-                        }
+                                    .ClientID = reader("ClientID"),
+                                    .Name = nameOrCompany,
+                                    .Phone = reader("Phone").ToString(),
+                                    .Email = reader("Email").ToString(),
+                                    .BillingAddress = reader("BillingAddress").ToString(),
+                                    .ClientType = GetClientType(source)
+                                }
                                 clients.Add(client)
                             End While
                         End Using
@@ -266,15 +259,15 @@ FROM clientcorporational;"
                                 Dim source As String = reader("Source").ToString()
 
                                 Dim client As New Client With {
-                            .ClientID = reader("ClientID").ToString(),
-                            .Name = reader("DisplayName").ToString(),
-                            .Phone = reader("Phone").ToString(),
-                            .Email = reader("Email").ToString(),
-                            .BillingAddress = reader("BillingAddress").ToString(),
-                            .Representative = reader("Representative").ToString(),
-                            .Company = reader("Company").ToString(),
-                            .ClientType = If(source = "client", "Residential", "Corporational")
-                        }
+                                    .ClientID = reader("ClientID").ToString(),
+                                    .Name = reader("DisplayName").ToString(),
+                                    .Phone = reader("Phone").ToString(),
+                                    .Email = reader("Email").ToString(),
+                                    .BillingAddress = reader("BillingAddress").ToString(),
+                                    .Representative = reader("Representative").ToString(),
+                                    .Company = reader("Company").ToString(),
+                                    .ClientType = If(source = "client", "Residential", "Corporational")
+                                }
                                 clients.Add(client)
                             End While
                         End Using
@@ -285,7 +278,6 @@ FROM clientcorporational;"
             End Try
             Return clients
         End Function
-
 
         ' Function to get client by ID
         Public Shared Function GetClientByID(clientID As String) As Client
@@ -299,7 +291,7 @@ FROM clientcorporational;"
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             If reader.Read() Then
                                 client = New Client With {
-                                    .ClientID = reader("ClientID").ToString(), ' Change from Convert.ToInt32 to ToString()
+                                    .ClientID = reader("ClientID").ToString(),
                                     .ClientGroupID = Convert.ToInt32(reader("ClientGroupID")),
                                     .Name = reader("Name").ToString(),
                                     .Phone = reader("Phone").ToString(),
@@ -328,17 +320,17 @@ FROM clientcorporational;"
                     conn.Open()
                     Dim SearchClientQuery As String = "SELECT 
     ClientID,
-ClientGroupID,
+    ClientGroupID,
     BillingAddress,
     Email,
     Phone,
     Name,
     NULL AS Company,
-CustomerGroup,
+    CustomerGroup,
     Language,
     ShippingAddress,
-NULL AS Representative,
-'client' AS Source
+    NULL AS Representative,
+    'client' AS Source
 FROM client 
 WHERE Name LIKE @searchText 
    OR ClientID LIKE @searchText 
@@ -348,18 +340,18 @@ UNION
 
 SELECT 
     ClientID,
-ClientGroupID,
+    ClientGroupID,
     BillingAddress,
     Email,
     Phone,
     NULL AS Name,
     Company,
-CustomerGroup,
+    CustomerGroup,
     Language,
     ShippingAddress,
     Representative,
-'clientcorporational' AS Source
-FROM clientcorporational AS Source
+    'clientcorporational' AS Source
+FROM clientcorporational
 WHERE Company LIKE @searchText 
    OR ClientID LIKE @searchText 
    OR Email LIKE @searchText
@@ -380,21 +372,20 @@ LIMIT 10;"
                                 End If
 
                                 Dim client As New Client With {
-                            .ClientID = reader("ClientID"),
-                            .Name = nameOrCompany,
-                            .Company = If(IsDBNull(reader("Company")), String.Empty, reader("Company").ToString()),
-                            .Phone = If(IsDBNull(reader("Phone")), String.Empty, reader("Phone").ToString()),
-                            .Email = If(IsDBNull(reader("Email")), String.Empty, reader("Email").ToString()),
-                            .CustomerGroup = If(IsDBNull(reader("CustomerGroup")), String.Empty, reader("CustomerGroup").ToString()),
-                            .ClientLanguage = If(IsDBNull(reader("Language")), String.Empty, reader("Language").ToString()),
-                            .BillingAddress = If(IsDBNull(reader("BillingAddress")), String.Empty, reader("BillingAddress").ToString()),
-                            .ShippingAddress = If(IsDBNull(reader("ShippingAddress")), String.Empty, reader("ShippingAddress").ToString()),
-                            .Representative = If(Not IsDBNull(reader("Representative")) AndAlso Not String.IsNullOrWhiteSpace(reader("Representative").ToString()),
-                                             reader("Representative").ToString(),
-                                             reader("Name").ToString()),
-                            .Source = reader("Source").ToString()
-                            }
-
+                                    .ClientID = reader("ClientID"),
+                                    .Name = nameOrCompany,
+                                    .Company = If(IsDBNull(reader("Company")), String.Empty, reader("Company").ToString()),
+                                    .Phone = If(IsDBNull(reader("Phone")), String.Empty, reader("Phone").ToString()),
+                                    .Email = If(IsDBNull(reader("Email")), String.Empty, reader("Email").ToString()),
+                                    .CustomerGroup = If(IsDBNull(reader("CustomerGroup")), String.Empty, reader("CustomerGroup").ToString()),
+                                    .ClientLanguage = If(IsDBNull(reader("Language")), String.Empty, reader("Language").ToString()),
+                                    .BillingAddress = If(IsDBNull(reader("BillingAddress")), String.Empty, reader("BillingAddress").ToString()),
+                                    .ShippingAddress = If(IsDBNull(reader("ShippingAddress")), String.Empty, reader("ShippingAddress").ToString()),
+                                    .Representative = If(Not IsDBNull(reader("Representative")) AndAlso Not String.IsNullOrWhiteSpace(reader("Representative").ToString()),
+                                                     reader("Representative").ToString(),
+                                                     reader("Name").ToString()),
+                                    .Source = reader("Source").ToString()
+                                }
                                 clients.Add(client)
                             End While
                         End Using
@@ -417,10 +408,6 @@ LIMIT 10;"
             End Select
         End Function
 
-        ' Add this method to your ClientController class
-
-        ' Replace the UpdateClient function in ClientController with this:
-
         Public Shared Function UpdateClient(client As Client) As Boolean
             Try
                 If Not ClientIDExists(client.ClientID.ToString()) Then
@@ -428,18 +415,15 @@ LIMIT 10;"
                     Return False
                 End If
 
-                ' Determine if it's a residential or corporate client based on the ClientID prefix
                 Dim clientIDStr As String = client.ClientID.ToString()
                 Dim prefix As String = clientIDStr.Substring(0, 2)
                 Dim query As String = ""
 
                 If prefix = "40" Then
-                    ' Residential client
                     query = "UPDATE client SET ClientGroupID = @ClientGroupID, Name = @Name, Phone = @Phone, Email = @Email, " &
                     "BillingAddress = @BillingAddress, ShippingAddress = @ShippingAddress, CustomerGroup = @CustomerGroup, " &
                     "Language = @Language, UpdatedAt = @UpdatedAt WHERE ClientID = @ClientID"
                 ElseIf prefix = "50" Then
-                    ' Corporate client
                     query = "UPDATE clientcorporational SET ClientGroupID = @ClientGroupID, Company = @Name, Phone = @Phone, Email = @Email, " &
                     "BillingAddress = @BillingAddress, ShippingAddress = @ShippingAddress, CustomerGroup = @CustomerGroup, " &
                     "Language = @Language, UpdatedAt = @UpdatedAt WHERE ClientID = @ClientID"
@@ -454,7 +438,6 @@ LIMIT 10;"
                         Using transaction As MySqlTransaction = conn.BeginTransaction()
                             Try
                                 Using updateCmd As New MySqlCommand(query, conn, transaction)
-                                    ' Add all parameters
                                     updateCmd.Parameters.AddWithValue("@ClientID", clientIDStr)
                                     updateCmd.Parameters.AddWithValue("@ClientGroupID", client.ClientGroupID)
                                     updateCmd.Parameters.AddWithValue("@Name", If(String.IsNullOrEmpty(client.Name), "", client.Name))
@@ -524,7 +507,6 @@ LIMIT 10;"
 
         Public Shared Function DeleteClient(clientID As String) As Boolean
             Try
-                ' Determine if it's a residential or corporate client based on the prefix
                 Dim prefix As String = clientID.Substring(0, 2)
                 Dim tableName As String = ""
 
@@ -544,7 +526,6 @@ LIMIT 10;"
                         conn.Open()
                         Using cmd As New MySqlCommand(query, conn)
                             cmd.Parameters.AddWithValue("@ClientID", clientID)
-
                             Dim result As Integer = cmd.ExecuteNonQuery()
                             Return result > 0
                         End Using
@@ -558,5 +539,6 @@ LIMIT 10;"
                 Return False
             End Try
         End Function
+
     End Class
 End Namespace

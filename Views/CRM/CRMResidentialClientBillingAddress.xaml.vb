@@ -1,6 +1,9 @@
-﻿Imports System.Windows.Markup
+﻿' CRMResidentialClientBillingAddress.xaml.vb
+Imports System.Windows.Markup
 Imports DocumentFormat.OpenXml.Wordprocessing
+Imports DPC.Data.Helpers.ViewLoader
 Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Helpers.ViewLoader
 Imports DPC.DPC.Data.Models
 
 Namespace DPC.Views.CRM
@@ -8,8 +11,7 @@ Namespace DPC.Views.CRM
         Inherits UserControl
 
         ' =========================================================
-        ' 1. INTERNAL MEMORY
-        ' These variables ensure data persists when you switch tabs
+        ' 1. INTERNAL MEMORY (Keeps data alive across tabs)
         ' =========================================================
         Private Shared _cachedAddress As String = ""
         Private Shared _cachedCity As String = ""
@@ -17,24 +19,33 @@ Namespace DPC.Views.CRM
         Private Shared _cachedCountry As String = ""
         Private Shared _cachedZipCode As String = ""
 
+        ' Called by other tabs during ClearCache to wipe this tab's memory
+        Public Shared Sub ResetMemory()
+            _cachedAddress = ""
+            _cachedCity = ""
+            _cachedRegion = ""
+            _cachedCountry = ""
+            _cachedZipCode = ""
+        End Sub
+
         Public Sub New()
             InitializeComponent()
 
-            ' 1. RESTORE: Load saved data immediately when the page loads
+            ' 2. RESTORE DATA
             txtAddress.Text = _cachedAddress
             txtCity.Text = _cachedCity
             txtRegion.Text = _cachedRegion
             txtCountry.Text = _cachedCountry
             txtZipCode.Text = _cachedZipCode
 
-            ' 2. AUTO-SAVE: Save to memory every time you type
+            ' 3. AUTO-SAVE HANDLERS
             AddHandler txtAddress.TextChanged, AddressOf SaveToMemory
             AddHandler txtCity.TextChanged, AddressOf SaveToMemory
             AddHandler txtRegion.TextChanged, AddressOf SaveToMemory
             AddHandler txtCountry.TextChanged, AddressOf SaveToMemory
             AddHandler txtZipCode.TextChanged, AddressOf SaveToMemory
 
-            ' 3. FORMATTING: Uppercase logic
+            ' 4. FORMATTING (Uppercase)
             AddHandler txtAddress.TextChanged, AddressOf TxtToUpper_TextChanged
             AddHandler txtCity.TextChanged, AddressOf TxtToUpper_TextChanged
             AddHandler txtRegion.TextChanged, AddressOf TxtToUpper_TextChanged
@@ -50,7 +61,6 @@ Namespace DPC.Views.CRM
             _cachedCountry = txtCountry.Text
             _cachedZipCode = txtZipCode.Text
 
-            ' Optional: Sync with global model if needed for the Add button
             ResidentialClientDetails.BillAddress = txtAddress.Text
             ResidentialClientDetails.BillCity = txtCity.Text
             ResidentialClientDetails.BillRegion = txtRegion.Text
@@ -79,8 +89,6 @@ Namespace DPC.Views.CRM
 
         ' --- ADD CLIENT BUTTON ---
         Private Sub AddClient(sender As Object, e As RoutedEventArgs)
-            ' Note: This checks global ResidentialClientDetails for Name/Phone/Email. 
-            ' Ensure those are set in the other tabs for this check to pass.
             If String.IsNullOrEmpty(ResidentialClientDetails.ClientName) OrElse
                String.IsNullOrEmpty(ResidentialClientDetails.Phone) OrElse
                String.IsNullOrEmpty(ResidentialClientDetails.Email) OrElse
@@ -103,7 +111,8 @@ Namespace DPC.Views.CRM
                 .ShippingAddress = $"{ResidentialClientDetails.Address}, {ResidentialClientDetails.City}, {ResidentialClientDetails.Region}, {ResidentialClientDetails.Country}, {ResidentialClientDetails.ZipCode}",
                 .CustomerGroup = ResidentialClientDetails.CustomerGroup,
                 .ClientLanguage = ResidentialClientDetails.CustomerLanguage,
-                .ClientType = "Residential"
+                .ClientType = "Residential",
+                .TinId = ""
             }
 
             Dim success As Boolean = ClientController.CreateClient(client)
@@ -115,21 +124,20 @@ Namespace DPC.Views.CRM
         End Sub
 
         Private Sub ClearCache()
-            ' Clear Local Memory
-            _cachedAddress = ""
-            _cachedCity = ""
-            _cachedRegion = ""
-            _cachedCountry = ""
-            _cachedZipCode = ""
+            ' Step 1 - Reset ALL tabs' shared memory (so switching tabs won't restore old data)
+            CRMResidentialClientPersonalInfo.ResetMemory()
+            CRMResidentialClientBillingAddress.ResetMemory()
+            CRMResidentialClientShippingAddress.ResetMemory()
+            CRMResidentialClientOtherSettings.ResetMemory()
 
-            ' Clear UI
+            ' Step 2 - Clear own UI fields
             txtAddress.Text = ""
             txtCity.Text = ""
             txtRegion.Text = ""
             txtCountry.Text = ""
             txtZipCode.Text = ""
 
-            ' Clear Global Model (Optional)
+            ' Step 3 - Clear Global Model (ALL fields)
             ResidentialClientDetails.ClientName = Nothing
             ResidentialClientDetails.Phone = Nothing
             ResidentialClientDetails.Email = Nothing
@@ -138,7 +146,15 @@ Namespace DPC.Views.CRM
             ResidentialClientDetails.BillRegion = Nothing
             ResidentialClientDetails.BillCountry = Nothing
             ResidentialClientDetails.BillZipCode = Nothing
-            ' ... (Clear other fields as needed)
+            ResidentialClientDetails.Address = Nothing
+            ResidentialClientDetails.City = Nothing
+            ResidentialClientDetails.Region = Nothing
+            ResidentialClientDetails.Country = Nothing
+            ResidentialClientDetails.ZipCode = Nothing
+            ResidentialClientDetails.ClientGroupID = 0
+            ResidentialClientDetails.CustomerGroup = Nothing
+            ResidentialClientDetails.CustomerLanguage = Nothing
+            ResidentialClientDetails.SameAsBilling = Nothing
         End Sub
 
     End Class
