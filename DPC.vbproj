@@ -1161,6 +1161,9 @@
     <Compile Include="Views\Project\ManageProject.xaml.vb">
       <DependentUpon>ManageProject.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Project\PreviewPrintTask.xaml.vb">
+      <DependentUpon>PreviewPrintTask.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Project\SupportTickets.xaml.vb">
       <DependentUpon>SupportTickets.xaml</DependentUpon>
     </Compile>
@@ -2182,6 +2185,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Project\PreviewPrintTask.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Project\SupportTickets.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2406,6 +2413,7 @@
     <Content Include=".env">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Assets\images\image_8bd95a.png" />
     <Content Include="Filter.vbs" />
     <Resource Include="Assets\payments\Amex.png" />
     <Resource Include="Assets\payments\Authorize.net.png" />
