@@ -168,53 +168,71 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             MainContainer.Children.Clear()
             itemDataSource.Clear()
             _productTextBoxes.Clear()
-            _serialCounters.Clear()
+            _serialCounters.Clear() ' Ensure this is a Dictionary(Of Integer, Integer)
 
             ' Parse the flat JSON list
             Dim itemsList = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(model.OrderItems)
 
             Dim currentTargetPanel As StackPanel = Nothing
-            Dim dataIdx As Integer = 0
+
+            ' This index will track the exact position in itemDataSource (the master list)
+            Dim masterIdx As Integer = 0
 
             ' 2. ITERATE AND BUILD UI
             For Each item In itemsList
+                ' Create a safe working copy of the item
+                Dim displayItem As New Dictionary(Of String, String)(item)
+
+                ' Ensure basic keys exist to prevent crashes elsewhere
+                If Not displayItem.ContainsKey("SerialNumber") Then displayItem("SerialNumber") = ""
+                If Not displayItem.ContainsKey("ProductName") Then displayItem("ProductName") = "Unknown Item"
+
                 ' A. Handle Header Rows
-                If item.ContainsKey("IsHeaderRow") AndAlso item("IsHeaderRow").ToString().ToLower() = "true" Then
-                    ' Get the name from ProductName if CategoryName is null
-                    Dim catName = If(item.ContainsKey("CategoryName") AndAlso Not String.IsNullOrEmpty(item("CategoryName")),
-                            item("CategoryName"), item("ProductName"))
+                If displayItem.ContainsKey("IsHeaderRow") AndAlso displayItem("IsHeaderRow").ToString().ToLower() = "true" Then
+                    ' Add header to the master data source
+                    itemDataSource.Add(displayItem)
+
+                    Dim catName = If(displayItem.ContainsKey("CategoryName") AndAlso Not String.IsNullOrEmpty(displayItem("CategoryName")),
+                            displayItem("CategoryName"), displayItem("ProductName"))
 
                     AddNewCategoryWithSpecificName(catName)
                     currentTargetPanel = GetLatestItemsPanel()
+
+                    ' Increment master index and move to next item
+                    masterIdx += 1
+                    Continue For
                 End If
 
                 ' B. Handle Product Rows
                 If currentTargetPanel Is Nothing Then
-                    AddNewCategoryWithSpecificName("")
+                    AddNewCategoryWithSpecificName("General Items")
                     currentTargetPanel = GetLatestItemsPanel()
                 End If
 
-                ' Prepare Product Data
-                Dim displayItem As New Dictionary(Of String, String)(item)
-                If Not displayItem.ContainsKey("SerialNumber") Then
-                    displayItem.Add("SerialNumber", "")
-                End If
-                Dim currentSerials = If(displayItem.ContainsKey("SerialNumber"), displayItem("SerialNumber"), "")
-
-                ' Initialize Serial Counter (For Edit/Continue Mode)
-                _serialCounters(dataIdx) = If(String.IsNullOrEmpty(currentSerials), 0,
-                                     currentSerials.Split(New String() {"  "}, StringSplitOptions.RemoveEmptyEntries).Length)
-
+                ' Add product to the master data source
                 itemDataSource.Add(displayItem)
 
-                ' Create the Product Row UI and add it to the Category's StackPanel
-                Dim productUI = AddNewProductUI(item, dataIdx, currentSerials)
+                Dim currentSerials = displayItem("SerialNumber")
+
+                ' Initialize Serial Counter using the Master Index
+                ' (Using a Dictionary for _serialCounters is safer than a List here)
+                Dim serialCount As Integer = 0
+                If Not String.IsNullOrEmpty(currentSerials) Then
+                    ' Use the same double-space separator used in your KeyDown logic
+                    serialCount = currentSerials.Split(New String() {"  "}, StringSplitOptions.RemoveEmptyEntries).Length
+                End If
+                _serialCounters(masterIdx) = serialCount
+
+                ' Create the Product Row UI
+                ' Pass masterIdx so the KeyDown handler knows exactly which dictionary entry to update
+                Dim productUI = AddNewProductUI(displayItem, masterIdx, currentSerials)
+
                 If productUI IsNot Nothing Then
                     currentTargetPanel.Children.Add(productUI)
-                    dataIdx += 1
                 End If
 
-                dataIdx += 1
+                ' Always increment masterIdx at the end of the loop
+                masterIdx += 1
             Next
         End Sub
 
@@ -321,17 +339,27 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                                               If e.Key = Key.Enter Then
                                                   Dim input = DirectCast(sender, TextBox)
                                                   Dim val = input.Text.Trim()
+
+                                                  If Not _serialCounters.ContainsKey(idx) Then Return
+
+                                                  currentQty = Integer.Parse(itemDataSource(idx)("Quantity"))
+
                                                   If Not String.IsNullOrEmpty(val) AndAlso _serialCounters(idx) < currentQty Then
                                                       _serialCounters(idx) += 1
                                                       Dim entry = $"({_serialCounters(idx)}) {val}"
+
                                                       txtSerialList.Text &= If(String.IsNullOrEmpty(txtSerialList.Text), entry, $"  {entry}")
 
                                                       Dim newRem = currentQty - _serialCounters(idx)
                                                       lblRemaining.Text = If(newRem <= 0, "COMPLETE", $"Remaining: {newRem}")
+
                                                       If newRem <= 0 Then
                                                           lblRemaining.Foreground = Brushes.Green : lblRemaining.FontWeight = FontWeights.Bold
-                                                          input.IsReadOnly = True : input.Text = "DONE" : serialBorder.Background = CType(New BrushConverter().ConvertFrom("#F5F5F5"), Brush)
+                                                          input.IsReadOnly = True : input.Text = "DONE"
+                                                          serialBorder.Background = CType(New BrushConverter().ConvertFrom("#F5F5F5"), Brush)
                                                       End If
+
+                                                      ' 3. Save back to the exact index in the list
                                                       itemDataSource(idx)("SerialNumber") = txtSerialList.Text
                                                       input.Clear()
                                                   End If
