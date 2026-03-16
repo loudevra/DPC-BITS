@@ -629,6 +629,15 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     Next
                 End If
 
+                If searchText.Length = txtDeliveryNumber.Text.Length And remainingList.Count = 0 Then
+                    MessageBox.Show($"All items in this Billing Statement {billing.BillingNumber} are already fully delivered. Please select another billing statement.",
+                    "Delivery Complete",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information)
+
+                    txtInvoiceNumber.Clear()
+                End If
+
                 DeliveryDetails.DRDeliveryItems = remainingList
                 LoadItems()
                 txtDeliveryNumber.Text = GenerateDeliveryId(billing.BillingNumber)
