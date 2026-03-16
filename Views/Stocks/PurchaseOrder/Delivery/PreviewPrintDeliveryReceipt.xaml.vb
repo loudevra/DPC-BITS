@@ -194,7 +194,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             Dim rowStyle As New Style(GetType(DataGridRow))
             rowStyle.Setters.Add(New Setter(DataGridRow.BackgroundProperty, Brushes.Transparent))
             rowStyle.Setters.Add(New Setter(DataGridRow.MinHeightProperty, 55.0))
-            rowStyle.Setters.Add(New Setter(DataGridRow.VerticalAlignmentProperty, VerticalAlignment.Center))
 
             ' The Trigger for Category Headers
             Dim rowTrigger As New DataTrigger() With {.Binding = New Binding("[IsHeaderRow]"), .Value = "true"}
@@ -248,12 +247,16 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         .Header = "Description", .Width = New DataGridLength(1, DataGridLengthUnitType.Star),
         .HeaderStyle = headerStyle
     }
-            Dim productFactory = New FrameworkElementFactory(GetType(StackPanel))
-            productFactory.SetValue(StackPanel.MarginProperty, New Thickness(8))
+            Dim productFactory = New FrameworkElementFactory(GetType(Border))
+            productFactory.SetValue(Border.PaddingProperty, New Thickness(8))
 
             Dim titleTxt = New FrameworkElementFactory(GetType(TextBlock))
             titleTxt.SetBinding(TextBlock.TextProperty, New Binding("[ProductName]"))
             titleTxt.SetValue(TextBlock.FontSizeProperty, 12.0)
+            titleTxt.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Left)
+            titleTxt.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center)
+            titleTxt.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap)
+
             productFactory.AppendChild(titleTxt)
 
             colProduct.CellTemplate = New DataTemplate With {.VisualTree = productFactory}
