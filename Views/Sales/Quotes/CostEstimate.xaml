@@ -482,9 +482,9 @@
 
                                                                         <DataTemplate.Triggers>
                                                                             <DataTrigger Binding="{Binding IsHeaderRow}" Value="True">
-                                                                                <Setter TargetName="txtProductTitle" Property="FontWeight" Value="Bold"/>
+                                                                                <!--<Setter TargetName="txtProductTitle" Property="FontWeight" Value="Bold"/>
                                                                                 <Setter TargetName="txtProductTitle" Property="Text" Value="{Binding Description}"/>
-                                                                                <Setter TargetName="txtProductTitle" Property="FontSize" Value="13"/>
+                                                                                <Setter TargetName="txtProductTitle" Property="FontSize" Value="13"/>-->
                                                                             </DataTrigger>
                                                                         </DataTemplate.Triggers>
                                                                     </DataTemplate>
