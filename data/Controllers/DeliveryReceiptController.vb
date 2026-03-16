@@ -125,6 +125,43 @@ Namespace DPC.Data.Controllers
             Return receipts
         End Function
 
+        Public Shared Function GetDeliveryReceiptByDRNumber(drNumber As String) As DeliveryReceiptModel
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "SELECT * FROM deliveryreceipts WHERE drNumber = @dr"
+
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@dr", drNumber)
+                        Using reader = cmd.ExecuteReader()
+                            If reader.Read() Then
+                                Return MapReaderToDeliveryModel(reader)
+                            End If
+                        End Using
+                    End Using
+                End Using
+            Catch ex As Exception
+                Debug.WriteLine("Error fetching full DR: " & ex.Message)
+            End Try
+            Return Nothing
+        End Function
+
+        Private Shared Function MapReaderToDeliveryModel(reader As MySqlDataReader) As DeliveryReceiptModel
+            Return New DeliveryReceiptModel With {
+            .DRNumber = reader("drNumber").ToString(),
+            .ReferenceInvoice = reader("referenceInvoice").ToString(),
+            .ClientName = reader("clientName").ToString(),
+            .ClientDetails = reader("clientDetails").ToString(),
+            .DRDate = If(reader("drDate") Is DBNull.Value, "", Convert.ToDateTime(reader("drDate")).ToString("MMM dd, yyyy")),
+            .ShippingMethod = reader("shippingMethod").ToString(),
+            .DeliveryNotes = reader("deliveryNotes").ToString(),
+            .ApprovedBy = reader("approvedBy").ToString(),
+            .PaymentTerm = reader("paymentTerm").ToString(),
+            .OrderItems = reader("orderItems").ToString(),
+            .DeliveryStatus = reader("deliveryStatus").ToString()
+        }
+        End Function
+
         Public Shared Function SearchDeliveryReceipts()
             Return New ObservableCollection(Of DeliveryReceiptModel)()
         End Function

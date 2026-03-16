@@ -10,6 +10,7 @@ Imports DPC.DPC.Data.Models
 Imports MaterialDesignThemes.Wpf
 Imports Microsoft.Win32
 Imports NuGet.Protocol.Plugins
+Imports Newtonsoft.Json
 
 Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
@@ -38,47 +39,49 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Sub
 
         Public Sub InitializeFields()
+            Dim receipt = DeliveryState.CurrentReceipt
+            If receipt Is Nothing Then Exit Sub
 
-            txtClientName.Text = DeliveryDetails.DRClientName
-
-            txtInvoiceNumber.Text = DeliveryDetails.DRReferenceInvoice
-
-            If DeliveryDetails.DRDeliveryItems IsNot Nothing AndAlso DeliveryDetails.DRDeliveryItems.Count > 0 Then
-
-            Else
-                FetchItemsFromInvoice(txtInvoiceNumber.Text)
-            End If
-
+            txtClientName.Text = receipt.ClientName
+            txtInvoiceNumber.Text = receipt.ReferenceInvoice
 
             GetClientInfo()
             LoadItems()
 
-            If String.IsNullOrEmpty(DeliveryDetails.DRNumber) Then
+            If String.IsNullOrWhiteSpace(receipt.DRNumber) Then
                 txtDeliveryNumber.Text = GenerateDeliveryId(txtInvoiceNumber.Text)
+                rbFullDelivery.IsEnabled = True
             Else
-                txtDeliveryNumber.Text = DeliveryDetails.DRNumber
+                txtDeliveryNumber.Text = receipt.DRNumber
+
+                txtInvoiceNumber.IsReadOnly = True
                 rbPartialDelivery.IsChecked = True
                 rbFullDelivery.IsChecked = False
                 rbFullDelivery.IsEnabled = False
             End If
 
-            dtDate.SelectedDate = DateTime.Today
+            Dim drDate As DateTime
+            If DateTime.TryParse(receipt.DRDate, drDate) Then
+                dtDate.SelectedDate = drDate
+            Else
+                dtDate.SelectedDate = DateTime.Today
+            End If
             txtSelectedDate.Text = dtDate.SelectedDate.Value.ToString("MMM dd, yyyy")
 
-            If Not String.IsNullOrEmpty(DeliveryDetails.DRShippingMethod) Then
-                cmbShippingMethod.Text = DeliveryDetails.DRShippingMethod
+            If Not String.IsNullOrWhiteSpace(receipt.ShippingMethod) Then
+                cmbShippingMethod.Text = receipt.ShippingMethod
             End If
 
-            If Not String.IsNullOrEmpty(DeliveryDetails.DRDeliveryNotes) Then
-                txtDeliveryNote.Text = DeliveryDetails.DRDeliveryNotes
+            If Not String.IsNullOrWhiteSpace(receipt.DeliveryNotes) Then
+                txtDeliveryNote.Text = receipt.DeliveryNotes
             End If
 
-            If Not String.IsNullOrEmpty(DeliveryDetails.DRApprovedBy) Then
-                cmbApprovedBy.Text = DeliveryDetails.DRApprovedBy
+            If Not String.IsNullOrWhiteSpace(receipt.ApprovedBy) Then
+                cmbApprovedBy.Text = receipt.ApprovedBy
             End If
 
-            If Not String.IsNullOrEmpty(DeliveryDetails.DRPaymentTerm) Then
-                cmbPaymentTerm.Text = DeliveryDetails.DRPaymentTerm
+            If Not String.IsNullOrWhiteSpace(receipt.PaymentTerm) Then
+                cmbPaymentTerm.Text = receipt.PaymentTerm
             End If
         End Sub
 
@@ -109,44 +112,57 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             '    Return
             'End If
 
-            DeliveryDetails.DRReferenceInvoice = txtInvoiceNumber.Text
-            DeliveryDetails.DRNumber = txtDeliveryNumber.Text
-            DeliveryDetails.DRDate = DateTime.Today.ToString("MMM dd, yyyy")
+            If Not String.IsNullOrWhiteSpace(txtDeliveryNumber.Text) Then
 
-            DeliveryDetails.DRClientName = txtClientName.Text
-            DeliveryDetails.DRClientDetails = txtClientDetails.Text
-            DeliveryDetails.DRDeliveryNotes = txtDeliveryNote.Text
-            DeliveryDetails.DRDeliveryStatus = If(rbFullDelivery.IsChecked = True, "FULL DELIVERY", If(rbPartialDelivery.IsChecked = True, "PARTIAL DELIVERY", "Not Specified"))
+                DeliveryDetails.DRReferenceInvoice = txtInvoiceNumber.Text
+                DeliveryDetails.DRNumber = txtDeliveryNumber.Text
+                DeliveryDetails.DRDate = DateTime.Today.ToString("MMM dd, yyyy")
 
-            Dim selectedMethod As ComboBoxItem = TryCast(cmbShippingMethod.SelectedItem, ComboBoxItem)
-            If selectedMethod IsNot Nothing Then
-                DeliveryDetails.DRShippingMethod = selectedMethod.Content.ToString()
+                DeliveryDetails.DRClientName = txtClientName.Text
+                DeliveryDetails.DRClientDetails = txtClientDetails.Text
+                DeliveryDetails.DRDeliveryNotes = txtDeliveryNote.Text
+                DeliveryDetails.DRDeliveryStatus = If(rbFullDelivery.IsChecked = True, "FULL DELIVERY", If(rbPartialDelivery.IsChecked = True, "PARTIAL DELIVERY", "Not Specified"))
+
+                Dim selectedMethod As ComboBoxItem = TryCast(cmbShippingMethod.SelectedItem, ComboBoxItem)
+                If selectedMethod IsNot Nothing Then
+                    DeliveryDetails.DRShippingMethod = selectedMethod.Content.ToString()
+                Else
+                    MessageBox.Show("Please select a Shipping Method (e.g., Pick-up or Delivery) before proceeding.",
+                        "Selection Required",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning)
+                    Return
+                End If
+
+                DeliveryDetails.DRDeliveryItems = itemDataSource.ToList()
+
+                DeliveryDetails.DRApprovedBy = cmbApprovedBy.Text
+                DeliveryDetails.DRPaymentTerm = cmbPaymentTerm.Text
+
+                ViewLoader.DynamicView.NavigateToView("previewprintdeliveryreceipt", Me)
             Else
-                MessageBox.Show("Please select a Shipping Method (e.g., Pick-up or Delivery) before proceeding.",
-                    "Selection Required",
+                MessageBox.Show("Please ensure that you have selected a valid Reference Number to proceed..",
+                    "Field Required",
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning)
                 Return
             End If
-
-            DeliveryDetails.DRDeliveryItems = itemDataSource.ToList()
-
-            DeliveryDetails.DRApprovedBy = cmbApprovedBy.Text
-            DeliveryDetails.DRPaymentTerm = cmbPaymentTerm.Text
-
-            ViewLoader.DynamicView.NavigateToView("previewprintdeliveryreceipt", Me)
         End Sub
 
         Private Sub LoadItems()
-            If DeliveryDetails.DRDeliveryItems Is Nothing Then Return
+            Dim receipt = DeliveryState.CurrentReceipt
+            If receipt Is Nothing OrElse String.IsNullOrWhiteSpace(receipt.OrderItems) Then Return
 
             itemDataSource.Clear()
             MainContainer.Children.Clear()
             _productTextBoxes.Clear()
+            _serialCounters.Clear()
+
+            Dim masterItems As List(Of Dictionary(Of String, String)) = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(receipt.OrderItems)
 
             Dim i As Integer = 1
 
-            For Each item As Dictionary(Of String, String) In DeliveryDetails.DRDeliveryItems
+            For Each item As Dictionary(Of String, String) In masterItems
                 Dim displayItem As New Dictionary(Of String, String)(item)
                 displayItem("SerialNumber") = ""
                 _serialCounters(i - 1) = 0 ' Initialize counter
