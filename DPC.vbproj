@@ -1158,6 +1158,9 @@
     <Compile Include="Views\Project\AddProject3.xaml.vb">
       <DependentUpon>AddProject3.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Project\EditProject.xaml.vb">
+      <DependentUpon>EditProject.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Project\ManageProject.xaml.vb">
       <DependentUpon>ManageProject.xaml</DependentUpon>
     </Compile>
@@ -1169,6 +1172,15 @@
     </Compile>
     <Compile Include="Views\Project\ToDoList.xaml.vb">
       <DependentUpon>ToDoList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Project\ToDoList\EditTask.xaml.vb">
+      <DependentUpon>EditTask.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Project\ToDoList\ManageTask.xaml.vb">
+      <DependentUpon>ManageTask.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Project\ToDoList\NewTask.xaml.vb">
+      <DependentUpon>NewTask.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PromoCodes\AddPromoCode.xaml.vb">
       <DependentUpon>AddPromoCode.xaml</DependentUpon>
@@ -2181,6 +2193,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Project\EditProject.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Project\ManageProject.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2194,6 +2210,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Project\ToDoList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Project\ToDoList\EditTask.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Project\ToDoList\ManageTask.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Project\ToDoList\NewTask.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
