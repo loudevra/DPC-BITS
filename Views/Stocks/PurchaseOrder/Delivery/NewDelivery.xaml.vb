@@ -55,6 +55,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 txtDeliveryNumber.Text = receipt.DRNumber
 
                 txtInvoiceNumber.IsReadOnly = True
+                txtInvoiceNumber.Foreground = Brushes.Gray
                 rbPartialDelivery.IsChecked = True
                 rbFullDelivery.IsChecked = False
                 rbFullDelivery.IsEnabled = False
@@ -495,6 +496,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Sub
 
         Private Sub DeliveryMode_Checked(sender As Object, e As RoutedEventArgs)
+            Dim isEditMode = DeliveryState.IsEditMode
             If rbPartialDelivery Is Nothing OrElse rbFullDelivery Is Nothing Then Return
             Dim isPartial As Boolean = rbPartialDelivery.IsChecked = True
 
@@ -508,7 +510,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     Dim index = kvp.Key.Split("_"c).Last()
                     Dim parentBorder As Border = TryCast(Me.FindName($"qtyBorder_{index}"), Border)
 
-                    If isPartial Then
+                    If isPartial And Not isEditMode Then
                         If qtyBox.Tag Is Nothing Then qtyBox.Tag = qtyBox.Text
                         qtyBox.IsReadOnly = False
 
