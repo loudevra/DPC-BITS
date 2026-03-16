@@ -192,6 +192,7 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Accounts.Transactions.ClientAddTabs.AddClientTabs()
 
                     ' Project Navigation
+                    ' Project Navigation
                     Case "newproject"
                         Return New Project.AddProject1()
                     Case "addproject2"
@@ -202,6 +203,14 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Project.ManageProject()
                     Case "todolist"
                         Return New Project.ToDoList()
+                    Case "newtask"
+                        Return New NewTask()
+                    Case "managetask"
+                        Return New ManageTask()
+                    Case "edittask"
+                        Return New EditTask()
+                    Case "editproject"
+                        Return New EditProject()
 
                     ' Sales Cost Estimate Navigation
                     Case "costestimate"
@@ -213,6 +222,11 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Sales.Quotes.EditQuote()
                     Case "previewprintquoteeditedquote"
                         Return New DPC.Components.Forms.PreviewPrintEditedQuote()
+
+                    Case "universaleditablepreviewdocument"
+                        Return New DPC.Components.Forms.UniversalEditablePreviewDocument()
+                    Case "universalprintablepreviewdocument"
+                        Return New DPC.Components.Forms.UniversalPrintablePreviewDocument()
 
                     ' Sales Billing Estimate Navigation
                     Case "billingestimate"
@@ -511,6 +525,7 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "hrmuploadfiles"
 
                 ' Projects Navigation
+                ' Projects Navigation
             ElseIf typeName = "newproject" Then
                 Return "newproject"
             ElseIf typeName = "editsuppliers" Then
@@ -523,6 +538,14 @@ Namespace DPC.Data.Helpers.ViewLoader
                 Return "manageproject"
             ElseIf typeName = "todolist" Then
                 Return "todolist"
+            ElseIf typeName = "newtask" Then
+                Return "newtask"
+            ElseIf typeName = "managetask" Then
+                Return "managetask"
+            ElseIf typeName = "edittask" Then
+                Return "edittask"
+
+
             ElseIf typeName = "purchaseorderstatement" Then
                 Return "purchaseorderstatement"
             ElseIf typeName = "printpreview" Then

@@ -1,5 +1,8 @@
-﻿Imports System.Windows.Markup
+﻿' CRMResidentialClientOtherSettings.xaml.vb
+Imports System.Windows.Markup
+Imports DPC.Data.Helpers.ViewLoader
 Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Helpers.ViewLoader
 Imports DPC.DPC.Data.Models
 
 Namespace DPC.Views.CRM
@@ -12,6 +15,13 @@ Namespace DPC.Views.CRM
         Private Shared _savedClientGroupID As Integer? = Nothing
         Private Shared _savedCustomerGroup As String = ""
         Private Shared _savedLanguage As String = ""
+
+        ' Called by other tabs during ClearCache to wipe this tab's memory
+        Public Shared Sub ResetMemory()
+            _savedClientGroupID = Nothing
+            _savedCustomerGroup = ""
+            _savedLanguage = ""
+        End Sub
 
         Public Sub New()
             InitializeComponent()
@@ -43,21 +53,17 @@ Namespace DPC.Views.CRM
 
         ' --- MEMORY MANAGEMENT ---
         Private Sub SaveToMemory(sender As Object, e As RoutedEventArgs)
-            ' 1. Save Group (Fix for BC30792)
             If cmbCustomerGroup.SelectedItem IsNot Nothing Then
                 _savedClientGroupID = CInt(cmbCustomerGroup.SelectedValue)
 
-                ' Correct way to cast KeyValuePair (Value Type)
                 Dim selectedGroup As KeyValuePair(Of Integer, String) =
                     CType(cmbCustomerGroup.SelectedItem, KeyValuePair(Of Integer, String))
-
                 _savedCustomerGroup = selectedGroup.Value
             Else
                 _savedClientGroupID = Nothing
                 _savedCustomerGroup = ""
             End If
 
-            ' 2. Save Language
             If cmbLanguage.SelectedItem IsNot Nothing Then
                 Dim selectedItem As ComboBoxItem = TryCast(cmbLanguage.SelectedItem, ComboBoxItem)
                 If selectedItem IsNot Nothing Then
@@ -69,15 +75,13 @@ Namespace DPC.Views.CRM
                 _savedLanguage = cmbLanguage.Text
             End If
 
-            ' 3. Update Global Model
-            ResidentialClientDetails.ClientGroupID = _savedClientGroupID
+            ResidentialClientDetails.ClientGroupID = If(_savedClientGroupID.HasValue, _savedClientGroupID.Value, 0)
             ResidentialClientDetails.CustomerGroup = _savedCustomerGroup
             ResidentialClientDetails.CustomerLanguage = _savedLanguage
         End Sub
 
         ' --- ADD CLIENT BUTTON ---
         Private Sub AddClient(sender As Object, e As RoutedEventArgs)
-            ' Check Global Fields
             If String.IsNullOrEmpty(ResidentialClientDetails.ClientName) OrElse
                String.IsNullOrEmpty(ResidentialClientDetails.Phone) OrElse
                String.IsNullOrEmpty(ResidentialClientDetails.BillAddress) OrElse
@@ -87,7 +91,6 @@ Namespace DPC.Views.CRM
                 Exit Sub
             End If
 
-            ' Check Local Fields
             If _savedClientGroupID Is Nothing Then
                 MessageBox.Show("Please select a Customer Group.", "Missing Information", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Exit Sub
@@ -102,7 +105,8 @@ Namespace DPC.Views.CRM
                 .ShippingAddress = $"{ResidentialClientDetails.Address}, {ResidentialClientDetails.City}, {ResidentialClientDetails.Region}, {ResidentialClientDetails.Country}, {ResidentialClientDetails.ZipCode}",
                 .CustomerGroup = ResidentialClientDetails.CustomerGroup,
                 .ClientLanguage = ResidentialClientDetails.CustomerLanguage,
-                .ClientType = "Residential"
+                .ClientType = "Residential",
+                .TinId = ""
             }
 
             Dim success As Boolean = ClientController.CreateClient(client)
@@ -114,17 +118,18 @@ Namespace DPC.Views.CRM
         End Sub
 
         Private Sub ClearCache()
-            ' Clear Local Memory
-            _savedClientGroupID = Nothing
-            _savedCustomerGroup = ""
-            _savedLanguage = ""
+            ' Step 1 - Reset ALL tabs' shared memory (so switching tabs won't restore old data)
+            CRMResidentialClientPersonalInfo.ResetMemory()
+            CRMResidentialClientBillingAddress.ResetMemory()
+            CRMResidentialClientShippingAddress.ResetMemory()
+            CRMResidentialClientOtherSettings.ResetMemory()
 
-            ' Clear UI
-            cmbCustomerGroup.SelectedValue = Nothing
+            ' Step 2 - Clear own UI fields
+            cmbCustomerGroup.SelectedIndex = -1
             cmbLanguage.SelectedIndex = -1
             cmbLanguage.Text = ""
 
-            ' Clear Global Model
+            ' Step 3 - Clear Global Model (ALL fields)
             ResidentialClientDetails.ClientName = Nothing
             ResidentialClientDetails.Phone = Nothing
             ResidentialClientDetails.Email = Nothing
@@ -138,10 +143,11 @@ Namespace DPC.Views.CRM
             ResidentialClientDetails.Region = Nothing
             ResidentialClientDetails.Country = Nothing
             ResidentialClientDetails.ZipCode = Nothing
-            ResidentialClientDetails.ClientGroupID = Nothing
+            ResidentialClientDetails.ClientGroupID = 0
             ResidentialClientDetails.CustomerGroup = Nothing
             ResidentialClientDetails.CustomerLanguage = Nothing
             ResidentialClientDetails.SameAsBilling = Nothing
         End Sub
+
     End Class
 End Namespace

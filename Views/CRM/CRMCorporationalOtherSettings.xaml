@@ -29,6 +29,7 @@
          FontFamily="Lexend" 
          FontWeight="SemiBold" 
          Foreground="#474747"
+         CharacterCasing="Upper"                    
          Style="{StaticResource RoundedTextboxStyle}"/>
                 </Border>
 
