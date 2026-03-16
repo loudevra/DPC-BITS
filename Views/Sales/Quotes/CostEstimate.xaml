@@ -237,10 +237,10 @@
                                                     </StackPanel>
 
                                                     <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Right">
-                                                        <TextBlock x:Name="SubmittedToClient" Text="Eli Clark" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                        <TextBlock x:Name="SubmittedToAddress" Text="Wales, Swansea" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="270"/>
-                                                        <TextBlock x:Name="SubmittedToNumber" Text="+63966634982" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                        <TextBlock x:Name="SubmittedToEmail" Text="brookerose@gmail.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
+                                                        <TextBlock x:Name="SubmittedToClient" Text="Eli Clark" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center" MaxWidth="230"/>
+                                                        <TextBlock x:Name="SubmittedToAddress" Text="Wales, Swansea" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="230"/>
+                                                        <TextBlock x:Name="SubmittedToNumber" Text="+63966634982" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center" MaxWidth="230"/>
+                                                        <TextBlock x:Name="SubmittedToEmail" Text="brookerose@gmail.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center" MaxWidth="230"/>
                                                     </StackPanel>
                                                 </Grid>
                                             </StackPanel>
@@ -457,17 +457,27 @@
                                                                 <DataGridTemplateColumn.CellTemplate>
                                                                     <DataTemplate>
                                                                         <StackPanel Margin="8" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                                                            <TextBlock x:Name="txtProductTitle"
-                                                                                        Text="{Binding Description}" 
-                                                                                        FontSize="12" 
-                                                                                        FontFamily="Lexend"/>
+                                                                            <TextBlock 
+                                                                                Text="{Binding Description}" 
+                                                                                FontSize="12" 
+                                                                                FontFamily="Lexend"
+                                                                                FontWeight="SemiBold"
+                                                                                MaxWidth="400"
+                                                                                TextWrapping="Wrap"
+                                                                                TextTrimming="CharacterEllipsis"
+                                                                                MaxHeight="36"/>
+                                                                            <!--<TextBlock 
+                                                                                Text="{Binding ProductDescription}" 
+                                                                                FontSize="12" 
+                                                                                FontFamily="Lexend"
+                                                                                Foreground="Black"
+                                                                                Margin="0,3,0,0"
+                                                                                MaxWidth="400"       
+                                                                                TextWrapping="Wrap"
+                                                                                TextTrimming="CharacterEllipsis"
+                                                                                MaxHeight="20" 
+                                                                                Visibility="{Binding ProductDescriptionVisibility}"/>-->
 
-                                                                            <TextBlock Text="{Binding ProductDescription}" 
-                                                                                       FontSize="11" 
-                                                                                       FontFamily="Lexend"
-                                                                                       Foreground="#555555"
-                                                                                       Margin="0,3,0,0"
-                                                                                       Visibility="{Binding ProductDescriptionVisibility}"/>
                                                                         </StackPanel>
 
                                                                         <DataTemplate.Triggers>
@@ -570,22 +580,23 @@
                                                                 <Setter Property="Background" Value="Transparent"/>
                                                                 <Setter Property="Padding" Value="3,0"/>
                                                                 <Setter Property="FontSize" Value="12"/>
+                                                                <Setter Property="VerticalContentAlignment" Value="Center"/>                                                                <Setter Property="BorderBrush" Value="Black"/>
+
                                                                 <Setter Property="VerticalContentAlignment" Value="Center"/>
-                                                                <Setter Property="BorderBrush" Value="Black"/>
-                                                                <Setter Property="BorderThickness" Value="0, 0, 1, 1"/>
 
-                                                                <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding IsHeaderRow}" Value="True">
-                                                                        <Setter Property="BorderThickness" Value="0, 0, 0, 1"/>
-                                                                        <Setter Property="Background" Value="#F2F2F2"/>
-                                                                        <Setter Property="FontWeight" Value="Bold"/>
-                                                                        <Setter Property="Padding" Value="3,0"/>
-                                                                    </DataTrigger>
+                                                                <Setter Property="Template">
+                                                                    <Setter.Value>
+                                                                        <ControlTemplate TargetType="{x:Type DataGridCell}">
+                                                                            <Border Padding="{TemplateBinding Padding}"                                             
+                                                                                    Background="{TemplateBinding Background}"
+                                                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                                                    BorderThickness="{TemplateBinding BorderThickness}">
+                                                                                <ContentPresenter VerticalAlignment="Center"/>
+                                                                            </Border>
+                                                                        </ControlTemplate>
+                                                                    </Setter.Value>
+                                                                </Setter>
 
-                                                                    <DataTrigger Binding="{Binding IsSubtotalRow}" Value="True">
-                                                                        <Setter Property="BorderThickness" Value="0, 0, 0, 0"/>
-                                                                    </DataTrigger>
-                                                                </Style.Triggers>
                                                             </Style>
                                                         </DataGrid.CellStyle>
                                                     </DataGrid>
