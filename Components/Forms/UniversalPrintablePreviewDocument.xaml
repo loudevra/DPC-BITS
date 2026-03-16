@@ -1,10 +1,9 @@
-﻿<UserControl x:Class="DPC.Views.Sales.Quotes.CostEstimate"
+﻿<UserControl x:Class="DPC.Components.Forms.UniversalPrintablePreviewDocument"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Background="#D9D9D9"
-             Loaded="CostEstimate_Loaded">
+             Loaded="PrintablePreview_Loaded">
 
     <UserControl.Resources>
         <!-- Border Style -->
@@ -51,9 +50,8 @@
         <Grid>
             <!-- Main Content (ScrollViewer) -->
             <ScrollViewer VerticalScrollBarVisibility="Auto"
-                          HorizontalScrollBarVisibility="Disabled">
+                              HorizontalScrollBarVisibility="Disabled">
                 <Grid>
-
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -62,95 +60,79 @@
 
                     <Viewbox Grid.Row="1" Margin="20,20,20,20" >
                         <!-- Main Content -->
-                        <StackPanel>
-                            <!-- Header Section -->
-                            <StackPanel x:Name="BackBtn" MouseLeftButtonUp="BackToUI_Click" Cursor="Hand" Grid.Row="0" Orientation="Horizontal" Margin="0,10,0,10">
-                                <materialDesign:PackIcon Kind="ChevronLeft" Width="15" Height="20" Foreground="#555555" Margin="0,0,10,0"/>
-                                <TextBlock Text="Quote" FontWeight="SemiBold" FontFamily="Lexend" FontSize="16" Foreground="#555555" VerticalAlignment="Center"/>
-                            </StackPanel>
+                        <StackPanel Grid.Row="1" Margin="20,20,20,20" Grid.ColumnSpan="2">
+                            <DockPanel LastChildFill="False" Margin="0,10,0,10">
+                                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="0,0,10,0">
+                                    <Button Click="CancelButton" Content="Cancel"
+                                                Margin="0,0,5,0"
+                                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                materialDesign:ButtonAssist.CornerRadius="20"
+                                                Foreground="#AEAEAE"
+                                                BorderBrush="#AEAEAE"
+                                                FontWeight="SemiBold"   
+                                                FontSize="16px"
+                                                Width="90"
+                                                Height="39"/>
+                                    <Button x:Name="SaveDb" Click="SaveDb_Click" Content="Save"
+                                                Margin="0,0,5,0"
+                                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                materialDesign:ButtonAssist.CornerRadius="20"
+                                                Foreground="White"
+                                                FontWeight="SemiBold"   
+                                                FontSize="16px"
+                                                Width="80"
+                                                Height="39"
+                                                Background="#2E466B"/>
+
+                                    <Button Click="SavePrint" Content="Print"
+                                                Style="{StaticResource MaterialDesignOutlinedButton}"
+                                                materialDesign:ButtonAssist.CornerRadius="20"
+                                                Foreground="White"
+                                                FontWeight="SemiBold"   
+                                                FontSize="16px"
+                                                Width="90"
+                                                Height="39"
+                                                Background="#2E466B"/>
+                                </StackPanel>
+                            </DockPanel>
 
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,10">
                                 <Button x:Name="btnPrevPage" 
-                                Click="PreviousPage_Click" 
-                                Content="◄ Previous" 
-                                Width="100" 
-                                Margin="5"
-                                Style="{StaticResource MaterialDesignOutlinedButton}"
-                                materialDesign:ButtonAssist.CornerRadius="20"
-                                Foreground="#555555"
-                                BorderBrush="#AEAEAE"
-                                FontWeight="SemiBold"
-                                FontSize="12"/>
+                                        Click="PreviousPage_Click" 
+                                        Content="◄ Previous" 
+                                        Width="100" 
+                                        Margin="5"
+                                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                                        materialDesign:ButtonAssist.CornerRadius="20"
+                                        Foreground="#555555"
+                                        BorderBrush="#AEAEAE"
+                                        FontWeight="SemiBold"
+                                        FontSize="12"/>
 
                                 <TextBlock x:Name="txtPageInfo" 
-                               Text="Page 1 of 1" 
-                               VerticalAlignment="Center" 
-                               Margin="20,0"
-                               FontFamily="Lexend" 
-                               FontSize="14" 
-                               FontWeight="SemiBold"
-                               Foreground="#2E466B"/>
+                                       Text="Page 1 of 1" 
+                                       VerticalAlignment="Center" 
+                                       Margin="20,0"
+                                       FontFamily="Lexend" 
+                                       FontSize="14" 
+                                       FontWeight="SemiBold"
+                                       Foreground="#2E466B"/>
 
                                 <Button x:Name="btnNextPage" 
-                                Click="NextPage_Click" 
-                                Content="Next ►" 
-                                Width="100" 
-                                Margin="5"
-                                Style="{StaticResource MaterialDesignOutlinedButton}"
-                                materialDesign:ButtonAssist.CornerRadius="20"
-                                Foreground="#555555"
-                                BorderBrush="#AEAEAE"
-                                FontWeight="SemiBold"
-                                FontSize="12"/>
+                                        Click="NextPage_Click" 
+                                        Content="Next ►" 
+                                        Width="100" 
+                                        Margin="5"
+                                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                                        materialDesign:ButtonAssist.CornerRadius="20"
+                                        Foreground="#555555"
+                                        BorderBrush="#AEAEAE"
+                                        FontWeight="SemiBold"
+                                        FontSize="12"/>
                             </StackPanel>
 
-                            <Border Background="White" CornerRadius="10,10, 0, 0">
-                                <Grid Grid.Row="1"  Margin="0,0,0,0"  >
 
-                                    <!--view-->
-                                    <Border HorizontalAlignment="Right" CornerRadius="10,10,10, 0 " Background="White" >
-                                        <Button Click="PrintPreview" Style="{StaticResource IconButton}">
-                                            <StackPanel>
-                                                <materialDesign:PackIcon Kind="FolderEyeOutline" Width="30" Height="30" Margin="10,10,10,0" Foreground="#555555"/>
-                                                <TextBlock Text="View" FontSize="8" HorizontalAlignment="Center" Foreground="#555555"/>
-                                            </StackPanel>
-                                        </Button>
-                                    </Border>
-
-                                    <!-- Toggle Image Button - Simple Version -->
-                                    <Border HorizontalAlignment="Right" Margin="0,0,55,0" CornerRadius="10,10,10,0" Background="White">
-                                        <Button x:Name="btnToggleImage" 
-                                        Click="ToggleImage_Click"
-                                        Style="{StaticResource IconButton}"
-                                        ToolTip="Toggle Product Images">
-                                            <StackPanel>
-                                                <materialDesign:PackIcon x:Name="iconToggleImage" 
-                                                 Kind="Image" 
-                                                 Width="27" 
-                                                 Height="27" 
-                                                 Margin="10,13,10,0" 
-                                                 Foreground="#555555"/>
-                                                <TextBlock x:Name="txtToggleImage" 
-                                                 Text="Hide Images" 
-                                                 FontSize="8" 
-                                                 HorizontalAlignment="Center" 
-                                                 Foreground="#555555"/>
-                                            </StackPanel>
-                                        </Button>
-                                    </Border>
-
-                                </Grid>
-                            </Border>
-                            <StackPanel Grid.Row="1" Margin="0,0,0,0" >
-                                <Border Background="White">
-                                    <Rectangle Width="auto"
-                                            Height="1" 
-                                            Stroke="#AEAEAE"
-                                            StrokeThickness="1"
-                                            Fill="Transparent"
-                                            VerticalAlignment="Top"
-                                            Margin="10"/>
-                                </Border>
+                            <StackPanel x:Name="PrintPreview" Grid.Row="1" Margin="0,0,0,0" >
                                 <Border MinHeight="1344" Width="816" Background="White" CornerRadius="0,0,10,10"  BorderThickness="0" Padding="40">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -159,8 +141,8 @@
                                         </Grid.ColumnDefinitions>
 
                                         <!--<Grid.Background>
-                                            <ImageBrush ImageSource="/Assets/images/DREAMPCBUILD LOGO WATERMARK SLANTED SPACED.png" Stretch="UniformToFill" Opacity="0.05"/>
-                                        </Grid.Background>-->
+                <ImageBrush ImageSource="/Assets/images/DREAMPCBUILD LOGO WATERMARK SLANTED SPACED.png" Stretch="UniformToFill" Opacity="0.05"/>
+            </Grid.Background>-->
 
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
@@ -180,18 +162,27 @@
                                             <Image Source="/Assets/images/logosidebarBlack.png" Stretch="Fill" Width="234" Height="75"/>
                                         </StackPanel>
                                         <TextBlock x:Name="PageIndicatorText" 
-                                               Grid.Row="0"
-                                               HorizontalAlignment="Right" 
-                                               VerticalAlignment="Top"
-                                               Margin="0,10,10,0"
-                                               FontFamily="Lexend"
-                                               FontSize="10"
-                                               FontWeight="SemiBold"
-                                               Foreground="#555555"
-                                               Text="Page 1 of 1" Grid.Column="1"/>
+                   Grid.Row="0"
+                   HorizontalAlignment="Right" 
+                   VerticalAlignment="Top"
+                   Margin="0,10,10,0"
+                   FontFamily="Lexend"
+                   FontSize="10"
+                   FontWeight="SemiBold"
+                   Foreground="#555555"
+                   Text="Page 1 of 1" Grid.Column="1"/>
                                         <!--Billing Statement Label-->
-                                        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left" Margin="302,5,0,15" Grid.Column="1">
-                                            <TextBlock Text="COST ESTIMATE" FontWeight="Bold" FontFamily="Lexend" FontSize="20" Foreground="#090909" VerticalAlignment="Center"/>
+                                        <StackPanel Grid.Row="2" 
+                        Grid.Column="1" 
+                        Orientation="Horizontal" 
+                        HorizontalAlignment="Center" 
+                        Margin="0,5,0,15">
+                                            <TextBlock x:Name="lblPageTitle" 
+                           Text="EDITABLE DOCUMENT" 
+                           FontWeight="Bold" 
+                           FontFamily="Lexend" 
+                           FontSize="20" 
+                           Foreground="#090909"/>
                                         </StackPanel>
                                         <!--Invoice and Date-->
                                         <!-- 08/01/2025 - Changed the Grid.Row Attribute from Grid.Row 2 to 3 -->
@@ -199,19 +190,19 @@
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" >
                                                 <TextBlock x:Name="CNIdentifier" Text="CE #:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center" />
                                                 <Border Background="White" BorderThickness="0.5,0.5,0.5,0.25"  BorderBrush="#090909" Padding="3,0" Width="250" Height="20" >
-                                                    <TextBlock x:Name="QuoteNumber" FontSize="12" FontFamily="Lexend" FontWeight="Bold"  HorizontalAlignment="Center"  VerticalAlignment="Center" />
+                                                    <TextBlock x:Name="DocumentNumber" FontSize="12" FontFamily="Lexend" FontWeight="Bold"  HorizontalAlignment="Center"  VerticalAlignment="Center" />
                                                 </Border>
                                             </StackPanel>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                                 <TextBlock Text="Date:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
                                                 <Border Background="White" BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="#090909" Padding="3,0" Width="250" Margin="8,0,0,0" Height="20">
-                                                    <TextBlock x:Name="QuoteDate" FontSize="9" FontFamily="Lexend"  HorizontalAlignment="Center"  VerticalAlignment="Center"/>
+                                                    <TextBlock x:Name="DocumentDate" FontSize="9" FontFamily="Lexend"  HorizontalAlignment="Center"  VerticalAlignment="Center"/>
                                                 </Border>
                                             </StackPanel>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                                 <TextBlock Text="Valid Until:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
                                                 <Border BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="Black" Padding="3,0" Width="250" Margin="8,0,0,0" Height="20">
-                                                    <TextBlock x:Name="QuoteValidityDate"  FontSize="9" FontWeight="Bold"  Foreground="Red" FontFamily="Lexend" HorizontalAlignment="Center"  VerticalAlignment="Center"/>
+                                                    <TextBlock x:Name="DocumentValidityDate"  FontSize="9" FontWeight="Bold"  Foreground="Red" FontFamily="Lexend" HorizontalAlignment="Center"  VerticalAlignment="Center"/>
                                                 </Border>
                                             </StackPanel>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
@@ -226,22 +217,26 @@
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="220"/>
                                                     </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
 
-                                                    <StackPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Right">
-                                                        <TextBlock Text="Client Name/Company Name:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                                        <TextBlock Text="Client Address                         :" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,15"/>
-                                                        <TextBlock Text="Contact Number                     :" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                                        <TextBlock Text="Client Email                             :" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
-                                                    </StackPanel>
+                                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Client Name/Company Name:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                    <TextBlock Grid.Row="0" Grid.Column="1" x:Name="SubmittedToClient" Text="Eli Clark" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" VerticalAlignment="Top"/>
 
-                                                    <StackPanel Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Right">
-                                                        <TextBlock x:Name="SubmittedToClient" Text="Eli Clark" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                        <TextBlock x:Name="SubmittedToAddress" Text="Wales, Swansea" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="270"/>
-                                                        <TextBlock x:Name="SubmittedToNumber" Text="+63966634982" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                        <TextBlock x:Name="SubmittedToEmail" Text="brookerose@gmail.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
-                                                    </StackPanel>
+                                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Client Address :" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                    <TextBlock Grid.Row="1" Grid.Column="1" x:Name="SubmittedToAddress" Text="Wales, Swansea" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" VerticalAlignment="Top" TextWrapping="Wrap" TextAlignment="Left"/>
+
+                                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Contact Number :" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                    <TextBlock Grid.Row="2" Grid.Column="1" x:Name="SubmittedToNumber" Text="+63966634982" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+
+                                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Client Email :" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                    <TextBlock Grid.Row="3" Grid.Column="1" x:Name="SubmittedToEmail" Text="brookerose@gmail.com" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                                                 </Grid>
                                             </StackPanel>
 
@@ -270,35 +265,25 @@
                                                 <Border Grid.Row="1" Grid.Column="0" Height="20" VerticalAlignment="Center" Padding="10,0,0,0">
                                                     <TextBlock x:Name="SalesRep" FontWeight="Bold" Height="11" Text="Prepared by:" Foreground="#090909" FontSize="11" FontFamily="{StaticResource Lexend}"/>
                                                 </Border>
-                                                <Border Grid.Row="1" Grid.Column="1" Height="20" VerticalAlignment="Center" >
-                                                    <ComboBox x:Name="cmbApproved" FontSize="10" FontWeight="Bold">
-                                                        <ComboBoxItem Content=""/>
-                                                        <ComboBoxItem Content="Alecksandra Balingit"/>
-                                                        <ComboBoxItem Content="Parvit Kumar"/>
-                                                    </ComboBox>
+                                                <Border Grid.Row="1" Grid.Column="1" Height="20" VerticalAlignment="Center">
+                                                    <TextBlock x:Name="lblApproved" 
+                                                               FontSize="10" 
+                                                               FontWeight="Bold" 
+                                                               FontFamily="Lexend"
+                                                               Foreground="#090909"
+                                                               HorizontalAlignment="Center" 
+                                                               VerticalAlignment="Center"/>
                                                 </Border>
-                                                <Border Grid.Row="1" Grid.Column="2" Height="20" VerticalAlignment="Center" Background="Red">
-                                                    <ComboBox x:Name="cmbTerms"
-                                                          FontSize="10"
-                                                          FontWeight="Bold"
-                                                          SelectionChanged="cmbTerms_SelectionChanged">
-                                                        <ComboBoxItem Content="Cash"/>
-                                                        <ComboBoxItem Content="7 Days PDC"/>
-                                                        <ComboBoxItem Content="14 Days PDC"/>
-                                                        <ComboBoxItem Content="30 Days PDC"/>
-                                                        <ComboBoxItem Content="45 Days PDC"/>
-                                                        <ComboBoxItem Content="60 Days PDC"/>
-                                                        <ComboBoxItem>
-                                                            <Grid Width="230">
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="Auto"/>
-                                                                    <ColumnDefinition Width="*"/>
-                                                                </Grid.ColumnDefinitions>
-                                                                <TextBlock Grid.Column="0" Text="Custom:" Margin="5,0"/>
-                                                                <TextBox Grid.Column="1" x:Name="CustomTerms"/>
-                                                            </Grid>
-                                                        </ComboBoxItem>
-                                                    </ComboBox>
+                                                <Border Grid.Row="1" Grid.Column="2" Height="20" VerticalAlignment="Center">
+                                                    <Border Grid.Row="1" Grid.Column="2" Height="20" VerticalAlignment="Center">
+                                                        <TextBlock x:Name="lblTermsDisplay" 
+                                                                   FontSize="10" 
+                                                                   FontWeight="Bold" 
+                                                                   FontFamily="Lexend"
+                                                                   HorizontalAlignment="Center" 
+                                                                   VerticalAlignment="Center"
+                                                                   Foreground="#090909"/>
+                                                    </Border>
                                                 </Border>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition/>
@@ -323,15 +308,15 @@
 
                                                 <StackPanel Grid.Row="0">
                                                     <DataGrid x:Name="dataGrid"
-                                                   IsReadOnly="True"
-                                                   AutoGenerateColumns="False"
-                                                   CanUserAddRows="False"
-                                                   HeadersVisibility="Column"
-                                                   GridLinesVisibility="None"
-                                                   Background="Transparent"
-                                                   RowBackground="Transparent"
-                                                   BorderThickness="0, 1, 0, 0"
-                                                   BorderBrush="Black">
+                       IsReadOnly="True"
+                       AutoGenerateColumns="False"
+                       CanUserAddRows="False"
+                       HeadersVisibility="Column"
+                       GridLinesVisibility="None"
+                       Background="Transparent"
+                       RowBackground="Transparent"
+                       BorderThickness="0, 1, 0, 0"
+                       BorderBrush="Black">
                                                         <DataGrid.GroupStyle>
                                                             <GroupStyle>
                                                                 <GroupStyle.HeaderTemplate>
@@ -350,20 +335,19 @@
                                                                 <DataGridTemplateColumn.CellTemplate>
                                                                     <DataTemplate>
                                                                         <Border Background="Transparent" 
-                                                                      HorizontalAlignment="Center" 
-                                                                      VerticalAlignment="Center"
-                                                                      Padding="2">
+                                          HorizontalAlignment="Center" 
+                                          VerticalAlignment="Center"
+                                          Padding="2">
 
                                                                             <Image x:Name="ProductImageControl"
-                                                                          Source="{Binding ProductImage}" 
-                                                                          MaxHeight="50" 
-                                                                          MaxWidth="50"
-                                                                          Stretch="Uniform"
-                                                                          HorizontalAlignment="Center"
-                                                                          VerticalAlignment="Center"
-                                                                          Cursor="Hand"
-                                                                          MouseLeftButtonDown="ProductImageControl_MouseLeftButtonDown">
-                                                                                <Image.Style>
+                                                                                  Source="{Binding ProductImage}" 
+                                                                                  MaxHeight="50" 
+                                                                                  MaxWidth="50"
+                                                                                  Stretch="Uniform"
+                                                                                  HorizontalAlignment="Center"
+                                                                                  VerticalAlignment="Center"
+                                                                                  Cursor="Hand">
+                                                                            <Image.Style>
                                                                                     <Style TargetType="Image">
                                                                                         <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
                                                                                         <Setter Property="RenderTransform">
@@ -379,9 +363,9 @@
                                                                                                         <Storyboard>
                                                                                                             <DoubleAnimation 
              
-                                                                                                         Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
-                                                                                                         To="1.1" 
-                                                                                                         Duration="0:0:0.3">
+                                                                             Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
+                                                                             To="1.1" 
+                                                                             Duration="0:0:0.3">
 
                                                                                                                 <DoubleAnimation.EasingFunction>
                                                                                                                     <QuadraticEase EasingMode="EaseOut"/>
@@ -389,9 +373,9 @@
                                                                                                             </DoubleAnimation>
                                                                                                             <DoubleAnimation 
              
-                                                                                                         Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
-                                                                                                         To="1.1" 
-                                                                                                         Duration="0:0:0.3">
+                                                                             Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
+                                                                             To="1.1" 
+                                                                             Duration="0:0:0.3">
 
                                                                                                                 <DoubleAnimation.EasingFunction>
                                                                                                                     <QuadraticEase EasingMode="EaseOut"/>
@@ -405,9 +389,9 @@
                                                                                                         <Storyboard>
                                                                                                             <DoubleAnimation 
              
-                                                                                                         Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
-                                                                                                         To="1" 
-                                                                                                         Duration="0:0:0.2">
+                                                                             Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
+                                                                             To="1" 
+                                                                             Duration="0:0:0.2">
 
                                                                                                                 <DoubleAnimation.EasingFunction>
                                                                                                                     <QuadraticEase EasingMode="EaseIn"/>
@@ -415,9 +399,9 @@
                                                                                                             </DoubleAnimation>
                                                                                                             <DoubleAnimation 
              
-                                                                                                         Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
-                                                                                                         To="1" 
-                                                                                                         Duration="0:0:0.2">
+                                                                             Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
+                                                                             To="1" 
+                                                                             Duration="0:0:0.2">
 
                                                                                                                 <DoubleAnimation.EasingFunction>
                                                                                                                     <QuadraticEase EasingMode="EaseIn"/>
@@ -458,22 +442,22 @@
                                                                     <DataTemplate>
                                                                         <StackPanel Margin="8" HorizontalAlignment="Left" VerticalAlignment="Center">
                                                                             <TextBlock x:Name="txtProductTitle"
-                                                                                        Text="{Binding Description}" 
-                                                                                        FontSize="12" 
-                                                                                        FontFamily="Lexend"/>
+                                                            Text="{Binding ProductName}" 
+                                                            FontSize="12" 
+                                                            FontFamily="Lexend"/>
 
                                                                             <TextBlock Text="{Binding ProductDescription}" 
-                                                                                       FontSize="11" 
-                                                                                       FontFamily="Lexend"
-                                                                                       Foreground="#555555"
-                                                                                       Margin="0,3,0,0"
-                                                                                       Visibility="{Binding ProductDescriptionVisibility}"/>
+                                                           FontSize="11" 
+                                                           FontFamily="Lexend"
+                                                           Foreground="#555555"
+                                                           Margin="0,3,0,0"
+                                                           Visibility="{Binding ProductDescriptionVisibility}"/>
                                                                         </StackPanel>
 
                                                                         <DataTemplate.Triggers>
                                                                             <DataTrigger Binding="{Binding IsHeaderRow}" Value="True">
                                                                                 <Setter TargetName="txtProductTitle" Property="FontWeight" Value="Bold"/>
-                                                                                <Setter TargetName="txtProductTitle" Property="Text" Value="{Binding Description}"/>
+                                                                                <Setter TargetName="txtProductTitle" Property="Text" Value="{Binding ProductName}"/>
                                                                                 <Setter TargetName="txtProductTitle" Property="FontSize" Value="13"/>
                                                                             </DataTrigger>
                                                                         </DataTemplate.Triggers>
@@ -532,14 +516,14 @@
                                                                             <Setter.Value>
                                                                                 <ControlTemplate TargetType="DataGridRow">
                                                                                     <Border BorderBrush="Black" 
-                                                                                            BorderThickness="0,0,0,1" 
-                                                                                            Background="{TemplateBinding Background}" 
-                                                                                            Padding="10,5">
-                                                                                        <TextBlock Text="{Binding Description}" 
-                                                                                                   HorizontalAlignment="Center" 
-                                                                                                   VerticalAlignment="Center"
-                                                                                                   FontSize="14"
-                                                                                                   FontWeight="Bold"/>
+                                                                BorderThickness="0,0,0,1" 
+                                                                Background="{TemplateBinding Background}" 
+                                                                Padding="10,5">
+                                                                                        <TextBlock Text="{Binding ProductName}" 
+                                                                       HorizontalAlignment="Center" 
+                                                                       VerticalAlignment="Center"
+                                                                       FontSize="14"
+                                                                       FontWeight="Bold"/>
                                                                                     </Border>
                                                                                 </ControlTemplate>
                                                                             </Setter.Value>
@@ -594,12 +578,12 @@
                                                     <StackPanel x:Name="NothingToFollowSection" Margin="0,0,5,0" Orientation="Vertical" HorizontalAlignment="Center">
                                                         <Border Background="Transparent" Padding="5" CornerRadius="5">
                                                             <TextBlock 
-                                                           Text="*............................................... Nothing to follow ...............................................*"
-                                                           FontFamily="Lexend"
-                                                           FontSize="10"
-                                                           FontWeight="Bold"
-                                                           Foreground="Black"
-                                                           HorizontalAlignment="Center"/>
+                               Text="*............................................... Nothing to follow ...............................................*"
+                               FontFamily="Lexend"
+                               FontSize="10"
+                               FontWeight="Bold"
+                               Foreground="Black"
+                               HorizontalAlignment="Center"/>
                                                         </Border>
                                                     </StackPanel>
 
@@ -607,22 +591,21 @@
                                                     <StackPanel x:Name="OtherServicesSection" Margin="5,0,5,0">
                                                         <Border BorderBrush="Transparent" BorderThickness="0" Padding="1">
                                                             <TextBlock 
-                                                           x:Name="OtherServices"
-                                                           Text="Services:"
-                                                           HorizontalAlignment="Center"
-                                                           FontFamily="Lexend"
-                                                           FontSize="12"
-                                                           FontWeight="SemiBold"
-                                                           Foreground="black"
-                                                           TextWrapping="Wrap"
-                                                           Width="400"        
-                                                           MinHeight="20"
-                                                           Padding="3"
-                                                           TextAlignment="Center"
-                                                           Background="Transparent"
-                                                           VerticalAlignment="Center"
-                                                           Cursor="Hand"
-                                                           MouseLeftButtonUp="TextEditorPopOut"/>
+                               x:Name="OtherServices"
+                               Text="Services:"
+                               HorizontalAlignment="Center"
+                               FontFamily="Lexend"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               Foreground="black"
+                               TextWrapping="Wrap"
+                               Width="400"        
+                               MinHeight="20"
+                               Padding="3"
+                               TextAlignment="Center"
+                               Background="Transparent"
+                               VerticalAlignment="Center"
+                               Cursor="Hand"/>
                                                         </Border>
                                                     </StackPanel>
                                                 </StackPanel>
@@ -632,29 +615,28 @@
                                                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                                                         <Border Background="Transparent" Padding="2" CornerRadius="5">
                                                             <TextBlock 
-                                                            Text="Warranty:"
-                                                            FontFamily="Lexend"
-                                                            FontSize="10"
-                                                            FontWeight="Bold"
-                                                            Foreground="Red"
-                                                            HorizontalAlignment="Left"/>
+                                Text="Warranty:"
+                                FontFamily="Lexend"
+                                FontSize="10"
+                                FontWeight="Bold"
+                                Foreground="Red"
+                                HorizontalAlignment="Left"/>
                                                         </Border>
                                                     </StackPanel>
 
                                                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                                                         <Border Background="Transparent" CornerRadius="5">
                                                             <TextBlock
-                                                            x:Name="Warranty"
-                                                            Text="Dream PC Build and IT Solutions Inc. offers 1 year warranty for this cost estimate. This warranty covers &#x0a;manufacturer defects and hardware malfunctions under normal usage. Terms and conditions apply."
-                                                            FontFamily="Lexend"
-                                                            MouseLeftButtonUp="TextEditorPopOut"
-                                                            FontSize="10"
-                                                            Width="450"
-                                                            TextWrapping="Wrap"
-                                                            FontWeight="Light"
-                                                            Foreground="Red"
-                                                            HorizontalAlignment="Center"
-                                                            TextAlignment="Center"/>
+                                x:Name="Warranty"
+                                Text="Dream PC Build and IT Solutions Inc. offers 1 year warranty for this cost estimate. This warranty covers &#x0a;manufacturer defects and hardware malfunctions under normal usage. Terms and conditions apply."
+                                FontFamily="Lexend"
+                                FontSize="10"
+                                Width="450"
+                                TextWrapping="Wrap"
+                                FontWeight="Light"
+                                Foreground="Red"
+                                HorizontalAlignment="Center"
+                                TextAlignment="Center"/>
                                                         </Border>
                                                     </StackPanel>
                                                 </StackPanel>
@@ -674,7 +656,7 @@
                                                     <!--Signature-->
                                                     <Border Grid.Column="0" BorderBrush="#090909" BorderThickness="0,0,1,0">
                                                         <TextBlock FontWeight="SemiBold" FontFamily="Lexend" FontSize="10" Foreground="#090909" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="4">
-                                                        PRINTED NAME AND SIGNATURE
+                            PRINTED NAME AND SIGNATURE
                                                         </TextBlock>
                                                     </Border>
 
@@ -705,16 +687,10 @@
 
                                                             <StackPanel Grid.Column="0">
                                                                 <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
-                                                                    <ComboBox x:Name="cmbSubtotalTax" FontSize="10" FontWeight="Bold" Height="15" Padding="4,2">
-                                                                        <ComboBoxItem Content="SUBTOTAL"/>
-
-                                                                    </ComboBox>
+                                                                    <TextBlock x:Name="lblSubtotal" Text="SUBTOTAL" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
                                                                 </Border>
                                                                 <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
-                                                                    <ComboBox x:Name="cmbDeliveryMobilization" FontSize="10" FontWeight="Bold" Height="15" Padding="4,2">
-                                                                        <ComboBoxItem Content="DELIVERY CHARGE"/>
-                                                                        <ComboBoxItem Content="MOBILIZATION"/>
-                                                                    </ComboBox>
+                                                                    <TextBlock x:Name="lblDeliveryMobilization"  FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
                                                                 </Border>
                                                                 <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
                                                                     <TextBlock Text="INSTALLATION FEE" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
@@ -731,13 +707,13 @@
                                                                     <TextBlock x:Name="Subtotal" Text="₱ 0.00" FontWeight="SemiBold" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
                                                                 </Border>
                                                                 <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                    <TextBox  x:Name="Delivery" TextChanged="Delivery_TextChanged" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
+                                                                    <TextBox  x:Name="Delivery" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
                                                                 </Border>
                                                                 <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                    <TextBox  x:Name="Installation" TextChanged="Installation_TextChanged" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
+                                                                    <TextBox  x:Name="Installation" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
                                                                 </Border>
                                                                 <Border x:Name="VatValue" BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                    <TextBox  x:Name="VAT12" TextChanged="VAT12_TextChanged" Text="₱ 0.00" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
+                                                                    <TextBox  x:Name="lblVatValue" Text="₱ 0.00" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
                                                                 </Border>
                                                                 <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
                                                                     <TextBlock x:Name="TotalCost" Text="₱ 0.00" FontWeight="SemiBold" FontSize="11" Foreground="Red" HorizontalAlignment="Left" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
@@ -753,14 +729,14 @@
                                                 <DockPanel>
                                                     <TextBlock Text="Notes:" Margin="2,0,5,0" FontWeight="SemiBold" FontFamily="Lexend" FontSize="8" Foreground="#090909" />
 
-                                                    <TextBlock x:Name="noteBox" LineHeight="1" Text="Bank Details:&#x0a;Acc. Name:&#x0a;Acc No.:" Foreground="Green" MouseLeftButtonUp="TextEditorPopOut" FontSize="8" TextWrapping="Wrap"/>
+                                                    <TextBlock x:Name="noteBox" LineHeight="1" Text="Bank Details:&#x0a;Acc. Name:&#x0a;Acc No.:" Foreground="Green" FontSize="8" TextWrapping="Wrap"/>
                                                 </DockPanel>
                                             </Border>
                                             <!--Remarks-->
                                             <Border BorderBrush="#090909" Height="20" BorderThickness="1,0,1,1" Margin="5,0,5,0" Padding="0,3">
                                                 <DockPanel>
                                                     <TextBlock Text="Remarks:" Margin="2,0,5,0" FontWeight="SemiBold" FontFamily="Lexend" FontSize="8" Foreground="#090909"  />
-                                                    <TextBlock x:Name="remarksBox"  MouseLeftButtonUp="TextEditorPopOut" FontSize="8" Foreground="Black" TextWrapping="Wrap"/>
+                                                    <TextBlock x:Name="remarksBox" FontSize="8" Foreground="Black" TextWrapping="Wrap"/>
                                                 </DockPanel>
                                             </Border>
 
@@ -782,19 +758,19 @@
                                                                 <TextBlock Text="For CASH payments:" TextAlignment="Center" FontWeight="Bold" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBlock x:Name="Term1" MouseLeftButtonUp="TextEditorPopOut" Text="50% upon ordering" TextAlignment="Center"  FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                                <TextBlock x:Name="Term1" Text="50% upon ordering" TextAlignment="Center"  FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBlock x:Name="Term2" MouseLeftButtonUp="TextEditorPopOut"  Text="30% upon delivery" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                                <TextBlock x:Name="Term2" Text="30% upon delivery" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBlock x:Name="Term3" MouseLeftButtonUp="TextEditorPopOut" Text="20% upon completion" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                                <TextBlock x:Name="Term3" Text="20% upon completion" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBlock x:Name="Term4" MouseLeftButtonUp="TextEditorPopOut" Text="Progress billing remaining balance (for bulk orders)" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                                <TextBlock x:Name="Term4" Text="Progress billing remaining balance (for bulk orders)" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
-                                                                <TextBlock x:Name="Term13" MouseLeftButtonUp="TextEditorPopOut" Text="" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                                <TextBlock x:Name="Term13" Text="" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                                             </Border>
                                                         </StackPanel>
                                                     </Border>
@@ -804,19 +780,19 @@
                                                                 <TextBlock Text="For CHEQUES payment:" TextAlignment="Center" FontWeight="Bold" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBlock x:Name="Term5" MouseLeftButtonUp="TextEditorPopOut" Text="Order will process upon clearance of cheque" TextAlignment="Center"  FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                                <TextBlock x:Name="Term5" Text="Order will process upon clearance of cheque" TextAlignment="Center"  FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBlock x:Name="Term6" MouseLeftButtonUp="TextEditorPopOut" Text="Any additional orders will be charged seperately" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                                <TextBlock x:Name="Term6"  Text="Any additional orders will be charged seperately" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBlock x:Name="Term7" MouseLeftButtonUp="TextEditorPopOut" Text="No return after installation" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                                <TextBlock x:Name="Term7"  Text="No return after installation" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBlock x:Name="Term8" MouseLeftButtonUp="TextEditorPopOut" Text="" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                                <TextBlock x:Name="Term8" Text="" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
-                                                                <TextBlock x:Name="Term14" MouseLeftButtonUp="TextEditorPopOut" Text="" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                                <TextBlock x:Name="Term14" Text="" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                                             </Border>
                                                         </StackPanel>
                                                     </Border>
@@ -826,19 +802,19 @@
                                                                 <TextBlock Text="For out of town projects:" TextAlignment="Center" FontWeight="Bold" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBlock x:Name="Term9" MouseLeftButtonUp="TextEditorPopOut" Text="Additional delivery charges" TextAlignment="Center"  FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                                <TextBlock x:Name="Term9" Text="Additional delivery charges" TextAlignment="Center"  FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBlock x:Name="Term10" MouseLeftButtonUp="TextEditorPopOut" Text="Please indicate lead time for installation" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                                <TextBlock x:Name="Term10" Text="Please indicate lead time for installation" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBlock x:Name="Term11" MouseLeftButtonUp="TextEditorPopOut" Text="We will have a site inscpetions prior to installation" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                                <TextBlock x:Name="Term11" Text="We will have a site inscpetions prior to installation" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                <TextBlock x:Name="Term12" MouseLeftButtonUp="TextEditorPopOut" Text="" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                                <TextBlock x:Name="Term12" Text="" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                                             </Border>
                                                             <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
-                                                                <TextBlock x:Name="Term15" MouseLeftButtonUp="TextEditorPopOut" Text="" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
+                                                                <TextBlock x:Name="Term15" Text="" TextAlignment="Center" FontFamily="Lexend" FontSize="6" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0"/>
                                                             </Border>
                                                         </StackPanel>
                                                     </Border>
@@ -859,7 +835,6 @@
                     </Viewbox>
                 </Grid>
             </ScrollViewer>
-
         </Grid>
     </Grid>
 </UserControl>

@@ -13,12 +13,12 @@ Imports Microsoft.Win32
 Imports SkiaSharp.Views.WPF
 Imports Newtonsoft.Json
 
-Namespace DPC.Views.Sales.Quotes
-    Public Class CostEstimate
+Namespace DPC.Components.Forms
+    Public Class UniversalEditablePreviewDocument
 
 #Region "1. Variables & Constants"
         Private itemDataSource As New ObservableCollection(Of OrderItems)
-        Private allItems As List(Of Dictionary(Of String, String))
+        Private allItems As ObservableCollection(Of OrderItems)
 
         ' Pagination State
         Private currentPageIndex As Integer = 0
@@ -29,7 +29,6 @@ Namespace DPC.Views.Sales.Quotes
         Private tempImagePath As String
         Private base64Image As String
         Private showProductImages As Boolean = True
-        Private _isEditingExistingQuote As Boolean = False
         Private Shared element As FrameworkElement
 
         ' Layout Constants - CALIBRATED FOR LEGAL SIZE
@@ -40,6 +39,7 @@ Namespace DPC.Views.Sales.Quotes
         Private Const ReservedSpaceForDescription As Double = 30
         Private categorizedItems As List(Of Dictionary(Of String, Object))
         Private Const CategoryHeaderHeight As Double = 40
+        Public Property IsEditMode As Boolean = False
 #End Region
 
 #Region "2. Initialization & Loading"
@@ -47,84 +47,62 @@ Namespace DPC.Views.Sales.Quotes
             InitializeComponent()
         End Sub
 
-        Private Sub CostEstimate_Loaded(sender As Object, e As RoutedEventArgs)
-            DetectQuoteMode()
+        Private Sub EditablePreview_Loaded(sender As Object, e As RoutedEventArgs)
+            DetectDocumentMode()
+
             txtPageInfo = TryCast(Me.FindName("txtPageInfo"), TextBlock)
 
-            If String.IsNullOrEmpty(CostEstimateDetails.CEQuoteNumberCache) OrElse CostEstimateDetails.CEQuoteItemsCache Is Nothing Then
-                MessageBox.Show("Quote data is missing.")
+            If PreviewState.CurrentPreview Is Nothing OrElse PreviewState.CurrentPreview.Items.Count = 0 Then
+                MessageBox.Show("Preview data is missing.")
                 Return
             End If
 
-            allItems = CostEstimateDetails.CEQuoteItemsCache
             LoadTextFields()
 
-            showProductImages = CostEstimateDetails.CEShowProductImages
+            showProductImages = PreviewState.CurrentPreview.ShowImages
             UpdateToggleButtonState()
-
             RecalculatePagination()
-
             LoadPage(0)
 
-            If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CEImageCache) Then
-                base64Image = CostEstimateDetails.CEImageCache
+            If Not String.IsNullOrWhiteSpace(PreviewState.CurrentPreview.SignatureImageBase64) Then
+                base64Image = PreviewState.CurrentPreview.SignatureImageBase64
                 DisplayUploadedImage()
             End If
         End Sub
 
         Private Sub LoadTextFields()
-            ' Load Prices
-            Dim _install As Decimal = 0
-            Dim _deliv As Decimal = 0
-            Decimal.TryParse(CostEstimateDetails.CEInstallation, _install)
-            Decimal.TryParse(CostEstimateDetails.CEDeliveryCost, _deliv)
+            Dim data = PreviewState.CurrentPreview
 
-            Installation.Text = "₱ " & _install.ToString("N2")
-            Delivery.Text = "₱ " & _deliv.ToString("N2")
+
+            Installation.Text = data.InstallationFee
+            Delivery.Text = data.DeliveryFee
 
             ' Load Text Fields
-            QuoteNumber.Text = CostEstimateDetails.CEQuoteNumberCache
-            QuoteDate.Text = CostEstimateDetails.CEQuoteDateCache
-            QuoteValidityDate.Text = CostEstimateDetails.CEValidUntilDate
-            Subtotal.Text = CostEstimateDetails.CETotalBaseAmount
-            VAT12.Text = CostEstimateDetails.CETotalTaxValueCache
-            lblVat.Text = CostEstimateDetails.CEVatLabel
-            TotalCost.Text = CostEstimateDetails.CETotalAmountCache
+            lblPageTitle.Text = data.DocumentTitle
+            lblBackButton.Text = data.BackButtonLabel
+            DocumentNumber.Text = data.DocumentNumber
+            DocumentDate.Text = data.DocumentDate
+            DocumentValidityDate.Text = data.DocumentValidity
+            Subtotal.Text = data.Subtotal
+            lblVatValue.Text = data.VatValue
+            lblVat.Text = data.VatLabel
+            TotalCost.Text = data.TotalCost
 
 
-            noteBox.Text = CostEstimateDetails.CEpaperNote
-            remarksBox.Text = CostEstimateDetails.CEremarksTxt
-
-            ' Load Terms
-            Term1.Text = CostEstimateDetails.CETerm1
-            Term2.Text = CostEstimateDetails.CETerm2
-            Term3.Text = CostEstimateDetails.CETerm3
-            Term4.Text = CostEstimateDetails.CETerm4
-            Term5.Text = CostEstimateDetails.CETerm5
-            Term6.Text = CostEstimateDetails.CETerm6
-            Term7.Text = CostEstimateDetails.CETerm7
-            Term8.Text = CostEstimateDetails.CETerm8
-            Term9.Text = CostEstimateDetails.CETerm9
-            Term10.Text = CostEstimateDetails.CETerm10
-            Term11.Text = CostEstimateDetails.CETerm11
-            Term12.Text = CostEstimateDetails.CETerm12
-            Term13.Text = CostEstimateDetails.CETerm13
-            Term14.Text = CostEstimateDetails.CETerm14
-            Term15.Text = CostEstimateDetails.CETerm15
+            noteBox.Text = data.Notes
+            remarksBox.Text = data.Remarks
 
             SalesRep.Text = CacheOnLoggedInName
-            cmbApproved.Text = CostEstimateDetails.CEApproved
-            cmbSubtotalTax.Text = CostEstimateDetails.CESubtotalExInc
-            Warranty.Text = CostEstimateDetails.CEWarranty
-            cmbDeliveryMobilization.Text = CostEstimateDetails.CEDeliveryMobilization
-            CNIdentifier.Text = CostEstimateDetails.CECNIndetifier
+            cmbApproved.Text = data.ApprovedBy
+            lblSubtotal.Text = data.SubtotalLabel
+            cmbDeliveryMobilization.Text = data.DeliveryMobilizationLabel
 
             ' Terms Selection
-            If CostEstimateDetails.CEisCustomTerm Then
-                CustomTerms.Text = CostEstimateDetails.CEpaymentTerms
+            If data.IsCustomTerm Then
+                CustomTerms.Text = data.PaymentTerms
                 cmbTerms.SelectedIndex = 6
             Else
-                cmbTerms.Text = CostEstimateDetails.CEpaymentTerms
+                cmbTerms.Text = data.PaymentTerms
             End If
 
             ' Header Details
@@ -133,26 +111,29 @@ Namespace DPC.Views.Sales.Quotes
 
         Private Sub PopulateHeaderDetails()
             Try
+                Dim data = PreviewState.CurrentPreview
+
                 Dim clientBlock = TryCast(Me.FindName("SubmittedToClient"), TextBlock)
                 Dim addressBlock = TryCast(Me.FindName("SubmittedToAddress"), TextBlock)
                 Dim emailBlock = TryCast(Me.FindName("SubmittedToEmail"), TextBlock)
                 Dim contactBlock = TryCast(Me.FindName("SubmittedToNumber"), TextBlock)
 
                 If clientBlock IsNot Nothing Then
-                    clientBlock.Text = If(Not String.IsNullOrWhiteSpace(CostEstimateDetails.CECompanyName), CostEstimateDetails.CECompanyName, CostEstimateDetails.CEClientName)
+                    clientBlock.Text = data.ClientName
                 End If
 
                 If addressBlock IsNot Nothing Then
-                    Dim parts As New List(Of String)
-                    If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CEAddress) Then parts.Add(CostEstimateDetails.CEAddress)
-                    If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CECity) Then parts.Add(CostEstimateDetails.CECity)
-                    If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CERegion) Then parts.Add(CostEstimateDetails.CERegion)
-                    If Not String.IsNullOrWhiteSpace(CostEstimateDetails.CECountry) Then parts.Add(CostEstimateDetails.CECountry)
-                    addressBlock.Text = String.Join(", ", parts)
+                    addressBlock.Text = data.ClientAddress
                 End If
 
-                If emailBlock IsNot Nothing Then emailBlock.Text = CostEstimateDetails.CEEmail
-                If contactBlock IsNot Nothing Then contactBlock.Text = CostEstimateDetails.CEPhone
+                If emailBlock IsNot Nothing Then
+                    emailBlock.Text = data.ClientEmail
+                End If
+
+                If contactBlock IsNot Nothing Then
+                    contactBlock.Text = data.ClientContact
+                End If
+
             Catch ex As Exception
                 Debug.WriteLine("Header Error: " & ex.Message)
             End Try
@@ -160,12 +141,11 @@ Namespace DPC.Views.Sales.Quotes
 #End Region
 
 #Region "3. The Pagination Engine (Core Logic)"
-
         Private Sub RecalculatePagination()
+            Dim data = PreviewState.CurrentPreview
             _paginatedPages.Clear()
 
-            ' Ensure allItems is fresh from the cache
-            allItems = CostEstimateDetails.CEQuoteItemsCache
+            allItems = data.Items
 
             If allItems Is Nothing OrElse allItems.Count = 0 Then
                 _paginatedPages.Add(New List(Of Integer))
@@ -176,11 +156,9 @@ Namespace DPC.Views.Sales.Quotes
             Dim pageIndices As New List(Of Integer)
             Dim currentHeight As Double = 0
 
-            ' Loop through all entries (Headers and Products) in one single list
             For i As Integer = 0 To allItems.Count - 1
                 Dim h As Double = CalculateItemHeight(allItems(i))
 
-                ' Check for Page Break
                 If currentHeight + h > PageMaxHeight Then
                     _paginatedPages.Add(New List(Of Integer)(pageIndices))
                     pageIndices.Clear()
@@ -195,7 +173,6 @@ Namespace DPC.Views.Sales.Quotes
                 _paginatedPages.Add(pageIndices)
             End If
 
-            ' Safety check: If total items fit but footer doesn't, add one more page
             If currentHeight > (PageMaxHeight - FooterSectionHeight) Then
                 _paginatedPages.Add(New List(Of Integer))
             End If
@@ -203,14 +180,15 @@ Namespace DPC.Views.Sales.Quotes
             totalPages = _paginatedPages.Count
         End Sub
 
-        Private Function CalculateItemHeight(item As Dictionary(Of String, String)) As Double
-            If item.ContainsKey("IsCategoryHeader") AndAlso item("IsCategoryHeader") = "True" Then
+        Private Function CalculateItemHeight(item As OrderItems) As Double
+            If item.IsHeaderRow Then
                 Return CategoryHeaderHeight
             End If
 
             Dim h As Double = BaseItemHeight
-            If item.ContainsKey("Description") AndAlso Not String.IsNullOrWhiteSpace(item("Description")) Then
-                Dim text As String = item("Description").Trim()
+
+            If Not String.IsNullOrWhiteSpace(item.ProductDescription) Then
+                Dim text As String = item.ProductDescription.Trim()
                 Dim ft As New FormattedText(text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight, New Typeface("Lexend"), 12, Brushes.Black, 1.0)
                 ft.MaxTextWidth = 400
                 h += ft.Height + ReservedSpaceForDescription
@@ -224,17 +202,14 @@ Namespace DPC.Views.Sales.Quotes
             currentPageIndex = index
             itemDataSource.Clear()
 
-            ' Simply get the indices stored for this page
             Dim indices = _paginatedPages(index)
 
             For Each idx In indices
-                ' CreateVisualItem already handles the check for IsCategoryHeader
-                itemDataSource.Add(CreateVisualItem(allItems(idx)))
+                itemDataSource.Add(allItems(idx))
             Next
 
             dataGrid.ItemsSource = itemDataSource
 
-            ' Standard UI Updates
             Dim isLastPage As Boolean = (currentPageIndex = totalPages - 1)
             SetFooterVisibility(isLastPage)
 
@@ -257,10 +232,8 @@ Namespace DPC.Views.Sales.Quotes
 
 #Region "4. Item & Group Processing"
         Private Function CreateVisualItem(item As Dictionary(Of String, String)) As OrderItems
-            ' 1. Check if this is a Category Header first
             Dim isHeader As Boolean = item.ContainsKey("IsCategoryHeader") AndAlso item("IsCategoryHeader") = "True"
 
-            ' 2. Initialize variables with defaults
             Dim rate As Decimal = 0
             Dim linePrice As Decimal = 0
             Dim qty As String = ""
@@ -269,28 +242,22 @@ Namespace DPC.Views.Sales.Quotes
             Dim vis As Visibility = Visibility.Collapsed
             Dim img As BitmapImage = Nothing
 
-            ' 3. ONLY parse prices and images if it's NOT a header
             If Not isHeader Then
-                ' Safety parsing for Rate
                 If item.ContainsKey("Rate") Then
                     Decimal.TryParse(item("Rate").Replace("₱", "").Replace(",", "").Trim(), rate)
                 End If
 
-                ' Safety parsing for Amount
                 If item.ContainsKey("Amount") Then
                     Decimal.TryParse(item("Amount").Replace("₱", "").Replace(",", "").Trim(), linePrice)
                 End If
 
-                ' Set Quantity
                 qty = If(item.ContainsKey("Quantity"), item("Quantity"), "0")
 
-                ' Handle Description
                 If item.ContainsKey("Description") AndAlso Not String.IsNullOrWhiteSpace(item("Description")) Then
                     desc = item("Description").Trim()
                     vis = Visibility.Visible
                 End If
 
-                ' Handle Image
                 If showProductImages Then
                     If item.ContainsKey("ProductImageBase64") AndAlso Not String.IsNullOrEmpty(item("ProductImageBase64")) Then
                         img = Base64ToBitmapImage(item("ProductImageBase64"))
@@ -300,7 +267,6 @@ Namespace DPC.Views.Sales.Quotes
                 End If
             End If
 
-            ' 4. Return the object (Note: Ensure your OrderItems class has the IsHeaderRow property)
             Return New OrderItems With {
             .Quantity = qty,
             .Description = prodName,
@@ -309,57 +275,52 @@ Namespace DPC.Views.Sales.Quotes
             .UnitPrice = If(isHeader, "", $"₱ {rate:N2}"),
             .LinePrice = If(isHeader, "", $"₱ {linePrice:N2}"),
             .ProductImage = img,
-            .IsHeaderRow = isHeader ' Add this property to your OrderItems class!
+            .IsHeaderRow = isHeader
         }
         End Function
 #End Region
 
 #Region "5. Navigation & UI Interaction"
         Private Sub BackToUI_Click(sender As Object, e As MouseButtonEventArgs)
-            Try
-                CEInstallation = ParseCurrency(Installation.Text)
-                CEDeliveryCost = ParseCurrency(Delivery.Text)
-                CostEstimateDetails.CEpaperNote = noteBox.Text
-                CostEstimateDetails.CEApproved = cmbApproved.Text
-                CostEstimateDetails.CEWarranty = Warranty.Text
-                CostEstimateDetails.CETotalAmountCache = TotalCost.Text
+            Dim data = PreviewState.CurrentPreview
+            PreviewState.ResetPreview()
 
-                If _isEditingExistingQuote Then
-                    ViewLoader.DynamicView.NavigateToCachedView("editquote", Me)
-                Else
-                    ViewLoader.DynamicView.NavigateToCachedView("salesnewquote", Me)
-                End If
-            Catch ex As Exception
-                MessageBox.Show("Error navigating: " & ex.Message)
-            End Try
+            itemDataSource.Clear()
+            If allItems IsNot Nothing Then allItems.Clear()
+            _paginatedPages.Clear()
+
+            currentPageIndex = 0
+            totalPages = 1
+            base64Image = ""
+
+            ViewLoader.DynamicView.NavigateToCachedView($"{data.CreatePath}", Me)
         End Sub
 
         Private Sub PrintPreview(sender As Object, e As RoutedEventArgs)
-            CostEstimateDetails.CEQuoteNumberCache = QuoteNumber.Text
-            CostEstimateDetails.CEnoteTxt = noteBox.Text
-            CostEstimateDetails.CEremarksTxt = remarksBox.Text
-            CostEstimateDetails.CEGrandTotalCost = TotalCost.Text
-            CostEstimateDetails.CEApproved = cmbApproved.Text
-            CostEstimateDetails.CEWarranty = Warranty.Text
-            CostEstimateDetails.CEDeliveryMobilization = cmbDeliveryMobilization.Text
+            Dim data = PreviewState.CurrentPreview
 
-            Dim deliv As Decimal = 0
-            Dim install As Decimal = 0
-            Decimal.TryParse(Delivery.Text.Replace("₱", "").Trim(), deliv)
-            Decimal.TryParse(Installation.Text.Replace("₱", "").Trim(), install)
-            CostEstimateDetails.CEDeliveryCost = deliv
-            CostEstimateDetails.CEInstallation = install
+            data.DeliveryMobilizationLabel = cmbDeliveryMobilization.Text
+            data.Notes = noteBox.Text
+            data.Remarks = remarksBox.Text
+            data.DeliveryFee = Delivery.Text
+            data.InstallationFee = Installation.Text
+            data.TotalCost = TotalCost.Text
+            data.ApprovedBy = cmbApproved.Text
+            data.PaymentTerms = If(String.IsNullOrWhiteSpace(cmbTerms.Text), "None", cmbTerms.Text)
 
-            If _isEditingExistingQuote Then
-                ViewLoader.DynamicView.NavigateToView("previewprintquoteeditedquote", Me)
-            Else
-                ViewLoader.DynamicView.NavigateToView("printpreviewquotes", Me)
-            End If
+            '====================================================
+            'WILL BE UPDATED AFTER PRINT PREVIEW IS IMPLEMENTED
+            '====================================================
+            ViewLoader.DynamicView.NavigateToView("universalprintablepreviewdocument", Me)
+
         End Sub
 
         Private Sub ToggleImage_Click(sender As Object, e As RoutedEventArgs)
+            Dim data = PreviewState.CurrentPreview
             showProductImages = Not showProductImages
-            CostEstimateDetails.CEShowProductImages = showProductImages
+
+            data.ShowImages = showProductImages
+
             UpdateToggleButtonState()
             RecalculatePagination()
             LoadPage(currentPageIndex)
@@ -403,7 +364,7 @@ Namespace DPC.Views.Sales.Quotes
 
         Private Sub UpdateImageColumnVisibility()
             For Each col In dataGrid.Columns
-                If TypeOf col Is DataGridTemplateColumn AndAlso col.Header?.ToString() = "Image" Then
+                If col.Header?.ToString() = "Image" Then
                     col.Visibility = If(showProductImages, Visibility.Visible, Visibility.Collapsed)
                     Exit For
                 End If
@@ -412,7 +373,6 @@ Namespace DPC.Views.Sales.Quotes
 #End Region
 
 #Region "6. Calculation Helpers"
-        ' Corrected: Renamed local vars to avoid collision with XAML controls
         Private Sub ComputeCost(s As Object, e As TextChangedEventArgs)
             Dim valSubTotal As Decimal = 0
             Dim valInstall As Decimal = 0
@@ -422,7 +382,7 @@ Namespace DPC.Views.Sales.Quotes
             Decimal.TryParse(Subtotal.Text.Replace("₱", "").Replace(",", "").Trim(), valSubTotal)
             Decimal.TryParse(Installation.Text.Replace("₱", "").Replace(",", "").Trim(), valInstall)
             Decimal.TryParse(Delivery.Text.Replace("₱", "").Replace(",", "").Trim(), valDeliv)
-            Decimal.TryParse(VAT12.Text.Replace("₱", "").Replace(",", "").Trim(), valVat)
+            Decimal.TryParse(lblVatValue.Text.Replace("₱", "").Replace(",", "").Trim(), valVat)
 
             Dim total As Decimal = valSubTotal + valInstall + valDeliv + valVat
             TotalCost.Text = "₱ " & total.ToString("N2")
@@ -434,9 +394,6 @@ Namespace DPC.Views.Sales.Quotes
 
         Private Sub Installation_TextChanged(sender As Object, e As TextChangedEventArgs)
             HandleCurrencyInput(sender, e)
-        End Sub
-
-        Private Sub VAT12_TextChanged(sender As Object, e As TextChangedEventArgs)
         End Sub
 
         Private Sub HandleCurrencyInput(sender As Object, e As TextChangedEventArgs)
@@ -472,17 +429,8 @@ Namespace DPC.Views.Sales.Quotes
 #End Region
 
 #Region "7. Utilities (Images, Files, Popups)"
-        Private Sub DetectQuoteMode()
-            Try
-                Dim qNum As String = CEQuoteNumberCache
-                If String.IsNullOrWhiteSpace(qNum) Then
-                    _isEditingExistingQuote = False
-                Else
-                    _isEditingExistingQuote = QuotesController.QuoteNumberExists(qNum)
-                End If
-            Catch
-                _isEditingExistingQuote = False
-            End Try
+        Private Sub DetectDocumentMode()
+            IsEditMode = PreviewState.CurrentPreview.IsEditMode
         End Sub
 
         Private Sub TextEditorPopOut(sender As Object, e As MouseButtonEventArgs)
@@ -507,10 +455,15 @@ Namespace DPC.Views.Sales.Quotes
 
         Private Sub StartFileUpload(path As String)
             Try
-                base64Image = Base64Utility.EncodeFileToBase64(path)
-                ImageCache = base64Image
-                CostEstimateDetails.CEsignature = True
+                Dim encodedString = Base64Utility.EncodeFileToBase64(path)
+                base64Image = encodedString
+
+                Dim data = PreviewState.CurrentPreview
+                data.SignatureImageBase64 = encodedString
+                data.HasSignature = True
+
                 DisplayUploadedImage()
+
             Catch ex As Exception
                 MessageBox.Show("Image Error: " & ex.Message)
             End Try
@@ -537,7 +490,6 @@ Namespace DPC.Views.Sales.Quotes
             End Try
         End Sub
 
-        ' Corrected: Event handler now attached properly to Image object
         Private Sub ProductImageControl_MouseLeftButtonDown(sender As Object, e As MouseButtonEventArgs)
             Dim img As Image = TryCast(sender, Image)
             If img Is Nothing OrElse img.Source Is Nothing Then Return
@@ -605,31 +557,17 @@ Namespace DPC.Views.Sales.Quotes
         End Function
 
         Private Sub cmbTerms_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
-            If cmbTerms.SelectedIndex = 6 Then
-                CostEstimateDetails.CEisCustomTerm = True
-            Else
-                CostEstimateDetails.CEisCustomTerm = False
-            End If
-        End Sub
+            Dim data = PreviewState.CurrentPreview
 
-        Private Sub cmbApproved_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles cmbApproved.SelectionChanged
+            If cmbTerms.SelectedIndex = 6 Then
+                data.IsCustomTerm = True
+            Else
+                data.IsCustomTerm = False
+            End If
+
+            data.PaymentTerms = cmbTerms.Text
         End Sub
 #End Region
 
-    End Class
-
-    Public Class StringToUpperConverter
-        Implements IValueConverter
-
-        Public Function Convert(value As Object, targetType As Type, parameter As Object, culture As CultureInfo) As Object Implements IValueConverter.Convert
-            If value IsNot Nothing Then
-                Return value.ToString().ToUpper()
-            End If
-            Return ""
-        End Function
-
-        Public Function ConvertBack(value As Object, targetType As Type, parameter As Object, culture As CultureInfo) As Object Implements IValueConverter.ConvertBack
-            Throw New NotImplementedException()
-        End Function
     End Class
 End Namespace
