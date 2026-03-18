@@ -226,5 +226,29 @@ Namespace DPC.Data.Controllers
                 Return False
             End Try
         End Function
+
+        Public Shared Function GetLatestDRFromDatabase(invoiceNumber As String) As String
+            Dim latestDR As String = ""
+            Dim query As String = "SELECT DRNumber FROM deliveryreceipts " &
+                                 "WHERE ReferenceInvoice = @inv " &
+                                 "ORDER BY DRNumber DESC LIMIT 1"
+
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@inv", invoiceNumber)
+                        Dim result = cmd.ExecuteScalar()
+                        If result IsNot Nothing Then
+                            latestDR = result.ToString()
+                        End If
+                    End Using
+                End Using
+            Catch ex As Exception
+                Debug.WriteLine("Error fetching latest DR: " & ex.Message)
+            End Try
+
+            Return latestDR
+        End Function
     End Class
 End Namespace

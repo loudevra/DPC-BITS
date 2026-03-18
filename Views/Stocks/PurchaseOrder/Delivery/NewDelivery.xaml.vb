@@ -717,6 +717,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
                 LoadItems()
 
+
                 txtDeliveryNumber.Text = GenerateDeliveryId(billing.BillingNumber)
             Else
                 ClearDeliveryForm()
@@ -789,22 +790,38 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Function
 
         Private Function GenerateDeliveryId(invoiceNumber As String) As String
-            Dim baseId As String = invoiceNumber.Trim().Replace("BL", "DR").Replace(" ", "")
+            Dim latestDR As String = DeliveryReceiptController.GetLatestDRFromDatabase(invoiceNumber)
 
-            If rbPartialDelivery IsNot Nothing AndAlso rbPartialDelivery.IsChecked = True Then
-                If baseId.Contains("(P") Then
-                    Try
-                        Dim parts = baseId.Split(New String() {"(P"}, StringSplitOptions.None)
-                        Dim prefix = parts(0)
-                        Dim currentNum As Integer = 0
+            Dim baseId As String
+            Dim hasExistingPartial As Boolean = False
 
-                        If Integer.TryParse(parts(1), currentNum) Then
-                            Return $"{prefix}(P{currentNum + 1})"
-                        End If
-                    Catch
-                        Return baseId & "(P1)"
-                    End Try
+            If Not String.IsNullOrEmpty(latestDR) Then
+                baseId = latestDR
+                If baseId.Contains("(P") Then hasExistingPartial = True
+            Else
+                baseId = invoiceNumber.Trim().Replace("BL", "DR").Replace(" ", "")
+            End If
+
+            ' --- UI CONTROL LOGIC ---
+            If hasExistingPartial Then
+                rbPartialDelivery.IsChecked = True
+                rbPartialDelivery.IsEnabled = False
+
+                rbFullDelivery.IsEnabled = False
+            Else
+                rbPartialDelivery.IsEnabled = True
+                rbFullDelivery.IsEnabled = True
+            End If
+
+            If rbPartialDelivery?.IsChecked = True Then
+                Dim pattern As String = "\(P(\d+)\)$"
+                Dim match = System.Text.RegularExpressions.Regex.Match(baseId, pattern)
+
+                If match.Success Then
+                    Dim currentNum As Integer = Integer.Parse(match.Groups(1).Value)
+                    Return System.Text.RegularExpressions.Regex.Replace(baseId, pattern, $"(P{currentNum + 1})")
                 Else
+                    ' First time partial delivery for this invoice
                     Return baseId & "(P1)"
                 End If
             End If
