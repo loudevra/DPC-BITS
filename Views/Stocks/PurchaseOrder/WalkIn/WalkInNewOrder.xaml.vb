@@ -1256,6 +1256,26 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             If textBox Is Nothing Then Exit Sub
 
             textBox.Dispatcher.BeginInvoke(Sub()
+                                               Dim rawText As String = textBox.Text.Replace(",", "").Trim()
+
+                                               If Not String.IsNullOrEmpty(rawText) Then
+                                                   Dim val As Decimal = 0
+                                                   If Decimal.TryParse(rawText, val) Then
+                                                       Dim formattedText As String = val.ToString("N0")
+
+                                                       If textBox.Text <> formattedText Then
+                                                           Dim caretIndex = textBox.CaretIndex
+                                                           Dim selectionStart = textBox.SelectionStart
+                                                           Dim oldLength = textBox.Text.Length
+
+                                                           textBox.Text = formattedText
+
+                                                           Dim newLength = textBox.Text.Length
+                                                           textBox.CaretIndex = Math.Max(0, caretIndex + (newLength - oldLength))
+                                                       End If
+                                                   End If
+                                               End If
+
                                                Dim parts = textBox.Name.Split("_"c)
                                                If parts.Length < 2 Then Exit Sub
 
