@@ -1,12 +1,14 @@
-﻿Imports MySql.Data.MySqlClient
-Imports System.Collections.ObjectModel
-Imports DPC.DPC.Data.Model
+﻿Imports System.Collections.ObjectModel
+Imports System.Data
+Imports System.IO
 Imports System.Web
 Imports System.Windows.Controls.Primitives
-Imports System.Data
-Imports DPC.DPC.Data.Models
-Imports System.IO
 Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Model
+Imports DPC.DPC.Data.Models
+Imports DPC.DPC.Views.HRM.Employees.Employees.EmployeesProfile.EmployeesProfileControls
+Imports MongoDB.Driver
+Imports MySql.Data.MySqlClient
 
 Namespace DPC.Data.Controllers
     Public Class DeliveryReceiptController
@@ -61,7 +63,13 @@ Namespace DPC.Data.Controllers
                                 addCmd.ExecuteNonQuery()
                                 transaction.Commit()
 
-                                MessageBox.Show($"Successfully Added the Delivery Receipt With Number {DRNumber}", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                                Dim billingUpdated = UpdateRelatedBilling(DRNumber, ReferenceInvoice)
+
+                                If billingUpdated Then
+                                    MessageBox.Show($"Successfully Added the Delivery Receipt With Number {DRNumber}", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                                Else
+                                    MessageBox.Show($"Added {DRNumber}, but failed to link to Billing record.", "Partial Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                                End If
                                 Return True
                             End Using
                         Catch ex As Exception
@@ -71,6 +79,8 @@ Namespace DPC.Data.Controllers
                         End Try
                     End Using
                 End Using
+
+
 
             Catch ex As Exception
                 MessageBox.Show("Unexpected error - " & ex.Message, "System Error", MessageBoxButton.OK, MessageBoxImage.Error)
@@ -193,6 +203,28 @@ Namespace DPC.Data.Controllers
                 End Using
             End Using
             Return totals
+        End Function
+
+        Public Shared Function UpdateRelatedBilling(deliveryNo As String, invoiceNo As String) As Boolean
+            Try
+                Dim query As String = "UPDATE walkinbilling SET " &
+                             "DRNo = IF(DRNo IS NULL OR DRNo = '', @dr, CONCAT(DRNo, ', ', @dr)) " &
+                             "WHERE billingNumber = @inv"
+
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@dr", deliveryNo)
+                        cmd.Parameters.AddWithValue("@inv", invoiceNo)
+
+                        Dim rowsAffected As Integer = cmd.ExecuteNonQuery()
+
+                        Return rowsAffected > 0
+                    End Using
+                End Using
+            Catch ex As Exception
+                Return False
+            End Try
         End Function
     End Class
 End Namespace
