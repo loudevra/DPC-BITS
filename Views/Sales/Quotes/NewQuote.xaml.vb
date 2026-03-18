@@ -1,6 +1,7 @@
 ﻿Imports System.Collections.ObjectModel
 Imports System.IO
 Imports System.Linq
+Imports System.Text.RegularExpressions
 Imports System.Windows.Controls.Primitives
 Imports System.Windows.Threading
 Imports DocumentFormat.OpenXml.Bibliography
@@ -14,6 +15,7 @@ Imports DPC.DPC.Views.Sales.Quotes.NewQuoteGovernment
 Imports DPC.DPC.Views.Stocks
 Imports MySql.Data.MySqlClient
 Imports Newtonsoft.Json
+Imports NuGet.Protocol.Plugins
 
 Namespace DPC.Views.Sales.Quotes
     ' Note - The value of defau
@@ -1209,6 +1211,8 @@ Namespace DPC.Views.Sales.Quotes
         Public Sub UpdateGrandTotal()
             Dim subtotalAmount As Decimal = 0
             Dim totalTaxAmount As Decimal = 0
+            Dim deliveryFee As Decimal = 0
+            Dim installationFee As Decimal = 0
 
             Dim amountTextBoxNames = LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
         SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
@@ -1226,6 +1230,9 @@ Namespace DPC.Views.Sales.Quotes
                 End If
             Next
 
+            Decimal.TryParse(txtDeliveryFee.Text.Replace("₱", "").Replace(",", "").Trim(), deliveryFee)
+            Decimal.TryParse(txtInstallationFee.Text.Replace("₱", "").Replace(",", "").Trim(), installationFee)
+
             UpdateTotalTax()
 
             Dim rawTax = txtTotalTax.Text.Replace("₱", "").Replace(",", "").Trim()
@@ -1234,10 +1241,10 @@ Namespace DPC.Views.Sales.Quotes
             Dim finalGrandTotal As Decimal = 0
 
             If _TaxSelection Then
-                finalGrandTotal = subtotalAmount + totalTaxAmount
+                finalGrandTotal = subtotalAmount + deliveryFee + installationFee + totalTaxAmount
                 CostEstimateDetails.CETotalAmountCache = "₱ " & finalGrandTotal.ToString("N2")
             Else
-                finalGrandTotal = subtotalAmount
+                finalGrandTotal = subtotalAmount + deliveryFee + installationFee
                 CostEstimateDetails.CETotalAmountCache = "₱ " & finalGrandTotal.ToString("N2")
             End If
 
@@ -1290,6 +1297,57 @@ Namespace DPC.Views.Sales.Quotes
             txtTotalDiscount.Text = "₱" & totalDiscount.ToString("N2")
         End Sub
 
+        Private Sub txtDeliveryFee_TextChange(sender As Object, e As TextChangedEventArgs)
+            Dim tb = DirectCast(sender, TextBox)
+            Dim input As String = tb.Text.Trim()
+
+            If String.IsNullOrEmpty(input) Then
+                lblFee.Text = "₱ 0.00"
+                Return
+            End If
+
+            Dim val As Integer = 0
+            If Integer.TryParse(input, val) Then
+                lblFee.Text = $"₱ {val:N2}"
+            Else
+                tb.Text = Regex.Replace(input, "[^0-9]", "")
+                tb.CaretIndex = tb.Text.Length
+            End If
+
+            UpdateGrandTotal()
+        End Sub
+
+        Public Sub txtInstallationFee_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim tb = DirectCast(sender, TextBox)
+            Dim input As String = tb.Text.Trim()
+
+            If String.IsNullOrEmpty(input) Then
+                lblInstallationFee.Text = "₱ 0.00"
+                Return
+            End If
+
+            Dim val As Integer = 0
+            If Integer.TryParse(input, val) Then
+                lblInstallationFee.Text = $"₱ {val:N2}"
+            Else
+                tb.Text = Regex.Replace(input, "[^0-9]", "")
+                tb.CaretIndex = tb.Text.Length
+            End If
+
+            UpdateGrandTotal()
+        End Sub
+
+        Private Sub cmbFeeType_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+            If lblFeeType Is Nothing OrElse cmbFeeType.SelectedIndex = -1 Then Return
+
+            ' 2. Handle the IDs (0 = Delivery, 1 = Mobilization)
+            Select Case cmbFeeType.SelectedIndex
+                Case 0
+                    lblFeeType.Text = "Delivery"
+                Case 1
+                    lblFeeType.Text = "Mobilization"
+            End Select
+        End Sub
 
         ' Quantity Textbox for Dynamic Product Input UI
         Private Sub Quantity_TextChanged(sender As Object, e As TextChangedEventArgs)

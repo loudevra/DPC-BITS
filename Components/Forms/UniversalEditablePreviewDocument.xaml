@@ -303,6 +303,29 @@
                                                                    Foreground="#090909"/>
                                                     </Border>
                                                 </Border>
+                                                <!--<Border Grid.Row="1" Grid.Column="2" Height="20" VerticalAlignment="Center" Background="Red">
+                                                    <ComboBox x:Name="cmbTerms"
+                                                          FontSize="10"
+                                                          FontWeight="Bold"
+                                                          SelectionChanged="cmbTerms_SelectionChanged">
+                                                        <ComboBoxItem Content="Cash"/>
+                                                        <ComboBoxItem Content="7 Days PDC"/>
+                                                        <ComboBoxItem Content="14 Days PDC"/>
+                                                        <ComboBoxItem Content="30 Days PDC"/>
+                                                        <ComboBoxItem Content="45 Days PDC"/>
+                                                        <ComboBoxItem Content="60 Days PDC"/>
+                                                        <ComboBoxItem>
+                                                            <Grid Width="230">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="Auto"/>
+                                                                    <ColumnDefinition Width="*"/>
+                                                                </Grid.ColumnDefinitions>
+                                                                <TextBlock Grid.Column="0" Text="Custom:" Margin="5,0"/>
+                                                                <TextBox Grid.Column="1" x:Name="CustomTerms"/>
+                                                            </Grid>
+                                                        </ComboBoxItem>
+                                                    </ComboBox>
+                                                </Border>-->
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition/>
                                                     <ColumnDefinition/>
