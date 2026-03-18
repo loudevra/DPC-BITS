@@ -1302,13 +1302,13 @@ Namespace DPC.Views.Sales.Quotes
             Dim input As String = tb.Text.Trim()
 
             If String.IsNullOrEmpty(input) Then
-                lblFee.Text = "₱ 0.00"
+                lblFee.Text = "₱0.00"
                 Return
             End If
 
             Dim val As Integer = 0
             If Integer.TryParse(input, val) Then
-                lblFee.Text = $"₱ {val:N2}"
+                lblFee.Text = $"₱{val:N2}"
             Else
                 tb.Text = Regex.Replace(input, "[^0-9]", "")
                 tb.CaretIndex = tb.Text.Length
@@ -1322,13 +1322,13 @@ Namespace DPC.Views.Sales.Quotes
             Dim input As String = tb.Text.Trim()
 
             If String.IsNullOrEmpty(input) Then
-                lblInstallationFee.Text = "₱ 0.00"
+                lblInstallationFee.Text = "₱0.00"
                 Return
             End If
 
             Dim val As Integer = 0
             If Integer.TryParse(input, val) Then
-                lblInstallationFee.Text = $"₱ {val:N2}"
+                lblInstallationFee.Text = $"₱{val:N2}"
             Else
                 tb.Text = Regex.Replace(input, "[^0-9]", "")
                 tb.CaretIndex = tb.Text.Length
@@ -1715,6 +1715,10 @@ Namespace DPC.Views.Sales.Quotes
 
                 data.ApprovedBy = cmbApprovedBy.Text
                 data.PaymentTerms = cmbPaymentTerm.Text
+
+                data.InstallationFee = lblInstallationFee.Text
+                data.FeeValue = lblFee.Text
+                data.DeliveryMobilizationLabel = lblFeeType.Text.ToUpper()
 
                 If selectedTaxType = "Exclusive" Then
                     data.VatLabel = "VAT EXCLUSIVE"

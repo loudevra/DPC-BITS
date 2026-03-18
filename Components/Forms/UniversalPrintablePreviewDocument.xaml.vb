@@ -79,7 +79,7 @@ Namespace DPC.Components.Forms
 
 
             Installation.Text = data.InstallationFee
-            Delivery.Text = data.DeliveryFee
+            Delivery.Text = data.FeeValue
 
             ' Load Text Fields
             lblPageTitle.Text = data.DocumentTitle

@@ -75,7 +75,7 @@ Namespace DPC.Components.Forms
 
 
             Installation.Text = data.InstallationFee
-            Delivery.Text = data.DeliveryFee
+            Delivery.Text = data.FeeValue
 
             ' Load Text Fields
             lblPageTitle.Text = data.DocumentTitle
@@ -96,7 +96,9 @@ Namespace DPC.Components.Forms
             lblApproved.Text = data.ApprovedBy
             lblTermsDisplay.Text = data.PaymentTerms
             lblSubtotal.Text = data.SubtotalLabel
-            cmbDeliveryMobilization.Text = data.DeliveryMobilizationLabel
+            lblFeeType.Text = data.DeliveryMobilizationLabel
+            Delivery.Text = data.FeeValue
+            Installation.Text = data.InstallationFee
 
             ' Header Details
             PopulateHeaderDetails()
@@ -292,10 +294,10 @@ Namespace DPC.Components.Forms
         Private Sub PrintPreview(sender As Object, e As RoutedEventArgs)
             Dim data = PreviewState.CurrentPreview
 
-            data.DeliveryMobilizationLabel = cmbDeliveryMobilization.Text
+            data.DeliveryMobilizationLabel = lblFeeType.Text
             data.Notes = noteBox.Text
             data.Remarks = remarksBox.Text
-            data.DeliveryFee = Delivery.Text
+            data.FeeValue = Delivery.Text
             data.InstallationFee = Installation.Text
             data.TotalCost = TotalCost.Text
 

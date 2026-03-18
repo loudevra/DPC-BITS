@@ -733,10 +733,9 @@
                                                                 <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
                                                                     <TextBlock x:Name="lblSubtotal" Text="SUBTOTAL" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
                                                                 </Border>
-                                                                <ComboBox x:Name="cmbDeliveryMobilization" FontSize="10" FontWeight="Bold" Height="16" Padding="4,2">
-                                                                    <ComboBoxItem Content="DELIVERY CHARGE"/>
-                                                                    <ComboBoxItem Content="MOBILIZATION"/>
-                                                                </ComboBox>
+                                                                <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
+                                                                    <TextBlock x:Name="lblFeeType" Text="FEE" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                                </Border>
                                                                 <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
                                                                     <TextBlock Text="INSTALLATION FEE" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
                                                                 </Border>
