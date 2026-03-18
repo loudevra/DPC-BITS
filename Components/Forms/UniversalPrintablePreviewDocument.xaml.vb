@@ -98,9 +98,9 @@ Namespace DPC.Components.Forms
 
             SalesRep.Text = CacheOnLoggedInName
             lblApproved.Text = data.ApprovedBy
+            lblTermsDisplay.Text = data.PaymentTerms
             lblSubtotal.Text = data.SubtotalLabel
             lblDeliveryMobilization.Text = data.DeliveryMobilizationLabel
-            lblTermsDisplay.Text = data.PaymentTerms
 
             ' Header Details
             PopulateHeaderDetails()

@@ -283,35 +283,25 @@
                                                 <Border Grid.Row="1" Grid.Column="0" Height="20" VerticalAlignment="Center" Padding="10,0,0,0">
                                                     <TextBlock x:Name="SalesRep" FontWeight="Bold" Height="11" Text="Prepared by:" Foreground="#090909" FontSize="11" FontFamily="{StaticResource Lexend}"/>
                                                 </Border>
-                                                <Border Grid.Row="1" Grid.Column="1" Height="20" VerticalAlignment="Center" >
-                                                    <ComboBox x:Name="cmbApproved" FontSize="10" FontWeight="Bold">
-                                                        <ComboBoxItem Content=""/>
-                                                        <ComboBoxItem Content="Alecksandra Balingit"/>
-                                                        <ComboBoxItem Content="Parvit Kumar"/>
-                                                    </ComboBox>
+                                                <Border Grid.Row="1" Grid.Column="1" Height="20" VerticalAlignment="Center">
+                                                    <TextBlock x:Name="lblApproved" 
+                                                               FontSize="10" 
+                                                               FontWeight="Bold" 
+                                                               FontFamily="Lexend"
+                                                               Foreground="#090909"
+                                                               HorizontalAlignment="Center" 
+                                                               VerticalAlignment="Center"/>
                                                 </Border>
-                                                <Border Grid.Row="1" Grid.Column="2" Height="20" VerticalAlignment="Center" Background="Red">
-                                                    <ComboBox x:Name="cmbTerms"
-                                                          FontSize="10"
-                                                          FontWeight="Bold"
-                                                          SelectionChanged="cmbTerms_SelectionChanged">
-                                                        <ComboBoxItem Content="Cash"/>
-                                                        <ComboBoxItem Content="7 Days PDC"/>
-                                                        <ComboBoxItem Content="14 Days PDC"/>
-                                                        <ComboBoxItem Content="30 Days PDC"/>
-                                                        <ComboBoxItem Content="45 Days PDC"/>
-                                                        <ComboBoxItem Content="60 Days PDC"/>
-                                                        <ComboBoxItem>
-                                                            <Grid Width="230">
-                                                                <Grid.ColumnDefinitions>
-                                                                    <ColumnDefinition Width="Auto"/>
-                                                                    <ColumnDefinition Width="*"/>
-                                                                </Grid.ColumnDefinitions>
-                                                                <TextBlock Grid.Column="0" Text="Custom:" Margin="5,0"/>
-                                                                <TextBox Grid.Column="1" x:Name="CustomTerms"/>
-                                                            </Grid>
-                                                        </ComboBoxItem>
-                                                    </ComboBox>
+                                                <Border Grid.Row="1" Grid.Column="2" Height="20" VerticalAlignment="Center">
+                                                    <Border Grid.Row="1" Grid.Column="2" Height="20" VerticalAlignment="Center">
+                                                        <TextBlock x:Name="lblTermsDisplay" 
+                                                                   FontSize="10" 
+                                                                   FontWeight="Bold" 
+                                                                   FontFamily="Lexend"
+                                                                   HorizontalAlignment="Center" 
+                                                                   VerticalAlignment="Center"
+                                                                   Foreground="#090909"/>
+                                                    </Border>
                                                 </Border>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition/>

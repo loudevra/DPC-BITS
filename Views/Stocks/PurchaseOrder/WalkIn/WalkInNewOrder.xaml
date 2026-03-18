@@ -106,6 +106,23 @@
 
                     <TextBlock Text="Warehouse Source:" FontWeight="SemiBold" Margin="0,15,0,5" Foreground="#474747"/>
                     <ComboBox x:Name="ComboBoxWarehouse" SelectionChanged="ComboBoxWarehouse_SelectionChanged" Style="{StaticResource RoundedComboBoxStyle}" Height="40" Background="White"/>
+
+                    <TextBlock Text="Approved By (Optional):" FontWeight="SemiBold" Margin="0,15,0,5"/>
+                    <ComboBox x:Name="cmbApprovedBy" 
+                              Style="{StaticResource RoundedComboBoxStyle}" 
+                              Height="40" Background="White">
+                        <ComboBoxItem Content="Alecksandra Balingit"/>
+                        <ComboBoxItem Content="Parvit Kumar"/>
+                    </ComboBox>
+                    <TextBlock Text="Payment Terms (Optional):" FontWeight="SemiBold" Margin="0,15,0,5"/>
+                    <ComboBox x:Name="cmbPaymentTerm" 
+                              Style="{StaticResource RoundedComboBoxStyle}" 
+                              Height="40" Background="White">
+                        <ComboBoxItem Content="Cash"/>
+                        <ComboBoxItem Content="30 Days PDC"/>
+                        <ComboBoxItem Content="Upon Completion"/>
+                    </ComboBox>
+
                 </StackPanel>
 
                 <Border Grid.Column="1" Background="White" CornerRadius="15" Padding="20" BorderBrush="#AEAEAE" BorderThickness="1" Margin="15,0,0,0">

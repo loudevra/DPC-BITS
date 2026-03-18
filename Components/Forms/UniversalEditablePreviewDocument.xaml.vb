@@ -93,17 +93,10 @@ Namespace DPC.Components.Forms
             remarksBox.Text = data.Remarks
 
             SalesRep.Text = CacheOnLoggedInName
-            cmbApproved.Text = data.ApprovedBy
+            lblApproved.Text = data.ApprovedBy
+            lblTermsDisplay.Text = data.PaymentTerms
             lblSubtotal.Text = data.SubtotalLabel
             cmbDeliveryMobilization.Text = data.DeliveryMobilizationLabel
-
-            ' Terms Selection
-            If data.IsCustomTerm Then
-                CustomTerms.Text = data.PaymentTerms
-                cmbTerms.SelectedIndex = 6
-            Else
-                cmbTerms.Text = data.PaymentTerms
-            End If
 
             ' Header Details
             PopulateHeaderDetails()
@@ -305,8 +298,6 @@ Namespace DPC.Components.Forms
             data.DeliveryFee = Delivery.Text
             data.InstallationFee = Installation.Text
             data.TotalCost = TotalCost.Text
-            data.ApprovedBy = cmbApproved.Text
-            data.PaymentTerms = If(String.IsNullOrWhiteSpace(cmbTerms.Text), "None", cmbTerms.Text)
 
             '====================================================
             'WILL BE UPDATED AFTER PRINT PREVIEW IS IMPLEMENTED
@@ -556,17 +547,17 @@ Namespace DPC.Components.Forms
             End If
         End Function
 
-        Private Sub cmbTerms_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
-            Dim data = PreviewState.CurrentPreview
+        'Private Sub cmbTerms_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+        '    Dim data = PreviewState.CurrentPreview
 
-            If cmbTerms.SelectedIndex = 6 Then
-                data.IsCustomTerm = True
-            Else
-                data.IsCustomTerm = False
-            End If
+        '    If cmbTerms.SelectedIndex = 6 Then
+        '        data.IsCustomTerm = True
+        '    Else
+        '        data.IsCustomTerm = False
+        '    End If
 
-            data.PaymentTerms = cmbTerms.Text
-        End Sub
+        '    data.PaymentTerms = cmbTerms.Text
+        'End Sub
 #End Region
 
     End Class

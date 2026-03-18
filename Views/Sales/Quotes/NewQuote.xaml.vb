@@ -1655,6 +1655,9 @@ Namespace DPC.Views.Sales.Quotes
                 data.DiscountValue = txtTotalDiscount.Text
                 data.DiscountSelection = txtDiscountSelection.Text
 
+                data.ApprovedBy = cmbApprovedBy.Text
+                data.PaymentTerms = cmbPaymentTerm.Text
+
                 If selectedTaxType = "Exclusive" Then
                     data.VatLabel = "VAT EXCLUSIVE"
                     data.SubtotalLabel = "SUBTOTAL VAT EX."
