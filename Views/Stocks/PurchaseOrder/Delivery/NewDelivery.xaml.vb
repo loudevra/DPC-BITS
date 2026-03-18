@@ -805,8 +805,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             ' --- UI CONTROL LOGIC ---
             If hasExistingPartial Then
                 rbPartialDelivery.IsChecked = True
-                rbPartialDelivery.IsEnabled = False
-
                 rbFullDelivery.IsEnabled = False
             Else
                 rbPartialDelivery.IsEnabled = True
@@ -821,7 +819,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     Dim currentNum As Integer = Integer.Parse(match.Groups(1).Value)
                     Return System.Text.RegularExpressions.Regex.Replace(baseId, pattern, $"(P{currentNum + 1})")
                 Else
-                    ' First time partial delivery for this invoice
+                    ' First time partial delivery for this invoice  
                     Return baseId & "(P1)"
                 End If
             End If
