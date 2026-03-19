@@ -1,11 +1,13 @@
 ﻿Imports System.Collections.ObjectModel
 Imports System.IO
 Imports System.Linq
+Imports System.Security.Cryptography.Xml
 Imports System.Text.RegularExpressions
 Imports System.Web.UI.WebControls.Expressions
 Imports System.Windows.Controls.Primitives
 Imports System.Windows.Threading
 Imports DocumentFormat.OpenXml.Bibliography
+Imports DocumentFormat.OpenXml.EMMA
 Imports DocumentFormat.OpenXml.Math
 Imports DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing
 Imports DPC.DPC.Components.Forms
@@ -14,6 +16,7 @@ Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
 Imports DPC.DPC.Data.Models
 Imports DPC.DPC.Views.Stocks
+Imports Google.Protobuf.WellKnownTypes
 Imports MySql.Data.MySqlClient
 Imports Newtonsoft.Json
 Imports SharpCompress.Readers.Tar
@@ -282,9 +285,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                         CEtaxSelection = False
                         TaxHeader.Header = "TAX(12%)"
                         CEisVatExInclude = False
-                        If Border IsNot Nothing Then
-                            Border.BorderThickness = New Thickness(0)
-                            Border.BorderBrush = Brushes.Transparent
+                        If border IsNot Nothing Then
+                            border.BorderThickness = New Thickness(0)
+                            border.BorderBrush = Brushes.Transparent
                         End If
                     End If
                 End If
@@ -301,9 +304,14 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         Private Sub InitializeProductUI()
             Dim model = TransactionState.ActiveRecord
 
-            If model IsNot Nothing AndAlso model.IsEditMode Then
+            If model IsNot Nothing AndAlso
+               Not String.IsNullOrWhiteSpace(model.DocumentNumber) AndAlso
+               model.OrderItems IsNot Nothing AndAlso
+               model.OrderItems.Count > 0 Then
+
                 LoadFromUniversalPreview(model)
             Else
+                MainContainer.Children.Clear()
                 AddNewCategoryUI()
                 txtBillingNumber.Text = BillingController.GenerateBillingID(False)
             End If
@@ -323,7 +331,23 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         Private Sub LoadFromUniversalPreview(model As UniversalTransactionModel)
             lblPageTitle.Text = model.EditLabel
             lblButton.Text = model.EditButtonLabel
-            txtBillingNumber.Text = model.DocumentNumber
+
+
+            If (Not model.DocumentNumber.StartsWith("BL-")) Then
+                Dim referenceNumber As String = model.DocumentNumber
+                Dim newReferenceNumber As String = ""
+                Dim firstHyphenIndex As Integer = referenceNumber.IndexOf("-"c)
+
+                If firstHyphenIndex <> -1 Then
+                    Dim remainder As String = referenceNumber.Substring(firstHyphenIndex + 1)
+                    newReferenceNumber = "BL-" & remainder
+                End If
+
+                txtBillingNumber.Text = newReferenceNumber
+                txtQuoteNumber.Text = model.DocumentNumber
+            Else
+                txtBillingNumber.Text = model.DocumentNumber
+            End If
             txtBillingNote.Text = model.Notes
 
 

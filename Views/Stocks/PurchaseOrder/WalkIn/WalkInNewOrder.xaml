@@ -146,7 +146,7 @@
                             <TextBox x:Name="txtBillingNumber" IsReadOnly="True" Style="{StaticResource RoundedTextboxStyle}" Padding="10,0" FontWeight="Bold"/>
                         </Border>
 
-                        <TextBlock Grid.Row="3" Text="Related Cost Estimate (Quote):" Margin="0,0,0,5"/>
+                        <TextBlock Grid.Row="3" Text="Related Cost Estimate (Quote):" FontWeight="SemiBold" Margin="0,0,0,5"/>
                         <Border Grid.Row="4" Style="{StaticResource RoundedBorderStyle}" Height="35" Margin="0,0,0,15">
                             <TextBox x:Name="txtQuoteNumber" 
                                      TextChanged="txtQuoteNumber_TextChanged" 
