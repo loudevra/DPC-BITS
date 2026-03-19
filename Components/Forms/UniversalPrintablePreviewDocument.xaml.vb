@@ -102,6 +102,14 @@ Namespace DPC.Components.Forms
             lblSubtotal.Text = data.SubtotalLabel
             lblDeliveryMobilization.Text = data.DeliveryMobilizationLabel
 
+            If data.DocumentTitle.StartsWith("BILLING") Then
+                CNIdentifier.Text = "BS No: "
+                ValidityContainer.Visibility = Visibility.Collapsed
+            Else
+                CNIdentifier.Text = "CE No: "
+                ValidityContainer.Visibility = Visibility.Visible
+            End If
+
             ' Header Details
             PopulateHeaderDetails()
         End Sub

@@ -100,6 +100,14 @@ Namespace DPC.Components.Forms
             Delivery.Text = data.FeeValue
             Installation.Text = data.InstallationFee
 
+            If data.DocumentTitle.StartsWith("BILLING") Then
+                CNIdentifier.Text = "BS No: "
+                ValidityContainer.Visibility = Visibility.Collapsed
+            Else
+                CNIdentifier.Text = "CE No: "
+                ValidityContainer.Visibility = Visibility.Visible
+            End If
+
             ' Header Details
             PopulateHeaderDetails()
         End Sub
