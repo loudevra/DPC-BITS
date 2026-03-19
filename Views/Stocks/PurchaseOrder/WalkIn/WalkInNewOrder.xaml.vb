@@ -1,6 +1,7 @@
 ﻿Imports System.Collections.ObjectModel
 Imports System.IO
 Imports System.Linq
+Imports System.Text.RegularExpressions
 Imports System.Web.UI.WebControls.Expressions
 Imports System.Windows.Controls.Primitives
 Imports System.Windows.Threading
@@ -1108,6 +1109,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         Public Sub UpdateGrandTotal()
             Dim subtotalAmount As Decimal = 0
             Dim totalTaxAmount As Decimal = 0
+            Dim deliveryFee As Decimal = 0
+            Dim installationFee As Decimal = 0
 
             ' 1. Get all Amount TextBoxes and sanitize them
             Dim amountTextBoxNames = LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
@@ -1127,27 +1130,26 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 End If
             Next
 
-            ' 2. Ensure Tax is also sanitized
+            Decimal.TryParse(txtDeliveryFee.Text.Replace("₱", "").Replace(",", "").Trim(), deliveryFee)
+            Decimal.TryParse(txtInstallationFee.Text.Replace("₱", "").Replace(",", "").Trim(), installationFee)
+
             UpdateTotalTax()
             Dim rawTax = txtTotalTax.Text.Replace("₱", "").Replace(",", "").Trim()
             Decimal.TryParse(rawTax, totalTaxAmount)
 
             Dim finalGrandTotal As Decimal = 0
 
-            ' 3. Calculate based on Tax Selection
             If _TaxSelection Then
-                ' Tax Exclusive logic: Total = Subtotal + Tax
-                finalGrandTotal = subtotalAmount + totalTaxAmount
+                finalGrandTotal = subtotalAmount + deliveryFee + installationFee + totalTaxAmount
+                CostEstimateDetails.CETotalAmountCache = "₱ " & finalGrandTotal.ToString("N2")
             Else
-                ' Tax Inclusive logic: Total = Subtotal (Tax is already inside)
-                finalGrandTotal = subtotalAmount
+                finalGrandTotal = subtotalAmount + deliveryFee + installationFee
+                CostEstimateDetails.CETotalAmountCache = "₱ " & finalGrandTotal.ToString("N2")
             End If
 
             BLSubtotalAmountCache = (subtotalAmount).ToString("F2")
-            ' 4. Format outputs for UI display
             txtGrandTotal.Text = "₱ " & finalGrandTotal.ToString("N2")
 
-            ' 5. Pass CLEAN values to Cache (It's better to store as Decimal or clean String)
             StatementDetails.TotalCostCache = finalGrandTotal.ToString("F2")
         End Sub
 
@@ -1195,6 +1197,58 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             txtTotalDiscount.Text = "₱ " & totalDiscount.ToString("N2")
         End Sub
 
+        Private Sub txtDeliveryFee_TextChange(sender As Object, e As TextChangedEventArgs)
+            Dim tb = DirectCast(sender, TextBox)
+            Dim input As String = tb.Text.Trim()
+
+            If String.IsNullOrEmpty(input) Then
+                lblFee.Text = "₱0.00"
+                Return
+            End If
+
+            Dim val As Integer = 0
+            If Integer.TryParse(input, val) Then
+                lblFee.Text = $"₱{val:N2}"
+            Else
+                tb.Text = Regex.Replace(input, "[^0-9]", "")
+                tb.CaretIndex = tb.Text.Length
+            End If
+
+            UpdateGrandTotal()
+        End Sub
+
+        Public Sub txtInstallationFee_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim tb = DirectCast(sender, TextBox)
+            Dim input As String = tb.Text.Trim()
+
+            If String.IsNullOrEmpty(input) Then
+                lblInstallationFee.Text = "₱0.00"
+                Return
+            End If
+
+            Dim val As Integer = 0
+            If Integer.TryParse(input, val) Then
+                lblInstallationFee.Text = $"₱{val:N2}"
+            Else
+                tb.Text = Regex.Replace(input, "[^0-9]", "")
+                tb.CaretIndex = tb.Text.Length
+            End If
+
+            UpdateGrandTotal()
+        End Sub
+
+        Private Sub cmbFeeType_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+            If lblFeeType Is Nothing OrElse cmbFeeType.SelectedIndex = -1 Then Return
+
+            ' 2. Handle the IDs (0 = Delivery, 1 = Mobilization)
+            Select Case cmbFeeType.SelectedIndex
+                Case 0
+                    lblFeeType.Text = "Delivery"
+                Case 1
+                    lblFeeType.Text = "Mobilization"
+            End Select
+        End Sub
+
 
         ' Quantity Textbox for Dynamic Product Input UI
         Private Sub Quantity_TextChanged(sender As Object, e As TextChangedEventArgs)
@@ -1202,6 +1256,26 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             If textBox Is Nothing Then Exit Sub
 
             textBox.Dispatcher.BeginInvoke(Sub()
+                                               Dim rawText As String = textBox.Text.Replace(",", "").Trim()
+
+                                               If Not String.IsNullOrEmpty(rawText) Then
+                                                   Dim val As Decimal = 0
+                                                   If Decimal.TryParse(rawText, val) Then
+                                                       Dim formattedText As String = val.ToString("N0")
+
+                                                       If textBox.Text <> formattedText Then
+                                                           Dim caretIndex = textBox.CaretIndex
+                                                           Dim selectionStart = textBox.SelectionStart
+                                                           Dim oldLength = textBox.Text.Length
+
+                                                           textBox.Text = formattedText
+
+                                                           Dim newLength = textBox.Text.Length
+                                                           textBox.CaretIndex = Math.Max(0, caretIndex + (newLength - oldLength))
+                                                       End If
+                                                   End If
+                                               End If
+
                                                Dim parts = textBox.Name.Split("_"c)
                                                If parts.Length < 2 Then Exit Sub
 
@@ -1502,6 +1576,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 data.TotalCost = txtGrandTotal.Text
                 data.DiscountValue = txtTotalDiscount.Text
                 data.DiscountSelection = txtDiscountSelection.Text
+
+                data.ApprovedBy = cmbApprovedBy.Text
+                data.PaymentTerms = cmbPaymentTerm.Text
+
+                data.InstallationFee = lblInstallationFee.Text
+                data.FeeValue = lblFee.Text
+                data.DeliveryMobilizationLabel = lblFeeType.Text.ToUpper()
 
                 If selectedTaxType = "Exclusive" Then
                     data.VatLabel = "VAT EXCLUSIVE"

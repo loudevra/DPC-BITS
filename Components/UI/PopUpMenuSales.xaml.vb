@@ -129,7 +129,7 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToNewDeliveryReceipt(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
+            ViewLoader.DynamicView.NavigateToCachedView("newdelivery", Me)
         End Sub
 
         Private Sub NavigateToManageDeliveryReceipt(sender As Object, e As RoutedEventArgs)

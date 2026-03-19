@@ -120,19 +120,20 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         ''' </summary>
         Private Sub OpenEditDeliveryReceipt(sender As Object, e As RoutedEventArgs)
             Dim receipt As DeliveryReceiptModel = TryCast(dataGrid.SelectedItem, DeliveryReceiptModel)
-            DeliveryDetails.ClearDeliveryDetails()
 
             If receipt IsNot Nothing Then
-                DeliveryDetails.DRReferenceInvoice = receipt.ReferenceInvoice
-                DeliveryDetails.DRClientName = receipt.ClientName
-                DeliveryDetails.DRClientDetails = receipt.ClientDetails
-                DeliveryDetails.DRDate = receipt.DRDate
-                DeliveryDetails.DRShippingMethod = receipt.ShippingMethod
-                DeliveryDetails.DRDeliveryNotes = receipt.DeliveryNotes
-                DeliveryDetails.DRApprovedBy = receipt.ApprovedBy
-                DeliveryDetails.DRPaymentTerm = receipt.PaymentTerm
+                DeliveryState.ClearDeliveryState()
 
-                ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
+                Dim fullReceiptData = DeliveryReceiptController.GetDeliveryReceiptByDRNumber(receipt.DRNumber)
+
+                If fullReceiptData IsNot Nothing Then
+                    DeliveryState.CurrentReceipt = fullReceiptData
+                    DeliveryState.IsEditMode = True
+
+                    ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
+                Else
+                    MessageBox.Show("Could not retrieve items for this delivery. Please try again.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                End If
             End If
         End Sub
 

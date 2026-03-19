@@ -203,7 +203,7 @@ Namespace DPC.Data.Controllers
         ''' Generates a unique Billing ID
         Public Shared Function GenerateBillingID(isGov As Boolean) As String
             Dim prefix As String = If(isGov, "GB-", "BL-")
-            Dim datePart As String = DateTime.Now.ToString("MMddyyyy")
+            Dim datePart As String = DateTime.Now.ToString("MM-dd-yyyy")
 
             Dim nextID As Integer = 1
             Try

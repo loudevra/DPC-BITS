@@ -38,7 +38,7 @@ Namespace DPC.Data.Models
         Public Property DiscountValue As String = "% Discount After"
         Public Property DeliveryMobilizationLabel As String = ""
         Public Property InstallationFee As String = "₱ 0.00"
-        Public Property DeliveryFee As String = "₱ 0.00"
+        Public Property FeeValue As String = "₱ 0.00"
         Public Property TotalCost As String = "₱ 0.00"
 
         ' Footer/Terms

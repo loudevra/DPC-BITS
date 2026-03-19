@@ -217,7 +217,7 @@
                                 <Border Grid.Row="4" Background="Transparent" Margin="5,0" BorderBrush="Black" BorderThickness="1">
                                     <StackPanel x:Name="MainContainer" 
                                                 VerticalAlignment="Top" 
-                                                HorizontalAlignment="Center" 
+                                                HorizontalAlignment="Stretch" 
                                                 Background="Transparent"/>
                                 </Border>
 

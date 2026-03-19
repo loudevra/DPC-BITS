@@ -6,7 +6,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              Background="#D9D9D9" FontFamily="Lexend"
-             d:DesignHeight="900" d:DesignWidth="1100">
+             d:DesignHeight="970" d:DesignWidth="1100">
 
     <UserControl.Resources>
         <Style x:Key="RoundedBorderStyle" TargetType="Border">
@@ -106,6 +106,23 @@
 
                     <TextBlock Text="Warehouse Source:" FontWeight="SemiBold" Margin="0,15,0,5" Foreground="#474747"/>
                     <ComboBox x:Name="ComboBoxWarehouse" SelectionChanged="ComboBoxWarehouse_SelectionChanged" Style="{StaticResource RoundedComboBoxStyle}" Height="40" Background="White"/>
+
+                    <TextBlock Text="Approved By (Optional):" FontWeight="SemiBold" Margin="0,15,0,5"/>
+                    <ComboBox x:Name="cmbApprovedBy" 
+                              Style="{StaticResource RoundedComboBoxStyle}" 
+                              Height="40" Background="White">
+                        <ComboBoxItem Content="Alecksandra Balingit"/>
+                        <ComboBoxItem Content="Parvit Kumar"/>
+                    </ComboBox>
+                    <TextBlock Text="Payment Terms (Optional):" FontWeight="SemiBold" Margin="0,15,0,5"/>
+                    <ComboBox x:Name="cmbPaymentTerm" 
+                              Style="{StaticResource RoundedComboBoxStyle}" 
+                              Height="40" Background="White">
+                        <ComboBoxItem Content="Cash"/>
+                        <ComboBoxItem Content="30 Days PDC"/>
+                        <ComboBoxItem Content="Upon Completion"/>
+                    </ComboBox>
+
                 </StackPanel>
 
                 <Border Grid.Column="1" Background="White" CornerRadius="15" Padding="20" BorderBrush="#AEAEAE" BorderThickness="1" Margin="15,0,0,0">
@@ -199,6 +216,102 @@
                     <StackPanel Grid.Column="0" Grid.Row="1" VerticalAlignment="Top">
                         <TextBlock Text="Calculation Settings" FontWeight="Bold" Foreground="#1D3242" Margin="0,0,0,10"/>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <ComboBox x:Name="cmbFeeType"
+              SelectionChanged="cmbFeeType_SelectionChanged"
+              Width="Auto"
+              MinWidth="120"
+              Padding="0"
+              FontWeight="SemiBold"
+              Cursor="Hand">
+
+                                <ComboBox.Style>
+                                    <Style TargetType="ComboBox">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ComboBox">
+                                                    <Grid>
+                                                        <!-- Clickable area -->
+                                                        <ToggleButton
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    HorizontalAlignment="Left"
+                                    Focusable="False"
+                                    IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                    ClickMode="Press">
+
+                                                            <ContentPresenter
+                                        Margin="0"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Left"
+                                        Content="{TemplateBinding SelectionBoxItem}"/>
+                                                        </ToggleButton>
+
+                                                        <!-- Dropdown -->
+                                                        <Popup
+                                    IsOpen="{TemplateBinding IsDropDownOpen}"
+                                    Placement="Bottom"
+                                    Focusable="False"
+                                    AllowsTransparency="True">
+                                                            <Border Background="White">
+                                                                <ItemsPresenter/>
+                                                            </Border>
+                                                        </Popup>
+                                                    </Grid>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ComboBox.Style>
+
+                                <ComboBoxItem Content="Delivery Fee" IsSelected="True"/>
+                                <ComboBoxItem Content="Mobilization Fee"/>
+                            </ComboBox>
+
+                            <Border Width="180" 
+                                    Height="40" 
+                                    Style="{StaticResource RoundedBorderStyle}" 
+                                    BorderThickness="2" 
+                                    BorderBrush="Black" 
+                                    Background="#F5F5F5"
+                                    CornerRadius="20"
+                                    VerticalAlignment="Center">
+
+                                <TextBox x:Name="txtDeliveryFee" 
+                                         TextChanged="txtDeliveryFee_TextChange" 
+                                         IsReadOnly="False" 
+                                         Style="{StaticResource RoundedTextboxStyle}" 
+                                         Background="Transparent"
+                                         BorderThickness="0"
+                                         Padding="10,0" 
+                                         FontWeight="Bold"
+                                         VerticalContentAlignment="Center"/>
+                            </Border>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <TextBlock Text="Installation Fee" Width="120" VerticalAlignment="Center" FontWeight="SemiBold"/>
+
+                            <Border Width="180" 
+                                    Height="40" 
+                                    Style="{StaticResource RoundedBorderStyle}" 
+                                    BorderThickness="2" 
+                                    BorderBrush="Black" 
+                                    Background="#F5F5F5"
+                                    CornerRadius="20"
+                                    VerticalAlignment="Center">
+
+                                <TextBox x:Name="txtInstallationFee" 
+                                         TextChanged="txtInstallationFee_TextChanged" 
+                                         IsReadOnly="False" 
+                                         Style="{StaticResource RoundedTextboxStyle}" 
+                                         Background="Transparent"
+                                         BorderThickness="0"
+                                         Padding="10,0" 
+                                         FontWeight="Bold"
+                                         VerticalContentAlignment="Center"/>
+                            </Border>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <TextBlock Text="Tax Mode:" VerticalAlignment="Center" Width="120" FontWeight="SemiBold"/>
                             <ComboBox x:Name="txtTaxSelection" SelectionChanged="txtTaxSelection_SelectionChanged" Width="180" Style="{StaticResource RoundedComboBoxStyle}">
                                 <ComboBoxItem Content="Inclusive" IsSelected="True"/>
@@ -219,6 +332,14 @@
                     <StackPanel Grid.Column="1" Grid.Row="1">
                         <Border Background="White" CornerRadius="15" Padding="20" BorderBrush="#AEAEAE" BorderThickness="1">
                             <StackPanel>
+                                <Grid Margin="0,0,0,8">
+                                    <TextBlock x:Name="lblFeeType" Text="Delivery" Foreground="#555555"/>
+                                    <TextBlock x:Name="lblFee" Text="₱ 0.00" HorizontalAlignment="Right" FontWeight="Bold" Foreground="#D23636"/>
+                                </Grid>
+                                <Grid Margin="0,0,0,8">
+                                    <TextBlock Text="Installation" Foreground="#555555"/>
+                                    <TextBlock x:Name="lblInstallationFee" Text="₱ 0.00" HorizontalAlignment="Right" FontWeight="Bold" Foreground="#D23636"/>
+                                </Grid>
                                 <Grid Margin="0,0,0,8">
                                     <TextBlock Text="Total Tax" Foreground="#555555"/>
                                     <TextBlock x:Name="txtTotalTax" Text="₱ 0.00" HorizontalAlignment="Right" FontWeight="Bold"/>
