@@ -56,13 +56,28 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 txtDeliveryNumber.Text = GenerateDeliveryId(txtInvoiceNumber.Text)
                 rbFullDelivery.IsEnabled = True
             Else
-                txtDeliveryNumber.Text = receipt.DocumentNumber
+                If (Not receipt.DocumentNumber.StartsWith("DR-")) Then
+                    Dim referenceNumber As String = receipt.DocumentNumber
+                    Dim newReferenceNumber As String = ""
+                    Dim firstHyphenIndex As Integer = referenceNumber.IndexOf("-"c)
 
-                txtInvoiceNumber.IsReadOnly = True
-                txtInvoiceNumber.Foreground = Brushes.Gray
-                rbPartialDelivery.IsChecked = True
-                rbFullDelivery.IsChecked = False
-                rbFullDelivery.IsEnabled = False
+                    If firstHyphenIndex <> -1 Then
+                        Dim remainder As String = referenceNumber.Substring(firstHyphenIndex + 1)
+                        newReferenceNumber = "DR-" & remainder
+                    End If
+
+                    txtDeliveryNumber.Text = newReferenceNumber
+                    txtInvoiceNumber.Text = receipt.DocumentNumber
+                    txtInvoiceNumber.IsReadOnly = True
+                    txtInvoiceNumber.Foreground = Brushes.Gray
+                Else
+                    txtDeliveryNumber.Text = receipt.DocumentNumber
+                    txtInvoiceNumber.IsReadOnly = True
+                    txtInvoiceNumber.Foreground = Brushes.Gray
+                    rbPartialDelivery.IsChecked = True
+                    rbFullDelivery.IsChecked = False
+                    rbFullDelivery.IsEnabled = False
+                End If
             End If
 
             Dim drDate As DateTime

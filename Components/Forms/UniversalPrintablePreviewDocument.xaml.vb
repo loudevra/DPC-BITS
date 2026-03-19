@@ -520,8 +520,7 @@ Namespace DPC.Components.Forms
                     If result = MessageBoxResult.Yes Then
                         _showDelivery = True
                         ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
-                    Else
-                        ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
+                        Return
                     End If
                 Else
                     MessageBox.Show("Failed to submit walk-in billing.")
