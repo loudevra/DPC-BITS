@@ -507,6 +507,25 @@ Namespace DPC.Components.Forms
                 Else
                     success = BillingController.InsertBillingStatement(bm)
                 End If
+
+                If success Then
+                    Dim _showDelivery As Boolean = False
+
+                    Dim result As MessageBoxResult = MessageBox.Show("Walk-in billing submitted successfully! Do you want to create a Delivery Receipt for this billing?",
+                                                     "Submission Successful",
+                                                     MessageBoxButton.YesNo,
+                                                     MessageBoxImage.Question)
+
+
+                    If result = MessageBoxResult.Yes Then
+                        _showDelivery = True
+                        ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
+                    Else
+                        ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
+                    End If
+                Else
+                    MessageBox.Show("Failed to submit walk-in billing.")
+                End If
             Else
                 Dim validityStr As String = validityDate.ToString("yyyy-MM-dd")
 
@@ -526,6 +545,25 @@ Namespace DPC.Components.Forms
                     data.WarehouseID.ToString(), data.WarehouseName,
                     json, data.Notes, data.VatValue, data.DiscountValue,
                     data.TotalCost, data.PreparedBy, data.ApprovedBy, data.PaymentTerms)
+                End If
+
+                If success Then
+                    Dim _showDelivery As Boolean = False
+
+                    Dim result As MessageBoxResult = MessageBox.Show("Quote submitted successfully! Do you want to create a Billing Statement for this Quote?",
+                                                     "Submission Successful",
+                                                     MessageBoxButton.YesNo,
+                                                     MessageBoxImage.Question)
+
+
+                    If result = MessageBoxResult.Yes Then
+                        _showDelivery = True
+                        ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
+                    Else
+                        ViewLoader.DynamicView.NavigateToView("newquote", Me)
+                    End If
+                Else
+                    MessageBox.Show("Failed to submit walk-in billing.")
                 End If
             End If
 
