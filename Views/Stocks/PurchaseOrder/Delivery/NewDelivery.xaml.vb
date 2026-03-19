@@ -1,17 +1,18 @@
 ﻿Imports System.Collections.ObjectModel
 Imports System.IO
+Imports System.Linq
 Imports System.Windows.Controls.Primitives
 Imports System.Windows.Threading
 Imports DocumentFormat.OpenXml.Office2013.Drawing.ChartStyle
 Imports DPC.DPC.Components.Forms
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
+Imports DPC.DPC.Data.Model
 Imports DPC.DPC.Data.Models
 Imports MaterialDesignThemes.Wpf
 Imports Microsoft.Win32
-Imports NuGet.Protocol.Plugins
 Imports Newtonsoft.Json
-Imports System.Linq
+Imports NuGet.Protocol.Plugins
 
 Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
@@ -161,77 +162,60 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Sub
 
         Private Sub LoadItems()
-            Dim model = DeliveryState.CurrentReceipt
-            If model Is Nothing OrElse String.IsNullOrWhiteSpace(model.OrderItems) Then Return
+            Dim model = TransactionState.ActiveRecord
 
-            ' 1. RESET UI & TRACKING
             MainContainer.Children.Clear()
             itemDataSource.Clear()
             _productTextBoxes.Clear()
-            _serialCounters.Clear() ' Ensure this is a Dictionary(Of Integer, Integer)
+            _serialCounters.Clear()
+            categoryCount = 0
 
-            ' Parse the flat JSON list
-            Dim itemsList = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(model.OrderItems)
+            If model?.OrderItems Is Nothing OrElse model.OrderItems.Count = 0 Then Return
 
             Dim currentTargetPanel As StackPanel = Nothing
-
-            ' This index will track the exact position in itemDataSource (the master list)
             Dim masterIdx As Integer = 0
 
-            ' 2. ITERATE AND BUILD UI
-            For Each item In itemsList
-                ' Create a safe working copy of the item
-                Dim displayItem As New Dictionary(Of String, String)(item)
+            For Each item In model.OrderItems
+                Dim displayItem As New Dictionary(Of String, String) From {
+                    {"ProductName", If(item.ProductName, "Unknown Item")},
+                    {"Quantity", If(item.Quantity, "0")},
+                    {"SerialNumber", If(item.SerialNumber, "")},
+                    {"IsHeaderRow", item.IsHeaderRow.ToString().ToLower()},
+                    {"MaxAllowed", If(Not String.IsNullOrEmpty(item.MaxAllowed), item.MaxAllowed, item.Quantity)}
+                }
 
-                ' Ensure basic keys exist to prevent crashes elsewhere
-                If Not displayItem.ContainsKey("SerialNumber") Then displayItem("SerialNumber") = ""
-                If Not displayItem.ContainsKey("ProductName") Then displayItem("ProductName") = "Unknown Item"
-
-                ' A. Handle Header Rows
-                If displayItem.ContainsKey("IsHeaderRow") AndAlso displayItem("IsHeaderRow").ToString().ToLower() = "true" Then
-                    ' Add header to the master data source
+                If displayItem("IsHeaderRow").ToLower() = "true" Then
                     itemDataSource.Add(displayItem)
 
-                    Dim catName = If(displayItem.ContainsKey("CategoryName") AndAlso Not String.IsNullOrEmpty(displayItem("CategoryName")),
-                            displayItem("CategoryName"), displayItem("ProductName"))
-
+                    Dim catName = If(Not String.IsNullOrEmpty(item.ProductName), item.ProductName, "New Category")
                     AddNewCategoryWithSpecificName(catName)
                     currentTargetPanel = GetLatestItemsPanel()
 
-                    ' Increment master index and move to next item
                     masterIdx += 1
                     Continue For
                 End If
 
-                ' B. Handle Product Rows
+                ' B. Ensure a panel exists for products
                 If currentTargetPanel Is Nothing Then
                     AddNewCategoryWithSpecificName("General Items")
                     currentTargetPanel = GetLatestItemsPanel()
                 End If
 
-                ' Add product to the master data source
+                ' C. Add Product to Data Source & UI
                 itemDataSource.Add(displayItem)
 
                 Dim currentSerials = displayItem("SerialNumber")
-
-                ' Initialize Serial Counter using the Master Index
-                ' (Using a Dictionary for _serialCounters is safer than a List here)
                 Dim serialCount As Integer = 0
                 If Not String.IsNullOrEmpty(currentSerials) Then
-                    ' Use the same double-space separator used in your KeyDown logic
                     serialCount = currentSerials.Split(New String() {"  "}, StringSplitOptions.RemoveEmptyEntries).Length
                 End If
                 _serialCounters(masterIdx) = serialCount
 
-                ' Create the Product Row UI
-                ' Pass masterIdx so the KeyDown handler knows exactly which dictionary entry to update
                 Dim productUI = AddNewProductUI(displayItem, masterIdx, currentSerials)
-
                 If productUI IsNot Nothing Then
                     currentTargetPanel.Children.Add(productUI)
                 End If
 
-                ' Always increment masterIdx at the end of the loop
                 masterIdx += 1
             Next
         End Sub
@@ -639,20 +623,21 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         Private Sub OnBillingTypingTimerTick(sender As Object, e As EventArgs)
             _billingTypingTimer.Stop()
 
-            Dim searchText = txtInvoiceNumber.Text.Trim()
+            Dim userInput As String = txtInvoiceNumber.Text.Trim().ToUpper()
+            Dim searchID As String = userInput.Replace("DR-", "BL-")
 
-            If searchText.Length < 3 Then
+            If searchID.Length < 5 Then
                 ClearDeliveryForm()
                 Return
             End If
 
-            Dim results = BillingController.SearchBillingStatements(searchText, 1, "Private")
+            Dim results = BillingController.SearchBillingStatements(searchID, 1, "Private")
 
-            If results.Count > 0 Then
-                Dim billing = results(0)
+            Dim billing = results.FirstOrDefault(Function(b) b.BillingNumber.Equals(searchID, StringComparison.OrdinalIgnoreCase))
 
-                If DeliveryState.CurrentReceipt Is Nothing Then
-                    DeliveryState.CurrentReceipt = New DeliveryReceiptModel()
+            If billing IsNot Nothing Then
+                If TransactionState.ActiveRecord Is Nothing Then
+                    TransactionState.ActiveRecord = New UniversalTransactionModel()
                 End If
 
                 Dim clientList = ClientController.SearchClients(billing.ClientID)
@@ -666,12 +651,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     txtClientName.Text = billing.ClientID
                 End If
 
-                DeliveryState.CurrentReceipt.ClientName = txtClientName.Text
-                DeliveryState.CurrentReceipt.DocumentReference = billing.BillingNumber
+                TransactionState.ActiveRecord.ClientName = txtClientName.Text
+                TransactionState.ActiveRecord.DocumentReference = billing.BillingNumber
 
                 Dim historyTotals = DeliveryReceiptController.GetAccumulatedDeliveryTotals(billing.BillingNumber)
                 Dim masterItems = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(billing.OrderItems)
-
                 Dim remainingList As New List(Of Dictionary(Of String, String))
 
                 If masterItems IsNot Nothing Then
@@ -698,25 +682,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     Next
                 End If
 
-                Dim actualProductCount = remainingList.Where(Function(x)
-                                                                 Return Not x.ContainsKey("IsHeaderRow") OrElse
-                                                        x("IsHeaderRow").ToString().ToLower() <> "true"
-                                                             End Function).Count()
-
-                If searchText.Length = txtDeliveryNumber.Text.Length() Then
-                    If actualProductCount = 0 Then
-                        MessageBox.Show($"All items in Billing Statement {billing.BillingNumber} are already fully delivered.",
-                                "Delivery Complete", MessageBoxButton.OK, MessageBoxImage.Information)
-                        txtInvoiceNumber.Clear()
-                        ClearDeliveryForm()
-                        Return
-                    End If
-                End If
-
-                DeliveryState.CurrentReceipt.OrderItems = JsonConvert.SerializeObject(remainingList)
+                Dim jsonString = JsonConvert.SerializeObject(remainingList)
+                TransactionState.ActiveRecord.RawItemsJson = jsonString
+                TransactionState.ActiveRecord.OrderItems = New ObservableCollection(Of OrderItems)(JsonConvert.DeserializeObject(Of List(Of OrderItems))(jsonString))
 
                 LoadItems()
-
 
                 txtDeliveryNumber.Text = GenerateDeliveryId(billing.BillingNumber)
             Else
@@ -749,7 +719,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Sub
 
         Private Sub BtnReset_Click(sender As Object, e As RoutedEventArgs) Handles BtnReset.Click
-            DeliveryState.ClearDeliveryState()
+            TransactionState.ResetRecord()
             lblPageTitle.Text = "Delivery Form"
             lblButton.Text = "GENERATE DELIVERY RECEIPT"
             ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
@@ -819,7 +789,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     Dim currentNum As Integer = Integer.Parse(match.Groups(1).Value)
                     Return System.Text.RegularExpressions.Regex.Replace(baseId, pattern, $"(P{currentNum + 1})")
                 Else
-                    ' First time partial delivery for this invoice  
                     Return baseId & "(P1)"
                 End If
             End If
