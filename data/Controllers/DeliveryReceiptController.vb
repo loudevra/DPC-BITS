@@ -9,6 +9,7 @@ Imports DPC.DPC.Data.Models
 Imports DPC.DPC.Views.HRM.Employees.Employees.EmployeesProfile.EmployeesProfileControls
 Imports MongoDB.Driver
 Imports MySql.Data.MySqlClient
+Imports Newtonsoft.Json
 
 Namespace DPC.Data.Controllers
     Public Class DeliveryReceiptController
@@ -88,8 +89,8 @@ Namespace DPC.Data.Controllers
             End Try
         End Function
 
-        Public Shared Function GetDeliveryReceipts(limit As Integer) As ObservableCollection(Of DeliveryReceiptModel)
-            Dim receipts As New ObservableCollection(Of DeliveryReceiptModel)
+        Public Shared Function GetDeliveryReceipts(limit As Integer) As ObservableCollection(Of UniversalTransactionModel)
+            Dim receipts As New ObservableCollection(Of UniversalTransactionModel)
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
@@ -108,20 +109,30 @@ Namespace DPC.Data.Controllers
 
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
-                                receipts.Add(New DeliveryReceiptModel() With {
-                            .DRNumber = reader("DRNumber").ToString(),
-                            .ReferenceInvoice = reader("ReferenceInvoice").ToString(),
-                            .DRDate = If(reader("DRDate") Is DBNull.Value, "-", reader("DRDate").ToString()),
+                                Dim jsonString As String = If(reader("OrderItems") Is DBNull.Value, "[]", reader("OrderItems").ToString())
+                                Dim itemsCollection As ObservableCollection(Of OrderItems)
+                                Try
+                                    Dim deserializedList = JsonConvert.DeserializeObject(Of List(Of OrderItems))(jsonString)
+                                    itemsCollection = New ObservableCollection(Of OrderItems)(deserializedList)
+                                Catch
+                                    itemsCollection = New ObservableCollection(Of OrderItems)()
+                                End Try
+
+                                receipts.Add(New UniversalTransactionModel() With {
+                            .DocumentNumber = reader("DRNumber").ToString(),
+                            .DocumentReference = reader("ReferenceInvoice").ToString(),
+                            .DocumentDate = If(reader("DRDate") Is DBNull.Value, "-", reader("DRDate").ToString()),
                             .ClientName = reader("ClientName").ToString(),
                             .ClientDetails = If(reader("ClientDetails") Is DBNull.Value, String.Empty, reader("ClientDetails").ToString()),
-                            .DeliveryNotes = If(reader("DeliveryNotes") Is DBNull.Value, String.Empty, reader("DeliveryNotes").ToString()),
+                            .Notes = If(reader("DeliveryNotes") Is DBNull.Value, String.Empty, reader("DeliveryNotes").ToString()),
                             .ShippingMethod = reader("ShippingMethod").ToString(),
-                            .DeliveryStatus = reader("DeliveryStatus").ToString(),
+                            .Status = reader("DeliveryStatus").ToString(),
                             .ApprovedBy = If(reader("ApprovedBy") Is DBNull.Value, "-", reader("ApprovedBy").ToString()),
                             .PaymentTerm = If(reader("PaymentTerm") Is DBNull.Value, "-", reader("PaymentTerm").ToString()),
-                            .OrderItems = reader("OrderItems").ToString(),
-                            .Username = reader("Username").ToString(),
-                            .DateAdded = If(reader("DateAdded") Is DBNull.Value, DateTime.MinValue, Convert.ToDateTime(reader("DateAdded")))
+                            .OrderItems = itemsCollection,
+                            .RawItemsJson = jsonString,
+                            .SalesRep = reader("Username").ToString(),
+                            .DateAdded = If(reader("DateAdded") Is DBNull.Value, DateTime.MinValue, Convert.ToDateTime(reader("DateAdded")).ToString("MMM dd, yyyy"))
                         })
                             End While
                         End Using
@@ -135,7 +146,7 @@ Namespace DPC.Data.Controllers
             Return receipts
         End Function
 
-        Public Shared Function GetDeliveryReceiptByDRNumber(drNumber As String) As DeliveryReceiptModel
+        Public Shared Function GetDeliveryReceiptByDRNumber(drNumber As String) As UniversalTransactionModel
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
@@ -156,24 +167,41 @@ Namespace DPC.Data.Controllers
             Return Nothing
         End Function
 
-        Private Shared Function MapReaderToDeliveryModel(reader As MySqlDataReader) As DeliveryReceiptModel
-            Return New DeliveryReceiptModel With {
-            .DRNumber = reader("drNumber").ToString(),
-            .ReferenceInvoice = reader("referenceInvoice").ToString(),
-            .ClientName = reader("clientName").ToString(),
-            .ClientDetails = reader("clientDetails").ToString(),
-            .DRDate = If(reader("drDate") Is DBNull.Value, "", Convert.ToDateTime(reader("drDate")).ToString("MMM dd, yyyy")),
-            .ShippingMethod = reader("shippingMethod").ToString(),
-            .DeliveryNotes = reader("deliveryNotes").ToString(),
-            .ApprovedBy = reader("approvedBy").ToString(),
-            .PaymentTerm = reader("paymentTerm").ToString(),
-            .OrderItems = reader("orderItems").ToString(),
-            .DeliveryStatus = reader("deliveryStatus").ToString()
-        }
+        Private Shared Function MapReaderToDeliveryModel(reader As MySqlDataReader) As UniversalTransactionModel
+            ' 1. Capture the JSON string safely
+            Dim jsonItems As String = If(reader("orderItems") Is DBNull.Value, "[]", reader("orderItems").ToString())
+
+            ' 2. Convert JSON string to ObservableCollection
+            Dim itemsCollection As New ObservableCollection(Of OrderItems)()
+            Try
+                If Not String.IsNullOrWhiteSpace(jsonItems) Then
+                    Dim list = JsonConvert.DeserializeObject(Of List(Of OrderItems))(jsonItems)
+                    itemsCollection = New ObservableCollection(Of OrderItems)(list)
+                End If
+            Catch ex As Exception
+                Debug.WriteLine("Error parsing OrderItems JSON: " & ex.Message)
+            End Try
+
+            ' 3. Return the populated Model
+            Return New UniversalTransactionModel With {
+        .DocumentNumber = reader("drNumber").ToString(),
+        .DocumentReference = reader("ReferenceInvoice").ToString(),
+        .ClientName = reader("clientName").ToString(),
+        .ClientDetails = reader("clientDetails").ToString(),
+        .DocumentDate = If(reader("drDate") Is DBNull.Value, "", Convert.ToDateTime(reader("drDate")).ToString("MMM dd, yyyy")),
+        .ShippingMethod = reader("shippingMethod").ToString(),
+        .Notes = reader("deliveryNotes").ToString(),
+        .ApprovedBy = reader("approvedBy").ToString(),
+        .PaymentTerm = reader("paymentTerm").ToString(),
+        .OrderItems = itemsCollection,
+        .RawItemsJson = jsonItems,
+        .Status = reader("deliveryStatus").ToString(),
+        .DateAdded = If(reader("DateAdded") Is DBNull.Value, DateTime.MinValue, Convert.ToDateTime(reader("DateAdded")).ToString("MMM dd, yyyy"))
+    }
         End Function
 
         Public Shared Function SearchDeliveryReceipts()
-            Return New ObservableCollection(Of DeliveryReceiptModel)()
+            Return New ObservableCollection(Of UniversalTransactionModel)()
         End Function
 
         Public Shared Function GetAccumulatedDeliveryTotals(invoiceNo As String) As Dictionary(Of String, Integer)

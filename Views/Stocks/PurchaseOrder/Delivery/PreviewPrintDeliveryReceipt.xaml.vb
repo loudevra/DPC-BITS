@@ -34,7 +34,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             If receipt Is Nothing Then Return
 
             txtDeliveryNumber.Text = receipt.DRNumber
-            txtReferenceInvoice.Text = receipt.ReferenceInvoice
+            txtDocumentReference.Text = receipt.DocumentReference
             txtDeliveryDate.Text = receipt.DRDate
             txtSalesRep.Text = CacheOnLoggedInName
             txtDeliveryClientName.Text = receipt.ClientName
@@ -461,7 +461,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
             If DeliveryReceiptController.InsertDeliveryReceipt(
                 DeliveryDetails.DRNumber,
-                DeliveryDetails.DRReferenceInvoice,
+                DeliveryDetails.DRDocumentReference,
                 DeliveryDetails.DRDate,
                 DeliveryDetails.DRClientName,
                 DeliveryDetails.DRClientDetails,

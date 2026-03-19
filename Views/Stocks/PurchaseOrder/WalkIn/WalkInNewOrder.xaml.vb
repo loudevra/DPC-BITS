@@ -339,7 +339,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
             Dim currentTargetPanel As StackPanel = Nothing
 
-            For Each item As OrderItems In model.Items
+            For Each item As OrderItems In model.OrderItems
                 If item.IsHeaderRow = True Then
                     AddNewCategoryWithSpecificName(item.ProductName)
                     currentTargetPanel = GetLatestItemsPanel()
@@ -1575,7 +1575,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                         newItem.ProductImage = Base64ToBitmapImage(dict("ProductImageBase64"))
                     End If
 
-                    data.Items.Add(newItem)
+                    data.OrderItems.Add(newItem)
                 Next
 
                 Dim selectedTaxType As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()

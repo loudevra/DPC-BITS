@@ -1,6 +1,6 @@
 ﻿Module DeliveryDetails
     Public DRNumber As String = ""
-    Public DRReferenceInvoice As String = ""
+    Public DRDocumentReference As String = ""
     Public DRDate As String = ""
 
     ' Client Information
@@ -24,7 +24,7 @@
     Public Sub ClearDeliveryDetails()
         ' Reset Strings to Empty
         DRNumber = ""
-        DRReferenceInvoice = ""
+        DRDocumentReference = ""
         DRDate = ""
         DRClientDetails = ""
         DRClientName = ""

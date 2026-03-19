@@ -56,7 +56,7 @@ Namespace DPC.Components.Forms
 
             txtPageInfo = TryCast(Me.FindName("txtPageInfo"), TextBlock)
 
-            If TransactionState.ActiveRecord Is Nothing OrElse TransactionState.ActiveRecord.Items.Count = 0 Then
+            If TransactionState.ActiveRecord Is Nothing OrElse TransactionState.ActiveRecord.OrderItems.Count = 0 Then
                 MessageBox.Show("Preview data is missing.")
                 Return
             End If
@@ -150,7 +150,7 @@ Namespace DPC.Components.Forms
             Dim data = TransactionState.ActiveRecord
             _paginatedPages.Clear()
 
-            allItems = data.Items
+            allItems = data.OrderItems
 
             If allItems Is Nothing OrElse allItems.Count = 0 Then
                 _paginatedPages.Add(New List(Of Integer))
@@ -327,7 +327,7 @@ Namespace DPC.Components.Forms
         End Sub
 
         Private Sub UpdateImageColumnVisibility()
-            For Each col In DataGrid.Columns
+            For Each col In dataGrid.Columns
                 If TypeOf col Is DataGridTemplateColumn AndAlso col.Header?.ToString() = "Image" Then
                     col.Visibility = If(showProductImages, Visibility.Visible, Visibility.Collapsed)
                     Exit For
@@ -467,7 +467,7 @@ Namespace DPC.Components.Forms
             Dim data = TransactionState.ActiveRecord
             If data Is Nothing Then Exit Sub
 
-            Dim json As String = JsonConvert.SerializeObject(data.Items)
+            Dim json As String = JsonConvert.SerializeObject(data.OrderItems)
             Dim docDate As DateTime
             Dim validityDate As DateTime
 

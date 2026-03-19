@@ -7,8 +7,10 @@ Namespace DPC.Data.Models
         Public Property DocumentTitle As String = "DOCUMENT"
         Public Property DocumentNumber As String = ""
         Public Property DocumentNumberLabel As String = "No:"
+        Public Property DocumentReference As String = ""
 
         ' --- 2. DATES & VALIDITY ---
+        Public Property DateAdded As String = ""
         Public Property DateLabel As String = "Date:"
         Public Property DocumentDate As String = DateTime.Now.ToString("MMMM dd, yyyy")
         Public Property ValidityLabel As String = "Valid Until:"
@@ -18,6 +20,7 @@ Namespace DPC.Data.Models
         ' --- 3. CLIENT & PERSONNEL ---
         Public Property ClientId As String = ""
         Public Property ClientName As String = ""
+        Public Property ClientDetails As String = ""
         Public Property ClientAddress As String = ""
         Public Property ClientContact As String = ""
         Public Property ClientEmail As String = ""
@@ -29,12 +32,15 @@ Namespace DPC.Data.Models
         ' --- 4. WAREHOUSE & LOGISTICS ---
         Public Property WarehouseName As String = ""
         Public Property WarehouseID As String = ""
+        Public Property ShippingMethod As String = ""
+        Public Property Status As String = ""
 
         ' --- 5. TABLES & ITEMS ---
-        Public Property Items As New ObservableCollection(Of OrderItems)
+        Public Property OrderItems As New ObservableCollection(Of OrderItems)
         Public Property RawItemsJson As String = ""
 
         ' --- 6. FINANCIALS (CURRENCY FORMATTED) ---
+        Public Property PaymentTerm As String = ""
         Public Property SubtotalLabel As String = ""
         Public Property Subtotal As String = "₱ 0.00"
 
@@ -68,6 +74,7 @@ Namespace DPC.Data.Models
         Public Property HasSignature As Boolean = False
 
         ' --- 8. STATE & UI CONTROL ---
+        Public Property IsFullyDelivered As Boolean = False
         Public Property IsEditMode As Boolean = False
         Public Property ShowImages As Boolean = True
         Public Property PrintPath As String = ""

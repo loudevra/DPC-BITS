@@ -42,20 +42,20 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Sub
 
         Public Sub InitializeFields()
-            Dim receipt = DeliveryState.CurrentReceipt
+            Dim receipt = TransactionState.ActiveRecord
             If receipt Is Nothing Then Exit Sub
 
             txtClientName.Text = receipt.ClientName
-            txtInvoiceNumber.Text = receipt.ReferenceInvoice
+            txtInvoiceNumber.Text = receipt.DocumentReference
 
             GetClientInfo()
             LoadItems()
 
-            If String.IsNullOrWhiteSpace(receipt.DRNumber) Then
+            If String.IsNullOrWhiteSpace(receipt.DocumentNumber) Then
                 txtDeliveryNumber.Text = GenerateDeliveryId(txtInvoiceNumber.Text)
                 rbFullDelivery.IsEnabled = True
             Else
-                txtDeliveryNumber.Text = receipt.DRNumber
+                txtDeliveryNumber.Text = receipt.DocumentNumber
 
                 txtInvoiceNumber.IsReadOnly = True
                 txtInvoiceNumber.Foreground = Brushes.Gray
@@ -65,7 +65,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             End If
 
             Dim drDate As DateTime
-            If DateTime.TryParse(receipt.DRDate, drDate) Then
+            If DateTime.TryParse(receipt.DocumentDate, drDate) Then
                 dtDate.SelectedDate = drDate
             Else
                 dtDate.SelectedDate = DateTime.Today
@@ -76,8 +76,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 cmbShippingMethod.Text = receipt.ShippingMethod
             End If
 
-            If Not String.IsNullOrWhiteSpace(receipt.DeliveryNotes) Then
-                txtDeliveryNote.Text = receipt.DeliveryNotes
+            If Not String.IsNullOrWhiteSpace(receipt.Notes) Then
+                txtDeliveryNote.Text = receipt.Notes
             End If
 
             If Not String.IsNullOrWhiteSpace(receipt.ApprovedBy) Then
@@ -113,7 +113,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     DeliveryState.CurrentReceipt = New DeliveryReceiptModel()
                 End If
 
-                DeliveryDetails.DRReferenceInvoice = txtInvoiceNumber.Text
+                DeliveryDetails.DRDocumentReference = txtInvoiceNumber.Text
                 DeliveryDetails.DRNumber = txtDeliveryNumber.Text
                 DeliveryDetails.DRDate = DateTime.Today.ToString("MMM dd, yyyy")
                 DeliveryDetails.DRClientName = txtClientName.Text
@@ -121,7 +121,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 DeliveryDetails.DRDeliveryNotes = txtDeliveryNote.Text
 
                 Dim receipt = DeliveryState.CurrentReceipt
-                receipt.ReferenceInvoice = txtInvoiceNumber.Text
+                receipt.DocumentReference = txtInvoiceNumber.Text
                 receipt.DRNumber = txtDeliveryNumber.Text
                 receipt.DRDate = DateTime.Today.ToString("MMM dd, yyyy")
                 receipt.ClientName = txtClientName.Text
@@ -667,7 +667,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 End If
 
                 DeliveryState.CurrentReceipt.ClientName = txtClientName.Text
-                DeliveryState.CurrentReceipt.ReferenceInvoice = billing.BillingNumber
+                DeliveryState.CurrentReceipt.DocumentReference = billing.BillingNumber
 
                 Dim historyTotals = DeliveryReceiptController.GetAccumulatedDeliveryTotals(billing.BillingNumber)
                 Dim masterItems = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(billing.OrderItems)
@@ -744,7 +744,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
             ' 4. Clear Global Delivery Cache
             DeliveryDetails.DRClientName = ""
-            DeliveryDetails.DRReferenceInvoice = ""
+            DeliveryDetails.DRDocumentReference = ""
             DeliveryDetails.DRDeliveryItems = New List(Of Dictionary(Of String, String))()
         End Sub
 

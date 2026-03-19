@@ -18,7 +18,7 @@ Namespace DPC.Components.Forms
 
 #Region "1. Variables & Constants"
         Private itemDataSource As New ObservableCollection(Of OrderItems)
-        Private allItems As ObservableCollection(Of OrderItems)
+        Private allOrderItems As ObservableCollection(Of OrderItems)
 
         ' Pagination State
         Private currentPageIndex As Integer = 0
@@ -37,7 +37,7 @@ Namespace DPC.Components.Forms
         Private Const BaseItemHeight As Double = 55
         Private Const DescriptionLineHeight As Double = 15
         Private Const ReservedSpaceForDescription As Double = 30
-        Private categorizedItems As List(Of Dictionary(Of String, Object))
+        Private categorizedOrderItems As List(Of Dictionary(Of String, Object))
         Private Const CategoryHeaderHeight As Double = 40
         Public Property IsEditMode As Boolean = False
 #End Region
@@ -52,7 +52,7 @@ Namespace DPC.Components.Forms
 
             txtPageInfo = TryCast(Me.FindName("txtPageInfo"), TextBlock)
 
-            If TransactionState.ActiveRecord Is Nothing OrElse TransactionState.ActiveRecord.Items.Count = 0 Then
+            If TransactionState.ActiveRecord Is Nothing OrElse TransactionState.ActiveRecord.OrderItems.Count = 0 Then
                 MessageBox.Show("Preview data is missing.")
                 Return
             End If
@@ -148,9 +148,9 @@ Namespace DPC.Components.Forms
             Dim data = TransactionState.ActiveRecord
             _paginatedPages.Clear()
 
-            allItems = data.Items
+            allOrderItems = data.OrderItems
 
-            If allItems Is Nothing OrElse allItems.Count = 0 Then
+            If allOrderItems Is Nothing OrElse allOrderItems.Count = 0 Then
                 _paginatedPages.Add(New List(Of Integer))
                 totalPages = 1
                 Return
@@ -159,8 +159,8 @@ Namespace DPC.Components.Forms
             Dim pageIndices As New List(Of Integer)
             Dim currentHeight As Double = 0
 
-            For i As Integer = 0 To allItems.Count - 1
-                Dim h As Double = CalculateItemHeight(allItems(i))
+            For i As Integer = 0 To allOrderItems.Count - 1
+                Dim h As Double = CalculateItemHeight(allOrderItems(i))
 
                 If currentHeight + h > PageMaxHeight Then
                     _paginatedPages.Add(New List(Of Integer)(pageIndices))
@@ -208,7 +208,7 @@ Namespace DPC.Components.Forms
             Dim indices = _paginatedPages(index)
 
             For Each idx In indices
-                itemDataSource.Add(allItems(idx))
+                itemDataSource.Add(allOrderItems(idx))
             Next
 
             dataGrid.ItemsSource = itemDataSource
@@ -289,7 +289,7 @@ Namespace DPC.Components.Forms
             TransactionState.ResetRecord()
 
             itemDataSource.Clear()
-            If allItems IsNot Nothing Then allItems.Clear()
+            If allOrderItems IsNot Nothing Then allOrderItems.Clear()
             _paginatedPages.Clear()
 
             currentPageIndex = 0

@@ -68,23 +68,23 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         ''' <summary>
         ''' Formats the model dates into user-friendly strings for the UI
         ''' </summary>
-        Private Shared Sub FormatDeliveryReceiptsForDisplay(receipts As ObservableCollection(Of DeliveryReceiptModel))
+        Private Shared Sub FormatDeliveryReceiptsForDisplay(receipts As ObservableCollection(Of UniversalTransactionModel))
             Try
                 For Each receipt In receipts
                     ' 1. Format Dates (Your existing code)
-                    If Not String.IsNullOrEmpty(receipt.DRDate) AndAlso receipt.DRDate <> "-" Then
+                    If Not String.IsNullOrEmpty(receipt.DocumentDate) AndAlso receipt.DocumentDate <> "-" Then
                         Dim dt As DateTime
-                        If DateTime.TryParse(receipt.DRDate, dt) Then
-                            receipt.DRDate = dt.ToString("MMM d, yyyy")
+                        If DateTime.TryParse(receipt.DocumentDate, dt) Then
+                            receipt.DocumentDate = dt.ToString("MMM d, yyyy")
                         End If
                     End If
 
                     If receipt.DateAdded <> DateTime.MinValue Then
-                        receipt.DateAddedDisplay = receipt.DateAdded.ToString("MMM d, yyyy")
+                        receipt.DateAdded = receipt.DateAdded.ToString("MMM d, yyyy")
                     End If
 
-                    Dim historyTotals = DeliveryReceiptController.GetAccumulatedDeliveryTotals(receipt.ReferenceInvoice)
-                    Dim billingResults = BillingController.SearchBillingStatements(receipt.ReferenceInvoice, 1, "Private")
+                    Dim historyTotals = DeliveryReceiptController.GetAccumulatedDeliveryTotals(receipt.DocumentReference)
+                    Dim billingResults = BillingController.SearchBillingStatements(receipt.DocumentReference, 1, "Private")
 
                     Dim isFinished As Boolean = True
 
@@ -119,16 +119,16 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         ''' Logic for the "Edit" button inside the DataGrid rows
         ''' </summary>
         Private Sub OpenEditDeliveryReceipt(sender As Object, e As RoutedEventArgs)
-            Dim receipt As DeliveryReceiptModel = TryCast(dataGrid.SelectedItem, DeliveryReceiptModel)
+            Dim receipt As UniversalTransactionModel = TryCast(dataGrid.SelectedItem, UniversalTransactionModel)
 
             If receipt IsNot Nothing Then
-                DeliveryState.ClearDeliveryState()
+                TransactionState.ResetRecord()
 
-                Dim fullReceiptData = DeliveryReceiptController.GetDeliveryReceiptByDRNumber(receipt.DRNumber)
+                Dim fullReceiptData = DeliveryReceiptController.GetDeliveryReceiptByDRNumber(receipt.DocumentNumber)
 
                 If fullReceiptData IsNot Nothing Then
-                    DeliveryState.CurrentReceipt = fullReceiptData
-                    DeliveryState.IsEditMode = True
+                    TransactionState.ActiveRecord = fullReceiptData
+                    TransactionState.IsEditMode = True
 
                     ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
                 Else
@@ -138,12 +138,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Sub
 
         Private Sub OpenContinueDeliveryReceipt(sender As Object, e As RoutedEventArgs)
-            Dim receipt As DeliveryReceiptModel = TryCast(dataGrid.SelectedItem, DeliveryReceiptModel)
+            Dim receipt As UniversalTransactionModel = TryCast(dataGrid.SelectedItem, UniversalTransactionModel)
 
             DeliveryDetails.ClearDeliveryDetails()
 
             If receipt IsNot Nothing Then
-                Dim currentDR As String = receipt.DRNumber
+                Dim currentDR As String = receipt.DocumentNumber
                 Dim nextDR As String = ""
 
                 If currentDR.Contains("(P") Then
@@ -166,17 +166,17 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 End If
 
                 DeliveryDetails.DRNumber = nextDR
-                DeliveryDetails.DRReferenceInvoice = receipt.ReferenceInvoice
+                DeliveryDetails.DRDocumentReference = receipt.DocumentReference
                 DeliveryDetails.DRClientName = receipt.ClientName
                 DeliveryDetails.DRClientDetails = receipt.ClientDetails
-                DeliveryDetails.DRDate = receipt.DRDate
+                DeliveryDetails.DRDate = receipt.DocumentDate
                 DeliveryDetails.DRShippingMethod = receipt.ShippingMethod
-                DeliveryDetails.DRDeliveryNotes = receipt.DeliveryNotes
+                DeliveryDetails.DRDeliveryNotes = receipt.Notes
                 DeliveryDetails.DRApprovedBy = receipt.ApprovedBy
                 DeliveryDetails.DRPaymentTerm = receipt.PaymentTerm
 
-                Dim historyTotals = DeliveryReceiptController.GetAccumulatedDeliveryTotals(receipt.ReferenceInvoice)
-                Dim billingResults = BillingController.SearchBillingStatements(receipt.ReferenceInvoice, 1, "Private")
+                Dim historyTotals = DeliveryReceiptController.GetAccumulatedDeliveryTotals(receipt.DocumentReference)
+                Dim billingResults = BillingController.SearchBillingStatements(receipt.DocumentReference, 1, "Private")
 
                 If billingResults.Count > 0 Then
                     Dim masterItems = Newtonsoft.Json.JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(billingResults(0).OrderItems)
