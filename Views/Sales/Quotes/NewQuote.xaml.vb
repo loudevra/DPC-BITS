@@ -1343,9 +1343,9 @@ Namespace DPC.Views.Sales.Quotes
             ' 2. Handle the IDs (0 = Delivery, 1 = Mobilization)
             Select Case cmbFeeType.SelectedIndex
                 Case 0
-                    lblFeeType.Text = "Delivery"
+                    lblFeeType.Text = "Delivery Fee"
                 Case 1
-                    lblFeeType.Text = "Mobilization"
+                    lblFeeType.Text = "Mobilization Fee"
             End Select
         End Sub
 

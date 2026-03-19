@@ -44,7 +44,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         ' Tax Combobox Variables
         Dim _TaxSelection As Boolean
         Dim _SelectedTax As Decimal
-
+        Private _isInitialized As Boolean = False
+        Private _billingTypingTimer As DispatcherTimer
         Private categoryCount As Integer = 0
 
 #Region "Initializiation once loaded the form"
@@ -1243,9 +1244,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             ' 2. Handle the IDs (0 = Delivery, 1 = Mobilization)
             Select Case cmbFeeType.SelectedIndex
                 Case 0
-                    lblFeeType.Text = "Delivery"
+                    lblFeeType.Text = "Delivery Fee"
                 Case 1
-                    lblFeeType.Text = "Mobilization"
+                    lblFeeType.Text = "Mobilization Fee"
             End Select
         End Sub
 
@@ -1285,6 +1286,14 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                                                CalculateAmount(rowIndex)
                                            End Sub, DispatcherPriority.Background)
         End Sub
+
+        Private Sub txtQuoteNumber_TextChanged(sender As Object, e As TextChangedEventArgs)
+            If Not _isInitialized Then Return
+
+            _billingTypingTimer.Stop()
+            _billingTypingTimer.Start()
+        End Sub
+
 
         Private Sub Quantity_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
             If Not e.Text.All(AddressOf Char.IsDigit) Then
