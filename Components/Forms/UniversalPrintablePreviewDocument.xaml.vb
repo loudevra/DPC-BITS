@@ -56,26 +56,26 @@ Namespace DPC.Components.Forms
 
             txtPageInfo = TryCast(Me.FindName("txtPageInfo"), TextBlock)
 
-            If PreviewState.CurrentPreview Is Nothing OrElse PreviewState.CurrentPreview.Items.Count = 0 Then
+            If TransactionState.ActiveRecord Is Nothing OrElse TransactionState.ActiveRecord.Items.Count = 0 Then
                 MessageBox.Show("Preview data is missing.")
                 Return
             End If
 
             LoadTextFields()
 
-            showProductImages = PreviewState.CurrentPreview.ShowImages
+            showProductImages = TransactionState.ActiveRecord.ShowImages
             'UpdateToggleButtonState()
             RecalculatePagination()
             LoadPage(0)
 
-            If Not String.IsNullOrWhiteSpace(PreviewState.CurrentPreview.SignatureImageBase64) Then
-                base64Image = PreviewState.CurrentPreview.SignatureImageBase64
+            If Not String.IsNullOrWhiteSpace(TransactionState.ActiveRecord.SignatureImageBase64) Then
+                base64Image = TransactionState.ActiveRecord.SignatureImageBase64
                 DisplayUploadedImage()
             End If
         End Sub
 
         Private Sub LoadTextFields()
-            Dim data = PreviewState.CurrentPreview
+            Dim data = TransactionState.ActiveRecord
 
 
             Installation.Text = data.InstallationFee
@@ -116,7 +116,7 @@ Namespace DPC.Components.Forms
 
         Private Sub PopulateHeaderDetails()
             Try
-                Dim data = PreviewState.CurrentPreview
+                Dim data = TransactionState.ActiveRecord
 
                 Dim clientBlock = TryCast(Me.FindName("SubmittedToClient"), TextBlock)
                 Dim addressBlock = TryCast(Me.FindName("SubmittedToAddress"), TextBlock)
@@ -147,7 +147,7 @@ Namespace DPC.Components.Forms
 
 #Region "3. The Pagination Engine (Core Logic)"
         Private Sub RecalculatePagination()
-            Dim data = PreviewState.CurrentPreview
+            Dim data = TransactionState.ActiveRecord
             _paginatedPages.Clear()
 
             allItems = data.Items
@@ -295,8 +295,8 @@ Namespace DPC.Components.Forms
         End Sub
 
         Private Sub CancelButton(sender As Object, e As RoutedEventArgs)
-            Dim data = PreviewState.CurrentPreview
-            PreviewState.ResetPreview()
+            Dim data = TransactionState.ActiveRecord
+            TransactionState.ResetRecord()
 
             itemDataSource.Clear()
             If allItems IsNot Nothing Then allItems.Clear()
@@ -339,7 +339,7 @@ Namespace DPC.Components.Forms
 #Region "6. Printing & PDF"
         Private Sub SavePrint(sender As Object, e As RoutedEventArgs)
             Try
-                Dim data = PreviewState.CurrentPreview
+                Dim data = TransactionState.ActiveRecord
                 Dim docName As String = data.DocumentNumber
 
                 Dim res As MessageBoxResult = MessageBox.Show("Do you want to save this as a PDF?", "Output", MessageBoxButton.YesNoCancel)
@@ -360,7 +360,7 @@ Namespace DPC.Components.Forms
 
         Private Sub SaveDb_Click(sender As Object, e As RoutedEventArgs)
             Try
-                Dim data = PreviewState.CurrentPreview
+                Dim data = TransactionState.ActiveRecord
                 Dim docName As String = data.DocumentNumber
 
                 Dim path As String = SaveAsPDF(docName)
@@ -464,7 +464,7 @@ Namespace DPC.Components.Forms
         End Sub
 
         Private Sub SaveToDb()
-            Dim data = PreviewState.CurrentPreview
+            Dim data = TransactionState.ActiveRecord
             If data Is Nothing Then Exit Sub
 
             Dim json As String = JsonConvert.SerializeObject(data.Items)
@@ -568,7 +568,7 @@ Namespace DPC.Components.Forms
             End If
 
             If success Then
-                PreviewState.ResetPreview()
+                TransactionState.ResetRecord()
                 ViewLoader.DynamicView.NavigateToView(data.CreatePath, Me)
             End If
         End Sub
@@ -595,11 +595,11 @@ Namespace DPC.Components.Forms
 
 #Region "7. Utilities"
         Private Sub DetectDocumentMode()
-            IsEditMode = PreviewState.CurrentPreview.IsEditMode
+            IsEditMode = TransactionState.ActiveRecord.IsEditMode
         End Sub
 
         Public Sub DisplaySignaturePreview()
-            Dim data = PreviewState.CurrentPreview
+            Dim data = TransactionState.ActiveRecord
             Dim grid As New Grid()
             grid.RowDefinitions.Add(New RowDefinition With {.Height = New GridLength(1, GridUnitType.Star)})
             grid.RowDefinitions.Add(New RowDefinition With {.Height = GridLength.Auto})

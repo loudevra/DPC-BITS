@@ -104,9 +104,9 @@ Namespace DPC.Views.Sales.Quotes
             Dim selectedQuote As QuotesModel = TryCast(dataGrid.SelectedItem, QuotesModel)
 
             If selectedQuote IsNot Nothing Then
-                PreviewState.ResetPreview()
+                TransactionState.ResetRecord()
 
-                With PreviewState.CurrentPreview
+                With TransactionState.ActiveRecord
                     .EditLabel = "Edit Cost Estimate"
                     .EditButtonLabel = "Update Cost Estimate"
                     .DocumentNumber = selectedQuote.QuoteNumber

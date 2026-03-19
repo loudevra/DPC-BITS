@@ -97,9 +97,9 @@ Namespace DPC.Views.Sales.Quotes
             Dim selectedQuote As BillingModel = TryCast(dataGrid.SelectedItem, BillingModel)
 
             If selectedQuote IsNot Nothing Then
-                PreviewState.ResetPreview()
+                TransactionState.ResetRecord()
 
-                With PreviewState.CurrentPreview
+                With TransactionState.ActiveRecord
                     .EditLabel = "Edit Billing Statement"
                     .EditButtonLabel = "Update Billing Statement"
                     .DocumentNumber = selectedQuote.BillingNumber

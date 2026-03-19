@@ -105,7 +105,7 @@ Namespace DPC.Views.Sales.Quotes
 
             ' Checks the value of CEType
             ' 1. Check the mode first
-            Dim model = PreviewState.CurrentPreview
+            Dim model = TransactionState.ActiveRecord
             Dim isEditing As Boolean = (model IsNot Nothing AndAlso model.IsEditMode)
 
             If isEditing Then
@@ -394,7 +394,7 @@ Namespace DPC.Views.Sales.Quotes
 
 #Region "This Loads every data if its available for updating"
         Private Sub InitializeProductUI()
-            Dim model = PreviewState.CurrentPreview
+            Dim model = TransactionState.ActiveRecord
 
             If model IsNot Nothing AndAlso model.IsEditMode Then
                 LoadFromUniversalPreview(model)
@@ -408,13 +408,13 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Sub BtnReset_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddClient.Click
-            PreviewState.ResetPreview()
+            TransactionState.ResetRecord()
             lblPageTitle.Text = "Cost Estimate"
             lblButton.Text = "Generate Cost Estimate"
             ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
         End Sub
 
-        Private Sub LoadFromUniversalPreview(model As UniversalPreviewModel)
+        Private Sub LoadFromUniversalPreview(model As UniversalTransactionModel)
             lblPageTitle.Text = model.EditLabel
             lblButton.Text = model.EditButtonLabel
             txtQuoteNumber.Text = model.DocumentNumber
@@ -453,7 +453,7 @@ Namespace DPC.Views.Sales.Quotes
             UpdateGrandTotal()
         End Sub
 
-        Private Sub FillClientsFieldFromModel(model As UniversalPreviewModel)
+        Private Sub FillClientsFieldFromModel(model As UniversalTransactionModel)
             RemoveHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
 
             Dim foundClients = ClientController.SearchClient(model.ClientId)
@@ -1490,7 +1490,7 @@ Namespace DPC.Views.Sales.Quotes
         End Function
 
         Private Sub txtQuoteNumber_TextChanged(sender As Object, e As TextChangedEventArgs)
-            Dim model = PreviewState.CurrentPreview
+            Dim model = TransactionState.ActiveRecord
             If model IsNot Nothing AndAlso model.IsEditMode Then Exit Sub
 
             Dim currentQuoteID = txtQuoteNumber.Text.Trim()
@@ -1681,8 +1681,8 @@ Namespace DPC.Views.Sales.Quotes
             End If
 
             Try
-                PreviewState.ResetPreview()
-                Dim data = PreviewState.CurrentPreview
+                TransactionState.ResetRecord()
+                Dim data = TransactionState.ActiveRecord
 
                 Dim selectedValidityOption = DirectCast(cmbCostEstimateValidty.SelectedItem, ComboBoxItem).Content.ToString()
                 Dim actualValidityDate = GetValidityDate(selectedValidityOption, OrderDateVM.SelectedDate.Value)

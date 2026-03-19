@@ -52,26 +52,26 @@ Namespace DPC.Components.Forms
 
             txtPageInfo = TryCast(Me.FindName("txtPageInfo"), TextBlock)
 
-            If PreviewState.CurrentPreview Is Nothing OrElse PreviewState.CurrentPreview.Items.Count = 0 Then
+            If TransactionState.ActiveRecord Is Nothing OrElse TransactionState.ActiveRecord.Items.Count = 0 Then
                 MessageBox.Show("Preview data is missing.")
                 Return
             End If
 
             LoadTextFields()
 
-            showProductImages = PreviewState.CurrentPreview.ShowImages
+            showProductImages = TransactionState.ActiveRecord.ShowImages
             UpdateToggleButtonState()
             RecalculatePagination()
             LoadPage(0)
 
-            If Not String.IsNullOrWhiteSpace(PreviewState.CurrentPreview.SignatureImageBase64) Then
-                base64Image = PreviewState.CurrentPreview.SignatureImageBase64
+            If Not String.IsNullOrWhiteSpace(TransactionState.ActiveRecord.SignatureImageBase64) Then
+                base64Image = TransactionState.ActiveRecord.SignatureImageBase64
                 DisplayUploadedImage()
             End If
         End Sub
 
         Private Sub LoadTextFields()
-            Dim data = PreviewState.CurrentPreview
+            Dim data = TransactionState.ActiveRecord
 
 
             Installation.Text = data.InstallationFee
@@ -114,7 +114,7 @@ Namespace DPC.Components.Forms
 
         Private Sub PopulateHeaderDetails()
             Try
-                Dim data = PreviewState.CurrentPreview
+                Dim data = TransactionState.ActiveRecord
 
                 Dim clientBlock = TryCast(Me.FindName("SubmittedToClient"), TextBlock)
                 Dim addressBlock = TryCast(Me.FindName("SubmittedToAddress"), TextBlock)
@@ -145,7 +145,7 @@ Namespace DPC.Components.Forms
 
 #Region "3. The Pagination Engine (Core Logic)"
         Private Sub RecalculatePagination()
-            Dim data = PreviewState.CurrentPreview
+            Dim data = TransactionState.ActiveRecord
             _paginatedPages.Clear()
 
             allItems = data.Items
@@ -285,8 +285,8 @@ Namespace DPC.Components.Forms
 
 #Region "5. Navigation & UI Interaction"
         Private Sub BackToUI_Click(sender As Object, e As MouseButtonEventArgs)
-            Dim data = PreviewState.CurrentPreview
-            PreviewState.ResetPreview()
+            Dim data = TransactionState.ActiveRecord
+            TransactionState.ResetRecord()
 
             itemDataSource.Clear()
             If allItems IsNot Nothing Then allItems.Clear()
@@ -300,7 +300,7 @@ Namespace DPC.Components.Forms
         End Sub
 
         Private Sub PrintPreview(sender As Object, e As RoutedEventArgs)
-            Dim data = PreviewState.CurrentPreview
+            Dim data = TransactionState.ActiveRecord
 
             data.DeliveryMobilizationLabel = lblFeeType.Text
             data.Notes = noteBox.Text
@@ -317,7 +317,7 @@ Namespace DPC.Components.Forms
         End Sub
 
         Private Sub ToggleImage_Click(sender As Object, e As RoutedEventArgs)
-            Dim data = PreviewState.CurrentPreview
+            Dim data = TransactionState.ActiveRecord
             showProductImages = Not showProductImages
 
             data.ShowImages = showProductImages
@@ -431,7 +431,7 @@ Namespace DPC.Components.Forms
 
 #Region "7. Utilities (Images, Files, Popups)"
         Private Sub DetectDocumentMode()
-            IsEditMode = PreviewState.CurrentPreview.IsEditMode
+            IsEditMode = TransactionState.ActiveRecord.IsEditMode
         End Sub
 
         Private Sub TextEditorPopOut(sender As Object, e As MouseButtonEventArgs)
@@ -459,7 +459,7 @@ Namespace DPC.Components.Forms
                 Dim encodedString = Base64Utility.EncodeFileToBase64(path)
                 base64Image = encodedString
 
-                Dim data = PreviewState.CurrentPreview
+                Dim data = TransactionState.ActiveRecord
                 data.SignatureImageBase64 = encodedString
                 data.HasSignature = True
 
@@ -558,7 +558,7 @@ Namespace DPC.Components.Forms
         End Function
 
         'Private Sub cmbTerms_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
-        '    Dim data = PreviewState.CurrentPreview
+        '    Dim data = TransactionState.ActiveRecord
 
         '    If cmbTerms.SelectedIndex = 6 Then
         '        data.IsCustomTerm = True
