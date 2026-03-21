@@ -1,4 +1,7 @@
-﻿' ManageTimeoutRequests.xaml.vb
+﻿' Add these two lines right at the top!
+Imports System.IO
+Imports Microsoft.Win32
+
 Imports System.Collections.ObjectModel
 Imports System.Windows
 Imports System.Windows.Controls
@@ -85,10 +88,19 @@ Namespace DPC.Views.Misc.OverTime
         End Sub
 
         Private Sub NavigateToPrintPreview(sender As Object, e As RoutedEventArgs)
-            ' Placeholder for print preview navigation
+            ' 1. Get the clicked row's data
+            Dim selectedRecord As OvertimeRequestModel = CType(CType(sender, Button).DataContext, OvertimeRequestModel)
+
+            If selectedRecord IsNot Nothing Then
+                ' 2. Pass it to the shared TargetPrintRecord variable in the Preview form
+                DPC.Views.Misc.OverTime.PreviewPrintOverTimeRequestForm.TargetPrintRecord = selectedRecord
+
+                ' 3. Navigate to the Print Preview view
+                ' Ensure the string matches the exact key used in your ViewLoader dictionary
+                DPC.Data.Helpers.ViewLoader.DynamicView.NavigateToView("previewprintovertimerequestform", Me)
+            End If
         End Sub
-        ' Inside ManageTimeoutRequests.xaml.vb
-        ' Place this inside your ManageOvertimeRequests.xaml.vb file
+
         Private Sub BtnEdit_Click(sender As Object, e As RoutedEventArgs)
             ' 1. Get the clicked row's data
             Dim selectedRecord As OvertimeRequestModel = CType(CType(sender, Button).DataContext, OvertimeRequestModel)
@@ -158,7 +170,7 @@ Namespace DPC.Views.Misc.OverTime
                 dataGrid.ItemsSource = filteredList
             End If
         End Sub
-        ' Change the name from BtnEdit_Click to NavigateToEdit
+
         Private Sub NavigateToEdit(sender As Object, e As RoutedEventArgs)
             ' 1. Get the clicked row's data
             Dim selectedRecord As OvertimeRequestModel = CType(CType(sender, Button).DataContext, OvertimeRequestModel)
@@ -174,6 +186,56 @@ Namespace DPC.Views.Misc.OverTime
 
         Private Sub dataGrid_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles dataGrid.SelectionChanged
 
+        End Sub
+
+        ' ==========================================
+        ' EXCEL / CSV EXPORT LOGIC (Upgraded Standard)
+        ' ==========================================
+        Private Sub ExportToExcel_Click(sender As Object, e As RoutedEventArgs)
+            Try
+                ' 1. Check if there is anything visible on the screen to export
+                If dataGrid.Items.Count = 0 Then
+                    MessageBox.Show("There is no data to export.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning)
+                    Return
+                End If
+
+                Dim saveFileDialog As New SaveFileDialog()
+                saveFileDialog.Filter = "CSV (Excel Compatible) (*.csv)|*.csv"
+                saveFileDialog.FileName = "OvertimeRequests_" & DateTime.Now.ToString("yyyyMMdd_HHmmss") & ".csv"
+                saveFileDialog.Title = "Export Overtime Requests to Excel"
+
+                If saveFileDialog.ShowDialog() = True Then
+                    Using writer As New StreamWriter(saveFileDialog.FileName)
+
+                        ' 2. THE HEADERS: Match DataGrid UI columns perfectly
+                        writer.WriteLine("Ref #,Employee,Job Title,Department,Total Hours,Request Date,Status")
+
+                        ' 3. THE ROWS: Loop through DataGrid items (respecting searches)
+                        For Each obj In dataGrid.Items
+                            Dim row As OvertimeRequestModel = TryCast(obj, OvertimeRequestModel)
+
+                            If row IsNot Nothing Then
+                                ' Bulletproof formatting: safely handles Nulls and prevents comma/quote crashes
+                                Dim ref As String = $"{row.OvertimeID}".Replace("""", """""")
+                                Dim emp As String = $"{row.EmployeeName}".Replace("""", """""")
+                                Dim job As String = $"{row.JobTitle}".Replace("""", """""")
+                                Dim dept As String = $"{row.Department}".Replace("""", """""")
+                                Dim hrs As String = $"{row.TotalHours}".Replace("""", """""")
+                                Dim rDate As String = $"{row.RequestDate}".Replace("""", """""")
+                                Dim status As String = $"{row.Status}".Replace("""", """""")
+
+                                ' 4. THE DATA: Map exactly to the headers
+                                Dim csvRow As String = $"""{ref}"",""{emp}"",""{job}"",""{dept}"",""{hrs}"",""{rDate}"",""{status}"""
+                                writer.WriteLine(csvRow)
+                            End If
+                        Next
+                    End Using
+
+                    MessageBox.Show("Successfully exported the visible records to Excel!", "Export Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                End If
+            Catch ex As Exception
+                MessageBox.Show("Error exporting to Excel: " & ex.Message, "Export Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
         End Sub
     End Class
 End Namespace

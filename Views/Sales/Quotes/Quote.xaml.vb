@@ -1,11 +1,14 @@
-﻿Imports System.Data
+﻿Imports System.Collections.ObjectModel
+Imports System.Data
+Imports System.IO
 Imports System.Windows.Controls.Primitives
 Imports System.Windows.Threading
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
+Imports DPC.DPC.Data.Models
+Imports Microsoft.Win32
 Imports MySql.Data.MySqlClient
-Imports System.Collections.ObjectModel
 Imports Newtonsoft.Json
 
 Namespace DPC.Views.Sales.Quotes
@@ -369,16 +372,47 @@ Namespace DPC.Views.Sales.Quotes
             End If
         End Sub
 
+        ' ==========================================
+        ' EXCEL / CSV EXPORT LOGIC (ManageWalkInClients)
+        ' ==========================================
         Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
-            ' Check if DataGrid has data
-            If dataGrid.Items.Count = 0 Then
-                MessageBox.Show("No data to export!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning)
-                Exit Sub
-            End If
+            Try
+                If dataGrid.Items.Count = 0 Then
+                    MessageBox.Show("No data to export!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning)
+                    Return
+                End If
 
-            ' Use the ExcelExporter helper with column exclusions
-            ExcelExporter.ExportDataGridToExcel(dataGrid, "QuotesExport", "Quotes List")
+                Dim saveFileDialog As New SaveFileDialog()
+                saveFileDialog.Filter = "CSV (Excel Compatible) (*.csv)|*.csv"
+                saveFileDialog.FileName = "Billing_Statements_" & DateTime.Now.ToString("yyyyMMdd_HHmmss") & ".csv"
+                saveFileDialog.Title = "Export Billing Statements to Excel"
 
+                If saveFileDialog.ShowDialog() = True Then
+                    Using writer As New StreamWriter(saveFileDialog.FileName)
+                        ' Header Row
+                        writer.WriteLine("Billing No.,DR No.,Date,Terms,Tax,Discount,Total Amount,Items")
+
+                        For Each obj In dataGrid.Items
+                            Dim item As BillingModel = TryCast(obj, BillingModel)
+                            If item IsNot Nothing Then
+                                Dim billNo As String = $"{item.BillingNumber}".Replace("""", """""")
+                                Dim drNo As String = $"{item.DRNo}".Replace("""", """""")
+                                Dim bDate As String = $"{item.BillingDate}".Replace("""", """""")
+                                Dim terms As String = $"{item.PaymentTerms}".Replace("""", """""")
+                                Dim tax As String = $"{item.TotalTax}".Replace("""", """""")
+                                Dim discount As String = $"{item.TotalDiscount}".Replace("""", """""")
+                                Dim total As String = $"{item.TotalAmount}".Replace("""", """""")
+                                Dim itemsData As String = $"{item.OrderItems}".Replace("""", """""")
+
+                                writer.WriteLine($"""{billNo}"",""{drNo}"",""{bDate}"",""{terms}"",""{tax}"",""{discount}"",""{total}"",""{itemsData}""")
+                            End If
+                        Next
+                    End Using
+                    MessageBox.Show("Billing statements successfully exported to Excel!", "Export Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                End If
+            Catch ex As Exception
+                MessageBox.Show($"An error occurred while exporting: {ex.Message}", "Export Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
         End Sub
 
         ' Setup bindings between DatePickers, Buttons, and ViewModels

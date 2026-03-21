@@ -39,63 +39,6 @@ Namespace DPC.Views.Misc.OverTime
         End Sub
 
         ' ==========================================
-        ' AUTOCOMPLETE LOGIC
-        ' ==========================================
-        Private Sub AutoCompleteTextBox_TextChanged(sender As Object, e As TextChangedEventArgs)
-            Dim input = AutoCompleteTextBox.Text.Trim().ToLower()
-            Dim filtered = employeeNames.Where(Function(name) name.ToLower().Contains(input)).ToList()
-
-            If String.IsNullOrWhiteSpace(AutoCompleteTextBox.Text) Then
-                JobTitle.Text = ""
-                EmployeeID.Text = ""
-                hourlyRate.Text = ""
-            End If
-
-            If filtered.Any() AndAlso Not String.IsNullOrWhiteSpace(input) Then
-                SuggestionListBox.ItemsSource = filtered
-                AutoCompletePopup.IsOpen = True
-            Else
-                AutoCompletePopup.IsOpen = False
-            End If
-        End Sub
-
-        Private Sub FetchEmployeeDetails(name As String)
-            Dim connStr As String = SplashScreen.GetDatabaseConnection().ConnectionString()
-            Try
-                Using conn As New MySqlConnection(connStr)
-                    conn.Open()
-                    Dim cmd As New MySqlCommand("SELECT employeeID, JobTitle, Department FROM employee WHERE Name = @name", conn)
-                    cmd.Parameters.AddWithValue("@name", name)
-                    Using reader As MySqlDataReader = cmd.ExecuteReader()
-                        If reader.Read() Then
-                            EmployeeID.Text = reader("employeeID").ToString()
-                            JobTitle.Text = reader("JobTitle").ToString()
-                            hourlyRate.Text = reader("Department").ToString()
-                        End If
-                    End Using
-                End Using
-            Catch ex As Exception
-            End Try
-        End Sub
-
-        ' ==========================================
-        ' AUTOCOMPLETE CLICK & KEYBOARD HANDLERS
-        ' ==========================================
-        Private Sub SuggestionListBox_PreviewMouseLeftButtonDown(sender As Object, e As MouseButtonEventArgs)
-            If SuggestionListBox.SelectedItem IsNot Nothing Then
-                AutoCompleteTextBox.Text = SuggestionListBox.SelectedItem.ToString()
-                AutoCompletePopup.IsOpen = False
-                FetchEmployeeDetails(AutoCompleteTextBox.Text)
-            End If
-        End Sub
-
-        Private Sub AutoCompleteTextBox_PreviewKeyDown(sender As Object, e As KeyEventArgs)
-            If e.Key = Key.Down AndAlso AutoCompletePopup.IsOpen Then
-                SuggestionListBox.Focus()
-            End If
-        End Sub
-
-        ' ==========================================
         ' CALENDAR DROPDOWN HANDLERS
         ' ==========================================
         Private Sub OvertimeDate_Click(sender As Object, e As RoutedEventArgs)
@@ -136,27 +79,46 @@ Namespace DPC.Views.Misc.OverTime
                 Return
             End If
 
-            Dim newRecord As New OvertimeRequestModel With {
-                .OvertimeID = "OT-" & (ManageTimeoutRequests.GlobalOvertimeList.Count + 1).ToString("D3"),
-                .EmployeeName = AutoCompleteTextBox.Text,
-                .JobTitle = JobTitle.Text,
-                .Department = hourlyRate.Text,
-                .TotalHours = totalHours,
-                .RequestDate = rawDate.Value.ToString("MMM dd, yyyy"),
-                .Status = "Pending",
-                .EmployeeID = EmployeeID.Text,
-                .Supervisor = SupervisorName.Text,
-                .StartTime = txtStartTime.Text,
-                .EndTime = txtEndTime.Text,
-                .Reason = txtReason.Text,
-                .Remarks = approverRemarks.Text,
-                .RequestedBy = TxtRequestedBy.Text
-            }
-
             Dim connStr As String = SplashScreen.GetDatabaseConnection().ConnectionString()
+
             Try
                 Using conn As New MySqlConnection(connStr)
                     conn.Open()
+
+                    ' 1. GENERATE A SAFE, UNIQUE ID DIRECTLY FROM THE DATABASE
+                    Dim newID As String = "OT-001" ' Default if table is empty
+                    Dim idCmd As New MySqlCommand("SELECT OvertimeID FROM overtime_requests ORDER BY OvertimeID DESC LIMIT 1", conn)
+                    Dim lastID As Object = idCmd.ExecuteScalar()
+
+                    If lastID IsNot Nothing AndAlso Not DBNull.Value.Equals(lastID) Then
+                        Dim idStr As String = lastID.ToString()
+                        If idStr.StartsWith("OT-") Then
+                            Dim numericPart As Integer
+                            If Integer.TryParse(idStr.Substring(3), numericPart) Then
+                                newID = "OT-" & (numericPart + 1).ToString("D3")
+                            End If
+                        End If
+                    End If
+
+                    ' 2. CREATE THE RECORD WITH THE SAFE ID
+                    Dim newRecord As New OvertimeRequestModel With {
+                        .OvertimeID = newID,
+                        .EmployeeName = AutoCompleteTextBox.Text,
+                        .JobTitle = JobTitle.Text,
+                        .Department = hourlyRate.Text,
+                        .TotalHours = totalHours,
+                        .RequestDate = rawDate.Value.ToString("MMM dd, yyyy"),
+                        .Status = "Pending",
+                        .EmployeeID = EmployeeID.Text,
+                        .Supervisor = SupervisorName.Text,
+                        .StartTime = txtStartTime.Text,
+                        .EndTime = txtEndTime.Text,
+                        .Reason = txtReason.Text,
+                        .Remarks = approverRemarks.Text,
+                        .RequestedBy = TxtRequestedBy.Text
+                    }
+
+                    ' 3. INSERT INTO DATABASE
                     Dim cmd As New MySqlCommand(
                         "INSERT INTO overtime_requests 
                         (OvertimeID, EmployeeName, EmployeeID, JobTitle, Department, Supervisor,
@@ -228,6 +190,120 @@ Namespace DPC.Views.Misc.OverTime
 
         Private Sub txtReason_TextChanged(sender As Object, e As TextChangedEventArgs)
 
+        End Sub
+
+
+
+        ' ==========================================
+        ' AUTOCOMPLETE CLICK & KEYBOARD HANDLERS
+        ' ==========================================
+        Private Sub SuggestionListBox_PreviewMouseLeftButtonDown(sender As Object, e As MouseButtonEventArgs)
+            ' This ensures we get the actual item clicked even if the user clicks the border of the item
+            Dim item = ItemsControl.ContainerFromElement(SuggestionListBox, CType(e.OriginalSource, DependencyObject))
+
+            If item IsNot Nothing Then
+                Dim selected As String = CType(item, ListBoxItem).Content.ToString()
+                AutoCompleteTextBox.Text = selected
+                AutoCompletePopup.IsOpen = False
+
+                ' Trigger the database fetch for this specific name
+                FetchEmployeeDetails(selected)
+            End If
+        End Sub
+        ' ==========================================
+        ' DATABASE: FETCH DETAILS
+        ' ==========================================
+        Private Sub FetchEmployeeDetails(name As String)
+            If String.IsNullOrWhiteSpace(name) Then Return
+
+            Dim connStr As String = SplashScreen.GetDatabaseConnection().ConnectionString()
+            Try
+                Using conn As New MySqlConnection(connStr)
+                    conn.Open()
+
+                    ' REMOVED JobTitle from the query since it doesn't exist
+                    Dim query As String = "SELECT EmployeeID, Department FROM employee WHERE Name = @name LIMIT 1"
+
+                    Dim cmd As New MySqlCommand(query, conn)
+                    cmd.Parameters.AddWithValue("@name", name.Trim())
+
+                    Using reader As MySqlDataReader = cmd.ExecuteReader()
+                        If reader.Read() Then
+                            ' Fill the UI TextBoxes that exist in the database
+                            EmployeeID.Text = reader("EmployeeID").ToString()
+                            hourlyRate.Text = reader("Department").ToString()
+
+                            ' Clear the Job Title box since we can't pull that info
+                            JobTitle.Clear()
+                        Else
+                            EmployeeID.Clear()
+                            JobTitle.Clear()
+                            hourlyRate.Clear()
+                        End If
+                    End Using
+                End Using
+            Catch ex As Exception
+                MessageBox.Show("Database Error: " & ex.Message, "Error Fetching Details", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+        End Sub
+        ' Add this flag at the top of your class to prevent infinite loops
+        Private isSelecting As Boolean = False
+
+        ' ==========================================
+        ' AUTOCOMPLETE LOGIC
+        ' ==========================================
+
+        ' 1. Added "Handles AutoCompleteTextBox.TextChanged"
+        Private Sub AutoCompleteTextBox_TextChanged(sender As Object, e As TextChangedEventArgs) Handles AutoCompleteTextBox.TextChanged
+            ' If we are currently auto-filling from a click, ignore this event
+            If isSelecting Then Return
+
+            Dim input = AutoCompleteTextBox.Text.Trim().ToLower()
+            Dim filtered = employeeNames.Where(Function(name) name.ToLower().Contains(input)).ToList()
+
+            If String.IsNullOrWhiteSpace(AutoCompleteTextBox.Text) Then
+                JobTitle.Text = ""
+                EmployeeID.Text = ""
+                hourlyRate.Text = ""
+            End If
+
+            If filtered.Any() AndAlso Not String.IsNullOrWhiteSpace(input) Then
+                SuggestionListBox.ItemsSource = filtered
+                AutoCompletePopup.IsOpen = True
+            Else
+                AutoCompletePopup.IsOpen = False
+            End If
+        End Sub
+
+        ' 2. Added "Handles AutoCompleteTextBox.PreviewKeyDown"
+        Private Sub AutoCompleteTextBox_PreviewKeyDown(sender As Object, e As KeyEventArgs) Handles AutoCompleteTextBox.PreviewKeyDown
+            If e.Key = Key.Down AndAlso AutoCompletePopup.IsOpen Then
+                SuggestionListBox.Focus()
+            End If
+        End Sub
+
+        ' ==========================================
+        ' AUTOCOMPLETE CLICK & KEYBOARD HANDLERS
+        ' ==========================================
+
+        ' 3. Replaced PreviewMouseLeftButtonDown with SelectionChanged (Much more reliable)
+        ' Added "Handles SuggestionListBox.SelectionChanged"
+        Private Sub SuggestionListBox_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles SuggestionListBox.SelectionChanged
+            ' Ensure something is actually selected
+            If SuggestionListBox.SelectedItem IsNot Nothing Then
+                Dim selected As String = SuggestionListBox.SelectedItem.ToString()
+
+                ' Temporarily disable the TextChanged event so it doesn't re-open the popup
+                isSelecting = True
+                AutoCompleteTextBox.Text = selected
+                isSelecting = False
+
+                AutoCompletePopup.IsOpen = False
+                SuggestionListBox.SelectedItem = Nothing ' Reset selection for the next time
+
+                ' Trigger the database fetch for this specific name
+                FetchEmployeeDetails(selected)
+            End If
         End Sub
     End Class
 End Namespace
