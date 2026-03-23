@@ -77,8 +77,8 @@ Namespace DPC.Data.Controllers
         ''' Inserts a new Billing Statement into the walkinbilling table
         Public Shared Function InsertBillingStatement(bm As BillingModel) As Boolean
             Try
-                Dim query As String = "INSERT INTO walkinbilling (billingNumber, billingDate, DRNo, clientID, companyRep, salesRep, preparedBy, approvedBy, paymentTerms, orderItems, warehouseID, base64img, taxProperty, discountProperty, totalTax, totalDiscount, totalAmount, billingNote, bankDetails, accName, accNo, remarks, dateAdded) " &
-                                     "VALUES (@billingNumber, @billingDate, @DRNo, @clientID, @companyRep, @salesRep, @preparedBy, @approvedBy, @paymentTerms, @orderItems, @warehouseID, @base64img, @taxProperty, @discountProperty, @totalTax, @totalDiscount, @totalAmount, @billingNote, @bankDetails, @accName, @accNo, @remarks, NOW())"
+                Dim query As String = "INSERT INTO walkinbilling (billingNumber, billingDate, DRNo, clientID, companyRep, salesRep, preparedBy, approvedBy, paymentTerms, orderItems, warehouseID, base64img, taxProperty, discountProperty, deliveryFee, installationFee, totalTax, totalDiscount, totalAmount, billingNote, bankDetails, accName, accNo, remarks, dateAdded) " &
+                                     "VALUES (@billingNumber, @billingDate, @DRNo, @clientID, @companyRep, @salesRep, @preparedBy, @approvedBy, @paymentTerms, @orderItems, @warehouseID, @base64img, @taxProperty, @discountProperty, @deliveryFee, @installationFee, @totalTax, @totalDiscount, @totalAmount, @billingNote, @bankDetails, @accName, @accNo, @remarks, NOW())"
 
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
@@ -134,6 +134,8 @@ Namespace DPC.Data.Controllers
                              "base64img = @base64img, " &
                              "taxProperty = @taxProperty, " &
                              "discountProperty = @discountProperty, " &
+                             "deliveryFee = @deliveryFee, " &
+                             "installationFee = @installationFee, " &
                              "totalTax = @totalTax, " &
                              "totalDiscount = @totalDiscount, " &
                              "totalAmount = @totalAmount, " &
@@ -166,6 +168,8 @@ Namespace DPC.Data.Controllers
                                 cmd.Parameters.AddWithValue("@base64img", If(String.IsNullOrEmpty(bm.Base64img), "", bm.Base64img))
                                 cmd.Parameters.AddWithValue("@taxProperty", bm.TaxProperty)
                                 cmd.Parameters.AddWithValue("@discountProperty", bm.DiscountProperty)
+                                cmd.Parameters.AddWithValue("@DeliveryFee", bm.DeliveryFee)
+                                cmd.Parameters.AddWithValue("@InstallationFee", bm.InstallationFee)
                                 cmd.Parameters.AddWithValue("@totalTax", bm.TotalTax)
                                 cmd.Parameters.AddWithValue("@totalDiscount", bm.TotalDiscount)
                                 cmd.Parameters.AddWithValue("@totalAmount", bm.TotalAmount)

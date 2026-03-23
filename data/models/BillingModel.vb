@@ -19,6 +19,8 @@
         Public Property PaymentTerms As String
 
         ' Financial Details
+        Public Property DeliveryFee As String
+        Public Property InstallationFee As String
         Public Property TaxProperty As String
         Public Property DiscountProperty As String
         Public Property TotalTax As String

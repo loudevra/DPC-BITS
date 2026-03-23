@@ -197,6 +197,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 TransactionState.ActiveRecord.OrderItems = New ObservableCollection(Of OrderItems)(JsonConvert.DeserializeObject(Of List(Of OrderItems))(jsonString))
                 TransactionState.ActiveRecord.DocumentNumber = searchID
                 TransactionState.ActiveRecord.WarehouseID = quote.WarehouseID
+                TransactionState.ActiveRecord.FeeValue = quote.DeliveryFee
+                TransactionState.ActiveRecord.InstallationFee = quote.InstallationFee
 
                 InitializeProductUI()
 

@@ -493,6 +493,8 @@ Namespace DPC.Components.Forms
                     .WarehouseName = data.WarehouseName,
                     .TaxProperty = data.VatType,
                     .DiscountProperty = data.DiscountSelection,
+                    .DeliveryFee = data.FeeValue,
+                    .InstallationFee = data.InstallationFee,
                     .TotalTax = data.VatValue,
                     .TotalDiscount = data.DiscountValue,
                     .TotalAmount = data.TotalCost,
@@ -534,7 +536,7 @@ Namespace DPC.Components.Forms
                     data.VatType, data.DiscountSelection,
                     data.ClientId.ToString(), data.ClientName,
                     data.WarehouseID.ToString(), data.WarehouseName,
-                    json, data.Notes, data.VatValue, data.DiscountValue,
+                    json, data.Notes, data.FeeValue, data.InstallationFee, data.VatValue, data.DiscountValue,
                     data.TotalCost, data.PreparedBy, data.ApprovedBy, data.PaymentTerms)
                 Else
                     success = QuotesController.InsertQuote(
@@ -542,7 +544,7 @@ Namespace DPC.Components.Forms
                     data.VatType, data.DiscountSelection,
                     data.ClientId.ToString(), data.ClientName,
                     data.WarehouseID.ToString(), data.WarehouseName,
-                    json, data.Notes, data.VatValue, data.DiscountValue,
+                    json, data.Notes, data.FeeValue, data.InstallationFee, data.VatValue, data.DiscountValue,
                     data.TotalCost, data.PreparedBy, data.ApprovedBy, data.PaymentTerms)
                 End If
 

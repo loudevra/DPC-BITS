@@ -629,20 +629,8 @@
     <Compile Include="Components\Forms\POSWalkInClient.xaml.vb">
       <DependentUpon>POSWalkInClient.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\Forms\PreviewPrintEditedQuote.xaml.vb">
-      <DependentUpon>PreviewPrintEditedQuote.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\Forms\PreviewPrintEditedQuoteFixing.xaml.vb">
-      <DependentUpon>PreviewPrintEditedQuoteFixing.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Components\Forms\UniversalPrintablePreviewDocument.xaml.vb">
       <DependentUpon>UniversalPrintablePreviewDocument.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\Forms\PreviewPrintQuote.xaml.vb">
-      <DependentUpon>PreviewPrintQuote.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Components\Forms\PreviewPrintQuoteGovernment.xaml.vb">
-      <DependentUpon>PreviewPrintQuoteGovernment.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\PreviewPrintStatement.xaml.vb">
       <DependentUpon>PreviewPrintStatement.xaml</DependentUpon>
@@ -1525,25 +1513,9 @@
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
-    <Page Include="Components\Forms\PreviewPrintEditedQuote.xaml">
-      <SubType>Designer</SubType>
-      <Generator>XamlIntelliSenseFileGenerator</Generator>
-    </Page>
-    <Page Include="Components\Forms\PreviewPrintEditedQuoteFixing.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Components\Forms\UniversalPrintablePreviewDocument.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Components\Forms\PreviewPrintQuote.xaml">
-      <SubType>Designer</SubType>
-      <Generator>XamlIntelliSenseFileGenerator</Generator>
-    </Page>
-    <Page Include="Components\Forms\PreviewPrintQuoteGovernment.xaml">
-      <SubType>Designer</SubType>
-      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\PreviewPrintStatement.xaml">
       <SubType>Designer</SubType>
