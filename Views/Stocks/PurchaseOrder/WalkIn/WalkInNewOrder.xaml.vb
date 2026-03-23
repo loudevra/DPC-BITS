@@ -329,8 +329,15 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         End Sub
 
         Private Sub LoadFromUniversalPreview(model As UniversalTransactionModel)
-            lblPageTitle.Text = model.EditLabel
-            lblButton.Text = model.EditButtonLabel
+            If model Is Nothing Then Exit Sub
+
+            If Not String.IsNullOrWhiteSpace(model.EditLabel) Then
+                lblPageTitle.Text = model.EditLabel
+            End If
+
+            If Not String.IsNullOrWhiteSpace(model.EditButtonLabel) Then
+                lblButton.Text = model.EditButtonLabel
+            End If
 
 
             If (Not model.DocumentNumber.StartsWith("BL-")) Then

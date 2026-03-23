@@ -101,7 +101,7 @@ Namespace DPC.Views.Sales.Quotes
 
                 With TransactionState.ActiveRecord
                     .EditLabel = "Edit Billing Statement"
-                    .EditButtonLabel = "Update Billing Statement"
+                    .EditButtonLabel = "UPDATE BILLING STATEMENT"
                     .DocumentNumber = selectedQuote.BillingNumber
                     .ClientName = selectedQuote.ClientName
                     .ClientId = selectedQuote.ClientID

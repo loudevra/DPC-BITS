@@ -80,7 +80,7 @@ Namespace DPC.Data.Models
         Public Property PrintPath As String = ""
         Public Property CreatePath As String = ""
         Public Property BackButtonLabel As String = "Back"
-        Public Property EditLabel As String = "EDIT DOCUMENT"
-        Public Property EditButtonLabel As String = "UPDATE DOCUMENT"
+        Public Property EditLabel As String = ""
+        Public Property EditButtonLabel As String = ""
     End Class
 End Namespace

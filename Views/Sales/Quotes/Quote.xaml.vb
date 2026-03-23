@@ -108,7 +108,7 @@ Namespace DPC.Views.Sales.Quotes
 
                 With TransactionState.ActiveRecord
                     .EditLabel = "Edit Cost Estimate"
-                    .EditButtonLabel = "Update Cost Estimate"
+                    .EditButtonLabel = "UPDATE COST ESTIMATE"
                     .DocumentNumber = selectedQuote.QuoteNumber
                     .ClientName = selectedQuote.ClientName
                     .ClientId = selectedQuote.ClientID
