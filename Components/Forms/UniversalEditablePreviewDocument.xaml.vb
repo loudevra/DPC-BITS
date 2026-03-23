@@ -418,6 +418,20 @@ Namespace DPC.Components.Forms
             AddHandler tb.TextChanged, AddressOf Installation_TextChanged
         End Sub
 
+        Private Sub FormatCurrencyOnLeave(sender As Object, e As RoutedEventArgs)
+            Dim tb = TryCast(sender, TextBox)
+            If tb Is Nothing Then Return
+
+            Dim cleanText = tb.Text.Replace("₱", "").Replace(",", "").Trim()
+            Dim val As Decimal = 0
+
+            If Decimal.TryParse(cleanText, val) Then
+                tb.Text = "₱ " & val.ToString("N2")
+            Else
+                tb.Text = "₱ 0.00"
+            End If
+        End Sub
+
         Private Function ParseCurrency(txt As String) As Decimal
             If String.IsNullOrWhiteSpace(txt) Then Return 0
             Dim clean As String = txt.Replace("₱", "").Replace(",", "").Trim()

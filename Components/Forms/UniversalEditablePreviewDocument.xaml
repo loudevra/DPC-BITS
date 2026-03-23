@@ -751,13 +751,13 @@
                                                                     <TextBlock x:Name="Subtotal" Text="₱ 0.00" FontWeight="SemiBold" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
                                                                 </Border>
                                                                 <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                    <TextBox  x:Name="Delivery" TextChanged="Delivery_TextChanged" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
+                                                                    <TextBox  x:Name="Delivery" TextChanged="Delivery_TextChanged" LostFocus="FormatCurrencyOnLeave" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
                                                                 </Border>
                                                                 <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                    <TextBox  x:Name="Installation" TextChanged="Installation_TextChanged" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
+                                                                    <TextBox  x:Name="Installation" TextChanged="Installation_TextChanged" LostFocus="FormatCurrencyOnLeave" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
                                                                 </Border>
                                                                 <Border x:Name="VatValue" BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                    <TextBox  x:Name="lblVatValue" Text="₱ 0.00" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
+                                                                    <TextBox  x:Name="lblVatValue" LostFocus="FormatCurrencyOnLeave" Text="₱ 0.00" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
                                                                 </Border>
                                                                 <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
                                                                     <TextBlock x:Name="TotalCost" Text="₱ 0.00" FontWeight="SemiBold" FontSize="11" Foreground="Red" HorizontalAlignment="Left" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
