@@ -145,11 +145,11 @@ Namespace DPC.Data.Controllers
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
                     Dim filterClause As String
-                    If quoteType.Equals("Government", StringComparison.OrdinalIgnoreCase) Then
-                        filterClause = "AND QuoteNumber LIKE 'GPCE-%'"
-                    Else
-                        filterClause = "AND QuoteNumber NOT LIKE 'GPCE-%'"
-                    End If
+                    'If quoteType.Equals("Government", StringComparison.OrdinalIgnoreCase) Then
+                    '    filterClause = "AND QuoteNumber LIKE 'GPCE-%'"
+                    'Else
+                    '    filterClause = "AND QuoteNumber NOT LIKE 'GPCE-%'"
+                    'End If
 
                     ' Build date filtering clause conditionally
                     Dim dateClause As String = String.Empty
@@ -205,7 +205,7 @@ Namespace DPC.Data.Controllers
                             .ClientName = reader("ClientName").ToString(),
                             .WarehouseID = reader("WarehouseID").ToString(),
                             .WarehouseName = reader("WarehouseName").ToString(),
-                            .OrderItems = itemList,
+                            .OrderItems = reader("OrderItems").ToString(),
                             .QuoteNote = If(reader("QuoteNote") Is DBNull.Value, String.Empty, reader("QuoteNote").ToString()),
                             .TotalTax = If(reader("TotalTax") Is DBNull.Value, 0, reader("TotalTax")),
                             .TotalDiscount = If(reader("TotalDiscount") Is DBNull.Value, 0, reader("TotalDiscount")),

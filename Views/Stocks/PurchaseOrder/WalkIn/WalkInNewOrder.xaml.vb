@@ -60,9 +60,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 .Interval = TimeSpan.FromMilliseconds(300)
             }
 
+            _billingTypingTimer = New DispatcherTimer With {.Interval = TimeSpan.FromMilliseconds(500)}
+            AddHandler _billingTypingTimer.Tick, AddressOf OnBillingTypingTimerTick
+
             AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
             AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
             AddHandler LstItems.SelectionChanged, AddressOf LstItems_SelectionChanged
+            AddHandler txtQuoteNumber.TextChanged, AddressOf txtQuoteNumber_TextChanged
 
             InitializeProductUI()
             rowCount += 1
@@ -95,6 +99,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 CEWarehouseNameCache = selectedWarehouse.Content.ToString()
             End If
 
+            _isInitialized = True
+
             'LoadCachedBillingData()
         End Sub
 #End Region
@@ -115,6 +121,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             _typingTimer.Start()
         End Sub
 
+        Private Sub txtQuoteNumber_TextChanged(sender As Object, e As TextChangedEventArgs)
+            If Not _isInitialized Then Return
+
+            _billingTypingTimer.Stop()
+            _billingTypingTimer.Start()
+        End Sub
+
         Private Sub OnTypingTimerTick(sender As Object, e As EventArgs)
             ' Stop the timer
             _typingTimer.Stop()
@@ -130,6 +143,67 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
             ' Adjust popup width to match the textbox
             AutoCompletePopup.Width = txtSearchCustomer.ActualWidth
+        End Sub
+
+        Private Sub OnBillingTypingTimerTick(sender As Object, e As EventArgs)
+            _billingTypingTimer.Stop()
+
+            Dim userInput As String = txtQuoteNumber.Text.Trim().ToUpper()
+            Dim hyphenIndex As Integer = userInput.IndexOf("-"c)
+
+            Dim searchID As String
+            If hyphenIndex <> -1 Then
+                searchID = "BL-" & userInput.Substring(hyphenIndex + 1)
+            Else
+                searchID = "BL-" & userInput
+            End If
+
+            Dim results = QuotesController.SearchQuotes(userInput, 1, "Private")
+
+            Dim quote = results.FirstOrDefault(Function(b) b.QuoteNumber.Equals(userInput, StringComparison.OrdinalIgnoreCase))
+
+            If quote IsNot Nothing Then
+                If TransactionState.ActiveRecord Is Nothing Then
+                    TransactionState.ActiveRecord = New UniversalTransactionModel()
+                End If
+
+                Dim clientList = ClientController.SearchClients(quote.ClientID)
+                Dim clientMatch = clientList.FirstOrDefault(Function(c) c.ClientID = quote.ClientID)
+
+                If clientMatch IsNot Nothing Then
+                    _selectedClient = clientMatch
+                    txtSearchCustomer.Text = _selectedClient.Name
+                    UpdateSupplierDetails(_selectedClient)
+                Else
+                    txtSearchCustomer.Text = quote.ClientID
+                End If
+
+                TransactionState.ActiveRecord.ClientName = txtSearchCustomer.Text
+                TransactionState.ActiveRecord.DocumentReference = quote.QuoteNumber
+
+                Dim masterItems = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(quote.OrderItems)
+                Dim fullList As New List(Of Dictionary(Of String, String))
+
+                If masterItems IsNot Nothing Then
+                    For Each item In masterItems
+                        Dim newItem As New Dictionary(Of String, String)(item)
+
+                        fullList.Add(newItem)
+                    Next
+                End If
+
+                Dim jsonString = JsonConvert.SerializeObject(fullList)
+                TransactionState.ActiveRecord.RawItemsJson = jsonString
+                TransactionState.ActiveRecord.OrderItems = New ObservableCollection(Of OrderItems)(JsonConvert.DeserializeObject(Of List(Of OrderItems))(jsonString))
+                TransactionState.ActiveRecord.DocumentNumber = searchID
+                TransactionState.ActiveRecord.WarehouseID = quote.WarehouseID
+
+                InitializeProductUI()
+
+                txtBillingNumber.Text = searchID
+            Else
+                ClearAllFields()
+            End If
         End Sub
 
         Private Sub LstItems_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
@@ -1319,14 +1393,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                                                CalculateAmount(rowIndex)
                                            End Sub, DispatcherPriority.Background)
         End Sub
-
-        Private Sub txtQuoteNumber_TextChanged(sender As Object, e As TextChangedEventArgs)
-            If Not _isInitialized Then Return
-
-            _billingTypingTimer.Stop()
-            _billingTypingTimer.Start()
-        End Sub
-
 
         Private Sub Quantity_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
             If Not e.Text.All(AddressOf Char.IsDigit) Then
