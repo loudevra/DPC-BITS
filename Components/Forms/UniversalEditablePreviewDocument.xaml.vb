@@ -385,7 +385,7 @@ Namespace DPC.Components.Forms
             Decimal.TryParse(Delivery.Text.Replace("₱", "").Replace(",", "").Trim(), valDeliv)
             Decimal.TryParse(lblVatValue.Text.Replace("₱", "").Replace(",", "").Trim(), valVat)
 
-            Dim total As Decimal = valSubTotal + valInstall + valDeliv + valVat
+            Dim total As Decimal = valSubTotal + valInstall + valDeliv
             TotalCost.Text = "₱ " & total.ToString("N2")
         End Sub
 

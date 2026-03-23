@@ -477,7 +477,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
                 DeliveryDetails.ClearDeliveryDetails()
 
-                ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
+                ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
             Else
                 MessageBox.Show("Failed to submit Delivery Receipt to the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End If

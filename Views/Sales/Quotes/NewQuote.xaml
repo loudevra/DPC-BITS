@@ -344,7 +344,7 @@
                         <Border Background="White" CornerRadius="15" Padding="20" BorderBrush="#AEAEAE" BorderThickness="1">
                             <StackPanel>
                                 <Grid Margin="0,0,0,8">
-                                    <TextBlock x:Name="lblFeeType" Text="Delivery" Foreground="#555555"/>
+                                    <TextBlock x:Name="lblFeeType" Text="Delivery Fee" Foreground="#555555"/>
                                     <TextBlock x:Name="lblFee" Text="₱ 0.00" HorizontalAlignment="Right" FontWeight="Bold" Foreground="#D23636"/>
                                 </Grid>
                                 <Grid Margin="0,0,0,8">

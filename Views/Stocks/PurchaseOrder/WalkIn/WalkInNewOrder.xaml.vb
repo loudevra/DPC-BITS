@@ -352,6 +352,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
                 txtBillingNumber.Text = newReferenceNumber
                 txtQuoteNumber.Text = model.DocumentNumber
+                txtDeliveryFee.Text = model.FeeValue
+                txtInstallationFee.Text = model.InstallationFee
             Else
                 txtBillingNumber.Text = model.DocumentNumber
             End If
