@@ -207,6 +207,8 @@ Namespace DPC.Data.Controllers
                             .WarehouseName = reader("WarehouseName").ToString(),
                             .OrderItems = reader("OrderItems").ToString(),
                             .QuoteNote = If(reader("QuoteNote") Is DBNull.Value, String.Empty, reader("QuoteNote").ToString()),
+                            .DeliveryFee = If(reader("DeliveryFee") Is DBNull.Value, 0, reader("DeliveryFee")),
+                            .InstallationFee = If(reader("InstallationFee") Is DBNull.Value, 0, reader("InstallationFee")),
                             .TotalTax = If(reader("TotalTax") Is DBNull.Value, 0, reader("TotalTax")),
                             .TotalDiscount = If(reader("TotalDiscount") Is DBNull.Value, 0, reader("TotalDiscount")),
                             .TotalPrice = If(reader("TotalPrice") Is DBNull.Value, 0, reader("TotalPrice"))

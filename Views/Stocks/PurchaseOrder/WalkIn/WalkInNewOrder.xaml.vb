@@ -1309,18 +1309,18 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
         Private Sub txtDeliveryFee_TextChange(sender As Object, e As TextChangedEventArgs)
             Dim tb = DirectCast(sender, TextBox)
-            Dim input As String = tb.Text.Trim()
+            Dim cleanInput As String = Regex.Replace(tb.Text, "[^0-9.]", "")
 
-            If String.IsNullOrEmpty(input) Then
+            If String.IsNullOrEmpty(cleanInput) OrElse cleanInput = "." Then
                 lblFee.Text = "₱0.00"
                 Return
             End If
 
-            Dim val As Integer = 0
-            If Integer.TryParse(input, val) Then
-                lblFee.Text = $"₱{val:N2}"
+            Dim val As Decimal = 0
+            If Decimal.TryParse(cleanInput, val) Then
+                lblFee.Text = $"{val:N2}"
             Else
-                tb.Text = Regex.Replace(input, "[^0-9]", "")
+                tb.Text = cleanInput.Substring(0, cleanInput.Length - 1)
                 tb.CaretIndex = tb.Text.Length
             End If
 
@@ -1329,18 +1329,18 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
         Public Sub txtInstallationFee_TextChanged(sender As Object, e As TextChangedEventArgs)
             Dim tb = DirectCast(sender, TextBox)
-            Dim input As String = tb.Text.Trim()
+            Dim cleanInput As String = Regex.Replace(tb.Text, "[^0-9.]", "")
 
-            If String.IsNullOrEmpty(input) Then
+            If String.IsNullOrEmpty(cleanInput) OrElse cleanInput = "." Then
                 lblInstallationFee.Text = "₱0.00"
                 Return
             End If
 
-            Dim val As Integer = 0
-            If Integer.TryParse(input, val) Then
-                lblInstallationFee.Text = $"₱{val:N2}"
+            Dim val As Decimal = 0
+            If Decimal.TryParse(cleanInput, val) Then
+                lblInstallationFee.Text = $"{val:N2}"
             Else
-                tb.Text = Regex.Replace(input, "[^0-9]", "")
+                tb.Text = cleanInput.Substring(0, cleanInput.Length - 1)
                 tb.CaretIndex = tb.Text.Length
             End If
 
