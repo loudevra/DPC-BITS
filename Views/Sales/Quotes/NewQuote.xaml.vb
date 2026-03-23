@@ -48,7 +48,7 @@ Namespace DPC.Views.Sales.Quotes
         Dim LoadingCEType As Boolean = True
         ' Set a fixed length for Cost Estimate
         Dim _FixedPrefixLength As Integer = 14
-
+        Private _isInitialized As Boolean = False
         Private categoryCount As Integer = 0
 
 #Region "Initializiation once loaded the form"
@@ -415,6 +415,7 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Sub LoadFromUniversalPreview(model As UniversalTransactionModel)
+            _isInitialized = False
             lblPageTitle.Text = model.EditLabel
             lblButton.Text = model.EditButtonLabel
             txtQuoteNumber.Text = model.DocumentNumber
@@ -1298,6 +1299,7 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Sub txtDeliveryFee_TextChange(sender As Object, e As TextChangedEventArgs)
+            If Not _isInitialized Then Return
             Dim tb = DirectCast(sender, TextBox)
             Dim cleanInput As String = Regex.Replace(tb.Text, "[^0-9.]", "")
 
@@ -1318,6 +1320,7 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Public Sub txtInstallationFee_TextChanged(sender As Object, e As TextChangedEventArgs)
+            If Not _isInitialized Then Return
             Dim tb = DirectCast(sender, TextBox)
             Dim cleanInput As String = Regex.Replace(tb.Text, "[^0-9.]", "")
 

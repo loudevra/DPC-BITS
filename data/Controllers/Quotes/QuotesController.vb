@@ -200,7 +200,7 @@ Namespace DPC.Data.Controllers
                             .QuoteDate = If(reader("QuoteDate") Is DBNull.Value, "-", reader.GetDateTime("QuoteDate").ToString("MMM d, yyyy")),
                             .Validity = If(reader("QuoteValidity") Is DBNull.Value, "-", reader.GetDateTime("QuoteValidity").ToString("MMM d, yyyy")),
                             .Tax = reader("Tax").ToString(),
-                            .Discount = reader("Discount").ToString(), ' ✅ Fixed: was ("Discount").ToString() missing reader
+                            .Discount = reader("Discount").ToString(),
                             .ClientID = reader("ClientID").ToString(),
                             .ClientName = reader("ClientName").ToString(),
                             .WarehouseID = reader("WarehouseID").ToString(),

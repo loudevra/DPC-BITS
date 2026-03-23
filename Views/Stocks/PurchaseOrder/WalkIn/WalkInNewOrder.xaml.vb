@@ -406,6 +406,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
         Private Sub LoadFromUniversalPreview(model As UniversalTransactionModel)
             If model Is Nothing Then Exit Sub
+            _isInitialized = False
 
             If Not String.IsNullOrWhiteSpace(model.EditLabel) Then
                 lblPageTitle.Text = model.EditLabel
@@ -1308,6 +1309,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         End Sub
 
         Private Sub txtDeliveryFee_TextChange(sender As Object, e As TextChangedEventArgs)
+            If Not _isInitialized Then Return
             Dim tb = DirectCast(sender, TextBox)
             Dim cleanInput As String = Regex.Replace(tb.Text, "[^0-9.]", "")
 
@@ -1328,6 +1330,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         End Sub
 
         Public Sub txtInstallationFee_TextChanged(sender As Object, e As TextChangedEventArgs)
+            If Not _isInitialized Then Return
             Dim tb = DirectCast(sender, TextBox)
             Dim cleanInput As String = Regex.Replace(tb.Text, "[^0-9.]", "")
 
