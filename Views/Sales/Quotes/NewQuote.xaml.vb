@@ -420,6 +420,8 @@ Namespace DPC.Views.Sales.Quotes
             lblButton.Text = model.EditButtonLabel
             txtQuoteNumber.Text = model.DocumentNumber
             txtQuoteNote.Text = model.Notes
+            txtDeliveryFee.Text = model.FeeValue
+            txtInstallationFee.Text = model.InstallationFee
 
 
             If model.WarehouseID > 0 Then
@@ -1304,13 +1306,13 @@ Namespace DPC.Views.Sales.Quotes
             Dim cleanInput As String = Regex.Replace(tb.Text, "[^0-9.]", "")
 
             If String.IsNullOrEmpty(cleanInput) OrElse cleanInput = "." Then
-                lblFee.Text = "₱0.00"
+                lblFee.Text = "₱ 0.00"
                 Return
             End If
 
             Dim val As Decimal = 0
             If Decimal.TryParse(cleanInput, val) Then
-                lblFee.Text = $"{val:N2}"
+                lblFee.Text = $"₱ {val:N2}"
             Else
                 tb.Text = cleanInput.Substring(0, cleanInput.Length - 1)
                 tb.CaretIndex = tb.Text.Length
@@ -1325,13 +1327,13 @@ Namespace DPC.Views.Sales.Quotes
             Dim cleanInput As String = Regex.Replace(tb.Text, "[^0-9.]", "")
 
             If String.IsNullOrEmpty(cleanInput) OrElse cleanInput = "." Then
-                lblInstallationFee.Text = "₱0.00"
+                lblInstallationFee.Text = "₱ 0.00"
                 Return
             End If
 
             Dim val As Decimal = 0
             If Decimal.TryParse(cleanInput, val) Then
-                lblInstallationFee.Text = $"{val:N2}"
+                lblInstallationFee.Text = $"₱ {val:N2}"
             Else
                 tb.Text = cleanInput.Substring(0, cleanInput.Length - 1)
                 tb.CaretIndex = tb.Text.Length

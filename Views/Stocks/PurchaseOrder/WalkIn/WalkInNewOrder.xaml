@@ -290,7 +290,6 @@
                                     VerticalAlignment="Center">
 
                                 <TextBox x:Name="txtDeliveryFee" 
-                                         TextChanged="txtDeliveryFee_TextChange" 
                                          IsReadOnly="False" 
                                          Style="{StaticResource RoundedTextboxStyle}" 
                                          Background="Transparent"
@@ -314,7 +313,6 @@
                                     VerticalAlignment="Center">
 
                                 <TextBox x:Name="txtInstallationFee" 
-                                         TextChanged="txtInstallationFee_TextChanged" 
                                          IsReadOnly="False" 
                                          Style="{StaticResource RoundedTextboxStyle}" 
                                          Background="Transparent"

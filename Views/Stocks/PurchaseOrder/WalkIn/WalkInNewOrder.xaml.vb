@@ -54,6 +54,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 #Region "Initializiation once loaded the form"
         Public Sub New()
             InitializeComponent()
+            _isInitialized = True
+            InitializeProductUI()
 
             ' Autocomplete part
             _typingTimer = New DispatcherTimer With {
@@ -68,7 +70,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             AddHandler LstItems.SelectionChanged, AddressOf LstItems_SelectionChanged
             AddHandler txtQuoteNumber.TextChanged, AddressOf txtQuoteNumber_TextChanged
 
-            InitializeProductUI()
+
             rowCount += 1
 
             ' Set a default date today and tomorrow
@@ -98,8 +100,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 CEWarehouseIDCache = Convert.ToInt32(selectedWarehouse.Tag)
                 CEWarehouseNameCache = selectedWarehouse.Content.ToString()
             End If
-
-            _isInitialized = True
 
             'LoadCachedBillingData()
         End Sub
@@ -429,12 +429,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
                 txtBillingNumber.Text = newReferenceNumber
                 txtQuoteNumber.Text = model.DocumentNumber
-                txtDeliveryFee.Text = model.FeeValue
-                txtInstallationFee.Text = model.InstallationFee
             Else
                 txtBillingNumber.Text = model.DocumentNumber
             End If
             txtBillingNote.Text = model.Notes
+            txtDeliveryFee.Text = model.FeeValue
+            txtInstallationFee.Text = model.InstallationFee
 
 
             If model.WarehouseID > 0 Then
@@ -465,6 +465,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                     PopulateDynamicRow(rowCount, item)
                 End If
             Next
+
+            _isInitialized = True
+
+            txtDeliveryFee_TextChange(txtDeliveryFee, Nothing)
+            txtInstallationFee_TextChanged(txtInstallationFee, Nothing)
 
             UpdateGrandTotal()
         End Sub
@@ -1314,13 +1319,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             Dim cleanInput As String = Regex.Replace(tb.Text, "[^0-9.]", "")
 
             If String.IsNullOrEmpty(cleanInput) OrElse cleanInput = "." Then
-                lblFee.Text = "₱0.00"
+                lblFee.Text = "₱ 0.00"
                 Return
             End If
 
             Dim val As Decimal = 0
             If Decimal.TryParse(cleanInput, val) Then
-                lblFee.Text = $"{val:N2}"
+                lblFee.Text = $"₱ {val:N2}"
             Else
                 tb.Text = cleanInput.Substring(0, cleanInput.Length - 1)
                 tb.CaretIndex = tb.Text.Length
@@ -1335,13 +1340,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             Dim cleanInput As String = Regex.Replace(tb.Text, "[^0-9.]", "")
 
             If String.IsNullOrEmpty(cleanInput) OrElse cleanInput = "." Then
-                lblInstallationFee.Text = "₱0.00"
+                lblInstallationFee.Text = "₱ 0.00"
                 Return
             End If
 
             Dim val As Decimal = 0
             If Decimal.TryParse(cleanInput, val) Then
-                lblInstallationFee.Text = $"{val:N2}"
+                lblInstallationFee.Text = $"₱ {val:N2}"
             Else
                 tb.Text = cleanInput.Substring(0, cleanInput.Length - 1)
                 tb.CaretIndex = tb.Text.Length
