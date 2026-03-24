@@ -1304,42 +1304,60 @@ Namespace DPC.Views.Sales.Quotes
         Private Sub txtDeliveryFee_TextChange(sender As Object, e As TextChangedEventArgs)
             If Not _isInitialized Then Return
             Dim tb = DirectCast(sender, TextBox)
-            Dim cleanInput As String = Regex.Replace(tb.Text, "[^0-9.]", "")
 
-            If String.IsNullOrEmpty(cleanInput) OrElse cleanInput = "." Then
-                lblFee.Text = "₱ 0.00"
-                Return
-            End If
+            Dim rawInput As String = tb.Text.Replace(",", "").Trim()
+            Dim cleanInput As String = Regex.Replace(rawInput, "[^0-9]", "")
 
-            Dim val As Decimal = 0
-            If Decimal.TryParse(cleanInput, val) Then
-                lblFee.Text = $"₱ {val:N2}"
+            RemoveHandler tb.TextChanged, AddressOf txtDeliveryFee_TextChange
+
+            If String.IsNullOrEmpty(cleanInput) Then
+                tb.Text = ""
+                lblFee.Text = "₱ 0"
             Else
-                tb.Text = cleanInput.Substring(0, cleanInput.Length - 1)
-                tb.CaretIndex = tb.Text.Length
+                Dim val As Long = 0
+                If Long.TryParse(cleanInput, val) Then
+                    lblFee.Text = $"₱ {val:N0}"
+
+                    Dim caretIndex = tb.CaretIndex
+                    Dim oldLength = tb.Text.Length
+
+                    tb.Text = val.ToString("N0")
+
+                    tb.CaretIndex = Math.Max(0, caretIndex + (tb.Text.Length - oldLength))
+                End If
             End If
 
+            AddHandler tb.TextChanged, AddressOf txtDeliveryFee_TextChange
             UpdateGrandTotal()
         End Sub
 
         Public Sub txtInstallationFee_TextChanged(sender As Object, e As TextChangedEventArgs)
             If Not _isInitialized Then Return
             Dim tb = DirectCast(sender, TextBox)
-            Dim cleanInput As String = Regex.Replace(tb.Text, "[^0-9.]", "")
 
-            If String.IsNullOrEmpty(cleanInput) OrElse cleanInput = "." Then
-                lblInstallationFee.Text = "₱ 0.00"
-                Return
-            End If
+            Dim rawInput As String = tb.Text.Replace(",", "").Trim()
+            Dim cleanInput As String = Regex.Replace(rawInput, "[^0-9]", "")
 
-            Dim val As Decimal = 0
-            If Decimal.TryParse(cleanInput, val) Then
-                lblInstallationFee.Text = $"₱ {val:N2}"
+            RemoveHandler tb.TextChanged, AddressOf txtInstallationFee_TextChanged
+
+            If String.IsNullOrEmpty(cleanInput) Then
+                tb.Text = ""
+                lblInstallationFee.Text = "₱ 0"
             Else
-                tb.Text = cleanInput.Substring(0, cleanInput.Length - 1)
-                tb.CaretIndex = tb.Text.Length
+                Dim val As Long = 0
+                If Long.TryParse(cleanInput, val) Then
+                    lblInstallationFee.Text = $"₱ {val:N0}"
+
+                    Dim caretIndex = tb.CaretIndex
+                    Dim oldLength = tb.Text.Length
+
+                    tb.Text = val.ToString("N0")
+
+                    tb.CaretIndex = Math.Max(0, caretIndex + (tb.Text.Length - oldLength))
+                End If
             End If
 
+            AddHandler tb.TextChanged, AddressOf txtInstallationFee_TextChanged
             UpdateGrandTotal()
         End Sub
 
