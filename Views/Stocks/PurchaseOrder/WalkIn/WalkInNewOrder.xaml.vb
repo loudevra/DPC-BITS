@@ -1,10 +1,13 @@
 ﻿Imports System.Collections.ObjectModel
 Imports System.IO
 Imports System.Linq
+Imports System.Security.Cryptography.Xml
+Imports System.Text.RegularExpressions
 Imports System.Web.UI.WebControls.Expressions
 Imports System.Windows.Controls.Primitives
 Imports System.Windows.Threading
 Imports DocumentFormat.OpenXml.Bibliography
+Imports DocumentFormat.OpenXml.EMMA
 Imports DocumentFormat.OpenXml.Math
 Imports DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing
 Imports DPC.DPC.Components.Forms
@@ -13,6 +16,7 @@ Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
 Imports DPC.DPC.Data.Models
 Imports DPC.DPC.Views.Stocks
+Imports Google.Protobuf.WellKnownTypes
 Imports MySql.Data.MySqlClient
 Imports Newtonsoft.Json
 Imports SharpCompress.Readers.Tar
@@ -43,23 +47,30 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         ' Tax Combobox Variables
         Dim _TaxSelection As Boolean
         Dim _SelectedTax As Decimal
-
+        Private _isInitialized As Boolean = False
+        Private _billingTypingTimer As DispatcherTimer
         Private categoryCount As Integer = 0
 
 #Region "Initializiation once loaded the form"
         Public Sub New()
             InitializeComponent()
+            _isInitialized = True
+            InitializeProductUI()
 
             ' Autocomplete part
             _typingTimer = New DispatcherTimer With {
                 .Interval = TimeSpan.FromMilliseconds(300)
             }
 
+            _billingTypingTimer = New DispatcherTimer With {.Interval = TimeSpan.FromMilliseconds(500)}
+            AddHandler _billingTypingTimer.Tick, AddressOf OnBillingTypingTimerTick
+
             AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
             AddHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
             AddHandler LstItems.SelectionChanged, AddressOf LstItems_SelectionChanged
+            AddHandler txtQuoteNumber.TextChanged, AddressOf txtQuoteNumber_TextChanged
 
-            InitializeProductUI()
+
             rowCount += 1
 
             ' Set a default date today and tomorrow
@@ -110,6 +121,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             _typingTimer.Start()
         End Sub
 
+        Private Sub txtQuoteNumber_TextChanged(sender As Object, e As TextChangedEventArgs)
+            If Not _isInitialized Then Return
+
+            _billingTypingTimer.Stop()
+            _billingTypingTimer.Start()
+        End Sub
+
         Private Sub OnTypingTimerTick(sender As Object, e As EventArgs)
             ' Stop the timer
             _typingTimer.Stop()
@@ -125,6 +143,69 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
             ' Adjust popup width to match the textbox
             AutoCompletePopup.Width = txtSearchCustomer.ActualWidth
+        End Sub
+
+        Private Sub OnBillingTypingTimerTick(sender As Object, e As EventArgs)
+            _billingTypingTimer.Stop()
+
+            Dim userInput As String = txtQuoteNumber.Text.Trim().ToUpper()
+            Dim hyphenIndex As Integer = userInput.IndexOf("-"c)
+
+            Dim searchID As String
+            If hyphenIndex <> -1 Then
+                searchID = "BL-" & userInput.Substring(hyphenIndex + 1)
+            Else
+                searchID = "BL-" & userInput
+            End If
+
+            Dim results = QuotesController.SearchQuotes(userInput, 1, "Private")
+
+            Dim quote = results.FirstOrDefault(Function(b) b.QuoteNumber.Equals(userInput, StringComparison.OrdinalIgnoreCase))
+
+            If quote IsNot Nothing Then
+                If TransactionState.ActiveRecord Is Nothing Then
+                    TransactionState.ActiveRecord = New UniversalTransactionModel()
+                End If
+
+                Dim clientList = ClientController.SearchClients(quote.ClientID)
+                Dim clientMatch = clientList.FirstOrDefault(Function(c) c.ClientID = quote.ClientID)
+
+                If clientMatch IsNot Nothing Then
+                    _selectedClient = clientMatch
+                    txtSearchCustomer.Text = _selectedClient.Name
+                    UpdateSupplierDetails(_selectedClient)
+                Else
+                    txtSearchCustomer.Text = quote.ClientID
+                End If
+
+                TransactionState.ActiveRecord.ClientName = txtSearchCustomer.Text
+                TransactionState.ActiveRecord.DocumentReference = quote.QuoteNumber
+
+                Dim masterItems = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(quote.OrderItems)
+                Dim fullList As New List(Of Dictionary(Of String, String))
+
+                If masterItems IsNot Nothing Then
+                    For Each item In masterItems
+                        Dim newItem As New Dictionary(Of String, String)(item)
+
+                        fullList.Add(newItem)
+                    Next
+                End If
+
+                Dim jsonString = JsonConvert.SerializeObject(fullList)
+                TransactionState.ActiveRecord.RawItemsJson = jsonString
+                TransactionState.ActiveRecord.OrderItems = New ObservableCollection(Of OrderItems)(JsonConvert.DeserializeObject(Of List(Of OrderItems))(jsonString))
+                TransactionState.ActiveRecord.DocumentNumber = searchID
+                TransactionState.ActiveRecord.WarehouseID = quote.WarehouseID
+                TransactionState.ActiveRecord.FeeValue = quote.DeliveryFee
+                TransactionState.ActiveRecord.InstallationFee = quote.InstallationFee
+
+                InitializeProductUI()
+
+                txtBillingNumber.Text = searchID
+            Else
+                ClearAllFields()
+            End If
         End Sub
 
         Private Sub LstItems_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
@@ -280,9 +361,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                         CEtaxSelection = False
                         TaxHeader.Header = "TAX(12%)"
                         CEisVatExInclude = False
-                        If Border IsNot Nothing Then
-                            Border.BorderThickness = New Thickness(0)
-                            Border.BorderBrush = Brushes.Transparent
+                        If border IsNot Nothing Then
+                            border.BorderThickness = New Thickness(0)
+                            border.BorderBrush = Brushes.Transparent
                         End If
                     End If
                 End If
@@ -297,11 +378,16 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
 #Region "This Loads every data if its available for updating"
         Private Sub InitializeProductUI()
-            Dim model = PreviewState.CurrentPreview
+            Dim model = TransactionState.ActiveRecord
 
-            If model IsNot Nothing AndAlso model.IsEditMode Then
+            If model IsNot Nothing AndAlso
+               Not String.IsNullOrWhiteSpace(model.DocumentNumber) AndAlso
+               model.OrderItems IsNot Nothing AndAlso
+               model.OrderItems.Count > 0 Then
+
                 LoadFromUniversalPreview(model)
             Else
+                MainContainer.Children.Clear()
                 AddNewCategoryUI()
                 txtBillingNumber.Text = BillingController.GenerateBillingID(False)
             End If
@@ -312,17 +398,43 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         End Sub
 
         Private Sub BtnReset_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddClient.Click
-            PreviewState.ResetPreview()
+            TransactionState.ResetRecord()
             lblPageTitle.Text = "Billing Statement"
             lblButton.Text = "Generate Billing Statement"
             ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
         End Sub
 
-        Private Sub LoadFromUniversalPreview(model As UniversalPreviewModel)
-            lblPageTitle.Text = model.EditLabel
-            lblButton.Text = model.EditButtonLabel
-            txtBillingNumber.Text = model.DocumentNumber
+        Private Sub LoadFromUniversalPreview(model As UniversalTransactionModel)
+            If model Is Nothing Then Exit Sub
+            _isInitialized = False
+
+            If Not String.IsNullOrWhiteSpace(model.EditLabel) Then
+                lblPageTitle.Text = model.EditLabel
+            End If
+
+            If Not String.IsNullOrWhiteSpace(model.EditButtonLabel) Then
+                lblButton.Text = model.EditButtonLabel
+            End If
+
+
+            If (Not model.DocumentNumber.StartsWith("BL-")) Then
+                Dim referenceNumber As String = model.DocumentNumber
+                Dim newReferenceNumber As String = ""
+                Dim firstHyphenIndex As Integer = referenceNumber.IndexOf("-"c)
+
+                If firstHyphenIndex <> -1 Then
+                    Dim remainder As String = referenceNumber.Substring(firstHyphenIndex + 1)
+                    newReferenceNumber = "BL-" & remainder
+                End If
+
+                txtBillingNumber.Text = newReferenceNumber
+                txtQuoteNumber.Text = model.DocumentNumber
+            Else
+                txtBillingNumber.Text = model.DocumentNumber
+            End If
             txtBillingNote.Text = model.Notes
+            txtDeliveryFee.Text = model.FeeValue
+            txtInstallationFee.Text = model.InstallationFee
 
 
             If model.WarehouseID > 0 Then
@@ -337,7 +449,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
             Dim currentTargetPanel As StackPanel = Nothing
 
-            For Each item As OrderItems In model.Items
+            For Each item As OrderItems In model.OrderItems
                 If item.IsHeaderRow = True Then
                     AddNewCategoryWithSpecificName(item.ProductName)
                     currentTargetPanel = GetLatestItemsPanel()
@@ -354,10 +466,15 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 End If
             Next
 
+            _isInitialized = True
+
+            txtDeliveryFee_TextChange(txtDeliveryFee, Nothing)
+            txtInstallationFee_TextChanged(txtInstallationFee, Nothing)
+
             UpdateGrandTotal()
         End Sub
 
-        Private Sub FillClientsFieldFromModel(model As UniversalPreviewModel)
+        Private Sub FillClientsFieldFromModel(model As UniversalTransactionModel)
             RemoveHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
 
             Dim foundClients = ClientController.SearchClient(model.ClientId)
@@ -1108,6 +1225,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
         Public Sub UpdateGrandTotal()
             Dim subtotalAmount As Decimal = 0
             Dim totalTaxAmount As Decimal = 0
+            Dim deliveryFee As Decimal = 0
+            Dim installationFee As Decimal = 0
 
             ' 1. Get all Amount TextBoxes and sanitize them
             Dim amountTextBoxNames = LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
@@ -1127,27 +1246,26 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 End If
             Next
 
-            ' 2. Ensure Tax is also sanitized
+            Decimal.TryParse(txtDeliveryFee.Text.Replace("₱", "").Replace(",", "").Trim(), deliveryFee)
+            Decimal.TryParse(txtInstallationFee.Text.Replace("₱", "").Replace(",", "").Trim(), installationFee)
+
             UpdateTotalTax()
             Dim rawTax = txtTotalTax.Text.Replace("₱", "").Replace(",", "").Trim()
             Decimal.TryParse(rawTax, totalTaxAmount)
 
             Dim finalGrandTotal As Decimal = 0
 
-            ' 3. Calculate based on Tax Selection
             If _TaxSelection Then
-                ' Tax Exclusive logic: Total = Subtotal + Tax
-                finalGrandTotal = subtotalAmount + totalTaxAmount
+                finalGrandTotal = subtotalAmount + deliveryFee + installationFee + totalTaxAmount
+                CostEstimateDetails.CETotalAmountCache = "₱ " & finalGrandTotal.ToString("N2")
             Else
-                ' Tax Inclusive logic: Total = Subtotal (Tax is already inside)
-                finalGrandTotal = subtotalAmount
+                finalGrandTotal = subtotalAmount + deliveryFee + installationFee
+                CostEstimateDetails.CETotalAmountCache = "₱ " & finalGrandTotal.ToString("N2")
             End If
 
             BLSubtotalAmountCache = (subtotalAmount).ToString("F2")
-            ' 4. Format outputs for UI display
             txtGrandTotal.Text = "₱ " & finalGrandTotal.ToString("N2")
 
-            ' 5. Pass CLEAN values to Cache (It's better to store as Decimal or clean String)
             StatementDetails.TotalCostCache = finalGrandTotal.ToString("F2")
         End Sub
 
@@ -1195,6 +1313,60 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             txtTotalDiscount.Text = "₱ " & totalDiscount.ToString("N2")
         End Sub
 
+        Private Sub txtDeliveryFee_TextChange(sender As Object, e As TextChangedEventArgs)
+            If Not _isInitialized Then Return
+            Dim tb = DirectCast(sender, TextBox)
+            Dim cleanInput As String = Regex.Replace(tb.Text, "[^0-9.]", "")
+
+            If String.IsNullOrEmpty(cleanInput) OrElse cleanInput = "." Then
+                lblFee.Text = "₱ 0.00"
+                Return
+            End If
+
+            Dim val As Decimal = 0
+            If Decimal.TryParse(cleanInput, val) Then
+                lblFee.Text = $"₱ {val:N2}"
+            Else
+                tb.Text = cleanInput.Substring(0, cleanInput.Length - 1)
+                tb.CaretIndex = tb.Text.Length
+            End If
+
+            UpdateGrandTotal()
+        End Sub
+
+        Public Sub txtInstallationFee_TextChanged(sender As Object, e As TextChangedEventArgs)
+            If Not _isInitialized Then Return
+            Dim tb = DirectCast(sender, TextBox)
+            Dim cleanInput As String = Regex.Replace(tb.Text, "[^0-9.]", "")
+
+            If String.IsNullOrEmpty(cleanInput) OrElse cleanInput = "." Then
+                lblInstallationFee.Text = "₱ 0.00"
+                Return
+            End If
+
+            Dim val As Decimal = 0
+            If Decimal.TryParse(cleanInput, val) Then
+                lblInstallationFee.Text = $"₱ {val:N2}"
+            Else
+                tb.Text = cleanInput.Substring(0, cleanInput.Length - 1)
+                tb.CaretIndex = tb.Text.Length
+            End If
+
+            UpdateGrandTotal()
+        End Sub
+
+        Private Sub cmbFeeType_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+            If lblFeeType Is Nothing OrElse cmbFeeType.SelectedIndex = -1 Then Return
+
+            ' 2. Handle the IDs (0 = Delivery, 1 = Mobilization)
+            Select Case cmbFeeType.SelectedIndex
+                Case 0
+                    lblFeeType.Text = "Delivery Fee"
+                Case 1
+                    lblFeeType.Text = "Mobilization Fee"
+            End Select
+        End Sub
+
 
         ' Quantity Textbox for Dynamic Product Input UI
         Private Sub Quantity_TextChanged(sender As Object, e As TextChangedEventArgs)
@@ -1202,6 +1374,26 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             If textBox Is Nothing Then Exit Sub
 
             textBox.Dispatcher.BeginInvoke(Sub()
+                                               Dim rawText As String = textBox.Text.Replace(",", "").Trim()
+
+                                               If Not String.IsNullOrEmpty(rawText) Then
+                                                   Dim val As Decimal = 0
+                                                   If Decimal.TryParse(rawText, val) Then
+                                                       Dim formattedText As String = val.ToString("N0")
+
+                                                       If textBox.Text <> formattedText Then
+                                                           Dim caretIndex = textBox.CaretIndex
+                                                           Dim selectionStart = textBox.SelectionStart
+                                                           Dim oldLength = textBox.Text.Length
+
+                                                           textBox.Text = formattedText
+
+                                                           Dim newLength = textBox.Text.Length
+                                                           textBox.CaretIndex = Math.Max(0, caretIndex + (newLength - oldLength))
+                                                       End If
+                                                   End If
+                                               End If
+
                                                Dim parts = textBox.Name.Split("_"c)
                                                If parts.Length < 2 Then Exit Sub
 
@@ -1455,8 +1647,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
         Private Sub GetAllDataInBillingProperties(client As Client, productItemsJson As String)
             Try
-                PreviewState.ResetPreview()
-                Dim data = PreviewState.CurrentPreview
+                TransactionState.ResetRecord()
+                Dim data = TransactionState.ActiveRecord
 
                 data.DocumentTitle = "BILLING STATEMENT"
                 data.BackButtonLabel = "Back to Billing Statement"
@@ -1492,7 +1684,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                         newItem.ProductImage = Base64ToBitmapImage(dict("ProductImageBase64"))
                     End If
 
-                    data.Items.Add(newItem)
+                    data.OrderItems.Add(newItem)
                 Next
 
                 Dim selectedTaxType As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
@@ -1502,6 +1694,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 data.TotalCost = txtGrandTotal.Text
                 data.DiscountValue = txtTotalDiscount.Text
                 data.DiscountSelection = txtDiscountSelection.Text
+
+                data.ApprovedBy = cmbApprovedBy.Text
+                data.PaymentTerms = cmbPaymentTerm.Text
+
+                data.InstallationFee = lblInstallationFee.Text
+                data.FeeValue = lblFee.Text
+                data.DeliveryMobilizationLabel = lblFeeType.Text.ToUpper()
 
                 If selectedTaxType = "Exclusive" Then
                     data.VatLabel = "VAT EXCLUSIVE"

@@ -18,7 +18,7 @@ Namespace DPC.Components.Forms
 
 #Region "1. Variables & Constants"
         Private itemDataSource As New ObservableCollection(Of OrderItems)
-        Private allItems As ObservableCollection(Of OrderItems)
+        Private allOrderItems As ObservableCollection(Of OrderItems)
 
         ' Pagination State
         Private currentPageIndex As Integer = 0
@@ -37,7 +37,7 @@ Namespace DPC.Components.Forms
         Private Const BaseItemHeight As Double = 55
         Private Const DescriptionLineHeight As Double = 15
         Private Const ReservedSpaceForDescription As Double = 30
-        Private categorizedItems As List(Of Dictionary(Of String, Object))
+        Private categorizedOrderItems As List(Of Dictionary(Of String, Object))
         Private Const CategoryHeaderHeight As Double = 40
         Public Property IsEditMode As Boolean = False
 #End Region
@@ -52,30 +52,30 @@ Namespace DPC.Components.Forms
 
             txtPageInfo = TryCast(Me.FindName("txtPageInfo"), TextBlock)
 
-            If PreviewState.CurrentPreview Is Nothing OrElse PreviewState.CurrentPreview.Items.Count = 0 Then
+            If TransactionState.ActiveRecord Is Nothing OrElse TransactionState.ActiveRecord.OrderItems.Count = 0 Then
                 MessageBox.Show("Preview data is missing.")
                 Return
             End If
 
             LoadTextFields()
 
-            showProductImages = PreviewState.CurrentPreview.ShowImages
+            showProductImages = TransactionState.ActiveRecord.ShowImages
             UpdateToggleButtonState()
             RecalculatePagination()
             LoadPage(0)
 
-            If Not String.IsNullOrWhiteSpace(PreviewState.CurrentPreview.SignatureImageBase64) Then
-                base64Image = PreviewState.CurrentPreview.SignatureImageBase64
+            If Not String.IsNullOrWhiteSpace(TransactionState.ActiveRecord.SignatureImageBase64) Then
+                base64Image = TransactionState.ActiveRecord.SignatureImageBase64
                 DisplayUploadedImage()
             End If
         End Sub
 
         Private Sub LoadTextFields()
-            Dim data = PreviewState.CurrentPreview
+            Dim data = TransactionState.ActiveRecord
 
 
             Installation.Text = data.InstallationFee
-            Delivery.Text = data.DeliveryFee
+            Delivery.Text = data.FeeValue
 
             ' Load Text Fields
             lblPageTitle.Text = data.DocumentTitle
@@ -93,16 +93,19 @@ Namespace DPC.Components.Forms
             remarksBox.Text = data.Remarks
 
             SalesRep.Text = CacheOnLoggedInName
-            cmbApproved.Text = data.ApprovedBy
+            lblApproved.Text = data.ApprovedBy
+            lblTermsDisplay.Text = data.PaymentTerms
             lblSubtotal.Text = data.SubtotalLabel
-            cmbDeliveryMobilization.Text = data.DeliveryMobilizationLabel
+            lblFeeType.Text = data.DeliveryMobilizationLabel
+            Delivery.Text = data.FeeValue
+            Installation.Text = data.InstallationFee
 
-            ' Terms Selection
-            If data.IsCustomTerm Then
-                CustomTerms.Text = data.PaymentTerms
-                cmbTerms.SelectedIndex = 6
+            If data.DocumentTitle.StartsWith("BILLING") Then
+                CNIdentifier.Text = "BS No: "
+                ValidityContainer.Visibility = Visibility.Collapsed
             Else
-                cmbTerms.Text = data.PaymentTerms
+                CNIdentifier.Text = "CE No: "
+                ValidityContainer.Visibility = Visibility.Visible
             End If
 
             ' Header Details
@@ -111,7 +114,7 @@ Namespace DPC.Components.Forms
 
         Private Sub PopulateHeaderDetails()
             Try
-                Dim data = PreviewState.CurrentPreview
+                Dim data = TransactionState.ActiveRecord
 
                 Dim clientBlock = TryCast(Me.FindName("SubmittedToClient"), TextBlock)
                 Dim addressBlock = TryCast(Me.FindName("SubmittedToAddress"), TextBlock)
@@ -142,12 +145,12 @@ Namespace DPC.Components.Forms
 
 #Region "3. The Pagination Engine (Core Logic)"
         Private Sub RecalculatePagination()
-            Dim data = PreviewState.CurrentPreview
+            Dim data = TransactionState.ActiveRecord
             _paginatedPages.Clear()
 
-            allItems = data.Items
+            allOrderItems = data.OrderItems
 
-            If allItems Is Nothing OrElse allItems.Count = 0 Then
+            If allOrderItems Is Nothing OrElse allOrderItems.Count = 0 Then
                 _paginatedPages.Add(New List(Of Integer))
                 totalPages = 1
                 Return
@@ -156,8 +159,8 @@ Namespace DPC.Components.Forms
             Dim pageIndices As New List(Of Integer)
             Dim currentHeight As Double = 0
 
-            For i As Integer = 0 To allItems.Count - 1
-                Dim h As Double = CalculateItemHeight(allItems(i))
+            For i As Integer = 0 To allOrderItems.Count - 1
+                Dim h As Double = CalculateItemHeight(allOrderItems(i))
 
                 If currentHeight + h > PageMaxHeight Then
                     _paginatedPages.Add(New List(Of Integer)(pageIndices))
@@ -205,7 +208,7 @@ Namespace DPC.Components.Forms
             Dim indices = _paginatedPages(index)
 
             For Each idx In indices
-                itemDataSource.Add(allItems(idx))
+                itemDataSource.Add(allOrderItems(idx))
             Next
 
             dataGrid.ItemsSource = itemDataSource
@@ -282,11 +285,11 @@ Namespace DPC.Components.Forms
 
 #Region "5. Navigation & UI Interaction"
         Private Sub BackToUI_Click(sender As Object, e As MouseButtonEventArgs)
-            Dim data = PreviewState.CurrentPreview
-            PreviewState.ResetPreview()
+            Dim data = TransactionState.ActiveRecord
+            TransactionState.ResetRecord()
 
             itemDataSource.Clear()
-            If allItems IsNot Nothing Then allItems.Clear()
+            If allOrderItems IsNot Nothing Then allOrderItems.Clear()
             _paginatedPages.Clear()
 
             currentPageIndex = 0
@@ -297,16 +300,14 @@ Namespace DPC.Components.Forms
         End Sub
 
         Private Sub PrintPreview(sender As Object, e As RoutedEventArgs)
-            Dim data = PreviewState.CurrentPreview
+            Dim data = TransactionState.ActiveRecord
 
-            data.DeliveryMobilizationLabel = cmbDeliveryMobilization.Text
+            data.DeliveryMobilizationLabel = lblFeeType.Text
             data.Notes = noteBox.Text
             data.Remarks = remarksBox.Text
-            data.DeliveryFee = Delivery.Text
+            data.FeeValue = Delivery.Text
             data.InstallationFee = Installation.Text
             data.TotalCost = TotalCost.Text
-            data.ApprovedBy = cmbApproved.Text
-            data.PaymentTerms = If(String.IsNullOrWhiteSpace(cmbTerms.Text), "None", cmbTerms.Text)
 
             '====================================================
             'WILL BE UPDATED AFTER PRINT PREVIEW IS IMPLEMENTED
@@ -316,7 +317,7 @@ Namespace DPC.Components.Forms
         End Sub
 
         Private Sub ToggleImage_Click(sender As Object, e As RoutedEventArgs)
-            Dim data = PreviewState.CurrentPreview
+            Dim data = TransactionState.ActiveRecord
             showProductImages = Not showProductImages
 
             data.ShowImages = showProductImages
@@ -384,7 +385,7 @@ Namespace DPC.Components.Forms
             Decimal.TryParse(Delivery.Text.Replace("₱", "").Replace(",", "").Trim(), valDeliv)
             Decimal.TryParse(lblVatValue.Text.Replace("₱", "").Replace(",", "").Trim(), valVat)
 
-            Dim total As Decimal = valSubTotal + valInstall + valDeliv + valVat
+            Dim total As Decimal = valSubTotal + valInstall + valDeliv
             TotalCost.Text = "₱ " & total.ToString("N2")
         End Sub
 
@@ -417,6 +418,20 @@ Namespace DPC.Components.Forms
             AddHandler tb.TextChanged, AddressOf Installation_TextChanged
         End Sub
 
+        Private Sub FormatCurrencyOnLeave(sender As Object, e As RoutedEventArgs)
+            Dim tb = TryCast(sender, TextBox)
+            If tb Is Nothing Then Return
+
+            Dim cleanText = tb.Text.Replace("₱", "").Replace(",", "").Trim()
+            Dim val As Decimal = 0
+
+            If Decimal.TryParse(cleanText, val) Then
+                tb.Text = "₱ " & val.ToString("N2")
+            Else
+                tb.Text = "₱ 0.00"
+            End If
+        End Sub
+
         Private Function ParseCurrency(txt As String) As Decimal
             If String.IsNullOrWhiteSpace(txt) Then Return 0
             Dim clean As String = txt.Replace("₱", "").Replace(",", "").Trim()
@@ -430,7 +445,7 @@ Namespace DPC.Components.Forms
 
 #Region "7. Utilities (Images, Files, Popups)"
         Private Sub DetectDocumentMode()
-            IsEditMode = PreviewState.CurrentPreview.IsEditMode
+            IsEditMode = TransactionState.ActiveRecord.IsEditMode
         End Sub
 
         Private Sub TextEditorPopOut(sender As Object, e As MouseButtonEventArgs)
@@ -458,7 +473,7 @@ Namespace DPC.Components.Forms
                 Dim encodedString = Base64Utility.EncodeFileToBase64(path)
                 base64Image = encodedString
 
-                Dim data = PreviewState.CurrentPreview
+                Dim data = TransactionState.ActiveRecord
                 data.SignatureImageBase64 = encodedString
                 data.HasSignature = True
 
@@ -556,17 +571,17 @@ Namespace DPC.Components.Forms
             End If
         End Function
 
-        Private Sub cmbTerms_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
-            Dim data = PreviewState.CurrentPreview
+        'Private Sub cmbTerms_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+        '    Dim data = TransactionState.ActiveRecord
 
-            If cmbTerms.SelectedIndex = 6 Then
-                data.IsCustomTerm = True
-            Else
-                data.IsCustomTerm = False
-            End If
+        '    If cmbTerms.SelectedIndex = 6 Then
+        '        data.IsCustomTerm = True
+        '    Else
+        '        data.IsCustomTerm = False
+        '    End If
 
-            data.PaymentTerms = cmbTerms.Text
-        End Sub
+        '    data.PaymentTerms = cmbTerms.Text
+        'End Sub
 #End Region
 
     End Class

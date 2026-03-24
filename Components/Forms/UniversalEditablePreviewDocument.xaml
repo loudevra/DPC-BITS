@@ -217,7 +217,7 @@
                                                     <TextBlock x:Name="DocumentDate" FontSize="9" FontFamily="Lexend"  HorizontalAlignment="Center"  VerticalAlignment="Center"/>
                                                 </Border>
                                             </StackPanel>
-                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <StackPanel x:Name="ValidityContainer"  Orientation="Horizontal" HorizontalAlignment="Right">
                                                 <TextBlock Text="Valid Until:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
                                                 <Border BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="Black" Padding="3,0" Width="250" Margin="8,0,0,0" Height="20">
                                                     <TextBlock x:Name="DocumentValidityDate"  FontSize="9" FontWeight="Bold"  Foreground="Red" FontFamily="Lexend" HorizontalAlignment="Center"  VerticalAlignment="Center"/>
@@ -283,14 +283,27 @@
                                                 <Border Grid.Row="1" Grid.Column="0" Height="20" VerticalAlignment="Center" Padding="10,0,0,0">
                                                     <TextBlock x:Name="SalesRep" FontWeight="Bold" Height="11" Text="Prepared by:" Foreground="#090909" FontSize="11" FontFamily="{StaticResource Lexend}"/>
                                                 </Border>
-                                                <Border Grid.Row="1" Grid.Column="1" Height="20" VerticalAlignment="Center" >
-                                                    <ComboBox x:Name="cmbApproved" FontSize="10" FontWeight="Bold">
-                                                        <ComboBoxItem Content=""/>
-                                                        <ComboBoxItem Content="Alecksandra Balingit"/>
-                                                        <ComboBoxItem Content="Parvit Kumar"/>
-                                                    </ComboBox>
+                                                <Border Grid.Row="1" Grid.Column="1" Height="20" VerticalAlignment="Center">
+                                                    <TextBlock x:Name="lblApproved" 
+                                                               FontSize="10" 
+                                                               FontWeight="Bold" 
+                                                               FontFamily="Lexend"
+                                                               Foreground="#090909"
+                                                               HorizontalAlignment="Center" 
+                                                               VerticalAlignment="Center"/>
                                                 </Border>
-                                                <Border Grid.Row="1" Grid.Column="2" Height="20" VerticalAlignment="Center" Background="Red">
+                                                <Border Grid.Row="1" Grid.Column="2" Height="20" VerticalAlignment="Center">
+                                                    <Border Grid.Row="1" Grid.Column="2" Height="20" VerticalAlignment="Center">
+                                                        <TextBlock x:Name="lblTermsDisplay" 
+                                                                   FontSize="10" 
+                                                                   FontWeight="Bold" 
+                                                                   FontFamily="Lexend"
+                                                                   HorizontalAlignment="Center" 
+                                                                   VerticalAlignment="Center"
+                                                                   Foreground="#090909"/>
+                                                    </Border>
+                                                </Border>
+                                                <!--<Border Grid.Row="1" Grid.Column="2" Height="20" VerticalAlignment="Center" Background="Red">
                                                     <ComboBox x:Name="cmbTerms"
                                                           FontSize="10"
                                                           FontWeight="Bold"
@@ -312,7 +325,7 @@
                                                             </Grid>
                                                         </ComboBoxItem>
                                                     </ComboBox>
-                                                </Border>
+                                                </Border>-->
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition/>
                                                     <ColumnDefinition/>
@@ -694,7 +707,7 @@
                                                     <!--Upload Signature-->
                                                     <Border x:Name="BrowseFile" Cursor="Hand" Background="Transparent" Grid.Column="1" BorderBrush="#090909" BorderThickness="0,0,1,0">
                                                         <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5">
-                                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                            <!--<StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                                                                 <materialDesign:PackIcon Kind="TrayUpload" Width="12" Height="12" Foreground="#555555" Margin="0,0,5,0" VerticalAlignment="Center"/>
                                                             </StackPanel>
                                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -704,7 +717,7 @@
                                                                 <Border  BorderBrush="#AEAEAE" BorderThickness="1" Padding="1" Width="50" CornerRadius="5">
                                                                     <TextBlock Text="Browse" FontWeight="Bold" FontFamily="Lexend" FontSize="8" Foreground="#AEAEAE" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                                 </Border>
-                                                            </StackPanel>
+                                                            </StackPanel>-->
                                                         </StackPanel>
                                                     </Border>
 
@@ -720,10 +733,9 @@
                                                                 <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
                                                                     <TextBlock x:Name="lblSubtotal" Text="SUBTOTAL" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
                                                                 </Border>
-                                                                <ComboBox x:Name="cmbDeliveryMobilization" FontSize="10" FontWeight="Bold" Height="16" Padding="4,2">
-                                                                    <ComboBoxItem Content="DELIVERY CHARGE"/>
-                                                                    <ComboBoxItem Content="MOBILIZATION"/>
-                                                                </ComboBox>
+                                                                <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
+                                                                    <TextBlock x:Name="lblFeeType" Text="FEE" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                                </Border>
                                                                 <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
                                                                     <TextBlock Text="INSTALLATION FEE" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
                                                                 </Border>
@@ -739,13 +751,13 @@
                                                                     <TextBlock x:Name="Subtotal" Text="₱ 0.00" FontWeight="SemiBold" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
                                                                 </Border>
                                                                 <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                    <TextBox  x:Name="Delivery" TextChanged="Delivery_TextChanged" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
+                                                                    <TextBox  x:Name="Delivery" TextChanged="Delivery_TextChanged" LostFocus="FormatCurrencyOnLeave" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
                                                                 </Border>
                                                                 <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                    <TextBox  x:Name="Installation" TextChanged="Installation_TextChanged" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
+                                                                    <TextBox  x:Name="Installation" TextChanged="Installation_TextChanged" LostFocus="FormatCurrencyOnLeave" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
                                                                 </Border>
                                                                 <Border x:Name="VatValue" BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                    <TextBox  x:Name="lblVatValue" Text="₱ 0.00" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
+                                                                    <TextBox  x:Name="lblVatValue" LostFocus="FormatCurrencyOnLeave" Text="₱ 0.00" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
                                                                 </Border>
                                                                 <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
                                                                     <TextBlock x:Name="TotalCost" Text="₱ 0.00" FontWeight="SemiBold" FontSize="11" Foreground="Red" HorizontalAlignment="Left" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>

@@ -145,11 +145,11 @@ Namespace DPC.Data.Controllers
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
                     Dim filterClause As String
-                    If quoteType.Equals("Government", StringComparison.OrdinalIgnoreCase) Then
-                        filterClause = "AND QuoteNumber LIKE 'GPCE-%'"
-                    Else
-                        filterClause = "AND QuoteNumber NOT LIKE 'GPCE-%'"
-                    End If
+                    'If quoteType.Equals("Government", StringComparison.OrdinalIgnoreCase) Then
+                    '    filterClause = "AND QuoteNumber LIKE 'GPCE-%'"
+                    'Else
+                    '    filterClause = "AND QuoteNumber NOT LIKE 'GPCE-%'"
+                    'End If
 
                     ' Build date filtering clause conditionally
                     Dim dateClause As String = String.Empty
@@ -200,13 +200,15 @@ Namespace DPC.Data.Controllers
                             .QuoteDate = If(reader("QuoteDate") Is DBNull.Value, "-", reader.GetDateTime("QuoteDate").ToString("MMM d, yyyy")),
                             .Validity = If(reader("QuoteValidity") Is DBNull.Value, "-", reader.GetDateTime("QuoteValidity").ToString("MMM d, yyyy")),
                             .Tax = reader("Tax").ToString(),
-                            .Discount = reader("Discount").ToString(), ' ✅ Fixed: was ("Discount").ToString() missing reader
+                            .Discount = reader("Discount").ToString(),
                             .ClientID = reader("ClientID").ToString(),
                             .ClientName = reader("ClientName").ToString(),
                             .WarehouseID = reader("WarehouseID").ToString(),
                             .WarehouseName = reader("WarehouseName").ToString(),
-                            .OrderItems = itemList,
+                            .OrderItems = reader("OrderItems").ToString(),
                             .QuoteNote = If(reader("QuoteNote") Is DBNull.Value, String.Empty, reader("QuoteNote").ToString()),
+                            .DeliveryFee = If(reader("DeliveryFee") Is DBNull.Value, 0, reader("DeliveryFee")),
+                            .InstallationFee = If(reader("InstallationFee") Is DBNull.Value, 0, reader("InstallationFee")),
                             .TotalTax = If(reader("TotalTax") Is DBNull.Value, 0, reader("TotalTax")),
                             .TotalDiscount = If(reader("TotalDiscount") Is DBNull.Value, 0, reader("TotalDiscount")),
                             .TotalPrice = If(reader("TotalPrice") Is DBNull.Value, 0, reader("TotalPrice"))
@@ -504,6 +506,8 @@ Namespace DPC.Data.Controllers
                                    WarehouseName As String,
                                    OrderItems As String,
                                    QuoteNote As String,
+                                   DeliveryFee As String,
+                                   InstallationFee As String,
                                    TotalTax As String,
                                    TotalDiscount As String,
                                    TotalPrice As String,
@@ -514,7 +518,16 @@ Namespace DPC.Data.Controllers
                 ' Query to check for duplicate QuoteNumber
                 Dim checkDuplicateQuery As String = "SELECT COUNT(*) FROM quotes WHERE QuoteNumber = @QuoteNumber"
                 ' Query to insert quote
-                Dim addQuery As String = "INSERT INTO quotes (QuoteNumber, ReferenceNo, QuoteDate, QuoteValidity, Tax, Discount, ClientID, ClientName, WarehouseID, WarehouseName, OrderItems, QuoteNote, TotalTax, TotalDiscount, TotalPrice, Username, ApprovedBy, PaymentTerms, DateAdded) VALUES (@QuoteNumber, @ReferenceNo, @QuoteDate, @QuoteValidity, @Tax, @Discount, @ClientID, @ClientName, @WarehouseID, @WarehouseName, @OrderItems, @QuoteNote, @TotalTax, @TotalDiscount, @TotalPrice, @Username, @ApprovedBy, @PaymentTerms, NOW())"
+                Dim addQuery As String = "INSERT INTO quotes (" &
+                                        "QuoteNumber, ReferenceNo, QuoteDate, QuoteValidity, Tax, Discount, " &
+                                        "ClientID, ClientName, WarehouseID, WarehouseName, OrderItems, QuoteNote, " &
+                                        "DeliveryFee, InstallationFee, TotalTax, TotalDiscount, TotalPrice, " &
+                                        "Username, ApprovedBy, PaymentTerms, DateAdded) " &
+                                        "VALUES (" &
+                                        "@QuoteNumber, @ReferenceNo, @QuoteDate, @QuoteValidity, @Tax, @Discount, " &
+                                        "@ClientID, @ClientName, @WarehouseID, @WarehouseName, @OrderItems, @QuoteNote, " &
+                                        "@DeliveryFee, @InstallationFee, @TotalTax, @TotalDiscount, @TotalPrice, " &
+                                        "@Username, @ApprovedBy, @PaymentTerms, NOW())"
 
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
@@ -545,6 +558,8 @@ Namespace DPC.Data.Controllers
                                 addQuoteCmd.Parameters.AddWithValue("@WarehouseName", WarehouseName)
                                 addQuoteCmd.Parameters.AddWithValue("@OrderItems", OrderItems)
                                 addQuoteCmd.Parameters.AddWithValue("@QuoteNote", QuoteNote)
+                                addQuoteCmd.Parameters.AddWithValue("@DeliveryFee", DeliveryFee)
+                                addQuoteCmd.Parameters.AddWithValue("@InstallationFee", InstallationFee)
                                 addQuoteCmd.Parameters.AddWithValue("@TotalTax", TotalTax)
                                 addQuoteCmd.Parameters.AddWithValue("@TotalDiscount", TotalDiscount)
                                 addQuoteCmd.Parameters.AddWithValue("@TotalPrice", TotalPrice)
@@ -595,6 +610,8 @@ Namespace DPC.Data.Controllers
                                 quote.WarehouseName = If(reader("WarehouseName") Is DBNull.Value, "", reader("WarehouseName").ToString())
                                 quote.OrderItems = If(reader("OrderItems") Is DBNull.Value, "", reader("OrderItems").ToString())
                                 quote.QuoteNote = If(reader("QuoteNote") Is DBNull.Value, "", reader("QuoteNote").ToString())
+                                quote.DeliveryFee = If(reader("DeliveryFee") Is DBNull.Value, 0, reader("DeliveryFee"))
+                                quote.InstallationFee = If(reader("InstallationFee") Is DBNull.Value, 0, reader("InstallationFee"))
                                 quote.TotalTax = If(reader("TotalTax") Is DBNull.Value, 0, reader("TotalTax"))
                                 quote.TotalDiscount = If(reader("TotalDiscount") Is DBNull.Value, 0, reader("TotalDiscount"))
                                 quote.TotalPrice = If(reader("TotalPrice") Is DBNull.Value, 0, reader("TotalPrice"))
@@ -623,6 +640,8 @@ Namespace DPC.Data.Controllers
                            WarehouseName As String,
                            OrderItems As String,
                            QuoteNote As String,
+                           DeliveryFee As String,
+                           InstallationFee As String,
                            TotalTax As String,
                            TotalDiscount As String,
                            TotalPrice As String,
@@ -650,6 +669,8 @@ Namespace DPC.Data.Controllers
                                             "WarehouseName = @WarehouseName, " &
                                             "OrderItems = @OrderItems, " &
                                             "QuoteNote = @QuoteNote, " &
+                                            "DeliveryFee = @DeliveryFee, " &
+                                            "InstallationFee = @InstallationFee, " &
                                             "TotalTax = @TotalTax, " &
                                             "TotalDiscount = @TotalDiscount, " &
                                             "TotalPrice = @TotalPrice, " &
@@ -678,6 +699,8 @@ Namespace DPC.Data.Controllers
                                 updateCmd.Parameters.AddWithValue("@WarehouseName", WarehouseName)
                                 updateCmd.Parameters.AddWithValue("@OrderItems", OrderItems)
                                 updateCmd.Parameters.AddWithValue("@QuoteNote", If(String.IsNullOrEmpty(QuoteNote), "", QuoteNote))
+                                updateCmd.Parameters.AddWithValue("@DeliveryFee", DeliveryFee)
+                                updateCmd.Parameters.AddWithValue("@InstallationFee", InstallationFee)
                                 updateCmd.Parameters.AddWithValue("@TotalTax", TotalTax)
                                 updateCmd.Parameters.AddWithValue("@TotalDiscount", TotalDiscount)
                                 updateCmd.Parameters.AddWithValue("@TotalPrice", TotalPrice)

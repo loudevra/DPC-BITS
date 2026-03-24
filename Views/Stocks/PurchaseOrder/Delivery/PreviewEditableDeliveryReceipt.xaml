@@ -154,7 +154,7 @@
                                         <StackPanel Orientation="Horizontal" Margin="0,2">
                                             <TextBlock Text="Ref Inv:" FontWeight="SemiBold" FontSize="11" Width="70"/>
                                             <Border BorderBrush="Black" BorderThickness="0.5"  Width="170" Padding="5,0">
-                                                <TextBlock x:Name="txtReferenceInvoice" FontSize="11" HorizontalAlignment="Center"/>
+                                                <TextBlock x:Name="txtDocumentReference" FontSize="11" HorizontalAlignment="Center"/>
                                             </Border>
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal" Margin="0,2">

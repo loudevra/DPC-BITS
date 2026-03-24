@@ -140,9 +140,9 @@
                                             <ColumnDefinition Width="385*"/>
                                         </Grid.ColumnDefinitions>
 
-                                        <!--<Grid.Background>
-                <ImageBrush ImageSource="/Assets/images/DREAMPCBUILD LOGO WATERMARK SLANTED SPACED.png" Stretch="UniformToFill" Opacity="0.05"/>
-            </Grid.Background>-->
+                                        <Grid.Background>
+                                            <ImageBrush ImageSource="/Assets/images/DREAMPCBUILD LOGO WATERMARK SLANTED SPACED.png" Stretch="UniformToFill" Opacity="0.05"/>
+                                        </Grid.Background>
 
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
@@ -199,7 +199,7 @@
                                                     <TextBlock x:Name="DocumentDate" FontSize="9" FontFamily="Lexend"  HorizontalAlignment="Center"  VerticalAlignment="Center"/>
                                                 </Border>
                                             </StackPanel>
-                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <StackPanel x:Name="ValidityContainer" Orientation="Horizontal" HorizontalAlignment="Right">
                                                 <TextBlock Text="Valid Until:" FontWeight="SemiBold" FontFamily="Lexend" FontSize="12" Foreground="#090909" VerticalAlignment="Center"/>
                                                 <Border BorderThickness="0.5,0.25,0.5,0.5" BorderBrush="Black" Padding="3,0" Width="250" Margin="8,0,0,0" Height="20">
                                                     <TextBlock x:Name="DocumentValidityDate"  FontSize="9" FontWeight="Bold"  Foreground="Red" FontFamily="Lexend" HorizontalAlignment="Center"  VerticalAlignment="Center"/>
@@ -663,7 +663,7 @@
                                                     <!--Upload Signature-->
                                                     <Border x:Name="BrowseFile" Cursor="Hand" Background="Transparent" Grid.Column="1" BorderBrush="#090909" BorderThickness="0,0,1,0">
                                                         <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5">
-                                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                            <!--<StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
                                                                 <materialDesign:PackIcon Kind="TrayUpload" Width="12" Height="12" Foreground="#555555" Margin="0,0,5,0" VerticalAlignment="Center"/>
                                                             </StackPanel>
                                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -673,7 +673,7 @@
                                                                 <Border  BorderBrush="#AEAEAE" BorderThickness="1" Padding="1" Width="50" CornerRadius="5">
                                                                     <TextBlock Text="Browse" FontWeight="Bold" FontFamily="Lexend" FontSize="8" Foreground="#AEAEAE" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                                 </Border>
-                                                            </StackPanel>
+                                                            </StackPanel>-->
                                                         </StackPanel>
                                                     </Border>
 
