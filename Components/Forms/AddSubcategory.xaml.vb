@@ -39,16 +39,7 @@ Namespace DPC.Components.Forms
         Private Sub CmbCategory_Filter(sender As Object, e As TextCompositionEventArgs)
             ComboBoxCategory.IsDropDownOpen = True
             Dim tb = TryCast(ComboBoxCategory.Template.FindName("PART_EditableTextBox", ComboBoxCategory), TextBox)
-
-            ' Force uppercase on the typed character
-            If tb IsNot Nothing Then
-                e.Handled = True
-                Dim caretIndex = tb.SelectionStart
-                tb.Text = (tb.Text & e.Text).ToUpperInvariant()
-                tb.CaretIndex = caretIndex + 1
-            End If
-
-            Dim filterText = If(tb IsNot Nothing, tb.Text, e.Text).ToUpperInvariant()
+            Dim filterText = If(tb IsNot Nothing, tb.Text & e.Text, e.Text).ToUpperInvariant()
 
             ComboBoxCategory.Items.Clear()
             For Each item In categoryItems
@@ -56,14 +47,6 @@ Namespace DPC.Components.Forms
                     ComboBoxCategory.Items.Add(item)
                 End If
             Next
-        End Sub
-
-        Private Sub ComboBoxCategory_Loaded(sender As Object, e As RoutedEventArgs)
-            Dim cb As ComboBox = CType(sender, ComboBox)
-            Dim tb As TextBox = TryCast(cb.Template.FindName("PART_EditableTextBox", cb), TextBox)
-            If tb IsNot Nothing Then
-                tb.CharacterCasing = CharacterCasing.Upper
-            End If
         End Sub
 
         Private Sub BtnClose_Click(sender As Object, e As RoutedEventArgs)

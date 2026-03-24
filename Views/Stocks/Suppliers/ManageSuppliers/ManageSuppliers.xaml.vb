@@ -1,5 +1,4 @@
-﻿' ManageSuppliers.xaml.vb
-Imports System.Collections.ObjectModel
+﻿Imports System.Collections.ObjectModel
 Imports System.ComponentModel
 Imports System.Data
 Imports System.Windows.Controls

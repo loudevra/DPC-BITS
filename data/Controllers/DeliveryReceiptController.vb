@@ -1,15 +1,12 @@
-﻿Imports System.Collections.ObjectModel
-Imports System.Data
-Imports System.IO
+﻿Imports MySql.Data.MySqlClient
+Imports System.Collections.ObjectModel
+Imports DPC.DPC.Data.Model
 Imports System.Web
 Imports System.Windows.Controls.Primitives
-Imports DPC.DPC.Data.Controllers
-Imports DPC.DPC.Data.Model
+Imports System.Data
 Imports DPC.DPC.Data.Models
-Imports DPC.DPC.Views.HRM.Employees.Employees.EmployeesProfile.EmployeesProfileControls
-Imports MongoDB.Driver
-Imports MySql.Data.MySqlClient
-Imports Newtonsoft.Json
+Imports System.IO
+Imports DPC.DPC.Data.Controllers
 
 Namespace DPC.Data.Controllers
     Public Class DeliveryReceiptController
@@ -64,13 +61,7 @@ Namespace DPC.Data.Controllers
                                 addCmd.ExecuteNonQuery()
                                 transaction.Commit()
 
-                                Dim billingUpdated = UpdateRelatedBilling(DRNumber, ReferenceInvoice)
-
-                                If billingUpdated Then
-                                    MessageBox.Show($"Successfully Added the Delivery Receipt With Number {DRNumber}", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
-                                Else
-                                    MessageBox.Show($"Added {DRNumber}, but failed to link to Billing record.", "Partial Success", MessageBoxButton.OK, MessageBoxImage.Information)
-                                End If
+                                MessageBox.Show($"Successfully Added the Delivery Receipt With Number {DRNumber}", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
                                 Return True
                             End Using
                         Catch ex As Exception
@@ -81,16 +72,14 @@ Namespace DPC.Data.Controllers
                     End Using
                 End Using
 
-
-
             Catch ex As Exception
                 MessageBox.Show("Unexpected error - " & ex.Message, "System Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 Return False
             End Try
         End Function
 
-        Public Shared Function GetDeliveryReceipts(limit As Integer) As ObservableCollection(Of UniversalTransactionModel)
-            Dim receipts As New ObservableCollection(Of UniversalTransactionModel)
+        Public Shared Function GetDeliveryReceipts(limit As Integer) As ObservableCollection(Of DeliveryReceiptModel)
+            Dim receipts As New ObservableCollection(Of DeliveryReceiptModel)
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
@@ -109,30 +98,20 @@ Namespace DPC.Data.Controllers
 
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
-                                Dim jsonString As String = If(reader("OrderItems") Is DBNull.Value, "[]", reader("OrderItems").ToString())
-                                Dim itemsCollection As ObservableCollection(Of OrderItems)
-                                Try
-                                    Dim deserializedList = JsonConvert.DeserializeObject(Of List(Of OrderItems))(jsonString)
-                                    itemsCollection = New ObservableCollection(Of OrderItems)(deserializedList)
-                                Catch
-                                    itemsCollection = New ObservableCollection(Of OrderItems)()
-                                End Try
-
-                                receipts.Add(New UniversalTransactionModel() With {
-                            .DocumentNumber = reader("DRNumber").ToString(),
-                            .DocumentReference = reader("ReferenceInvoice").ToString(),
-                            .DocumentDate = If(reader("DRDate") Is DBNull.Value, "-", reader("DRDate").ToString()),
+                                receipts.Add(New DeliveryReceiptModel() With {
+                            .DRNumber = reader("DRNumber").ToString(),
+                            .ReferenceInvoice = reader("ReferenceInvoice").ToString(),
+                            .DRDate = If(reader("DRDate") Is DBNull.Value, "-", reader("DRDate").ToString()),
                             .ClientName = reader("ClientName").ToString(),
                             .ClientDetails = If(reader("ClientDetails") Is DBNull.Value, String.Empty, reader("ClientDetails").ToString()),
-                            .Notes = If(reader("DeliveryNotes") Is DBNull.Value, String.Empty, reader("DeliveryNotes").ToString()),
+                            .DeliveryNotes = If(reader("DeliveryNotes") Is DBNull.Value, String.Empty, reader("DeliveryNotes").ToString()),
                             .ShippingMethod = reader("ShippingMethod").ToString(),
-                            .Status = reader("DeliveryStatus").ToString(),
+                            .DeliveryStatus = reader("DeliveryStatus").ToString(),
                             .ApprovedBy = If(reader("ApprovedBy") Is DBNull.Value, "-", reader("ApprovedBy").ToString()),
                             .PaymentTerm = If(reader("PaymentTerm") Is DBNull.Value, "-", reader("PaymentTerm").ToString()),
-                            .OrderItems = itemsCollection,
-                            .RawItemsJson = jsonString,
-                            .SalesRep = reader("Username").ToString(),
-                            .DateAdded = If(reader("DateAdded") Is DBNull.Value, DateTime.MinValue, Convert.ToDateTime(reader("DateAdded")).ToString("MMM dd, yyyy"))
+                            .OrderItems = reader("OrderItems").ToString(),
+                            .Username = reader("Username").ToString(),
+                            .DateAdded = If(reader("DateAdded") Is DBNull.Value, DateTime.MinValue, Convert.ToDateTime(reader("DateAdded")))
                         })
                             End While
                         End Using
@@ -146,62 +125,8 @@ Namespace DPC.Data.Controllers
             Return receipts
         End Function
 
-        Public Shared Function GetDeliveryReceiptByDRNumber(drNumber As String) As UniversalTransactionModel
-            Try
-                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                    conn.Open()
-                    Dim query As String = "SELECT * FROM deliveryreceipts WHERE drNumber = @dr"
-
-                    Using cmd As New MySqlCommand(query, conn)
-                        cmd.Parameters.AddWithValue("@dr", drNumber)
-                        Using reader = cmd.ExecuteReader()
-                            If reader.Read() Then
-                                Return MapReaderToDeliveryModel(reader)
-                            End If
-                        End Using
-                    End Using
-                End Using
-            Catch ex As Exception
-                Debug.WriteLine("Error fetching full DR: " & ex.Message)
-            End Try
-            Return Nothing
-        End Function
-
-        Private Shared Function MapReaderToDeliveryModel(reader As MySqlDataReader) As UniversalTransactionModel
-            ' 1. Capture the JSON string safely
-            Dim jsonItems As String = If(reader("orderItems") Is DBNull.Value, "[]", reader("orderItems").ToString())
-
-            ' 2. Convert JSON string to ObservableCollection
-            Dim itemsCollection As New ObservableCollection(Of OrderItems)()
-            Try
-                If Not String.IsNullOrWhiteSpace(jsonItems) Then
-                    Dim list = JsonConvert.DeserializeObject(Of List(Of OrderItems))(jsonItems)
-                    itemsCollection = New ObservableCollection(Of OrderItems)(list)
-                End If
-            Catch ex As Exception
-                Debug.WriteLine("Error parsing OrderItems JSON: " & ex.Message)
-            End Try
-
-            ' 3. Return the populated Model
-            Return New UniversalTransactionModel With {
-        .DocumentNumber = reader("drNumber").ToString(),
-        .DocumentReference = reader("ReferenceInvoice").ToString(),
-        .ClientName = reader("clientName").ToString(),
-        .ClientDetails = reader("clientDetails").ToString(),
-        .DocumentDate = If(reader("drDate") Is DBNull.Value, "", Convert.ToDateTime(reader("drDate")).ToString("MMM dd, yyyy")),
-        .ShippingMethod = reader("shippingMethod").ToString(),
-        .Notes = reader("deliveryNotes").ToString(),
-        .ApprovedBy = reader("approvedBy").ToString(),
-        .PaymentTerm = reader("paymentTerm").ToString(),
-        .OrderItems = itemsCollection,
-        .RawItemsJson = jsonItems,
-        .Status = reader("deliveryStatus").ToString(),
-        .DateAdded = If(reader("DateAdded") Is DBNull.Value, DateTime.MinValue, Convert.ToDateTime(reader("DateAdded")).ToString("MMM dd, yyyy"))
-    }
-        End Function
-
         Public Shared Function SearchDeliveryReceipts()
-            Return New ObservableCollection(Of UniversalTransactionModel)()
+            Return New ObservableCollection(Of DeliveryReceiptModel)()
         End Function
 
         Public Shared Function GetAccumulatedDeliveryTotals(invoiceNo As String) As Dictionary(Of String, Integer)
@@ -231,52 +156,6 @@ Namespace DPC.Data.Controllers
                 End Using
             End Using
             Return totals
-        End Function
-
-        Public Shared Function UpdateRelatedBilling(deliveryNo As String, invoiceNo As String) As Boolean
-            Try
-                Dim query As String = "UPDATE walkinbilling SET " &
-                             "DRNo = IF(DRNo IS NULL OR DRNo = '', @dr, CONCAT(DRNo, ', ', @dr)) " &
-                             "WHERE billingNumber = @inv"
-
-                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                    conn.Open()
-                    Using cmd As New MySqlCommand(query, conn)
-                        cmd.Parameters.AddWithValue("@dr", deliveryNo)
-                        cmd.Parameters.AddWithValue("@inv", invoiceNo)
-
-                        Dim rowsAffected As Integer = cmd.ExecuteNonQuery()
-
-                        Return rowsAffected > 0
-                    End Using
-                End Using
-            Catch ex As Exception
-                Return False
-            End Try
-        End Function
-
-        Public Shared Function GetLatestDRFromDatabase(invoiceNumber As String) As String
-            Dim latestDR As String = ""
-            Dim query As String = "SELECT DRNumber FROM deliveryreceipts " &
-                                 "WHERE ReferenceInvoice = @inv " &
-                                 "ORDER BY DRNumber DESC LIMIT 1"
-
-            Try
-                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                    conn.Open()
-                    Using cmd As New MySqlCommand(query, conn)
-                        cmd.Parameters.AddWithValue("@inv", invoiceNumber)
-                        Dim result = cmd.ExecuteScalar()
-                        If result IsNot Nothing Then
-                            latestDR = result.ToString()
-                        End If
-                    End Using
-                End Using
-            Catch ex As Exception
-                Debug.WriteLine("Error fetching latest DR: " & ex.Message)
-            End Try
-
-            Return latestDR
         End Function
     End Class
 End Namespace

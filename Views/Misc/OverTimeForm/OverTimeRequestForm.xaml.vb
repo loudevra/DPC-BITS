@@ -226,8 +226,5 @@ Namespace DPC.Views.Misc.OverTime
             End If
         End Sub
 
-        Private Sub txtReason_TextChanged(sender As Object, e As TextChangedEventArgs)
-
-        End Sub
     End Class
 End Namespace

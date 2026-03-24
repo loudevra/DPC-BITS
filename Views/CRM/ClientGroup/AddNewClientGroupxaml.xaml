@@ -24,7 +24,7 @@
                     <TextBlock Text="Group Name:" Foreground="#555555" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                 </StackPanel>
                 <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,20">
-                    <TextBox x:Name="txtGroupName" Style="{StaticResource RoundedTextboxStyle}" Foreground="#555555" FontSize="14" FontWeight="SemiBold" CharacterCasing="Upper"/>
+                    <TextBox x:Name="txtGroupName" Style="{StaticResource RoundedTextboxStyle}" Foreground="#555555" FontSize="14" FontWeight="SemiBold" />
                 </Border>
             </StackPanel>
             <!--Description-->
@@ -33,7 +33,7 @@
                     <TextBlock Text="Description:" Foreground="#555555" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                 </StackPanel>
                 <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,20">
-                    <TextBox x:Name="txtDescription" Style="{StaticResource RoundedTextboxStyle}" Foreground="#555555" FontSize="14" FontWeight="SemiBold" CharacterCasing="Upper"/>
+                    <TextBox x:Name="txtDescription" Style="{StaticResource RoundedTextboxStyle}" Foreground="#555555" FontSize="14" FontWeight="SemiBold" />
                 </Border>
             </StackPanel>
             <StackPanel Grid.Row="3" HorizontalAlignment="Right">

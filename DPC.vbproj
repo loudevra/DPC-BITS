@@ -545,9 +545,6 @@
     <Compile Include="Components\Forms\ConvertToPopUp.xaml.vb">
       <DependentUpon>ConvertToPopUp.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\Forms\UniversalEditablePreviewDocument.xaml.vb">
-      <DependentUpon>UniversalEditablePreviewDocument.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Components\Forms\CostEstimatePrintPopUp.xaml.vb">
       <DependentUpon>CostEstimatePrintPopUp.xaml</DependentUpon>
     </Compile>
@@ -629,8 +626,17 @@
     <Compile Include="Components\Forms\POSWalkInClient.xaml.vb">
       <DependentUpon>POSWalkInClient.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\Forms\UniversalPrintablePreviewDocument.xaml.vb">
-      <DependentUpon>UniversalPrintablePreviewDocument.xaml</DependentUpon>
+    <Compile Include="Components\Forms\PreviewPrintEditedQuote.xaml.vb">
+      <DependentUpon>PreviewPrintEditedQuote.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\PreviewPrintEditedQuoteFixing.xaml.vb">
+      <DependentUpon>PreviewPrintEditedQuoteFixing.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\PreviewPrintQuote.xaml.vb">
+      <DependentUpon>PreviewPrintQuote.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Forms\PreviewPrintQuoteGovernment.xaml.vb">
+      <DependentUpon>PreviewPrintQuoteGovernment.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Forms\PreviewPrintStatement.xaml.vb">
       <DependentUpon>PreviewPrintStatement.xaml</DependentUpon>
@@ -742,8 +748,6 @@
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
     <Compile Include="Data\DataModules\BillingDetails.vb" />
-    <Compile Include="Data\Helpers\DeliveryState.vb" />
-    <Compile Include="Data\Helpers\TransactionState.vb" />
     <Compile Include="Data\Models\DeliveryReceiptModel.vb" />
     <Compile Include="Data\Models\BillingModel.vb" />
     <Compile Include="Data\DataModules\CostEstimateDetails.vb" />
@@ -789,7 +793,6 @@
     <Compile Include="Data\Models\ResidentialClientDetails.vb" />
     <Compile Include="Data\Models\SoftwareUpdate\GithubRelease.vb" />
     <Compile Include="Data\Models\Supplier.vb" />
-    <Compile Include="Data\Models\UniversalTransactionModel.vb" />
     <Compile Include="Data\Models\UpdatedClient.vb" />
     <Compile Include="Data\Models\Warehouses.vb" />
     <Compile Include="SplashScreen.xaml.vb">
@@ -1147,29 +1150,14 @@
     <Compile Include="Views\Project\AddProject3.xaml.vb">
       <DependentUpon>AddProject3.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Project\EditProject.xaml.vb">
-      <DependentUpon>EditProject.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Project\ManageProject.xaml.vb">
       <DependentUpon>ManageProject.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Project\PreviewPrintTask.xaml.vb">
-      <DependentUpon>PreviewPrintTask.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Project\SupportTickets.xaml.vb">
       <DependentUpon>SupportTickets.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Project\ToDoList.xaml.vb">
       <DependentUpon>ToDoList.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Project\ToDoList\EditTask.xaml.vb">
-      <DependentUpon>EditTask.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Project\ToDoList\ManageTask.xaml.vb">
-      <DependentUpon>ManageTask.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Project\ToDoList\NewTask.xaml.vb">
-      <DependentUpon>NewTask.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PromoCodes\AddPromoCode.xaml.vb">
       <DependentUpon>AddPromoCode.xaml</DependentUpon>
@@ -1401,10 +1389,6 @@
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
-    <Page Include="Components\Forms\UniversalEditablePreviewDocument.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Components\Forms\CostEstimatePrintPopUp.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
@@ -1513,9 +1497,21 @@
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
-    <Page Include="Components\Forms\UniversalPrintablePreviewDocument.xaml">
+    <Page Include="Components\Forms\PreviewPrintEditedQuote.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\PreviewPrintEditedQuoteFixing.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Components\Forms\PreviewPrintQuote.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Forms\PreviewPrintQuoteGovernment.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
     <Page Include="Components\Forms\PreviewPrintStatement.xaml">
       <SubType>Designer</SubType>
@@ -2166,15 +2162,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Project\EditProject.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Project\ManageProject.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Project\PreviewPrintTask.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2183,18 +2171,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Project\ToDoList.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Project\ToDoList\EditTask.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Project\ToDoList\ManageTask.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Project\ToDoList\NewTask.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2414,7 +2390,6 @@
     <Content Include=".env">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Assets\images\image_8bd95a.png" />
     <Content Include="Filter.vbs" />
     <Resource Include="Assets\payments\Amex.png" />
     <Resource Include="Assets\payments\Authorize.net.png" />

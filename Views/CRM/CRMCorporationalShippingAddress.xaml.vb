@@ -1,5 +1,4 @@
-﻿' shipping address
-Imports System.Windows.Markup
+﻿Imports System.Windows.Markup
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Models
 
