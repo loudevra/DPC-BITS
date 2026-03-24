@@ -70,8 +70,6 @@ Namespace DPC
             AddHandler topNavBar.NavigateToPOS, AddressOf LoadPOSForm
             AddHandler topNavBar.RestoreDefaultSidebar, AddressOf RestoreDefaultSidebar
 
-            EmployeeLoginHistoryController.AddLoginHistory(CacheOnEmployeeID, CacheOnLoggedInName, CacheOnLoggedInEmail, DateTime.Now())
-            EmployeeLoginHistoryController.AddAuthUserStatus(CacheLogInHistoryID, CacheOnEmployeeID, CacheOnLoggedInName)
         End Sub
 
         ' Load POS Form into the sidebar and ensure sidebar is expanded

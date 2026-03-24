@@ -1,16 +1,21 @@
 ﻿Imports System.Windows
 Imports System.Windows.Controls
 Imports System.Windows.Data
+Imports System.Windows.Threading ' Required for the background timer
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Converters.ValueConverter
 Imports DPC.DPC.Data.Helpers
 Imports MaterialDesignThemes.Wpf
+Imports MySql.Data.MySqlClient
 
 Namespace DPC.Components.Navigation
     Partial Public Class TopNavBar
         ' Events for navigation
         Public Event NavigateToPOS()
         Public Event RestoreDefaultSidebar()
+
+        ' Declare the background timer
+        Private NotifTimer As DispatcherTimer
 
         Public Sub New()
             InitializeComponent()
@@ -19,11 +24,39 @@ Namespace DPC.Components.Navigation
         End Sub
 
         Private Sub OnNavBarLoaded(sender As Object, e As RoutedEventArgs)
+            ' Run the first check immediately when the navbar loads
+            LoadNotificationBadge()
+
+            ' Setup the background timer to check for new notifications every 30 seconds
+            NotifTimer = New DispatcherTimer()
+            NotifTimer.Interval = TimeSpan.FromSeconds(30)
+            AddHandler NotifTimer.Tick, AddressOf AutoCheckNotifications
+            NotifTimer.Start()
+        End Sub
+
+        ' The method that runs every time the timer ticks
+        Private Sub AutoCheckNotifications(sender As Object, e As EventArgs)
             LoadNotificationBadge()
         End Sub
 
         Public Sub LoadNotificationBadge()
-            Dim count As Integer = EmployeeLoginHistoryController.GetUnreadCount(CacheOnEmployeeID)
+            Dim count As Integer = 0
+
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    ' Count ALL unread login history records
+                    Dim query As String = "SELECT COUNT(*) FROM employeeloginhistory WHERE is_read = 0"
+
+                    Using cmd As New MySqlCommand(query, conn)
+                        count = Convert.ToInt32(cmd.ExecuteScalar())
+                    End Using
+                End Using
+            Catch ex As Exception
+                count = 0
+            End Try
+
+            ' Update the UI badge based on the count
             If count > 0 Then
                 NotificationCount.Text = If(count > 99, "99+", count.ToString())
                 NotificationBadge.Visibility = Visibility.Visible
@@ -41,37 +74,50 @@ Namespace DPC.Components.Navigation
             SearchBar.SetBinding(Grid.MaxWidthProperty, binding)
         End Sub
 
-        ' Open POS - Modified to load POS form in sidebar
         Private Sub OpenPOS(sender As Object, e As RoutedEventArgs)
             RaiseEvent NavigateToPOS()
         End Sub
 
-        ' Change Business Location
         Private Sub ChangeLocation(sender As Object, e As RoutedEventArgs)
             RaiseEvent RestoreDefaultSidebar()
             MessageBox.Show("Changing business location...")
         End Sub
 
-        ' Search Customer
         Private Sub SearchCustomer(sender As Object, e As RoutedEventArgs)
             RaiseEvent RestoreDefaultSidebar()
             Dim searchQuery As String = SearchBar.Text
             MessageBox.Show($"Searching for: {searchQuery}")
         End Sub
 
-        ' Show Notifications
+        ' Show Notifications and mark as read
         Private Sub ShowNotifications(sender As Object, e As RoutedEventArgs)
             RaiseEvent RestoreDefaultSidebar()
-            MessageBox.Show("Showing notifications...")
+
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    ' Mark ALL logins as read
+                    Dim query As String = "UPDATE employeeloginhistory SET is_read = 1 WHERE is_read = 0"
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.ExecuteNonQuery()
+                    End Using
+                End Using
+            Catch ex As Exception
+            End Try
+
+            ' Refresh the badge immediately so it disappears
+            LoadNotificationBadge()
+
+            ' Open the Notification Modal
+            Dim notifModal As New DPC.Components.ConfirmationModals.NotificationModal(CacheOnEmployeeID)
+            notifModal.ShowDialog()
         End Sub
 
-        ' Show Messages
         Private Sub ShowMessages(sender As Object, e As RoutedEventArgs)
             RaiseEvent RestoreDefaultSidebar()
             MessageBox.Show("Showing messages...")
         End Sub
 
-        ' Toggle Clock In/Out
         Private Sub ToggleClockInOut(sender As Object, e As RoutedEventArgs)
             RaiseEvent RestoreDefaultSidebar()
             If ClockIcon.Kind = MaterialDesignThemes.Wpf.PackIconKind.ClockOutline Then
