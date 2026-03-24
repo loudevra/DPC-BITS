@@ -68,8 +68,29 @@
 
         <!-- Right Icons (Notifications, Messages, Clock In/Out) -->
         <StackPanel Orientation="Horizontal" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0">
-            <Button Style="{StaticResource IconButton}" Click="ShowNotifications">
-                <materialDesign:PackIcon Kind="Bell" Width="24" Height="24"/>
+            <Button Style="{StaticResource IconButton}" Click="ShowNotifications" x:Name="BellButton">
+                <Grid>
+                    <materialDesign:PackIcon Kind="Bell" Width="24" Height="24"/>
+                    <!-- Red badge -->
+                    <Border x:Name="NotificationBadge"
+                Background="Red"
+                CornerRadius="8"
+                MinWidth="16"
+                Height="16"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Margin="0,0,-4,-4"
+                Visibility="Collapsed"
+                Padding="3,0">
+                        <TextBlock x:Name="NotificationCount"
+                       Text="0"
+                       Foreground="White"
+                       FontSize="9"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+                    </Border>
+                </Grid>
             </Button>
             <Button Style="{StaticResource IconButton}" Click="ShowMessages">
                 <materialDesign:PackIcon Kind="Email" Width="24" Height="24" Margin="10,0,0,0"/>
