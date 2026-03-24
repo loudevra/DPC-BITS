@@ -134,6 +134,8 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
@@ -144,8 +146,19 @@
                             <TextBox x:Name="txtBillingNumber" IsReadOnly="True" Style="{StaticResource RoundedTextboxStyle}" Padding="10,0" FontWeight="Bold"/>
                         </Border>
 
-                        <TextBlock Grid.Row="3" Text="Billing Date:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <TextBlock Grid.Row="3" Text="Related Cost Estimate (Quote):" FontWeight="SemiBold" Margin="0,0,0,5"/>
                         <Border Grid.Row="4" Style="{StaticResource RoundedBorderStyle}" Height="35" Margin="0,0,0,15">
+                            <TextBox x:Name="txtQuoteNumber" 
+                                     TextChanged="txtQuoteNumber_TextChanged" 
+                                     BorderThickness="0" 
+                                     Background="Transparent" 
+                                     VerticalContentAlignment="Center" 
+                                     CharacterCasing="Upper"
+                                     Padding="10,0"/>
+                        </Border>
+
+                        <TextBlock Grid.Row="5" Text="Billing Date:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <Border Grid.Row="6" Style="{StaticResource RoundedBorderStyle}" Height="35" Margin="0,0,0,15">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="49*"/>
@@ -165,8 +178,8 @@
                             </Grid>
                         </Border>
 
-                        <TextBlock Grid.Row="5" Text="Billing Note:" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                        <Border Grid.Row="6" Style="{StaticResource RoundedBorderStyle}" VerticalAlignment="Stretch" MinHeight="115">
+                        <TextBlock Grid.Row="7" Text="Billing Note:" FontWeight="SemiBold" Margin="0,0,0,5"/>
+                        <Border Grid.Row="8" Style="{StaticResource RoundedBorderStyle}" VerticalAlignment="Stretch" MinHeight="115">
                             <TextBox x:Name="txtBillingNote" TextWrapping="Wrap" AcceptsReturn="True" Style="{StaticResource RoundedTextboxStyle}" Padding="10" VerticalContentAlignment="Top"/>
                         </Border>
                     </Grid>
@@ -277,7 +290,6 @@
                                     VerticalAlignment="Center">
 
                                 <TextBox x:Name="txtDeliveryFee" 
-                                         TextChanged="txtDeliveryFee_TextChange" 
                                          IsReadOnly="False" 
                                          Style="{StaticResource RoundedTextboxStyle}" 
                                          Background="Transparent"
@@ -301,7 +313,6 @@
                                     VerticalAlignment="Center">
 
                                 <TextBox x:Name="txtInstallationFee" 
-                                         TextChanged="txtInstallationFee_TextChanged" 
                                          IsReadOnly="False" 
                                          Style="{StaticResource RoundedTextboxStyle}" 
                                          Background="Transparent"
@@ -333,7 +344,7 @@
                         <Border Background="White" CornerRadius="15" Padding="20" BorderBrush="#AEAEAE" BorderThickness="1">
                             <StackPanel>
                                 <Grid Margin="0,0,0,8">
-                                    <TextBlock x:Name="lblFeeType" Text="Delivery" Foreground="#555555"/>
+                                    <TextBlock x:Name="lblFeeType" Text="Delivery Fee" Foreground="#555555"/>
                                     <TextBlock x:Name="lblFee" Text="₱ 0.00" HorizontalAlignment="Right" FontWeight="Bold" Foreground="#D23636"/>
                                 </Grid>
                                 <Grid Margin="0,0,0,8">

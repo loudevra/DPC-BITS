@@ -22,7 +22,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
         Public Sub IntializeFields()
             txtDeliveryNumber.Text = DeliveryDetails.DRNumber
-            txtReferenceInvoice.Text = DeliveryDetails.DRReferenceInvoice
+            txtDocumentReference.Text = DeliveryDetails.DRDocumentReference
             txtDeliveryDate.Text = DeliveryDetails.DRDate
             'DRClientDetails.Text = DeliveryDetails.DRClientDetails
             txtSalesRep.Text = CacheOnLoggedInName

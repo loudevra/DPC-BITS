@@ -220,8 +220,8 @@ Namespace DPC.Data.Helpers.ViewLoader
 
                     Case "editquote"
                         Return New Sales.Quotes.EditQuote()
-                    Case "previewprintquoteeditedquote"
-                        Return New DPC.Components.Forms.PreviewPrintEditedQuote()
+                    'Case "previewprintquoteeditedquote"
+                    '    Return New DPC.Components.Forms.PreviewPrintEditedQuote()
 
                     Case "universaleditablepreviewdocument"
                         Return New DPC.Components.Forms.UniversalEditablePreviewDocument()
@@ -235,11 +235,11 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "navigatetoquotes"
                         Return New Sales.Quotes.NewQuote()
                     ' Print Preview for Quotes
-                    Case "printpreviewquotes"
-                        Return New DPC.Components.Forms.PreviewPrintQuote()
+                    'Case "printpreviewquotes"
+                    '    Return New DPC.Components.Forms.PreviewPrintQuote()
                     ' Print Preview for Quotes Government
-                    Case "printpreviewquotesgovernment"
-                        Return New DPC.Components.Forms.PreviewPrintQuoteGovernment()
+                    'Case "printpreviewquotesgovernment"
+                    '    Return New DPC.Components.Forms.PreviewPrintQuoteGovernment()
                     ' New Subscription Navigation
                     Case "newsubscriptions"
                         Return New Sales.Subscriptions.NewSubscriptionInvoice()

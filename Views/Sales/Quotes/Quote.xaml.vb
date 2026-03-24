@@ -104,11 +104,11 @@ Namespace DPC.Views.Sales.Quotes
             Dim selectedQuote As QuotesModel = TryCast(dataGrid.SelectedItem, QuotesModel)
 
             If selectedQuote IsNot Nothing Then
-                PreviewState.ResetPreview()
+                TransactionState.ResetRecord()
 
-                With PreviewState.CurrentPreview
+                With TransactionState.ActiveRecord
                     .EditLabel = "Edit Cost Estimate"
-                    .EditButtonLabel = "Update Cost Estimate"
+                    .EditButtonLabel = "UPDATE COST ESTIMATE"
                     .DocumentNumber = selectedQuote.QuoteNumber
                     .ClientName = selectedQuote.ClientName
                     .ClientId = selectedQuote.ClientID
@@ -124,7 +124,7 @@ Namespace DPC.Views.Sales.Quotes
 
                         Dim rawData = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(jsonString)
 
-                        .Items.Clear()
+                        .OrderItems.Clear()
 
                         If rawData IsNot Nothing Then
                             For Each dict In rawData
@@ -158,7 +158,7 @@ Namespace DPC.Views.Sales.Quotes
                                 newItem.ProductDescriptionVisibility = If(String.IsNullOrWhiteSpace(newItem.ProductDescription),
                                                  Visibility.Collapsed, Visibility.Visible)
 
-                                .Items.Add(newItem)
+                                .OrderItems.Add(newItem)
                             Next
                         End If
                     Catch ex As Exception

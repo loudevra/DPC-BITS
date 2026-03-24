@@ -48,7 +48,7 @@ Namespace DPC.Views.Sales.Quotes
         Dim LoadingCEType As Boolean = True
         ' Set a fixed length for Cost Estimate
         Dim _FixedPrefixLength As Integer = 14
-
+        Private _isInitialized As Boolean = False
         Private categoryCount As Integer = 0
 
 #Region "Initializiation once loaded the form"
@@ -85,6 +85,7 @@ Namespace DPC.Views.Sales.Quotes
 
             txtTaxSelection_SelectionChanged(txtTaxSelection, Nothing)
 
+            _isInitialized = True
             InitializeProductUI()
             rowCount += 1
 
@@ -105,7 +106,7 @@ Namespace DPC.Views.Sales.Quotes
 
             ' Checks the value of CEType
             ' 1. Check the mode first
-            Dim model = PreviewState.CurrentPreview
+            Dim model = TransactionState.ActiveRecord
             Dim isEditing As Boolean = (model IsNot Nothing AndAlso model.IsEditMode)
 
             If isEditing Then
@@ -394,7 +395,7 @@ Namespace DPC.Views.Sales.Quotes
 
 #Region "This Loads every data if its available for updating"
         Private Sub InitializeProductUI()
-            Dim model = PreviewState.CurrentPreview
+            Dim model = TransactionState.ActiveRecord
 
             If model IsNot Nothing AndAlso model.IsEditMode Then
                 LoadFromUniversalPreview(model)
@@ -408,17 +409,20 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Sub BtnReset_Click(sender As Object, e As RoutedEventArgs) Handles BtnAddClient.Click
-            PreviewState.ResetPreview()
+            TransactionState.ResetRecord()
             lblPageTitle.Text = "Cost Estimate"
             lblButton.Text = "Generate Cost Estimate"
             ViewLoader.DynamicView.NavigateToView("salesnewquote", Me)
         End Sub
 
-        Private Sub LoadFromUniversalPreview(model As UniversalPreviewModel)
+        Private Sub LoadFromUniversalPreview(model As UniversalTransactionModel)
+            _isInitialized = False
             lblPageTitle.Text = model.EditLabel
             lblButton.Text = model.EditButtonLabel
             txtQuoteNumber.Text = model.DocumentNumber
             txtQuoteNote.Text = model.Notes
+            txtDeliveryFee.Text = model.FeeValue
+            txtInstallationFee.Text = model.InstallationFee
 
 
             If model.WarehouseID > 0 Then
@@ -433,7 +437,7 @@ Namespace DPC.Views.Sales.Quotes
 
             Dim currentTargetPanel As StackPanel = Nothing
 
-            For Each item As OrderItems In model.Items
+            For Each item As OrderItems In model.OrderItems
                 If item.IsHeaderRow = True Then
                     AddNewCategoryWithSpecificName(item.ProductName)
                     currentTargetPanel = GetLatestItemsPanel()
@@ -453,7 +457,7 @@ Namespace DPC.Views.Sales.Quotes
             UpdateGrandTotal()
         End Sub
 
-        Private Sub FillClientsFieldFromModel(model As UniversalPreviewModel)
+        Private Sub FillClientsFieldFromModel(model As UniversalTransactionModel)
             RemoveHandler txtSearchCustomer.TextChanged, AddressOf txtSearchCustomer_TextChanged
 
             Dim foundClients = ClientController.SearchClient(model.ClientId)
@@ -1298,19 +1302,20 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Sub txtDeliveryFee_TextChange(sender As Object, e As TextChangedEventArgs)
+            If Not _isInitialized Then Return
             Dim tb = DirectCast(sender, TextBox)
-            Dim input As String = tb.Text.Trim()
+            Dim cleanInput As String = Regex.Replace(tb.Text, "[^0-9.]", "")
 
-            If String.IsNullOrEmpty(input) Then
-                lblFee.Text = "₱0.00"
+            If String.IsNullOrEmpty(cleanInput) OrElse cleanInput = "." Then
+                lblFee.Text = "₱ 0.00"
                 Return
             End If
 
-            Dim val As Integer = 0
-            If Integer.TryParse(input, val) Then
-                lblFee.Text = $"₱{val:N2}"
+            Dim val As Decimal = 0
+            If Decimal.TryParse(cleanInput, val) Then
+                lblFee.Text = $"₱ {val:N2}"
             Else
-                tb.Text = Regex.Replace(input, "[^0-9]", "")
+                tb.Text = cleanInput.Substring(0, cleanInput.Length - 1)
                 tb.CaretIndex = tb.Text.Length
             End If
 
@@ -1318,19 +1323,20 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Public Sub txtInstallationFee_TextChanged(sender As Object, e As TextChangedEventArgs)
+            If Not _isInitialized Then Return
             Dim tb = DirectCast(sender, TextBox)
-            Dim input As String = tb.Text.Trim()
+            Dim cleanInput As String = Regex.Replace(tb.Text, "[^0-9.]", "")
 
-            If String.IsNullOrEmpty(input) Then
-                lblInstallationFee.Text = "₱0.00"
+            If String.IsNullOrEmpty(cleanInput) OrElse cleanInput = "." Then
+                lblInstallationFee.Text = "₱ 0.00"
                 Return
             End If
 
-            Dim val As Integer = 0
-            If Integer.TryParse(input, val) Then
-                lblInstallationFee.Text = $"₱{val:N2}"
+            Dim val As Decimal = 0
+            If Decimal.TryParse(cleanInput, val) Then
+                lblInstallationFee.Text = $"₱ {val:N2}"
             Else
-                tb.Text = Regex.Replace(input, "[^0-9]", "")
+                tb.Text = cleanInput.Substring(0, cleanInput.Length - 1)
                 tb.CaretIndex = tb.Text.Length
             End If
 
@@ -1343,9 +1349,9 @@ Namespace DPC.Views.Sales.Quotes
             ' 2. Handle the IDs (0 = Delivery, 1 = Mobilization)
             Select Case cmbFeeType.SelectedIndex
                 Case 0
-                    lblFeeType.Text = "Delivery"
+                    lblFeeType.Text = "Delivery Fee"
                 Case 1
-                    lblFeeType.Text = "Mobilization"
+                    lblFeeType.Text = "Mobilization Fee"
             End Select
         End Sub
 
@@ -1490,7 +1496,7 @@ Namespace DPC.Views.Sales.Quotes
         End Function
 
         Private Sub txtQuoteNumber_TextChanged(sender As Object, e As TextChangedEventArgs)
-            Dim model = PreviewState.CurrentPreview
+            Dim model = TransactionState.ActiveRecord
             If model IsNot Nothing AndAlso model.IsEditMode Then Exit Sub
 
             Dim currentQuoteID = txtQuoteNumber.Text.Trim()
@@ -1681,8 +1687,8 @@ Namespace DPC.Views.Sales.Quotes
             End If
 
             Try
-                PreviewState.ResetPreview()
-                Dim data = PreviewState.CurrentPreview
+                TransactionState.ResetRecord()
+                Dim data = TransactionState.ActiveRecord
 
                 Dim selectedValidityOption = DirectCast(cmbCostEstimateValidty.SelectedItem, ComboBoxItem).Content.ToString()
                 Dim actualValidityDate = GetValidityDate(selectedValidityOption, OrderDateVM.SelectedDate.Value)
@@ -1722,7 +1728,7 @@ Namespace DPC.Views.Sales.Quotes
                         newItem.ProductImage = Base64ToBitmapImage(dict("ProductImageBase64"))
                     End If
 
-                    data.Items.Add(newItem)
+                    data.OrderItems.Add(newItem)
                 Next
 
                 Dim selectedTaxType As String = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString()
