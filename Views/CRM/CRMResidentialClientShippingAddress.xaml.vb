@@ -1,8 +1,5 @@
-﻿' CRMResidentialClientShippingAddress.xaml.vb
-Imports System.Windows.Markup
-Imports DPC.Data.Helpers.ViewLoader
+﻿Imports System.Windows.Markup
 Imports DPC.DPC.Data.Controllers
-Imports DPC.DPC.Data.Helpers.ViewLoader
 Imports DPC.DPC.Data.Models
 
 Namespace DPC.Views.CRM
@@ -18,16 +15,6 @@ Namespace DPC.Views.CRM
         Private Shared _savedCountry As String = ""
         Private Shared _savedZipCode As String = ""
         Private Shared _savedSameAsBilling As Boolean = False
-
-        ' Called by other tabs during ClearCache to wipe this tab's memory
-        Public Shared Sub ResetMemory()
-            _savedAddress = ""
-            _savedCity = ""
-            _savedRegion = ""
-            _savedCountry = ""
-            _savedZipCode = ""
-            _savedSameAsBilling = False
-        End Sub
 
         Public Sub New()
             InitializeComponent()
@@ -64,13 +51,16 @@ Namespace DPC.Views.CRM
         End Sub
 
         ' --- MEMORY MANAGEMENT ---
+        ' FIX: Updated "e" to TextChangedEventArgs to match the event type
         Private Sub SaveToMemory(sender As Object, e As TextChangedEventArgs)
+            ' FIX: Added .Text to all fields to prevent "TextBox to String" error
             _savedAddress = txtAddress.Text
             _savedCity = txtCity.Text
             _savedRegion = txtRegion.Text
             _savedCountry = txtCountry.Text
             _savedZipCode = txtZipCode.Text
 
+            ' Save to Global Model
             ResidentialClientDetails.Address = txtAddress.Text
             ResidentialClientDetails.City = txtCity.Text
             ResidentialClientDetails.Region = txtRegion.Text
@@ -87,6 +77,7 @@ Namespace DPC.Views.CRM
                 GetInfoBillAddress()
             Else
                 SetFieldsEnabled(True)
+                ' Clear fields
                 txtAddress.Text = ""
                 txtCity.Text = ""
                 txtRegion.Text = ""
@@ -96,6 +87,7 @@ Namespace DPC.Views.CRM
         End Sub
 
         Private Sub GetInfoBillAddress()
+            ' Pull from Billing Model
             txtAddress.Text = ResidentialClientDetails.BillAddress
             txtCity.Text = ResidentialClientDetails.BillCity
             txtRegion.Text = ResidentialClientDetails.BillRegion
@@ -104,6 +96,7 @@ Namespace DPC.Views.CRM
 
             SetFieldsEnabled(False)
 
+            ' Force save to memory
             _savedAddress = txtAddress.Text
             _savedCity = txtCity.Text
             _savedRegion = txtRegion.Text
@@ -138,6 +131,7 @@ Namespace DPC.Views.CRM
 
         ' --- ADD CLIENT BUTTON ---
         Private Sub AddClient(sender As Object, e As RoutedEventArgs)
+            ' Check Global Fields (Personal & Billing)
             If String.IsNullOrEmpty(ResidentialClientDetails.ClientName) OrElse
                String.IsNullOrEmpty(ResidentialClientDetails.BillAddress) Then
 
@@ -145,6 +139,8 @@ Namespace DPC.Views.CRM
                 Exit Sub
             End If
 
+            ' Check Local Fields (Shipping)
+            ' FIX: Added .Text
             If String.IsNullOrEmpty(txtAddress.Text) OrElse
                String.IsNullOrEmpty(txtCity.Text) Then
 
@@ -161,8 +157,7 @@ Namespace DPC.Views.CRM
                 .ShippingAddress = $"{txtAddress.Text}, {txtCity.Text}, {txtRegion.Text}, {txtCountry.Text}, {txtZipCode.Text}",
                 .CustomerGroup = ResidentialClientDetails.CustomerGroup,
                 .ClientLanguage = ResidentialClientDetails.CustomerLanguage,
-                .ClientType = "Residential",
-                .TinId = ""
+                .ClientType = "Residential"
             }
 
             Dim success As Boolean = ClientController.CreateClient(client)
@@ -174,13 +169,13 @@ Namespace DPC.Views.CRM
         End Sub
 
         Private Sub ClearCache()
-            ' Step 1 - Reset ALL tabs' shared memory (so switching tabs won't restore old data)
-            CRMResidentialClientPersonalInfo.ResetMemory()
-            CRMResidentialClientBillingAddress.ResetMemory()
-            CRMResidentialClientShippingAddress.ResetMemory()
-            CRMResidentialClientOtherSettings.ResetMemory()
+            _savedAddress = ""
+            _savedCity = ""
+            _savedRegion = ""
+            _savedCountry = ""
+            _savedZipCode = ""
+            _savedSameAsBilling = False
 
-            ' Step 2 - Clear own UI fields
             txtAddress.Text = ""
             txtCity.Text = ""
             txtRegion.Text = ""
@@ -188,25 +183,6 @@ Namespace DPC.Views.CRM
             txtZipCode.Text = ""
             billingCheckBox.IsChecked = False
             SetFieldsEnabled(True)
-
-            ' Step 3 - Clear Global Model (ALL fields)
-            ResidentialClientDetails.ClientName = Nothing
-            ResidentialClientDetails.Phone = Nothing
-            ResidentialClientDetails.Email = Nothing
-            ResidentialClientDetails.BillAddress = Nothing
-            ResidentialClientDetails.BillCity = Nothing
-            ResidentialClientDetails.BillRegion = Nothing
-            ResidentialClientDetails.BillCountry = Nothing
-            ResidentialClientDetails.BillZipCode = Nothing
-            ResidentialClientDetails.Address = Nothing
-            ResidentialClientDetails.City = Nothing
-            ResidentialClientDetails.Region = Nothing
-            ResidentialClientDetails.Country = Nothing
-            ResidentialClientDetails.ZipCode = Nothing
-            ResidentialClientDetails.ClientGroupID = 0
-            ResidentialClientDetails.CustomerGroup = Nothing
-            ResidentialClientDetails.CustomerLanguage = Nothing
-            ResidentialClientDetails.SameAsBilling = Nothing
         End Sub
 
     End Class

@@ -422,7 +422,6 @@
                  FontFamily="Lexend"
                  Background="Transparent"
                  HorizontalAlignment="Stretch"
-                 CharacterCasing="Upper"                                
                  Focusable="True"/>
                                     </Grid>
                                 </Border>

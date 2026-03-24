@@ -5,6 +5,6 @@
     Public Sub ClearBillingDetails()
         ' Reset Strings to Empty
         HeaderTitle = "Billing Statement"
-        DRDocumentReference = "Statement"
+        DRReferenceInvoice = "Statement"
     End Sub
 End Module

@@ -1,17 +1,14 @@
 ﻿Imports System.Collections.ObjectModel
 Imports System.IO
-Imports System.Linq
 Imports System.Windows.Controls.Primitives
 Imports System.Windows.Threading
 Imports DocumentFormat.OpenXml.Office2013.Drawing.ChartStyle
 Imports DPC.DPC.Components.Forms
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
-Imports DPC.DPC.Data.Model
 Imports DPC.DPC.Data.Models
 Imports MaterialDesignThemes.Wpf
 Imports Microsoft.Win32
-Imports Newtonsoft.Json
 Imports NuGet.Protocol.Plugins
 
 Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
@@ -21,14 +18,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         Private _client As New ObservableCollection(Of Client)
         Private deliveryDate As New CalendarController.SingleCalendar()
         Private itemDataSource As New System.Collections.ObjectModel.ObservableCollection(Of Dictionary(Of String, String))
-        Private itemOriginalData As New System.Collections.ObjectModel.ObservableCollection(Of Dictionary(Of String, String))
         Private _productTextBoxes As New Dictionary(Of String, TextBox)
         Private _serialCounters As New Dictionary(Of Integer, Integer)
         Private popupEditSerial As Popup
         Private recentlyClosedSerial As Boolean = False
         Private _isInitialized As Boolean = False
         Private _billingTypingTimer As DispatcherTimer
-        Private categoryCount As Integer = 0
 
         Public Sub New()
             InitializeComponent()
@@ -43,65 +38,47 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Sub
 
         Public Sub InitializeFields()
-            Dim receipt = TransactionState.ActiveRecord
-            If receipt Is Nothing Then Exit Sub
 
-            txtClientName.Text = receipt.ClientName
-            txtInvoiceNumber.Text = receipt.DocumentReference
+            txtClientName.Text = DeliveryDetails.DRClientName
+
+            txtInvoiceNumber.Text = DeliveryDetails.DRReferenceInvoice
+
+            If DeliveryDetails.DRDeliveryItems IsNot Nothing AndAlso DeliveryDetails.DRDeliveryItems.Count > 0 Then
+
+            Else
+                FetchItemsFromInvoice(txtInvoiceNumber.Text)
+            End If
+
 
             GetClientInfo()
             LoadItems()
 
-            If String.IsNullOrWhiteSpace(receipt.DocumentNumber) Then
+            If String.IsNullOrEmpty(DeliveryDetails.DRNumber) Then
                 txtDeliveryNumber.Text = GenerateDeliveryId(txtInvoiceNumber.Text)
-                rbFullDelivery.IsEnabled = True
             Else
-                If (Not receipt.DocumentNumber.StartsWith("DR-")) Then
-                    Dim referenceNumber As String = receipt.DocumentNumber
-                    Dim newReferenceNumber As String = ""
-                    Dim firstHyphenIndex As Integer = referenceNumber.IndexOf("-"c)
-
-                    If firstHyphenIndex <> -1 Then
-                        Dim remainder As String = referenceNumber.Substring(firstHyphenIndex + 1)
-                        newReferenceNumber = "DR-" & remainder
-                    End If
-
-                    txtDeliveryNumber.Text = newReferenceNumber
-                    txtInvoiceNumber.Text = receipt.DocumentNumber
-                    txtInvoiceNumber.IsReadOnly = True
-                    txtInvoiceNumber.Foreground = Brushes.Gray
-                Else
-                    txtDeliveryNumber.Text = receipt.DocumentNumber
-                    txtInvoiceNumber.IsReadOnly = True
-                    txtInvoiceNumber.Foreground = Brushes.Gray
-                    rbPartialDelivery.IsChecked = True
-                    rbFullDelivery.IsChecked = False
-                    rbFullDelivery.IsEnabled = False
-                End If
+                txtDeliveryNumber.Text = DeliveryDetails.DRNumber
+                rbPartialDelivery.IsChecked = True
+                rbFullDelivery.IsChecked = False
+                rbFullDelivery.IsEnabled = False
             End If
 
-            Dim drDate As DateTime
-            If DateTime.TryParse(receipt.DocumentDate, drDate) Then
-                dtDate.SelectedDate = drDate
-            Else
-                dtDate.SelectedDate = DateTime.Today
-            End If
+            dtDate.SelectedDate = DateTime.Today
             txtSelectedDate.Text = dtDate.SelectedDate.Value.ToString("MMM dd, yyyy")
 
-            If Not String.IsNullOrWhiteSpace(receipt.ShippingMethod) Then
-                cmbShippingMethod.Text = receipt.ShippingMethod
+            If Not String.IsNullOrEmpty(DeliveryDetails.DRShippingMethod) Then
+                cmbShippingMethod.Text = DeliveryDetails.DRShippingMethod
             End If
 
-            If Not String.IsNullOrWhiteSpace(receipt.Notes) Then
-                txtDeliveryNote.Text = receipt.Notes
+            If Not String.IsNullOrEmpty(DeliveryDetails.DRDeliveryNotes) Then
+                txtDeliveryNote.Text = DeliveryDetails.DRDeliveryNotes
             End If
 
-            If Not String.IsNullOrWhiteSpace(receipt.ApprovedBy) Then
-                cmbApprovedBy.Text = receipt.ApprovedBy
+            If Not String.IsNullOrEmpty(DeliveryDetails.DRApprovedBy) Then
+                cmbApprovedBy.Text = DeliveryDetails.DRApprovedBy
             End If
 
-            If Not String.IsNullOrWhiteSpace(receipt.PaymentTerm) Then
-                cmbPaymentTerm.Text = receipt.PaymentTerm
+            If Not String.IsNullOrEmpty(DeliveryDetails.DRPaymentTerm) Then
+                cmbPaymentTerm.Text = DeliveryDetails.DRPaymentTerm
             End If
         End Sub
 
@@ -123,330 +100,293 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Sub
 
         Private Sub GenerateDeliveryReceipt_Click(sender As Object, e As RoutedEventArgs)
-            If Not String.IsNullOrWhiteSpace(txtDeliveryNumber.Text) Then
 
-                If DeliveryState.CurrentReceipt Is Nothing Then
-                    DeliveryState.CurrentReceipt = New DeliveryReceiptModel()
-                End If
-
-                DeliveryDetails.DRDocumentReference = txtInvoiceNumber.Text
-                DeliveryDetails.DRNumber = txtDeliveryNumber.Text
-                DeliveryDetails.DRDate = DateTime.Today.ToString("MMM dd, yyyy")
-                DeliveryDetails.DRClientName = txtClientName.Text
-                DeliveryDetails.DRClientDetails = txtClientDetails.Text
-                DeliveryDetails.DRDeliveryNotes = txtDeliveryNote.Text
-
-                Dim receipt = DeliveryState.CurrentReceipt
-                receipt.DocumentReference = txtInvoiceNumber.Text
-                receipt.DRNumber = txtDeliveryNumber.Text
-                receipt.DRDate = DateTime.Today.ToString("MMM dd, yyyy")
-                receipt.ClientName = txtClientName.Text
-                receipt.ClientDetails = txtClientDetails.Text
-                receipt.DeliveryNotes = txtDeliveryNote.Text
-
-                Dim status = If(rbFullDelivery.IsChecked = True, "FULL DELIVERY",
-                     If(rbPartialDelivery.IsChecked = True, "PARTIAL DELIVERY", "Not Specified"))
-                DeliveryDetails.DRDeliveryStatus = status
-                receipt.DeliveryStatus = status
-
-                Dim selectedMethod As ComboBoxItem = TryCast(cmbShippingMethod.SelectedItem, ComboBoxItem)
-                If selectedMethod IsNot Nothing Then
-                    Dim methodStr = selectedMethod.Content.ToString()
-                    DeliveryDetails.DRShippingMethod = methodStr
-                    receipt.ShippingMethod = methodStr
-                Else
-                    MessageBox.Show("Please select a Shipping Method before proceeding.", "Selection Required", MessageBoxButton.OK, MessageBoxImage.Warning)
-                    Return
-                End If
-
-                DeliveryDetails.DRApprovedBy = cmbApprovedBy.Text
-                receipt.ApprovedBy = cmbApprovedBy.Text
-
-                DeliveryDetails.DRPaymentTerm = cmbPaymentTerm.Text
-                receipt.PaymentTerm = cmbPaymentTerm.Text
-
-                DeliveryDetails.DRDeliveryItems = itemDataSource.ToList()
-
-                receipt.OrderItems = JsonConvert.SerializeObject(itemDataSource.ToList())
-
-                ViewLoader.DynamicView.NavigateToView("previewprintdeliveryreceipt", Me)
-            Else
-                MessageBox.Show("Please ensure that you have selected a valid Reference Number to proceed.", "Field Required", MessageBoxButton.OK, MessageBoxImage.Warning)
+            If Not AreAllSerialsCompleted() Then
+                MessageBox.Show("Some items have missing serial numbers. Please ensure all items are 'COMPLETE' before generating the receipt.",
+                        "Incomplete Serials",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning)
                 Return
             End If
+
+            DeliveryDetails.DRReferenceInvoice = txtInvoiceNumber.Text
+            DeliveryDetails.DRNumber = txtDeliveryNumber.Text
+            DeliveryDetails.DRDate = DateTime.Today.ToString("MMM dd, yyyy")
+
+            DeliveryDetails.DRClientName = txtClientName.Text
+            DeliveryDetails.DRClientDetails = txtClientDetails.Text
+            DeliveryDetails.DRDeliveryNotes = txtDeliveryNote.Text
+            DeliveryDetails.DRDeliveryStatus = If(rbFullDelivery.IsChecked = True, "FULL DELIVERY", If(rbPartialDelivery.IsChecked = True, "PARTIAL DELIVERY", "Not Specified"))
+
+            Dim selectedMethod As ComboBoxItem = TryCast(cmbShippingMethod.SelectedItem, ComboBoxItem)
+            If selectedMethod IsNot Nothing Then
+                DeliveryDetails.DRShippingMethod = selectedMethod.Content.ToString()
+            Else
+                MessageBox.Show("Please select a Shipping Method (e.g., Pick-up or Delivery) before proceeding.",
+                    "Selection Required",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning)
+                Return
+            End If
+
+            DeliveryDetails.DRDeliveryItems = itemDataSource.ToList()
+
+            DeliveryDetails.DRApprovedBy = cmbApprovedBy.Text
+            DeliveryDetails.DRPaymentTerm = cmbPaymentTerm.Text
+
+            ViewLoader.DynamicView.NavigateToView("previewprintdeliveryreceipt", Me)
         End Sub
 
         Private Sub LoadItems()
-            Dim model = TransactionState.ActiveRecord
+            If DeliveryDetails.DRDeliveryItems Is Nothing Then Return
 
-            MainContainer.Children.Clear()
             itemDataSource.Clear()
+            MainContainer.Children.Clear()
             _productTextBoxes.Clear()
-            _serialCounters.Clear()
-            categoryCount = 0
 
-            If model?.OrderItems Is Nothing OrElse model.OrderItems.Count = 0 Then Return
+            Dim i As Integer = 1
 
-            Dim currentTargetPanel As StackPanel = Nothing
-            Dim masterIdx As Integer = 0
-
-            For Each item In model.OrderItems
-                Dim displayItem As New Dictionary(Of String, String) From {
-                    {"ProductName", If(item.ProductName, "Unknown Item")},
-                    {"Quantity", If(item.Quantity, "0")},
-                    {"SerialNumber", If(item.SerialNumber, "")},
-                    {"IsHeaderRow", item.IsHeaderRow.ToString().ToLower()},
-                    {"MaxAllowed", If(Not String.IsNullOrEmpty(item.MaxAllowed), item.MaxAllowed, item.Quantity)}
-                }
-
-                If displayItem("IsHeaderRow").ToLower() = "true" Then
-                    itemDataSource.Add(displayItem)
-
-                    Dim catName = If(Not String.IsNullOrEmpty(item.ProductName), item.ProductName, "New Category")
-                    AddNewCategoryWithSpecificName(catName)
-                    currentTargetPanel = GetLatestItemsPanel()
-
-                    masterIdx += 1
-                    Continue For
-                End If
-
-                ' B. Ensure a panel exists for products
-                If currentTargetPanel Is Nothing Then
-                    AddNewCategoryWithSpecificName("General Items")
-                    currentTargetPanel = GetLatestItemsPanel()
-                End If
-
-                ' C. Add Product to Data Source & UI
+            For Each item As Dictionary(Of String, String) In DeliveryDetails.DRDeliveryItems
+                Dim displayItem As New Dictionary(Of String, String)(item)
+                displayItem("SerialNumber") = ""
+                _serialCounters(i - 1) = 0 ' Initialize counter
                 itemDataSource.Add(displayItem)
 
-                Dim currentSerials = displayItem("SerialNumber")
-                Dim serialCount As Integer = 0
-                If Not String.IsNullOrEmpty(currentSerials) Then
-                    serialCount = currentSerials.Split(New String() {"  "}, StringSplitOptions.RemoveEmptyEntries).Length
-                End If
-                _serialCounters(masterIdx) = serialCount
+                ' 1. Outer row container
+                Dim rowBorder As New Border With {
+                    .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
+                    .BorderThickness = New Thickness(2),
+                    .CornerRadius = New CornerRadius(15),
+                    .Padding = New Thickness(10),
+                    .Margin = New Thickness(0, 5, 0, 5),
+                    .Background = Brushes.White,
+                    .HorizontalAlignment = HorizontalAlignment.Stretch
+                }
 
-                Dim productUI = AddNewProductUI(displayItem, masterIdx, currentSerials)
-                If productUI IsNot Nothing Then
-                    currentTargetPanel.Children.Add(productUI)
-                End If
+                Dim rowGrid As New Grid()
+                rowGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(4, GridUnitType.Star)})
+                rowGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(70, GridUnitType.Pixel)})
+                rowGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(2, GridUnitType.Star)})
 
-                masterIdx += 1
-            Next
-        End Sub
+                ' Three rows: Inputs, Header (Labels/Button), and List
+                rowGrid.RowDefinitions.Add(New RowDefinition With {.Height = GridLength.Auto})
+                rowGrid.RowDefinitions.Add(New RowDefinition With {.Height = GridLength.Auto})
+                rowGrid.RowDefinitions.Add(New RowDefinition With {.Height = GridLength.Auto})
 
-        Private Function AddNewProductUI(item As Dictionary(Of String, String), idx As Integer, existingSerials As String) As Border
-            If item.ContainsKey("IsHeaderRow") AndAlso item("IsHeaderRow").ToString().ToLower() = "true" Then
-                Return Nothing
-            End If
-            ' 1. Row Container
-            Dim rowBorder As New Border With {
-                .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
-                .BorderThickness = New Thickness(2),
-                .CornerRadius = New CornerRadius(15),
-                .Padding = New Thickness(10),
-                .Margin = New Thickness(0, 5, 0, 5),
-                .Background = Brushes.White,
-                .HorizontalAlignment = HorizontalAlignment.Stretch
-            }
+                ' 2. Item Name & Qty (Row 0)
+                Dim nameBorder As New Border With {
+                    .Style = CType(FindResource("RoundedBorderStyle"), Style),
+                    .Background = CType(New BrushConverter().ConvertFrom("#F5F5F5"), Brush),
+                    .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
+                    .BorderThickness = New Thickness(2),
+                    .CornerRadius = New CornerRadius(10),
+                    .Height = 50,
+                    .Margin = New Thickness(5, 0, 5, 5)
+                }
+                Dim txtName As New TextBox With {
+                    .Text = item("ProductName"),
+                    .IsReadOnly = True,
+                    .BorderThickness = New Thickness(0),
+                    .Background = Brushes.Transparent,
+                    .VerticalContentAlignment = VerticalAlignment.Center,
+                    .Padding = New Thickness(10, 0, 10, 0),
+                    .FontFamily = New FontFamily("Lexend")
+                }
+                nameBorder.Child = txtName
+                Grid.SetRow(nameBorder, 0)
+                Grid.SetColumn(nameBorder, 0)
+                rowGrid.Children.Add(nameBorder)
 
-            Dim rowGrid As New Grid()
-            rowGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(4, GridUnitType.Star)})
-            rowGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(70, GridUnitType.Pixel)})
-            rowGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(2, GridUnitType.Star)})
-            rowGrid.RowDefinitions.Add(New RowDefinition With {.Height = GridLength.Auto})
-            rowGrid.RowDefinitions.Add(New RowDefinition With {.Height = GridLength.Auto})
-            rowGrid.RowDefinitions.Add(New RowDefinition With {.Height = GridLength.Auto})
+                Dim qtyBorder As New Border With {
+                    .Style = CType(FindResource("RoundedBorderStyle"), Style),
+                    .Background = CType(New BrushConverter().ConvertFrom("#F5F5F5"), Brush),
+                    .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
+                    .BorderThickness = New Thickness(2),
+                    .CornerRadius = New CornerRadius(10),
+                    .Height = 50,
+                    .Margin = New Thickness(5, 0, 5, 5)
+                }
 
-            ' 2. Name & Quantity Row
-            Dim txtName As New TextBox With {.Text = item("ProductName"), .IsReadOnly = True, .BorderThickness = New Thickness(0), .Background = Brushes.Transparent, .VerticalContentAlignment = VerticalAlignment.Center, .Padding = New Thickness(10, 0, 10, 0), .FontFamily = New FontFamily("Lexend")}
-            Dim nameBorder As New Border With {.Child = txtName, .Height = 50, .Background = CType(New BrushConverter().ConvertFrom("#F5F5F5"), Brush), .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush), .BorderThickness = New Thickness(2), .CornerRadius = New CornerRadius(10), .Margin = New Thickness(5, 0, 5, 5)}
-            Grid.SetColumn(nameBorder, 0) : rowGrid.Children.Add(nameBorder)
+                qtyBorder.Name = $"qtyBorder_{i - 1}"
+                If Me.FindName(qtyBorder.Name) IsNot Nothing Then Me.UnregisterName(qtyBorder.Name)
+                Me.RegisterName(qtyBorder.Name, qtyBorder)
 
-            Dim maxRemaining = If(item.ContainsKey("MaxAllowed"), item("MaxAllowed"), item("Quantity"))
-            Dim txtQty As New TextBox With {.Text = item("Quantity"), .IsReadOnly = True, .BorderThickness = New Thickness(0), .Background = Brushes.Transparent, .VerticalContentAlignment = VerticalAlignment.Center, .HorizontalContentAlignment = HorizontalAlignment.Center, .FontFamily = New FontFamily("Lexend"), .Tag = maxRemaining, .Name = $"txtQuantity_{idx}"}
-            RegisterControlName(txtQty.Name, txtQty)
-            _productTextBoxes.Add(txtQty.Name, txtQty)
-            AddHandler txtQty.TextChanged, AddressOf Quantity_TextChanged
+                Dim maxRemaining = If(item.ContainsKey("MaxAllowed"), item("MaxAllowed"), item("Quantity"))
 
-            Dim qtyBorder As New Border With {.Child = txtQty, .Height = 50, .Background = Brushes.White, .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush), .BorderThickness = New Thickness(2), .CornerRadius = New CornerRadius(10), .Margin = New Thickness(5, 0, 5, 5), .Name = $"qtyBorder_{idx}"}
-            RegisterControlName(qtyBorder.Name, qtyBorder)
-            Grid.SetColumn(qtyBorder, 1) : rowGrid.Children.Add(qtyBorder)
+                Dim txtQty As New TextBox With {
+                    .Text = item("Quantity"),
+                    .IsReadOnly = True,
+                    .BorderThickness = New Thickness(0),
+                    .Background = Brushes.Transparent,
+                    .VerticalContentAlignment = VerticalAlignment.Center,
+                    .HorizontalContentAlignment = HorizontalAlignment.Center,
+                    .FontFamily = New FontFamily("Lexend"),
+                    .Tag = maxRemaining
+                }
 
-            ' 3. Serial Input
-            Dim txtSerial As New TextBox With {.Name = $"txtSerialInput_{idx}", .BorderThickness = New Thickness(0), .Background = Brushes.Transparent, .VerticalContentAlignment = VerticalAlignment.Center, .Padding = New Thickness(10, 0, 10, 0), .FontFamily = New FontFamily("Lexend"), .Tag = idx}
-            RegisterControlName(txtSerial.Name, txtSerial)
-            Dim serialBorder As New Border With {.Child = txtSerial, .Height = 50, .Background = Brushes.White, .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush), .BorderThickness = New Thickness(2), .CornerRadius = New CornerRadius(10), .Margin = New Thickness(5, 0, 5, 5), .Name = $"serialBorder_{idx}"}
-            RegisterControlName(serialBorder.Name, serialBorder)
-            Grid.SetColumn(serialBorder, 2) : rowGrid.Children.Add(serialBorder)
+                AddHandler txtQty.TextChanged, AddressOf Quantity_TextChanged
 
-            ' 4. Header (Labels & Edit Button)
-            Dim headerGrid As New Grid With {.Margin = New Thickness(5, 5, 5, 2)}
-            headerGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
-            headerGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
-            headerGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
+                txtQty.Name = $"txtQuantity_{i - 1}"
+                If Me.FindName(txtQty.Name) IsNot Nothing Then Me.UnregisterName(txtQty.Name)
+                Me.RegisterName(txtQty.Name, txtQty)
+                _productTextBoxes.Add(txtQty.Name, txtQty)
 
-            Dim lblRemaining As New TextBlock With {.Name = $"lblRemaining_{idx}", .VerticalAlignment = VerticalAlignment.Center, .FontStyle = FontStyles.Italic, .Foreground = Brushes.Gray, .Margin = New Thickness(5, 0, 0, 0)}
-            RegisterControlName(lblRemaining.Name, lblRemaining)
+                qtyBorder.Child = txtQty
+                Grid.SetRow(qtyBorder, 0)
+                Grid.SetColumn(qtyBorder, 1)
+                rowGrid.Children.Add(qtyBorder)
 
-            ' Initial logic for existing data
-            Dim currentQty As Integer = 0
-            Integer.TryParse(item("Quantity"), currentQty)
-            Dim remCount = currentQty - _serialCounters(idx)
-            lblRemaining.Text = If(remCount <= 0, "COMPLETE", $"Remaining: {remCount}")
+                ' 3. Serial Input (Row 0, Col 2)
+                Dim serialBorder As New Border With {
+                    .Style = CType(FindResource("RoundedBorderStyle"), Style),
+                    .Background = Brushes.White,
+                    .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
+                    .BorderThickness = New Thickness(2),
+                    .CornerRadius = New CornerRadius(10),
+                    .Height = 50,
+                    .Margin = New Thickness(5, 0, 5, 5)
+                }
+                Dim txtSerial As New TextBox With {
+                    .Name = $"txtSerialInput_{i}",
+                    .BorderThickness = New Thickness(0),
+                    .Background = Brushes.Transparent,
+                    .VerticalContentAlignment = VerticalAlignment.Center,
+                    .Padding = New Thickness(10, 0, 10, 0),
+                    .FontFamily = New FontFamily("Lexend"),
+                    .Tag = i - 1
+                }
 
-            ' Styling for completed items
-            If remCount <= 0 Then
-                lblRemaining.Foreground = Brushes.Green : lblRemaining.FontWeight = FontWeights.Bold
-                txtSerial.IsReadOnly = True : txtSerial.Text = "DONE" : serialBorder.Background = CType(New BrushConverter().ConvertFrom("#F5F5F5"), Brush)
-            End If
+                txtSerial.Name = $"txtSerialInput_{i - 1}"
+                If Me.FindName(txtSerial.Name) IsNot Nothing Then Me.UnregisterName(txtSerial.Name)
+                Me.RegisterName(txtSerial.Name, txtSerial)
 
-            Dim btnEditSerial As New Button With {.Style = CType(FindResource("MaterialDesignIconButton"), Style), .Width = 30, .Height = 30, .Content = New PackIcon With {.Kind = PackIconKind.EditOutline, .Width = 18, .Height = 18}, .Tag = idx}
-            AddHandler btnEditSerial.Click, AddressOf OpenEditSerialPopup
+                serialBorder.Child = txtSerial
+                Grid.SetRow(serialBorder, 0)
+                Grid.SetColumn(serialBorder, 2)
+                rowGrid.Children.Add(serialBorder)
 
-            Dim lblTitle As New TextBlock With {
-                .Text = "Serial Numbers: ",
-                .FontWeight = FontWeights.SemiBold,
-                .FontFamily = New FontFamily("Lexend"),
-                .VerticalAlignment = VerticalAlignment.Center ' Keep text vertically centered
-            }
-            Grid.SetColumn(lblTitle, 0)
-            headerGrid.Children.Add(lblTitle)
+                ' 4. Header Grid (Row 1): Labels and Edit Button
+                Dim headerGrid As New Grid With {
+                    .VerticalAlignment = VerticalAlignment.Center,
+                    .Margin = New Thickness(5, 5, 5, 2)
+                }
+                headerGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
+                headerGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)})
+                headerGrid.ColumnDefinitions.Add(New ColumnDefinition With {.Width = GridLength.Auto})
 
-            ' lblRemaining (Already created earlier in your code)
-            lblRemaining.VerticalAlignment = VerticalAlignment.Center
-            Grid.SetColumn(lblRemaining, 1)
-            headerGrid.Children.Add(lblRemaining)
+                Dim lblSerial As New TextBlock With {
+                    .Text = "Serial Numbers: ",
+                    .VerticalAlignment = VerticalAlignment.Center,
+                    .FontFamily = New FontFamily("Lexend"),
+                    .FontWeight = FontWeights.SemiBold,
+                    .Foreground = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush)
+                }
+                Grid.SetColumn(lblSerial, 0)
 
-            ' btnEditSerial (Already created earlier in your code)
-            Grid.SetColumn(btnEditSerial, 2)
-            headerGrid.Children.Add(btnEditSerial)
+                Dim lblRemaining As New TextBlock With {
+                    .Name = $"lblRemaining_{i}",
+                    .Text = $"Remaining: {item("Quantity")}",
+                    .VerticalAlignment = VerticalAlignment.Center,
+                    .FontStyle = FontStyles.Italic,
+                    .Foreground = Brushes.Gray,
+                    .Margin = New Thickness(5, 0, 0, 0)
+                }
 
-            ' Finally add the headerGrid to the main rowGrid
-            Grid.SetRow(headerGrid, 1)
-            Grid.SetColumnSpan(headerGrid, 3)
-            rowGrid.Children.Add(headerGrid)
+                lblRemaining.Name = $"lblRemaining_{i - 1}"
+                If Me.FindName(lblRemaining.Name) IsNot Nothing Then Me.UnregisterName(lblRemaining.Name)
+                Me.RegisterName(lblRemaining.Name, lblRemaining)
 
-            ' 5. Serial List View
-            Dim txtSerialList As New TextBlock With {.Name = $"txtSerialList_{idx}", .TextWrapping = TextWrapping.Wrap, .Padding = New Thickness(10), .FontFamily = New FontFamily("Lexend"), .FontSize = 11, .Text = existingSerials}
-            RegisterControlName(txtSerialList.Name, txtSerialList)
-            Dim listBorder As New Border With {.Child = txtSerialList, .Background = CType(New BrushConverter().ConvertFrom("#F5F5F5"), Brush), .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush), .BorderThickness = New Thickness(2), .CornerRadius = New CornerRadius(5), .MinHeight = 80, .Margin = New Thickness(5)}
-            Grid.SetRow(listBorder, 2) : Grid.SetColumnSpan(listBorder, 3) : rowGrid.Children.Add(listBorder)
+                Grid.SetColumn(lblRemaining, 1)
 
-            ' 6. Input Logic
-            AddHandler txtSerial.KeyDown, Sub(sender, e)
-                                              If e.Key = Key.Enter Then
-                                                  Dim input = DirectCast(sender, TextBox)
-                                                  Dim val = input.Text.Trim()
+                Dim btnEditSerial As New Button With {
+                    .Style = CType(FindResource("MaterialDesignIconButton"), Style),
+                    .Width = 30, .Height = 30,
+                    .Content = New PackIcon With {.Kind = PackIconKind.EditOutline, .Width = 18, .Height = 18},
+                    .Cursor = Cursors.Hand,
+                    .Tag = i - 1,
+                    .VerticalAlignment = VerticalAlignment.Center
+                }
+                Grid.SetColumn(btnEditSerial, 2)
 
-                                                  If Not _serialCounters.ContainsKey(idx) Then Return
+                headerGrid.Children.Add(lblSerial)
+                headerGrid.Children.Add(lblRemaining)
+                headerGrid.Children.Add(btnEditSerial)
 
-                                                  currentQty = Integer.Parse(itemDataSource(idx)("Quantity"))
+                Grid.SetRow(headerGrid, 1)
+                Grid.SetColumnSpan(headerGrid, 3)
+                rowGrid.Children.Add(headerGrid)
 
-                                                  If Not String.IsNullOrEmpty(val) AndAlso _serialCounters(idx) < currentQty Then
-                                                      _serialCounters(idx) += 1
-                                                      Dim entry = $"({_serialCounters(idx)}) {val}"
+                ' 5. Serial List (Row 2)
+                Dim serialListBorder As New Border With {
+                    .Style = CType(FindResource("RoundedBorderStyle"), Style),
+                    .Background = CType(New BrushConverter().ConvertFrom("#F5F5F5"), Brush),
+                    .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
+                    .BorderThickness = New Thickness(2),
+                    .CornerRadius = New CornerRadius(5),
+                    .MinHeight = 80,
+                    .Margin = New Thickness(5)
+                }
 
-                                                      txtSerialList.Text &= If(String.IsNullOrEmpty(txtSerialList.Text), entry, $"  {entry}")
+                serialBorder.Name = $"serialBorder_{i - 1}"
+                If Me.FindName(serialBorder.Name) IsNot Nothing Then Me.UnregisterName(serialBorder.Name)
+                Me.RegisterName(serialBorder.Name, serialBorder)
 
-                                                      Dim newRem = currentQty - _serialCounters(idx)
-                                                      lblRemaining.Text = If(newRem <= 0, "COMPLETE", $"Remaining: {newRem}")
+                Dim txtSerialList As New TextBlock With {
+                    .Name = $"txtSerialList_{i}",
+                    .TextWrapping = TextWrapping.Wrap,
+                    .Padding = New Thickness(10),
+                    .FontFamily = New FontFamily("Lexend"),
+                    .FontSize = 11
+                }
 
-                                                      If newRem <= 0 Then
-                                                          lblRemaining.Foreground = Brushes.Green : lblRemaining.FontWeight = FontWeights.Bold
-                                                          input.IsReadOnly = True : input.Text = "DONE"
-                                                          serialBorder.Background = CType(New BrushConverter().ConvertFrom("#F5F5F5"), Brush)
+                txtSerialList.Name = $"txtSerialList_{i - 1}"
+                If Me.FindName(txtSerialList.Name) IsNot Nothing Then Me.UnregisterName(txtSerialList.Name)
+                Me.RegisterName(txtSerialList.Name, txtSerialList)
+
+                serialListBorder.Child = txtSerialList
+                Grid.SetRow(serialListBorder, 2)
+                Grid.SetColumnSpan(serialListBorder, 3)
+                rowGrid.Children.Add(serialListBorder)
+
+                ' Logic
+                AddHandler txtSerial.KeyDown, Sub(sender, e)
+                                                  If e.Key = Key.Enter Then
+                                                      Dim input = DirectCast(sender, TextBox)
+                                                      Dim idx As Integer = CInt(input.Tag)
+                                                      Dim val = input.Text.Trim()
+
+                                                      Dim currentQty As Integer = 0
+                                                      Integer.TryParse(itemDataSource(idx)("Quantity"), currentQty)
+
+                                                      If Not String.IsNullOrEmpty(val) AndAlso _serialCounters(idx) < currentQty Then
+                                                          _serialCounters(idx) += 1
+                                                          Dim entry = $"({_serialCounters(idx)}) {val}"
+                                                          txtSerialList.Text &= If(String.IsNullOrEmpty(txtSerialList.Text), entry, $"  {entry}")
+
+                                                          Dim remCount = currentQty - _serialCounters(idx)
+                                                          lblRemaining.Text = If(remCount <= 0, "COMPLETE", $"Remaining: {remCount}")
+
+                                                          If remCount <= 0 Then
+                                                              lblRemaining.Foreground = Brushes.Green
+                                                              lblRemaining.FontWeight = FontWeights.Bold
+                                                              input.IsReadOnly = True
+                                                              serialBorder.Background = CType(New BrushConverter().ConvertFrom("#F5F5F5"), Brush)
+                                                              input.Text = "DONE"
+                                                          End If
+
+                                                          itemDataSource(idx)("SerialNumber") = txtSerialList.Text
+                                                          input.Clear()
                                                       End If
-
-                                                      ' 3. Save back to the exact index in the list
-                                                      itemDataSource(idx)("SerialNumber") = txtSerialList.Text
-                                                      input.Clear()
+                                                      e.Handled = True
                                                   End If
-                                                  e.Handled = True
-                                              End If
-                                          End Sub
+                                              End Sub
 
-            rowBorder.Child = rowGrid
-            Return rowBorder
-        End Function
+                AddHandler btnEditSerial.Click, AddressOf OpenEditSerialPopup
 
-        Private Sub AddNewCategoryUI()
-            categoryCount += 1
-            Dim currentCatId = categoryCount
-
-            Dim categoryWrapper As New StackPanel With {
-                .Margin = New Thickness(0, 10, 0, 20)
-            }
-
-            Dim headerBorder As New Border With {
-                .Background = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
-                .CornerRadius = New CornerRadius(10, 10, 0, 0),
-                .Padding = New Thickness(15, 8, 15, 8),
-                .Margin = New Thickness(0, 5, 0, 0),
-                .Height = 45
-            }
-
-            Dim headerGrid As New Grid()
-            headerGrid.ColumnDefinitions.Add(New ColumnDefinition() With {.Width = New GridLength(1, GridUnitType.Star)})
-            headerGrid.ColumnDefinitions.Add(New ColumnDefinition() With {.Width = GridLength.Auto})
-
-            Dim categoryHeader As New TextBox With {
-                .Text = "New Category Group",
-                .FontSize = 14,
-                .FontWeight = FontWeights.SemiBold,
-                .Foreground = Brushes.White,
-                .Background = Brushes.Transparent,
-                .BorderThickness = New Thickness(0),
-                .FontFamily = New FontFamily("Lexend"),
-                .VerticalAlignment = VerticalAlignment.Center,
-                .IsReadOnly = True
-            }
-
-            ' Assemble Header
-            headerGrid.Children.Add(categoryHeader)
-            Grid.SetColumn(categoryHeader, 0)
-            headerBorder.Child = headerGrid
-
-            ' THE ITEMS PANEL (Where product rows go)
-            Dim categoryItemsPanel As New StackPanel()
-
-            ' ASSEMBLE
-            categoryWrapper.Children.Add(headerBorder)
-            categoryWrapper.Children.Add(categoryItemsPanel)
-
-            ' ADD TO MAIN UI
-            MainContainer.Children.Add(categoryWrapper)
-        End Sub
-
-        Private Sub AddNewCategoryWithSpecificName(catName As String)
-            AddNewCategoryUI()
-
-            Dim lastWrapper = TryCast(MainContainer.Children(MainContainer.Children.Count - 1), StackPanel)
-            If lastWrapper IsNot Nothing Then
-                Dim headerBorder = TryCast(lastWrapper.Children(0), Border)
-                Dim headerGrid = TryCast(headerBorder?.Child, Grid)
-                Dim nameTxt = TryCast(headerGrid?.Children(0), TextBox)
-
-                If nameTxt IsNot Nothing Then
-                    nameTxt.Text = If(String.IsNullOrWhiteSpace(catName), "", catName)
-                End If
-            End If
-        End Sub
-
-        Private Function GetLatestItemsPanel() As StackPanel
-            If MainContainer.Children.Count = 0 Then Return Nothing
-
-            Dim lastWrapper = TryCast(MainContainer.Children(MainContainer.Children.Count - 1), StackPanel)
-            If lastWrapper Is Nothing OrElse lastWrapper.Children.Count < 2 Then Return Nothing
-
-            Return TryCast(lastWrapper.Children(1), StackPanel)
-        End Function
-
-        Private Sub RegisterControlName(name As String, control As FrameworkElement)
-            If Me.FindName(name) IsNot Nothing Then
-                Me.UnregisterName(name)
-            End If
-            Me.RegisterName(name, control)
+                rowBorder.Child = rowGrid
+                MainContainer.Children.Add(rowBorder)
+                i += 1
+            Next
         End Sub
 
         Private Sub OpenEditSerialPopup(sender As Object, e As RoutedEventArgs)
@@ -539,7 +479,6 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Sub
 
         Private Sub DeliveryMode_Checked(sender As Object, e As RoutedEventArgs)
-            Dim isEditMode = DeliveryState.IsEditMode
             If rbPartialDelivery Is Nothing OrElse rbFullDelivery Is Nothing Then Return
             Dim isPartial As Boolean = rbPartialDelivery.IsChecked = True
 
@@ -553,7 +492,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     Dim index = kvp.Key.Split("_"c).Last()
                     Dim parentBorder As Border = TryCast(Me.FindName($"qtyBorder_{index}"), Border)
 
-                    If isPartial And Not isEditMode Then
+                    If isPartial Then
                         If qtyBox.Tag Is Nothing Then qtyBox.Tag = qtyBox.Text
                         qtyBox.IsReadOnly = False
 
@@ -638,24 +577,22 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         Private Sub OnBillingTypingTimerTick(sender As Object, e As EventArgs)
             _billingTypingTimer.Stop()
 
-            Dim userInput As String = txtInvoiceNumber.Text.Trim().ToUpper()
-            Dim searchID As String = userInput.Replace("DR-", "BL-")
+            Dim searchText = txtInvoiceNumber.Text.Trim()
 
-            If searchID.Length < 5 Then
+            ' 1. Basic validation: If cleared or too short, reset the whole form
+            If searchText.Length < 3 Then
                 ClearDeliveryForm()
                 Return
             End If
 
-            Dim results = BillingController.SearchBillingStatements(searchID, 1, "Private")
+            ' 2. Search for the Billing Statement
+            Dim results = BillingController.SearchBillingStatements(searchText, 1, "Private")
 
-            Dim billing = results.FirstOrDefault(Function(b) b.BillingNumber.Equals(searchID, StringComparison.OrdinalIgnoreCase))
-
-            If billing IsNot Nothing Then
-                If TransactionState.ActiveRecord Is Nothing Then
-                    TransactionState.ActiveRecord = New UniversalTransactionModel()
-                End If
+            If results.Count > 0 Then
+                Dim billing = results(0)
 
                 Dim clientList = ClientController.SearchClients(billing.ClientID)
+
                 Dim clientMatch = clientList.FirstOrDefault(Function(c) c.ClientID = billing.ClientID)
 
                 If clientMatch IsNot Nothing Then
@@ -666,30 +603,25 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     txtClientName.Text = billing.ClientID
                 End If
 
-                TransactionState.ActiveRecord.ClientName = txtClientName.Text
-                TransactionState.ActiveRecord.DocumentReference = billing.BillingNumber
+                DeliveryDetails.DRClientName = txtClientName.Text
+                DeliveryDetails.DRReferenceInvoice = billing.BillingNumber
 
                 Dim historyTotals = DeliveryReceiptController.GetAccumulatedDeliveryTotals(billing.BillingNumber)
-                Dim masterItems = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(billing.OrderItems)
+                Dim masterItems = Newtonsoft.Json.JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(billing.OrderItems)
+
                 Dim remainingList As New List(Of Dictionary(Of String, String))
 
                 If masterItems IsNot Nothing Then
-                    For Each item In masterItems
-                        If (item.ContainsKey("IsHeaderRow") AndAlso item("IsHeaderRow").ToString().ToLower() = "true") OrElse
-                   (item.ContainsKey("IsSubotalRow") AndAlso item("IsSubotalRow").ToString().ToLower() = "true") Then
-                            remainingList.Add(New Dictionary(Of String, String)(item))
-                            Continue For
-                        End If
-
-                        Dim pName = item("ProductName")
+                    For Each masterItem In masterItems
+                        Dim pName = masterItem("ProductName")
                         Dim originalQty = 0
-                        Integer.TryParse(item("Quantity"), originalQty)
+                        Integer.TryParse(masterItem("Quantity"), originalQty)
 
                         Dim deliveredSoFar = If(historyTotals.ContainsKey(pName), historyTotals(pName), 0)
                         Dim balance = originalQty - deliveredSoFar
 
                         If balance > 0 Then
-                            Dim newItem As New Dictionary(Of String, String)(item)
+                            Dim newItem As New Dictionary(Of String, String)(masterItem)
                             newItem("Quantity") = balance.ToString()
                             newItem("MaxAllowed") = balance.ToString()
                             remainingList.Add(newItem)
@@ -697,12 +629,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     Next
                 End If
 
-                Dim jsonString = JsonConvert.SerializeObject(remainingList)
-                TransactionState.ActiveRecord.RawItemsJson = jsonString
-                TransactionState.ActiveRecord.OrderItems = New ObservableCollection(Of OrderItems)(JsonConvert.DeserializeObject(Of List(Of OrderItems))(jsonString))
-
+                DeliveryDetails.DRDeliveryItems = remainingList
                 LoadItems()
-
                 txtDeliveryNumber.Text = GenerateDeliveryId(billing.BillingNumber)
             Else
                 ClearDeliveryForm()
@@ -729,15 +657,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
             ' 4. Clear Global Delivery Cache
             DeliveryDetails.DRClientName = ""
-            DeliveryDetails.DRDocumentReference = ""
+            DeliveryDetails.DRReferenceInvoice = ""
             DeliveryDetails.DRDeliveryItems = New List(Of Dictionary(Of String, String))()
-        End Sub
-
-        Private Sub BtnReset_Click(sender As Object, e As RoutedEventArgs) Handles BtnReset.Click
-            TransactionState.ResetRecord()
-            lblPageTitle.Text = "Delivery Form"
-            lblButton.Text = "GENERATE DELIVERY RECEIPT"
-            ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
         End Sub
 #Region "Helpers"
         Private Sub UpdateClientDetails(client As Client)
@@ -775,34 +696,21 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Function
 
         Private Function GenerateDeliveryId(invoiceNumber As String) As String
-            Dim latestDR As String = DeliveryReceiptController.GetLatestDRFromDatabase(invoiceNumber)
+            Dim baseId As String = invoiceNumber.Trim().Replace("BL", "DR").Replace(" ", "")
 
-            Dim baseId As String
-            Dim hasExistingPartial As Boolean = False
+            If rbPartialDelivery IsNot Nothing AndAlso rbPartialDelivery.IsChecked = True Then
+                If baseId.Contains("(P") Then
+                    Try
+                        Dim parts = baseId.Split(New String() {"(P"}, StringSplitOptions.None)
+                        Dim prefix = parts(0)
+                        Dim currentNum As Integer = 0
 
-            If Not String.IsNullOrEmpty(latestDR) Then
-                baseId = latestDR
-                If baseId.Contains("(P") Then hasExistingPartial = True
-            Else
-                baseId = invoiceNumber.Trim().Replace("BL", "DR").Replace(" ", "")
-            End If
-
-            ' --- UI CONTROL LOGIC ---
-            If hasExistingPartial Then
-                rbPartialDelivery.IsChecked = True
-                rbFullDelivery.IsEnabled = False
-            Else
-                rbPartialDelivery.IsEnabled = True
-                rbFullDelivery.IsEnabled = True
-            End If
-
-            If rbPartialDelivery?.IsChecked = True Then
-                Dim pattern As String = "\(P(\d+)\)$"
-                Dim match = System.Text.RegularExpressions.Regex.Match(baseId, pattern)
-
-                If match.Success Then
-                    Dim currentNum As Integer = Integer.Parse(match.Groups(1).Value)
-                    Return System.Text.RegularExpressions.Regex.Replace(baseId, pattern, $"(P{currentNum + 1})")
+                        If Integer.TryParse(parts(1), currentNum) Then
+                            Return $"{prefix}(P{currentNum + 1})"
+                        End If
+                    Catch
+                        Return baseId & "(P1)"
+                    End Try
                 Else
                     Return baseId & "(P1)"
                 End If

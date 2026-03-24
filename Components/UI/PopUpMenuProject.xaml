@@ -6,6 +6,7 @@
     Background="Transparent">
 
     <UserControl.Resources>
+        <!-- Hyperlink Styling -->
         <Style TargetType="Hyperlink">
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="TextDecorations" Value="{x:Null}"/>
@@ -17,12 +18,14 @@
             </Style.Triggers>
         </Style>
 
+        <!-- Submenu Item Style -->
         <Style x:Key="SubmenuItemStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="#d4d4d4"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="Margin" Value="25,3,0,3"/>
         </Style>
 
+        <!-- Main Menu Item Style -->
         <Style x:Key="MainMenuItemStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontFamily" Value="Lexend"/>
@@ -32,6 +35,7 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
 
+        <!-- Vertical Line Style -->
         <Style x:Key="VerticalLineStyle" TargetType="Border">
             <Setter Property="Width" Value="1"/>
             <Setter Property="Background" Value="#444444"/>
@@ -40,6 +44,7 @@
         </Style>
     </UserControl.Resources>
 
+    <!-- Main Grid to center the content -->
     <Grid Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -52,9 +57,10 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!-- The Card is now in the center column/row -->
         <materialDesign:Card Grid.Column="1" Grid.Row="1" Background="#0F0F0F" UniformCornerRadius="0" Margin="0" Width="285">
             <StackPanel Orientation="Vertical" Margin="35,0,0,0">
-
+                <!-- Project Management Section -->
                 <StackPanel>
                     <Grid Margin="0,8,0,0">
                         <Grid.ColumnDefinitions>
@@ -69,14 +75,17 @@
                         </TextBlock>
                     </Grid>
 
+                    <!-- Submenu items with vertical lines -->
                     <Grid Margin="24,3,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
+                        <!-- Vertical line -->
                         <Rectangle Width="1" Fill="#444444" HorizontalAlignment="Left" Margin="0,0,0,0"/>
 
+                        <!-- Submenu items -->
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToNewProject">
@@ -87,57 +96,34 @@
                                 <Hyperlink Click="NavigateToManageProject">
                                     <TextBlock Text="Manage Project" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
-                                <TextBlock.ToolTip>
-                                    <ToolTip Content="Monitor, update, and manage ongoing projects." Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
-                                </TextBlock.ToolTip>
+                                                                                            <TextBlock.ToolTip>
+<ToolTip Content="Monitor, update, and manage ongoing projects." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
                             </TextBlock>
                         </StackPanel>
                     </Grid>
                 </StackPanel>
 
-                <StackPanel>
-                    <Grid Margin="0,8,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <materialDesign:PackIcon Kind="FormatListChecks" Foreground="White" Width="20" Height="20" Margin="10,0,0,0"/>
-                        <TextBlock Grid.Column="1">
-                            <Hyperlink Click="NavigateToToDoList">
-                                <TextBlock Text="To Do List" Style="{StaticResource MainMenuItemStyle}"/>
-                            </Hyperlink>
-                            <TextBlock.ToolTip>
-                                <ToolTip Content="Track personal or team task lists efficiently." Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
-                            </TextBlock.ToolTip>
-                        </TextBlock>
-                    </Grid>
-
-                    <Grid Margin="24,3,0,8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Rectangle Width="1" Fill="#444444" HorizontalAlignment="Left" Margin="0,0,0,0"/>
-
-                        <StackPanel Grid.Column="1">
-                            <TextBlock Margin="10,3,0,3">
-                                <Hyperlink Click="NavigateToNewTask">
-                                    <TextBlock Text="New Task" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
-                                </Hyperlink>
-                            </TextBlock>
-                            <TextBlock Margin="10,3,0,3">
-                                <Hyperlink Click="NavigateToManageTask">
-                                    <TextBlock Text="Manage Task" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
-                                </Hyperlink>
-                                <TextBlock.ToolTip>
-                                    <ToolTip Content="Monitor, update, and manage your tasks." Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
-                                </TextBlock.ToolTip>
-                            </TextBlock>
-                        </StackPanel>
-                    </Grid>
-                </StackPanel>
-
+                <!-- To Do List -->
+                <Grid Margin="0,8,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <materialDesign:PackIcon Kind="FormatListChecks" Foreground="White" Width="20" Height="20" Margin="10,0,0,0"/>
+                    <TextBlock Grid.Column="1">
+                        <Hyperlink Click="NavigateToToDoList">
+                            <TextBlock Text="To Do List" Style="{StaticResource MainMenuItemStyle}"/>
+                        </Hyperlink>
+                                                                                    <TextBlock.ToolTip>
+<ToolTip Content="Track personal or team task lists efficiently." 
+                Style="{StaticResource SpeechBubbleToolTip}"
+                    Placement="Top"/>
+                 </TextBlock.ToolTip>
+                    </TextBlock>
+                </Grid>
             </StackPanel>
         </materialDesign:Card>
     </Grid>

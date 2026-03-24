@@ -424,8 +424,7 @@
                  FontFamily="Lexend"
                  Background="Transparent"
                  HorizontalAlignment="Stretch"
-                 Focusable="True"
-                 CharacterCasing="Upper"/>
+                 Focusable="True"/>
 
                                         <!-- Popup with ListBox -->
                                         <Popup x:Name="AutoCompletePopup"
@@ -582,7 +581,6 @@
                  FontFamily="Lexend"
                  Background="Transparent"
                  HorizontalAlignment="Stretch"
-                 CharacterCasing="Upper"                                
                  Focusable="True"/>
                                     </Grid>
                                 </Border>
@@ -610,7 +608,6 @@ Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
          FontFamily="Lexend"
          Background="Transparent"
          HorizontalAlignment="Stretch"
-         CharacterCasing="Upper"                     
          Focusable="True"/>
                                     </Grid>
                                 </Border>
@@ -730,7 +727,7 @@ BorderThickness="1" HorizontalContentAlignment="Left">
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
 
-                                        <TextBox x:Name="lblWidth" Text="80" Grid.Column="0" Style="{StaticResource CustomTextBoxStyle}" CharacterCasing="Upper"/>
+                                        <TextBox x:Name="lblWidth" Text="80" Grid.Column="0" Style="{StaticResource CustomTextBoxStyle}"/>
                                     </Grid>
                                 </Border>
                             </StackPanel>
@@ -745,7 +742,7 @@ BorderThickness="1" HorizontalContentAlignment="Left">
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
 
-                                        <TextBox x:Name="lblHeight"  Text="80" Grid.Column="0" Style="{StaticResource CustomTextBoxStyle}" CharacterCasing="Upper"/>
+                                        <TextBox x:Name="lblHeight"  Text="80" Grid.Column="0" Style="{StaticResource CustomTextBoxStyle}"/>
                                     </Grid>
                                 </Border>
                             </StackPanel>
@@ -772,7 +769,7 @@ BorderThickness="1" HorizontalContentAlignment="Left">
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
 
-                                        <TextBox Text="1" x:Name="copies" Grid.Column="0" Style="{StaticResource CustomTextBoxStyle}" CharacterCasing="Upper"/>
+                                        <TextBox Text="1" x:Name="copies" Grid.Column="0" Style="{StaticResource CustomTextBoxStyle}"/>
                                     </Grid>
                                 </Border>
                             </StackPanel>

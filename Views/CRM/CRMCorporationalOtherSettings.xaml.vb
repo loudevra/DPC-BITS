@@ -1,5 +1,4 @@
-﻿' settings
-Imports ClosedXML.Excel
+﻿Imports ClosedXML.Excel
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Models
 

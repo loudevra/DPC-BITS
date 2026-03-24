@@ -15,7 +15,6 @@ Imports MongoDB.Driver.GridFS
 Imports PdfSharp.Drawing
 Imports PdfSharp.Pdf
 Imports SkiaSharp.Views.WPF
-Imports Newtonsoft.Json
 
 Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
     Public Class PreviewPrintDeliveryReceipt
@@ -30,72 +29,55 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Sub
 
         Public Sub IntializeFields()
-            Dim receipt = DeliveryState.CurrentReceipt
-            If receipt Is Nothing Then Return
-
-            txtDeliveryNumber.Text = receipt.DRNumber
-            txtDocumentReference.Text = receipt.DocumentReference
-            txtDeliveryDate.Text = receipt.DRDate
+            txtDeliveryNumber.Text = DeliveryDetails.DRNumber
+            txtReferenceInvoice.Text = DeliveryDetails.DRReferenceInvoice
+            txtDeliveryDate.Text = DeliveryDetails.DRDate
             txtSalesRep.Text = CacheOnLoggedInName
-            txtDeliveryClientName.Text = receipt.ClientName
-            txtNotes.Text = receipt.DeliveryNotes
-            txtShippingMethod.Text = receipt.ShippingMethod
-            txtApprovedBy.Text = receipt.ApprovedBy
-            txtPaymentTerm.Text = receipt.PaymentTerm
-            txtDeliveryStatus.Text = receipt.DeliveryStatus
+            txtDeliveryClientName.Text = DeliveryDetails.DRClientName
+            txtNotes.Text = DeliveryDetails.DRDeliveryNotes
+            txtShippingMethod.Text = DeliveryDetails.DRShippingMethod
+            txtApprovedBy.Text = DeliveryDetails.DRApprovedBy
+            txtPaymentTerm.Text = DeliveryDetails.DRPaymentTerm
+            txtDeliveryStatus.Text = DeliveryDetails.DRDeliveryStatus
 
-            Dim clientDetails = receipt.ClientDetails
+            'LoadTestPlaceholderData()
+            LoadPage()
+
+            Dim clientDetails As String
+            clientDetails = DeliveryDetails.DRClientDetails
+
             If Not String.IsNullOrEmpty(clientDetails) Then
                 txtDeliveryRep.Text = Regex.Match(clientDetails, "Representative Name: (.*)").Groups(1).Value.Trim()
                 txtDeliveryContact.Text = Regex.Match(clientDetails, "Contact: (.*)").Groups(1).Value.Trim()
                 txtDeliveryAddress.Text = Regex.Match(clientDetails, "Delivery Address: (.*)").Groups(1).Value.Trim()
             End If
-
-            LoadPage()
         End Sub
 
         Private Sub LoadPage()
             _pageMap.Clear()
+
             Dim maxHeightPerPage As Double = 650
             Dim currentHeight As Double = 0
-
-            Dim rawItems = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(DeliveryState.CurrentReceipt.OrderItems)
-
             Dim currentPageItems As New List(Of Dictionary(Of String, String))
+
             _pageMap.Add(currentPageItems)
 
-            Dim productCounter As Integer = 1
-
-            For Each rawItem In rawItems
-                Dim isHeader = rawItem.ContainsKey("IsHeaderRow") AndAlso rawItem("IsHeaderRow").ToString().ToLower() = "true"
-
-                Dim displayItem = New Dictionary(Of String, String)(rawItem)
-
-                If isHeader Then
-                    displayItem("Number") = ""
-                Else
-                    displayItem("Number") = productCounter.ToString()
-                    productCounter += 1
-                End If
-
-
-                If displayItem.ContainsKey("SerialNumber") Then
-                    Dim raw = displayItem("SerialNumber")
-                    displayItem("SerialNumber") = Regex.Replace(raw, "\(\d+\)\s*", "").Replace("  ", ", ").Trim()
-                End If
+            For i As Integer = 0 To DeliveryDetails.DRDeliveryItems.Count - 1
+                Dim rawItem = DeliveryDetails.DRDeliveryItems(i)
+                Dim displayItem = CleanItemForDisplay(rawItem, i)
 
                 Dim rowElement = CreateRowElement(displayItem)
                 rowElement.Measure(New Size(726, Double.PositiveInfinity))
                 Dim rowHeight = rowElement.DesiredSize.Height
 
-                If (currentHeight + rowHeight + 5) > maxHeightPerPage AndAlso currentPageItems.Count > 0 Then
+                If (currentHeight + rowHeight + 10) > maxHeightPerPage AndAlso currentPageItems.Count > 0 Then
                     currentPageItems = New List(Of Dictionary(Of String, String))
                     _pageMap.Add(currentPageItems)
                     currentHeight = 0
                 End If
 
                 currentPageItems.Add(displayItem)
-                currentHeight += rowHeight + 5
+                currentHeight += rowHeight + 10
             Next
 
             RenderPages(_currentPageIndex)
@@ -180,114 +162,94 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Function
 
         Private Sub AddColumnsToGrid(dg As DataGrid)
-            ' --- 1. Global Header Style (Black Bar) ---
             Dim headerStyle As New Style(GetType(System.Windows.Controls.Primitives.DataGridColumnHeader))
-            headerStyle.Setters.Add(New Setter(Control.BackgroundProperty, CType(New BrushConverter().ConvertFrom("#090909"), Brush)))
+            headerStyle.Setters.Add(New Setter(Control.BackgroundProperty, Brushes.Black))
             headerStyle.Setters.Add(New Setter(Control.ForegroundProperty, Brushes.White))
-            headerStyle.Setters.Add(New Setter(Control.FontSizeProperty, 10.0))
-            headerStyle.Setters.Add(New Setter(Control.FontWeightProperty, FontWeights.SemiBold))
-            headerStyle.Setters.Add(New Setter(Control.PaddingProperty, New Thickness(5, 3, 5, 3)))
+            headerStyle.Setters.Add(New Setter(Control.FontSizeProperty, 9.0))
+            headerStyle.Setters.Add(New Setter(Control.PaddingProperty, New Thickness(5)))
             headerStyle.Setters.Add(New Setter(Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Center))
-            headerStyle.Setters.Add(New Setter(Control.HeightProperty, 30.0))
+            headerStyle.Setters.Add(New Setter(Control.BorderBrushProperty, Brushes.Black))
+            headerStyle.Setters.Add(New Setter(Control.BorderThicknessProperty, New Thickness(0, 0, 1, 0)))
 
-            ' --- 2. Row Style with Header Template Trigger ---
             Dim rowStyle As New Style(GetType(DataGridRow))
             rowStyle.Setters.Add(New Setter(DataGridRow.BackgroundProperty, Brushes.Transparent))
-            rowStyle.Setters.Add(New Setter(DataGridRow.MinHeightProperty, 55.0))
-
-            ' The Trigger for Category Headers
-            Dim rowTrigger As New DataTrigger() With {.Binding = New Binding("[IsHeaderRow]"), .Value = "true"}
-            rowTrigger.Setters.Add(New Setter(DataGridRow.FontWeightProperty, FontWeights.Bold))
-            rowTrigger.Setters.Add(New Setter(DataGridRow.MinHeightProperty, 40.0))
-
-            ' Create the ControlTemplate for centered headers (Matches your XAML)
-            Dim rowTemplate As New ControlTemplate(GetType(DataGridRow))
-            Dim borderFactory = New FrameworkElementFactory(GetType(Border))
-            borderFactory.SetValue(Border.BorderBrushProperty, Brushes.Black)
-            borderFactory.SetValue(Border.BorderThicknessProperty, New Thickness(0, 0, 0, 1))
-            borderFactory.SetBinding(Border.BackgroundProperty, New Binding("Background") With {.RelativeSource = New RelativeSource(RelativeSourceMode.TemplatedParent)})
-            borderFactory.SetValue(Border.PaddingProperty, New Thickness(10, 5, 10, 5))
-
-            Dim textFactory = New FrameworkElementFactory(GetType(TextBlock))
-            textFactory.SetBinding(TextBlock.TextProperty, New Binding("[ProductName]"))
-            textFactory.SetValue(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center)
-            textFactory.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center)
-            textFactory.SetValue(TextBlock.FontSizeProperty, 14.0)
-            textFactory.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold)
-
-            borderFactory.AppendChild(textFactory)
-            rowTemplate.VisualTree = borderFactory
-            rowTrigger.Setters.Add(New Setter(DataGridRow.TemplateProperty, rowTemplate))
-
-            rowStyle.Triggers.Add(rowTrigger)
+            rowStyle.Setters.Add(New Setter(DataGridRow.BorderThicknessProperty, New Thickness(0)))
             dg.RowStyle = rowStyle
 
-            ' --- 3. Cell Style with Border Logic ---
             Dim cellStyle As New Style(GetType(DataGridCell))
-            cellStyle.Setters.Add(New Setter(DataGridCell.PaddingProperty, New Thickness(3, 0, 3, 0)))
-            cellStyle.Setters.Add(New Setter(DataGridCell.BorderBrushProperty, Brushes.Black))
-            cellStyle.Setters.Add(New Setter(DataGridCell.BorderThicknessProperty, New Thickness(0, 0, 1, 1)))
-
-            ' Trigger to hide side borders on headers
-            Dim cellTrigger As New DataTrigger() With {.Binding = New Binding("[IsHeaderRow]"), .Value = "true"}
-            cellTrigger.Setters.Add(New Setter(DataGridCell.BorderThicknessProperty, New Thickness(0, 0, 0, 1)))
-            cellStyle.Triggers.Add(cellTrigger)
+            cellStyle.Setters.Add(New Setter(DataGridCell.BackgroundProperty, Brushes.Transparent))
+            cellStyle.Setters.Add(New Setter(DataGridCell.BorderThicknessProperty, New Thickness(0)))
+            cellStyle.Setters.Add(New Setter(DataGridCell.FocusVisualStyleProperty, Nothing))
             dg.CellStyle = cellStyle
 
-            ' --- 4. Define Columns ---
-            ' # Column
+            Dim centeredStyle As New Style(GetType(TextBlock))
+            centeredStyle.Setters.Add(New Setter(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center))
+            centeredStyle.Setters.Add(New Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center))
+            centeredStyle.Setters.Add(New Setter(TextBlock.FontSizeProperty, 11.0))
+
             dg.Columns.Add(New DataGridTextColumn With {
-        .Header = "#", .Binding = New Binding("[Number]"), .Width = 40,
-        .HeaderStyle = headerStyle,
-        .ElementStyle = CreateCenteredTextStyle(11)
-    })
+                .Header = "#",
+                .Binding = New Binding("[Number]"),
+                .MinWidth = 60,
+                .Width = 60,
+                .HeaderStyle = headerStyle,
+                .ElementStyle = centeredStyle
+            })
 
-            ' Product Description Column
             Dim colProduct As New DataGridTemplateColumn With {
-        .Header = "Description", .Width = New DataGridLength(1, DataGridLengthUnitType.Star),
-        .HeaderStyle = headerStyle
-    }
-            Dim productFactory = New FrameworkElementFactory(GetType(Border))
-            productFactory.SetValue(Border.PaddingProperty, New Thickness(8))
+                .Header = "Product / Description",
+                .Width = New DataGridLength(2, DataGridLengthUnitType.Star),
+                .MinWidth = 303,
+                .HeaderStyle = headerStyle
+            }
 
-            Dim titleTxt = New FrameworkElementFactory(GetType(TextBlock))
-            titleTxt.SetBinding(TextBlock.TextProperty, New Binding("[ProductName]"))
-            titleTxt.SetValue(TextBlock.FontSizeProperty, 12.0)
-            titleTxt.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Left)
-            titleTxt.SetValue(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center)
-            titleTxt.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap)
+            Dim factory = New FrameworkElementFactory(GetType(StackPanel))
+            factory.SetValue(StackPanel.MarginProperty, New Thickness(5))
+            factory.SetValue(StackPanel.VerticalAlignmentProperty, VerticalAlignment.Center)
 
-            productFactory.AppendChild(titleTxt)
+            Dim txtName = New FrameworkElementFactory(GetType(TextBlock))
+            txtName.SetBinding(TextBlock.TextProperty, New Binding("[ProductName]"))
+            txtName.SetValue(TextBlock.FontWeightProperty, FontWeights.Bold)
+            txtName.SetValue(TextBlock.FontSizeProperty, 11.0)
+            txtName.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap)
 
-            colProduct.CellTemplate = New DataTemplate With {.VisualTree = productFactory}
+            Dim txtDesc = New FrameworkElementFactory(GetType(TextBlock))
+            txtDesc.SetBinding(TextBlock.TextProperty, New Binding("[Description]"))
+            txtDesc.SetValue(TextBlock.FontSizeProperty, 11.0)
+            txtDesc.SetValue(TextBlock.ForegroundProperty, Brushes.DimGray)
+            txtDesc.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap)
+
+            factory.AppendChild(txtName)
+            factory.AppendChild(txtDesc)
+            colProduct.CellTemplate = New DataTemplate With {.VisualTree = factory}
             dg.Columns.Add(colProduct)
 
-            ' Qty Column
             dg.Columns.Add(New DataGridTextColumn With {
-        .Header = "Quantity", .Binding = New Binding("[Quantity]"), .Width = 70,
-        .HeaderStyle = headerStyle,
-        .ElementStyle = CreateCenteredTextStyle(12)
-    })
+                .Header = "Qty",
+                .Binding = New Binding("[Quantity]"),
+                .MinWidth = 60,
+                .Width = 60,
+                .HeaderStyle = headerStyle,
+                .ElementStyle = centeredStyle
+            })
 
-            ' Serials Column
+            Dim serialStyle As New Style(GetType(TextBlock))
+            serialStyle.Setters.Add(New Setter(TextBlock.TextWrappingProperty, TextWrapping.Wrap))
+            serialStyle.Setters.Add(New Setter(TextBlock.FontSizeProperty, 11.0))
+            serialStyle.Setters.Add(New Setter(TextBlock.PaddingProperty, New Thickness(5)))
+            serialStyle.Setters.Add(New Setter(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center))
+            serialStyle.Setters.Add(New Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center))
+            serialStyle.Setters.Add(New Setter(TextBlock.TextAlignmentProperty, TextAlignment.Center))
+
             dg.Columns.Add(New DataGridTextColumn With {
-        .Header = "Serial Numbers", .Binding = New Binding("[SerialNumber]"), .Width = 250,
-        .HeaderStyle = headerStyle,
-        .ElementStyle = CreateCenteredTextStyle(10, True)
-    })
+                .Header = "Serial Numbers",
+                .Binding = New Binding("[SerialNumber]"),
+                .Width = New DataGridLength(2, DataGridLengthUnitType.Star),
+                .MinWidth = 303,
+                .HeaderStyle = headerStyle,
+                .ElementStyle = serialStyle
+            })
         End Sub
-
-        ' Helper to keep code clean
-        Private Function CreateCenteredTextStyle(size As Double, Optional wrap As Boolean = False) As Style
-            Dim st As New Style(GetType(TextBlock))
-            st.Setters.Add(New Setter(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center))
-            st.Setters.Add(New Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center))
-            st.Setters.Add(New Setter(TextBlock.TextAlignmentProperty, TextAlignment.Center))
-            st.Setters.Add(New Setter(TextBlock.FontSizeProperty, size))
-            st.Setters.Add(New Setter(TextBlock.FontFamilyProperty, New FontFamily("Lexend")))
-            If wrap Then st.Setters.Add(New Setter(TextBlock.TextWrappingProperty, TextWrapping.Wrap))
-            Return st
-        End Function
 
         Private Sub CancelButton(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToCachedView("newdelivery", Me)
@@ -461,7 +423,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
             If DeliveryReceiptController.InsertDeliveryReceipt(
                 DeliveryDetails.DRNumber,
-                DeliveryDetails.DRDocumentReference,
+                DeliveryDetails.DRReferenceInvoice,
                 DeliveryDetails.DRDate,
                 DeliveryDetails.DRClientName,
                 DeliveryDetails.DRClientDetails,
@@ -477,7 +439,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
                 DeliveryDetails.ClearDeliveryDetails()
 
-                ViewLoader.DynamicView.NavigateToView("newdelivery", Me)
+                ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
             Else
                 MessageBox.Show("Failed to submit Delivery Receipt to the database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End If
@@ -513,5 +475,150 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                 Return False
             End Try
         End Function
+
+        ' FOR TESTING ONLY
+        Public Sub LoadTestPlaceholderData()
+            DeliveryDetails.DRDeliveryItems.Clear()
+
+            DeliveryDetails.DRDeliveryItems = New List(Of Dictionary(Of String, String))()
+
+            Dim item1 As New Dictionary(Of String, String) From {
+                {"Quantity", "1"},
+                {"ProductName", "HIKVISION - 2MP WEATHERPROOF IR IP CAMERA"},
+                {"Description", "High-definition outdoor security camera with night vision."},
+                {"Amount", "1881.60"},
+                {"SerialNumber", "SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831, SN-HK-992831"}
+            }
+
+            Dim item2 As New Dictionary(Of String, String) From {
+                {"Quantity", "5"},
+                {"ProductName", "AEROCOOL UNITED POWER 500W (80+ WHITE)"},
+                {"Description", "Enter product description (Optional)"},
+                {"Amount", "2035.04"},
+                {"SerialNumber", "N/A"}
+            }
+
+            Dim item3 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item4 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item5 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item6 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item7 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item8 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item9 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item10 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item11 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item12 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item13 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item14 As New Dictionary(Of String, String) From {
+                {"Quantity", "12"},
+                {"ProductName", "LOGITECH G-PRO WIRELESS LIGHTSPEED GAMING MOUSE - BLACK EDITION"},
+                {"Description", "Ultra-lightweight gaming mouse used by esports professionals."},
+                {"Amount", "4500.00"},
+                {"SerialNumber", "SN-LOGI-7721"}
+            }
+
+            Dim item15 As New Dictionary(Of String, String) From {
+                {"Quantity", "1"},
+                {"ProductName", "HIKVISION - 2MP WEATHERPROOF IR IP CAMERA"},
+                {"Description", "High-definition outdoor security camera with night vision."},
+                {"Amount", "1881.60"},
+                {"SerialNumber", "SN-HK-992831"}
+            }
+
+            DeliveryDetails.DRDeliveryItems.Add(item1)
+            DeliveryDetails.DRDeliveryItems.Add(item2)
+            DeliveryDetails.DRDeliveryItems.Add(item3)
+            DeliveryDetails.DRDeliveryItems.Add(item4)
+            DeliveryDetails.DRDeliveryItems.Add(item5)
+            DeliveryDetails.DRDeliveryItems.Add(item6)
+            DeliveryDetails.DRDeliveryItems.Add(item7)
+            DeliveryDetails.DRDeliveryItems.Add(item8)
+            DeliveryDetails.DRDeliveryItems.Add(item9)
+            DeliveryDetails.DRDeliveryItems.Add(item10)
+            DeliveryDetails.DRDeliveryItems.Add(item11)
+            DeliveryDetails.DRDeliveryItems.Add(item12)
+            DeliveryDetails.DRDeliveryItems.Add(item13)
+            DeliveryDetails.DRDeliveryItems.Add(item14)
+            DeliveryDetails.DRDeliveryItems.Add(item15)
+
+            LoadPage()
+        End Sub
     End Class
 End Namespace

@@ -410,7 +410,7 @@
                                                                                     TextWrapping="Wrap"
                                                                                     TextTrimming="CharacterEllipsis"
                                                                                     MaxHeight="36"/>
-                                                                                <!--<TextBlock 
+                                                                                <TextBlock 
                                                                                     Text="{Binding ProductDescription}" 
                                                                                     FontSize="12" 
                                                                                     FontFamily="Lexend"
@@ -420,7 +420,7 @@
                                                                                     TextWrapping="Wrap"
                                                                                     TextTrimming="CharacterEllipsis"
                                                                                     MaxHeight="20" 
-                                                                                    Visibility="{Binding ProductDescriptionVisibility}"/>-->
+                                                                                    Visibility="{Binding ProductDescriptionVisibility}"/>
                                                                             </StackPanel>
                                                                         </DataTemplate>
                                                                     </DataGridTemplateColumn.CellTemplate>

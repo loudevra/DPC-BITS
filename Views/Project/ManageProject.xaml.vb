@@ -202,60 +202,6 @@ Namespace DPC.Views.Project
                 MessageBox.Show("Error deleting project: " & ex.Message)
             End Try
         End Sub
-        ' --- EXCEL EXPORT FUNCTIONALITY ---
-
-        Private Sub BtnExportExcel_Click(sender As Object, e As RoutedEventArgs)
-            ' 1. Check if there is data to export
-            If _filteredProjects Is Nothing OrElse _filteredProjects.Count = 0 Then
-                MessageBox.Show("There are no projects to export.", "Empty Data", MessageBoxButton.OK, MessageBoxImage.Information)
-                Return
-            End If
-
-            ' 2. Open a Save File Dialog so the user can choose where to save the file
-            Dim sfd As New Microsoft.Win32.SaveFileDialog()
-            sfd.Filter = "Excel CSV File (*.csv)|*.csv"
-            sfd.FileName = "Project_Report_" & DateTime.Now.ToString("yyyyMMdd") & ".csv"
-
-            If sfd.ShowDialog() = True Then
-                Try
-                    ' 3. Build the Excel-compatible text using StringBuilder
-                    Dim sb As New System.Text.StringBuilder()
-
-                    ' Add the Header Row
-                    sb.AppendLine("Project ID,Project Name,Status,Customer,Budget,Start Date,Due Date,Assigned To")
-
-                    ' Add the Data Rows
-                    For Each p In _filteredProjects
-                        Dim row As New List(Of String) From {
-                            EscapeCsv(p.ProjectID.ToString()),
-                            EscapeCsv(p.ProjectName),
-                            EscapeCsv(p.Status),
-                            EscapeCsv(p.Customer),
-                            EscapeCsv(p.Budget.ToString()),
-                            EscapeCsv(If(p.StartDate IsNot Nothing, p.StartDate.ToString(), "")),
-                            EscapeCsv(If(p.DueDate IsNot Nothing, p.DueDate.ToString(), "")),
-                            EscapeCsv(p.AssignedToName)
-                        }
-                        ' Join columns with commas
-                        sb.AppendLine(String.Join(",", row))
-                    Next
-
-                    ' 4. Save the file
-                    System.IO.File.WriteAllText(sfd.FileName, sb.ToString())
-                    MessageBox.Show("Exported successfully! You can now open this file in Excel.", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
-
-                Catch ex As Exception
-                    MessageBox.Show("Error exporting data: " & ex.Message, "Export Error", MessageBoxButton.OK, MessageBoxImage.Error)
-                End Try
-            End If
-        End Sub
-
-        ' Helper function to handle commas or quotes inside your data (e.g., if a Project Name has a comma in it)
-        Private Function EscapeCsv(value As String) As String
-            If String.IsNullOrWhiteSpace(value) Then Return """"""
-            ' Wrap value in quotes and double-up any existing quotes for Excel compatibility
-            Return """" & value.Replace("""", """""") & """"
-        End Function
 
     End Class
 End Namespace

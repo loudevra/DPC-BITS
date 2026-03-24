@@ -41,9 +41,9 @@
     Public CETerm10 As String = "Please indicate lead time for installation"
     Public CETerm11 As String = "We will have a site inscpetions prior to installation"
     Public CETerm12 As String = ""
-    Public CETerm13 As String = ""
-    Public CETerm14 As String = ""
-    Public CETerm15 As String = ""
+    Public CETerm13 As String = "" ' Before Terms
+    Public CETerm14 As String = "" ' During Terms
+    Public CETerm15 As String = "" ' After Terms
     Public CETotalCostDelivery, CEDeliveryCost As Decimal
     Public CEApproved As String
     Public CEInstallation As String

@@ -11,8 +11,6 @@
         Public Property WarehouseID As String
         Public Property WarehouseName As String
         Public Property QuoteNote As String
-        Public Property DeliveryFee As String
-        Public Property InstallationFee As String
         Public Property TotalTax As String
         Public Property TotalDiscount As String
         Public Property TotalPrice As String

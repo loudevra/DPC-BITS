@@ -2,7 +2,7 @@
     Public Class DeliveryReceiptModel
         ' Primary Identifiers
         Public Property DRNumber As String
-        Public Property DocumentReference As String
+        Public Property ReferenceInvoice As String
 
         ' Client Information
         Public Property ClientName As String

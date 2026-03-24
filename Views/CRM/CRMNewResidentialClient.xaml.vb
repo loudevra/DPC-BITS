@@ -1,5 +1,4 @@
-﻿' CRMNewResidentialClient.xaml.vb
-Namespace DPC.Views.CRM
+﻿Namespace DPC.Views.CRM
     Public Class CRMNewResidentialClient
 
         Public Sub New()
