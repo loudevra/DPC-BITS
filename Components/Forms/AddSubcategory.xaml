@@ -31,7 +31,7 @@
             <StackPanel Grid.Row="1" Margin="0,0,0,15">
                 <StackPanel Margin="0,0,0,15">
                     <TextBlock Text="Category:" FontSize="14" FontWeight="SemiBold" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,0,10"/>
-                    <ComboBox x:Name="ComboBoxCategory" Style="{StaticResource RoundedComboBoxStyle}"/>
+                    <ComboBox x:Name="ComboBoxCategory" Style="{StaticResource RoundedComboBoxStyle}" IsEditable="True" IsTextSearchEnabled="True" Loaded="ComboBoxCategory_Loaded"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="No. of Sub-Categories:" FontSize="14" FontWeight="SemiBold" Foreground="#555555" VerticalAlignment="Center" Margin="0,0,15,0"/>

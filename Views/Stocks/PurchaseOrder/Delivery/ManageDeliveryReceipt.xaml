@@ -383,37 +383,45 @@
                                 </DataGrid.CellStyle>
 
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="DR Number" Binding="{Binding DRNumber}" Width="150"/>
-                                    <DataGridTextColumn Header="Invoice Ref" Binding="{Binding ReferenceInvoice}" Width="130"/>
-                                    <DataGridTextColumn Header="DR Date" Binding="{Binding DRDate}" Width="120"/>
-                                    <DataGridTextColumn Header="Status" Binding="{Binding DeliveryStatus}" Width="140">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="FontWeight" Value="Bold"/>
-                                                <Style.Triggers>
-                                                    <Trigger Property="Text" Value="FULL DELIVERY">
-                                                        <Setter Property="Foreground" Value="#456B2E"/>
-                                                    </Trigger>
+                                    <DataGridTextColumn Header="DR Number" Binding="{Binding DocumentNumber}" Width="150"/>
+                                    <DataGridTextColumn Header="Invoice Ref" Binding="{Binding DocumentReference}" Width="130"/>
+                                    <DataGridTextColumn Header="DR Date" Binding="{Binding DocumentDate}" Width="120"/>
+                                    <DataGridTemplateColumn Header="Status">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock x:Name="txtStatus" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Text" Value="{Binding DeliveryStatus}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding DeliveryStatus}" Value="FULL DELIVERY">
+                                                                    <Setter Property="Text" Value="COMPLETE"/>
+                                                                    <Setter Property="Foreground" Value="#456B2E" />
+                                                                </DataTrigger>
 
-                                                    <DataTrigger Binding="{Binding DeliveryStatus}" Value="PARTIAL DELIVERY">
-                                                        <Setter Property="Foreground" Value="#FFA500"/>
-                                                    </DataTrigger>
+                                                                <DataTrigger Binding="{Binding DeliveryStatus}" Value="PARTIAL DELIVERY">
+                                                                    <Setter Property="Foreground" Value="#FFA500"/>
+                                                                </DataTrigger>
 
-                                                    <MultiDataTrigger>
-                                                        <MultiDataTrigger.Conditions>
-                                                            <Condition Binding="{Binding DeliveryStatus}" Value="PARTIAL DELIVERY"/>
-                                                            <Condition Binding="{Binding IsFullyDelivered}" Value="True"/>
-                                                        </MultiDataTrigger.Conditions>
-                                                        <Setter Property="Foreground" Value="#456B2E"/>
-                                                    </MultiDataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
+                                                                <MultiDataTrigger>
+                                                                    <MultiDataTrigger.Conditions>
+                                                                        <Condition Binding="{Binding DeliveryStatus}" Value="PARTIAL DELIVERY"/>
+                                                                        <Condition Binding="{Binding IsFullyDelivered}" Value="True"/>
+                                                                    </MultiDataTrigger.Conditions>
+                                                                    <Setter Property="Text" Value="COMPLETE"/>
+                                                                    <Setter Property="Foreground" Value="#456B2E"/>
+                                                                </MultiDataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
                                     <DataGridTextColumn Header="Client Name" Binding="{Binding ClientName}" Width="180"/>
                                     <DataGridTextColumn Header="Shipping" Binding="{Binding ShippingMethod}" Width="120"/>
-                                    <DataGridTextColumn Header="Prepared By" Binding="{Binding Username}" Width="120"/>
-                                    <DataGridTextColumn Header="System Date" Binding="{Binding DateAddedDisplay}" Width="120"/>
+                                    <DataGridTextColumn Header="Prepared By" Binding="{Binding SalesRep}" Width="120"/>
+                                    <DataGridTextColumn Header="System Date" Binding="{Binding DateAdded}" Width="120"/>
 
                                     <DataGridTemplateColumn Header="Actions" Width="100">
                                         <DataGridTemplateColumn.CellTemplate>

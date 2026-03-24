@@ -1,5 +1,4 @@
-﻿<!--- ManageProject.xaml -->
-    <UserControl x:Class="DPC.Views.Project.ManageProject"
+﻿<UserControl x:Class="DPC.Views.Project.ManageProject"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -23,12 +22,10 @@
             </Setter>
         </Style>
 
-        <!-- Border Style -->
         <Style x:Key="RoundedBorderStyle" TargetType="Border">
             <Setter Property="CornerRadius" Value="15"/>
         </Style>
 
-        <!-- Button Style -->
         <Style x:Key="RoundedButtonStyle" TargetType="Button">
             <Setter Property="Template">
                 <Setter.Value>
@@ -54,13 +51,11 @@
                     BorderBrush="{TemplateBinding BorderBrush}" 
                     BorderThickness="1">
                             <Grid>
-                                <!-- Define two columns, Content on left, Arrow on right -->
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="35" />
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Selected Item Content -->
                                 <ContentPresenter Name="ContentSite"
                                       IsHitTestVisible="False"
                                       Content="{TemplateBinding SelectionBoxItem}"
@@ -68,7 +63,6 @@
                                       VerticalAlignment="Center"
                                       Margin="10,0,5,0"/>
 
-                                <!-- Arrow Button (Right) -->
                                 <ToggleButton Name="ToggleButton" 
                                   Grid.Column="1"
                                   Focusable="False"
@@ -98,19 +92,16 @@
                                     </ToggleButton.Style>
                                 </ToggleButton>
 
-                                <!-- Dropdown Items -->
                                 <Popup Name="Popup"
                            Placement="Bottom"
                            IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
                            AllowsTransparency="True"
                            Focusable="False"
                            MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-                                    <!-- MATCH WIDTH -->
                                     <Border Style="{StaticResource RoundedBorderStyle}" 
                                 Background="White" 
                                 BorderBrush="#AEAEAE"
                                 Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-                                        <!-- MATCH WIDTH -->
                                         <ScrollViewer>
                                             <StackPanel>
                                                 <ItemsPresenter/>
@@ -133,7 +124,6 @@
             <Setter Property="Padding" Value="5"/>
         </Style>
 
-        <!-- Add the RoundedTextboxStyle that was missing in the original code -->
         <Style x:Key="RoundedTextboxStyle" TargetType="TextBox">
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Background" Value="Transparent"/>
@@ -144,9 +134,7 @@
     </UserControl.Resources>
 
     <Grid>
-        <!-- Main Content Area -->
         <Grid>
-            <!-- Main Content (ScrollViewer) -->
             <ScrollViewer VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Disabled">
                 <Grid Margin="20">
@@ -155,14 +143,11 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <!-- Main Content -->
                     <StackPanel Grid.Row="1" Margin="20">
-                        <!-- Header Section -->
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
                             <TextBlock Text="Projects" FontSize="32" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#555555" Width="287" Height="44"/>
                         </StackPanel>
 
-                        <!-- Stats Section -->
                         <Grid Margin="0,0,0,20">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -171,7 +156,6 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <!-- Cards -->
                             <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="15,5,15,5" Width="Auto" Margin="0,0,5,0" Height="80">
                                 <Grid>
                                     <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
@@ -221,7 +205,6 @@
                                 </Grid>
                             </Border>
                         </Grid>
-                        <!-- Filters and Controls -->
                         <Border Grid.Row="1" Padding="5" Background="White" CornerRadius="10" BorderBrush="White" Margin="0,0,0,15" >
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -229,10 +212,8 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Left Controls -->
                                 <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                    <!-- Excel Button -->
-                                    <Button Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" Foreground="White" Width="75" Height="29" Margin="10,0,10,0">
+                                    <Button x:Name="btnExportExcel" Click="BtnExportExcel_Click" Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" Foreground="White" Width="75" Height="29" Margin="10,0,10,0">
                                         <materialDesign:PackIcon Kind="MicrosoftExcel" Width="25" Height="25"/>
                                     </Button>
 
@@ -251,7 +232,6 @@
                                     </Button>
                                 </StackPanel>
 
-                                <!-- Right Controls -->
                                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
                                     <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Width="250" Height="36">
                                         <Grid>
@@ -291,25 +271,50 @@
                             </Grid>
                         </Border>
 
-                        <!-- Add this grid directly after the filters and controls border -->
-                        <Border Background="White" CornerRadius="8" Padding="5">
+
+                        <Border Background="White" CornerRadius="8" BorderBrush="#D4E3F0" BorderThickness="1" ClipToBounds="True">
                             <StackPanel>
-                                <!-- Data Grid -->
                                 <DataGrid x:Name="ProjectDataGrid"
           AutoGenerateColumns="False"
           CanUserAddRows="False"
           HeadersVisibility="Column"
-          GridLinesVisibility="None"
+          GridLinesVisibility="Horizontal"
+          HorizontalGridLinesBrush="#F0F0F0"
           RowBackground="White"
-          AlternatingRowBackground="WhiteSmoke"
-          BorderThickness="0">
+          AlternatingRowBackground="#FAFCFD"
+          BorderThickness="0"
+          RowHeight="40"
+          HorizontalScrollBarVisibility="Disabled">
+                                    <DataGrid.Resources>
+                                        <Style TargetType="DataGridColumnHeader">
+                                            <Setter Property="Background" Value="#F4F8FB"/>
+                                            <Setter Property="Foreground" Value="#0A5A97"/>
+                                            <Setter Property="FontFamily" Value="Lexend"/>
+                                            <Setter Property="FontSize" Value="13"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                            <Setter Property="Padding" Value="10,8"/>
+                                            <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                                            <Setter Property="BorderBrush" Value="#D4E3F0"/>
+                                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                        </Style>
+
+                                        <Style x:Key="TextCell" TargetType="TextBlock">
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                            <Setter Property="Margin" Value="10,0,0,0"/>
+                                            <Setter Property="FontFamily" Value="Lexend"/>
+                                            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                        </Style>
+                                    </DataGrid.Resources>
+
                                     <DataGrid.Columns>
-                                        <DataGridTextColumn Header="#"             Binding="{Binding ProjectID}"        Width="60"/>
-                                        <DataGridTextColumn Header="Project Name"  Binding="{Binding ProjectName}"      Width="180"/>
-                                        <DataGridTemplateColumn Header="Status" Width="110">
+                                        <DataGridTextColumn Header="#"             Binding="{Binding ProjectID}"        Width="50" ElementStyle="{StaticResource TextCell}"/>
+
+                                        <DataGridTextColumn Header="Project"  Binding="{Binding ProjectName}"      Width="*" ElementStyle="{StaticResource TextCell}"/>
+
+                                        <DataGridTemplateColumn Header="Status" Width="120">
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
-                                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
                                                         <Ellipse Width="10" Height="10" VerticalAlignment="Center" Margin="0,0,6,0">
                                                             <Ellipse.Style>
                                                                 <Style TargetType="Ellipse">
@@ -336,79 +341,72 @@
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>
-                                        <DataGridTextColumn Header="Customer"      Binding="{Binding Customer}"         Width="140"/>
-                                        <DataGridTextColumn Header="ABC"           Binding="{Binding Budget, StringFormat='{}{0:N0}'}" Width="100"/>
-                                        <DataGridTextColumn Header="Start Date"    Binding="{Binding StartDate, StringFormat='{}{0:MMM dd, yyyy}'}"  Width="110"/>
-                                        <DataGridTextColumn Header="Due Date"      Binding="{Binding DueDate, StringFormat='{}{0:MMM dd, yyyy}'}"    Width="110"/>
-                                        <DataGridTextColumn Header="Assigned To" Binding="{Binding AssignedToName}" Width="110"/>
-                                        <!-- Settings Column -->
+
+                                        <DataGridTextColumn Header="Customer"      Binding="{Binding Customer}"         Width="*" ElementStyle="{StaticResource TextCell}"/>
+
+                                        <DataGridTextColumn Header="ABC"           Binding="{Binding Budget, StringFormat='{}{0:N0}'}" Width="0.8*" ElementStyle="{StaticResource TextCell}"/>
+                                        <DataGridTextColumn Header="Start Date"    Binding="{Binding StartDate, StringFormat='{}{0:MMM dd, yyyy}'}"  Width="105" ElementStyle="{StaticResource TextCell}"/>
+                                        <DataGridTextColumn Header="Due Date"      Binding="{Binding DueDate, StringFormat='{}{0:MMM dd, yyyy}'}"    Width="105" ElementStyle="{StaticResource TextCell}"/>
+                                        <DataGridTextColumn Header="Assigned To"   Binding="{Binding AssignedToName}" Width="*" ElementStyle="{StaticResource TextCell}"/>
+
                                         <DataGridTemplateColumn Header="Actions" Width="90">
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
-                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-
-                                                        <!-- EDIT ICON BUTTON -->
+                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                                                         <Button Width="30" Height="30"
-                                                                Background="White"
-                                                                Margin="0,0,5,0"
-                                                                Tag="{Binding ProjectID}"
-                                                                Click="BtnEdit_Click">
+                                Background="White"
+                                Margin="0,0,5,0"
+                                Tag="{Binding ProjectID}"
+                                Click="BtnEdit_Click">
                                                             <Button.Template>
                                                                 <ControlTemplate TargetType="Button">
                                                                     <Border Background="{TemplateBinding Background}" 
-                                                                            CornerRadius="5"
-                                                                            BorderBrush="#AEAEAE"
-                                                                            BorderThickness="1">
+                                            CornerRadius="5"
+                                            BorderBrush="#AEAEAE"
+                                            BorderThickness="1">
                                                                         <materialDesign:PackIcon Kind="SquareEditOutline" 
-                                                                                                 Width="16" Height="16"
-                                                                                                 Foreground="#52C69D"
-                                                                                                 HorizontalAlignment="Center" 
-                                                                                                 VerticalAlignment="Center"/>
+                                                                 Width="16" Height="16"
+                                                                 Foreground="#52C69D"
+                                                                 HorizontalAlignment="Center" 
+                                                                 VerticalAlignment="Center"/>
                                                                     </Border>
                                                                 </ControlTemplate>
                                                             </Button.Template>
                                                         </Button>
 
-                                                        <!-- DELETE ICON BUTTON -->
                                                         <Button Width="30" Height="30"
-                                                                Background="White"
-                                                                Tag="{Binding ProjectID}"
-                                                                Click="BtnDelete_Click">
+                                Background="White"
+                                Tag="{Binding ProjectID}"
+                                Click="BtnDelete_Click">
                                                             <Button.Template>
                                                                 <ControlTemplate TargetType="Button">
                                                                     <Border Background="{TemplateBinding Background}" 
-                                                                            CornerRadius="5"
-                                                                            BorderBrush="#AEAEAE"
-                                                                            BorderThickness="1">
+                                            CornerRadius="5"
+                                            BorderBrush="#AEAEAE"
+                                            BorderThickness="1">
                                                                         <materialDesign:PackIcon Kind="TrashCanOutline" 
-                                                                                                 Width="16" Height="16"
-                                                                                                 Foreground="#C0392B"
-                                                                                                 HorizontalAlignment="Center" 
-                                                                                                 VerticalAlignment="Center"/>
+                                                                 Width="16" Height="16"
+                                                                 Foreground="#C0392B"
+                                                                 HorizontalAlignment="Center" 
+                                                                 VerticalAlignment="Center"/>
                                                                     </Border>
                                                                 </ControlTemplate>
                                                             </Button.Template>
                                                         </Button>
-
                                                     </StackPanel>
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>
                                     </DataGrid.Columns>
-                                    <!-- keep your existing RowStyle, ColumnHeaderStyle, CellStyle here -->
                                 </DataGrid>
                             </StackPanel>
                         </Border>
-
-                        <!-- Table and Controls -->
                         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,0,0,15"/>
 
-                        <!-- Pagination Controls -->
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
                             <Border Background="White" CornerRadius="30" Padding="10,5" BorderThickness="2" BorderBrush="#adadad">
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
 
-                                    <!-- Previous -->
                                     <Button x:Name="btnPrev" Content="&lt;" FontSize="14" Width="30" Height="30"
                     Background="Transparent" BorderBrush="Transparent"
                     FontFamily="Lexend" Foreground="#adadad" Click="BtnPrev_Click">
@@ -421,7 +419,6 @@
                                         </Button.Template>
                                     </Button>
 
-                                    <!-- Dynamic Page Buttons -->
                                     <ItemsControl x:Name="PageButtonsPanel">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
@@ -430,7 +427,6 @@
                                         </ItemsControl.ItemsPanel>
                                     </ItemsControl>
 
-                                    <!-- Next -->
                                     <Button x:Name="btnNext" Content="&gt;" FontSize="14" Width="30" Height="30"
                     Background="Transparent" BorderBrush="Transparent"
                     FontFamily="Lexend" Foreground="#555555" FontWeight="Bold" Click="BtnNext_Click">

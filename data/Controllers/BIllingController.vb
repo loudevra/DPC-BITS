@@ -77,8 +77,8 @@ Namespace DPC.Data.Controllers
         ''' Inserts a new Billing Statement into the walkinbilling table
         Public Shared Function InsertBillingStatement(bm As BillingModel) As Boolean
             Try
-                Dim query As String = "INSERT INTO walkinbilling (billingNumber, billingDate, DRNo, clientID, companyRep, salesRep, preparedBy, approvedBy, paymentTerms, orderItems, warehouseID, base64img, taxProperty, discountProperty, totalTax, totalDiscount, totalAmount, billingNote, bankDetails, accName, accNo, remarks, dateAdded) " &
-                                     "VALUES (@billingNumber, @billingDate, @DRNo, @clientID, @companyRep, @salesRep, @preparedBy, @approvedBy, @paymentTerms, @orderItems, @warehouseID, @base64img, @taxProperty, @discountProperty, @totalTax, @totalDiscount, @totalAmount, @billingNote, @bankDetails, @accName, @accNo, @remarks, NOW())"
+                Dim query As String = "INSERT INTO walkinbilling (billingNumber, billingDate, DRNo, clientID, companyRep, salesRep, preparedBy, approvedBy, paymentTerms, orderItems, warehouseID, base64img, taxProperty, discountProperty, deliveryFee, installationFee, totalTax, totalDiscount, totalAmount, billingNote, bankDetails, accName, accNo, remarks, dateAdded) " &
+                                     "VALUES (@billingNumber, @billingDate, @DRNo, @clientID, @companyRep, @salesRep, @preparedBy, @approvedBy, @paymentTerms, @orderItems, @warehouseID, @base64img, @taxProperty, @discountProperty, @deliveryFee, @installationFee, @totalTax, @totalDiscount, @totalAmount, @billingNote, @bankDetails, @accName, @accNo, @remarks, NOW())"
 
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
@@ -109,16 +109,105 @@ Namespace DPC.Data.Controllers
                         Return cmd.ExecuteNonQuery() > 0
                     End Using
                 End Using
+
+                MessageBox.Show($"Successfully Added the Billing Statement With Number {bm.BillingNumber}")
             Catch ex As Exception
                 MessageBox.Show("Failed to save billing statement: " & ex.Message)
                 Return False
             End Try
         End Function
 
+        Public Shared Function UpdateBillingStatement(bm As BillingModel) As Boolean
+            Try
+                ' SQL Query - Updates all fields where the billingNumber matches
+                Dim query As String = "UPDATE walkinbilling SET " &
+                             "billingDate = @billingDate, " &
+                             "DRNo = @DRNo, " &
+                             "clientID = @clientID, " &
+                             "companyRep = @companyRep, " &
+                             "salesRep = @salesRep, " &
+                             "preparedBy = @preparedBy, " &
+                             "approvedBy = @approvedBy, " &
+                             "paymentTerms = @paymentTerms, " &
+                             "orderItems = @orderItems, " &
+                             "warehouseID = @warehouseID, " &
+                             "base64img = @base64img, " &
+                             "taxProperty = @taxProperty, " &
+                             "discountProperty = @discountProperty, " &
+                             "deliveryFee = @deliveryFee, " &
+                             "installationFee = @installationFee, " &
+                             "totalTax = @totalTax, " &
+                             "totalDiscount = @totalDiscount, " &
+                             "totalAmount = @totalAmount, " &
+                             "billingNote = @billingNote, " &
+                             "bankDetails = @bankDetails, " &
+                             "accName = @accName, " &
+                             "accNo = @accNo, " &
+                             "remarks = @remarks " &
+                             "WHERE billingNumber = @billingNumber"
+
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Using transaction As MySqlTransaction = conn.BeginTransaction()
+                        Try
+                            Using cmd As New MySqlCommand(query, conn, transaction)
+                                ' Primary Key for WHERE clause
+                                cmd.Parameters.AddWithValue("@billingNumber", bm.BillingNumber)
+
+                                ' Data Parameters
+                                cmd.Parameters.AddWithValue("@billingDate", bm.BillingDate)
+                                cmd.Parameters.AddWithValue("@DRNo", If(String.IsNullOrEmpty(bm.DRNo), "", bm.DRNo))
+                                cmd.Parameters.AddWithValue("@clientID", bm.ClientID)
+                                cmd.Parameters.AddWithValue("@companyRep", bm.CompanyRep)
+                                cmd.Parameters.AddWithValue("@salesRep", If(String.IsNullOrEmpty(bm.PreparedBy), "", bm.PreparedBy))
+                                cmd.Parameters.AddWithValue("@preparedBy", bm.PreparedBy)
+                                cmd.Parameters.AddWithValue("@approvedBy", If(String.IsNullOrEmpty(bm.ApprovedBy), "", bm.ApprovedBy))
+                                cmd.Parameters.AddWithValue("@paymentTerms", If(String.IsNullOrEmpty(bm.PaymentTerms), "", bm.PaymentTerms))
+                                cmd.Parameters.AddWithValue("@orderItems", bm.OrderItems)
+                                cmd.Parameters.AddWithValue("@warehouseID", bm.WarehouseID)
+                                cmd.Parameters.AddWithValue("@base64img", If(String.IsNullOrEmpty(bm.Base64img), "", bm.Base64img))
+                                cmd.Parameters.AddWithValue("@taxProperty", bm.TaxProperty)
+                                cmd.Parameters.AddWithValue("@discountProperty", bm.DiscountProperty)
+                                cmd.Parameters.AddWithValue("@DeliveryFee", bm.DeliveryFee)
+                                cmd.Parameters.AddWithValue("@InstallationFee", bm.InstallationFee)
+                                cmd.Parameters.AddWithValue("@totalTax", bm.TotalTax)
+                                cmd.Parameters.AddWithValue("@totalDiscount", bm.TotalDiscount)
+                                cmd.Parameters.AddWithValue("@totalAmount", bm.TotalAmount)
+                                cmd.Parameters.AddWithValue("@billingNote", If(String.IsNullOrEmpty(bm.BillingNote), "", bm.BillingNote))
+                                cmd.Parameters.AddWithValue("@bankDetails", If(String.IsNullOrEmpty(bm.BankDetails), "", bm.BankDetails))
+                                cmd.Parameters.AddWithValue("@accName", If(String.IsNullOrEmpty(bm.AccName), "", bm.AccName))
+                                cmd.Parameters.AddWithValue("@accNo", If(String.IsNullOrEmpty(bm.AccNo), "", bm.AccNo))
+                                cmd.Parameters.AddWithValue("@remarks", If(String.IsNullOrEmpty(bm.Remarks), "", bm.Remarks))
+
+                                Dim rowsAffected As Integer = cmd.ExecuteNonQuery()
+
+                                If rowsAffected > 0 Then
+                                    transaction.Commit()
+                                    Return True
+                                Else
+                                    transaction.Rollback()
+                                    Return False
+                                End If
+                            End Using
+                            MessageBox.Show($"Successfully Updated the Billing Statement With Number {bm.BillingNumber}")
+                        Catch ex As Exception
+                            transaction.Rollback()
+                            Throw ex
+                        End Try
+                    End Using
+                End Using
+            Catch ex As Exception
+                Debug.WriteLine("Error in UpdateBillingStatement: " & ex.Message)
+                MessageBox.Show("Failed to update billing statement: " & ex.Message)
+                Return False
+            End Try
+        End Function
+
+
         ''' Generates a unique Billing ID
         Public Shared Function GenerateBillingID(isGov As Boolean) As String
             Dim prefix As String = If(isGov, "GB-", "BL-")
-            Dim datePart As String = DateTime.Now.ToString("MMddyyyy")
+            Dim datePart As String = DateTime.Now.ToString("MM-dd-yyyy")
 
             Dim nextID As Integer = 1
             Try
@@ -138,6 +227,25 @@ Namespace DPC.Data.Controllers
             End Try
 
             Return $"{prefix}{datePart}-{nextID:D4}"
+        End Function
+
+        Public Shared Function BillingNumberExists(billingNumber As String) As Boolean
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    ' Query the walkinbilling table specifically
+                    Dim query As String = "SELECT COUNT(*) FROM walkinbilling WHERE billingNumber = @billingNumber"
+
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@billingNumber", billingNumber)
+                        Dim count As Integer = Convert.ToInt32(cmd.ExecuteScalar())
+                        Return count > 0
+                    End Using
+                End Using
+            Catch ex As Exception
+                Debug.WriteLine("Error in BillingNumberExists: " & ex.Message)
+                Return False
+            End Try
         End Function
 
         ''' Helper to map SQL reader to BillingModel

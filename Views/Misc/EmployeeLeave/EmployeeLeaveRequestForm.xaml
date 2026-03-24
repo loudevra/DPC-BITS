@@ -46,7 +46,7 @@
                             <Grid>
                                 <TextBox x:Name="AutoCompleteTextBox" FontFamily="{StaticResource Lexend}" Height="35" Style="{StaticResource RoundedTextboxStyle}" FontSize="14" TextAlignment="Center" VerticalAlignment="Top"
                                          TextChanged="AutoCompleteTextBox_TextChanged"
-                                         PreviewKeyDown="AutoCompleteTextBox_PreviewKeyDown"/>
+                                         PreviewKeyDown="AutoCompleteTextBox_PreviewKeyDown" CharacterCasing="Upper"/>
 
                                 <Popup x:Name="AutoCompletePopup" Placement="Bottom" PlacementTarget="{Binding ElementName=AutoCompleteTextBox}" StaysOpen="False" AllowsTransparency="True" Focusable="False" IsOpen="False">
                                     <Border Background="White" BorderBrush="Gray" BorderThickness="1" CornerRadius="5">
@@ -60,7 +60,7 @@
                     <StackPanel Grid.Column="1" Grid.Row="0" Margin="10">
                         <TextBlock Text="EMPLOYEE ID" FontFamily="{StaticResource Lexend}" FontWeight="Bold" FontSize="16" TextAlignment="Left" Margin="10,0,0,5"/>
                         <Border Style="{StaticResource RoundedBorderStyle}">
-                            <TextBox FontFamily="{StaticResource Lexend}" x:Name="EmployeeID" Height="35" Style="{StaticResource RoundedTextboxStyle}" FontSize="14" TextAlignment="Center" IsReadOnly="True"/>
+                            <TextBox FontFamily="{StaticResource Lexend}" x:Name="EmployeeID" Height="35" Style="{StaticResource RoundedTextboxStyle}" FontSize="14" TextAlignment="Center" IsReadOnly="True" CharacterCasing="Upper"/>
                         </Border>
                     </StackPanel>
 
@@ -92,7 +92,7 @@
                         <TextBlock Text="WORK PHONE" FontFamily="{StaticResource Lexend}" FontWeight="Bold" FontSize="16" TextAlignment="Left" Margin="10,0,0,5"/>
                         <Border Style="{StaticResource RoundedBorderStyle}">
                             <TextBox FontFamily="{StaticResource Lexend}" x:Name="WorkPhone" Height="35" Style="{StaticResource RoundedTextboxStyle}" FontSize="14" TextAlignment="Center" 
-                                     PreviewTextInput="NumericOnly_PreviewTextInput" />
+                                     PreviewTextInput="NumericOnly_PreviewTextInput" CharacterCasing="Upper" />
                         </Border>
                     </StackPanel>
 
@@ -100,21 +100,21 @@
                         <TextBlock Text="PERSONAL PHONE" FontFamily="{StaticResource Lexend}" FontWeight="Bold" FontSize="16" TextAlignment="Left" Margin="10,0,0,5"/>
                         <Border Style="{StaticResource RoundedBorderStyle}">
                             <TextBox FontFamily="{StaticResource Lexend}" x:Name="PersonalPhone" Height="35" Style="{StaticResource RoundedTextboxStyle}" FontSize="14" TextAlignment="Center" 
-                                     PreviewTextInput="NumericOnly_PreviewTextInput" />
+                                     PreviewTextInput="NumericOnly_PreviewTextInput" CharacterCasing="Upper"/>
                         </Border>
                     </StackPanel>
 
                     <StackPanel Grid.Column="0" Grid.Row="2" Margin="10">
                         <TextBlock Text="DEPARTMENT NAME" FontFamily="{StaticResource Lexend}" FontWeight="Bold" FontSize="16" TextAlignment="Left" Margin="10,0,0,5"/>
                         <Border Style="{StaticResource RoundedBorderStyle}">
-                            <TextBox FontFamily="{StaticResource Lexend}" x:Name="Department" Height="35" Style="{StaticResource RoundedTextboxStyle}" FontSize="14" TextAlignment="Center"/>
+                            <TextBox FontFamily="{StaticResource Lexend}" x:Name="Department" Height="35" Style="{StaticResource RoundedTextboxStyle}" FontSize="14" TextAlignment="Center" CharacterCasing="Upper"/>
                         </Border>
                     </StackPanel>
 
                     <StackPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2" Margin="10">
                         <TextBlock Text="SUPERVISOR NAME" FontFamily="{StaticResource Lexend}" FontWeight="Bold" FontSize="16" TextAlignment="Left" Margin="10,0,0,5"/>
                         <Border Style="{StaticResource RoundedBorderStyle}">
-                            <TextBox FontFamily="{StaticResource Lexend}" x:Name="SupervisorName" Height="35" Style="{StaticResource RoundedTextboxStyle}" FontSize="14" TextAlignment="Center"/>
+                            <TextBox FontFamily="{StaticResource Lexend}" x:Name="SupervisorName" Height="35" Style="{StaticResource RoundedTextboxStyle}" FontSize="14" TextAlignment="Center" CharacterCasing="Upper"/>
                         </Border>
                     </StackPanel>
                 </Grid>
@@ -182,7 +182,7 @@
                             </Border>
 
                             <Border Grid.Column="2" Style="{StaticResource RoundedBorderStyle}" Margin="0,0,5,0" Background="White" Padding="5,0,5,0">
-                                <TextBox x:Name="txtHours" Height="35" VerticalContentAlignment="Center" FontFamily="{StaticResource Lexend}" TextAlignment="Center" FontSize="14" FontWeight="Bold" Background="Transparent" BorderThickness="0" materialDesign:TextFieldAssist.DecorationVisibility="Hidden"/>
+                                <TextBox x:Name="txtHours" Height="35" VerticalContentAlignment="Center" FontFamily="{StaticResource Lexend}" TextAlignment="Center" FontSize="14" FontWeight="Bold" Background="Transparent" BorderThickness="0" materialDesign:TextFieldAssist.DecorationVisibility="Hidden" CharacterCasing="Upper"/>
                             </Border>
 
                             <Border Grid.Column="3" Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,0" Background="White" Padding="5,0,5,0">
@@ -216,7 +216,7 @@
                     <StackPanel Grid.Row="0" Grid.Column="0" Margin="10,0,10,15">
                         <TextBlock Text="EMPLOYEE NAME" FontFamily="{StaticResource Lexend}" FontWeight="Bold" FontSize="14" Margin="10,0,0,5"/>
                         <Border Style="{StaticResource RoundedBorderStyle}">
-                            <TextBox FontFamily="{StaticResource Lexend}" Height="35" Style="{StaticResource RoundedTextboxStyle}" FontSize="14" TextAlignment="Center" IsReadOnly="True" Text="{Binding ElementName=AutoCompleteTextBox, Path=Text}" Background="#EAEAEA" Foreground="#555555"/>
+                            <TextBox FontFamily="{StaticResource Lexend}" Height="35" Style="{StaticResource RoundedTextboxStyle}" FontSize="14" TextAlignment="Center" IsReadOnly="True" Text="{Binding ElementName=AutoCompleteTextBox, Path=Text}" Background="#EAEAEA" Foreground="#555555" CharacterCasing="Upper"/>
                         </Border>
                     </StackPanel>
 
@@ -230,14 +230,14 @@
                     <StackPanel Grid.Row="0" Grid.Column="2" Margin="10,0,10,15">
                         <TextBlock Text="DATE" FontFamily="{StaticResource Lexend}" FontWeight="Bold" FontSize="14" Margin="10,0,0,5"/>
                         <Border Style="{StaticResource RoundedBorderStyle}">
-                            <TextBox FontFamily="{StaticResource Lexend}" Height="35" Style="{StaticResource RoundedTextboxStyle}" FontSize="14" TextAlignment="Center" IsReadOnly="True" Text="{Binding ElementName=TodayDatePicker, Path=SelectedDate, StringFormat='MMMM dd, yyyy'}" Background="#EAEAEA" Foreground="#555555"/>
+                            <TextBox FontFamily="{StaticResource Lexend}" Height="35" Style="{StaticResource RoundedTextboxStyle}" FontSize="14" TextAlignment="Center" IsReadOnly="True" Text="{Binding ElementName=TodayDatePicker, Path=SelectedDate, StringFormat='MMMM dd, yyyy'}" Background="#EAEAEA" Foreground="#555555" CharacterCasing="Upper"/>
                         </Border>
                     </StackPanel>
 
                     <StackPanel Grid.Row="1" Grid.Column="0" Margin="10,10,10,0">
                         <TextBlock Text="SUPERVISOR NAME" FontFamily="{StaticResource Lexend}" FontWeight="Bold" FontSize="14" Margin="10,0,0,5"/>
                         <Border Style="{StaticResource RoundedBorderStyle}">
-                            <TextBox FontFamily="{StaticResource Lexend}" Height="35" Style="{StaticResource RoundedTextboxStyle}" FontSize="14" TextAlignment="Center" IsReadOnly="True" Text="{Binding ElementName=SupervisorName, Path=Text}" Background="#EAEAEA" Foreground="#555555"/>
+                            <TextBox FontFamily="{StaticResource Lexend}" Height="35" Style="{StaticResource RoundedTextboxStyle}" FontSize="14" TextAlignment="Center" IsReadOnly="True" Text="{Binding ElementName=SupervisorName, Path=Text}" Background="#EAEAEA" Foreground="#555555" CharacterCasing="Upper"/>
                         </Border>
                     </StackPanel>
 
