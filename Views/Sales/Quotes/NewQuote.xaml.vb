@@ -85,6 +85,7 @@ Namespace DPC.Views.Sales.Quotes
 
             txtTaxSelection_SelectionChanged(txtTaxSelection, Nothing)
 
+            _isInitialized = True
             InitializeProductUI()
             rowCount += 1
 
