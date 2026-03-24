@@ -97,6 +97,8 @@ Namespace DPC.Data.Controllers
                         cmd.Parameters.AddWithValue("@base64img", bm.Base64img)
                         cmd.Parameters.AddWithValue("@taxProperty", bm.TaxProperty)
                         cmd.Parameters.AddWithValue("@discountProperty", bm.DiscountProperty)
+                        cmd.Parameters.AddWithValue("@deliveryFee", bm.DeliveryFee)
+                        cmd.Parameters.AddWithValue("@installationFee", bm.InstallationFee)
                         cmd.Parameters.AddWithValue("@totalTax", bm.TotalTax)
                         cmd.Parameters.AddWithValue("@totalDiscount", bm.TotalDiscount)
                         cmd.Parameters.AddWithValue("@totalAmount", bm.TotalAmount)
