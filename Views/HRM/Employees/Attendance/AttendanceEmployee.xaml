@@ -181,7 +181,7 @@
             <!-- Title and Add Button -->
             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,10,0,20">
                 <materialDesign:PackIcon Kind="PackageVariantClosedPlus" Width="60" Height="60" Foreground="#474747"/>
-                <TextBlock Text="Employee Attendance"
+                <TextBlock Text="Employee AttendanceSSSSSS"
                            FontWeight="SemiBold"
                            FontFamily="Lexend"
                            FontSize="25"
