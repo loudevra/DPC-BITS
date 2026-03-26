@@ -7,8 +7,8 @@
              Background="Transparent">
 
     <materialDesign:Card Width="450" Padding="20" Background="White"
-                            HorizontalAlignment="Center" VerticalAlignment="Center"
-                            UniformCornerRadius="20">
+                         HorizontalAlignment="Center" VerticalAlignment="Center"
+                         UniformCornerRadius="20">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -16,9 +16,10 @@
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-                <materialDesign:PackIcon Kind="ShapeRectanglePlus" Width="40" Height="40" Margin="0,0,15,0" VerticalAlignment="Center" Foreground="#555555"/>
-                <TextBlock FontSize="20" Foreground="#555555" FontWeight="Bold" Text="Add Attendance" Margin="0,0,0,0" VerticalAlignment="Center"/>
+                <materialDesign:PackIcon x:Name="IconTitle" Kind="ShapeRectanglePlus" Width="40" Height="40" Margin="0,0,15,0" VerticalAlignment="Center" Foreground="#555555"/>
+                <TextBlock x:Name="TxtTitle" FontSize="20" Foreground="#555555" FontWeight="Bold" Text="Add Attendance" Margin="0,0,0,0" VerticalAlignment="Center"/>
             </StackPanel>
+
             <Button Grid.Column="1" Width="20" Height="20" HorizontalAlignment="Right" VerticalAlignment="Top" Background="Transparent" BorderBrush="Transparent" x:Name="BtnClose">
                 <materialDesign:PackIcon Kind="Close" Foreground="#555555" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Button>
@@ -28,7 +29,6 @@
                     <TextBlock Text="Employees:" Foreground="#555555" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0" />
                 </StackPanel>
                 <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10">
-                    <!--Product Name Value is here!-->
                     <TextBox x:Name="TxtEmployee" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold" CharacterCasing="Upper"/>
                 </Border>
 
@@ -42,48 +42,43 @@
                                 <ColumnDefinition Width=".05*"/>
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <!-- Single Date Picker -->
                             <DatePicker x:Name="SingleDatePicker"
-            Style="{StaticResource SingleDatePickerStyle}"
-            SelectedDate="{Binding SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-          
-            SelectedDateChanged="SingleDatePicker_SelectedDateChanged"
-            Opacity="0"
-            IsHitTestVisible="False" />
-                            <!-- Calendar Icon -->
+                                        Style="{StaticResource SingleDatePickerStyle}"
+                                        SelectedDate="{Binding SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        SelectedDateChanged="SingleDatePicker_SelectedDateChanged"
+                                        Opacity="0"
+                                        IsHitTestVisible="False" />
                             <materialDesign:PackIcon Grid.Column="0" Kind="Calendar" Width="32" Height="25" Foreground="#474747" VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="10,0,0,0"/>
-                            <!-- Date Display - Now uses FormattedDate property -->
                             <Button x:Name="DateButton" Grid.Column="1" Style="{StaticResource DateButtonStyle}" Click="StartDate_Click" Width="Auto" Margin="28,0,25,0">
-                                <TextBlock Text="{Binding FormattedDate}" Margin="0,0,5,0" Height="14" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold" />
+                                <TextBlock x:Name="TxtDateDisplay" Text="Select a date" Margin="0,0,5,0" Height="14" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold" />
                             </Button>
                         </Grid>
                     </Border>
                 </StackPanel>
 
-
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                     <TextBlock Text="From:" Foreground="#555555" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                 </StackPanel>
-                <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10">
-                    <!--Product Name Value is here!-->
-                    <TextBox x:Name="TxtStartTime" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold" CharacterCasing="Upper"/>
+                <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10" Padding="10,0">
+                    <materialDesign:TimePicker x:Name="TpStartTime" Is24Hours="False" BorderThickness="0" Background="Transparent" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold" VerticalAlignment="Center"/>
                 </Border>
+
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                     <TextBlock Text="To:" Foreground="#555555" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                 </StackPanel>
-                <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,20">
-                    <!--Product Name Value is here!-->
-                    <TextBox x:Name="TxtEndTime" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold" CharacterCasing="Upper"/>
+                <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,20" Padding="10,0">
+                    <materialDesign:TimePicker x:Name="TpEndTime" Is24Hours="False" BorderThickness="0" Background="Transparent" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold" VerticalAlignment="Center"/>
                 </Border>
+
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                     <TextBlock Text="Note:" Foreground="#555555" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
                 </StackPanel>
                 <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10" Height="129" Padding="0,15,0,15">
-                    <!--Product Name Value is here!-->
                     <TextBox x:Name="TxtNote" Style="{StaticResource RoundedTextboxStyle}" Height="Auto" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold" CharacterCasing="Upper" AcceptsReturn="True"/>
                 </Border>
-                <Button Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#52C69D" >
-                    <TextBlock Text="Add" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="15" FontWeight="SemiBold"/>
+
+                <Button x:Name="BtnAdd" Click="BtnAdd_Click" Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#52C69D" >
+                    <TextBlock x:Name="TxtBtnAdd" Text="Add" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="15" FontWeight="SemiBold"/>
                 </Button>
             </StackPanel>
         </Grid>
