@@ -8,6 +8,8 @@ Imports DPC.DPC.Data.Model
 Imports DPC.DPC.Data.Models
 Imports MySql.Data.MySqlClient
 Imports Newtonsoft.Json
+Imports System.IO
+Imports Microsoft.Win32
 
 Namespace DPC.Views.Sales.Quotes
     Public Class ManageWalkInClients
@@ -246,11 +248,59 @@ Namespace DPC.Views.Sales.Quotes
             dueDateViewModel.SelectedDate = DueDatePicker.SelectedDate
         End Sub
 
-        ' Excel Export
+        ' ==========================================
+        ' EXCEL / CSV EXPORT LOGIC
+        ' ==========================================
         Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
-            If dataGrid.Items.Count > 0 Then
-                ExcelExporter.ExportDataGridToExcel(dataGrid, "Billing_Statements", "Billing Statement Report")
-            End If
+            Try
+                ' 1. Check if there is data in the grid
+                If dataGrid.Items.Count = 0 Then
+                    MessageBox.Show("No data to export!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning)
+                    Return
+                End If
+
+                ' 2. Open the Save File Dialog
+                Dim saveFileDialog As New SaveFileDialog()
+                saveFileDialog.Filter = "CSV (Excel Compatible) (*.csv)|*.csv"
+                saveFileDialog.FileName = "Billing_Statements_" & DateTime.Now.ToString("yyyyMMdd_HHmmss") & ".csv"
+                saveFileDialog.Title = "Export Billing Statements to Excel"
+
+                ' 3. If the user clicks "Save"
+                If saveFileDialog.ShowDialog() = True Then
+
+                    ' 4. Create and write to the file
+                    Using writer As New StreamWriter(saveFileDialog.FileName)
+                        ' Write the Header Row perfectly matching your DataGrid columns in the XAML
+                        writer.WriteLine("Billing No.,DR No.,Date,Terms,Tax,Discount,Total Amount,Items")
+
+                        ' 5. Loop through the current items in the DataGrid and write them safely
+                        For Each obj In dataGrid.Items
+                            Dim item As BillingModel = TryCast(obj, BillingModel)
+
+                            If item IsNot Nothing Then
+                                ' Using string interpolation safely handles Null/Empty data automatically
+                                ' We replace double quotes with double-double quotes to prevent CSV formatting breaks
+                                Dim billNo As String = $"{item.BillingNumber}".Replace("""", """""")
+                                Dim drNo As String = $"{item.DRNo}".Replace("""", """""")
+                                Dim bDate As String = $"{item.BillingDate}".Replace("""", """""")
+                                Dim terms As String = $"{item.PaymentTerms}".Replace("""", """""")
+                                Dim tax As String = $"{item.TotalTax}".Replace("""", """""")
+                                Dim discount As String = $"{item.TotalDiscount}".Replace("""", """""")
+                                Dim total As String = $"{item.TotalAmount}".Replace("""", """""")
+                                Dim itemsData As String = $"{item.OrderItems}".Replace("""", """""")
+
+                                ' Wrap in quotes to prevent stray commas inside data from breaking columns
+                                writer.WriteLine($"""{billNo}"",""{drNo}"",""{bDate}"",""{terms}"",""{tax}"",""{discount}"",""{total}"",""{itemsData}""")
+                            End If
+                        Next
+                    End Using
+
+                    MessageBox.Show("Billing statements successfully exported to Excel!", "Export Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                End If
+
+            Catch ex As Exception
+                MessageBox.Show($"An error occurred while exporting: {ex.Message}", "Export Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
         End Sub
 
         Private Sub NavigateToGovernmentQuotes(sender As Object, e As RoutedEventArgs)

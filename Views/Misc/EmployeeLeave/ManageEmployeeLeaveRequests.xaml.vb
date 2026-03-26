@@ -2,6 +2,8 @@
 Imports System.Linq ' <--- THIS FIXES THE SEARCH BAR ERROR!
 Imports System.Windows
 Imports System.Windows.Controls
+Imports System.IO
+Imports Microsoft.Win32
 
 Namespace DPC.Views.Misc.EmployeeLeave
 
@@ -130,6 +132,64 @@ Namespace DPC.Views.Misc.EmployeeLeave
                 dataGrid.ItemsSource = filteredList
             End If
         End Sub
+        ' ---------------------------------------------------------------
+        '  EXPORT TO EXCEL (CSV Format)
+        ' ---------------------------------------------------------------
+        Private Sub BtnExportExcel_Click(sender As Object, e As RoutedEventArgs) Handles btnExportExcel.Click
+
+            ' --- TEST POPUP: If you don't see this, the code isn't building! ---
+            MessageBox.Show("Excel Button Clicked!", "System Test")
+
+            Try
+                ' 1. Check if there is data in the grid
+                If dataGrid.Items.Count = 0 Then
+                    MessageBox.Show("No data to export!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning)
+                    Return
+                End If
+
+                ' 2. Open the Save File Dialog
+                Dim saveFileDialog As New SaveFileDialog()
+                saveFileDialog.Filter = "CSV (Excel Compatible) (*.csv)|*.csv"
+                saveFileDialog.FileName = "EmployeeLeave_Export_" & DateTime.Now.ToString("yyyyMMdd_HHmmss") & ".csv"
+                saveFileDialog.Title = "Export Leave Requests to Excel"
+
+                ' 3. If the user clicks "Save"
+                If saveFileDialog.ShowDialog() = True Then
+
+                    ' 4. Create and write to the file
+                    Using writer As New StreamWriter(saveFileDialog.FileName)
+                        ' Write the Header Row matching your DataGrid columns
+                        writer.WriteLine("Ref #,Employee,Department,Start Date,End Date,Code,Hrs,Status")
+
+                        ' 5. Loop through the current items in the DataGrid and write them
+                        For Each obj In dataGrid.Items
+                            Dim item As EmployeeLeaveModel = TryCast(obj, EmployeeLeaveModel)
+
+                            If item IsNot Nothing Then
+                                ' Wrap text in double quotes to prevent commas from breaking the columns
+                                Dim ref = If(item.LeaveID, "").Replace("""", """""")
+                                Dim empName = If(item.EmployeeName, "").Replace("""", """""")
+                                Dim dept = If(item.Department, "").Replace("""", """""")
+                                Dim startDate = If(item.StartDate, "").Replace("""", """""")
+                                Dim endDate = If(item.EndDate, "").Replace("""", """""")
+                                Dim code = If(item.LeaveCode, "").Replace("""", """""")
+                                Dim hrs = If(item.HoursRequested, "").Replace("""", """""")
+                                Dim status = If(item.Status, "").Replace("""", """""")
+
+                                writer.WriteLine($"""{ref}"",""{empName}"",""{dept}"",""{startDate}"",""{endDate}"",""{code}"",""{hrs}"",""{status}""")
+                            End If
+                        Next
+                    End Using
+
+                    MessageBox.Show("Leave request data successfully exported!", "Export Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                End If
+
+            Catch ex As Exception
+                MessageBox.Show($"An error occurred while exporting: {ex.Message}", "Export Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+        End Sub
+
+
 
     End Class
 End Namespace

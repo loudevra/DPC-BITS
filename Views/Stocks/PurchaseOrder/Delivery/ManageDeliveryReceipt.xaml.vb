@@ -6,6 +6,8 @@ Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Models
 Imports MySql.Data.MySqlClient
+Imports System.IO
+Imports Microsoft.Win32
 
 Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
     Public Class ManageDeliveryReceipt
@@ -292,11 +294,58 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             PerformSearch() ' Re-run search on date change
         End Sub
 
-        ' Excel Export
+        ' ==========================================
+        ' EXCEL / CSV EXPORT LOGIC
+        ' ==========================================
         Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
-            If dataGrid.Items.Count > 0 Then
-                ExcelExporter.ExportDataGridToExcel(dataGrid, "Delivery_Receipts", "Delivery Receipt Report")
-            End If
+            Try
+                ' 1. Check if there is data in the grid
+                If dataGrid.Items.Count = 0 Then
+                    MessageBox.Show("No data to export!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning)
+                    Return
+                End If
+
+                ' 2. Open the Save File Dialog
+                Dim saveFileDialog As New SaveFileDialog()
+                saveFileDialog.Filter = "CSV (Excel Compatible) (*.csv)|*.csv"
+                saveFileDialog.FileName = "Delivery_Receipts_" & DateTime.Now.ToString("yyyyMMdd_HHmmss") & ".csv"
+                saveFileDialog.Title = "Export Delivery Receipts to Excel"
+
+                ' 3. If the user clicks "Save"
+                If saveFileDialog.ShowDialog() = True Then
+
+                    ' 4. Create and write to the file
+                    Using writer As New StreamWriter(saveFileDialog.FileName)
+                        ' Write the Header Row perfectly matching your DataGrid columns
+                        writer.WriteLine("DR Number,Invoice Ref,DR Date,Status,Client Name,Shipping,Prepared By,System Date")
+
+                        ' 5. Loop through the current items in the DataGrid and write them safely
+                        For Each obj In dataGrid.Items
+                            Dim item As DeliveryReceiptModel = TryCast(obj, DeliveryReceiptModel)
+
+                            If item IsNot Nothing Then
+                                ' Using string interpolation safely handles Null/Empty data automatically
+                                ' We wrap everything in double quotes to prevent internal commas from breaking columns
+                                Dim drNum As String = $"{item.DRNumber}".Replace("""", """""")
+                                Dim invRef As String = $"{item.ReferenceInvoice}".Replace("""", """""")
+                                Dim drDate As String = $"{item.DRDate}".Replace("""", """""")
+                                Dim status As String = $"{item.DeliveryStatus}".Replace("""", """""")
+                                Dim client As String = $"{item.ClientName}".Replace("""", """""")
+                                Dim shipping As String = $"{item.ShippingMethod}".Replace("""", """""")
+                                Dim prepBy As String = $"{item.Username}".Replace("""", """""")
+                                Dim sysDate As String = $"{item.DateAddedDisplay}".Replace("""", """""")
+
+                                writer.WriteLine($"""{drNum}"",""{invRef}"",""{drDate}"",""{status}"",""{client}"",""{shipping}"",""{prepBy}"",""{sysDate}""")
+                            End If
+                        Next
+                    End Using
+
+                    MessageBox.Show("Delivery receipt data successfully exported to Excel!", "Export Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                End If
+
+            Catch ex As Exception
+                MessageBox.Show($"An error occurred while exporting: {ex.Message}", "Export Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
         End Sub
 
         Private Sub NavigateToNewDelivery(sender As Object, e As RoutedEventArgs)
