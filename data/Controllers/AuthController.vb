@@ -43,11 +43,12 @@ Namespace DPC.Data.Controllers
                                 ' Verify password using PBKDF2Hasher
                                 If PBKDF2Hasher.VerifyPassword(password, storedHashedPassword) Then
                                     ' Pass the value to the object
-                                    Dim UserLogs As New Sidebar()
 
                                     CacheOnLoggedInEmail = Email
                                     CacheOnLoggedInName = Name
                                     CacheOnEmployeeID = employeeID
+
+                                    Dim UserLogs As New Sidebar()
 
                                     Dim userRole As String = GetUserRole(roleID)
                                     Dim accessToken As String = GenerateJwtToken(employeeID, username, userRole, ACCESS_TOKEN_EXPIRY)
@@ -55,6 +56,9 @@ Namespace DPC.Data.Controllers
 
                                     ' Store refresh token in the database
                                     StoreRefreshToken(employeeID, refreshToken)
+
+                                    ' Record login history + notification
+                                    EmployeeLoginHistoryController.AddLoginHistory(employeeID, Name, Email, DateTime.Now)
 
                                     Return (accessToken, refreshToken)
                                 End If

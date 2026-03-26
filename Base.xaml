@@ -8,7 +8,7 @@
         Background="Transparent"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
-        AllowsTransparency="True">
+        AllowsTransparency="True"> 
     <!-- Main Grid Layout -->
     <Grid>
         <!-- Material Design Card -->

@@ -506,6 +506,9 @@
     <Compile Include="Components\ConfirmationModals\LoginConfirmationModals.xaml.vb">
       <DependentUpon>LoginConfirmationModals.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\ConfirmationModals\NotificationModal.xaml.vb">
+      <DependentUpon>NotificationModal.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Forms\AddAttendance.xaml.vb">
       <DependentUpon>AddAttendance.xaml</DependentUpon>
     </Compile>
@@ -1346,6 +1349,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\ConfirmationModals\HRMConfirmationEmployeeSalaryUpdate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\ConfirmationModals\NotificationModal.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
