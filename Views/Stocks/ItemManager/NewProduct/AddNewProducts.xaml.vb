@@ -76,6 +76,53 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                                                   End Sub
             End If
 
+            ' ADD THIS: Handle Brand Selection to populate Suppliers
+            AddHandler ComboBoxBrand.SelectionChanged, Sub(sender2, e2)
+                                                           Dim selectedBrand = TryCast(ComboBoxBrand.SelectedItem, ComboBoxItem)
+                                                           If selectedBrand IsNot Nothing Then
+                                                               Dim brandID As Integer
+                                                               If Integer.TryParse(selectedBrand.Tag?.ToString(), brandID) Then
+                                                                   ProductController.GetSuppliersByBrand(brandID, ComboBoxSupplier)
+                                                               End If
+                                                           End If
+                                                       End Sub
+
+            ' Supplier Search - ADD THIS SECTION
+            Dim cbSupplierTextBox As TextBox = CType(ComboBoxSupplier.Template.FindName("PART_EditableTextBox", ComboBoxSupplier), TextBox)
+            If cbSupplierTextBox IsNot Nothing Then
+                Dim supplierTimer As New DispatcherTimer With {.Interval = TimeSpan.FromMilliseconds(300)}
+                AddHandler supplierTimer.Tick, Sub(src, args)
+                                                   supplierTimer.Stop()
+                                                   Dim view = CollectionViewSource.GetDefaultView(ComboBoxSupplier.Items)
+                                                   If view IsNot Nothing Then
+                                                       view.Refresh()
+                                                       If Not view.IsEmpty Then ComboBoxSupplier.IsDropDownOpen = True
+                                                   End If
+                                               End Sub
+                AddHandler cbSupplierTextBox.PreviewMouseLeftButtonDown, Sub(src, args)
+                                                                             ComboBoxSupplier.IsDropDownOpen = True
+                                                                         End Sub
+                AddHandler cbSupplierTextBox.TextChanged, Sub(s, args)
+                                                              Dim originalText = cbSupplierTextBox.Text
+                                                              Dim upperText = originalText.ToUpper()
+                                                              If originalText <> upperText Then
+                                                                  Dim selStart = cbSupplierTextBox.SelectionStart
+                                                                  cbSupplierTextBox.Text = upperText
+                                                                  cbSupplierTextBox.SelectionStart = selStart
+                                                                  Return
+                                                              End If
+                                                              If Not cbSupplierTextBox.IsFocused Then Return
+                                                              Dim selectedSupplier = TryCast(ComboBoxSupplier.SelectedItem, ComboBoxItem)
+                                                              If selectedSupplier IsNot Nothing AndAlso selectedSupplier.Content?.ToString() = originalText Then
+                                                                  ComboBoxSupplier.IsDropDownOpen = False
+                                                                  Return
+                                                              End If
+                                                              ComboBoxSupplier.IsDropDownOpen = True
+                                                              supplierTimer.Stop()
+                                                              supplierTimer.Start()
+                                                          End Sub
+            End If
+
             ' Category Search
             Dim cbCategoryTextBox As TextBox = CType(ComboBoxCategory.Template.FindName("PART_EditableTextBox", ComboBoxCategory), TextBox)
             If cbCategoryTextBox IsNot Nothing Then
