@@ -199,7 +199,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         End Sub
         Private Sub SetupTimers()
             uploadTimer.Interval = TimeSpan.FromMilliseconds(100)
-            AddHandler uploadTimer.Tick, AddressOf UploadTimer_Tick
         End Sub
         Private Sub OpenProductVariationDetails()
             Dim productVariationDetails = New ProductVariationDetails()
@@ -398,63 +397,41 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             End If
         End Sub
         Private Sub StartFileUpload(filePath As String)
-            UploadProgressBar.Value = 0
-            UploadStatus.Text = "Uploading..."
             Dim fileInfo As New FileInfo(filePath)
             Dim fileSizeText As String = Base64Utility.GetReadableFileSize(fileInfo.Length)
             ImgName.Text = Path.GetFileName(filePath)
             ImgSize.Text = fileSizeText
+
+            ' Encode to base64 for storage/submission
             Try
                 base64Image = Base64Utility.EncodeFileToBase64(filePath)
             Catch ex As Exception
                 MessageBox.Show("Error encoding image: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 Exit Sub
             End Try
-            ImageInfoPanel.Visibility = Visibility.Visible
-            BtnBrowse.IsEnabled = False
-            DropBorder.AllowDrop = False
-            isUploadLocked = True
-            ConfigureUploadTimer()
-        End Sub
-        Private Sub ConfigureUploadTimer()
-            If uploadTimer.IsEnabled Then
-                uploadTimer.Stop()
-            End If
-            uploadTimer.Start()
-        End Sub
-        Private Sub UploadTimer_Tick(sender As Object, e As EventArgs)
-            If UploadProgressBar.Value < 100 Then
-                UploadProgressBar.Value += 2
-            Else
-                uploadTimer.Stop()
-                UploadStatus.Text = "Upload Complete"
-                ImageInfoPanel.Visibility = Visibility.Collapsed
-                ImageDisplayPanel.Visibility = Visibility.Visible
-                DisplayUploadedImage()
-                BtnRemoveImage.Visibility = Visibility.Visible
-            End If
-        End Sub
-        Private Sub DisplayUploadedImage()
+
+            ' Load image directly from the original file (no temp file round-trip)
             Try
-                Dim tempImagePath As String = Path.Combine(Path.GetTempPath(), "decoded_image.png")
-                If File.Exists(tempImagePath) Then
-                    GC.Collect()
-                    GC.WaitForPendingFinalizers()
-                    File.Delete(tempImagePath)
-                End If
-                Base64Utility.DecodeBase64ToFile(base64Image, tempImagePath)
                 Dim imageSource As New BitmapImage()
-                Using stream As New FileStream(tempImagePath, FileMode.Open, FileAccess.Read, FileShare.Read)
-                    imageSource.BeginInit()
-                    imageSource.CacheOption = BitmapCacheOption.OnLoad
-                    imageSource.StreamSource = stream
-                    imageSource.EndInit()
-                End Using
+                imageSource.BeginInit()
+                imageSource.CacheOption = BitmapCacheOption.OnLoad
+                imageSource.DecodePixelWidth = 300 ' Limit decoded size for faster rendering
+                imageSource.UriSource = New Uri(filePath)
+                imageSource.EndInit()
                 imageSource.Freeze()
                 UploadedImage.Source = imageSource
             Catch ex As Exception
-                MessageBox.Show("Error decoding image: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                MessageBox.Show("Error loading image: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                Exit Sub
             End Try
+
+            ' Skip the fake progress timer — go straight to complete
+            ImageInfoPanel.Visibility = Visibility.Collapsed
+            ImageDisplayPanel.Visibility = Visibility.Visible
+            BtnRemoveImage.Visibility = Visibility.Visible
+            BtnBrowse.IsEnabled = False
+            DropBorder.AllowDrop = False
+            isUploadLocked = True
         End Sub
         Private Sub RemoveImage(sender As Object, e As RoutedEventArgs)
             uploadTimer.Stop()
@@ -473,16 +450,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             BtnRemoveImage.Visibility = Visibility.Collapsed
             UploadedImage.Source = Nothing
             base64Image = String.Empty
-            Dim tempImagePath As String = Path.Combine(Path.GetTempPath(), "decoded_image.png")
-            If File.Exists(tempImagePath) Then
-                Try
-                    GC.Collect()
-                    GC.WaitForPendingFinalizers()
-                    File.Delete(tempImagePath)
-                Catch ex As Exception
-                    ' Ignore deletion errors
-                End Try
-            End If
         End Sub
 #End Region
         Public Sub LoadProductVariations()
@@ -635,6 +602,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                RadBtnPercentage Is Nothing Then
                     Return
                 End If
+
                 Dim buyingPrice As Decimal
                 If String.IsNullOrWhiteSpace(TxtPurchaseOrder.Text) OrElse
                Not Decimal.TryParse(TxtPurchaseOrder.Text, buyingPrice) OrElse
