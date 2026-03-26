@@ -157,7 +157,7 @@
             <Setter Property="HeadersVisibility" Value="Column"/>
             <Setter Property="GridLinesVisibility" Value="None"/>
             <Setter Property="RowBackground" Value="White"/>
-            <Setter Property="AlternatingRowBackground" Value="WhiteSmoke"/>
+            <Setter Property="AlternatingRowBackground" Value="#F9F9F9"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
             <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
@@ -166,6 +166,22 @@
             <Setter Property="ColumnWidth" Value="SizeToHeader"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        </Style>
+
+        <!-- Centered Cell Style for text columns -->
+        <Style x:Key="CenteredCellStyle" TargetType="DataGridCell">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridCell">
+                        <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" BorderThickness="0">
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </UserControl.Resources>
 
@@ -288,7 +304,7 @@
             </Border>
 
             <!-- DataGrid Container -->
-            <Border Grid.Row="3" Background="White" CornerRadius="10" BorderBrush="White" BorderThickness="1">
+            <Border Grid.Row="3" Background="White" CornerRadius="10" BorderBrush="White" BorderThickness="1" Padding="5">
                 <DataGrid Name="dataGrid"
                       Style="{StaticResource CustomDataGridStyle}"
                       HorizontalAlignment="Stretch"
@@ -296,55 +312,94 @@
                       Margin="5"
                       HorizontalScrollBarVisibility="Visible"
                       VerticalScrollBarVisibility="Visible">
+
                     <DataGrid.RowStyle>
                         <Style TargetType="DataGridRow">
-                            <Setter Property="Margin" Value="0,5,0,5"/>
-                            <Setter Property="Padding" Value="5"/>
+                            <Setter Property="Margin" Value="0,2,0,2"/>
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="MinHeight" Value="50"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#EEF2FA"/>
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="#E0E8F5"/>
+                                </Trigger>
+                            </Style.Triggers>
                         </Style>
                     </DataGrid.RowStyle>
 
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="FontFamily" Value="Lexend"/>
-                            <Setter Property="FontSize" Value="13"/>
+                            <Setter Property="FontSize" Value="12"/>
                             <Setter Property="FontWeight" Value="SemiBold"/>
-                            <Setter Property="Foreground" Value="#474747"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="Background" Value="#474747"/>
                             <Setter Property="HorizontalContentAlignment" Value="Center"/>
                             <Setter Property="VerticalContentAlignment" Value="Center"/>
-                            <Setter Property="Padding" Value="10,5"/>
-                            <Setter Property="SeparatorBrush" Value="#DDDDDD"/>
+                            <Setter Property="Padding" Value="12,8"/>
+                            <Setter Property="SeparatorBrush" Value="#5A5A5A"/>
                             <Setter Property="SeparatorVisibility" Value="Visible"/>
+                            <Setter Property="BorderThickness" Value="0,0,1,0"/>
+                            <Setter Property="BorderBrush" Value="#5A5A5A"/>
                         </Style>
                     </DataGrid.ColumnHeaderStyle>
 
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="#" Binding="{Binding ID}" Width="Auto" FontFamily="Lexend" Foreground="#474747"/>
-                        <DataGridTemplateColumn Header="Product Image" Width="110">
+                        <!-- ID Column -->
+                        <DataGridTextColumn Header="#" Binding="{Binding ID}" Width="50" FontFamily="Lexend" Foreground="#474747"
+                                            CellStyle="{StaticResource CenteredCellStyle}"/>
+
+                        <!-- Product Image with rounded clipping -->
+                        <DataGridTemplateColumn Header="Image" Width="80">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Image Source="{Binding ImageSource}" Width="100" Height="100" />
+                                    <Border CornerRadius="8" Width="60" Height="60" Margin="4"
+                                            Background="#F0F0F0" BorderBrush="#E0E0E0" BorderThickness="1">
+                                        <Border.Clip>
+                                            <RectangleGeometry RadiusX="8" RadiusY="8" Rect="0,0,60,60"/>
+                                        </Border.Clip>
+                                        <Image Source="{Binding ImageSource}" Width="60" Height="60" Stretch="UniformToFill"/>
+                                    </Border>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#474747"/>
-                        <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#474747"/>
-                        <DataGridTextColumn Header="Sub Category" Binding="{Binding SubCategory}" Width="Auto" MinWidth="120" FontFamily="Lexend" Foreground="#474747"/>
-                        <DataGridTextColumn Header="Brand" Binding="{Binding Brand}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#474747"/>
-                        <DataGridTextColumn Header="Supplier" Binding="{Binding Supplier}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#474747"/>
-                        <DataGridTextColumn Header="Warehouse" Binding="{Binding Warehouse}" Width="Auto" MinWidth="110" FontFamily="Lexend" Foreground="#474747"/>
-                        <DataGridTextColumn Header="Markup Price" Binding="{Binding SellingPrice}" Width="Auto" MinWidth="110" FontFamily="Lexend" Foreground="#474747"/>
-                        <DataGridTextColumn Header="Buying Price" Binding="{Binding BuyingPrice}" Width="Auto" MinWidth="110" FontFamily="Lexend" Foreground="#474747"/>
-                        <DataGridTextColumn Header="Stock Quantity" Binding="{Binding StockQuantity}" Width="Auto" MinWidth="120" FontFamily="Lexend" Foreground="#474747"/>
-                        <DataGridTextColumn Header="Alert" Binding="{Binding AlertQuantity}" Width="Auto" MinWidth="80" FontFamily="Lexend" Foreground="#474747"/>
-                        <DataGridTemplateColumn Header="Settings" Width="80">
+
+                        <!-- Text columns with consistent styling -->
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" MinWidth="120" FontFamily="Lexend" Foreground="#333333"
+                                            CellStyle="{StaticResource CenteredCellStyle}"/>
+                        <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#555555"
+                                            CellStyle="{StaticResource CenteredCellStyle}"/>
+                        <DataGridTextColumn Header="Sub Category" Binding="{Binding SubCategory}" Width="Auto" MinWidth="110" FontFamily="Lexend" Foreground="#555555"
+                                            CellStyle="{StaticResource CenteredCellStyle}"/>
+                        <DataGridTextColumn Header="Brand" Binding="{Binding Brand}" Width="Auto" MinWidth="90" FontFamily="Lexend" Foreground="#555555"
+                                            CellStyle="{StaticResource CenteredCellStyle}"/>
+                        <DataGridTextColumn Header="Supplier" Binding="{Binding Supplier}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#555555"
+                                            CellStyle="{StaticResource CenteredCellStyle}"/>
+                        <DataGridTextColumn Header="Warehouse" Binding="{Binding Warehouse}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#555555"
+                                            CellStyle="{StaticResource CenteredCellStyle}"/>
+                        <DataGridTextColumn Header="Markup Price" Binding="{Binding SellingPrice}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#555555"
+                                            CellStyle="{StaticResource CenteredCellStyle}"/>
+                        <DataGridTextColumn Header="Buying Price" Binding="{Binding BuyingPrice}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#555555"
+                                            CellStyle="{StaticResource CenteredCellStyle}"/>
+                        <DataGridTextColumn Header="Stock Qty" Binding="{Binding StockQuantity}" Width="Auto" MinWidth="90" FontFamily="Lexend" Foreground="#555555"
+                                            CellStyle="{StaticResource CenteredCellStyle}"/>
+                        <DataGridTextColumn Header="Alert" Binding="{Binding AlertQuantity}" Width="Auto" MinWidth="60" FontFamily="Lexend" Foreground="#555555"
+                                            CellStyle="{StaticResource CenteredCellStyle}"/>
+
+                        <!-- Action buttons with better spacing -->
+                        <DataGridTemplateColumn Header="Actions" Width="90">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                        <Button Width="30" Height="30" Background="Transparent" Margin="0,0,5,0" ToolTip="Edit" Click="OpenEditProduct" Cursor="Hand">
-                                            <materialDesign:PackIcon Kind="CircleEditOutline" Width="16" Height="16" Foreground="#52C69D"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Button Width="32" Height="32" Background="Transparent" Margin="0,0,4,0" ToolTip="Edit" Click="OpenEditProduct" Cursor="Hand"
+                                                BorderThickness="0">
+                                            <materialDesign:PackIcon Kind="CircleEditOutline" Width="18" Height="18" Foreground="#52C69D"/>
                                         </Button>
-                                        <Button Width="30" Height="30" Background="Transparent" Margin="0" ToolTip="Delete" Cursor="Hand" Click="DeleteProduct">
-                                            <materialDesign:PackIcon Kind="DeleteOutline" Width="16" Height="16" Foreground="#E65E5E"/>
+                                        <Button Width="32" Height="32" Background="Transparent" Margin="0" ToolTip="Delete" Cursor="Hand" Click="DeleteProduct"
+                                                BorderThickness="0">
+                                            <materialDesign:PackIcon Kind="DeleteOutline" Width="18" Height="18" Foreground="#E65E5E"/>
                                         </Button>
                                     </StackPanel>
                                 </DataTemplate>
