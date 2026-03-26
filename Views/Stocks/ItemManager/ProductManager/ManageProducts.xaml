@@ -317,7 +317,7 @@
                         <Style TargetType="DataGridRow">
                             <Setter Property="Margin" Value="0,2,0,2"/>
                             <Setter Property="Padding" Value="0"/>
-                            <Setter Property="MinHeight" Value="50"/>
+                            <Setter Property="MinHeight" Value="85"/>
                             <Style.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter Property="Background" Value="#EEF2FA"/>
@@ -352,15 +352,16 @@
                                             CellStyle="{StaticResource CenteredCellStyle}"/>
 
                         <!-- Product Image with rounded clipping -->
-                        <DataGridTemplateColumn Header="Image" Width="80">
+                        <DataGridTemplateColumn Header="Image" Width="120" MinWidth="120">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Border CornerRadius="8" Width="60" Height="60" Margin="4"
-                                            Background="#F0F0F0" BorderBrush="#E0E0E0" BorderThickness="1">
+                                    <Border CornerRadius="8" Width="80" Height="80" Margin="8"
+                                            Background="#F0F0F0" BorderBrush="#E0E0E0" BorderThickness="1"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <Border.Clip>
-                                            <RectangleGeometry RadiusX="8" RadiusY="8" Rect="0,0,60,60"/>
+                                            <RectangleGeometry RadiusX="8" RadiusY="8" Rect="0,0,80,80"/>
                                         </Border.Clip>
-                                        <Image Source="{Binding ImageSource}" Width="60" Height="60" Stretch="UniformToFill"/>
+                                        <Image Source="{Binding ImageSource}" Width="80" Height="80" Stretch="UniformToFill"/>
                                     </Border>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
