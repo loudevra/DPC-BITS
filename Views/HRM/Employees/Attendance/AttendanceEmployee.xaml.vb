@@ -124,7 +124,7 @@ Namespace DPC.Views.HRM.Employees.Attendance
             End If
         End Sub
 
-        ' 7. EDIT Functionality (BULLETPROOF DATE VERSION)
+        ' 7. EDIT Functionality (BULLETPROOF TEXT VERSION)
         Private Sub BtnEdit_Click(sender As Object, e As RoutedEventArgs)
             Dim btn As Button = TryCast(sender, Button)
             If btn IsNot Nothing Then
@@ -138,30 +138,12 @@ Namespace DPC.Views.HRM.Employees.Attendance
                     editForm.TxtBtnAdd.Text = "Update"
                     editForm.IconTitle.Kind = MaterialDesignThemes.Wpf.PackIconKind.SquareEditOutline
 
-                    ' 1. Pre-fill the standard text fields
+                    ' FORCE ALL TEXT directly into the boxes! No more TryParse failing silently!
                     editForm.TxtEmployee.Text = record.EmployeeName
                     editForm.TxtNote.Text = record.Note
-
-                    ' 2. BULLETPROOF DATE: Force the text to display exactly what is in the table NO MATTER WHAT
                     editForm.TxtDateDisplay.Text = record.AttendanceDate
-
-                    ' Now try to silently sync the hidden calendar picker to match that date
-                    Dim parsedDate As DateTime
-                    If DateTime.TryParse(record.AttendanceDate, parsedDate) Then
-                        editForm.SingleDatePicker.SelectedDate = parsedDate
-                    End If
-
-                    ' 3. Safely parse and set Time In
-                    Dim parsedTimeIn As DateTime
-                    If DateTime.TryParse(record.TimeIn, parsedTimeIn) Then
-                        editForm.TpStartTime.SelectedTime = parsedTimeIn
-                    End If
-
-                    ' 4. Safely parse and set Time Out
-                    Dim parsedTimeOut As DateTime
-                    If DateTime.TryParse(record.TimeOut, parsedTimeOut) Then
-                        editForm.TpEndTime.SelectedTime = parsedTimeOut
-                    End If
+                    editForm.TpStartTime.Text = record.TimeIn
+                    editForm.TpEndTime.Text = record.TimeOut
 
                     ' Intercept the Add event to update existing record
                     AddHandler editForm.OnAttendanceAdded, Sub(empName, attDate, tIn, tOut, noteVal)
