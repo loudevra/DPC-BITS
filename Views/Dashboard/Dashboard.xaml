@@ -155,7 +155,8 @@
                                                              VerticalAlignment="Center"/>
                                 </Grid>
                                 <TextBlock Text="Today Sales" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" FontFamily="Lexend" />
-                                <TextBlock Text="+?0.00" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" FontFamily="Lexend" />
+                                <TextBlock x:Name="TxtTodaySales" Text="+?0.00" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" FontFamily="Lexend" />
+
                             </StackPanel>
                         </Border>
 
@@ -171,7 +172,7 @@
                                                              VerticalAlignment="Center"/>
                                 </Grid>
                                 <TextBlock Text="This Month Sales" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" FontFamily="Lexend" />
-                                <TextBlock Text="+?0.00" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" FontFamily="Lexend" />
+                                <TextBlock x:Name="TxtMonthSales" Text="+?0.00" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" FontFamily="Lexend" />
                             </StackPanel>
                         </Border>
                     </Grid>
