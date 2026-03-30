@@ -49,6 +49,11 @@ Namespace DPC.Components.Navigation
                 End Try
             End Using
 
+            ' Show Accounts button only when the user has permission
+            If Accounts OrElse RoleName = "Administrator" Then
+                BtnAccounts.Visibility = Visibility.Visible
+            End If
+
             CheckUpdateVisibility()
             VerNum.Text = My.Application.Info.Version.ToString()
 

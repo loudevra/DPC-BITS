@@ -110,7 +110,7 @@ Placement="Right"/>
                             <TextBlock Text="Project" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
                         </StackPanel>
                     </Button>
-                    <Button  x:Name="BtnAccounts" Style="{StaticResource SidebarButton}" Click="OpenAccounts">
+                    <Button  x:Name="BtnAccounts" Style="{StaticResource SidebarButton}" Click="OpenAccounts" Visibility="Collapsed">
                         <Button.ToolTip>
                             <ToolTip Content="Financial accounts and transaction records" 
 Style="{StaticResource SpeechBubbleToolTipLight}"
