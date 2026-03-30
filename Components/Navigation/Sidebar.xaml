@@ -121,7 +121,7 @@ Placement="Right"/>
                             <TextBlock Text="Accounts" Foreground="White" Margin="15,4,0,0" FontFamily="Lexend"/>
                         </StackPanel>
                     </Button>
-                    <Button  x:Name="BtnPromoCodes" Style="{StaticResource SidebarButton}" Click="OpenPromoCodes">
+                    <Button  x:Name="BtnPromoCodes" Style="{StaticResource SidebarButton}" Click="OpenPromoCodes" Visibility="Collapsed">
                         <Button.ToolTip>
                             <ToolTip Content="Create and manage promotional discount codes" 
 Style="{StaticResource SpeechBubbleToolTipLight}"
