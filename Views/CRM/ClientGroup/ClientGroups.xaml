@@ -7,34 +7,60 @@
     <UserControl.Resources>
 
         <Style x:Key="ModernScrollBarStyle" TargetType="ScrollBar">
-            <Setter Property="Width" Value="4"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="ScrollBar">
-                        <Grid Background="Transparent" Height="107">
-                            <Border x:Name="TrackBackground" Width="5" VerticalAlignment="Stretch" Background="#555555" CornerRadius="5"/>
-                            <Track Name="PART_Track" IsDirectionReversed="true" Margin="0">
+                    <ControlTemplate TargetType="{x:Type ScrollBar}">
+                        <Grid Background="{TemplateBinding Background}">
+                            <Track x:Name="PART_Track"
+                           IsDirectionReversed="True"
+                           Focusable="false"
+                           Orientation="{TemplateBinding Orientation}">
                                 <Track.DecreaseRepeatButton>
-                                    <RepeatButton Command="ScrollBar.LineUpCommand" Visibility="Collapsed"/>
+                                    <RepeatButton Style="{x:Null}" IsTabStop="False" Opacity="0"/>
                                 </Track.DecreaseRepeatButton>
                                 <Track.Thumb>
-                                    <Thumb Background="#555555" Margin="0" Width="4" Height="30">
+                                    <Thumb>
                                         <Thumb.Template>
-                                            <ControlTemplate TargetType="Thumb">
-                                                <Border Background="{TemplateBinding Background}" CornerRadius="30"/>
+                                            <ControlTemplate TargetType="{x:Type Thumb}">
+                                                <Border x:Name="ThumbBorder"
+                                                CornerRadius="4"
+                                                Background="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="ThumbBorder" Property="Background" Value="#222222"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
                                             </ControlTemplate>
                                         </Thumb.Template>
                                     </Thumb>
                                 </Track.Thumb>
                                 <Track.IncreaseRepeatButton>
-                                    <RepeatButton Command="ScrollBar.LineDownCommand" Visibility="Collapsed"/>
+                                    <RepeatButton Style="{x:Null}" IsTabStop="False" Opacity="0"/>
                                 </Track.IncreaseRepeatButton>
                             </Track>
                         </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Orientation" Value="Vertical">
+                                <Setter TargetName="PART_Track" Property="IsDirectionReversed" Value="True"/>
+                            </Trigger>
+                            <Trigger Property="Orientation" Value="Horizontal">
+                                <Setter TargetName="PART_Track" Property="IsDirectionReversed" Value="False"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Style.Triggers>
+                <Trigger Property="Orientation" Value="Horizontal">
+                    <Setter Property="Height" Value="10"/>
+                    <Setter Property="Width" Value="Auto"/>
+                </Trigger>
+                <Trigger Property="Orientation" Value="Vertical">
+                    <Setter Property="Width" Value="10"/>
+                    <Setter Property="Height" Value="Auto"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <Style x:Key="AddNewButtonStyle" TargetType="Button">
@@ -366,46 +392,11 @@
                     </DataGrid.Columns>
                 </DataGrid>
 
-                <Grid Grid.Row="1" Margin="0,15,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-
-                    <TextBlock Name="txtPageInfo"
-                               Grid.Column="0"
-                               FontFamily="Lexend"
-                               FontSize="12"
-                               Foreground="#474747"
-                               VerticalAlignment="Center"
-                               Text="Showing 0 of 0 entries"/>
-
-                    <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <Button x:Name="BtnPrevPage"
-                                Click="BtnPrevPage_Click"
-                                Style="{StaticResource ActionIconButtonStyle}"
-                                Width="30" Height="30" Margin="0,0,4,0"
-                                ToolTip="Previous Page">
-                            <materialDesign:PackIcon Kind="ChevronLeft" Width="20" Height="20" Foreground="#474747"/>
-                        </Button>
-
-                        <TextBlock Name="txtCurrentPage"
-                                   FontFamily="Lexend"
-                                   FontSize="12"
-                                   Foreground="#474747"
-                                   VerticalAlignment="Center"
-                                   Margin="4,0"
-                                   Text="Page 1"/>
-
-                        <Button x:Name="BtnNextPage"
-                                Click="BtnNextPage_Click"
-                                Style="{StaticResource ActionIconButtonStyle}"
-                                Width="30" Height="30" Margin="4,0,0,0"
-                                ToolTip="Next Page">
-                            <materialDesign:PackIcon Kind="ChevronRight" Width="20" Height="20" Foreground="#474747"/>
-                        </Button>
-                    </StackPanel>
-                </Grid>
+                <StackPanel x:Name="paginationPanel"
+                            Grid.Row="1"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Margin="0,15,0,0"/>
             </Grid>
         </Border>
 

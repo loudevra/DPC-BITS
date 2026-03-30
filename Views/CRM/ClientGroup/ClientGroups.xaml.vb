@@ -1,9 +1,12 @@
-﻿Imports System.Data
+﻿Imports System.Collections.ObjectModel
+Imports System.Data
 Imports System.IO
 Imports System.Windows
 Imports System.Windows.Controls
 Imports System.Windows.Controls.Primitives
+Imports DPC.Data.Helpers
 Imports DPC.DPC.Data.Controllers
+Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Models
 Imports OfficeOpenXml
 
@@ -11,14 +14,11 @@ Namespace DPC.Views.CRM.ClientGroup
     Public Class ClientGroups
         Inherits UserControl
 
-        ' Holds the full unfiltered list
-        Private _allClientGroups As IEnumerable(Of DPC.Data.Models.ClientGroup)
+        ' Pagination + Search helpers (same as ManageSuppliers)
+        Private _paginationHelper As PaginationHelper
+        Private _searchFilterHelper As SearchFilterHelper
 
-        ' Pagination state
-        Private _currentPage As Integer = 1
-        Private _pageSize As Integer = 10
-
-        ' Holds the group pending deletion across the async confirmation callback
+        ' Holds the group pending deletion
         Private _pendingDeleteGroup As DPC.Data.Models.ClientGroup
 
         Public Sub New()
@@ -26,65 +26,59 @@ Namespace DPC.Views.CRM.ClientGroup
             LoadDetails()
         End Sub
 
-        ' =======================================================
-        ' NEW: Automatic Row Numbering Handler
-        ' =======================================================
-        Private Sub dataGrid_LoadingRow(sender As Object, e As DataGridRowEventArgs) Handles dataGrid.LoadingRow
-            e.Row.Header = (e.Row.GetIndex() + 1).ToString()
-        End Sub
-
         Private Sub LoadDetails()
-            _allClientGroups = ClientGroupController.GetClientGroup()
-            _currentPage = 1
-            ApplySearch(If(txtSearch IsNot Nothing AndAlso txtSearch.Text <> "Search", txtSearch.Text, ""))
+            Try
+                ' Get all client groups from DB
+                Dim allGroups = ClientGroupController.GetClientGroup()
+                Dim allItems As New ObservableCollection(Of Object)(allGroups.Cast(Of Object)())
+
+                ' Clear pagination panel to avoid duplicates on reload
+                paginationPanel.Children.Clear()
+
+                ' Initialize PaginationHelper (same as ManageSuppliers)
+                _paginationHelper = New PaginationHelper(dataGrid, paginationPanel)
+
+                ' Apply page size from ComboBox
+                If cmbPageSize IsNot Nothing Then
+                    Dim selected = TryCast(cmbPageSize.SelectedItem, ComboBoxItem)
+                    If selected IsNot Nothing Then
+                        Dim parsed As Integer
+                        If Integer.TryParse(selected.Content.ToString(), parsed) Then
+                            _paginationHelper.ItemsPerPage = parsed
+                        End If
+                    End If
+                End If
+
+                ' Set all items — this triggers the first render
+                _paginationHelper.AllItems = allItems
+
+                ' Initialize SearchFilterHelper with searchable columns
+                _searchFilterHelper = New SearchFilterHelper(_paginationHelper,
+                    "GroupName", "Description")
+
+            Catch ex As Exception
+                MessageBox.Show("Error loading client groups: " & ex.Message,
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
         End Sub
 
-        Private Sub RefreshGrid()
-            If _allClientGroups Is Nothing Then Return
+        Private Sub CmbPageSize_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+            If _paginationHelper Is Nothing Then Return
 
-            ' Apply current search filter
-            Dim keyword As String = If(txtSearch IsNot Nothing AndAlso txtSearch.Text <> "Search", txtSearch.Text.Trim(), "")
+            Dim selected = TryCast(cmbPageSize.SelectedItem, ComboBoxItem)
+            If selected Is Nothing Then Return
 
-            Dim filtered As IEnumerable(Of DPC.Data.Models.ClientGroup)
-            If String.IsNullOrWhiteSpace(keyword) Then
-                filtered = _allClientGroups
-            Else
-                filtered = _allClientGroups.Where(
-                    Function(g) g.GroupName.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0 OrElse
-                                (g.Description IsNot Nothing AndAlso g.Description.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0))
+            Dim parsed As Integer
+            If Integer.TryParse(selected.Content.ToString(), parsed) Then
+                _paginationHelper.ItemsPerPage = parsed
             End If
-
-            Dim totalItems As Integer = filtered.Count()
-            Dim totalPages As Integer = Math.Max(1, CInt(Math.Ceiling(totalItems / _pageSize)))
-
-            ' Clamp page
-            If _currentPage > totalPages Then _currentPage = totalPages
-            If _currentPage < 1 Then _currentPage = 1
-
-            ' Page the data
-            Dim paged = filtered.Skip((_currentPage - 1) * _pageSize).Take(_pageSize).ToList()
-            dataGrid.ItemsSource = Nothing
-            dataGrid.ItemsSource = paged
-
-            ' Update pagination labels
-            Dim startEntry As Integer = If(totalItems = 0, 0, (_currentPage - 1) * _pageSize + 1)
-            Dim endEntry As Integer = Math.Min(_currentPage * _pageSize, totalItems)
-            txtPageInfo.Text = $"Showing {startEntry}–{endEntry} of {totalItems} entries"
-            txtCurrentPage.Text = $"Page {_currentPage} of {totalPages}"
-
-            ' Enable / disable nav buttons
-            BtnPrevPage.IsEnabled = _currentPage > 1
-            BtnNextPage.IsEnabled = _currentPage < totalPages
-        End Sub
-
-        Private Sub ApplySearch(keyword As String)
-            _currentPage = 1
-            RefreshGrid()
         End Sub
 
         Private Sub TxtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
             If txtSearch.Text = "Search" Then Return
-            ApplySearch(txtSearch.Text.Trim())
+            If _searchFilterHelper IsNot Nothing Then
+                _searchFilterHelper.SearchText = txtSearch.Text.Trim()
+            End If
         End Sub
 
         Private Sub TxtSearch_GotFocus(sender As Object, e As RoutedEventArgs)
@@ -101,30 +95,6 @@ Namespace DPC.Views.CRM.ClientGroup
             End If
         End Sub
 
-        Private Sub CmbPageSize_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
-            Dim selected = TryCast(cmbPageSize.SelectedItem, ComboBoxItem)
-            If selected Is Nothing Then Return
-
-            Dim parsed As Integer
-            If Integer.TryParse(selected.Content.ToString(), parsed) Then
-                _pageSize = parsed
-                _currentPage = 1
-                RefreshGrid()
-            End If
-        End Sub
-
-        Private Sub BtnPrevPage_Click(sender As Object, e As RoutedEventArgs)
-            If _currentPage > 1 Then
-                _currentPage -= 1
-                RefreshGrid()
-            End If
-        End Sub
-
-        Private Sub BtnNextPage_Click(sender As Object, e As RoutedEventArgs)
-            _currentPage += 1
-            RefreshGrid()
-        End Sub
-
         Private Sub CRMAddNewClientGroup(sender As Object, e As RoutedEventArgs)
             Dim form As New DPC.Views.CRM.ClientGroup.AddNewClientGroup()
             AddHandler form.FormClosed, AddressOf LoadDetails
@@ -139,7 +109,7 @@ Namespace DPC.Views.CRM.ClientGroup
             If clientGroup Is Nothing Then Return
 
             Dim form As New DPC.Views.CRM.ClientGroup.AddNewClientGroup()
-            form.EditGroup = clientGroup                         ' ← passes the record
+            form.EditGroup = clientGroup
             AddHandler form.FormClosed, AddressOf LoadDetails
             PopupHelper.OpenPopupWithControl(sender, form, "windowcenter", True, -50, 0, Window.GetWindow(Me))
         End Sub
@@ -151,7 +121,7 @@ Namespace DPC.Views.CRM.ClientGroup
             Dim clientGroup = TryCast(btn.DataContext, DPC.Data.Models.ClientGroup)
             If clientGroup Is Nothing Then
                 MessageBox.Show("Could not identify the selected group.", "Error",
-                                MessageBoxButton.OK, MessageBoxImage.Warning)
+                    MessageBoxButton.OK, MessageBoxImage.Warning)
                 Return
             End If
 
@@ -168,10 +138,10 @@ Namespace DPC.Views.CRM.ClientGroup
 
             If ClientGroupController.DeleteClientGroup(_pendingDeleteGroup) Then
                 MessageBox.Show("Client group deleted successfully.", "Success",
-                                MessageBoxButton.OK, MessageBoxImage.Information)
+                    MessageBoxButton.OK, MessageBoxImage.Information)
             Else
                 MessageBox.Show("Failed to delete client group.", "Error",
-                                MessageBoxButton.OK, MessageBoxImage.Error)
+                    MessageBoxButton.OK, MessageBoxImage.Error)
             End If
 
             _pendingDeleteGroup = Nothing
@@ -187,6 +157,8 @@ Namespace DPC.Views.CRM.ClientGroup
                 saveDialog.FileName = "ClientGroups_" & DateTime.Now.ToString("yyyyMMdd_HHmmss")
 
                 If saveDialog.ShowDialog() <> True Then Return
+
+                Dim allGroups = ClientGroupController.GetClientGroup()
 
                 Using pkg As New ExcelPackage()
                     Dim ws As ExcelWorksheet = pkg.Workbook.Worksheets.Add("Client Groups")
@@ -205,7 +177,7 @@ Namespace DPC.Views.CRM.ClientGroup
                     End Using
 
                     Dim row As Integer = 2
-                    For Each g In _allClientGroups
+                    For Each g In allGroups
                         ws.Cells(row, 1).Value = g.ClientGroupID
                         ws.Cells(row, 2).Value = g.GroupName
                         ws.Cells(row, 3).Value = g.Description
@@ -218,11 +190,11 @@ Namespace DPC.Views.CRM.ClientGroup
                 End Using
 
                 MessageBox.Show("Exported successfully!", "Excel Export",
-                                MessageBoxButton.OK, MessageBoxImage.Information)
+                    MessageBoxButton.OK, MessageBoxImage.Information)
 
             Catch ex As Exception
                 MessageBox.Show("Export failed: " & ex.Message, "Error",
-                                MessageBoxButton.OK, MessageBoxImage.Error)
+                    MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Sub
 
