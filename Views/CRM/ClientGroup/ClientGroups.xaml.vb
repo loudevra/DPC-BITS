@@ -51,7 +51,7 @@ Namespace DPC.Views.CRM.ClientGroup
             Else
                 filtered = _allClientGroups.Where(
                     Function(g) g.GroupName.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0 OrElse
-                                g.Description.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0)
+                                (g.Description IsNot Nothing AndAlso g.Description.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0))
             End If
 
             Dim totalItems As Integer = filtered.Count()
