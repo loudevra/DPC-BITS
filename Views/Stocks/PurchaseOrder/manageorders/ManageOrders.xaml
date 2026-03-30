@@ -241,11 +241,11 @@
 
                 <!-- Right Controls (Date Range & Search) -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                    <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200">
+                    <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Height="38">
                         <Grid>
                             <TextBox x:Name="SearchText" Height="Auto" Margin="10,0,30,0" VerticalAlignment="Center" VerticalContentAlignment="Center" BorderThickness="0"
                                  FontFamily="Lexend" Background="Transparent" HorizontalAlignment="Stretch" Focusable="True" TextChanged="TextBox_TextChanged"/>
-                            <materialDesign:PackIcon Kind="Magnify" Width="20" Height="20" Foreground="Black" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                            <materialDesign:PackIcon Kind="Magnify" Width="20" Height="21" Foreground="Black" HorizontalAlignment="Right" Margin="0,0,10,0"/>
                         </Grid>
                     </Border>
                     <Border Style="{StaticResource RoundedGridStyle}" HorizontalAlignment="Right" Margin="10" MinWidth="250">
@@ -254,6 +254,7 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
@@ -304,6 +305,23 @@
                                                  VerticalAlignment="Center"
                                                  Grid.Column="3"
                                                  Margin="0,0,5,0"/>
+
+                            <!-- Clear Date Range Button -->
+                            <Button x:Name="BtnClearDateRange"
+                                Grid.Column="4"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Width="25"
+                                Height="25"
+                                Padding="0"
+                                Margin="5,0,5,0"
+                                Click="ClearDateRange_Click"
+                                ToolTip="Clear date filter">
+                                <materialDesign:PackIcon Kind="Close"
+                                                     Width="18"
+                                                     Height="18"
+                                                     Foreground="Black"/>
+                            </Button>
                         </Grid>
                     </Border>
                 </StackPanel>

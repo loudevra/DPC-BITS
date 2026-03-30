@@ -1,11 +1,14 @@
 ﻿Imports System.ComponentModel
 Imports System.Data
+Imports System.Linq
+Imports System.Collections.ObjectModel
 Imports System.Windows
 Imports System.Windows.Controls
 Imports System.Windows.Controls.Primitives
 Imports System.Windows.Threading
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
+Imports DPC.DPC.Data.Model
 
 Namespace DPC.Views.Stocks.PurchaseOrder.ManageOrders
     Public Class ManageOrders
@@ -30,7 +33,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.ManageOrders
             AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
             AddHandler cmbLimit.SelectionChanged, AddressOf GetItemsFromDB
 
-
+            ' Add handlers for date pickers to trigger search when dates change
+            AddHandler StartDatePicker.SelectedDateChanged, AddressOf OnDateRangeChanged
+            AddHandler EndDatePicker.SelectedDateChanged, AddressOf OnDateRangeChanged
         End Sub
 
         Private Sub DataGrid_CellClick(sender As Object, e As MouseButtonEventArgs)
@@ -67,13 +72,53 @@ Namespace DPC.Views.Stocks.PurchaseOrder.ManageOrders
             GetItemsFromDB()
         End Sub
 
+        ' Event handler for date range changes
+        Private Sub OnDateRangeChanged(sender As Object, e As SelectionChangedEventArgs)
+            ' Only trigger search if both dates are selected
+            If DateRangeVM.StartDate.HasValue AndAlso DateRangeVM.EndDate.HasValue Then
+                GetItemsFromDB()
+            End If
+        End Sub
+
+        ' Clear date range filter
+        Private Sub ClearDateRange_Click(sender As Object, e As RoutedEventArgs)
+            ' Reset dates to Nothing to disable filtering
+            DateRangeVM.StartDate = Nothing
+            DateRangeVM.EndDate = Nothing
+
+            ' Refresh the data to show all records
+            GetItemsFromDB()
+        End Sub
+
         Private Sub GetItemsFromDB()
-            If String.IsNullOrWhiteSpace(SearchText.Text) Then
+            ' Get all orders first
+            Dim allOrders = PurchaseOrderController.GetOrders(CInt(cmbLimit.Text))
+
+            ' Apply search filter if text is provided
+            If Not String.IsNullOrWhiteSpace(SearchText.Text) Then
+                allOrders = PurchaseOrderController.GetOrdersSearch(SearchText.Text, CInt(cmbLimit.Text))
+            End If
+
+            ' Apply date range filter only if both dates are selected
+            If DateRangeVM.StartDate.HasValue AndAlso DateRangeVM.EndDate.HasValue Then
+                Dim filteredOrders = allOrders.Where(Function(order)
+                                                         Dim orderDate As Date
+                                                         ' Parse the date from "MMMM d, yyyy" format
+                                                         If Date.TryParseExact(order.OrderDate, "MMMM d, yyyy",
+                                         System.Globalization.CultureInfo.InvariantCulture,
+                                         Globalization.DateTimeStyles.None, orderDate) Then
+                                                             Return orderDate >= DateRangeVM.StartDate.Value.Date AndAlso
+                               orderDate <= DateRangeVM.EndDate.Value.Date
+                                                         End If
+                                                         Return False
+                                                     End Function).ToList()
+
                 dataGrid.ItemsSource = Nothing
-                dataGrid.ItemsSource = PurchaseOrderController.GetOrders(CInt(cmbLimit.Text))
+                dataGrid.ItemsSource = New ObservableCollection(Of PurchaseOrderModel)(filteredOrders)
             Else
+                ' No date filter applied - show all results
                 dataGrid.ItemsSource = Nothing
-                dataGrid.ItemsSource = PurchaseOrderController.GetOrdersSearch(SearchText.Text, CInt(cmbLimit.Text))
+                dataGrid.ItemsSource = allOrders
             End If
         End Sub
 
@@ -105,10 +150,10 @@ Namespace DPC.Views.Stocks.PurchaseOrder.ManageOrders
     Public Class DateRangeViewModel
         Implements INotifyPropertyChanged
 
-        Private _startDate As Date? = Date.Now
-        Private _endDate As Date? = Date.Now.AddDays(1) ' Tomorrow
+        Private _startDate As Date? = Nothing ' No default filter
+        Private _endDate As Date? = Nothing ' No default filter
 
-        ' Start Date (Today)
+        ' Start Date
         Public Property StartDate As Date?
             Get
                 Return _startDate
@@ -119,7 +164,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.ManageOrders
             End Set
         End Property
 
-        ' End Date (Tomorrow)
+        ' End Date
         Public Property EndDate As Date?
             Get
                 Return _endDate
