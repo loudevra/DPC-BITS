@@ -10,7 +10,7 @@ Namespace DPC.Data.Controllers
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "INSERT INTO clientGroup (GroupName, Description) VALUES (@GroupName, @Description)"
+                    Dim query As String = "INSERT INTO clientgroup (GroupName, Description) VALUES (@GroupName, @Description)"
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@GroupName", group.GroupName)
                         cmd.Parameters.AddWithValue("@Description", group.Description)
@@ -19,8 +19,9 @@ Namespace DPC.Data.Controllers
                 End Using
                 Return True
             Catch ex As Exception
-                Console.WriteLine("Error creating ClientGroup: " & ex.Message)
-                Return False
+                ' Console.WriteLine("Error creating ClientGroup: " & ex.Message)
+                MessageBox.Show("Error creating ClientGroup: " & ex.Message, "Debug Error",
+            MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Function
 

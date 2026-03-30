@@ -1,4 +1,5 @@
-﻿Imports DPC.DPC.Data.Controllers
+﻿' AddNewClientGroupxaml.xaml.vb
+Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Models
 Namespace DPC.Views.CRM.ClientGroup
     Public Class AddNewClientGroup
