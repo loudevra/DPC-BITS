@@ -13,10 +13,17 @@ Namespace DPC.Components.Forms
             InitializeComponent()
             AddHandler BtnClose.Click, AddressOf BtnClose_Click
         End Sub
-
-        ' The Click event for the custom Date Button
+        ' The Click event for the custom Date Button (With Past-Date Restriction)
         Private Sub StartDate_Click(sender As Object, e As RoutedEventArgs)
-            ' This forces the hidden calendar popup to open
+            Dim minDate As DateTime = DateTime.Today
+
+            ' If we are editing a record, check if the text box already holds a past date
+            Dim existingDate As DateTime
+            If DateTime.TryParse(TxtDateDisplay.Text, existingDate) AndAlso existingDate < DateTime.Today Then
+                minDate = existingDate
+            End If
+
+            SingleDatePicker.DisplayDateStart = minDate
             SingleDatePicker.IsDropDownOpen = True
         End Sub
 
