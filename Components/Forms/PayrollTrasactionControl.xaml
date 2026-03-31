@@ -30,9 +30,12 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- Header -->
             <StackPanel Grid.Row="0" Orientation="Horizontal">
                 <materialDesign:PackIcon Kind="ShapeRectanglePlus" Foreground="#555555" Margin="5,0,0,10" Width="28" Height="28"/>
                 <TextBlock FontSize="18" Foreground="#555555" FontWeight="Bold" Text="Add Payroll Transaction" Margin="7,0,0,10"/>
@@ -41,93 +44,91 @@
                 <materialDesign:PackIcon Kind="Close" Foreground="#555555" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Button>
 
-
-            <!-- Fields -->
-            <TextBlock Grid.Row="1" Text="Search Player:" Foreground="#555555" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontWeight="Medium" Margin="0,5,0,0"/>
+            <TextBlock Grid.Row="1" Text="Search Player:" Foreground="#555555" FontFamily="Lexend" FontWeight="Medium" Margin="0,5,0,0"/>
             <Border Grid.Row="2" Height="40" Margin="0,5,0,0" BorderBrush="#555555" BorderThickness="2" CornerRadius="18" Padding="15,10,15,10">
-                <TextBox Background="Transparent" BorderThickness="0" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold" CharacterCasing="Upper"/>
+                <TextBox x:Name="txtEmployee" Background="Transparent" BorderThickness="0" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold" CharacterCasing="Upper"/>
             </Border>
 
-            <TextBlock Grid.Row="3" Text="C/O:" Foreground="#555555" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontWeight="Medium" Margin="0,5,0,0"/>
+            <TextBlock Grid.Row="3" Text="C/O:" Foreground="#555555" FontFamily="Lexend" FontWeight="Medium" Margin="0,5,0,0"/>
             <Border Grid.Row="4" Height="40" Margin="0,5,0,0" BorderBrush="#555555" BorderThickness="2" CornerRadius="18" Padding="15,10,15,10">
                 <TextBox Background="Transparent" BorderThickness="0" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold" CharacterCasing="Upper"/>
             </Border>
 
-            <TextBlock Grid.Row="5" Text="Account:" Foreground="#555555" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontWeight="Medium" Margin="0,5,0,0"/>
+            <TextBlock Grid.Row="5" Text="Account:" Foreground="#555555" FontFamily="Lexend" FontWeight="Medium" Margin="0,5,0,0"/>
             <Border Grid.Row="6" Height="40" Margin="0,5,0,0" BorderBrush="#555555" BorderThickness="2" CornerRadius="18" Padding="15,10,15,10">
-                <TextBox Background="Transparent" BorderThickness="0" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold" CharacterCasing="Upper"/>
+                <TextBox x:Name="txtAccount" Background="Transparent" BorderThickness="0" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold" CharacterCasing="Upper"/>
             </Border>
 
-            <TextBlock Grid.Row="7" Text="Date:" Foreground="#555555" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontWeight="Medium" Margin="0,5,0,0"/>
+            <TextBlock Grid.Row="7" Text="Date:" Foreground="#555555" FontFamily="Lexend" FontWeight="Medium" Margin="0,5,0,0"/>
             <Border Style="{StaticResource RoundedBorderStyle}" Grid.Row="8" Height="40">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width=".05*"/>
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <!-- Single Date Picker -->
                     <DatePicker x:Name="SingleDatePicker"
-Style="{StaticResource SingleDatePickerStyle}"
-SelectedDate="{Binding SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-SelectedDateChanged="SingleDatePicker_SelectedDateChanged"
-Opacity="0"
-IsHitTestVisible="False" />
-                    <!-- Calendar Icon -->
+                                Style="{StaticResource SingleDatePickerStyle}"
+                                SelectedDate="{Binding SelectedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                Opacity="0"
+                                IsHitTestVisible="False" />
                     <materialDesign:PackIcon Grid.Column="0" Kind="Calendar" Width="30" Height="23" Foreground="#474747" VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="10,0,0,0"/>
-                    <!-- Date Display - Now uses FormattedDate property -->
                     <Button x:Name="DateButton" Grid.Column="1" Style="{StaticResource DateButtonStyle}" Click="StartDate_Click" Width="Auto" Margin="28,0,25,0">
                         <TextBlock Text="{Binding FormattedDate}" Margin="0,-5,5,0" Foreground="#555555" FontWeight="SemiBold" Height="14"/>
                     </Button>
                 </Grid>
             </Border>
 
-            <TextBlock Grid.Row="9" Text="Amount:" Foreground="#555555" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontWeight="Medium" Margin="0,5,0,0"/>
+            <TextBlock Grid.Row="9" Text="Amount:" Foreground="#555555" FontFamily="Lexend" FontWeight="Medium" Margin="0,5,0,0"/>
             <Border Grid.Row="10" Height="40" Margin="0,5,0,0" BorderBrush="#555555" BorderThickness="2" CornerRadius="18" Padding="15,10,15,10">
-                <TextBox Background="Transparent" BorderThickness="0" Foreground="#555555" FontWeight="SemiBold" CharacterCasing="Upper"/>
+                <TextBox x:Name="txtAmount" Background="Transparent" BorderThickness="0" Foreground="#555555" FontWeight="SemiBold" CharacterCasing="Upper"/>
             </Border>
 
-
-
-            <TextBlock Grid.Row="12" Text="Type:" Foreground="#555555" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontWeight="Medium" Margin="0,5,0,0"/>
+            <TextBlock Grid.Row="12" Text="Type:" Foreground="#555555" FontFamily="Lexend" FontWeight="Medium" Margin="0,5,0,0"/>
             <Border Grid.Row="13" Height="40" Margin="0,5,0,0" BorderBrush="#555555" BorderThickness="2" CornerRadius="18" Padding="15,10,15,10">
                 <TextBox Background="Transparent" BorderThickness="0" Foreground="#555555" FontWeight="SemiBold" CharacterCasing="Upper"/>
             </Border>
 
-            <TextBlock Grid.Row="14" Text="Category:" Foreground="#555555" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontWeight="Medium" Margin="0,5,0,0"/>
+            <TextBlock Grid.Row="14" Text="Category:" Foreground="#555555" FontFamily="Lexend" FontWeight="Medium" Margin="0,5,0,0"/>
             <Border Grid.Row="15" Height="40" Margin="0,5,0,0" BorderBrush="#555555" BorderThickness="2" CornerRadius="18" Padding="15,10,15,10">
                 <TextBox Background="Transparent" BorderThickness="0" Foreground="#555555" FontWeight="SemiBold" CharacterCasing="Upper"/>
             </Border>
 
-            <TextBlock Grid.Row="18" Text="Method:" Foreground="#555555" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontWeight="Medium" Margin="0,5,0,0"/>
-            <Border Grid.Row="18" Height="40" Margin="0,20,0,0" BorderBrush="#555555" BorderThickness="2" CornerRadius="18" Padding="15,10,15,10" >
-                <TextBox Background="Transparent" BorderThickness="0" Foreground="#555555" FontWeight="SemiBold" CharacterCasing="Upper"/>
+            <TextBlock Grid.Row="16" Text="Method:" Foreground="#555555" FontFamily="Lexend" FontWeight="Medium" Margin="0,5,0,0"/>
+            <Border Grid.Row="17" Height="40" Margin="0,5,0,0" BorderBrush="#555555" BorderThickness="2" CornerRadius="18" Padding="15,10,15,10" >
+                <TextBox x:Name="txtMethod" Background="Transparent" BorderThickness="0" Foreground="#555555" FontWeight="SemiBold" CharacterCasing="Upper"/>
             </Border>
 
-            <TextBlock Grid.Row="16" Text="Note:" Foreground="#555555" FontFamily="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;700" FontWeight="Medium" Margin="0,75,0,-70"/>
-            <Border Grid.Row="16" Height="40" Margin="0,112,0,-72" BorderBrush="#555555" BorderThickness="2" CornerRadius="18" Padding="15,10,15,10">
-                <TextBox Background="Transparent" BorderThickness="0" Foreground="#555555" FontWeight="SemiBold" CharacterCasing="Upper"/>
+            <TextBlock Grid.Row="18" Text="Note:" Foreground="#555555" FontFamily="Lexend" FontWeight="Medium" Margin="0,5,0,0"/>
+            <Border Grid.Row="19" Height="40" Margin="0,5,0,0" BorderBrush="#555555" BorderThickness="2" CornerRadius="18" Padding="15,10,15,10">
+                <TextBox x:Name="txtNote" Background="Transparent" BorderThickness="0" Foreground="#555555" FontWeight="SemiBold" CharacterCasing="Upper"/>
             </Border>
 
-
-            <!-- Add Button -->
-            <Button Grid.Row="16" Content="Add" Width="100" Height="35" Background="#52C69D" 
-                    Foreground="#FDFDFD" FontWeight="SemiBold" HorizontalAlignment="Right"
-                    Margin="0,160,10,-120" >
+            <Button Grid.Row="20" Content="Add" Width="100" Height="35" 
+        Foreground="#FDFDFD" FontWeight="SemiBold" HorizontalAlignment="Right"
+        Margin="0,20,10,20" Click="BtnAdd_Click" Cursor="Hand">
                 <Button.Style>
                     <Style TargetType="Button">
+                        <Setter Property="Background" Value="#52C69D"/>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="Button">
-                                    <Border Background="{TemplateBinding Background}" CornerRadius="20">
+                                    <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="17">
                                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#45AB86"/>
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#328567"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>
                     </Style>
                 </Button.Style>
             </Button>
-
         </Grid>
     </Border>
 </UserControl>
