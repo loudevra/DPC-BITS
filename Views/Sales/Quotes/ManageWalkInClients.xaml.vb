@@ -15,9 +15,8 @@ Namespace DPC.Views.Sales.Quotes
     Public Class ManageWalkInClients
         Inherits UserControl
 
-        ' ViewModels for the custom DatePicker behavior
-        Private startDateViewModel As New CalendarController.SingleCalendar()
-        Private dueDateViewModel As New CalendarController.SingleCalendar()
+        ' ViewModel for the custom DatePicker behavior
+        Private filterDateViewModel As New CalendarController.SingleCalendar()
         Private _typingTimer As DispatcherTimer
 
         Private _isInitialized As Boolean = False
@@ -62,6 +61,23 @@ Namespace DPC.Views.Sales.Quotes
 
                 ' Call the BillingController to fetch records
                 Dim statements = BillingController.GetBillingStatements(limit, _Type)
+
+                ' Apply date filter if a date is selected
+                If filterDateViewModel.SelectedDate.HasValue Then
+                    Dim filterDate As Date = filterDateViewModel.SelectedDate.Value.Date
+                    Dim filteredStatements As New ObservableCollection(Of BillingModel)
+
+                    For Each stmt In statements
+                        Dim stmtDate As DateTime
+                        If DateTime.TryParse(stmt.BillingDate, stmtDate) Then
+                            If stmtDate.Date = filterDate Then
+                                filteredStatements.Add(stmt)
+                            End If
+                        End If
+                    Next
+
+                    statements = filteredStatements
+                End If
 
                 FormatStatementsForDisplay(statements)
                 dataGrid.ItemsSource = statements
@@ -212,6 +228,24 @@ Namespace DPC.Views.Sales.Quotes
                 End If
 
                 Dim results = BillingController.SearchBillingStatements(SearchText.Text.Trim(), limit, _Type)
+
+                ' Apply date filter if a date is selected
+                If filterDateViewModel.SelectedDate.HasValue Then
+                    Dim filterDate As Date = filterDateViewModel.SelectedDate.Value.Date
+                    Dim filteredResults As New ObservableCollection(Of BillingModel)
+
+                    For Each stmt In results
+                        Dim stmtDate As DateTime
+                        If DateTime.TryParse(stmt.BillingDate, stmtDate) Then
+                            If stmtDate.Date = filterDate Then
+                                filteredResults.Add(stmt)
+                            End If
+                        End If
+                    Next
+
+                    results = filteredResults
+                End If
+
                 FormatStatementsForDisplay(results)
                 dataGrid.ItemsSource = results
             Catch ex As Exception
@@ -231,21 +265,53 @@ Namespace DPC.Views.Sales.Quotes
             End If
         End Sub
 
-        ' DatePicker Handlers
-        Private Sub StartDateButton_Click(sender As Object, e As RoutedEventArgs)
-            StartDatePicker.IsDropDownOpen = True
+        ' DatePicker Handlers - Updated for single date filter
+        Private Sub FilterDateButton_Click(sender As Object, e As RoutedEventArgs)
+            FilterDatePicker.IsDropDownOpen = True
         End Sub
 
-        Private Sub DueDateButton_Click(sender As Object, e As RoutedEventArgs)
-            DueDatePicker.IsDropDownOpen = True
+        Private Sub FilterDatePicker_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs)
+            filterDateViewModel.SelectedDate = FilterDatePicker.SelectedDate
+
+            ' Update the text and clear button visibility
+            If FilterDatePicker.SelectedDate.HasValue Then
+                FilterDateText.Text = FilterDatePicker.SelectedDate.Value.ToString("MMM dd, yyyy")
+                FilterDateText.Foreground = New SolidColorBrush(CType(ColorConverter.ConvertFromString("#555555"), Color))
+                ClearDateButton.Visibility = Visibility.Visible
+            Else
+                FilterDateText.Text = "Select Date"
+                FilterDateText.Foreground = New SolidColorBrush(CType(ColorConverter.ConvertFromString("#AEAEAE"), Color))
+                ClearDateButton.Visibility = Visibility.Collapsed
+            End If
+
+            ' Reload data with the new date filter
+            If _isInitialized Then
+                If String.IsNullOrWhiteSpace(SearchText.Text) Then
+                    LoadData()
+                Else
+                    PerformSearch()
+                End If
+            End If
         End Sub
 
-        Private Sub StartDatePicker_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs)
-            startDateViewModel.SelectedDate = StartDatePicker.SelectedDate
-        End Sub
+        Private Sub ClearDateButton_Click(sender As Object, e As RoutedEventArgs)
+            ' Clear the selected date
+            FilterDatePicker.SelectedDate = Nothing
+            filterDateViewModel.SelectedDate = Nothing
 
-        Private Sub DueDatePicker_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs)
-            dueDateViewModel.SelectedDate = DueDatePicker.SelectedDate
+            ' Reset the text display
+            FilterDateText.Text = "Select Date"
+            FilterDateText.Foreground = New SolidColorBrush(CType(ColorConverter.ConvertFromString("#AEAEAE"), Color))
+            ClearDateButton.Visibility = Visibility.Collapsed
+
+            ' Reload data without date filter
+            If _isInitialized Then
+                If String.IsNullOrWhiteSpace(SearchText.Text) Then
+                    LoadData()
+                Else
+                    PerformSearch()
+                End If
+            End If
         End Sub
 
         ' ==========================================
@@ -313,10 +379,8 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Public Sub SetupDatePickers()
-            StartDatePicker.DataContext = startDateViewModel
-            StartDateButton.DataContext = startDateViewModel
-            DueDatePicker.DataContext = dueDateViewModel
-            DueDateButton.DataContext = dueDateViewModel
+            FilterDatePicker.DataContext = filterDateViewModel
+            FilterDateButton.DataContext = filterDateViewModel
         End Sub
 
         Private Function GetCacheModule() As BillingModel
