@@ -12,15 +12,23 @@ Namespace DPC.Views.Stocks.ProductsLabel.StandardLabel
             InitializeComponent()
         End Sub
 
-        Private Sub BtnCustomLabel_Checked(sender As Object, e As RoutedEventArgs)
-            If Me.IsLoaded Then
-                ViewNavigation.NavigateToView("CustomLabel", TryCast(sender, DependencyObject))
+        ' Re-apply correct radio state every time this view becomes visible from cache
+        Private Sub UserControl_IsVisibleChanged(sender As Object, e As DependencyPropertyChangedEventArgs)
+            If CBool(e.NewValue) = True Then
+                BtnStandardLabel.IsChecked = True
             End If
         End Sub
 
-        Private Sub BtnStandardLabel_Checked(sender As Object, e As RoutedEventArgs)
+        ' Use Click instead of Checked — only fires on real user clicks, not programmatic IsChecked changes
+        Private Sub BtnCustomLabel_Click(sender As Object, e As RoutedEventArgs)
             If Me.IsLoaded Then
-                ViewNavigation.NavigateToView("StandardLabel", TryCast(sender, DependencyObject))
+                ViewNavigation.NavigateToCachedView("CustomLabel", TryCast(sender, DependencyObject))
+            End If
+        End Sub
+
+        Private Sub BtnStandardLabel_Click(sender As Object, e As RoutedEventArgs)
+            If Me.IsLoaded Then
+                ViewNavigation.NavigateToCachedView("StandardLabel", TryCast(sender, DependencyObject))
             End If
         End Sub
 

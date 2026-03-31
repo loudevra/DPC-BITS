@@ -6,7 +6,8 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="namespace:DPC.Views.Stocks.ProductsLabel"
         mc:Ignorable="d"
-        Background="#D9D9D9">
+        Background="#D9D9D9"
+        IsVisibleChanged="UserControl_IsVisibleChanged">
 
     <UserControl.Resources>
         <!-- Default Border Style -->
@@ -17,13 +18,11 @@
             <Setter Property="Width" Value="Auto"/>
             <Setter Property="Background" Value="White"/>
             <Setter Property="BorderBrush" Value="Black"/>
-            <!-- Default Black -->
         </Style>
 
         <!-- Default PackIcon Style -->
         <Style x:Key="DefaultPackIconStyle" TargetType="materialDesign:PackIcon">
             <Setter Property="Foreground" Value="#474747"/>
-            <!-- Default Gray -->
             <Setter Property="Width" Value="20"/>
             <Setter Property="Height" Value="20"/>
             <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -34,29 +33,22 @@
         <!-- Custom RadioButton Style -->
         <Style x:Key="CustomRadioButtonStyle" TargetType="RadioButton">
             <Setter Property="Foreground" Value="#474747"/>
-            <!-- Default Text Color -->
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RadioButton">
                         <StackPanel Orientation="Horizontal">
-                            <!-- Outer Circle -->
                             <Border Width="16" Height="16" CornerRadius="8" 
                                 BorderThickness="2" Margin="5"
                                 x:Name="OuterCircle"
                                 BorderBrush="#474747">
-                                <!-- Inner Circle -->
                                 <Ellipse Width="8" Height="8" Fill="Transparent" 
                                      x:Name="InnerCircle" Visibility="Collapsed"/>
                             </Border>
-
-                            <!-- TextBlock for Content -->
                             <TextBlock x:Name="RadioText" VerticalAlignment="Center"
                                    Text="{TemplateBinding Content}" 
                                    Foreground="{TemplateBinding Foreground}"/>
                         </StackPanel>
-
                         <ControlTemplate.Triggers>
-                            <!-- When Checked (Only the selected button changes) -->
                             <Trigger Property="IsChecked" Value="True">
                                 <Setter TargetName="InnerCircle" Property="Visibility" Value="Visible"/>
                                 <Setter TargetName="InnerCircle" Property="Fill" Value="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"/>
@@ -64,8 +56,6 @@
                                 <Setter TargetName="RadioText" Property="Foreground" Value="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"/>
                                 <Setter Property="Foreground" Value="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"/>
                             </Trigger>
-
-                            <!-- When Unchecked (Stays in default black/gray) -->
                             <Trigger Property="IsChecked" Value="False">
                                 <Setter TargetName="InnerCircle" Property="Visibility" Value="Collapsed"/>
                                 <Setter TargetName="OuterCircle" Property="BorderBrush" Value="#474747"/>
@@ -154,21 +144,16 @@
                         BorderBrush="{TemplateBinding BorderBrush}" 
                         BorderThickness="1">
                             <Grid>
-                                <!-- Define two columns, Content on left, Arrow on right -->
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="35" />
                                 </Grid.ColumnDefinitions>
-
-                                <!-- Selected Item Content -->
                                 <ContentPresenter Name="ContentSite"
                                           IsHitTestVisible="False"
                                           Content="{TemplateBinding SelectionBoxItem}"
                                           ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
                                           VerticalAlignment="Center"
                                           Margin="10,0,5,0"/>
-
-                                <!-- Arrow Button (Right) -->
                                 <ToggleButton Name="ToggleButton" 
                                       Grid.Column="1"
                                       Focusable="False"
@@ -197,20 +182,16 @@
                                         </Style>
                                     </ToggleButton.Style>
                                 </ToggleButton>
-
-                                <!-- Dropdown Items -->
                                 <Popup Name="Popup"
                                Placement="Bottom"
                                IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
                                AllowsTransparency="True"
                                Focusable="False"
                                MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-                                    <!-- MATCH WIDTH -->
                                     <Border Style="{StaticResource RoundedBorderStyle}" 
                                     Background="White" 
                                     BorderBrush="Black"
                                     Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-                                        <!-- MATCH WIDTH -->
                                         <ScrollViewer>
                                             <StackPanel>
                                                 <ItemsPresenter/>
@@ -233,28 +214,90 @@
             <Setter Property="Padding" Value="5"/>
         </Style>
 
+        <!-- ModernScrollViewerStyle -->
+        <Style x:Key="ModernScrollBarStyle" TargetType="ScrollBar">
+            <Setter Property="Width" Value="4"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid Background="Transparent" Height="107">
+                            <Border
+                                x:Name="TrackBackground"
+                                Width="5"
+                                VerticalAlignment="Stretch"
+                                Background="#555555"
+                                CornerRadius="5"/>
+                            <Track Name="PART_Track"
+                                   IsDirectionReversed="true"
+                                   Margin="0">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="ScrollBar.LineUpCommand" Visibility="Collapsed"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Background="#555555"
+                                           Margin="0"
+                                           Width="4"
+                                           Height="30">
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="Thumb">
+                                                <Border Background="{TemplateBinding Background}" CornerRadius="30"/>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="ScrollBar.LineDownCommand" Visibility="Collapsed"/>
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernScrollViewerStyle" TargetType="ScrollViewer">
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <ScrollContentPresenter Grid.Column="0" Grid.Row="0"/>
+                            <ScrollBar x:Name="PART_VerticalScrollBar"
+                                       Grid.Column="1" Grid.Row="0"
+                                       Orientation="Vertical"
+                                       Style="{StaticResource ModernScrollBarStyle}"
+                                       Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </UserControl.Resources>
 
     <Grid>
-    
-
         <!-- Main Content -->
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <!-- Form Content -->
             </Grid.RowDefinitions>
 
-     
             <!-- Main Form Content -->
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Style="{StaticResource ModernScrollViewerStyle}">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <!--Product Label-->
                         <RowDefinition Height="Auto"/>
-                        <!--Print Settings-->
                         <RowDefinition Height="Auto"/>
-                        <!--Print Details-->
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
@@ -276,9 +319,10 @@
                                         <ColumnDefinition Width=".5*"/>
                                         <ColumnDefinition Width=".5*"/>
                                     </Grid.ColumnDefinitions>
-                                    <!-- Yes Button with Border -->
+
+                                    <!-- Custom Button -->
                                     <Border Grid.Column="0" Background="#AEAEAE" CornerRadius="20" Padding="10" Margin="25,0,25,25" MouseLeftButtonDown="CustomBorder_Click">
-                                        <RadioButton Content="Custom" IsChecked="True" GroupName="Custom_Standard" FontFamily="Lexend" FontSize="14" Foreground="White" x:Name="BtnCustomLabel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Checked="BtnCustomLabel_Checked">
+                                        <RadioButton Content="Custom" IsChecked="True" GroupName="Custom_Standard" FontFamily="Lexend" FontSize="14" Foreground="White" x:Name="BtnCustomLabel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="BtnCustomLabel_Click">
                                             <RadioButton.Style>
                                                 <Style TargetType="RadioButton">
                                                     <Setter Property="Template">
@@ -305,9 +349,9 @@
                                         </RadioButton>
                                     </Border>
 
-                                    <!-- No Button with Border -->
-                                    <Border Grid.Column="1" Background="#AEAEAE" CornerRadius="20" Padding="10" Margin="25,0,25,25" MouseLeftButtonDown="CustomBorder_Click">
-                                        <RadioButton Content="Standard" GroupName="Custom_Standard"  FontFamily="Lexend" FontSize="14" Foreground="White"  x:Name="BtnStandardLabel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Checked="BtnStandardLabel_Checked">
+                                    <!-- Standard Button -->
+                                    <Border Grid.Column="1" Background="#AEAEAE" CornerRadius="20" Padding="10" Margin="25,0,25,25" MouseLeftButtonDown="StandardBorder_Click">
+                                        <RadioButton Content="Standard" GroupName="Custom_Standard" FontFamily="Lexend" FontSize="14" Foreground="White" x:Name="BtnStandardLabel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="BtnStandardLabel_Click">
                                             <RadioButton.Style>
                                                 <Style TargetType="RadioButton">
                                                     <Setter Property="Template">
@@ -340,10 +384,9 @@
                                 <TextBlock Text="Warehouse:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
                                 <StackPanel Width="Auto" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                                     <ComboBox x:Name="cmbWarehouses" FontFamily="Lexend" FontSize="14" Foreground="#474747"
-    Padding="10" Width="Auto" Height="40" Background="White" BorderBrush="black"
-    BorderThickness="1" HorizontalContentAlignment="Left" Margin="0,0,0,10" SelectionChanged="ItemsFromWarehouse">
+                                              Padding="10" Width="Auto" Height="40" Background="White" BorderBrush="black"
+                                              BorderThickness="1" HorizontalContentAlignment="Left" Margin="0,0,0,10" SelectionChanged="ItemsFromWarehouse">
                                         <ComboBox.Resources>
-                                            <!-- Custom ComboBox Toggle Button -->
                                             <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
                                                 <Setter Property="Focusable" Value="False"/>
                                                 <Setter Property="Template">
@@ -352,46 +395,38 @@
                                                             <Border Background="Transparent" Padding="5">
                                                                 <Grid>
                                                                     <Path x:Name="Arrow" Data="M 0 0 L 4 4 L 8 0 Z"
-              HorizontalAlignment="Right" VerticalAlignment="Center"
-              Fill="Black" Width="8" Height="8" 
-              Margin="0,5,10,0"/>
+                                                                          HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                                          Fill="Black" Width="8" Height="8" Margin="0,5,10,0"/>
                                                                 </Grid>
                                                             </Border>
                                                         </ControlTemplate>
                                                     </Setter.Value>
                                                 </Setter>
                                             </Style>
-
-                                            <!-- Custom ComboBox Style -->
                                             <Style TargetType="ComboBox">
                                                 <Setter Property="Template">
                                                     <Setter.Value>
                                                         <ControlTemplate TargetType="ComboBox">
                                                             <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="20" Padding="5">
+                                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                                    CornerRadius="20" Padding="5">
                                                                 <Grid>
-                                                                    <!-- Toggle Button for Dropdown -->
                                                                     <ToggleButton Name="ToggleButton" 
-                                      Style="{StaticResource ComboBoxToggleButton}"
-                                      Grid.Column="2" Focusable="False"
-                                      IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" 
-                                      ClickMode="Press"/>
-
-                                                                    <!-- Selected Content -->
+                                                                                  Style="{StaticResource ComboBoxToggleButton}"
+                                                                                  Grid.Column="2" Focusable="False"
+                                                                                  IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" 
+                                                                                  ClickMode="Press"/>
                                                                     <ContentPresenter Name="ContentSite" IsHitTestVisible="False"
-                  Content="{Binding SelectedItem.Value, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue='Select Warehouse'}"
-                  Margin="10,0,40,0" VerticalAlignment="Center"/>
-
-                                                                    <!-- Dropdown List -->
+                                                                                      Content="{Binding SelectedItem.Value, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue='Select Warehouse'}"
+                                                                                      Margin="10,0,40,0" VerticalAlignment="Center"/>
                                                                     <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" 
-                                       AllowsTransparency="True" Focusable="False"
-                                       PopupAnimation="Slide"
-                                       MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                                                           AllowsTransparency="True" Focusable="False"
+                                                                           PopupAnimation="Slide"
+                                                                           MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
                                                                         <Border Background="White" BorderBrush="Gray" BorderThickness="1" 
-                                        CornerRadius="10"
-                                        Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                                                                CornerRadius="10"
+                                                                                Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
                                                                             <ScrollViewer>
                                                                                 <StackPanel>
                                                                                     <ItemsPresenter/>
@@ -410,40 +445,36 @@
                                 </StackPanel>
                                 <TextBlock Text="Products:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
                                 <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" 
-        Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
+                                        Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
-                                            <!-- Makes the TextBox fill the width -->
                                         </Grid.ColumnDefinitions>
-
                                         <TextBox Grid.Column="0"
                                                  x:Name="txtProducts"
                                                  TextChanged="searchProducts"
-                 Height="35"
-                 Margin="20,0,0,0"
-                 VerticalAlignment="Center"
-                 VerticalContentAlignment="Center"
-                 BorderThickness="0"
-                 FontFamily="Lexend"
-                 Background="Transparent"
-                 HorizontalAlignment="Stretch"
-                 Focusable="True"
-                 CharacterCasing="Upper"/>
-
-                                        <!-- Popup with ListBox -->
+                                                 Height="35"
+                                                 Margin="20,0,0,0"
+                                                 VerticalAlignment="Center"
+                                                 VerticalContentAlignment="Center"
+                                                 BorderThickness="0"
+                                                 FontFamily="Lexend"
+                                                 Background="Transparent"
+                                                 HorizontalAlignment="Stretch"
+                                                 Focusable="True"
+                                                 CharacterCasing="Upper"/>
                                         <Popup x:Name="AutoCompletePopup"
-    PlacementTarget="{Binding ElementName=txtProducts}"
-    Placement="Bottom"
-    StaysOpen="False"
-    IsOpen="False"
-    AllowsTransparency="True"
-    PopupAnimation="Fade">
+                                               PlacementTarget="{Binding ElementName=txtProducts}"
+                                               Placement="Bottom"
+                                               StaysOpen="False"
+                                               IsOpen="False"
+                                               AllowsTransparency="True"
+                                               PopupAnimation="Fade">
                                             <Border Background="White"
-             BorderBrush="LightGray"
-             BorderThickness="1"
-             MaxHeight="150"
-             Width="{Binding ElementName=TxtItem, Path=ActualWidth}">
+                                                    BorderBrush="LightGray"
+                                                    BorderThickness="1"
+                                                    MaxHeight="150"
+                                                    Width="{Binding ElementName=TxtItem, Path=ActualWidth}">
                                                 <ListBox x:Name="LstItems" SelectionChanged="LstItems_SelectionChanged">
                                                     <ListBox.ItemTemplate>
                                                         <DataTemplate>
@@ -465,9 +496,7 @@
 
                     <StackPanel x:Name="PrintSettings" Grid.Row="1" Margin="25,0,25,30">
                         <Border BorderThickness="0,2,0,0" BorderBrush="#AEAEAE" Margin="-10,0,-10,25" Width="Auto" HorizontalAlignment="Stretch"/>
-
                         <TextBlock Text="Print Settings" FontWeight="Regular" FontFamily="Lexend" FontSize="20" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,20"/>
-
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -483,12 +512,11 @@
                             <StackPanel Grid.Row="0" Grid.Column="0">
                                 <TextBlock Text="Barcode Type:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
                             </StackPanel>
-                            <StackPanel Grid.Row="1" Grid.Column="0"  Margin="10,0,25,10">
+                            <StackPanel Grid.Row="1" Grid.Column="0" Margin="10,0,25,10">
                                 <ComboBox x:Name="barcodeType" SelectedIndex="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"
-    Padding="10" Width="Auto" Height="40" Background="White" BorderBrush="black"
-    BorderThickness="1" HorizontalContentAlignment="Left">
+                                          Padding="10" Width="Auto" Height="40" Background="White" BorderBrush="black"
+                                          BorderThickness="1" HorizontalContentAlignment="Left">
                                     <ComboBox.Resources>
-                                        <!-- Custom ComboBox Toggle Button -->
                                         <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
                                             <Setter Property="Focusable" Value="False"/>
                                             <Setter Property="Template">
@@ -497,48 +525,39 @@
                                                         <Border Background="Transparent" Padding="5">
                                                             <Grid>
                                                                 <Path x:Name="Arrow" Data="M 0 0 L 4 4 L 8 0 Z"
-              HorizontalAlignment="Right" VerticalAlignment="Center"
-              Fill="Black" Width="8" Height="8" 
-              Margin="0,5,10,0"/>
+                                                                      HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                                      Fill="Black" Width="8" Height="8" Margin="0,5,10,0"/>
                                                             </Grid>
                                                         </Border>
                                                     </ControlTemplate>
                                                 </Setter.Value>
                                             </Setter>
                                         </Style>
-
-                                        <!-- Custom ComboBox Style -->
                                         <Style TargetType="ComboBox">
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="ComboBox">
                                                         <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="20" Padding="5">
+                                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                                CornerRadius="20" Padding="5">
                                                             <Grid>
-                                                                <!-- Toggle Button for Dropdown -->
                                                                 <ToggleButton Name="ToggleButton" 
-                                      Style="{StaticResource ComboBoxToggleButton}"
-                                      Grid.Column="2" Focusable="False"
-                                      IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" 
-                                      ClickMode="Press"/>
-
-                                                                <!-- Selected Content -->
+                                                                              Style="{StaticResource ComboBoxToggleButton}"
+                                                                              Grid.Column="2" Focusable="False"
+                                                                              IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" 
+                                                                              ClickMode="Press"/>
                                                                 <ContentPresenter Name="ContentSite" IsHitTestVisible="False" 
-                                      Content="{TemplateBinding SelectionBoxItem}" 
-                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                      Margin="10,0,40,0" VerticalAlignment="Center"/>
-
-                                                                <!-- Dropdown List -->
+                                                                                  Content="{TemplateBinding SelectionBoxItem}" 
+                                                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                                                  Margin="10,0,40,0" VerticalAlignment="Center"/>
                                                                 <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" 
-                                       AllowsTransparency="True" Focusable="False"
-                                       PopupAnimation="Slide"
-                                                              
-                                       MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                                                       AllowsTransparency="True" Focusable="False"
+                                                                       PopupAnimation="Slide"
+                                                                       MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
                                                                     <Border Background="White" BorderBrush="Gray" BorderThickness="1" 
-                                        CornerRadius="10"
-                                        Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                                                            CornerRadius="10"
+                                                                            Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
                                                                         <ScrollViewer>
                                                                             <StackPanel>
                                                                                 <ItemsPresenter/>
@@ -553,8 +572,6 @@
                                             </Setter>
                                         </Style>
                                     </ComboBox.Resources>
-
-                                    <!-- ComboBox Items -->
                                     <ComboBoxItem Content="EAN-13"/>
                                     <ComboBoxItem Content="CODE-128"/>
                                     <ComboBoxItem Content="CODE-39"/>
@@ -569,25 +586,16 @@
                             </StackPanel>
                             <StackPanel Grid.Row="1" Grid.Column="1" Margin="10,0,25,10">
                                 <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" 
-        Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
+                                        Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
-                                            <!-- Makes the TextBox fill the width -->
                                         </Grid.ColumnDefinitions>
-
-                                        <TextBox x:Name="barcodeWidth" Grid.Column="0"
-                                                 Text="50"
-                 Height="35"
-                 Margin="20,0,0,0"
-                 VerticalAlignment="Center"
-                 VerticalContentAlignment="Center"
-                 BorderThickness="0"
-                 FontFamily="Lexend"
-                 Background="Transparent"
-                 HorizontalAlignment="Stretch"
-                 CharacterCasing="Upper"                                
-                 Focusable="True"/>
+                                        <TextBox x:Name="barcodeWidth" Grid.Column="0" Text="50"
+                                                 Height="35" Margin="20,0,0,0" VerticalAlignment="Center"
+                                                 VerticalContentAlignment="Center" BorderThickness="0"
+                                                 FontFamily="Lexend" Background="Transparent"
+                                                 HorizontalAlignment="Stretch" CharacterCasing="Upper" Focusable="True"/>
                                     </Grid>
                                 </Border>
                             </StackPanel>
@@ -596,26 +604,17 @@
                                 <TextBlock Text="Barcode Height:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
                             </StackPanel>
                             <StackPanel Grid.Row="1" Grid.Column="2" Margin="10,0,25,10">
-                                <Border BorderThickness="1" BorderBrush="black" CornerRadius="20" 
-Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
+                                <Border BorderThickness="1" BorderBrush="black" CornerRadius="20"
+                                        Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
-                                            <!-- Makes the TextBox fill the width -->
                                         </Grid.ColumnDefinitions>
-
-                                        <TextBox x:Name="barcodeHeight" Grid.Column="0"
-                                                 Text="30"
-         Height="35"
-         Margin="20,0,0,0"
-         VerticalAlignment="Center"
-         VerticalContentAlignment="Center"
-         BorderThickness="0"
-         FontFamily="Lexend"
-         Background="Transparent"
-         HorizontalAlignment="Stretch"
-         CharacterCasing="Upper"                     
-         Focusable="True"/>
+                                        <TextBox x:Name="barcodeHeight" Grid.Column="0" Text="30"
+                                                 Height="35" Margin="20,0,0,0" VerticalAlignment="Center"
+                                                 VerticalContentAlignment="Center" BorderThickness="0"
+                                                 FontFamily="Lexend" Background="Transparent"
+                                                 HorizontalAlignment="Stretch" CharacterCasing="Upper" Focusable="True"/>
                                     </Grid>
                                 </Border>
                             </StackPanel>
@@ -623,13 +622,12 @@ Background="White" HorizontalAlignment="Stretch" Margin="0,0,0,10">
                             <StackPanel Grid.Row="0" Grid.Column="3">
                                 <TextBlock Text="Font Size:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
                             </StackPanel>
-                            <StackPanel Grid.Row="1" Grid.Column="3"  Margin="10,0,25,10">
+                            <StackPanel Grid.Row="1" Grid.Column="3" Margin="10,0,25,10">
                                 <ComboBox x:Name="cmbFontSize" SelectedIndex="3" FontFamily="Lexend" FontSize="14" Foreground="#474747"
-Padding="10" Width="Auto" Height="40" Background="White" BorderBrush="black"
-BorderThickness="1" HorizontalContentAlignment="Left">
+                                          Padding="10" Width="Auto" Height="40" Background="White" BorderBrush="black"
+                                          BorderThickness="1" HorizontalContentAlignment="Left">
                                     <ComboBox.Resources>
-                                        <!-- Custom ComboBox Toggle Button -->
-                                        <Style  x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+                                        <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
                                             <Setter Property="Focusable" Value="False"/>
                                             <Setter Property="Template">
                                                 <Setter.Value>
@@ -637,48 +635,39 @@ BorderThickness="1" HorizontalContentAlignment="Left">
                                                         <Border Background="Transparent" Padding="5">
                                                             <Grid>
                                                                 <Path x:Name="Arrow" Data="M 0 0 L 4 4 L 8 0 Z"
-          HorizontalAlignment="Right" VerticalAlignment="Center"
-          Fill="Black" Width="8" Height="8" 
-          Margin="0,5,10,0"/>
+                                                                      HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                                      Fill="Black" Width="8" Height="8" Margin="0,5,10,0"/>
                                                             </Grid>
                                                         </Border>
                                                     </ControlTemplate>
                                                 </Setter.Value>
                                             </Setter>
                                         </Style>
-
-                                        <!-- Custom ComboBox Style -->
                                         <Style TargetType="ComboBox">
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate TargetType="ComboBox">
                                                         <Border Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="20" Padding="5">
+                                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                                CornerRadius="20" Padding="5">
                                                             <Grid>
-                                                                <!-- Toggle Button for Dropdown -->
                                                                 <ToggleButton Name="ToggleButton" 
-                                  Style="{StaticResource ComboBoxToggleButton}"
-                                  Grid.Column="2" Focusable="False"
-                                  IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" 
-                                  ClickMode="Press"/>
-
-                                                                <!-- Selected Content -->
+                                                                              Style="{StaticResource ComboBoxToggleButton}"
+                                                                              Grid.Column="2" Focusable="False"
+                                                                              IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" 
+                                                                              ClickMode="Press"/>
                                                                 <ContentPresenter Name="ContentSite" IsHitTestVisible="False" 
-                                  Content="{TemplateBinding SelectionBoxItem}" 
-                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                  Margin="10,0,40,0" VerticalAlignment="Center"/>
-
-                                                                <!-- Dropdown List -->
+                                                                                  Content="{TemplateBinding SelectionBoxItem}" 
+                                                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                                                  Margin="10,0,40,0" VerticalAlignment="Center"/>
                                                                 <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" 
-                                   AllowsTransparency="True" Focusable="False"
-                                   PopupAnimation="Slide"
-                                                          
-                                   MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                                                       AllowsTransparency="True" Focusable="False"
+                                                                       PopupAnimation="Slide"
+                                                                       MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
                                                                     <Border Background="White" BorderBrush="Gray" BorderThickness="1" 
-                                    CornerRadius="10"
-                                    Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                                                            CornerRadius="10"
+                                                                            Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
                                                                         <ScrollViewer>
                                                                             <StackPanel>
                                                                                 <ItemsPresenter/>
@@ -693,8 +682,6 @@ BorderThickness="1" HorizontalContentAlignment="Left">
                                             </Setter>
                                         </Style>
                                     </ComboBox.Resources>
-
-                                    <!-- ComboBox Items -->
                                     <ComboBoxItem Content="8pt"/>
                                     <ComboBoxItem Content="9pt"/>
                                     <ComboBoxItem Content="10pt"/>
@@ -733,7 +720,6 @@ BorderThickness="1" HorizontalContentAlignment="Left">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
-
                                         <TextBox x:Name="lblWidth" Text="80" Grid.Column="0" Style="{StaticResource CustomTextBoxStyle}" CharacterCasing="Upper"/>
                                     </Grid>
                                 </Border>
@@ -748,8 +734,7 @@ BorderThickness="1" HorizontalContentAlignment="Left">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
-
-                                        <TextBox x:Name="lblHeight"  Text="80" Grid.Column="0" Style="{StaticResource CustomTextBoxStyle}" CharacterCasing="Upper"/>
+                                        <TextBox x:Name="lblHeight" Text="80" Grid.Column="0" Style="{StaticResource CustomTextBoxStyle}" CharacterCasing="Upper"/>
                                     </Grid>
                                 </Border>
                             </StackPanel>
@@ -775,13 +760,10 @@ BorderThickness="1" HorizontalContentAlignment="Left">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
-
                                         <TextBox Text="1" x:Name="copies" Grid.Column="0" Style="{StaticResource CustomTextBoxStyle}" CharacterCasing="Upper"/>
                                     </Grid>
                                 </Border>
                             </StackPanel>
-
-                       
                         </Grid>
 
                         <Border BorderThickness="0,2,0,0" BorderBrush="#AEAEAE" Margin="-10,10,-10,15" Width="Auto" HorizontalAlignment="Stretch"/>
@@ -810,14 +792,13 @@ BorderThickness="1" HorizontalContentAlignment="Left">
                                 <TextBlock Text="Print Details" FontWeight="Regular" FontFamily="Lexend" FontSize="20" Foreground="#474747" VerticalAlignment="Top"/>
                             </StackPanel>
 
-                            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" >
+                            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
                                 <TextBlock Text="Product Name:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top"/>
                             </StackPanel>
                             <ToggleButton x:Name="includeProductName" IsChecked="True" Grid.Row="2" Margin="0,0,0,10" Grid.Column="0" Style="{StaticResource ToggleSwitchStyle}"/>
 
-                            <!-- Detail not yet added (Remove collapsed stack panel if will add details) -->
                             <StackPanel Visibility="Collapsed">
-                                <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" >
+                                <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
                                     <TextBlock Text="Business Location:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top"/>
                                 </StackPanel>
                                 <ToggleButton x:Name="includeBusinessLocation" Grid.Row="4" Margin="0,0,0,10" Grid.Column="0" Style="{StaticResource ToggleSwitchStyle}"/>
@@ -828,34 +809,28 @@ BorderThickness="1" HorizontalContentAlignment="Left">
                             </StackPanel>
                             <ToggleButton x:Name="includeWarehouse" Margin="0,0,0,10" Grid.Row="6" Grid.Column="0" Style="{StaticResource ToggleSwitchStyle}"/>
 
-
-                            <StackPanel Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" >
+                            <StackPanel Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2">
                                 <TextBlock Text="Price:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top"/>
                             </StackPanel>
-                            <ToggleButton x:Name="includePrice" Grid.Row="8" IsChecked="True" Grid.Column="0" Margin="0,0,0,10" Style="{StaticResource ToggleSwitchStyle}" />
+                            <ToggleButton x:Name="includePrice" Grid.Row="8" IsChecked="True" Grid.Column="0" Margin="0,0,0,10" Style="{StaticResource ToggleSwitchStyle}"/>
 
-                            
                             <StackPanel Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2">
                                 <TextBlock Text="Product Code:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top"/>
                             </StackPanel>
-                            <ToggleButton x:Name="includeProductCode" IsChecked="True" Grid.Row="10" Margin="0,0,0,10" Grid.Column="0" Style="{StaticResource ToggleSwitchStyle}" />
+                            <ToggleButton x:Name="includeProductCode" IsChecked="True" Grid.Row="10" Margin="0,0,0,10" Grid.Column="0" Style="{StaticResource ToggleSwitchStyle}"/>
 
-                            <!-- Detail not yet added (Remove collapsed stack panel if will add details) -->
                             <StackPanel Visibility="Collapsed">
-                                <StackPanel Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="2" >
+                                <StackPanel Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="2">
                                     <TextBlock Text="Products:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top"/>
                                 </StackPanel>
                                 <ToggleButton x:Name="includeProduct" Grid.Row="12" Margin="0,0,0,10" Grid.Column="0" Style="{StaticResource ToggleSwitchStyle}"/>
-
                             </StackPanel>
-                            
 
                             <StackPanel Grid.Row="13" Grid.Column="0" Grid.ColumnSpan="2" Margin="25,25,25,40" HorizontalAlignment="Right">
                                 <Button Click="PrintBarcodes" Content="Print" Style="{StaticResource PrinterButton}"/>
                             </StackPanel>
                         </Grid>
-                        <Border x:Name="testBorder" Width="793.7" Height="auto" Visibility="Hidden">
-                        </Border>
+                        <Border x:Name="testBorder" Width="793.7" Height="auto" Visibility="Hidden"/>
                     </StackPanel>
                 </Grid>
             </ScrollViewer>

@@ -8,7 +8,6 @@ Namespace DPC.Views.Stocks.ProductsLabel.CustomLabel
     ''' <summary>
     ''' Interaction logic for CustomLabel.xaml
     ''' </summary>
-
     Public Class CustomLabel
         Inherits UserControl
 
@@ -20,62 +19,37 @@ Namespace DPC.Views.Stocks.ProductsLabel.CustomLabel
 
         Public Sub New()
             InitializeComponent()
-
             LoadWarehouses()
-
         End Sub
-        ' Trigger the default selection on window load
+
         Private Sub Window_Loaded(sender As Object, e As RoutedEventArgs)
-            ' Set Add as the default checked radio button
-            'AddProductName.IsChecked = True
-            ' Apply styles accordingly
-            'UpdateStyles(AddBorderProductName, AddIconProductName, "#456B2E", True)
-            'UpdateStyles(AddBorderBusinessLocation, AddIconBusinessLocation, "#456B2E", True)
-            'UpdateStyles(AddBorderWarehouse, AddIconWarehouse, "#456B2E", True)
-            'UpdateStyles(AddBorderPrice, AddIconPrice, "#456B2E", True)
-            'UpdateStyles(AddBorderProductCode, AddIconProductCode, "#456B2E", True)
-            'UpdateStyles(AddBorderProducts, AddIconProducts, "#456B2E", True)
         End Sub
 
-        ' General method to update styles
-        'Private Sub UpdateStyles(border As Border, icon As MaterialDesignThemes.Wpf.PackIcon, color As String, isChecked As Boolean)
-        '    If border IsNot Nothing AndAlso icon IsNot Nothing Then
-        '        If isChecked Then
-        '            Dim newColor As New SolidColorBrush(CType(ColorConverter.ConvertFromString(color), Color))
-        '            border.BorderBrush = newColor
-        '            icon.Foreground = newColor
-        '        Else
-        '            border.BorderBrush = Brushes.Black
-        '            icon.Foreground = New SolidColorBrush(ColorConverter.ConvertFromString("#474747"))
-        '        End If
-        '    End If
-        'End Sub
-
-        ' Event Handlers
+        ' Re-apply correct radio state every time this view becomes visible from cache
+        Private Sub UserControl_IsVisibleChanged(sender As Object, e As DependencyPropertyChangedEventArgs)
+            If CBool(e.NewValue) = True Then
+                BtnCustomLabel.IsChecked = True
+            End If
+        End Sub
 
         Private Sub CustomBorder_Click(sender As Object, e As MouseButtonEventArgs)
             BtnCustomLabel.IsChecked = True
-            If Me.IsLoaded Then
-                ViewNavigation.NavigateToView("CustomLabel", TryCast(sender, DependencyObject))
-            End If
         End Sub
 
         Private Sub StandardBorder_Click(sender As Object, e As MouseButtonEventArgs)
             BtnStandardLabel.IsChecked = True
+        End Sub
+
+        ' Use Click instead of Checked — only fires on real user clicks, not programmatic IsChecked changes
+        Private Sub BtnCustomLabel_Click(sender As Object, e As RoutedEventArgs)
             If Me.IsLoaded Then
-                ViewNavigation.NavigateToView("StandardLabel", TryCast(sender, DependencyObject))
+                ViewNavigation.NavigateToCachedView("CustomLabel", TryCast(sender, DependencyObject))
             End If
         End Sub
 
-        Private Sub BtnCustomLabel_Checked(sender As Object, e As RoutedEventArgs)
+        Private Sub BtnStandardLabel_Click(sender As Object, e As RoutedEventArgs)
             If Me.IsLoaded Then
-                ViewNavigation.NavigateToView("CustomLabel", TryCast(sender, DependencyObject))
-            End If
-        End Sub
-
-        Private Sub BtnStandardLabel_Checked(sender As Object, e As RoutedEventArgs)
-            If Me.IsLoaded Then
-                ViewNavigation.NavigateToView("StandardLabel", TryCast(sender, DependencyObject))
+                ViewNavigation.NavigateToCachedView("StandardLabel", TryCast(sender, DependencyObject))
             End If
         End Sub
 
@@ -87,15 +61,9 @@ Namespace DPC.Views.Stocks.ProductsLabel.CustomLabel
         End Sub
 
         Private Sub searchProducts(sender As Object, e As TextChangedEventArgs)
-
             _product = StocksLabelController.SearchProducts(txtProducts.Text, _warehouseID)
-
             LstItems.ItemsSource = _product
-
-            ' Show popup if we have results
             AutoCompletePopup.IsOpen = _product.Count > 0
-
-            ' Adjust popup width to match the textbox
             AutoCompletePopup.Width = txtProducts.ActualWidth
         End Sub
 
@@ -105,10 +73,8 @@ Namespace DPC.Views.Stocks.ProductsLabel.CustomLabel
                 txtProducts.Text = _selectedProduct.ProductName
                 AutoCompletePopup.IsOpen = False
 
-                ' Store serial numbers
                 SerialNumberList = StocksLabelController.GetSerialNumber(_selectedProduct.ProductID)
 
-                ' DEBUG: Show what was retrieved
                 MessageBox.Show($"Product: {_selectedProduct.ProductName}" & vbCrLf &
                                $"Product ID: {_selectedProduct.ProductID}" & vbCrLf &
                                $"Serial Numbers Found: {If(SerialNumberList IsNot Nothing, SerialNumberList.Count.ToString(), "NULL")}",
@@ -121,6 +87,7 @@ Namespace DPC.Views.Stocks.ProductsLabel.CustomLabel
             _selectedProduct = Nothing
             txtProducts.Clear()
         End Sub
+
         Private Function MmToDiu(mm As Double) As Double
             Return mm * 96 / 25.4
         End Function
@@ -135,26 +102,27 @@ Namespace DPC.Views.Stocks.ProductsLabel.CustomLabel
             Dim fontSizeDouble As Double = CType(sizeString, Double)
 
             Dim productLabel As New TextBlock With {
-        .Width = _lblWidth,
-        .Height = _lblHeight,
-        .TextWrapping = TextWrapping.Wrap,
-        .FontSize = fontSizeDouble,
-        .Text = _selectedProduct.ProductName,
-        .VerticalAlignment = VerticalAlignment.Center,
-        .HorizontalAlignment = HorizontalAlignment.Center,
-        .TextAlignment = TextAlignment.Center,
-        .Margin = New Thickness(0, 2, 0, 0)
-    }
+                .Width = _lblWidth,
+                .Height = _lblHeight,
+                .TextWrapping = TextWrapping.Wrap,
+                .FontSize = fontSizeDouble,
+                .Text = _selectedProduct.ProductName,
+                .VerticalAlignment = VerticalAlignment.Center,
+                .HorizontalAlignment = HorizontalAlignment.Center,
+                .TextAlignment = TextAlignment.Center,
+                .Margin = New Thickness(0, 2, 0, 0)
+            }
 
             Dim ProductCodeLabel As New TextBlock With {
-        .Width = _lblWidth,
-        .FontSize = fontSizeDouble,
-        .Text = _selectedProduct.ProductCode,
-        .VerticalAlignment = VerticalAlignment.Center,
-        .HorizontalAlignment = HorizontalAlignment.Center,
-        .TextAlignment = TextAlignment.Center,
-        .Margin = New Thickness(0, 2, 0, 0)
-    }
+                .Width = _lblWidth,
+                .FontSize = fontSizeDouble,
+                .Text = _selectedProduct.ProductCode,
+                .VerticalAlignment = VerticalAlignment.Center,
+                .HorizontalAlignment = HorizontalAlignment.Center,
+                .TextAlignment = TextAlignment.Center,
+                .Margin = New Thickness(0, 2, 0, 0)
+            }
+
             Dim imageSource As BitmapImage = StocksLabelController.GenerateBarcode(code, _width, _height, barcodeType.SelectedIndex)
             Dim barcodeImage As New System.Windows.Controls.Image
 
@@ -168,66 +136,56 @@ Namespace DPC.Views.Stocks.ProductsLabel.CustomLabel
                 barcodeImage.HorizontalAlignment = HorizontalAlignment.Stretch
             Else
                 MessageBox.Show("Failed to generate barcode image. Please check the code format.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
-                Dim nullPanel As New StackPanel
-                Return nullPanel
+                Return New StackPanel
             End If
 
             Dim barcodeLabel As New TextBlock With {
-        .Width = _lblWidth,
-        .FontSize = fontSizeDouble,
-        .Text = code,
-        .VerticalAlignment = VerticalAlignment.Center,
-        .HorizontalAlignment = HorizontalAlignment.Center,
-        .TextAlignment = TextAlignment.Center,
-        .Margin = New Thickness(0, 2, 0, 0)
-    }
+                .Width = _lblWidth,
+                .FontSize = fontSizeDouble,
+                .Text = code,
+                .VerticalAlignment = VerticalAlignment.Center,
+                .HorizontalAlignment = HorizontalAlignment.Center,
+                .TextAlignment = TextAlignment.Center,
+                .Margin = New Thickness(0, 2, 0, 0)
+            }
 
             Dim retailPrice As New TextBlock With {
-        .TextWrapping = TextWrapping.Wrap,
-        .FontSize = fontSizeDouble,
-        .Text = "₱ " + _selectedProduct.RetailPrice.ToString("N2"),
-        .VerticalAlignment = VerticalAlignment.Center,
-        .HorizontalAlignment = HorizontalAlignment.Center,
-        .TextAlignment = TextAlignment.Center,
-        .Margin = New Thickness(0, 2, 0, 0)
-    }
+                .TextWrapping = TextWrapping.Wrap,
+                .FontSize = fontSizeDouble,
+                .Text = "₱ " + _selectedProduct.RetailPrice.ToString("N2"),
+                .VerticalAlignment = VerticalAlignment.Center,
+                .HorizontalAlignment = HorizontalAlignment.Center,
+                .TextAlignment = TextAlignment.Center,
+                .Margin = New Thickness(0, 2, 0, 0)
+            }
 
             Dim warehouseLabel As New TextBlock With {
-        .Width = _lblWidth,
-        .FontSize = fontSizeDouble,
-        .TextWrapping = TextWrapping.Wrap,
-        .Text = cmbWarehouses.Text,
-        .VerticalAlignment = VerticalAlignment.Center,
-        .HorizontalAlignment = HorizontalAlignment.Center,
-        .TextAlignment = TextAlignment.Center,
-        .Margin = New Thickness(0, 2, 0, 0)
-    }
+                .Width = _lblWidth,
+                .FontSize = fontSizeDouble,
+                .TextWrapping = TextWrapping.Wrap,
+                .Text = cmbWarehouses.Text,
+                .VerticalAlignment = VerticalAlignment.Center,
+                .HorizontalAlignment = HorizontalAlignment.Center,
+                .TextAlignment = TextAlignment.Center,
+                .Margin = New Thickness(0, 2, 0, 0)
+            }
 
             Dim sp As New StackPanel With {
-        .Background = New SolidColorBrush(Colors.White),
-        .Margin = New Thickness(0, 0, 4, 0)
-    }
+                .Background = New SolidColorBrush(Colors.White),
+                .Margin = New Thickness(0, 0, 4, 0)
+            }
 
-            If includeProductName.IsChecked Then
-                sp.Children.Add(productLabel)
-            End If
-            If includeProductCode.IsChecked Then
-                sp.Children.Add(ProductCodeLabel)
-            End If
+            If includeProductName.IsChecked Then sp.Children.Add(productLabel)
+            If includeProductCode.IsChecked Then sp.Children.Add(ProductCodeLabel)
             sp.Children.Add(barcodeImage)
             sp.Children.Add(barcodeLabel)
-            If includePrice.IsChecked Then
-                sp.Children.Add(retailPrice)
-            End If
-            If includeWarehouse.IsChecked Then
-                sp.Children.Add(warehouseLabel)
-            End If
+            If includePrice.IsChecked Then sp.Children.Add(retailPrice)
+            If includeWarehouse.IsChecked Then sp.Children.Add(warehouseLabel)
 
             Return sp
         End Function
 
         Private Sub PrintBarcodes(sender As Object, e As RoutedEventArgs)
-            ' Add validation with user feedback
             If _selectedProduct Is Nothing Then
                 MessageBox.Show("Please select a product first.", "No Product Selected", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Exit Sub
@@ -243,23 +201,19 @@ Namespace DPC.Views.Stocks.ProductsLabel.CustomLabel
                 Exit Sub
             End If
 
-            ' Clear UI
             wrapPanel.Children.Clear()
             testBorder.Child = Nothing
 
-            ' Copy count setup
             Dim copyCount As Integer = 1
             If Not Integer.TryParse(copies.Text, copyCount) OrElse copyCount < 1 Then
                 copies.Text = "1"
                 copyCount = 1
             End If
 
-            ' Container for multiple pages
             Dim containerPanel As New StackPanel With {.Orientation = Orientation.Vertical}
-            Dim pageHeightLimit As Double = 1122.52 ' A4 height
-            Dim pageWidth As Double = 793.7 ' A4 width
+            Dim pageHeightLimit As Double = 1122.52
+            Dim pageWidth As Double = 793.7
 
-            ' Initialize first page
             Dim currentWrapPanel As New WrapPanel With {.Width = pageWidth}
             Dim currentBorder As New Border With {
                 .Background = New SolidColorBrush(Colors.White),
@@ -269,7 +223,6 @@ Namespace DPC.Views.Stocks.ProductsLabel.CustomLabel
                 .Child = currentWrapPanel
             }
 
-            ' Use testBorder to measure page height
             testBorder.Child = currentBorder
             testBorder.Measure(New Size(pageWidth, 5000))
             testBorder.Arrange(New Rect(0, 0, pageWidth, 5000))
@@ -280,18 +233,13 @@ Namespace DPC.Views.Stocks.ProductsLabel.CustomLabel
                     Dim panel = CreateBarcodePanel(serialNumber)
                     currentWrapPanel.Children.Add(panel)
 
-                    ' Update layout to check overflow
                     testBorder.UpdateLayout()
 
                     If testBorder.ActualHeight > pageHeightLimit Then
-                        ' Remove overflowing panel
                         currentWrapPanel.Children.Remove(panel)
-
-                        ' Disconnect from testBorder before adding to container
                         testBorder.Child = Nothing
                         containerPanel.Children.Add(currentBorder)
 
-                        ' Start a new page
                         currentWrapPanel = New WrapPanel With {.Width = pageWidth}
                         currentWrapPanel.Children.Add(panel)
 
@@ -309,17 +257,14 @@ Namespace DPC.Views.Stocks.ProductsLabel.CustomLabel
                 Next
             Next
 
-            ' Add last page if it has content
             If currentWrapPanel.Children.Count > 0 Then
                 testBorder.Child = Nothing
                 containerPanel.Children.Add(currentBorder)
             End If
 
-            ' Show preview
             Dim lblPreview As New LabelPrintPreview(containerPanel)
             lblPreview.ShowDialog()
         End Sub
-
 
 
         'Product Name
