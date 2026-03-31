@@ -101,10 +101,10 @@
                             <Border Height="1344" Width="816" Background="White" CornerRadius="0,0,10,10"  BorderThickness="0" Padding="40">
                                 <Grid>
 
-                                   
-                                    <!--<Grid.Background>
+
+                                    <Grid.Background>
                                         <ImageBrush ImageSource="/Assets/images/DREAMPCBUILD LOGO WATERMARK SLANTED SPACED.png" Stretch="UniformToFill" Opacity="0.05"/>
-                                    </Grid.Background>-->
+                                    </Grid.Background>
 
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
@@ -250,6 +250,7 @@
                                                       RowBackground="Transparent"
                                                       BorderThickness="0, 1, 0, 0"
                                                       BorderBrush="Black">
+                                                
                                                 <DataGrid.Columns>
                                                     <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="80"/>
                                                     <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*"/>
