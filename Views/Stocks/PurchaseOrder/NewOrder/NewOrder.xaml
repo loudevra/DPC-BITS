@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="namespace:DPC.Views.Stocks.PurchaseOrder"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Background="#D9D9D9" FontFamily="Lexend">
+        Background="#D9D9D9" FontFamily="Lexend" Width="940">
 
     <Grid>
         <Grid.RowDefinitions>
