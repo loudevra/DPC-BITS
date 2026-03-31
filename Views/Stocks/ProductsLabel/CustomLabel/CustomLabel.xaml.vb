@@ -1,5 +1,7 @@
 Imports System.Collections.ObjectModel
+Imports DPC.Data.Helpers.ViewLoader
 Imports DPC.DPC.Data.Controllers.Stocks
+Imports DPC.DPC.Data.Helpers.ViewLoader
 Imports DPC.DPC.Data.Model
 
 Namespace DPC.Views.Stocks.ProductsLabel.CustomLabel
@@ -50,6 +52,33 @@ Namespace DPC.Views.Stocks.ProductsLabel.CustomLabel
         'End Sub
 
         ' Event Handlers
+
+        Private Sub CustomBorder_Click(sender As Object, e As MouseButtonEventArgs)
+            BtnCustomLabel.IsChecked = True
+            If Me.IsLoaded Then
+                ViewNavigation.NavigateToView("CustomLabel", TryCast(sender, DependencyObject))
+            End If
+        End Sub
+
+        Private Sub StandardBorder_Click(sender As Object, e As MouseButtonEventArgs)
+            BtnStandardLabel.IsChecked = True
+            If Me.IsLoaded Then
+                ViewNavigation.NavigateToView("StandardLabel", TryCast(sender, DependencyObject))
+            End If
+        End Sub
+
+        Private Sub BtnCustomLabel_Checked(sender As Object, e As RoutedEventArgs)
+            If Me.IsLoaded Then
+                ViewNavigation.NavigateToView("CustomLabel", TryCast(sender, DependencyObject))
+            End If
+        End Sub
+
+        Private Sub BtnStandardLabel_Checked(sender As Object, e As RoutedEventArgs)
+            If Me.IsLoaded Then
+                ViewNavigation.NavigateToView("StandardLabel", TryCast(sender, DependencyObject))
+            End If
+        End Sub
+
         Private Sub LoadWarehouses()
             Dim warehouse = StocksLabelController.GetWarehouse()
             cmbWarehouses.ItemsSource = warehouse

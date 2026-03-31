@@ -273,18 +273,20 @@
                                     </Grid.ColumnDefinitions>
                                     <!-- Yes Button with Border -->
                                     <Border Grid.Column="0" Background="#AEAEAE" CornerRadius="20" Padding="10" Margin="25,0,25,25">
-                                        <RadioButton Content="Custom" GroupName="Custom_Standard" FontFamily="Lexend" FontSize="14" Foreground="White"  x:Name="BtnCustomLabel" Click="CustomLabel">
+                                        <RadioButton Content="Custom" GroupName="Custom_Standard" FontFamily="Lexend" FontSize="14" Foreground="White" x:Name="BtnCustomLabel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Checked="BtnCustomLabel_Checked">
                                             <RadioButton.Style>
                                                 <Style TargetType="RadioButton">
                                                     <Setter Property="Template">
                                                         <Setter.Value>
                                                             <ControlTemplate TargetType="RadioButton">
-                                                                <StackPanel Orientation="Horizontal">
-                                                                    <Border Width="16" Height="16" CornerRadius="8" BorderBrush="White" BorderThickness="2" Margin="5">
-                                                                        <Ellipse Width="8" Height="8" Fill="White" Visibility="Collapsed" x:Name="Dot"/>
-                                                                    </Border>
-                                                                    <ContentPresenter VerticalAlignment="Center"/>
-                                                                </StackPanel>
+                                                                <Border Background="Transparent" HorizontalAlignment="Stretch">
+                                                                    <StackPanel Orientation="Horizontal">
+                                                                        <Border Width="16" Height="16" CornerRadius="8" BorderBrush="White" BorderThickness="2" Margin="5">
+                                                                            <Ellipse Width="8" Height="8" Fill="White" Visibility="Collapsed" x:Name="Dot"/>
+                                                                        </Border>
+                                                                        <ContentPresenter VerticalAlignment="Center"/>
+                                                                    </StackPanel>
+                                                                </Border>
                                                                 <ControlTemplate.Triggers>
                                                                     <Trigger Property="IsChecked" Value="True">
                                                                         <Setter TargetName="Dot" Property="Visibility" Value="Visible"/>
@@ -300,18 +302,20 @@
 
                                     <!-- No Button with Border -->
                                     <Border Grid.Column="1" Background="#AEAEAE" CornerRadius="20" Padding="10" Margin="25,0,25,25">
-                                        <RadioButton Content="Standard" IsChecked="True" GroupName="Custom_Standard" FontFamily="Lexend" FontSize="14" Foreground="White"  x:Name="BtnStandardLabel" Click="StandardLabel">
+                                        <RadioButton Content="Standard" IsChecked="True" GroupName="Custom_Standard" FontFamily="Lexend" FontSize="14" Foreground="White" x:Name="BtnStandardLabel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Checked="BtnStandardLabel_Checked">
                                             <RadioButton.Style>
                                                 <Style TargetType="RadioButton">
                                                     <Setter Property="Template">
                                                         <Setter.Value>
                                                             <ControlTemplate TargetType="RadioButton">
-                                                                <StackPanel Orientation="Horizontal">
-                                                                    <Border Width="16" Height="16" CornerRadius="8" BorderBrush="White" BorderThickness="2" Margin="5">
-                                                                        <Ellipse Width="8" Height="8" Fill="White" Visibility="Collapsed" x:Name="Dot"/>
-                                                                    </Border>
-                                                                    <ContentPresenter VerticalAlignment="Center"/>
-                                                                </StackPanel>
+                                                                <Border Background="Transparent" HorizontalAlignment="Stretch">
+                                                                    <StackPanel Orientation="Horizontal">
+                                                                        <Border Width="16" Height="16" CornerRadius="8" BorderBrush="White" BorderThickness="2" Margin="5">
+                                                                            <Ellipse Width="8" Height="8" Fill="White" Visibility="Collapsed" x:Name="Dot"/>
+                                                                        </Border>
+                                                                        <ContentPresenter VerticalAlignment="Center"/>
+                                                                    </StackPanel>
+                                                                </Border>
                                                                 <ControlTemplate.Triggers>
                                                                     <Trigger Property="IsChecked" Value="True">
                                                                         <Setter TargetName="Dot" Property="Visibility" Value="Visible"/>
@@ -330,9 +334,7 @@
                             <StackPanel Grid.Row="2" Margin="25,0,25,0">
                                 <TextBlock Text="Warehouse:" FontWeight="Regular" FontFamily="Lexend" FontSize="14" Foreground="#474747" VerticalAlignment="Top" Margin="0,0,0,5"/>
                                 <StackPanel Width="Auto" HorizontalAlignment="Stretch" Margin="0,0,0,10">
-                                    <ComboBox SelectedIndex="0" FontFamily="Lexend" FontSize="14" Foreground="#474747"
-    Padding="10" Width="Auto" Height="40" Background="White" BorderBrush="black"
-    BorderThickness="1" HorizontalContentAlignment="Left" Margin="0,0,0,10">
+                                    <ComboBox SelectedIndex="0" FontFamily="Lexend" FontSize="14" Foreground="#474747" Padding="10" Width="Auto" Height="40" Background="White" BorderBrush="black" BorderThickness="1" HorizontalContentAlignment="Left" Margin="0,0,0,10">
                                         <ComboBox.Resources>
                                             <!-- Custom ComboBox Toggle Button -->
                                             <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
