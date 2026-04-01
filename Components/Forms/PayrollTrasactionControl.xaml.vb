@@ -43,6 +43,14 @@ Namespace DPC.Components.Forms
         End Sub
 
         Private Sub StartDate_Click(sender As Object, e As RoutedEventArgs)
+            Dim minDate As DateTime = DateTime.Today
+
+            ' If we are editing a transaction, check if the calendar already has an older date loaded
+            If SingleDatePicker.SelectedDate.HasValue AndAlso SingleDatePicker.SelectedDate.Value < DateTime.Today Then
+                minDate = SingleDatePicker.SelectedDate.Value
+            End If
+
+            SingleDatePicker.DisplayDateStart = minDate
             SingleDatePicker.IsDropDownOpen = True
         End Sub
 
@@ -111,5 +119,6 @@ Namespace DPC.Components.Forms
             End If
 
         End Sub
+
     End Class
 End Namespace

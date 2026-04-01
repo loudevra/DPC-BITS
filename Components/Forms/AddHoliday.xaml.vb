@@ -92,13 +92,29 @@ Namespace DPC.Components.Forms
             BtnClose_Click(Nothing, Nothing)
         End Sub
 
-        ' FORCE THE "FROM" CALENDAR TO OPEN
+        ' FORCE THE "FROM" CALENDAR TO OPEN (WITH PAST-DATE RESTRICTION)
         Private Sub BtnFrom_Click(sender As Object, e As RoutedEventArgs)
+            Dim minDate As DateTime = DateTime.Today
+
+            ' If editing a holiday that already started in the past, use that as the minimum
+            If dpFromHidden.SelectedDate.HasValue AndAlso dpFromHidden.SelectedDate.Value < DateTime.Today Then
+                minDate = dpFromHidden.SelectedDate.Value
+            End If
+
+            dpFromHidden.DisplayDateStart = minDate
             dpFromHidden.IsDropDownOpen = True
         End Sub
 
-        ' FORCE THE "TO" CALENDAR TO OPEN
+        ' FORCE THE "TO" CALENDAR TO OPEN (WITH PAST-DATE RESTRICTION)
         Private Sub BtnTo_Click(sender As Object, e As RoutedEventArgs)
+            Dim minDate As DateTime = DateTime.Today
+
+            ' If editing a holiday that already ended in the past, use that as the minimum
+            If dpToHidden.SelectedDate.HasValue AndAlso dpToHidden.SelectedDate.Value < DateTime.Today Then
+                minDate = dpToHidden.SelectedDate.Value
+            End If
+
+            dpToHidden.DisplayDateStart = minDate
             dpToHidden.IsDropDownOpen = True
         End Sub
 
