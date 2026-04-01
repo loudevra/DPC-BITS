@@ -94,12 +94,26 @@ Public Class EditProject
         End Try
     End Sub
 
-    ' Date and Text Handlers
+    ' Date and Text Handlers with Past-Date Restriction
     Private Sub StartDateButton_Click(sender As Object, e As RoutedEventArgs)
+        Dim minDate As DateTime = DateTime.Today
+        ' If the project already has an older date saved, use that as the minimum
+        If StartDatePicker.SelectedDate.HasValue AndAlso StartDatePicker.SelectedDate.Value < DateTime.Today Then
+            minDate = StartDatePicker.SelectedDate.Value
+        End If
+
+        StartDatePicker.DisplayDateStart = minDate
         StartDatePicker.IsDropDownOpen = True
     End Sub
 
     Private Sub DueDateButton_Click(sender As Object, e As RoutedEventArgs)
+        Dim minDate As DateTime = DateTime.Today
+        ' If the project already has an older date saved, use that as the minimum
+        If DueDatePicker.SelectedDate.HasValue AndAlso DueDatePicker.SelectedDate.Value < DateTime.Today Then
+            minDate = DueDatePicker.SelectedDate.Value
+        End If
+
+        DueDatePicker.DisplayDateStart = minDate
         DueDatePicker.IsDropDownOpen = True
     End Sub
 

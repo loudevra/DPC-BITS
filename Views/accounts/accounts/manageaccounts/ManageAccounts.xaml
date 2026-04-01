@@ -25,12 +25,10 @@
             </Setter>
         </Style>
 
-        <!-- Border Style -->
         <Style x:Key="RoundedBorderStyle" TargetType="Border">
             <Setter Property="CornerRadius" Value="15"/>
         </Style>
 
-        <!-- Button Style -->
         <Style x:Key="RoundedButtonStyle" TargetType="Button">
             <Setter Property="Template">
                 <Setter.Value>
@@ -57,13 +55,11 @@
                     BorderBrush="{TemplateBinding BorderBrush}" 
                     BorderThickness="1">
                             <Grid>
-                                <!-- Define two columns, Content on left, Arrow on right -->
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="35" />
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Selected Item Content -->
                                 <ContentPresenter Name="ContentSite"
                                       IsHitTestVisible="False"
                                       Content="{TemplateBinding SelectionBoxItem}"
@@ -71,7 +67,6 @@
                                       VerticalAlignment="Center"
                                       Margin="10,0,5,0"/>
 
-                                <!-- Arrow Button (Right) -->
                                 <ToggleButton Name="ToggleButton" 
                                   Grid.Column="1"
                                   Focusable="False"
@@ -101,19 +96,16 @@
                                     </ToggleButton.Style>
                                 </ToggleButton>
 
-                                <!-- Dropdown Items -->
                                 <Popup Name="Popup"
                            Placement="Bottom"
                            IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
                            AllowsTransparency="True"
                            Focusable="False"
                            MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-                                    <!-- MATCH WIDTH -->
                                     <Border Style="{StaticResource RoundedBorderStyle}" 
                                 Background="White" 
                                 BorderBrush="Black"
                                 Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-                                        <!-- MATCH WIDTH -->
                                         <ScrollViewer>
                                             <StackPanel>
                                                 <ItemsPresenter/>
@@ -136,21 +128,18 @@
             <Setter Property="Padding" Value="5"/>
         </Style>
 
-        <!-- Added style for ModernScrollViewerStyle -->
         <Style x:Key="ModernScrollViewerStyle" TargetType="ScrollViewer">
             <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
             <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
             <Setter Property="Background" Value="Transparent"/>
         </Style>
 
-        <!-- Added style for RoundedTextboxStyle -->
         <Style x:Key="RoundedTextboxStyle" TargetType="TextBox">
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
 
-        <!-- Custom DataGrid Style -->
         <Style x:Key="CustomDataGridStyle" TargetType="DataGrid">
             <Setter Property="AutoGenerateColumns" Value="False"/>
             <Setter Property="CanUserAddRows" Value="False"/>
@@ -183,7 +172,6 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- Title and Add Button -->
             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,10,0,20" Grid.ColumnSpan="2">
                 <TextBlock Text="Manage Accounts"
                            FontWeight="Bold"
@@ -203,7 +191,6 @@
                 </Button>
             </StackPanel>
 
-            <!-- Status Cards -->
             <Grid Grid.Row="1" Margin="0,0,0,20" Grid.ColumnSpan="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -211,7 +198,6 @@
 
                 </Grid.ColumnDefinitions>
 
-                <!-- Balance Card -->
                 <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="15,5,15,5" Margin="10" Height="80">
                     <Grid>
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Left">
@@ -225,7 +211,6 @@
                     </Grid>
                 </Border>
 
-                <!-- Stock Out Card -->
                 <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="15,5,15,5" Margin="10" Height="80">
                     <Grid>
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Left">
@@ -240,7 +225,6 @@
                 </Border>
             </Grid>
 
-            <!-- Filters and Controls -->
             <Border Grid.Row="2" Padding="5" Background="White" CornerRadius="10" BorderBrush="White" Margin="0,0,0,10" Grid.ColumnSpan="2">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -248,9 +232,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Left Controls -->
                     <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="5,0,0,0" VerticalAlignment="Center">
-                        <!-- Excel Button -->
                         <Button x:Name="btnExportExcel" Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" Foreground="White" Width="75" Height="29" Margin="5,0,0,0" Click="BtnExportExcel_Click">
                             <materialDesign:PackIcon Kind="MicrosoftExcel" Width="25" Height="25"/>
                         </Button>
@@ -271,11 +253,8 @@
                             <materialDesign:PackIcon Kind="FormatListBulleted" Width="24" Height="24" Margin="5" Foreground="#555555"/>
                         </Button>
 
-
-
                     </StackPanel>
 
-                    <!-- Right Controls -->
                     <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
                         <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Width="211" Height="34">
                             <Grid>
@@ -287,7 +266,6 @@
                 </Grid>
             </Border>
 
-            <!-- DataGrid Container -->
             <Border Grid.Row="3" Background="White" CornerRadius="10" BorderBrush="White" BorderThickness="1" Grid.ColumnSpan="2">
                 <DataGrid Name="AccountsDataGrid"
                       Style="{StaticResource CustomDataGridStyle}"
@@ -321,24 +299,66 @@
 
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="#" Binding="{Binding ID}" Width="Auto" MinWidth="50" FontFamily="Lexend" Foreground="#474747"/>
-                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#474747"/>
+
+                        <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" MinWidth="100" FontFamily="Lexend" Foreground="#474747"/>
+
                         <DataGridTextColumn Header="Total Products" Binding="{Binding TotalProd}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#474747"/>
                         <DataGridTextColumn Header="Stock Quantity" Binding="{Binding Qty}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#474747"/>
                         <DataGridTextColumn Header="Worth (Sales/Stocks)" Binding="{Binding Worth}" Width="Auto" FontFamily="Lexend" Foreground="#474747"/>
 
-
                         <DataGridTemplateColumn Header="Actions" Width="Auto">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                        <Button Content="Edit" Width="60" Height="25" Margin="2"/>
-                                        <Button Content="Delete" Width="60" Height="25" Margin="2"/>
-                                    </StackPanel>
+                                    <Border BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="5,2" Background="White" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                                            <Button Background="Transparent" 
+                                BorderThickness="0" 
+                                Padding="5" 
+                                Margin="0,0,10,0" 
+                                Cursor="Hand" 
+                                ToolTip="Edit"
+                                Click="BtnEdit_Click">
+                                                <materialDesign:PackIcon Kind="SquareEditOutline" Width="20" Height="20" Foreground="#5DC196"/>
+                                                <Button.Style>
+                                                    <Style TargetType="Button">
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+
+                                            <Button Background="Transparent" 
+                                BorderThickness="0" 
+                                Padding="5" 
+                                Cursor="Hand" 
+                                ToolTip="Delete"
+                                Click="BtnDelete_Click">
+                                                <materialDesign:PackIcon Kind="TrashCanOutline" Width="20" Height="20" Foreground="#F27A7A"/>
+                                                <Button.Style>
+                                                    <Style TargetType="Button">
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+
+                                        </StackPanel>
+                                    </Border>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
-
                 </DataGrid>
             </Border>
         </Grid>

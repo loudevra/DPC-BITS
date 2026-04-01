@@ -109,11 +109,26 @@ Public Class EditTask
         End If
     End Sub
 
-    Private Sub StartDateButton_Click(sender As Object, e As RoutedEventArgs)
+    ' =========================================================
+    ' DATE PICKER CLICK HANDLERS (With Past-Date Restrictions)
+    ' =========================================================
+    Private Sub StartDateButton_Click(sender As Object, e As RoutedEventArgs) Handles StartDateButton.Click
+        Dim minDate As DateTime = DateTime.Today
+        If StartDatePicker.SelectedDate.HasValue AndAlso StartDatePicker.SelectedDate.Value < DateTime.Today Then
+            minDate = StartDatePicker.SelectedDate.Value
+        End If
+
+        StartDatePicker.DisplayDateStart = minDate
         StartDatePicker.IsDropDownOpen = True
     End Sub
 
-    Private Sub DueDateButton_Click(sender As Object, e As RoutedEventArgs)
+    Private Sub DueDateButton_Click(sender As Object, e As RoutedEventArgs) Handles DueDateButton.Click
+        Dim minDate As DateTime = DateTime.Today
+        If DueDatePicker.SelectedDate.HasValue AndAlso DueDatePicker.SelectedDate.Value < DateTime.Today Then
+            minDate = DueDatePicker.SelectedDate.Value
+        End If
+
+        DueDatePicker.DisplayDateStart = minDate
         DueDatePicker.IsDropDownOpen = True
     End Sub
 
