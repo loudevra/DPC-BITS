@@ -20,6 +20,16 @@ Namespace DPC.Views.Misc.EmployeeLeave
             If TodayDatePicker IsNot Nothing Then
                 TodayDatePicker.SelectedDate = DateTime.Now
             End If
+
+            ' Create a blackout range from the beginning of time up to yesterday
+            Dim pastDates As New CalendarDateRange(DateTime.MinValue, DateTime.Today.AddDays(-1))
+
+            ' Forcefully block these dates in the calendars
+            If TodayDatePicker IsNot Nothing Then TodayDatePicker.BlackoutDates.Add(pastDates)
+            If StartDatePicker IsNot Nothing Then StartDatePicker.BlackoutDates.Add(pastDates)
+            If EndDatePicker IsNot Nothing Then EndDatePicker.BlackoutDates.Add(pastDates)
+            If SupervisorDate IsNot Nothing Then SupervisorDate.BlackoutDates.Add(pastDates)
+            If ApprovalDate IsNot Nothing Then ApprovalDate.BlackoutDates.Add(pastDates)
         End Sub
 
         ' ==========================================
@@ -96,27 +106,56 @@ Namespace DPC.Views.Misc.EmployeeLeave
                 SuggestionListBox.Focus()
             End If
         End Sub
-
         ' ==========================================
-        ' CALENDAR DROPDOWN HANDLERS
+        ' CALENDAR CLICK HANDLERS
         ' ==========================================
         Private Sub TodayDate_Click(sender As Object, e As RoutedEventArgs)
+            Dim minDate As DateTime = DateTime.Today
+            If TodayDatePicker.SelectedDate.HasValue AndAlso TodayDatePicker.SelectedDate.Value < DateTime.Today Then
+                minDate = TodayDatePicker.SelectedDate.Value
+            End If
+
+            TodayDatePicker.DisplayDateStart = minDate
             TodayDatePicker.IsDropDownOpen = True
         End Sub
 
         Private Sub StartDate_Click(sender As Object, e As RoutedEventArgs)
+            Dim minDate As DateTime = DateTime.Today
+            If StartDatePicker.SelectedDate.HasValue AndAlso StartDatePicker.SelectedDate.Value < DateTime.Today Then
+                minDate = StartDatePicker.SelectedDate.Value
+            End If
+
+            StartDatePicker.DisplayDateStart = minDate
             StartDatePicker.IsDropDownOpen = True
         End Sub
 
         Private Sub EndDate_Click(sender As Object, e As RoutedEventArgs)
+            Dim minDate As DateTime = DateTime.Today
+            If EndDatePicker.SelectedDate.HasValue AndAlso EndDatePicker.SelectedDate.Value < DateTime.Today Then
+                minDate = EndDatePicker.SelectedDate.Value
+            End If
+
+            EndDatePicker.DisplayDateStart = minDate
             EndDatePicker.IsDropDownOpen = True
         End Sub
 
         Private Sub SupervisorDate_Click(sender As Object, e As RoutedEventArgs)
+            Dim minDate As DateTime = DateTime.Today
+            If SupervisorDate.SelectedDate.HasValue AndAlso SupervisorDate.SelectedDate.Value < DateTime.Today Then
+                minDate = SupervisorDate.SelectedDate.Value
+            End If
+
+            SupervisorDate.DisplayDateStart = minDate
             SupervisorDate.IsDropDownOpen = True
         End Sub
 
         Private Sub ApprovalDate_Click(sender As Object, e As RoutedEventArgs)
+            Dim minDate As DateTime = DateTime.Today
+            If ApprovalDate.SelectedDate.HasValue AndAlso ApprovalDate.SelectedDate.Value < DateTime.Today Then
+                minDate = ApprovalDate.SelectedDate.Value
+            End If
+
+            ApprovalDate.DisplayDateStart = minDate
             ApprovalDate.IsDropDownOpen = True
         End Sub
 

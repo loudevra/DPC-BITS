@@ -46,28 +46,46 @@ Namespace DPC.Views.Misc.OverTime
         End Sub
 
         ' ==========================================
-        ' CALENDAR CLICK HANDLERS
+        ' CALENDAR DROPDOWN HANDLERS
         ' ==========================================
-        ' These methods manually open the dropdown when the button is clicked
-
         Private Sub OvertimeDate_Click(sender As Object, e As RoutedEventArgs)
+            Dim minDate As DateTime = DateTime.Today
+            If dtOvertimeDate.SelectedDate.HasValue AndAlso dtOvertimeDate.SelectedDate.Value < DateTime.Today Then
+                minDate = dtOvertimeDate.SelectedDate.Value
+            End If
+
+            dtOvertimeDate.DisplayDateStart = minDate
             dtOvertimeDate.IsDropDownOpen = True
         End Sub
 
         Private Sub CashAdvanceDate_Click(sender As Object, e As RoutedEventArgs)
+            Dim minDate As DateTime = DateTime.Today
+            If CashAdvanceDatePicker.SelectedDate.HasValue AndAlso CashAdvanceDatePicker.SelectedDate.Value < DateTime.Today Then
+                minDate = CashAdvanceDatePicker.SelectedDate.Value
+            End If
+
+            CashAdvanceDatePicker.DisplayDateStart = minDate
             CashAdvanceDatePicker.IsDropDownOpen = True
         End Sub
 
         Private Sub RequestDate_Click(sender As Object, e As RoutedEventArgs)
+            Dim minDate As DateTime = DateTime.Today
+            If RequestDate.SelectedDate.HasValue AndAlso RequestDate.SelectedDate.Value < DateTime.Today Then
+                minDate = RequestDate.SelectedDate.Value
+            End If
+
+            RequestDate.DisplayDateStart = minDate
             RequestDate.IsDropDownOpen = True
         End Sub
 
-        ' Add this handler to your EditOverTime class
         Private Sub ApprovalDate_Click(sender As Object, e As RoutedEventArgs)
-            ' This manually opens the calendar dropdown when you click the button
-            If ApprovalDate IsNot Nothing Then
-                ApprovalDate.IsDropDownOpen = True
+            Dim minDate As DateTime = DateTime.Today
+            If ApprovalDate.SelectedDate.HasValue AndAlso ApprovalDate.SelectedDate.Value < DateTime.Today Then
+                minDate = ApprovalDate.SelectedDate.Value
             End If
+
+            ApprovalDate.DisplayDateStart = minDate
+            ApprovalDate.IsDropDownOpen = True
         End Sub
 
         ' Add these handlers to your EditOverTime class

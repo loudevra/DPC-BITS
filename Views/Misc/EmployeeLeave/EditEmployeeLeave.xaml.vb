@@ -75,25 +75,36 @@ Namespace DPC.Views.Misc.EmployeeLeave
         ' CALENDAR CLICK HANDLERS
         ' ==========================================
         Private Sub TodayDate_Click(sender As Object, e As RoutedEventArgs)
+            TodayDatePicker.DisplayDateStart = DateTime.Today
             TodayDatePicker.IsDropDownOpen = True
         End Sub
 
         Private Sub StartDate_Click(sender As Object, e As RoutedEventArgs)
+            ' If there's already an older date saved, use that as the minimum so it doesn't crash. 
+            ' Otherwise, restrict to today.
+            Dim minDate As DateTime = DateTime.Today
+            If StartDatePicker.SelectedDate.HasValue AndAlso StartDatePicker.SelectedDate.Value < DateTime.Today Then
+                minDate = StartDatePicker.SelectedDate.Value
+            End If
+
+            StartDatePicker.DisplayDateStart = minDate
             StartDatePicker.IsDropDownOpen = True
         End Sub
 
         Private Sub EndDate_Click(sender As Object, e As RoutedEventArgs)
+            EndDatePicker.DisplayDateStart = DateTime.Today
             EndDatePicker.IsDropDownOpen = True
         End Sub
 
         Private Sub SupervisorDate_Click(sender As Object, e As RoutedEventArgs)
+            SupervisorDate.DisplayDateStart = DateTime.Today
             SupervisorDate.IsDropDownOpen = True
         End Sub
 
         Private Sub ApprovalDate_Click(sender As Object, e As RoutedEventArgs)
+            ApprovalDate.DisplayDateStart = DateTime.Today
             ApprovalDate.IsDropDownOpen = True
         End Sub
-
         ' ==========================================
         ' SAVE / APPROVE / REJECT LOGIC
         ' ==========================================
