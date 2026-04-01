@@ -36,6 +36,23 @@ Public Class NewTask
         AddHandler Me.Loaded, AddressOf NewTask_Loaded
     End Sub
 
+    Private Sub EditorBox_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
+        Dim upperText As String = e.Text.ToUpperInvariant()
+        If upperText = e.Text Then Return  ' Already uppercase, let it pass through normally
+
+        e.Handled = True  ' Block the original lowercase input
+
+        Dim rtb = TryCast(sender, RichTextBox)
+        If rtb Is Nothing Then Return
+
+        ' Replace selection (or caret position) with uppercase character
+        rtb.Selection.Text = upperText
+
+        ' Advance caret past the inserted character
+        Dim newPos = rtb.Selection.End
+        rtb.CaretPosition = newPos
+    End Sub
+
     Private Sub NewTask_Loaded(sender As Object, e As RoutedEventArgs)
         ' Display full name (whatever sidebar cache has)
         txtAssignTo.Text = CacheOnLoggedInName
@@ -275,6 +292,19 @@ Public Class NewTask
         EditingCommands.IncreaseIndentation.Execute(Nothing, EditorBox)
         EditingCommands.ToggleItalic.Execute(Nothing, EditorBox)
     End Sub
+
+    Private Sub ForceUpperCase(tb As TextBox)
+        If tb Is Nothing Then Return
+        Dim text As String = tb.Text
+        Dim upper As String = text.ToUpper()
+
+        If text <> upper Then
+            Dim caretPos As Integer = tb.SelectionStart
+            tb.Text = upper
+            tb.SelectionStart = Math.Min(caretPos, upper.Length)
+        End If
+    End Sub
+
 
     Private Sub Insert_Link_Click(sender As Object, e As RoutedEventArgs)
         Dim url As String = Microsoft.VisualBasic.Interaction.InputBox("Enter the URL:", "Insert Link", "http://")

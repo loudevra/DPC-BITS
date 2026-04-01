@@ -229,6 +229,7 @@
                     </Border>
                     <Border Background="White" CornerRadius="0,0,12,12" BorderBrush="#545454" BorderThickness="1,0,1,1" ClipToBounds="True">
                         <RichTextBox x:Name="EditorBox"
+                                     PreviewTextInput="EditorBox_PreviewTextInput"
                                      IsDocumentEnabled="True"
                                      Background="White"
                                      BorderThickness="0"
