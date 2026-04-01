@@ -13,18 +13,12 @@
         Unloaded="NewSupplierUserControl_Unloaded"
         Loaded="NewSupplierUserControl_Loaded">
 
-    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center">
 
         <Border Background="#FFFFFF" 
-                Width="500" 
-                MaxHeight="550" 
-                HorizontalAlignment="Center" 
-                VerticalAlignment="Center"
+                HorizontalAlignment="Stretch" 
+                Margin="10"
                 CornerRadius="15">
-
-            <Border.Effect>
-                <DropShadowEffect Color="Black" Opacity="0.3" BlurRadius="20" ShadowDepth="4"/>
-            </Border.Effect>
 
             <Grid>
                 <Grid.RowDefinitions>
