@@ -13,6 +13,32 @@ Imports Newtonsoft.Json
 Imports NuGet.Protocol.Core.Types
 
 Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
+    Public Class NewOrderCache
+        Public Shared SelectedSupplier As SupplierDataModel = Nothing
+        Public Shared SupplierText As String = ""
+        Public Shared SupplierDetailsText As String = ""
+        Public Shared InvoiceNumber As String = ""
+        Public Shared WarehouseIndex As Integer = 0
+        Public Shared TaxIndex As Integer = 0
+        Public Shared DiscountIndex As Integer = 0
+        Public Shared OrderNote As String = ""
+        Public Shared OrderDate As Date? = Date.Today
+        Public Shared DueDate As Date? = Date.Today.AddDays(1)
+        Public Shared Rows As New List(Of CachedRow)
+        Public Shared HasData As Boolean = False
+    End Class
+
+    Public Class CachedRow
+        Public Property ItemName As String = ""
+        Public Property Quantity As String = ""
+        Public Property Rate As String = ""
+        Public Property TaxRate As String = ""
+        Public Property Tax As String = ""
+        Public Property Discount As String = ""
+        Public Property Amount As String = ""
+        Public Property Description As String = ""
+    End Class
+
     Public Class NewOrder
 
 #Region "Initialization and Properties"
@@ -47,13 +73,18 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             AddHandler Tax.SelectionChanged, AddressOf TaxChange
 
             MyDynamicGrid = CType(TableGridPanel.Children(0), Grid)
-            AddNewRow()
+            AddHandler Me.Unloaded, AddressOf OnUnloaded
 
-            ClearFields()
-
-
-            InvoiceNumber.Text = PurchaseOrderController.GenerateInvoice()
             ProductController.GetWarehouse(ComboBoxWarehouse)
+
+            If NewOrderCache.HasData Then
+                RestoreFromCache()
+                ComboBoxWarehouse.SelectedIndex = NewOrderCache.WarehouseIndex
+            Else
+                AddNewRow()
+                ClearFields()
+                InvoiceNumber.Text = PurchaseOrderController.GenerateInvoice()
+            End If
         End Sub
 #End Region
 
@@ -262,6 +293,102 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
             TotalPrice.Text = 0
             AddNewRow()
             InvoiceNumber.Text = PurchaseOrderController.GenerateInvoice()
+        End Sub
+
+        Private Sub OnUnloaded(sender As Object, e As RoutedEventArgs)
+            SaveToCache()
+        End Sub
+
+        Private Sub SaveToCache()
+            NewOrderCache.SelectedSupplier = _selectedSupplier
+            NewOrderCache.SupplierText = TxtSupplier.Text
+            NewOrderCache.SupplierDetailsText = TxtSupplierDetails.Text
+            NewOrderCache.InvoiceNumber = InvoiceNumber.Text
+            NewOrderCache.TaxIndex = Tax.SelectedIndex
+            NewOrderCache.DiscountIndex = Discount.SelectedIndex
+            NewOrderCache.OrderNote = OrderNote.Text
+            NewOrderCache.OrderDate = OrderDatePicker.SelectedDate
+            NewOrderCache.DueDate = OrderDueDatePicker.SelectedDate
+            NewOrderCache.WarehouseIndex = ComboBoxWarehouse.SelectedIndex
+
+            NewOrderCache.Rows.Clear()
+            For i As Integer = 0 To namesList.Count - 1
+                Dim cachedRow As New CachedRow()
+                Dim parts = namesList(i).Split("_"c)
+                Dim rowIndex = parts(1)
+
+                Dim nameTxt As TextBox = GetTextBoxFromStackPanel($"txt_{rowIndex}_0")
+                Dim qtyTxt As TextBox = GetTextBoxFromStackPanel($"txt_{rowIndex}_1")
+                Dim rateTxt As TextBox = GetTextBoxFromStackPanel($"txt_{rowIndex}_2")
+                Dim taxRateTxt As TextBox = GetTextBoxFromStackPanel($"txt_{rowIndex}_3")
+                Dim taxTxt As TextBox = GetTextBoxFromStackPanel($"txt_{rowIndex}_4")
+                Dim discountTxt As TextBox = GetTextBoxFromStackPanel($"txt_{rowIndex}_5")
+                Dim priceTxt As TextBox = GetTextBoxFromStackPanel($"txt_{rowIndex}_6")
+                Dim descTxt As TextBox = GetTextBoxFromStackPanel($"txt_full_{rowIndex}")
+
+                cachedRow.ItemName = If(nameTxt IsNot Nothing, nameTxt.Text, "")
+                cachedRow.Quantity = If(qtyTxt IsNot Nothing, qtyTxt.Text, "")
+                cachedRow.Rate = If(rateTxt IsNot Nothing, rateTxt.Text, "")
+                cachedRow.TaxRate = If(taxRateTxt IsNot Nothing, taxRateTxt.Text, "")
+                cachedRow.Tax = If(taxTxt IsNot Nothing, taxTxt.Text, "")
+                cachedRow.Discount = If(discountTxt IsNot Nothing, discountTxt.Text, "")
+                cachedRow.Amount = If(priceTxt IsNot Nothing, priceTxt.Text, "")
+                cachedRow.Description = If(descTxt IsNot Nothing, descTxt.Text, "")
+
+                NewOrderCache.Rows.Add(cachedRow)
+            Next
+
+            NewOrderCache.HasData = True
+        End Sub
+
+        Private Sub RestoreFromCache()
+            _selectedSupplier = NewOrderCache.SelectedSupplier
+            TxtSupplier.Text = NewOrderCache.SupplierText
+            TxtSupplierDetails.Text = NewOrderCache.SupplierDetailsText
+            InvoiceNumber.Text = NewOrderCache.InvoiceNumber
+            Tax.SelectedIndex = NewOrderCache.TaxIndex
+            Discount.SelectedIndex = NewOrderCache.DiscountIndex
+            OrderNote.Text = NewOrderCache.OrderNote
+            OrderDate.SelectedDate = NewOrderCache.OrderDate
+            OrderDueDate.SelectedDate = NewOrderCache.DueDate
+
+            ClearAllRows()
+            namesList.Clear()
+            quantityList.Clear()
+            rateList.Clear()
+            taxRateList.Clear()
+            taxList.Clear()
+            discountList.Clear()
+            priceList.Clear()
+            descriptionList.Clear()
+
+            For Each cachedRow In NewOrderCache.Rows
+                AddNewRow()
+
+                Dim lastEntry = namesList.Last()
+                Dim parts = lastEntry.Split("_"c)
+                Dim rowIndex = parts(1)
+
+                Dim nameTxt As TextBox = GetTextBoxFromStackPanel($"txt_{rowIndex}_0")
+                Dim qtyTxt As TextBox = GetTextBoxFromStackPanel($"txt_{rowIndex}_1")
+                Dim rateTxt As TextBox = GetTextBoxFromStackPanel($"txt_{rowIndex}_2")
+                Dim taxRateTxt As TextBox = GetTextBoxFromStackPanel($"txt_{rowIndex}_3")
+                Dim taxTxt As TextBox = GetTextBoxFromStackPanel($"txt_{rowIndex}_4")
+                Dim discountTxt As TextBox = GetTextBoxFromStackPanel($"txt_{rowIndex}_5")
+                Dim priceTxt As TextBox = GetTextBoxFromStackPanel($"txt_{rowIndex}_6")
+                Dim descTxt As TextBox = GetTextBoxFromStackPanel($"txt_full_{rowIndex}")
+
+                If nameTxt IsNot Nothing Then nameTxt.Text = cachedRow.ItemName
+                If qtyTxt IsNot Nothing Then qtyTxt.Text = cachedRow.Quantity
+                If rateTxt IsNot Nothing Then rateTxt.Text = cachedRow.Rate
+                If taxRateTxt IsNot Nothing Then taxRateTxt.Text = cachedRow.TaxRate
+                If taxTxt IsNot Nothing Then taxTxt.Text = cachedRow.Tax
+                If discountTxt IsNot Nothing Then discountTxt.Text = cachedRow.Discount
+                If priceTxt IsNot Nothing Then priceTxt.Text = cachedRow.Amount
+                If descTxt IsNot Nothing Then descTxt.Text = cachedRow.Description
+            Next
+
+            If rowCount > 0 Then UpdateTaxAndAmount(rowCount - 1)
         End Sub
 
 #Region "Product Autocomplete"
@@ -1208,6 +1335,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.NewOrder
                     StatementDetails.Phone = _selectedSupplier.SupplierPhone
                     StatementDetails.Email = _selectedSupplier.SupplierEmail
 
+                    NewOrderCache.HasData = False
 
                     ViewLoader.DynamicView.NavigateToView("purchaseorderstatement", Me)
                 End If

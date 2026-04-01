@@ -28,10 +28,20 @@ Namespace DPC.Views.Stocks.PurchaseOrder.ManageOrders
             GetItemsFromDB()
 
             AddHandler _typingTimer.Tick, AddressOf OnTypingTimerTick
-            AddHandler cmbLimit.SelectionChanged, AddressOf GetItemsFromDB
-
+            AddHandler cmbLimit.SelectionChanged, AddressOf cmbLimit_SelectionChanged
 
         End Sub
+
+        Private Sub cmbLimit_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+            GetItemsFromDB()
+        End Sub
+
+        Private Function GetLimit() As Integer
+            If cmbLimit.SelectedItem IsNot Nothing Then
+                Return CInt(DirectCast(cmbLimit.SelectedItem, ComboBoxItem).Content.ToString())
+            End If
+            Return 10
+        End Function
 
         Private Sub DataGrid_CellClick(sender As Object, e As MouseButtonEventArgs)
             Dim depObj As DependencyObject = TryCast(e.OriginalSource, DependencyObject)
@@ -70,10 +80,10 @@ Namespace DPC.Views.Stocks.PurchaseOrder.ManageOrders
         Private Sub GetItemsFromDB()
             If String.IsNullOrWhiteSpace(SearchText.Text) Then
                 dataGrid.ItemsSource = Nothing
-                dataGrid.ItemsSource = PurchaseOrderController.GetOrders(CInt(cmbLimit.Text))
+                dataGrid.ItemsSource = PurchaseOrderController.GetOrders(GetLimit())
             Else
                 dataGrid.ItemsSource = Nothing
-                dataGrid.ItemsSource = PurchaseOrderController.GetOrdersSearch(SearchText.Text, CInt(cmbLimit.Text))
+                dataGrid.ItemsSource = PurchaseOrderController.GetOrdersSearch(SearchText.Text, GetLimit())
             End If
         End Sub
 
