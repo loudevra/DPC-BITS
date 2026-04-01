@@ -195,33 +195,32 @@
                             </StackPanel>
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="45*"/>
-                                    <ColumnDefinition Width="254*"/>
+                                    <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <ComboBox x:Name="ComboBoxSupplier" 
-                                          Grid.Column="0"
-                                          Style="{StaticResource RoundedComboBoxStyle}" 
-                                          Width="Auto" Height="40" 
-                                          Margin="0,0,5,0" 
-                                          FontFamily="Lexend" 
-                                          Foreground="#474747" 
-                                          FontWeight="SemiBold"
-                                          IsEditable="True"
-                                          IsReadOnly="False"
-                                          IsTextSearchEnabled="True"
-                                          TextSearch.TextPath="Content"
-                                          DisplayMemberPath="Content"
-                                          StaysOpenOnEdit="True" Grid.ColumnSpan="2"/>
+              Grid.Column="0"
+              Style="{StaticResource RoundedComboBoxStyle}" 
+              Width="Auto" Height="40" 
+              Margin="0,0,5,0" 
+              FontFamily="Lexend" 
+              Foreground="#474747" 
+              FontWeight="SemiBold"
+              IsEditable="True"
+              IsReadOnly="False"
+              IsTextSearchEnabled="True"
+              TextSearch.TextPath="Content"
+              DisplayMemberPath="Content"
+              StaysOpenOnEdit="True"/>
                                 <Button Grid.Column="1"
-                                        Click="BtnAddSupplier_Click"
-                                        Width="40" Height="40"
-                                        Style="{StaticResource MaterialDesignIconButton}"
-                                        ToolTip="Add Supplier" Grid.ColumnSpan="2" Margin="254,0,0,0">
+            Click="BtnAddSupplier_Click"
+            Width="40" Height="40"
+            Style="{StaticResource MaterialDesignIconButton}"
+            ToolTip="Add Supplier">
                                     <materialDesign:PackIcon Kind="AccountMultiplePlus" 
-                                                             Width="24" Height="24" 
-                                                             VerticalAlignment="Center"
-                                                             Foreground="#474747"/>
+                                 Width="24" Height="24" 
+                                 VerticalAlignment="Center"
+                                 Foreground="#474747"/>
                                 </Button>
                             </Grid>
                         </StackPanel>
