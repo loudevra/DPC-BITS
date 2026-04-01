@@ -124,7 +124,7 @@ Namespace DPC.Views.HRM.Employees.Attendance
             End If
         End Sub
 
-        ' 7. EDIT Functionality (BULLETPROOF TEXT VERSION)
+        ' 7. EDIT Functionality (With Calendar Sync Fix)
         Private Sub BtnEdit_Click(sender As Object, e As RoutedEventArgs)
             Dim btn As Button = TryCast(sender, Button)
             If btn IsNot Nothing Then
@@ -138,17 +138,21 @@ Namespace DPC.Views.HRM.Employees.Attendance
                     editForm.TxtBtnAdd.Text = "Update"
                     editForm.IconTitle.Kind = MaterialDesignThemes.Wpf.PackIconKind.SquareEditOutline
 
-                    ' FORCE ALL TEXT directly into the boxes! No more TryParse failing silently!
+                    ' Set text boxes
                     editForm.TxtEmployee.Text = record.EmployeeName
                     editForm.TxtNote.Text = record.Note
                     editForm.TxtDateDisplay.Text = record.AttendanceDate
                     editForm.TpStartTime.Text = record.TimeIn
                     editForm.TpEndTime.Text = record.TimeOut
 
+                    ' --> NEW FIX: Sync the hidden calendar so it knows we are editing an older date!
+                    Dim parsedDate As DateTime
+                    If DateTime.TryParse(record.AttendanceDate, parsedDate) Then
+                        editForm.SingleDatePicker.SelectedDate = parsedDate
+                    End If
+
                     ' Intercept the Add event to update existing record
                     AddHandler editForm.OnAttendanceAdded, Sub(empName, attDate, tIn, tOut, noteVal)
-
-                                                               ' Create a completely new record to force WPF to redraw it instantly
                                                                Dim updatedRecord As New AttendanceRecord With {
                                                                    .ID = record.ID,
                                                                    .EmployeeName = empName,
@@ -158,12 +162,10 @@ Namespace DPC.Views.HRM.Employees.Attendance
                                                                    .Note = noteVal
                                                                }
 
-                                                               ' Find the old record and swap it with the updated one
                                                                Dim index = AttendanceList.IndexOf(record)
                                                                If index >= 0 Then
                                                                    AttendanceList(index) = updatedRecord
                                                                End If
-
                                                            End Sub
 
                     Dim parentWindow = Window.GetWindow(Me)
@@ -172,7 +174,9 @@ Namespace DPC.Views.HRM.Employees.Attendance
             End If
         End Sub
 
+
     End Class
+
 
     ' Our Data Model mapping to the table columns
     Public Class AttendanceRecord
