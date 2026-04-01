@@ -25,12 +25,10 @@
             </Setter>
         </Style>
 
-        <!-- Border Style -->
         <Style x:Key="RoundedBorderStyle" TargetType="Border">
             <Setter Property="CornerRadius" Value="15"/>
         </Style>
 
-        <!-- Button Style -->
         <Style x:Key="RoundedButtonStyle" TargetType="Button">
             <Setter Property="Template">
                 <Setter.Value>
@@ -56,13 +54,11 @@
                     BorderBrush="{TemplateBinding BorderBrush}" 
                     BorderThickness="1">
                             <Grid>
-                                <!-- Define two columns, Content on left, Arrow on right -->
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="35" />
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Selected Item Content -->
                                 <ContentPresenter Name="ContentSite"
                                       IsHitTestVisible="False"
                                       Content="{TemplateBinding SelectionBoxItem}"
@@ -70,7 +66,6 @@
                                       VerticalAlignment="Center"
                                       Margin="10,0,5,0"/>
 
-                                <!-- Arrow Button (Right) -->
                                 <ToggleButton Name="ToggleButton" 
                                   Grid.Column="1"
                                   Focusable="False"
@@ -100,19 +95,16 @@
                                     </ToggleButton.Style>
                                 </ToggleButton>
 
-                                <!-- Dropdown Items -->
                                 <Popup Name="Popup"
                            Placement="Bottom"
                            IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
                            AllowsTransparency="True"
                            Focusable="False"
                            MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-                                    <!-- MATCH WIDTH -->
                                     <Border Style="{StaticResource RoundedBorderStyle}" 
                                 Background="White" 
                                 BorderBrush="Black"
                                 Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-                                        <!-- MATCH WIDTH -->
                                         <ScrollViewer>
                                             <StackPanel>
                                                 <ItemsPresenter/>
@@ -135,7 +127,6 @@
             <Setter Property="Padding" Value="5"/>
         </Style>
 
-        <!-- Add the RoundedTextboxStyle that was missing in the original code -->
         <Style x:Key="RoundedTextboxStyle" TargetType="TextBox">
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Background" Value="Transparent"/>
@@ -146,9 +137,7 @@
     </UserControl.Resources>
 
     <Grid>
-        <!-- Main Content Area -->
         <Grid>
-            <!-- Main Content (ScrollViewer) -->
             <ScrollViewer VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Disabled">
                 <Grid Margin="20">
@@ -157,9 +146,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <!-- Main Content -->
                     <StackPanel Grid.Row="1" Margin="20">
-                        <!-- Header Section -->
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
                             <TextBlock Text="Departments" FontSize="35" FontWeight="Bold" FontFamily="Lexend" Foreground="#474747" />
 
@@ -173,7 +160,6 @@
                             </Button>
                         </StackPanel>
 
-                        <!-- Filters and Controls -->
                         <Border Grid.Row="1" Padding="5" Background="White" CornerRadius="10" BorderBrush="White" Margin="0,0,0,15" >
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -181,9 +167,7 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Left Controls -->
                                 <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                    <!-- Excel Button -->
                                     <Button  
     Style="{StaticResource RoundedButtonStyle}" 
     Background="#456B2E" 
@@ -194,7 +178,7 @@
     Click="ExportToExcel"
     Cursor="Hand">
 
-        <materialDesign:PackIcon 
+                                        <materialDesign:PackIcon 
         Kind="MicrosoftExcel" 
         Width="25" 
         Height="25"/>
@@ -211,7 +195,6 @@
                                     </ComboBox>
                                 </StackPanel>
 
-                                <!-- Right Controls -->
                                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
                                     <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Width="211" Height="34">
                                         <Grid>
@@ -233,10 +216,8 @@
                             </Grid>
                         </Border>
 
-                        <!-- Table and Controls test-->
                         <Border Background="White" CornerRadius="8" Padding="15">
                             <StackPanel>
-                                <!-- Data Grid -->
                                 <DataGrid Name="dataGrid"
          AutoGenerateColumns="False"
          CanUserAddRows="False"
@@ -311,16 +292,30 @@
                                             </DataGridTextColumn.ElementStyle>
                                         </DataGridTextColumn>
                                         <DataGridTemplateColumn Header="Actions" Width="100">
-                                            
+
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 
-                                                        <Button Width="30" Height="30" Background="Transparent" Margin="0" ToolTip="Edit" Cursor="Hand" Click="EditDepartmentPopup_Click">
+                                                        <Button Width="30" Height="30" Background="Transparent" BorderThickness="0" Margin="0" ToolTip="Edit" Cursor="Hand" Click="EditDepartmentPopup_Click">
+                                                            <Button.Template>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="4">
+                                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    </Border>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
                                                             <materialDesign:PackIcon Kind="SquareEditOutline" Width="16" Height="16" Foreground="#52C69D"/>
                                                         </Button>
 
-                                                        <Button Width="30" Height="30" Background="Transparent" Margin="0" ToolTip="Delete" Cursor="Hand" Click="DeleteDepartmentPopup_Click">
+                                                        <Button Width="30" Height="30" Background="Transparent" BorderThickness="0" Margin="0" ToolTip="Delete" Cursor="Hand" Click="DeleteDepartmentPopup_Click">
+                                                            <Button.Template>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="4">
+                                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    </Border>
+                                                                </ControlTemplate>
+                                                            </Button.Template>
                                                             <materialDesign:PackIcon Kind="DeleteOutline" Width="16" Height="16" Foreground="#E65E5E"/>
                                                         </Button>
 
