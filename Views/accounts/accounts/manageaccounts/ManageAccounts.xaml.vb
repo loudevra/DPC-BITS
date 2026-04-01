@@ -139,6 +139,35 @@ Namespace DPC.Views.Accounts.Accounts.ManageAccounts
         Private Sub NavigateToAddAccout(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("navaddaccount", Me)
         End Sub
+
+        ' ---------------------------------------------------------------
+        '  DATA GRID ACTIONS (Edit & Delete)
+        ' ---------------------------------------------------------------
+
+        Private Sub BtnEdit_Click(sender As Object, e As RoutedEventArgs)
+            ' Get the clicked button
+            Dim btn As Button = CType(sender, Button)
+            ' Retrieve the data context (the specific account bound to this row)
+            Dim account = btn.DataContext
+
+            ' TODO: Add your edit logic here, e.g., passing 'account' to an Edit Window
+            MessageBox.Show("Edit clicked for account.", "Edit", MessageBoxButton.OK, MessageBoxImage.Information)
+        End Sub
+
+        Private Sub BtnDelete_Click(sender As Object, e As RoutedEventArgs)
+            ' Get the clicked button
+            Dim btn As Button = CType(sender, Button)
+            ' Retrieve the data context (the specific account bound to this row)
+            Dim account = btn.DataContext
+
+            ' TODO: Add your delete logic here, e.g., prompt for confirmation and remove from database
+            Dim result = MessageBox.Show("Are you sure you want to delete this account?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning)
+            If result = MessageBoxResult.Yes Then
+                ' Execute delete operation
+                ' LoadAccounts() ' Reload grid after deletion
+            End If
+        End Sub
+
         ' ---------------------------------------------------------------
         '  EXPORT TO EXCEL (CSV Format)
         ' ---------------------------------------------------------------
