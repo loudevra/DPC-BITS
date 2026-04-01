@@ -29,6 +29,7 @@ Namespace DPC.Views.DataReports.ManageRegularCostEstimateFiles
         Private _pageSize As Integer = 10
         Private _totalRecords As Integer = 0
         Private _searchText As String = String.Empty
+        Private _uploadDate As DateTime? = Nothing
 
         Public Sub New()
             InitializeComponent()
@@ -108,6 +109,7 @@ Namespace DPC.Views.DataReports.ManageRegularCostEstimateFiles
                                               selectedFileCode = selectedItem.Content.ToString()
                                           End If
                                       End If
+
                                   End Sub)
 
                 ' Add file code filter if not "All"
@@ -121,6 +123,21 @@ Namespace DPC.Views.DataReports.ManageRegularCostEstimateFiles
                 If Not String.IsNullOrWhiteSpace(_searchText) Then
                     Dim searchFilter = filterBuilder.Regex("filename", New BsonRegularExpression(_searchText, "i"))
                     filters.Add(searchFilter)
+                End If
+
+                ' Add upload date filter (exact date match)
+                If _uploadDate.HasValue Then
+                    ' Get start of selected date (00:00:00)
+                    Dim dateStart = _uploadDate.Value.Date.ToUniversalTime()
+                    ' Get end of selected date (23:59:59)
+                    Dim dateEnd = _uploadDate.Value.Date.AddDays(1).ToUniversalTime()
+
+                    ' Filter for files uploaded on the selected date
+                    Dim dateFilter = filterBuilder.And(
+                        filterBuilder.Gte(Of BsonDateTime)("uploadDate", New BsonDateTime(dateStart)),
+                        filterBuilder.Lt(Of BsonDateTime)("uploadDate", New BsonDateTime(dateEnd))
+                    )
+                    filters.Add(dateFilter)
                 End If
 
                 ' Combine all filters
@@ -513,6 +530,24 @@ Namespace DPC.Views.DataReports.ManageRegularCostEstimateFiles
             Await UploadFile()
         End Sub
 
+        ''' <summary>
+        ''' Handles upload date picker change
+        ''' </summary>
+        Private Sub DpUploadDate_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs)
+            _uploadDate = dpUploadDate.SelectedDate
+            _currentPage = 1
+            LoadCostEstimateFiles()
+        End Sub
+
+        ''' <summary>
+        ''' Clears the selected date from the date picker
+        ''' </summary>
+        Private Sub ClearDateButton_Click(sender As Object, e As RoutedEventArgs)
+            dpUploadDate.SelectedDate = Nothing
+            _uploadDate = Nothing
+            _currentPage = 1
+            LoadCostEstimateFiles()
+        End Sub
 #End Region
 
     End Class
