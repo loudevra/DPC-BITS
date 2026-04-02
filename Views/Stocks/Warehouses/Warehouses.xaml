@@ -9,12 +9,10 @@
              Background="#D9D9D9">
 
     <UserControl.Resources>
-        <!-- Border Style -->
         <Style x:Key="RoundedBorderStyle" TargetType="Border">
             <Setter Property="CornerRadius" Value="15"/>
         </Style>
 
-        <!-- Button Style -->
         <Style x:Key="RoundedButtonStyle" TargetType="Button">
             <Setter Property="Template">
                 <Setter.Value>
@@ -40,13 +38,11 @@
                     BorderBrush="{TemplateBinding BorderBrush}" 
                     BorderThickness="1">
                             <Grid>
-                                <!-- Define two columns, Content on left, Arrow on right -->
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="35" />
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Selected Item Content -->
                                 <ContentPresenter Name="ContentSite"
                                       IsHitTestVisible="False"
                                       Content="{TemplateBinding SelectionBoxItem}"
@@ -54,7 +50,6 @@
                                       VerticalAlignment="Center"
                                       Margin="10,0,5,0"/>
 
-                                <!-- Arrow Button (Right) -->
                                 <ToggleButton Name="ToggleButton" 
                                   Grid.Column="1"
                                   Focusable="False"
@@ -84,19 +79,16 @@
                                     </ToggleButton.Style>
                                 </ToggleButton>
 
-                                <!-- Dropdown Items -->
                                 <Popup Name="Popup"
                            Placement="Bottom"
                            IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
                            AllowsTransparency="True"
                            Focusable="False"
                            MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-                                    <!-- MATCH WIDTH -->
                                     <Border Style="{StaticResource RoundedBorderStyle}" 
                                 Background="White" 
                                 BorderBrush="Black"
                                 Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-                                        <!-- MATCH WIDTH -->
                                         <ScrollViewer>
                                             <StackPanel>
                                                 <ItemsPresenter/>
@@ -111,7 +103,6 @@
             </Setter>
         </Style>
 
-        <!-- TextBox Style  -->
         <Style x:Key="RoundedTextboxStyle" TargetType="TextBox">
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Background" Value="Transparent"/>
@@ -122,16 +113,11 @@
     <Grid x:Name="mainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Header Section -->
             <RowDefinition Height="Auto"/>
-            <!-- Options Bar -->
             <RowDefinition Height="*"/>
-            <!-- DataGrid Section -->
             <RowDefinition Height="Auto"/>
-            <!-- Pagination Section -->
         </Grid.RowDefinitions>
 
-        <!-- Title and Add Button - Static at top -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20,20,20,10">
             <TextBlock Text="Warehouses"
                        FontWeight="SemiBold"
@@ -152,7 +138,6 @@
             </Border>
         </StackPanel>
 
-        <!-- Options Bar - Static with controls -->
         <StackPanel VerticalAlignment="Center" Grid.Row="1" Margin="20,10">
             <Border Style="{StaticResource RoundedBorderStyle}" BorderThickness="0" Background="white" Padding="10" CornerRadius="10">
                 <Grid>
@@ -176,7 +161,6 @@
                         <ComboBoxItem Content="50"/>
                         <ComboBoxItem Content="100"/>
                     </ComboBox>
-                    <!-- SEARCH BAR FIXED: now in column 3, takes all available space -->
                     <StackPanel Grid.Column="3" HorizontalAlignment="Right">
                         <Border Style="{StaticResource RoundedBorderStyle}"
                                 BorderThickness="1"
@@ -223,7 +207,6 @@
             </Border>
         </StackPanel>
 
-        <!-- DataGrid Section - Scrollable Content -->
         <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="20,0">
             <DataGrid Name="dataGrid"
                       AutoGenerateColumns="False"
@@ -303,11 +286,17 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <Button Width="30" Height="30" Background="Transparent" Margin="0,0,5,0" ToolTip="Edit" Click="OpenEditWarehouse" >
-                                        <materialDesign:PackIcon Kind="CircleEditOutline" Width="16" Height="16" Foreground="#52C69D"/>
+                                    <Button Width="25" Height="23" Background="Transparent"
+                                            BorderThickness="0" BorderBrush="Transparent" Padding="0"
+                                            Margin="0,0,2,0" ToolTip="Edit"
+                                            Click="OpenEditWarehouse" Cursor="Hand">
+                                        <materialDesign:PackIcon Kind="SquareEditOutline" Width="20" Height="18" Foreground="#52C69D"/>
                                     </Button>
-                                    <Button Width="30" Height="30" Background="Transparent" Margin="0" ToolTip="Delete" Click="DeleteWarehouse">
-                                        <materialDesign:PackIcon Kind="DeleteOutline" Width="16" Height="16" Foreground="#E65E5E"/>
+                                    <Button Width="25" Height="23" Background="Transparent"
+                                            BorderThickness="0" BorderBrush="Transparent" Padding="0"
+                                            Margin="0" ToolTip="Delete"
+                                            Click="DeleteWarehouse" Cursor="Hand">
+                                        <materialDesign:PackIcon Kind="DeleteOutline" Width="20" Height="18" Foreground="#E65E5E"/>
                                     </Button>
                                 </StackPanel>
                             </DataTemplate>
@@ -317,9 +306,7 @@
             </DataGrid>
         </ScrollViewer>
 
-        <!-- Pagination Section - Fixed at bottom -->
         <StackPanel x:Name="paginationPanel" Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,20">
-            <!-- Pagination controls will be added here programmatically -->
         </StackPanel>
     </Grid>
 </UserControl>

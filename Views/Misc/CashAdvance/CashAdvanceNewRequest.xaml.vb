@@ -204,18 +204,7 @@ Namespace DPC.Views.Misc.CashAdvance
                            RequestDate.SelectedDate.Value.ToString("yyyy-MM-dd"),
                            "")
 
-                    'Dim approvedBy As String
-                    'CbApprover.SelectedIndex = 0
-
-                    'Dim selectedItem = TryCast(CbApprover.SelectedItem, ComboBoxItem)
-                    'If selectedItem IsNot Nothing Then
-                    '    approvedBy = selectedItem.Content.ToString()
-                    'Else
-                    '    approvedBy = ""
-                    'End If
-
-
-                    ' Generate a unique reference for the cash advance request
+            
                     Dim caRef As String = newcashadvance.GenerateCashAdvanceRef(EmployID)
 
                     MessageBox.Show(caRef)

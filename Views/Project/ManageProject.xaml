@@ -299,7 +299,7 @@
                 </DataGrid.Resources>
 
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="#"              Binding="{Binding ProjectID}"        Width="50" ElementStyle="{StaticResource TextCell}"/>
+                    <DataGridTextColumn Header="#"               Binding="{Binding ProjectID}"        Width="50" ElementStyle="{StaticResource TextCell}"/>
 
                     <DataGridTextColumn Header="Project"  Binding="{Binding ProjectName}"      Width="*" ElementStyle="{StaticResource TextCell}"/>
 
@@ -354,8 +354,7 @@
                                             <ControlTemplate TargetType="Button">
                                                 <Border Background="{TemplateBinding Background}" 
                                                         CornerRadius="5"
-                                                        BorderBrush="#AEAEAE"
-                                                        BorderThickness="1">
+                                                        BorderThickness="0">
                                                     <materialDesign:PackIcon Kind="SquareEditOutline" 
                                                                              Width="16" Height="16"
                                                                              Foreground="#52C69D"
@@ -374,8 +373,7 @@
                                             <ControlTemplate TargetType="Button">
                                                 <Border Background="{TemplateBinding Background}" 
                                                         CornerRadius="5"
-                                                        BorderBrush="#AEAEAE"
-                                                        BorderThickness="1">
+                                                        BorderThickness="0">
                                                     <materialDesign:PackIcon Kind="TrashCanOutline" 
                                                                              Width="16" Height="16"
                                                                              Foreground="#C0392B"

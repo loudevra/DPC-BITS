@@ -40,9 +40,18 @@ Namespace DPC.Views.Misc.CashAdvance
 
 
         Private Sub NavigateToPrintPreview(sender As Object, e As RoutedEventArgs)
+            ' Get the specific item bound to the row where the button was clicked
             Dim btn As Button = TryCast(sender, Button)
-            GetAllData()
-            DynamicView.NavigateToView("previewprintcashadvancerequestform", Me)
+            Dim selectedRequest As CashAdvanceRetrieval = TryCast(btn.DataContext, CashAdvanceRetrieval)
+
+            If selectedRequest IsNot Nothing Then
+                ' Set the selected item manually so GetAllData picks it up
+                dataGrid.SelectedItem = selectedRequest
+                GetAllData()
+
+                ' Navigate to the Print Preview page
+                DynamicView.NavigateToView("previewprintcashadvancerequestform", Me)
+            End If
         End Sub
 
 
@@ -134,6 +143,58 @@ Namespace DPC.Views.Misc.CashAdvance
             Catch ex As Exception
                 MessageBox.Show($"An error occurred while exporting: {ex.Message}", "Export Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
+        End Sub
+        ' ---------------------------------------------------------------
+        '  DELETE FUNCTIONALITY
+        ' ---------------------------------------------------------------
+        Private Sub BtnDelete_Click(sender As Object, e As RoutedEventArgs)
+            ' 1. Identify the selected row via the button's DataContext
+            Dim btn As Button = TryCast(sender, Button)
+            Dim selectedRequest As CashAdvanceRetrieval = TryCast(btn.DataContext, CashAdvanceRetrieval)
+
+            If selectedRequest Is Nothing Then Return
+
+            ' 2. Ask for user confirmation
+            Dim result As MessageBoxResult = MessageBox.Show(
+                $"Are you sure you want to delete Cash Advance Ref: {selectedRequest.CashAdvanceID}?",
+                "Confirm Delete",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning)
+
+            If result = MessageBoxResult.Yes Then
+                DeleteRecordFromDatabase(selectedRequest.CashAdvanceID)
+            End If
+        End Sub
+
+        Private Sub DeleteRecordFromDatabase(refID As String)
+            ' The query to remove the record
+            Dim query As String = "DELETE FROM cashadvance WHERE caRef = @ID"
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Dim cmd As New MySqlCommand(query, conn)
+                    cmd.Parameters.AddWithValue("@ID", refID)
+
+                    Dim rowsAffected As Integer = cmd.ExecuteNonQuery()
+
+                    If rowsAffected > 0 Then
+                        MessageBox.Show("Record deleted successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                        ' 3. Refresh the DataGrid to show current data
+                        LoadData()
+                    Else
+                        MessageBox.Show("Record not found or already deleted.", "Notice", MessageBoxButton.OK, MessageBoxImage.Exclamation)
+                    End If
+
+                Catch ex As Exception
+                    MessageBox.Show($"Database Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                Finally
+                    conn.Close()
+                End Try
+            End Using
+        End Sub
+        Private Sub BtnAddNew_Click(sender As Object, e As RoutedEventArgs) Handles btnAddNew.Click
+            DynamicView.NavigateToView("addcashadvancerequest", Me)
         End Sub
     End Class
 

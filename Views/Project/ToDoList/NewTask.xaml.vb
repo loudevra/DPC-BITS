@@ -98,36 +98,35 @@ Public Class NewTask
         Dim selectedStatus = TryCast(cmbStatus.SelectedItem, StatusItem)
 
         ' =========================================================
-        ' SAVE TASK TO IN-MEMORY LIST (No Database)
+        ' SAVE TASK TO IN-MEMORY LIST 
         ' =========================================================
         Dim newTask As New TaskModel()
-
-        ' Simulate an Auto-Increment ID
         newTask.TaskID = GlobalTaskStore.TaskList.Count + 1
-
         newTask.Task = txtName.Text
         newTask.Status = If(selectedStatus IsNot Nothing, selectedStatus.Label, "Due")
 
-        ' Format Start Date
         If StartDatePicker.SelectedDate.HasValue Then
             newTask.Start = StartDatePicker.SelectedDate.Value.ToString("MMM dd, yyyy")
         Else
             newTask.Start = "-"
         End If
 
-        ' Format Due Date
         If DueDatePicker.SelectedDate.HasValue Then
             newTask.DueDate = DueDatePicker.SelectedDate.Value.ToString("MMM dd, yyyy")
         Else
             newTask.DueDate = "-"
         End If
 
-        ' Add the newly created task to the global shared list directly
         GlobalTaskStore.TaskList.Add(newTask)
         ' =========================================================
 
         MessageBox.Show("Task added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
         ClearFields()
+
+        ' ADD THIS LINE HERE:
+        ' Navigate back to the Manage Task page using your custom ViewLoader
+        ViewLoader.DynamicView.NavigateToView("managetask", Me)
+
     End Sub
 
     Private Sub ClearFields()
@@ -352,6 +351,7 @@ Public Class NewTask
             EditorBox.Height = 250
         End If
     End Sub
+
 
     Private Sub cmbStatus_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles cmbStatus.SelectionChanged
     End Sub

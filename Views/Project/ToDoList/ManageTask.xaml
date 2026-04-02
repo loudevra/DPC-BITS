@@ -297,10 +297,10 @@
                                                 <DataTemplate>
                                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
 
-                                                        <Button Width="30" Height="30" Background="White" BorderBrush="#D1D1D1" BorderThickness="1" Margin="0,0,8,0" Padding="0" Cursor="Hand" ToolTip="Edit" Click="BtnEditTask_Click">
+                                                        <Button Width="30" Height="30" Background="White" BorderThickness="0" Margin="0,0,8,0" Padding="0" Cursor="Hand" ToolTip="Edit" Click="BtnEditTask_Click">
                                                             <Button.Template>
                                                                 <ControlTemplate TargetType="Button">
-                                                                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4">
+                                                                    <Border Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="4">
                                                                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                                     </Border>
                                                                 </ControlTemplate>
@@ -308,10 +308,10 @@
                                                             <materialDesign:PackIcon Kind="SquareEditOutline" Width="18" Height="18" Foreground="#4DB6AC"/>
                                                         </Button>
 
-                                                        <Button Width="30" Height="30" Background="White" BorderBrush="#D1D1D1" BorderThickness="1" Padding="0" Cursor="Hand" ToolTip="Delete" Click="BtnDeleteTask_Click">
+                                                        <Button Width="30" Height="30" Background="White" BorderThickness="0" Padding="0" Cursor="Hand" ToolTip="Delete" Click="BtnDeleteTask_Click">
                                                             <Button.Template>
                                                                 <ControlTemplate TargetType="Button">
-                                                                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4">
+                                                                    <Border Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="4">
                                                                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                                     </Border>
                                                                 </ControlTemplate>
