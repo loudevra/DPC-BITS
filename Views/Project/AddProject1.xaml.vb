@@ -186,23 +186,20 @@ Namespace DPC.Views.Project
         End Sub
 
         Private Sub Button_Click_1(sender As Object, e As RoutedEventArgs)
+            ' 1. Validations
             If String.IsNullOrWhiteSpace(txtName.Text) Then
                 MessageBox.Show("Project Name is required.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Return
             End If
 
+            ' Ensure we have the Employee ID
             If String.IsNullOrWhiteSpace(AssignedEmployeeID) Then
                 ResolveAssignedEmployeeID()
             End If
 
-            If String.IsNullOrWhiteSpace(AssignedEmployeeID) Then
-                MessageBox.Show("Cannot determine EmployeeID for: " & txtAssignTo.Text, "Validation", MessageBoxButton.OK, MessageBoxImage.Warning)
-                Return
-            End If
-
+            ' 2. Data Preparation
             Dim noteText As String = New TextRange(EditorBox.Document.ContentStart, EditorBox.Document.ContentEnd).Text.Trim()
             Dim selectedStatus = TryCast(cmbStatus.SelectedItem, StatusItem)
-
             Dim rawBudget As Long
             Long.TryParse(txtBudget.Text.Replace(",", ""), rawBudget)
 
@@ -219,11 +216,19 @@ Namespace DPC.Views.Project
                 .Note = noteText
             }
 
+            ' 3. Save to Database
             Dim success As Boolean = DPC.Data.Controllers.ProjectController.CreateProject(proj)
 
+            ' 4. Post-Save Logic
             If success Then
                 MessageBox.Show("Project added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+
+                ' IMPORTANT: Clear the shared memory so the next "Add Project" starts fresh
                 ClearFields()
+
+                ' NAVIGATE BACK TO THE PROJECT LIST
+                ' Using your ViewLoader helper
+                ViewLoader.DynamicView.NavigateToView("manageproject", Me)
             End If
         End Sub
 
