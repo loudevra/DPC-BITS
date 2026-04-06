@@ -109,10 +109,11 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
                         <!-- Card 1: Today Invoices -->
-                        <Border Background="White" CornerRadius="10" Margin="10" Width="170" Grid.Column="0">
+                        <Border Background="White" CornerRadius="10" Margin="5" HorizontalAlignment="Stretch" Grid.Column="0">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
                                 <Grid Width="50" Height="50" Margin="0,0,0,10">
                                     <Ellipse Fill="#f0f0f0"/>
@@ -128,7 +129,7 @@
                         </Border>
 
                         <!-- Card 2: This Month Invoices -->
-                        <Border Background="White" CornerRadius="10" Margin="10" Width="170"  Grid.Column="1">
+                        <Border Background="White" CornerRadius="10" Margin="5" HorizontalAlignment="Stretch" Grid.Column="1">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
                                 <Grid Width="50" Height="50" Margin="0,0,0,10">
                                     <Ellipse Fill="#f0f0f0"/>
@@ -144,7 +145,7 @@
                         </Border>
 
                         <!-- Card 3: Today Sales -->
-                        <Border Background="White" CornerRadius="10" Margin="10" Width="170" Grid.Column="2">
+                        <Border Background="White" CornerRadius="10" Margin="5" HorizontalAlignment="Stretch" Grid.Column="2">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
                                 <Grid Width="50" Height="50" Margin="0,0,0,10">
                                     <Ellipse Fill="#f0f0f0"/>
@@ -161,7 +162,7 @@
                         </Border>
 
                         <!-- Card 4: This Month Sales -->
-                        <Border Background="White" CornerRadius="10" Margin="10" Width="170" Grid.Column="3">
+                        <Border Background="White" CornerRadius="10" Margin="5" HorizontalAlignment="Stretch" Grid.Column="3">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
                                 <Grid Width="50" Height="50" Margin="0,0,0,10">
                                     <Ellipse Fill="#f0f0f0"/>
@@ -173,6 +174,22 @@
                                 </Grid>
                                 <TextBlock Text="This Month Sales" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" FontFamily="Lexend" />
                                 <TextBlock x:Name="TxtMonthSales" Text="+?0.00" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" FontFamily="Lexend" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Card 5: This Year's Sales -->
+                        <Border Background="White" CornerRadius="10" Margin="5" HorizontalAlignment="Stretch" Grid.Column="4">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10">
+                                <Grid Width="50" Height="50" Margin="0,0,0,10">
+                                    <Ellipse Fill="#f0f0f0"/>
+                                    <materialDesign:PackIcon Kind="Finance"
+                                     Width="24" Height="24"
+                                     Foreground="Black"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center"/>
+                                </Grid>
+                                <TextBlock Text="This Year's Sales" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" FontFamily="Lexend" />
+                                <TextBlock x:Name="TxtYearlySales" Text="+?0.00" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" FontFamily="Lexend" />
                             </StackPanel>
                         </Border>
                     </Grid>
