@@ -24,6 +24,15 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         Private popupAddSubCategory As Popup
         Private recentlyClosed As Boolean = False
         Private filterTimer As New DispatcherTimer()
+
+        ' Persists combo selections across page navigation
+        Private Shared _savedBrandTag As String = Nothing
+        Private Shared _savedSupplierTag As String = Nothing
+        Private Shared _savedCategoryContent As String = Nothing
+        Private Shared _savedSubCategoryContent As String = Nothing
+        Private Shared _savedWarehouseTag As String = Nothing
+        Private Shared _savedMeasurementUnitIndex As Integer = 0
+
 #Region "Initialization"
         Public Sub New()
             InitializeComponent()
@@ -32,6 +41,62 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             LoadInitialData()
             Me.DataContext = ProductViewModel.Instance
         End Sub
+
+        Private Sub RestoreComboSelections()
+            ' Brand
+            If _savedBrandTag IsNot Nothing Then
+                For Each item As ComboBoxItem In ComboBoxBrand.Items
+                    If item.Tag?.ToString() = _savedBrandTag Then
+                        ComboBoxBrand.SelectedItem = item
+                        Exit For
+                    End If
+                Next
+            End If
+
+            ' Supplier
+            If _savedSupplierTag IsNot Nothing Then
+                For Each item As ComboBoxItem In ComboBoxSupplier.Items
+                    If item.Tag?.ToString() = _savedSupplierTag Then
+                        ComboBoxSupplier.SelectedItem = item
+                        Exit For
+                    End If
+                Next
+            End If
+
+            ' Category
+            If _savedCategoryContent IsNot Nothing Then
+                For Each item As ComboBoxItem In ComboBoxCategory.Items
+                    If item.Content?.ToString() = _savedCategoryContent Then
+                        ComboBoxCategory.SelectedItem = item
+                        Exit For
+                    End If
+                Next
+            End If
+
+            ' SubCategory
+            If _savedSubCategoryContent IsNot Nothing Then
+                For Each item As ComboBoxItem In ComboBoxSubCategory.Items
+                    If item.Content?.ToString() = _savedSubCategoryContent Then
+                        ComboBoxSubCategory.SelectedItem = item
+                        Exit For
+                    End If
+                Next
+            End If
+
+            ' Warehouse
+            If _savedWarehouseTag IsNot Nothing Then
+                For Each item As ComboBoxItem In ComboBoxWarehouse.Items
+                    If item.Tag?.ToString() = _savedWarehouseTag Then
+                        ComboBoxWarehouse.SelectedItem = item
+                        Exit For
+                    End If
+                Next
+            End If
+
+            ' Measurement Unit (static items, index is stable)
+            ComboBoxMeasurementUnit.SelectedIndex = _savedMeasurementUnitIndex
+        End Sub
+
         Private Sub AddNewProducts_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
             InitializeMarkupUI()
             InitializeUIElements()
@@ -64,7 +129,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                                                           Return
                                                       End If
                                                       If Not cbTextBox.IsFocused Then Return
-                                                      ' If user just picked from list, close dropdown and stop
                                                       Dim selectedBrand = TryCast(ComboBoxBrand.SelectedItem, ComboBoxItem)
                                                       If selectedBrand IsNot Nothing AndAlso selectedBrand.Content?.ToString() = originalText Then
                                                           ComboBoxBrand.IsDropDownOpen = False
@@ -76,7 +140,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                                                   End Sub
             End If
 
-            ' ADD THIS: Handle Brand Selection to populate Suppliers
             AddHandler ComboBoxBrand.SelectionChanged, Sub(sender2, e2)
                                                            Dim selectedBrand = TryCast(ComboBoxBrand.SelectedItem, ComboBoxItem)
                                                            If selectedBrand IsNot Nothing Then
@@ -87,7 +150,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                                                            End If
                                                        End Sub
 
-            ' Supplier Search - ADD THIS SECTION
+            ' Supplier Search
             Dim cbSupplierTextBox As TextBox = CType(ComboBoxSupplier.Template.FindName("PART_EditableTextBox", ComboBoxSupplier), TextBox)
             If cbSupplierTextBox IsNot Nothing Then
                 Dim supplierTimer As New DispatcherTimer With {.Interval = TimeSpan.FromMilliseconds(300)}
@@ -148,7 +211,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                                                                   Return
                                                               End If
                                                               If Not cbCategoryTextBox.IsFocused Then Return
-                                                              ' If user just picked from list, close dropdown and stop
                                                               Dim selectedItem = TryCast(ComboBoxCategory.SelectedItem, ComboBoxItem)
                                                               If selectedItem IsNot Nothing AndAlso selectedItem.Content?.ToString() = originalText Then
                                                                   ComboBoxCategory.IsDropDownOpen = False
@@ -185,7 +247,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                                                                      Return
                                                                  End If
                                                                  If Not cbSubCategoryTextBox.IsFocused Then Return
-                                                                 ' If user just picked from list, close dropdown and stop
                                                                  Dim selectedItem = TryCast(ComboBoxSubCategory.SelectedItem, ComboBoxItem)
                                                                  If selectedItem IsNot Nothing AndAlso selectedItem.Content?.ToString() = originalText Then
                                                                      ComboBoxSubCategory.IsDropDownOpen = False
@@ -196,13 +257,38 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                                                                  subCategoryTimer.Start()
                                                              End Sub
             End If
+
+            ' Save selections whenever user picks from each dropdown
+            AddHandler ComboBoxSupplier.SelectionChanged, Sub(s, ev)
+                                                              Dim item = TryCast(ComboBoxSupplier.SelectedItem, ComboBoxItem)
+                                                              _savedSupplierTag = item?.Tag?.ToString()
+                                                          End Sub
+
+            AddHandler ComboBoxSubCategory.SelectionChanged, Sub(s, ev)
+                                                                 Dim item = TryCast(ComboBoxSubCategory.SelectedItem, ComboBoxItem)
+                                                                 _savedSubCategoryContent = item?.Content?.ToString()
+                                                             End Sub
+
+            AddHandler ComboBoxWarehouse.SelectionChanged, Sub(s, ev)
+                                                               Dim item = TryCast(ComboBoxWarehouse.SelectedItem, ComboBoxItem)
+                                                               _savedWarehouseTag = item?.Tag?.ToString()
+                                                           End Sub
+
+            AddHandler ComboBoxMeasurementUnit.SelectionChanged, Sub(s, ev)
+                                                                     _savedMeasurementUnitIndex = ComboBoxMeasurementUnit.SelectedIndex
+                                                                 End Sub
+
+            RestoreComboSelections()
         End Sub
+
         Private Sub SetupTimers()
             uploadTimer.Interval = TimeSpan.FromMilliseconds(100)
         End Sub
+
         Private Sub OpenProductVariationDetails()
             Dim productVariationDetails = New ProductVariationDetails()
         End Sub
+
         Private Sub InitializeUIElements()
             If ProductController.IsVariation = Nothing Or ProductController.IsVariation = False Then
                 Toggle.IsChecked = False
@@ -224,6 +310,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             TxtDiscountRate.Text = "0"
             SingleDatePicker.DisplayDateStart = DateTime.Today
         End Sub
+
         Private Sub SetupControllerReferences()
             ProductController.MainContainer = MainContainer
             ProductController.TxtStockUnits = TxtStockUnits
@@ -236,6 +323,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 dateButton.DataContext = calendarViewModel
             End If
         End Sub
+
         Private Sub LoadInitialData()
             ProductController.GetBrandsWithSupplier(ComboBoxBrand)
             ProductController.GetProductCategory(ComboBoxCategory)
@@ -248,23 +336,28 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             End If
         End Sub
 #End Region
+
 #Region "Event Handlers"
         Public Sub IntegerOnlyTextInputHandler(sender As Object, e As TextCompositionEventArgs)
             ProductController.IntegerOnlyTextInputHandler(sender, e)
         End Sub
+
         Public Sub IntegerOnlyPasteHandler(sender As Object, e As DataObjectPastingEventArgs)
             ProductController.IntegerOnlyPasteHandler(sender, e)
         End Sub
+
         Private Sub Toggle_Click(sender As Object, e As RoutedEventArgs)
             ProductController.VariationChecker(Toggle, StackPanelVariation, StackPanelWarehouse,
                 StackPanelRetailPrice, StackPanelOrderPrice, StackPanelTaxRate,
                 StackPanelDiscountRate, StackPanelMarkup, BorderStocks, StackPanelAlertQuantity,
                 StackPanelStockUnits, OuterStackPanel)
         End Sub
+
         Private Sub IncludeSerial_Click(sender As Object, e As RoutedEventArgs)
             ProductController.SerialNumberChecker(CheckBoxSerialNumber, StackPanelSerialRow,
                 TxtStockUnits, BorderStockUnits)
         End Sub
+
         Private Sub BtnAddProduct_Click(sender As Object, e As RoutedEventArgs)
             Dim isSuccessAddProduct As Boolean = ProductController.InsertNewProduct(Toggle, CheckBoxSerialNumber,
             TxtProductName, TxtProductCode, ComboBoxCategory, ComboBoxSubCategory,
@@ -282,35 +375,50 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 DPC.Components.Forms.AddVariation._savedVariations.Clear()
                 DPC.Data.Controllers.ProductController.variationManager.GetAllVariationData().Clear()
                 DPC.Data.Controllers.ProductController.variationManager.CurrentCombination = Nothing
+
+                ' Also clear saved combo state on successful submit
+                _savedBrandTag = Nothing
+                _savedSupplierTag = Nothing
+                _savedCategoryContent = Nothing
+                _savedSubCategoryContent = Nothing
+                _savedWarehouseTag = Nothing
+                _savedMeasurementUnitIndex = 0
+
                 If Not String.IsNullOrWhiteSpace(base64Image) Then
                     ResetImageComponents()
                 End If
             End If
         End Sub
+
         Private Sub CategoryComboBox_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles ComboBoxCategory.SelectionChanged
             Dim selectedCategory As String = TryCast(ComboBoxCategory.SelectedItem, ComboBoxItem)?.Content?.ToString()
+            _savedCategoryContent = selectedCategory
             If Not String.IsNullOrEmpty(selectedCategory) Then
                 ProductController.GetProductSubcategory(selectedCategory, ComboBoxSubCategory, SubCategoryLabel, StackPanelSubCategory)
             Else
                 ComboBoxSubCategory.Items.Clear()
             End If
         End Sub
+
         Private Sub ComboBoxBrand_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles ComboBoxBrand.SelectionChanged
             Dim selectedBrandItem As ComboBoxItem = TryCast(ComboBoxBrand.SelectedItem, ComboBoxItem)
             If selectedBrandItem IsNot Nothing AndAlso selectedBrandItem.Tag IsNot Nothing Then
+                _savedBrandTag = selectedBrandItem.Tag.ToString()
                 Dim brandID As Integer = Convert.ToInt32(selectedBrandItem.Tag)
-                ProductController.GetSuppliersByBrand(brandID, ComboBoxSupplier)  ' <-- Populates supplier dropdown
+                ProductController.GetSuppliersByBrand(brandID, ComboBoxSupplier)
                 ProductController.GetCategoryByBrand(brandID, ComboBoxCategory)
             Else
-                ComboBoxSupplier.Items.Clear()  ' <-- Clears supplier dropdown
+                _savedBrandTag = Nothing
+                ComboBoxSupplier.Items.Clear()
                 ComboBoxCategory.Items.Clear()
                 ComboBoxSubCategory.Items.Clear()
-                'StackPanelSubCategory.Visibility = Visibility.Collapsed
             End If
         End Sub
+
         Private Sub StartDate_Click(sender As Object, e As RoutedEventArgs)
             SingleDatePicker.IsDropDownOpen = True
         End Sub
+
         Private Sub SingleDatePicker_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs) Handles SingleDatePicker.SelectedDateChanged
             Dim datePicker As DatePicker = TryCast(sender, DatePicker)
             If datePicker IsNot Nothing AndAlso datePicker.DataContext IsNot Nothing Then
@@ -320,30 +428,36 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 End If
             End If
         End Sub
+
         Private Sub BtnAddRow_Click(sender As Object, e As RoutedEventArgs)
             ProductController.BtnAddRow_Click(Nothing, Nothing)
         End Sub
+
         Private Sub BtnRemoveRow_Click(sender As Object, e As RoutedEventArgs)
             ProductController.BtnRemoveRow_Click(Nothing, Nothing)
         End Sub
+
         Private Sub TxtStockUnits_KeyDown(sender As Object, e As KeyEventArgs)
             If e.Key = Key.Enter Then
                 ProductController.ProcessStockUnitsEntry(TxtStockUnits, MainContainer)
                 e.Handled = True
             End If
         End Sub
+
         Private Sub OpenAddVariation(sender As Object, e As RoutedEventArgs)
             Dim openAddVariation As New DPC.Components.Forms.AddVariation()
             AddHandler openAddVariation.close, AddressOf AddVariation_Closed
             Dim parentWindow As Window = Window.GetWindow(Me)
             PopupHelper.OpenPopupWithControl(sender, openAddVariation, "windowcenter", -100, 0, False, parentWindow)
         End Sub
+
         Private Sub AddVariation_Closed(sender As Object, e As RoutedEventArgs)
             Dim variations As List(Of ProductVariation) = ProductController.GetProductVariations()
             If variations IsNot Nothing Then
                 ProductController.UpdateProductVariationText(variations, TxtProductVariation)
             End If
         End Sub
+
         Private Sub ForceUpperCase(tb As TextBox)
             If tb Is Nothing Then Return
             Dim text As String = tb.Text
@@ -367,6 +481,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             ForceUpperCase(TryCast(sender, TextBox))
         End Sub
 #End Region
+
 #Region "Image Handling"
         Private Sub BtnBrowse_Click(sender As Object, e As RoutedEventArgs)
             If isUploadLocked Then Return
@@ -381,11 +496,13 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 End If
             End If
         End Sub
+
         Private Sub Border_DragEnter(sender As Object, e As DragEventArgs)
             If e.Data.GetDataPresent(DataFormats.FileDrop) Then
                 e.Effects = DragDropEffects.Copy
             End If
         End Sub
+
         Private Sub Border_Drop(sender As Object, e As DragEventArgs)
             If isUploadLocked Then Return
             If e.Data.GetDataPresent(DataFormats.FileDrop) Then
@@ -396,13 +513,13 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 End If
             End If
         End Sub
+
         Private Sub StartFileUpload(filePath As String)
             Dim fileInfo As New FileInfo(filePath)
             Dim fileSizeText As String = Base64Utility.GetReadableFileSize(fileInfo.Length)
             ImgName.Text = Path.GetFileName(filePath)
             ImgSize.Text = fileSizeText
 
-            ' Encode to base64 for storage/submission
             Try
                 base64Image = Base64Utility.EncodeFileToBase64(filePath)
             Catch ex As Exception
@@ -410,12 +527,11 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 Exit Sub
             End Try
 
-            ' Load image directly from the original file (no temp file round-trip)
             Try
                 Dim imageSource As New BitmapImage()
                 imageSource.BeginInit()
                 imageSource.CacheOption = BitmapCacheOption.OnLoad
-                imageSource.DecodePixelWidth = 300 ' Limit decoded size for faster rendering
+                imageSource.DecodePixelWidth = 300
                 imageSource.UriSource = New Uri(filePath)
                 imageSource.EndInit()
                 imageSource.Freeze()
@@ -425,7 +541,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 Exit Sub
             End Try
 
-            ' Skip the fake progress timer — go straight to complete
             ImageInfoPanel.Visibility = Visibility.Collapsed
             ImageDisplayPanel.Visibility = Visibility.Visible
             BtnRemoveImage.Visibility = Visibility.Visible
@@ -433,10 +548,12 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             DropBorder.AllowDrop = False
             isUploadLocked = True
         End Sub
+
         Private Sub RemoveImage(sender As Object, e As RoutedEventArgs)
             uploadTimer.Stop()
             ResetImageComponents()
         End Sub
+
         Private Sub ResetImageComponents()
             UploadProgressBar.Value = 0
             UploadStatus.Text = ""
@@ -452,14 +569,17 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             base64Image = String.Empty
         End Sub
 #End Region
+
         Public Sub LoadProductVariations()
             Dim variations As List(Of ProductVariation) = ProductController.GetProductVariations()
             ProductController.UpdateProductVariationText(variations, TxtProductVariation)
         End Sub
+
         Private Sub BtnRemoveImage_Click(sender As Object, e As RoutedEventArgs)
             ProductViewModel.Instance.ProductImage = Nothing
             ProductViewModel.Instance.ImagePath = Nothing
         End Sub
+
         Private Sub LoadImageFromFile(filePath As String)
             Try
                 Dim fileInfo As New FileInfo(filePath)
@@ -480,9 +600,11 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 MessageBox.Show("Error loading image: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Sub
+
         Private Sub OnBrandAdded()
             ' LoadBrands()
         End Sub
+
         Private Sub BtnAddBrand_Click(sender As Object, e As RoutedEventArgs)
             Dim clickedButton As Button = TryCast(sender, Button)
             If clickedButton Is Nothing Then Return
@@ -518,37 +640,34 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                                              End Sub
             popupAddBrand.IsOpen = True
         End Sub
+
         Private Sub BtnAddSupplier_Click(sender As Object, e As RoutedEventArgs)
             If popupAddSupplier IsNot Nothing Then
                 popupAddSupplier.IsOpen = False
                 popupAddSupplier.Child = Nothing
             End If
-
             Dim addSupplierControl As New DPC.Views.Stocks.Supplier.NewSuppliers.NewSuppliers()
-
             AddHandler addSupplierControl.SupplierAdded, Sub()
                                                              ProductController.GetSuppliersByBrand(0, ComboBoxSupplier)
                                                          End Sub
             AddHandler addSupplierControl.ClosePopup, Sub()
                                                           popupAddSupplier.IsOpen = False
                                                       End Sub
-
             popupAddSupplier = New Popup With {
-        .Placement = PlacementMode.AbsolutePoint,
-        .StaysOpen = False,
-        .AllowsTransparency = True,
-        .Child = addSupplierControl
-    }
-
+                .Placement = PlacementMode.AbsolutePoint,
+                .StaysOpen = False,
+                .AllowsTransparency = True,
+                .Child = addSupplierControl
+            }
             AddHandler popupAddSupplier.Opened, Sub()
                                                     Dim screenWidth As Double = SystemParameters.PrimaryScreenWidth
                                                     Dim screenHeight As Double = SystemParameters.PrimaryScreenHeight
                                                     popupAddSupplier.HorizontalOffset = (screenWidth / 2) - (addSupplierControl.ActualWidth / 2)
                                                     popupAddSupplier.VerticalOffset = (screenHeight / 2) - (addSupplierControl.ActualHeight / 2)
                                                 End Sub
-
             popupAddSupplier.IsOpen = True
         End Sub
+
         Private Sub BtnAddCategory_Click(sender As Object, e As RoutedEventArgs)
             If popupAddCategory IsNot Nothing Then
                 popupAddCategory.IsOpen = False
@@ -572,6 +691,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                                                 End Sub
             popupAddCategory.IsOpen = True
         End Sub
+
         Private Sub BtnAddSubcategory_Click(sender As Object, e As RoutedEventArgs)
             If popupAddSubCategory IsNot Nothing Then
                 popupAddSubCategory.IsOpen = False
@@ -595,6 +715,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                                                    End Sub
             popupAddSubCategory.IsOpen = True
         End Sub
+
 #Region "Markup and Price Calculation"
         Private Sub CalculateSellingPrice()
             Try
@@ -602,7 +723,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                RadBtnPercentage Is Nothing Then
                     Return
                 End If
-
                 Dim buyingPrice As Decimal
                 If String.IsNullOrWhiteSpace(TxtPurchaseOrder.Text) OrElse
                Not Decimal.TryParse(TxtPurchaseOrder.Text, buyingPrice) OrElse
@@ -628,19 +748,24 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 MessageBox.Show("Error calculating selling price: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Sub
+
         Private Sub TxtMarkup_TextChanged(sender As Object, e As TextChangedEventArgs) Handles TxtMarkup.TextChanged
             CalculateSellingPrice()
         End Sub
+
         Private Sub TxtPurchaseOrder_TextChanged(sender As Object, e As TextChangedEventArgs) Handles TxtPurchaseOrder.TextChanged
             CalculateSellingPrice()
         End Sub
+
         Private Sub RadioButton_Checked(sender As Object, e As RoutedEventArgs) Handles RadBtnPercentage.Checked, RadBtnFlat.Checked
             UpdateMarkupLabelsIfReady()
             CalculateSellingPrice()
         End Sub
+
         Private Sub UpdateMarkupLabels()
             UpdateMarkupLabelsIfReady()
         End Sub
+
         Private Sub UpdateMarkupLabelsIfReady()
             If TxtMarkupLabel Is Nothing OrElse RadBtnPercentage Is Nothing OrElse
            MarkupPrefix Is Nothing Then
@@ -654,6 +779,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 MarkupPrefix.Kind = PackIconKind.CurrencyPhp
             End If
         End Sub
+
         Private Sub InitializeMarkupUI()
             If TxtMarkupLabel Is Nothing OrElse RadBtnPercentage Is Nothing OrElse
            MarkupPrefix Is Nothing Then
@@ -666,7 +792,9 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             End If
         End Sub
 #End Region
+
     End Class
+
     Public Class InverseBooleanToVisibilityConverter
         Implements IValueConverter
         Public Function Convert(value As Object, targetType As Type, parameter As Object, culture As Globalization.CultureInfo) As Object Implements IValueConverter.Convert
