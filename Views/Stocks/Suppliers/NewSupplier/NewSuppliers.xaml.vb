@@ -79,16 +79,23 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
 
                 Dim brandIDs As List(Of String) = autocompleteHelper.SelectedItems.Select(Function(b) b.ID.ToString()).ToList()
 
+                ' Insert into database
                 SupplierController.InsertSupplier(
             TxtRepresentative.Text.Trim(), TxtCompany.Text.Trim(), TxtPhone.Text.Trim(),
             TxtEmail.Text.Trim(), TxtAddress.Text.Trim(), TxtCity.Text.Trim(),
             TxtRegion.Text.Trim(), TxtCountry.Text.Trim(), TxtPostalCode.Text.Trim(),
             TxtTINID.Text.Trim(), brandIDs)
 
+                MessageBox.Show("Supplier added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+
                 RaiseEvent SupplierAdded()
                 ClearCacheModule()
                 ClearFields()          ' <-- clears the actual UI controls
+
+                ' Keep this if you still use this control inside a popup elsewhere
                 RaiseEvent ClosePopup()
+
+                Global.DPC.DPC.Data.Helpers.ViewLoader.DynamicView.NavigateToView("managesuppliers", Me)
 
             Catch ex As Exception
                 MessageBox.Show("An error occurred while adding the supplier: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
@@ -99,6 +106,7 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
         Private Sub BtnCancel_Click(sender As Object, e As RoutedEventArgs)
             RaiseEvent ClosePopup()
         End Sub
+
 
 #Region "Cache Management"
         ' Helper to reset the global module variables after successful save
