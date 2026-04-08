@@ -51,6 +51,7 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
         Private Sub UserControl_Loaded(sender As Object, e As RoutedEventArgs)
             If Not _isInitialized Then
                 LoadData()
+                ApplyRolePermissions() ' ADD THIS LINE
                 _isInitialized = True
             End If
         End Sub
@@ -408,6 +409,40 @@ LIMIT @pageSize OFFSET @offset;
             End Try
         End Sub
 
+        Private Sub dataGrid_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles dataGrid.SelectionChanged
 
+        End Sub
+
+        Private Sub ApplyRolePermissions()
+            Dim isSales As Boolean = False
+
+            ' Fetch role based on the logged in user's cached email
+            Dim query As String = "SELECT ur.RoleName FROM employee e JOIN userroles ur ON e.UserRoleID = ur.RoleID WHERE e.Email = @email"
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@email", CacheOnLoggedInEmail)
+                        Dim roleName As Object = cmd.ExecuteScalar()
+
+                        ' Check if the role contains "Sales"
+                        If roleName IsNot Nothing AndAlso roleName.ToString().ToLower().Contains("sales") Then
+                            isSales = True
+                        End If
+                    End Using
+                Catch ex As Exception
+                    ' Silently handle database errors or fall back to hiding it to be safe
+                    Console.WriteLine("Error checking role: " & ex.Message)
+                End Try
+            End Using
+
+            ' Hide or show the Selling Price column
+            If isSales Then
+                colSellingPrice.Visibility = Visibility.Collapsed
+            Else
+                colSellingPrice.Visibility = Visibility.Visible
+            End If
+        End Sub
     End Class
 End Namespace

@@ -97,7 +97,10 @@ Namespace DPC.Components.Navigation
 
             ' Apply per-permission
             If Not (Sales Or isAdmin) Then GrayOutButton(BtnSales)
-            If Not (Stock Or isAdmin) Then GrayOutButton(BtnStocks)
+
+            ' UPDATE: Allow Sales users to see the Stocks button clearly
+            If Not (Stock Or Sales Or isAdmin) Then GrayOutButton(BtnStocks)
+
             If Not (Crm Or isAdmin) Then GrayOutButton(BtnCRM)
             If Not (Project Or isAdmin) Then GrayOutButton(BtnProjects)
             If Not (Accounts Or isAdmin) Then GrayOutButton(BtnAccounts)
@@ -217,7 +220,8 @@ Namespace DPC.Components.Navigation
         ''' Opens the Stocks popup menu.
         ''' </summary>
         Private Sub OpenStocksPopup(sender As Object, e As RoutedEventArgs)
-            If Stock = True Or IsPrivileged Then
+            ' UPDATE: Added "Or Sales = True" to grant access
+            If Stock = True Or Sales = True Or IsPrivileged Then
                 Dim popupMenu As New PopUpMenuStocks()
                 Dim button As Button = CType(sender, Button)
                 Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
