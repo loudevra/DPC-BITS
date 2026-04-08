@@ -318,5 +318,24 @@ Namespace DPC.Data.Controllers
             End Try
         End Function
 
+        '' GetThisYearTotalSales()
+        Public Shared Function GetThisYearTotalSales() As Decimal
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "SELECT COALESCE(SUM(CAST(REPLACE(REPLACE(totalAmount, '₱', ''), ',', '') AS DECIMAL(15,2))), 0) 
+                           FROM walkinbilling 
+                           WHERE YEAR(dateAdded) = YEAR(NOW())"
+                    Using cmd As New MySqlCommand(query, conn)
+                        Dim result = cmd.ExecuteScalar()
+                        Return If(result Is DBNull.Value OrElse result Is Nothing, 0D, Convert.ToDecimal(result))
+                    End Using
+                End Using
+            Catch ex As Exception
+                Debug.WriteLine("Error in GetThisYearTotalSales: " & ex.Message)
+                Return 0D
+            End Try
+        End Function
+
     End Class
 End Namespace

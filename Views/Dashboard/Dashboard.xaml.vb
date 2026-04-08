@@ -18,10 +18,17 @@ Namespace DPC.Views.Dashboard
             Try
                 Dim todaySales As Decimal = BillingController.GetTodayTotalSales()
                 Dim monthSales As Decimal = BillingController.GetThisMonthTotalSales()
+                Dim yearlySales As Decimal = BillingController.GetThisYearTotalSales()
+
+                ' TEMPORARY DEBUG - remove after fixing
+                MessageBox.Show($"Today: {todaySales} | Month: {monthSales} | Year: {yearlySales}", "Debug Sales")
 
                 TxtTodaySales.Text = "+" & todaySales.ToString("N2")
                 TxtMonthSales.Text = "+" & monthSales.ToString("N2")
+                TxtYearlySales.Text = "+" & yearlySales.ToString("N2")
             Catch ex As Exception
+                ' TEMPORARY DEBUG - shows actual error
+                MessageBox.Show("Error: " & ex.Message, "Debug Error")
                 Debug.WriteLine("Error loading sales data: " & ex.Message)
             End Try
         End Sub
