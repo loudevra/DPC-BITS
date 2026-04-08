@@ -1,4 +1,4 @@
-<UserControl x:Class="DPC.Views.Dashboard.Dashboard"
+﻿<UserControl x:Class="DPC.Views.Dashboard.Dashboard"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -188,8 +188,29 @@
                                      HorizontalAlignment="Center"
                                      VerticalAlignment="Center"/>
                                 </Grid>
-                                <TextBlock Text="This Year's Sales" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center" FontFamily="Lexend" />
-                                <TextBlock x:Name="TxtYearlySales" Text="+?0.00" FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" FontFamily="Lexend" />
+
+                                <!-- Year Navigator -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button x:Name="BtnPrevYear" Content="◀"
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    Padding="2" MinWidth="0" Height="20"
+                    Click="BtnPrevYear_Click"/>
+                                    <TextBox x:Name="TxtSelectedYear"
+         Width="48" TextAlignment="Center"
+         BorderThickness="0" Background="Transparent"
+         FontFamily="Lexend" FontWeight="SemiBold" FontSize="12"
+         VerticalAlignment="Center"
+         KeyDown="TxtSelectedYear_KeyDown"/>
+                                    <Button x:Name="BtnNextYear" Content="▶"
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    Padding="2" MinWidth="0" Height="20"
+                    Click="BtnNextYear_Click"/>
+                                </StackPanel>
+
+                                <TextBlock Text="Year's Sales" FontWeight="SemiBold" FontSize="12"
+                   HorizontalAlignment="Center" FontFamily="Lexend"/>
+                                <TextBlock x:Name="TxtYearlySales" Text="+0.00" FontWeight="Bold"
+                   FontSize="20" HorizontalAlignment="Center" FontFamily="Lexend"/>
                             </StackPanel>
                         </Border>
                     </Grid>
