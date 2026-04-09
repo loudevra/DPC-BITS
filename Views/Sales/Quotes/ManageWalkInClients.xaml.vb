@@ -369,9 +369,8 @@ Namespace DPC.Views.Sales.Quotes
             End Try
         End Sub
 
-        Private Sub NavigateToGovernmentQuotes(sender As Object, e As RoutedEventArgs)
-            ' Redirect to your Add Billing View
-            ViewLoader.DynamicView.NavigateToView("billingform", Me)
+        Private Sub NavigateToWalkInOrder(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
         End Sub
 
         Private Sub ComboBoxLimit_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)

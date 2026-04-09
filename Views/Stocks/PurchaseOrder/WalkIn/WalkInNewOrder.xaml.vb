@@ -778,6 +778,9 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             targetPanel.Children.Add(mainBorder)
             UpdateGrandTotal()
         End Sub
+        Private Sub NavigateToWalkInOrder(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("walkinorder", Me)
+        End Sub
 
         ' Textbox for Product Search It also included inside the Popup Function
         Public Function CreateProductSearchBox(width As Double, rowIndex As Integer) As Border
