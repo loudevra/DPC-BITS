@@ -11,6 +11,7 @@ Imports DPC.DPC.Data.Model
 Imports DPC.DPC.Views.Stocks.ItemManager.NewProduct
 Imports MaterialDesignThemes.Wpf
 Imports Microsoft.Win32
+Imports MySql.Data.MySqlClient
 Imports OfficeOpenXml.FormulaParsing.Excel.Functions
 
 Namespace DPC.Views.Stocks.ItemManager.ProductManager
@@ -28,14 +29,73 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
         Private isUploadLocked As Boolean = False
 
         Private Sub EditProduct_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
-            ' Now initialize the markup UI after the control has been loaded
             InitializeMarkupUI()
             base64Image = cacheProductImage
             DisplaySelectedProductImage()
 
-            'Store all data in cache in their respective displays and initializes other details related to the selected product
             InitializeSelectedProduct()
+
+            ' This calls the method below
+            ApplyRolePermissions()
         End Sub
+
+        ' --- PASTE THIS ENTIRE BLOCK RIGHT HERE ---
+        Private isSalesUser As Boolean = False
+
+
+
+        ' --- SECURITY TOOLKIT: LOCK SENSITIVE INPUTS ---
+        Private Sub ApplyRolePermissions()
+            ' Fetch role based on the logged-in user's cached email
+            Dim query As String = "SELECT ur.RoleName FROM employee e JOIN userroles ur ON e.UserRoleID = ur.RoleID WHERE e.Email = @email"
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@email", CacheOnLoggedInEmail)
+                        Dim roleName As Object = cmd.ExecuteScalar()
+
+                        ' Check if the role contains "Sales"
+                        If roleName IsNot Nothing AndAlso roleName.ToString().ToLower().Contains("sales") Then
+                            isSalesUser = True
+                        End If
+                    End Using
+                Catch ex As Exception
+                    Console.WriteLine("Error checking role: " & ex.Message)
+                End Try
+            End Using
+
+            ' If Sales, hide ONLY the Retail Price input and inject Admin message
+            If isSalesUser Then
+                Dim LockTextBox = Sub(txt As TextBox)
+                                      If txt Is Nothing Then Return
+
+                                      ' Hide the textbox (your CalculateSellingPrice will still update it invisibly!)
+                                      txt.Visibility = Visibility.Collapsed
+                                      txt.Text = "0"
+
+                                      ' Inject the Admin Message into the same container
+                                      Dim parentGrid As Grid = TryCast(txt.Parent, Grid)
+                                      If parentGrid IsNot Nothing Then
+                                          Dim adminMsg As New TextBlock With {
+                            .Text = "🔒 Admin Access Only",
+                            .Foreground = New SolidColorBrush(Color.FromRgb(210, 54, 54)),
+                            .FontWeight = FontWeights.SemiBold,
+                            .VerticalAlignment = VerticalAlignment.Center,
+                            .Margin = New Thickness(10, 0, 0, 0),
+                            .FontFamily = New FontFamily("Lexend")
+                        }
+                                          Grid.SetColumn(adminMsg, Grid.GetColumn(txt))
+                                          parentGrid.Children.Add(adminMsg)
+                                      End If
+                                  End Sub
+
+                ' ONLY lock the Product Selling Price
+                LockTextBox(TxtRetailPrice)
+            End If
+        End Sub
+        ' --- END OF BLOCK ---
 
         Private Sub EditProduct_Unloaded(sender As Object, e As RoutedEventArgs) Handles Me.Unloaded
             ClearAllCacheValues(cacheProductUpdateCompletion)
