@@ -216,7 +216,6 @@
 
                                 <!-- Watermark TextBlock -->
                                 <TextBlock Grid.Column="0"
-                                          Text="Date"
                                           Margin="10,0,0,0"
                                           VerticalAlignment="Center"
                                           Foreground="#AEAEAE"
