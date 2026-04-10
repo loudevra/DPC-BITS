@@ -269,11 +269,16 @@
                     <Setter Property="FontFamily" Value="Lexend"/>
                     <Setter Property="FontSize" Value="13"/>
                     <Setter Property="FontWeight" Value="SemiBold"/>
-                    <Setter Property="Foreground" Value="#474747"/>
-                    <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="Background" Value="#474747"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
                     <Setter Property="VerticalContentAlignment" Value="Center"/>
-                    <Setter Property="Padding" Value="10,5"/>
-                    <Setter Property="Background" Value="White"/>
+                    <Setter Property="Padding" Value="12,8"/>
+
+                    <Setter Property="SeparatorBrush" Value="#5A5A5A"/>
+                    <Setter Property="SeparatorVisibility" Value="Visible"/>
+                    <Setter Property="BorderThickness" Value="0,0,1,0"/>
+                    <Setter Property="BorderBrush" Value="#5A5A5A"/>
                 </Style>
             </DataGrid.ColumnHeaderStyle>
 
@@ -355,14 +360,31 @@
                 <DataGridTemplateColumn Header="Actions" Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Border BorderBrush="#D9D9D9" BorderThickness="1.5" CornerRadius="6" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="4,2">
+                            <Border BorderThickness="0" CornerRadius="6" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="4,2">
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <Button Width="28" Height="28" Background="Transparent" Margin="0,0,5,0" ToolTip="Edit" Click="OpenEditBrand" Padding="0" BorderThickness="0">
+
+                                    <Button Width="28" Height="28" Background="Transparent" BorderThickness="0" Margin="0,0,5,0" ToolTip="Edit" Click="OpenEditBrand" Padding="0">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="4">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Button.Template>
                                         <materialDesign:PackIcon Kind="SquareEditOutline" Width="18" Height="18" Foreground="#52C69D"/>
                                     </Button>
-                                    <Button Width="28" Height="28" Background="Transparent" Margin="0" ToolTip="Delete" Click="DeleteBrand" Padding="0" BorderThickness="0">
+
+                                    <Button Width="28" Height="28" Background="Transparent" BorderThickness="0" Margin="0" ToolTip="Delete" Click="DeleteBrand" Padding="0">
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="4">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Button.Template>
                                         <materialDesign:PackIcon Kind="TrashCanOutline" Width="18" Height="18" Foreground="#E65E5E"/>
                                     </Button>
+
                                 </StackPanel>
                             </Border>
                         </DataTemplate>

@@ -1,5 +1,4 @@
-﻿<!-- ManageSuppliers.xaml -->
-    <UserControl x:Class="DPC.Views.Stocks.Suppliers.ManageSuppliers.ManageSuppliers"
+﻿<UserControl x:Class="DPC.Views.Stocks.Suppliers.ManageSuppliers.ManageSuppliers"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -10,7 +9,6 @@
         Background="#D9D9D9">
 
     <UserControl.Resources>
-        <!-- Modern ScrollBar Style for Both Horizontal and Vertical -->
         <Style x:Key="ModernScrollBarStyle" TargetType="ScrollBar">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Template">
@@ -46,11 +44,9 @@
                             </Track>
                         </Grid>
                         <ControlTemplate.Triggers>
-                            <!-- Trigger for Vertical ScrollBar -->
                             <Trigger Property="Orientation" Value="Vertical">
                                 <Setter TargetName="PART_Track" Property="IsDirectionReversed" Value="True"/>
                             </Trigger>
-                            <!-- Trigger for Horizontal ScrollBar -->
                             <Trigger Property="Orientation" Value="Horizontal">
                                 <Setter TargetName="PART_Track" Property="IsDirectionReversed" Value="False"/>
                             </Trigger>
@@ -58,14 +54,11 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-            <!-- Style Triggers for sizing based on orientation -->
             <Style.Triggers>
-                <!-- Horizontal ScrollBar: 10px height -->
                 <Trigger Property="Orientation" Value="Horizontal">
                     <Setter Property="Height" Value="10"/>
                     <Setter Property="Width" Value="Auto"/>
                 </Trigger>
-                <!-- Vertical ScrollBar: 10px width -->
                 <Trigger Property="Orientation" Value="Vertical">
                     <Setter Property="Width" Value="10"/>
                     <Setter Property="Height" Value="Auto"/>
@@ -79,16 +72,11 @@
     <Grid x:Name="mainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Header Section -->
             <RowDefinition Height="Auto"/>
-            <!-- Options Bar -->
             <RowDefinition Height="*"/>
-            <!-- DataGrid Section -->
             <RowDefinition Height="Auto"/>
-            <!-- Pagination Section -->
         </Grid.RowDefinitions>
 
-        <!-- Title and Add Button - Static at top -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20,20,20,10">
             <TextBlock Text="Suppliers"
                        FontWeight="SemiBold"
@@ -108,7 +96,6 @@
             </Button>
         </StackPanel>
 
-        <!-- Options Bar - Static with controls -->
         <StackPanel VerticalAlignment="Center" Grid.Row="1" Margin="20,10">
             <Border Style="{StaticResource RoundedBorderStyle}" BorderThickness="0" Background="white" Padding="10" CornerRadius="10">
                 <Grid>
@@ -149,7 +136,6 @@
             </Border>
         </StackPanel>
 
-        <!-- DataGrid Section - Scrollable Content -->
         <DataGrid Name="dataGrid"
                   Grid.Row="2"
                   AutoGenerateColumns="False"
@@ -164,7 +150,6 @@
                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                   ScrollViewer.HorizontalScrollBarVisibility="Auto">
             <DataGrid.Resources>
-                <!-- Apply the modern ScrollBar style to all scrollbars within this DataGrid -->
                 <Style TargetType="ScrollBar" BasedOn="{StaticResource ModernScrollBarStyle}" />
             </DataGrid.Resources>
             <DataGrid.RowStyle>
@@ -181,11 +166,16 @@
                     <Setter Property="FontFamily" Value="Lexend"/>
                     <Setter Property="FontSize" Value="13"/>
                     <Setter Property="FontWeight" Value="SemiBold"/>
-                    <Setter Property="Foreground" Value="#474747"/>
-                    <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="Background" Value="#474747"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
                     <Setter Property="VerticalContentAlignment" Value="Center"/>
-                    <Setter Property="Padding" Value="10,5"/>
-                    <Setter Property="Background" Value="White"/>
+                    <Setter Property="Padding" Value="12,8"/>
+
+                    <Setter Property="SeparatorBrush" Value="#5A5A5A"/>
+                    <Setter Property="SeparatorVisibility" Value="Visible"/>
+                    <Setter Property="BorderThickness" Value="0,0,1,0"/>
+                    <Setter Property="BorderBrush" Value="#5A5A5A"/>
                 </Style>
             </DataGrid.ColumnHeaderStyle>
 
@@ -283,11 +273,25 @@
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 
-                                <Button Width="30" Height="30" Background="Transparent" Margin="0" ToolTip="Edit" Cursor="Hand" Click="OpenEditSupplier">
+                                <Button Width="30" Height="30" Background="Transparent" BorderThickness="0" Margin="0" ToolTip="Edit" Cursor="Hand" Click="OpenEditSupplier">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="4">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Button.Template>
                                     <materialDesign:PackIcon Kind="SquareEditOutline" Width="16" Height="16" Foreground="#52C69D"/>
                                 </Button>
 
-                                <Button Width="30" Height="30" Background="Transparent" Margin="0" ToolTip="Delete" Cursor="Hand" Click="DeleteProduct">
+                                <Button Width="30" Height="30" Background="Transparent" BorderThickness="0" Margin="0" ToolTip="Delete" Cursor="Hand" Click="DeleteProduct">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="4">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Button.Template>
                                     <materialDesign:PackIcon Kind="DeleteOutline" Width="16" Height="16" Foreground="#E65E5E"/>
                                 </Button>
 
@@ -298,9 +302,7 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <!-- Pagination Section - Fixed at bottom -->
         <StackPanel x:Name="paginationPanel" Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,20">
-            <!-- Pagination controls will be added here programmatically -->
         </StackPanel>
     </Grid>
 </UserControl>
