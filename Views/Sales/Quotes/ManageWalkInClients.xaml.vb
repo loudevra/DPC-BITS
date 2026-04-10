@@ -23,9 +23,17 @@ Namespace DPC.Views.Sales.Quotes
         Private _BillingNumber As String
         Private _Type As String = "Private" ' Default filter for billing
 
+        ' User access control properties
+        Private _currentUserID As String
+        Private _currentUserRole As String
+        Private _isAdmin As Boolean = False
+
         Public Sub New()
             InitializeComponent()
             SetupDatePickers()
+
+            ' Initialize user access control
+            InitializeUserAccess()
 
             ' Initialize the search delay timer
             _typingTimer = New DispatcherTimer With {
@@ -36,6 +44,55 @@ Namespace DPC.Views.Sales.Quotes
             ' Load data when the control is ready
             AddHandler Me.Loaded, AddressOf UserControl_Loaded
         End Sub
+
+        ''' <summary>
+        ''' Initialize user access control based on logged-in user
+        ''' </summary>
+        Private Sub InitializeUserAccess()
+            Try
+                ' Get current user ID from global cache
+                _currentUserID = CacheOnEmployeeID
+
+                ' Get user role from database
+                _currentUserRole = GetCurrentUserRole(_currentUserID)
+
+                ' Check if user is admin (has full access)
+                _isAdmin = (_currentUserRole = "Administrator" OrElse _currentUserRole = "Business Owner")
+
+                ' Display access level in UI (optional)
+                If Not _isAdmin Then
+                    ' You can add a visual indicator here if needed
+                    Debug.WriteLine($"User {_currentUserID} has restricted access")
+                End If
+            Catch ex As Exception
+                MessageBox.Show($"Error initializing user access: {ex.Message}", "Access Control Error", MessageBoxButton.OK, MessageBoxImage.Warning)
+                _isAdmin = False ' Default to restricted access on error
+            End Try
+        End Sub
+
+        ''' <summary>
+        ''' Get the role of the current user from the database
+        ''' </summary>
+        Private Function GetCurrentUserRole(employeeID As String) As String
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "SELECT r.RoleName FROM employee e " &
+                                        "INNER JOIN userroles r ON e.UserRoleID = r.RoleID " &
+                                        "WHERE e.EmployeeID = @EmployeeID"
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@EmployeeID", employeeID)
+                        Dim result As Object = cmd.ExecuteScalar()
+                        If result IsNot DBNull.Value AndAlso result IsNot Nothing Then
+                            Return result.ToString()
+                        End If
+                    End Using
+                End Using
+            Catch ex As Exception
+                Debug.WriteLine($"Error getting user role: {ex.Message}")
+            End Try
+            Return "User" ' Default role
+        End Function
 
         Private Sub UserControl_Loaded(sender As Object, e As RoutedEventArgs)
             If Not _isInitialized Then
@@ -49,7 +106,7 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         ''' <summary>
-        ''' Loads billing data into the DataGrid based on the selected limit
+        ''' Loads billing data into the DataGrid based on the selected limit and user access
         ''' </summary>
         Public Sub LoadData()
             Try
@@ -59,8 +116,8 @@ Namespace DPC.Views.Sales.Quotes
                     limit = Convert.ToInt32(CType(cmbLimit.SelectedItem, ComboBoxItem).Content)
                 End If
 
-                ' Call the BillingController to fetch records
-                Dim statements = BillingController.GetBillingStatements(limit, _Type)
+                ' Call the BillingController to fetch records with user filtering
+                Dim statements = BillingController.GetBillingStatements(limit, _Type, _currentUserID, _isAdmin)
 
                 ' Apply date filter if a date is selected
                 If filterDateViewModel.SelectedDate.HasValue Then
@@ -110,11 +167,19 @@ Namespace DPC.Views.Sales.Quotes
 
         ''' <summary>
         ''' Logic for the "Edit" button inside the DataGrid rows
+        ''' Only allows editing if user owns the record or is admin
         ''' </summary>
         Private Sub OpenEditStatement(sender As Object, e As RoutedEventArgs)
             Dim selectedQuote As BillingModel = TryCast(dataGrid.SelectedItem, BillingModel)
 
             If selectedQuote IsNot Nothing Then
+                ' Check access control
+                If Not _isAdmin AndAlso selectedQuote.CreatedBy <> _currentUserID Then
+                    MessageBox.Show("You do not have permission to edit this billing statement.",
+                                  "Access Denied", MessageBoxButton.OK, MessageBoxImage.Warning)
+                    Return
+                End If
+
                 TransactionState.ResetRecord()
 
                 With TransactionState.ActiveRecord
@@ -182,10 +247,18 @@ Namespace DPC.Views.Sales.Quotes
 
         ''' <summary>
         ''' Logic for the "Delete" button inside the DataGrid rows
+        ''' Only allows deletion if user owns the record or is admin
         ''' </summary>
         Private Sub DeleteStatement(sender As Object, e As RoutedEventArgs)
             Dim statement As BillingModel = TryCast(dataGrid.SelectedItem, BillingModel)
             If statement Is Nothing Then Return
+
+            ' Check access control
+            If Not _isAdmin AndAlso statement.CreatedBy <> _currentUserID Then
+                MessageBox.Show("You do not have permission to delete this billing statement.",
+                              "Access Denied", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Return
+            End If
 
             Dim result = MessageBox.Show($"Are you sure you want to delete Billing Statement {statement.BillingNumber}?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning)
 
@@ -227,7 +300,8 @@ Namespace DPC.Views.Sales.Quotes
                     limit = Convert.ToInt32(CType(cmbLimit.SelectedItem, ComboBoxItem).Content)
                 End If
 
-                Dim results = BillingController.SearchBillingStatements(SearchText.Text.Trim(), limit, _Type)
+                ' Use user-filtered search
+                Dim results = BillingController.SearchBillingStatements(SearchText.Text.Trim(), limit, _Type, _currentUserID, _isAdmin)
 
                 ' Apply date filter if a date is selected
                 If filterDateViewModel.SelectedDate.HasValue Then
@@ -390,3 +464,4 @@ Namespace DPC.Views.Sales.Quotes
         End Function
     End Class
 End Namespace
+
