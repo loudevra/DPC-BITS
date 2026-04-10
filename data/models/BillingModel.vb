@@ -42,5 +42,9 @@
         Public Property BillingNote As String
         Public Property Remarks As String
         Public Property DateAdded As DateTime
+
+        ' Created By Information
+        Public Property CreatedBy As String
     End Class
 End Namespace
+''''''''''

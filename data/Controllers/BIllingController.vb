@@ -46,6 +46,46 @@ Namespace DPC.Data.Controllers
             Return statements
         End Function
 
+        ''' <summary>
+        ''' Gets billing statements with user-based filtering
+        ''' </summary>
+        Public Shared Function GetBillingStatements(limit As Integer, type As String, currentUserID As String, isAdmin As Boolean) As ObservableCollection(Of BillingModel)
+            Dim statements As New ObservableCollection(Of BillingModel)
+
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+
+                    Dim query As String
+                    If isAdmin Then
+                        ' Admin sees all records
+                        query = "SELECT * FROM walkinbilling ORDER BY dateAdded DESC LIMIT @Limit"
+                    Else
+                        ' Regular users see only their own records
+                        query = "SELECT * FROM walkinbilling WHERE CreatedBy = @CreatedBy ORDER BY dateAdded DESC LIMIT @Limit"
+                    End If
+
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@Limit", limit)
+                        If Not isAdmin Then
+                            cmd.Parameters.AddWithValue("@CreatedBy", currentUserID)
+                        End If
+
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            While reader.Read()
+                                ' Use MapReaderToModel instead of manually mapping
+                                statements.Add(MapReaderToModel(reader))
+                            End While
+                        End Using
+                    End Using
+                End Using
+            Catch ex As Exception
+                MessageBox.Show($"Error loading billing statements: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+
+            Return statements
+        End Function
+
         ''' Searches billing statements based on text criteria
         Public Shared Function SearchBillingStatements(searchText As String, limit As Integer, billingType As String) As ObservableCollection(Of BillingModel)
             Dim statements As New ObservableCollection(Of BillingModel)
@@ -53,7 +93,8 @@ Namespace DPC.Data.Controllers
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
 
-                    Dim query As String = $"
+                    Dim query As String
+                    query = $"
                         SELECT * FROM walkinbilling 
                         WHERE (billingNumber LIKE @search OR DRNo LIKE @search OR clientID LIKE @search OR companyRep LIKE @search)
                         ORDER BY dateAdded DESC LIMIT @limit"
@@ -72,6 +113,51 @@ Namespace DPC.Data.Controllers
                 Debug.WriteLine("Error in SearchBillingStatements: " & ex.Message)
             End Try
             Return statements
+        End Function
+
+        ''' <summary>
+        ''' Search billing statements with user-based filtering
+        ''' </summary>
+        Public Shared Function SearchBillingStatements(searchTerm As String, limit As Integer, type As String, currentUserID As String, isAdmin As Boolean) As ObservableCollection(Of BillingModel)
+            Dim results As New ObservableCollection(Of BillingModel)
+
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+
+                    Dim query As String
+                    If isAdmin Then
+                        ' Admin searches all records - using clientID instead of clientName
+                        query = "SELECT * FROM walkinbilling WHERE " +
+                               "(billingNumber LIKE @SearchTerm OR clientID LIKE @SearchTerm OR DRNo LIKE @SearchTerm OR companyRep LIKE @SearchTerm) " +
+                               "ORDER BY dateAdded DESC LIMIT @Limit"
+                    Else
+                        ' Regular users search only their own records - using clientID instead of clientName
+                        query = "SELECT * FROM walkinbilling WHERE CreatedBy = @CreatedBy AND " +
+                               "(billingNumber LIKE @SearchTerm OR clientID LIKE @SearchTerm OR DRNo LIKE @SearchTerm OR companyRep LIKE @SearchTerm) " +
+                               "ORDER BY dateAdded DESC LIMIT @Limit"
+                    End If
+
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@SearchTerm", "%" & searchTerm & "%")
+                        cmd.Parameters.AddWithValue("@Limit", limit)
+                        If Not isAdmin Then
+                            cmd.Parameters.AddWithValue("@CreatedBy", currentUserID)
+                        End If
+
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            While reader.Read()
+                                ' Use MapReaderToModel instead of manually mapping
+                                results.Add(MapReaderToModel(reader))
+                            End While
+                        End Using
+                    End Using
+                End Using
+            Catch ex As Exception
+                MessageBox.Show($"Error searching billing statements: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+
+            Return results
         End Function
 
         ''' Inserts a new Billing Statement into the walkinbilling table

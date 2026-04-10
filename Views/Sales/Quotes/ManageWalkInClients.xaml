@@ -485,5 +485,13 @@ IsReadOnly="True">
                 </Grid>
             </ScrollViewer>
         </Grid>
+
+        <!-- Add this somewhere in your UI, perhaps in a header section -->
+        <TextBlock x:Name="AccessLevelIndicator" 
+                   Text="Viewing: My Records Only" 
+                   Foreground="#FF6B6B"
+                   FontSize="12"
+                   Margin="10,5"
+                   Visibility="Collapsed"/>
     </Grid>
 </UserControl>
