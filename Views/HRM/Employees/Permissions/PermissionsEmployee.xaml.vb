@@ -25,15 +25,20 @@ Namespace DPC.Views.HRM.Employees.Permissions
         End Sub
 
         Private Sub PermissionsEmployee_Loaded(sender As Object, e As RoutedEventArgs)
+            RemoveHandler Me.Loaded, AddressOf PermissionsEmployee_Loaded
+
             LoadPermissionsFromDatabase()
 
             If dataGrid IsNot Nothing Then
                 dataGrid.ItemsSource = _permissionItems
             End If
 
-            ' Track changes so the Update button activates
+            ' Reset handlers safely
+            RemoveHandler _permissionItems.CollectionChanged, AddressOf OnPermissionItemsChanged
             AddHandler _permissionItems.CollectionChanged, AddressOf OnPermissionItemsChanged
+
             For Each item In _permissionItems
+                RemoveHandler item.PropertyChanged, AddressOf OnPermissionItemPropertyChanged
                 AddHandler item.PropertyChanged, AddressOf OnPermissionItemPropertyChanged
             Next
         End Sub
@@ -140,19 +145,22 @@ Namespace DPC.Views.HRM.Employees.Permissions
         ' ---- Save ----
 
         Private Sub BtnSave_Click(sender As Object, e As RoutedEventArgs) Handles btnSave.Click
+            e.Handled = True   ' ✅ THIS STOPS DUPLICATION
+
             Try
                 Dim result As MessageBoxResult = MessageBox.Show(
-                    "Are you sure you want to update permissions for all modules?",
-                    "Confirm Update",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Question)
+            "Are you sure you want to update permissions for all modules?",
+            "Confirm Update",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Question)
 
                 If result = MessageBoxResult.Yes Then
                     SaveAllPermissions()
                 End If
+
             Catch ex As Exception
                 MessageBox.Show($"Error updating permissions: {ex.Message}",
-                                "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Sub
 
