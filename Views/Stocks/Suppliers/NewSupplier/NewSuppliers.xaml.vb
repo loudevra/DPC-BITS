@@ -69,30 +69,33 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
         ' Add supplier
         Private Sub BtnAddSupplier(sender As Object, e As RoutedEventArgs)
             Try
-                ' 1. Validate required fields
                 If String.IsNullOrWhiteSpace(TxtRepresentative.Text) OrElse
-                   String.IsNullOrWhiteSpace(TxtCompany.Text) OrElse
-                   String.IsNullOrWhiteSpace(TxtEmail.Text) OrElse
-                   String.IsNullOrWhiteSpace(TxtPhone.Text) Then
+           String.IsNullOrWhiteSpace(TxtCompany.Text) OrElse
+           String.IsNullOrWhiteSpace(TxtEmail.Text) OrElse
+           String.IsNullOrWhiteSpace(TxtPhone.Text) Then
                     MessageBox.Show("Please fill in all required fields (*).", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                     Return
                 End If
 
-                ' 2. Collect Data
                 Dim brandIDs As List(Of String) = autocompleteHelper.SelectedItems.Select(Function(b) b.ID.ToString()).ToList()
 
-                ' 3. Insert to Database
+                ' Insert into database
                 SupplierController.InsertSupplier(
-                    TxtRepresentative.Text.Trim(), TxtCompany.Text.Trim(), TxtPhone.Text.Trim(),
-                    TxtEmail.Text.Trim(), TxtAddress.Text.Trim(), TxtCity.Text.Trim(),
-                    TxtRegion.Text.Trim(), TxtCountry.Text.Trim(), TxtPostalCode.Text.Trim(),
-                    TxtTINID.Text.Trim(), brandIDs)
+            TxtRepresentative.Text.Trim(), TxtCompany.Text.Trim(), TxtPhone.Text.Trim(),
+            TxtEmail.Text.Trim(), TxtAddress.Text.Trim(), TxtCity.Text.Trim(),
+            TxtRegion.Text.Trim(), TxtCountry.Text.Trim(), TxtPostalCode.Text.Trim(),
+            TxtTINID.Text.Trim(), brandIDs)
+
+                MessageBox.Show("Supplier added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
 
                 RaiseEvent SupplierAdded()
-
                 ClearCacheModule()
+                ClearFields()          ' <-- clears the actual UI controls
 
+                ' Keep this if you still use this control inside a popup elsewhere
                 RaiseEvent ClosePopup()
+
+                Global.DPC.DPC.Data.Helpers.ViewLoader.DynamicView.NavigateToView("managesuppliers", Me)
 
             Catch ex As Exception
                 MessageBox.Show("An error occurred while adding the supplier: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
@@ -103,6 +106,7 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
         Private Sub BtnCancel_Click(sender As Object, e As RoutedEventArgs)
             RaiseEvent ClosePopup()
         End Sub
+
 
 #Region "Cache Management"
         ' Helper to reset the global module variables after successful save
@@ -117,6 +121,22 @@ Namespace DPC.Views.Stocks.Supplier.NewSuppliers
             CacheCompanyCountry = String.Empty
             CacheCompanyPostalCode = String.Empty
             CacheCompanyTINID = String.Empty
+        End Sub
+
+        ' Add this method inside the NewSuppliers class
+        Private Sub ClearFields()
+            TxtRepresentative.Text = String.Empty
+            TxtCompany.Text = String.Empty
+            TxtPhone.Text = String.Empty
+            TxtEmail.Text = String.Empty
+            TxtAddress.Text = String.Empty
+            TxtCity.Text = String.Empty
+            TxtRegion.Text = String.Empty
+            TxtCountry.Text = String.Empty
+            TxtPostalCode.Text = String.Empty
+            TxtTINID.Text = String.Empty
+            TxtItem.Text = String.Empty
+            autocompleteHelper.ClearSelection(ChipPanel)  ' Clear brand chips too
         End Sub
 
         ' Stores in a Module serve as cache when navigating away

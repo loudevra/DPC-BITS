@@ -180,6 +180,128 @@
             <Setter Property="FontFamily" Value="Lexend"/>
         </Style>
 
+        <!-- DatePicker Style -->
+        <Style x:Key="RoundedDatePickerStyle" TargetType="DatePicker">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,5"/>
+            <Setter Property="FontFamily" Value="Lexend"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DatePicker">
+                        <Border Style="{StaticResource RoundedBorderStyle}"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Text Box for Date Display -->
+                                <DatePickerTextBox x:Name="PART_TextBox"
+                                                   Grid.Column="0"
+                                                   Margin="10,0,0,0"
+                                                   VerticalAlignment="Center"
+                                                   Background="Transparent"
+                                                   BorderThickness="0"
+                                                   Focusable="True"
+                                                   FontFamily="{TemplateBinding FontFamily}"
+                                                   FontSize="{TemplateBinding FontSize}"/>
+
+                                <!-- Watermark TextBlock -->
+                                <TextBlock Grid.Column="0"
+                                          Margin="10,0,0,0"
+                                          VerticalAlignment="Center"
+                                          Foreground="#AEAEAE"
+                                          FontFamily="{TemplateBinding FontFamily}"
+                                          FontSize="{TemplateBinding FontSize}"
+                                          IsHitTestVisible="False">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Text, ElementName=PART_TextBox}" Value="">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+
+                                <!-- Clear Button -->
+                                <Button x:Name="PART_ClearButton"
+                                        Grid.Column="1"
+                                        Width="20"
+                                        Height="20"
+                                        Margin="5,0,2,0"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Cursor="Hand"
+                                        Focusable="False"
+                                        ToolTip="Clear date"
+                                        Click="ClearDateButton_Click">
+                                    <materialDesign:PackIcon Kind="Close"
+                                                             Width="16"
+                                                             Height="16"
+                                                             Foreground="#999999"/>
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border Background="{TemplateBinding Background}"
+                                                                CornerRadius="10"
+                                                                Padding="2">
+                                                            <ContentPresenter HorizontalAlignment="Center" 
+                                                                            VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background" Value="#E0E0E0"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+
+                                <!-- Calendar Button -->
+                                <Button x:Name="PART_Button"
+                                        Grid.Column="2"
+                                        Width="30"
+                                        Height="30"
+                                        Margin="0,0,2,0"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Cursor="Hand"
+                                        Focusable="False">
+                                    <materialDesign:PackIcon Kind="Calendar"
+                                                             Width="20"
+                                                             Height="20"
+                                                             Foreground="#474747"/>
+                                </Button>
+
+                                <!-- Calendar Popup -->
+                                <Popup x:Name="PART_Popup"
+                                       AllowsTransparency="True"
+                                       Placement="Bottom"
+                                       PlacementTarget="{Binding ElementName=PART_TextBox}"
+                                       StaysOpen="False"/>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- DataGrid Style -->
         <Style x:Key="DataGridStyle" TargetType="DataGrid">
             <Setter Property="Background" Value="White"/>
@@ -295,10 +417,11 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width=".20*"/>
+                        <ColumnDefinition Width="80"/>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width=".20*"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="2*"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
                         <Button Style="{StaticResource RoundedButtonStyle}" 
@@ -354,16 +477,25 @@
                         <ComboBoxItem Content="HHCE"/>
                     </ComboBox>
 
+                    <!-- Upload Date Picker -->
+                    <DatePicker x:Name="dpUploadDate" 
+                                Style="{StaticResource RoundedDatePickerStyle}"
+                                Grid.Column="5"
+                                VerticalAlignment="Center"
+                                Margin="10,0,0,0"
+                                MinWidth="120"
+                                SelectedDateChanged="DpUploadDate_SelectedDateChanged"/>
+                                
+
                     <!-- SEARCH BAR -->
-                    <StackPanel Grid.Column="5" HorizontalAlignment="Right">
+                    <StackPanel Grid.Column="6" Margin="20,0,0,0">
                         <Border Style="{StaticResource RoundedBorderStyle}"
                         BorderThickness="1"
                         BorderBrush="#474747"
-                        MinWidth="250"
+                        MinWidth="200"
                         Height="34"
                         Margin="0,0,10,0"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Right">
+                        VerticalAlignment="Center">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>

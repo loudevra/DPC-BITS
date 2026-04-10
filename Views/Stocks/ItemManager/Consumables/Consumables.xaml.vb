@@ -7,6 +7,8 @@ Imports DPC.DPC.Data.Controllers.Stocks
 Imports DPC.DPC.Views.ItemManager.Consumables
 Imports DPC.DPC.Views.Warehouse
 Imports DPC.Views.ItemManager.Consumables
+Imports System.IO
+Imports Microsoft.Win32
 
 Namespace DPC.Views.Stocks.ItemManager.Consumables
     Public Class Consumables
@@ -26,6 +28,51 @@ Namespace DPC.Views.Stocks.ItemManager.Consumables
 
             ' Load data after the control is fully loaded
             AddHandler Me.Loaded, AddressOf UserControl_Loaded
+        End Sub
+        ' --- EXCEL / CSV EXPORT LOGIC ---
+        Private Sub BtnExportExcel_Click(sender As Object, e As RoutedEventArgs)
+            Try
+                ' 1. Get the current items from the DataGrid
+                Dim items = TryCast(dataGrid.ItemsSource, IEnumerable(Of ConsumableModels))
+
+                ' 2. Check if there is actually data to export
+                If items Is Nothing OrElse Not items.Any() Then
+                    MessageBox.Show("There is no data to export.", "Export Empty", MessageBoxButton.OK, MessageBoxImage.Information)
+                    Return
+                End If
+
+                ' 3. Open the Save File Dialog
+                Dim saveFileDialog As New SaveFileDialog()
+                saveFileDialog.Filter = "CSV (Excel Compatible) (*.csv)|*.csv"
+                saveFileDialog.FileName = "Consumables_Export_" & DateTime.Now.ToString("yyyyMMdd_HHmmss") & ".csv"
+                saveFileDialog.Title = "Export Consumables to Excel"
+
+                ' 4. If the user clicks "Save"
+                If saveFileDialog.ShowDialog() = True Then
+
+                    ' 5. Create and write to the file
+                    Using writer As New StreamWriter(saveFileDialog.FileName)
+                        ' Write the Header Row
+                        writer.WriteLine("Product ID,Product Name,Warehouse,Stock")
+
+                        ' Write each data row
+                        For Each item In items
+                            ' We wrap text in double quotes to prevent commas inside Product Names from breaking the columns
+                            Dim id = If(item.ProductID, "").Replace("""", """""")
+                            Dim name = If(item.ProductName, "").Replace("""", """""")
+                            Dim warehouse = If(item.WarehouseName, "").Replace("""", """""")
+                            Dim stock = item.Stock.ToString()
+
+                            writer.WriteLine($"""{id}"",""{name}"",""{warehouse}"",""{stock}""")
+                        Next
+                    End Using
+
+                    MessageBox.Show("Data successfully exported!", "Export Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                End If
+
+            Catch ex As Exception
+                MessageBox.Show($"An error occurred while exporting: {ex.Message}", "Export Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
         End Sub
 
         Private Sub UserControl_Loaded(sender As Object, e As RoutedEventArgs)
@@ -174,4 +221,5 @@ Namespace DPC.Views.Stocks.ItemManager.Consumables
         Public Property WarehouseName As String
         Public Property Stock As Integer
     End Class
+
 End Namespace

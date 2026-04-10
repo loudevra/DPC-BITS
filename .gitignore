@@ -363,3 +363,10 @@ MigrationBackup/
 FodyWeavers.xsd
 
 .env
+/Views/Misc/Documents/ManagePullOutForm.xaml
+/Views/Misc/Documents/ManagePullOutForm.xaml.vb
+/Views/Misc/Calendar.xaml.vb
+/Views/Misc/Calendar.xaml
+/Views/Stocks/StockReturn/CutomersRecords/CustomerRecordForm.xaml
+/Views/Stocks/StockReturn/CutomersRecords/CustomerRecordForm.xaml.vb
+/data/Controllers/CustomerController.vb

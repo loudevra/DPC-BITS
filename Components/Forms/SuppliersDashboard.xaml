@@ -1,0 +1,25 @@
+﻿<Window x:Class="DPC.Views.SuppliersDashboard"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Suppliers" Height="600" Width="800">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <DockPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Text="Suppliers List" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+
+            <Button x:Name="BtnOpenAddSupplier" 
+                    Content="+ Add New Supplier" 
+                    Click="BtnOpenAddSupplier_Click" 
+                    DockPanel.Dock="Right" 
+                    HorizontalAlignment="Right" 
+                    Width="150" Height="35" 
+                    Background="#52C69D" Foreground="White" FontWeight="SemiBold"/>
+        </DockPanel>
+
+        <DataGrid Grid.Row="1" x:Name="SuppliersDataGrid" AutoGenerateColumns="True" CanUserAddRows="False" IsReadOnly="True" />
+    </Grid>
+</Window>

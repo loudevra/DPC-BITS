@@ -16,6 +16,7 @@ Imports DPC.DPC.Data.Model
 Imports System.Collections.ObjectModel
 Imports DocumentFormat.OpenXml.Office.MetaAttributes
 Imports DPC.DPC.Components.ConfirmationModals
+Imports System.Threading.Tasks
 
 Namespace DPC.Views.Stocks.ItemManager.ProductManager
     Public Class ManageProducts
@@ -24,11 +25,17 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
         Private _dataTable As DataTable
         Private _isInitialized As Boolean = False
 
+        ' Pagination fields
+        Private _currentPage As Integer = 1
+        Private _pageSize As Integer = 10
+        Private _totalRows As Integer = 0
+
         Public Sub New()
             InitializeComponent()
 
             ' Set up the TextChanged event immediately
             AddHandler txtSearch.TextChanged, AddressOf TxtSearch_TextChanged
+            AddHandler cmbPageSize.SelectionChanged, AddressOf CmbPageSize_SelectionChanged
 
             ' Initialize the StockStatsController with the TextBlocks from our UI
             StockStatsController.Initialize(
@@ -44,7 +51,17 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
         Private Sub UserControl_Loaded(sender As Object, e As RoutedEventArgs)
             If Not _isInitialized Then
                 LoadData()
+                ApplyRolePermissions() ' ADD THIS LINE
                 _isInitialized = True
+            End If
+        End Sub
+
+        Private Sub CmbPageSize_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+            Dim selectedItem = TryCast(cmbPageSize.SelectedItem, ComboBoxItem)
+            If selectedItem IsNot Nothing Then
+                _pageSize = Integer.Parse(selectedItem.Content.ToString())
+                _currentPage = 1
+                LoadData()
             End If
         End Sub
 
@@ -98,12 +115,18 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
         End Sub
 
         ' Load Data Using ProductController and update stock stats
-        Public Sub LoadData()
+        Public Async Sub LoadData()
             Try
-                ' Modified version to save the DataTable
-                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                    ' Query from paste-2.txt
-                    Dim query As String = "
+                Dim dataTable As DataTable = Nothing
+                Dim inStockProducts As Integer = 0
+                Dim stockOutProducts As Integer = 0
+
+                ' Run the heavy database + image processing work on a background thread
+                Await Task.Run(
+                    Sub()
+                        Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                            ' Query WITHOUT the heavy productImage column
+                            Dim query As String = "
                     SELECT  
     p.productID AS ID,  
     p.productName AS Name,  
@@ -145,64 +168,86 @@ GROUP BY
     p.productID, p.productName, c.categoryName, sc.subcategoryName,  
     b.brandName, s.supplierName, p.productImage, p.productVariation
 
-ORDER BY p.productName;
-
+ORDER BY p.productName
+LIMIT @pageSize OFFSET @offset;
             "
-                    conn.Open()
-                    Dim adapter As New MySqlDataAdapter(query, conn)
-                    _dataTable = New DataTable()
-                    adapter.Fill(_dataTable)
+                            conn.Open()
+                            Dim adapter As New MySqlDataAdapter(query, conn)
+                            adapter.SelectCommand.Parameters.AddWithValue("@pageSize", _pageSize)
+                            adapter.SelectCommand.Parameters.AddWithValue("@offset", (_currentPage - 1) * _pageSize)
+                            dataTable = New DataTable()
+                            adapter.Fill(dataTable)
 
-                    ' Add column for Image display
-                    If Not _dataTable.Columns.Contains("ImageSource") Then
-                        _dataTable.Columns.Add("ImageSource", GetType(BitmapImage))
-                    End If
+                            ' Get total count for stats (lightweight query)
+                            Dim countQuery As String = "
+                        SELECT 
+                            COUNT(*) AS Total,
+                            SUM(CASE WHEN TotalStock > 0 THEN 1 ELSE 0 END) AS InStock,
+                            SUM(CASE WHEN TotalStock = 0 THEN 1 ELSE 0 END) AS StockOut
+                        FROM (
+                            SELECT p.productID,
+                                SUM(COALESCE(pnv.stockUnit, 0) + COALESCE(pvs.stockUnit, 0)) AS TotalStock
+                            FROM product p
+                            LEFT JOIN productnovariation pnv ON p.productID = pnv.productID AND p.productVariation = 0
+                            LEFT JOIN productvariationstock pvs ON p.productID = pvs.productID AND p.productVariation = 1
+                            GROUP BY p.productID
+                        ) AS StockSummary"
 
-                    ' Process images and count stocks
-                    Dim inStockProducts As Integer = 0
-                    Dim stockOutProducts As Integer = 0
-
-                    For Each row As DataRow In _dataTable.Rows
-                        ' Process the image
-                        If row("ProductImage") IsNot DBNull.Value Then
-                            Dim base64String As String = row("ProductImage").ToString()
-                            Try
-                                ' Convert Base64 to BitmapImage
-                                Dim imageBytes As Byte() = Convert.FromBase64String(base64String)
-                                Dim imageSource As New BitmapImage()
-                                Using stream As New MemoryStream(imageBytes)
-                                    imageSource.BeginInit()
-                                    imageSource.StreamSource = stream
-                                    imageSource.CacheOption = BitmapCacheOption.OnLoad
-                                    imageSource.EndInit()
-                                    imageSource.Freeze() ' Important for cross-thread usage
+                            Using countCmd As New MySqlCommand(countQuery, conn)
+                                Using reader = countCmd.ExecuteReader()
+                                    If reader.Read() Then
+                                        inStockProducts = Convert.ToInt32(reader("InStock"))
+                                        stockOutProducts = Convert.ToInt32(reader("StockOut"))
+                                        _totalRows = Convert.ToInt32(reader("Total"))
+                                    End If
                                 End Using
-                                row("ImageSource") = imageSource
-                            Catch ex As Exception
-                                ' Set a default image or handle error
-                                Console.WriteLine($"Error processing image: {ex.Message}")
-                            End Try
-                        End If
+                            End Using
 
-                        ' Count products by stock status
-                        Dim stockQuantity As Integer = Convert.ToInt32(row("StockQuantity"))
-                        If stockQuantity > 0 Then
-                            inStockProducts += 1
-                        Else
-                            stockOutProducts += 1
-                            ' For products with no stock, ensure warehouse is empty
-                            row("Warehouse") = DBNull.Value
-                        End If
-                    Next
+                            ' Add column for Image display
+                            If Not dataTable.Columns.Contains("ImageSource") Then
+                                dataTable.Columns.Add("ImageSource", GetType(BitmapImage))
+                            End If
 
-                    ' Set the data source
-                    dataGrid.ItemsSource = _dataTable.DefaultView
+                            ' Process images on background thread with downscaled decode
+                            For Each row As DataRow In dataTable.Rows
+                                If row("ProductImage") IsNot DBNull.Value Then
+                                    Dim base64String As String = row("ProductImage").ToString()
+                                    Try
+                                        Dim imageBytes As Byte() = Convert.FromBase64String(base64String)
+                                        Dim imageSource As New BitmapImage()
+                                        Using stream As New MemoryStream(imageBytes)
+                                            imageSource.BeginInit()
+                                            imageSource.StreamSource = stream
+                                            imageSource.CacheOption = BitmapCacheOption.OnLoad
+                                            ' Decode at display size to save memory
+                                            imageSource.DecodePixelWidth = 100
+                                            imageSource.DecodePixelHeight = 100
+                                            imageSource.EndInit()
+                                            imageSource.Freeze() ' Required for cross-thread usage
+                                        End Using
+                                        row("ImageSource") = imageSource
+                                    Catch ex As Exception
+                                        Console.WriteLine($"Error processing image: {ex.Message}")
+                                    End Try
+                                End If
 
-                    ' Update status cards
-                    txtInStock.Text = inStockProducts.ToString()
-                    txtStockOut.Text = stockOutProducts.ToString()
-                    txtTotal.Text = _dataTable.Rows.Count.ToString()
-                End Using
+                                ' For products with no stock, clear warehouse
+                                Dim stockQuantity As Integer = Convert.ToInt32(row("StockQuantity"))
+                                If stockQuantity = 0 Then
+                                    row("Warehouse") = DBNull.Value
+                                End If
+                            Next
+                        End Using
+                    End Sub)
+
+                ' Update UI on the dispatcher thread
+                _dataTable = dataTable
+                dataGrid.ItemsSource = _dataTable.DefaultView
+
+                ' Update status cards
+                txtInStock.Text = inStockProducts.ToString()
+                txtStockOut.Text = stockOutProducts.ToString()
+                txtTotal.Text = _totalRows.ToString()
 
             Catch ex As Exception
                 MessageBox.Show($"Error loading data: {ex.Message}")
@@ -364,6 +409,40 @@ ORDER BY p.productName;
             End Try
         End Sub
 
+        Private Sub dataGrid_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles dataGrid.SelectionChanged
 
+        End Sub
+
+        Private Sub ApplyRolePermissions()
+            Dim isSales As Boolean = False
+
+            ' Fetch role based on the logged in user's cached email
+            Dim query As String = "SELECT ur.RoleName FROM employee e JOIN userroles ur ON e.UserRoleID = ur.RoleID WHERE e.Email = @email"
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@email", CacheOnLoggedInEmail)
+                        Dim roleName As Object = cmd.ExecuteScalar()
+
+                        ' Check if the role contains "Sales"
+                        If roleName IsNot Nothing AndAlso roleName.ToString().ToLower().Contains("sales") Then
+                            isSales = True
+                        End If
+                    End Using
+                Catch ex As Exception
+                    ' Silently handle database errors or fall back to hiding it to be safe
+                    Console.WriteLine("Error checking role: " & ex.Message)
+                End Try
+            End Using
+
+            ' Hide or show the Selling Price column
+            If isSales Then
+                colSellingPrice.Visibility = Visibility.Collapsed
+            Else
+                colSellingPrice.Visibility = Visibility.Visible
+            End If
+        End Sub
     End Class
 End Namespace

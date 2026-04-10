@@ -4,228 +4,152 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:local="namespace:DPC.Views.Stocks.ItemManager" 
-        xmlns:local1="namespace:DPC.Components.Forms"
         mc:Ignorable="d"
         Background="Transparent"
         FontFamily="{StaticResource Lexend}"
         Foreground="#474747"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
         Unloaded="NewSupplierUserControl_Unloaded"
         Loaded="NewSupplierUserControl_Loaded">
 
-    <materialDesign:Card Width="550" 
-                     MaxHeight="550"  Padding="20" 
-                     Background="White"
-                     HorizontalAlignment="Center" 
-                     VerticalAlignment="Center"
-                     UniformCornerRadius="20">
-        <Grid>
-            <!-- Title Header - Now outside of ScrollViewer and static -->
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Center">
 
-            <!-- Header with Icon and Title -->
-            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20">
-                <materialDesign:PackIcon Kind="Bullseye" Foreground="#474747" Width="40" Height="40"/>
-                <Label Content="Add New Supplier" FontWeight="SemiBold" FontSize="30" FontFamily="Lexend" Foreground="#474747" VerticalAlignment="Center" Margin="0,-3,0,0"/>
-            </StackPanel>
+        <Border Background="#FFFFFF" 
+                HorizontalAlignment="Stretch" 
+                Margin="10"
+                CornerRadius="15">
 
-            <!-- Main Form Content -->
-            <ScrollViewer Style="{StaticResource ModernScrollViewerStyle}" 
-              VerticalScrollBarVisibility="Auto" 
-              HorizontalScrollBarVisibility="Disabled"
-              Grid.Row="1">
-                <Grid Background="Transparent" Height="Auto">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0" Margin="25,10,25,20">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Margin="30,30,30,10">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="Target" Foreground="#474747" Width="30" Height="30" VerticalAlignment="Center"/>
+                        <TextBlock Text="Add New Supplier" FontWeight="Bold" FontSize="26" FontFamily="{StaticResource Lexend}" Foreground="#474747" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </StackPanel>
 
-                        <StackPanel Grid.Row="0" Margin="0,0,0,10">
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                <TextBlock Text="Company Representative:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                            </StackPanel>
-                            <Border Style="{StaticResource RoundedBorderStyle}">
-                                <!--Representative Name Value is here!-->
+                    <Border Height="1" Background="#E0E0E0" Margin="0,15,0,0" HorizontalAlignment="Stretch"/>
+                </StackPanel>
+
+                <ScrollViewer Style="{StaticResource ModernScrollViewerStyle}" 
+                              VerticalScrollBarVisibility="Auto" 
+                              HorizontalScrollBarVisibility="Disabled"
+                              Grid.Row="1" Margin="30,0,15,30" Padding="0,0,15,0">
+
+                    <StackPanel HorizontalAlignment="Stretch">
+
+                        <StackPanel Margin="0,0,0,15">
+                            <TextBlock Text="Company Representative:" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                            <Border Style="{StaticResource RoundedBorderStyle}" Height="40">
                                 <TextBox x:Name="TxtRepresentative" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" CharacterCasing="Upper" TextChanged="ForceUppercase_TextChanged"/>
                             </Border>
                         </StackPanel>
 
-                        <StackPanel Grid.Row="1" Margin="0,10">
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                <TextBlock Text="Company Name:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                            </StackPanel>
-                            <Border Style="{StaticResource RoundedBorderStyle}">
-                                <!--Representative Name Value is here!-->
+                        <StackPanel Margin="0,0,0,15">
+                            <TextBlock Text="Company Name:" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                            <Border Style="{StaticResource RoundedBorderStyle}" Height="40">
                                 <TextBox x:Name="TxtCompany" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" CharacterCasing="Upper" TextChanged="ForceUppercase_TextChanged"/>
                             </Border>
                         </StackPanel>
 
-                        <StackPanel Grid.Row="2" Margin="0,10">
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                <TextBlock Text="Phone Number:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                            </StackPanel>
-                            <Border Style="{StaticResource RoundedBorderStyle}">
-                                <!--Phone Number Value is here!-->
+                        <StackPanel Margin="0,0,0,15">
+                            <TextBlock Text="Phone Number:" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                            <Border Style="{StaticResource RoundedBorderStyle}" Height="40">
                                 <TextBox x:Name="TxtPhone" PreviewTextInput="TxtPhone_PreviewTextInput" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold"/>
                             </Border>
                         </StackPanel>
 
-                        <StackPanel Grid.Row="3" Margin="0,10">
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                <TextBlock Text="Email:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                            </StackPanel>
-                            <Border Style="{StaticResource RoundedBorderStyle}">
-                                <!--Email Value is here!-->
+                        <StackPanel Margin="0,0,0,15">
+                            <TextBlock Text="Email:" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                            <Border Style="{StaticResource RoundedBorderStyle}" Height="40">
                                 <TextBox x:Name="TxtEmail" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold"/>
                             </Border>
                         </StackPanel>
 
-                        <StackPanel Grid.Row="4" Margin="0,10">
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                <TextBlock Text="Brand/s:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                            </StackPanel>
-
-                            <StackPanel>
-                                <!-- TextBox + Popup -->
-                                <Grid>
-                                    <!-- Text Input -->
-                                    <Border Style="{StaticResource RoundedBorderStyle}">
-                                        <TextBox x:Name="TxtItem"
-                                         Style="{StaticResource RoundedTextboxStyle}"
-                                         VerticalAlignment="Top" FontFamily="Lexend" FontWeight="SemiBold" CharacterCasing="Upper" TextChanged="ForceUppercase_TextChanged" />
+                        <StackPanel Margin="0,0,0,15">
+                            <TextBlock Text="Brand/s:" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                            <Grid>
+                                <Border Style="{StaticResource RoundedBorderStyle}" Height="40">
+                                    <TextBox x:Name="TxtItem" Style="{StaticResource RoundedTextboxStyle}" VerticalAlignment="Center" FontFamily="Lexend" FontWeight="SemiBold" CharacterCasing="Upper" TextChanged="ForceUppercase_TextChanged" />
+                                </Border>
+                                <Popup x:Name="AutoCompletePopup" PlacementTarget="{Binding ElementName=TxtItem}" Placement="Bottom" StaysOpen="False" IsOpen="False" AllowsTransparency="True" PopupAnimation="Fade">
+                                    <Border Background="White" BorderBrush="LightGray" BorderThickness="1" MaxHeight="150" Width="{Binding ElementName=TxtItem, Path=ActualWidth}">
+                                        <ListBox x:Name="LstItems">
+                                            <ListBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Name}" Padding="8"/>
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+                                        </ListBox>
                                     </Border>
-
-                                    <!-- Popup with ListBox -->
-                                    <Popup x:Name="AutoCompletePopup"
-                                       PlacementTarget="{Binding ElementName=TxtItem}"
-                                       Placement="Bottom"
-                                       StaysOpen="False"
-                                       IsOpen="False"
-                                       AllowsTransparency="True"
-                                       PopupAnimation="Fade">
-                                        <Border Background="White"
-                                        BorderBrush="LightGray"
-                                        BorderThickness="1"
-                                        MaxHeight="150"
-                                        Width="{Binding ElementName=TxtItem, Path=ActualWidth}">
-                                            <ListBox x:Name="LstItems">
-                                                <ListBox.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <TextBlock Text="{Binding Name}" Padding="8"/>
-                                                    </DataTemplate>
-                                                </ListBox.ItemTemplate>
-                                            </ListBox>
-                                        </Border>
-                                    </Popup>
-                                </Grid>
-
-                                <!-- Chips -->
-                                <WrapPanel x:Name="ChipPanel" Margin="0,5,0,5" />
-                            </StackPanel>
+                                </Popup>
+                            </Grid>
+                            <WrapPanel x:Name="ChipPanel" Margin="0,5,0,0" />
                         </StackPanel>
 
-                        <StackPanel Grid.Row="5" Margin="0,10">
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                <TextBlock Text="Address:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                            </StackPanel>
-                            <Border Style="{StaticResource RoundedBorderStyle}">
-                                <!--Email Value is here!-->
+                        <StackPanel Margin="0,0,0,15">
+                            <TextBlock Text="Address:" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                            <Border Style="{StaticResource RoundedBorderStyle}" Height="40">
                                 <TextBox x:Name="TxtAddress" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" CharacterCasing="Upper" TextChanged="ForceUppercase_TextChanged"/>
                             </Border>
                         </StackPanel>
 
-                        <StackPanel Grid.Row="6" Margin="0,10">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
-                                <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                        <TextBlock Text="City:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                                    </StackPanel>
-                                    <Border Style="{StaticResource RoundedBorderStyle}">
-                                        <!--City Value is here!-->
-                                        <TextBox x:Name="TxtCity" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" CharacterCasing="Upper" TextChanged="ForceUppercase_TextChanged"/>
-                                    </Border>
-                                </StackPanel>
-                                <StackPanel Grid.Column="1"  Margin="5,0,5,0">
-                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                        <TextBlock Text="Region:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                                    </StackPanel>
-                                    <Border Style="{StaticResource RoundedBorderStyle}">
-                                        <!--Region Value is here!-->
-                                        <TextBox x:Name="TxtRegion" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" CharacterCasing="Upper" TextChanged="ForceUppercase_TextChanged"/>
-                                    </Border>
-                                </StackPanel>
-                                <StackPanel Grid.Column="2" Margin="10,0,0,0">
-                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                        <TextBlock Text="Country:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                                    </StackPanel>
-                                    <Border Style="{StaticResource RoundedBorderStyle}">
-                                        <!--Country Value is here!-->
-                                        <TextBox x:Name="TxtCountry" PreviewTextInput="TxtCountry_PreviewTextInput" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" CharacterCasing="Upper" TextChanged="ForceUppercase_TextChanged"/>
-                                    </Border>
-                                </StackPanel>
-                            </Grid>
-                        </StackPanel>
-
-                        <StackPanel Grid.Row="7" Margin="0,10">
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                <TextBlock Text="Postal Code:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="City:" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                                <Border Style="{StaticResource RoundedBorderStyle}" Height="40">
+                                    <TextBox x:Name="TxtCity" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" CharacterCasing="Upper" TextChanged="ForceUppercase_TextChanged"/>
+                                </Border>
                             </StackPanel>
-                            <Border Style="{StaticResource RoundedBorderStyle}">
-                                <!--Postal Code Value is here!-->
+
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Region:" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                                <Border Style="{StaticResource RoundedBorderStyle}" Height="40">
+                                    <TextBox x:Name="TxtRegion" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" CharacterCasing="Upper" TextChanged="ForceUppercase_TextChanged"/>
+                                </Border>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="4">
+                                <TextBlock Text="Country:" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                                <Border Style="{StaticResource RoundedBorderStyle}" Height="40">
+                                    <TextBox x:Name="TxtCountry" PreviewTextInput="TxtCountry_PreviewTextInput" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold" CharacterCasing="Upper" TextChanged="ForceUppercase_TextChanged"/>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+
+                        <StackPanel Margin="0,0,0,15">
+                            <TextBlock Text="Postal Code:" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                            <Border Style="{StaticResource RoundedBorderStyle}" Height="40">
                                 <TextBox x:Name="TxtPostalCode" PreviewTextInput="TxtPostalCode_PreviewTextInput" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold"/>
                             </Border>
                         </StackPanel>
 
-                        <StackPanel Grid.Row="8" Margin="0,10">
-                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                                <TextBlock Text="TIN ID:" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0"/>
-                            </StackPanel>
-                            <Border Style="{StaticResource RoundedBorderStyle}">
-                                <!--TINID Value is here!-->
+                        <StackPanel Margin="0,0,0,25">
+                            <TextBlock Text="TIN ID:" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                            <Border Style="{StaticResource RoundedBorderStyle}" Height="40">
                                 <TextBox x:Name="TxtTINID" PreviewTextInput="TxtTINID_PreviewTextInput" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" FontWeight="SemiBold"/>
                             </Border>
                         </StackPanel>
 
-                        <StackPanel Grid.Row="9" Margin="0,10">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
+                        <Button Width="130" Height="40" HorizontalAlignment="Right" Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#52C69D" Click="BtnAddSupplier">
+                            <TextBlock Text="Add" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="15" FontWeight="Bold"/>
+                        </Button>
 
-                                <StackPanel Grid.Column="2">
-                                    <Button Style="{StaticResource RoundedButtonStyle}" BorderThickness="0" Background="#52C69D" Click="BtnAddSupplier">
-                                        <TextBlock Text="Add" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="15"/>
-                                    </Button>
-                                </StackPanel>
-                            </Grid>
-                        </StackPanel>
-                    </Grid>
-                </Grid>
-            </ScrollViewer>
-        </Grid>
-    </materialDesign:Card>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+    </Grid>
 </UserControl>

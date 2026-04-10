@@ -53,7 +53,7 @@
                         <ColumnDefinition Width=".5*"/>
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                        <Button Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" BorderThickness="0" Margin="0">
+                        <Button x:Name="btnExportExcel" Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" BorderThickness="0" Margin="0" Click="BtnExportExcel_Click">
                             <materialDesign:PackIcon Kind="MicrosoftExcel" Width="25" Height="25" Foreground="White" Margin="25,0"/>
                         </Button>
                     </StackPanel>
@@ -239,15 +239,20 @@
                     <DataGridTemplateColumn Header="Settings" Width="Auto">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="Auto">
-                                    <Button Width="30" Height="30" Background="Transparent" Margin="0" ToolTip="Edit" Cursor="Hand" Click="NavigateToEdit" BorderThickness="0">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Width="30" Height="30" Background="Transparent" BorderThickness="0"
+                        ToolTip="Edit" Cursor="Hand" Click="NavigateToEdit">
                                         <materialDesign:PackIcon Kind="Pencil" Width="20" Height="20" Foreground="Orange"/>
                                     </Button>
-                                    <Button Width="30" Height="30" Background="Transparent" Margin="2,0,0,0" ToolTip="Delete" Cursor="Hand"  BorderThickness="0">
+
+                                    <Button Width="30" Height="30" Background="Transparent" Margin="2,0,0,0" 
+        ToolTip="Delete" Cursor="Hand" BorderThickness="0"
+        Click="BtnDelete_Click">
                                         <materialDesign:PackIcon Kind="DeleteOutline" Width="20" Height="20" Foreground="Red"/>
                                     </Button>
-                                    <Button Width="30" Height="30" Background="Transparent" Margin="2,0,0,0"
-                                            ToolTip="Print" Cursor="Hand" Click="NavigateToPrintPreview"  BorderThickness="0">
+
+                                    <Button Width="30" Height="30" Background="Transparent" BorderThickness="0"
+                        ToolTip="Print" Cursor="Hand" Click="NavigateToPrintPreview">
                                         <Button.Style>
                                             <Style TargetType="Button">
                                                 <Setter Property="Visibility" Value="Collapsed"/>
@@ -258,7 +263,6 @@
                                                 </Style.Triggers>
                                             </Style>
                                         </Button.Style>
-
                                         <materialDesign:PackIcon Kind="Printer" Width="20" Height="20" Foreground="Green"/>
                                     </Button>
                                 </StackPanel>

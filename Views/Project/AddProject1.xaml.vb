@@ -1,5 +1,4 @@
-﻿' AddProject1.xaml.vb (FULL FILE, COMPILE-FIXED)
-Imports System.Windows.Controls.Primitives
+﻿Imports System.Windows.Controls.Primitives
 Imports System.Windows.Data
 Imports System.Windows.Documents
 Imports System.Windows.Media
@@ -21,6 +20,18 @@ Namespace DPC.Views.Project
         ' Store EmployeeID for saving (fits VARCHAR(20))
         Private AssignedEmployeeID As String = Nothing
 
+        ' =========================================================
+        ' 1. INTERNAL MEMORY (Keeps data alive across tabs)
+        ' =========================================================
+        Private Shared _savedProjectName As String = ""
+        Private Shared _savedCustomer As String = ""
+        Private Shared _savedBudget As String = ""
+        Private Shared _savedStatusIndex As Integer = -1
+        Private Shared _savedStartDate As DateTime? = Nothing
+        Private Shared _savedDueDate As DateTime? = Nothing
+        Private Shared _savedDueDateOnlyChecked As Boolean = True
+        Private Shared _savedNote As String = ""
+
         Public Sub New()
             InitializeComponent()
             SetupDatePickers()
@@ -33,15 +44,74 @@ Namespace DPC.Views.Project
             }
 
             cmbStatus.ItemsSource = statuses
-            cmbStatus.SelectedIndex = -1
+
+            ' 2. RESTORE DATA FROM MEMORY
+            txtName.Text = _savedProjectName
+            txtCustomer.Text = _savedCustomer
+            txtBudget.Text = _savedBudget
+            cmbStatus.SelectedIndex = _savedStatusIndex
+
+            StartDatePicker.SelectedDate = _savedStartDate
+            startDateViewModel.SelectedDate = _savedStartDate
+
+            DueDatePicker.SelectedDate = _savedDueDate
+            dueDateViewModel.SelectedDate = _savedDueDate
+
+            RadBtnDueDateOnly.IsChecked = _savedDueDateOnlyChecked
+            RadBtnStartDueDate.IsChecked = Not _savedDueDateOnlyChecked
+
+            If Not String.IsNullOrWhiteSpace(_savedNote) Then
+                EditorBox.Document.Blocks.Clear()
+                EditorBox.Document.Blocks.Add(New Paragraph(New Run(_savedNote)))
+            End If
+
+            ' 3. AUTO-SAVE HANDLERS (Added AFTER restoring to prevent overwriting)
+            AddHandler txtName.TextChanged, AddressOf SaveTextToMemory
+            AddHandler txtCustomer.TextChanged, AddressOf SaveTextToMemory
+            AddHandler txtBudget.TextChanged, AddressOf SaveTextToMemory
+            AddHandler cmbStatus.SelectionChanged, AddressOf SaveComboToMemory
+            AddHandler StartDatePicker.SelectedDateChanged, AddressOf SaveDatesToMemory
+            AddHandler DueDatePicker.SelectedDateChanged, AddressOf SaveDatesToMemory
+            AddHandler RadBtnDueDateOnly.Checked, AddressOf SaveRadioToMemory
+            AddHandler RadBtnStartDueDate.Checked, AddressOf SaveRadioToMemory
+            AddHandler EditorBox.TextChanged, AddressOf SaveEditorToMemory
 
             AddHandler Me.Loaded, AddressOf AddProject1_Loaded
         End Sub
 
+        ' =========================================================
+        ' MEMORY MANAGEMENT (Auto-saving as you type)
+        ' =========================================================
+        Private Sub SaveTextToMemory(sender As Object, e As TextChangedEventArgs)
+            _savedProjectName = txtName.Text
+            _savedCustomer = txtCustomer.Text
+            _savedBudget = txtBudget.Text
+        End Sub
+
+        Private Sub SaveComboToMemory(sender As Object, e As SelectionChangedEventArgs)
+            _savedStatusIndex = cmbStatus.SelectedIndex
+        End Sub
+
+        Private Sub SaveDatesToMemory(sender As Object, e As SelectionChangedEventArgs)
+            _savedStartDate = StartDatePicker.SelectedDate
+            _savedDueDate = DueDatePicker.SelectedDate
+        End Sub
+
+        Private Sub SaveRadioToMemory(sender As Object, e As RoutedEventArgs)
+            _savedDueDateOnlyChecked = RadBtnDueDateOnly.IsChecked.GetValueOrDefault(True)
+        End Sub
+
+        Private Sub SaveEditorToMemory(sender As Object, e As TextChangedEventArgs)
+            _savedNote = New TextRange(EditorBox.Document.ContentStart, EditorBox.Document.ContentEnd).Text.Trim()
+        End Sub
+
+        ' =========================================================
+        ' EXISTING LOGIC BELOW
+        ' =========================================================
+
         Private Sub AddProject1_Loaded(sender As Object, e As RoutedEventArgs)
             ' Display full name (whatever sidebar cache has)
             txtAssignTo.Text = CacheOnLoggedInName
-
             ' Resolve EmployeeID to save
             ResolveAssignedEmployeeID()
         End Sub
@@ -88,9 +158,6 @@ Namespace DPC.Views.Project
             End Try
         End Sub
 
-        ' =========================================================
-        ' SECTION 1: TEXT HANDLING (Uppercase Project Name)
-        ' =========================================================
         Private Sub TxtToUpper_TextChanged(sender As Object, e As TextChangedEventArgs) Handles txtName.TextChanged
             Dim tb = TryCast(sender, TextBox)
             If tb Is Nothing Then Return
@@ -110,13 +177,7 @@ Namespace DPC.Views.Project
             End If
         End Sub
 
-        ' =========================================================
-        ' SECTION 2: DATE PICKER LOGIC
-        ' =========================================================
         Public Sub SetupDatePickers()
-            startDateViewModel.SelectedDate = Nothing
-            dueDateViewModel.SelectedDate = Nothing
-
             StartDatePicker.DataContext = startDateViewModel
             StartDateButton.DataContext = startDateViewModel
 
@@ -124,27 +185,21 @@ Namespace DPC.Views.Project
             DueDateButton.DataContext = dueDateViewModel
         End Sub
 
-        ' =========================================================
-        ' SECTION 3: SAVE AND CLEAR LOGIC
-        ' =========================================================
         Private Sub Button_Click_1(sender As Object, e As RoutedEventArgs)
+            ' 1. Validations
             If String.IsNullOrWhiteSpace(txtName.Text) Then
                 MessageBox.Show("Project Name is required.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Return
             End If
 
+            ' Ensure we have the Employee ID
             If String.IsNullOrWhiteSpace(AssignedEmployeeID) Then
                 ResolveAssignedEmployeeID()
             End If
 
-            If String.IsNullOrWhiteSpace(AssignedEmployeeID) Then
-                MessageBox.Show("Cannot determine EmployeeID for: " & txtAssignTo.Text, "Validation", MessageBoxButton.OK, MessageBoxImage.Warning)
-                Return
-            End If
-
+            ' 2. Data Preparation
             Dim noteText As String = New TextRange(EditorBox.Document.ContentStart, EditorBox.Document.ContentEnd).Text.Trim()
             Dim selectedStatus = TryCast(cmbStatus.SelectedItem, StatusItem)
-
             Dim rawBudget As Long
             Long.TryParse(txtBudget.Text.Replace(",", ""), rawBudget)
 
@@ -161,27 +216,27 @@ Namespace DPC.Views.Project
                 .Note = noteText
             }
 
+            ' 3. Save to Database
             Dim success As Boolean = DPC.Data.Controllers.ProjectController.CreateProject(proj)
 
+            ' 4. Post-Save Logic
             If success Then
                 MessageBox.Show("Project added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+
+                ' IMPORTANT: Clear the shared memory so the next "Add Project" starts fresh
                 ClearFields()
+
+                ' NAVIGATE BACK TO THE PROJECT LIST
+                ' Using your ViewLoader helper
+                ViewLoader.DynamicView.NavigateToView("manageproject", Me)
             End If
         End Sub
 
-        Private Sub EditorBox_TextChanged(sender As Object, e As TextChangedEventArgs)
-            Dim box As RichTextBox = sender
-            Dim range As New TextRange(box.Document.ContentStart, box.Document.ContentEnd)
-            Dim pos = box.CaretPosition
-            range.Text = range.Text.ToUpper()
-            box.CaretPosition = pos
-        End Sub
-
         Private Sub ClearFields()
+            ' Clear UI
             txtName.Clear()
             txtCustomer.Clear()
             txtBudget.Clear()
-
             cmbStatus.SelectedIndex = -1
 
             startDateViewModel.SelectedDate = Nothing
@@ -195,12 +250,19 @@ Namespace DPC.Views.Project
             txtAssignTo.Text = CacheOnLoggedInName
             ResolveAssignedEmployeeID()
 
+            ' Clear Local Shared Memory
+            _savedProjectName = ""
+            _savedCustomer = ""
+            _savedBudget = ""
+            _savedStatusIndex = -1
+            _savedStartDate = Nothing
+            _savedDueDate = Nothing
+            _savedDueDateOnlyChecked = True
+            _savedNote = ""
+
             txtName.Focus()
         End Sub
 
-        ' =========================================================
-        ' SECTION 4: FORMATTING & UI EVENTS
-        ' =========================================================
         Private Sub txtBudget_TextChanged(sender As Object, e As TextChangedEventArgs)
             Dim tb = TryCast(sender, TextBox)
             If tb Is Nothing Then Return
@@ -228,11 +290,26 @@ Namespace DPC.Views.Project
             AddHandler tb.TextChanged, AddressOf txtBudget_TextChanged
         End Sub
 
+        ' =========================================================
+        ' DATE PICKER CLICK HANDLERS (With Past-Date Restrictions)
+        ' =========================================================
         Private Sub StartDateButton_Click(sender As Object, e As RoutedEventArgs) Handles StartDateButton.Click
+            Dim minDate As DateTime = DateTime.Today
+            If StartDatePicker.SelectedDate.HasValue AndAlso StartDatePicker.SelectedDate.Value < DateTime.Today Then
+                minDate = StartDatePicker.SelectedDate.Value
+            End If
+
+            StartDatePicker.DisplayDateStart = minDate
             StartDatePicker.IsDropDownOpen = True
         End Sub
 
         Private Sub DueDateButton_Click(sender As Object, e As RoutedEventArgs) Handles DueDateButton.Click
+            Dim minDate As DateTime = DateTime.Today
+            If DueDatePicker.SelectedDate.HasValue AndAlso DueDatePicker.SelectedDate.Value < DateTime.Today Then
+                minDate = DueDatePicker.SelectedDate.Value
+            End If
+
+            DueDatePicker.DisplayDateStart = minDate
             DueDatePicker.IsDropDownOpen = True
         End Sub
 
@@ -260,6 +337,7 @@ Namespace DPC.Views.Project
             End If
         End Sub
 
+        ' (Rich Text Editor Formatting Buttons stay the exact same as you had them)
         Private Sub Format_Bold_Click(sender As Object, e As RoutedEventArgs)
             EditingCommands.ToggleBold.Execute(Nothing, EditorBox)
         End Sub
@@ -422,6 +500,7 @@ Namespace DPC.Views.Project
 
         Private Sub cmbStatus_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles cmbStatus.SelectionChanged
         End Sub
+
     End Class
 
     Public Class StatusItem

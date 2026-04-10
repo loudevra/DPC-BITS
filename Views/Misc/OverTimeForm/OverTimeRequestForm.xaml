@@ -43,8 +43,9 @@
                         <Border Style="{StaticResource RoundedBorderStyle}">
                             <Grid>
                                 <TextBox x:Name="AutoCompleteTextBox" FontFamily="{StaticResource Lexend}" Height="35" Style="{StaticResource RoundedTextboxStyle}" FontSize="14" TextAlignment="Center" VerticalAlignment="Top"
-                     TextChanged="AutoCompleteTextBox_TextChanged"
-                     PreviewKeyDown="AutoCompleteTextBox_PreviewKeyDown" CharacterCasing="Upper"/>
+         TextChanged="AutoCompleteTextBox_TextChanged"
+         PreviewKeyDown="AutoCompleteTextBox_PreviewKeyDown" 
+         CharacterCasing="Upper"/>
 
                                 <Popup x:Name="AutoCompletePopup" Placement="Bottom" PlacementTarget="{Binding ElementName=AutoCompleteTextBox}" StaysOpen="False" AllowsTransparency="True" Focusable="False" IsOpen="False">
                                     <Border Background="White" BorderBrush="Gray" BorderThickness="1" CornerRadius="5">

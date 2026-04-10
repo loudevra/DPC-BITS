@@ -2,7 +2,8 @@
 Imports DPC.DPC.Data.Controllers
 Imports System.Windows
 Imports DPC.DPC.Data.Helpers
-
+Imports System.IO
+Imports Microsoft.Win32
 
 Namespace DPC.Views.Accounts.Accounts.ManageAccounts
     Partial Public Class ManageAccounts
@@ -137,6 +138,85 @@ Namespace DPC.Views.Accounts.Accounts.ManageAccounts
 
         Private Sub NavigateToAddAccout(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("navaddaccount", Me)
+        End Sub
+
+        ' ---------------------------------------------------------------
+        '  DATA GRID ACTIONS (Edit & Delete)
+        ' ---------------------------------------------------------------
+
+        Private Sub BtnEdit_Click(sender As Object, e As RoutedEventArgs)
+            ' Get the clicked button
+            Dim btn As Button = CType(sender, Button)
+            ' Retrieve the data context (the specific account bound to this row)
+            Dim account = btn.DataContext
+
+            ' TODO: Add your edit logic here, e.g., passing 'account' to an Edit Window
+            MessageBox.Show("Edit clicked for account.", "Edit", MessageBoxButton.OK, MessageBoxImage.Information)
+        End Sub
+
+        Private Sub BtnDelete_Click(sender As Object, e As RoutedEventArgs)
+            ' Get the clicked button
+            Dim btn As Button = CType(sender, Button)
+            ' Retrieve the data context (the specific account bound to this row)
+            Dim account = btn.DataContext
+
+            ' TODO: Add your delete logic here, e.g., prompt for confirmation and remove from database
+            Dim result = MessageBox.Show("Are you sure you want to delete this account?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning)
+            If result = MessageBoxResult.Yes Then
+                ' Execute delete operation
+                ' LoadAccounts() ' Reload grid after deletion
+            End If
+        End Sub
+
+        ' ---------------------------------------------------------------
+        '  EXPORT TO EXCEL (CSV Format)
+        ' ---------------------------------------------------------------
+        Private Sub BtnExportExcel_Click(sender As Object, e As RoutedEventArgs)
+            Try
+                ' 1. Check if there is data in the grid
+                If AccountsDataGrid.Items.Count = 0 Then
+                    MessageBox.Show("No data to export!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning)
+                    Return
+                End If
+
+                ' 2. Open the Save File Dialog
+                Dim saveFileDialog As New SaveFileDialog()
+                saveFileDialog.Filter = "CSV (Excel Compatible) (*.csv)|*.csv"
+                saveFileDialog.FileName = "Accounts_Export_" & DateTime.Now.ToString("yyyyMMdd_HHmmss") & ".csv"
+                saveFileDialog.Title = "Export Accounts to Excel"
+
+                ' 3. If the user clicks "Save"
+                If saveFileDialog.ShowDialog() = True Then
+
+                    ' 4. Create and write to the file
+                    Using writer As New StreamWriter(saveFileDialog.FileName)
+                        ' Write the Header Row matching your DataGrid columns
+                        writer.WriteLine("ID,Name,Total Products,Stock Quantity,Worth (Sales/Stocks)")
+
+                        ' 5. Loop through the current items in the DataGrid and write them
+                        For Each obj In AccountsDataGrid.Items
+                            If obj IsNot Nothing Then
+                                ' Using Reflection to dynamically grab the properties by name
+                                ' This safely handles the data regardless of your exact Model Class name!
+                                Dim objType = obj.GetType()
+
+                                Dim id = If(objType.GetProperty("ID")?.GetValue(obj, Nothing)?.ToString(), "")
+                                Dim name = If(objType.GetProperty("Name")?.GetValue(obj, Nothing)?.ToString(), "").Replace("""", """""")
+                                Dim totalProd = If(objType.GetProperty("TotalProd")?.GetValue(obj, Nothing)?.ToString(), "").Replace("""", """""")
+                                Dim qty = If(objType.GetProperty("Qty")?.GetValue(obj, Nothing)?.ToString(), "").Replace("""", """""")
+                                Dim worth = If(objType.GetProperty("Worth")?.GetValue(obj, Nothing)?.ToString(), "").Replace("""", """""")
+
+                                writer.WriteLine($"""{id}"",""{name}"",""{totalProd}"",""{qty}"",""{worth}""")
+                            End If
+                        Next
+                    End Using
+
+                    MessageBox.Show("Accounts successfully exported!", "Export Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                End If
+
+            Catch ex As Exception
+                MessageBox.Show($"An error occurred while exporting: {ex.Message}", "Export Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
         End Sub
     End Class
 End Namespace

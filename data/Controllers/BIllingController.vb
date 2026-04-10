@@ -278,5 +278,101 @@ Namespace DPC.Data.Controllers
                 Return 0D
             End If
         End Function
+
+        ''' Gets the total sales amount for today
+        Public Shared Function GetTodayTotalSales() As Decimal
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "SELECT COALESCE(SUM(CAST(REPLACE(REPLACE(totalAmount, '₱', ''), ',', '') AS DECIMAL(15,2))), 0) 
+                                   FROM walkinbilling 
+                                   WHERE DATE(dateAdded) = CURDATE()"
+                    Using cmd As New MySqlCommand(query, conn)
+                        Dim result = cmd.ExecuteScalar()
+                        Return If(result Is DBNull.Value OrElse result Is Nothing, 0D, Convert.ToDecimal(result))
+                    End Using
+                End Using
+            Catch ex As Exception
+                Debug.WriteLine("Error in GetTodayTotalSales: " & ex.Message)
+                Return 0D
+            End Try
+        End Function
+
+        ''' Gets the total sales amount for the current month
+        Public Shared Function GetThisMonthTotalSales() As Decimal
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "SELECT COALESCE(SUM(CAST(REPLACE(REPLACE(totalAmount, '₱', ''), ',', '') AS DECIMAL(15,2))), 0) 
+                                   FROM walkinbilling 
+                                   WHERE MONTH(dateAdded) = MONTH(NOW()) 
+                                   AND YEAR(dateAdded) = YEAR(NOW())"
+                    Using cmd As New MySqlCommand(query, conn)
+                        Dim result = cmd.ExecuteScalar()
+                        Return If(result Is DBNull.Value OrElse result Is Nothing, 0D, Convert.ToDecimal(result))
+                    End Using
+                End Using
+            Catch ex As Exception
+                Debug.WriteLine("Error in GetThisMonthTotalSales: " & ex.Message)
+                Return 0D
+            End Try
+        End Function
+
+        '' GetThisYearTotalSales()
+        Public Shared Function GetThisYearTotalSales() As Decimal
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "SELECT COALESCE(SUM(CAST(REPLACE(REPLACE(totalAmount, '₱', ''), ',', '') AS DECIMAL(15,2))), 0) 
+                           FROM walkinbilling 
+                           WHERE YEAR(dateAdded) = YEAR(NOW())"
+                    Using cmd As New MySqlCommand(query, conn)
+                        Dim result = cmd.ExecuteScalar()
+                        Return If(result Is DBNull.Value OrElse result Is Nothing, 0D, Convert.ToDecimal(result))
+                    End Using
+                End Using
+            Catch ex As Exception
+                Debug.WriteLine("Error in GetThisYearTotalSales: " & ex.Message)
+                Return 0D
+            End Try
+        End Function
+
+        ''' Gets total sales for a specific year
+        Public Shared Function GetSalesByYear(year As Integer) As Decimal
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "SELECT COALESCE(SUM(CAST(REPLACE(REPLACE(totalAmount, '₱', ''), ',', '') AS DECIMAL(15,2))), 0) 
+                                   FROM walkinbilling 
+                                   WHERE YEAR(dateAdded) = @year"
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@year", year)
+                        Dim result = cmd.ExecuteScalar()
+                        Return If(result Is DBNull.Value OrElse result Is Nothing, 0D, Convert.ToDecimal(result))
+                    End Using
+                End Using
+            Catch ex As Exception
+                Debug.WriteLine("Error in GetSalesByYear: " & ex.Message)
+                Return 0D
+            End Try
+        End Function
+
+        ''' Gets the earliest year that has a billing record
+        Public Shared Function GetEarliestSalesYear() As Integer
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "SELECT COALESCE(MIN(YEAR(dateAdded)), YEAR(NOW())) FROM walkinbilling"
+                    Using cmd As New MySqlCommand(query, conn)
+                        Dim result = cmd.ExecuteScalar()
+                        Return If(result Is DBNull.Value OrElse result Is Nothing, DateTime.Now.Year, Convert.ToInt32(result))
+                    End Using
+                End Using
+            Catch ex As Exception
+                Debug.WriteLine("Error in GetEarliestSalesYear: " & ex.Message)
+                Return DateTime.Now.Year
+            End Try
+        End Function
+
     End Class
 End Namespace

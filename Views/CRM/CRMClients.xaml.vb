@@ -6,6 +6,8 @@ Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Models
 Imports DPC.Data.Helpers.ViewLoader
+Imports System.IO
+Imports Microsoft.Win32
 
 Namespace DPC.Views.CRM
 
@@ -115,16 +117,58 @@ Namespace DPC.Views.CRM
                 CellValuePopup.IsOpen = True
             End If
         End Sub
-
         ' ---------------------------------------------------------------
-        '  EXPORT
+        '  EXPORT TO EXCEL (CSV Format)
         ' ---------------------------------------------------------------
         Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
-            If dataGrid.Items.Count = 0 Then
-                MessageBox.Show("No data to export!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning)
-                Exit Sub
-            End If
-            ExcelExporter.ExportDataGridToExcel(dataGrid, "ClientsExport", "Clients List")
+            Try
+                ' 1. Check if there is data in the grid
+                If dataGrid.Items.Count = 0 Then
+                    MessageBox.Show("No data to export!", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning)
+                    Return
+                End If
+
+                ' 2. Open the Save File Dialog
+                Dim saveFileDialog As New SaveFileDialog()
+                saveFileDialog.Filter = "CSV (Excel Compatible) (*.csv)|*.csv"
+                saveFileDialog.FileName = "Clients_Export_" & DateTime.Now.ToString("yyyyMMdd_HHmmss") & ".csv"
+                saveFileDialog.Title = "Export Clients to Excel"
+
+                ' 3. If the user clicks "Save"
+                If saveFileDialog.ShowDialog() = True Then
+
+                    ' 4. Create and write to the file
+                    Using writer As New StreamWriter(saveFileDialog.FileName)
+                        ' Write the Header Row matching your DataGrid columns
+                        writer.WriteLine("Client ID,Name,Type,Address,Email,Phone")
+
+                        ' 5. Loop through the current items in the DataGrid and write them
+                        For Each obj In dataGrid.Items
+                            Dim item As Client = TryCast(obj, Client)
+
+                            If item IsNot Nothing Then
+                                ' Wrap text in double quotes to prevent commas inside addresses/names from breaking the columns
+                                Dim id = If(item.ClientID.ToString(), "")
+                                Dim name = If(item.Name, "").Replace("""", """""")
+
+                                ' FIXED: Renamed to clientTypeStr to avoid the VB.NET CType keyword
+                                Dim clientTypeStr = If(item.ClientType, "").Replace("""", """""")
+
+                                Dim address = If(item.BillingAddress, "").Replace("""", """""")
+                                Dim email = If(item.Email, "").Replace("""", """""")
+                                Dim phone = If(item.Phone, "").Replace("""", """""")
+
+                                writer.WriteLine($"""{id}"",""{name}"",""{clientTypeStr}"",""{address}"",""{email}"",""{phone}""")
+                            End If
+                        Next
+                    End Using
+
+                    MessageBox.Show("Clients successfully exported!", "Export Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                End If
+
+            Catch ex As Exception
+                MessageBox.Show($"An error occurred while exporting: {ex.Message}", "Export Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
         End Sub
 
         ' ---------------------------------------------------------------
@@ -338,6 +382,54 @@ Namespace DPC.Views.CRM
                                          RemoveHandler window.SizeChanged, sizeChangedHandler
                                      End Sub
         End Sub
+        ' Add this method inside your CRMClients class
+
+        ' ---------------------------------------------------------------
+        '  OPEN CLIENT FILE VIEW
+        ' ---------------------------------------------------------------
+        Private Sub OpenClientFileView(sender As Object, e As RoutedEventArgs)
+            Try
+                Dim button As Button = TryCast(sender, Button)
+                If button Is Nothing Then Return
+
+                ' Extract the Client object from the clicked row
+                Dim selectedClient As Client = TryCast(button.DataContext, Client)
+                If selectedClient Is Nothing Then Return
+
+                ' Find the main application window (DPC.Base)
+                Dim mainWindow As DPC.Base = Nothing
+                For Each w As Window In Application.Current.Windows
+                    If TypeOf w Is DPC.Base Then
+                        mainWindow = DirectCast(w, DPC.Base)
+                        Exit For
+                    End If
+                Next
+
+                If mainWindow IsNot Nothing Then
+                    ' Initialize the FileView
+                    Dim fileViewControl As New FileView()
+
+                    ' Pass the client data to the FileView so it knows whose files to load
+                    fileViewControl.LoadClientData(selectedClient)
+
+                    ' Navigate to the FileView
+                    mainWindow.CurrentView = fileViewControl
+
+                    ' Close any open popups (from your cell click logic) just in case
+                    If CellValuePopup.IsOpen Then
+                        CellValuePopup.IsOpen = False
+                    End If
+                Else
+                    ' Fallback if dynamic view navigation is mapped
+                    ViewLoader.DynamicView.NavigateToView("fileview", Me)
+                End If
+
+            Catch ex As Exception
+                System.Diagnostics.Debug.WriteLine($"DEBUG: Exception in OpenClientFileView: {ex.Message}")
+                MessageBox.Show($"Error opening client files: {ex.Message}", "Navigation Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+        End Sub
+
 
     End Class
 End Namespace

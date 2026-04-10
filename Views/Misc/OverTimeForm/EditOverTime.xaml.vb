@@ -1,5 +1,7 @@
 ﻿Imports System.Windows
 Imports System.Windows.Controls
+Imports MySql.Data.MySqlClient
+
 
 Namespace DPC.Views.Misc.OverTime
 
@@ -44,28 +46,46 @@ Namespace DPC.Views.Misc.OverTime
         End Sub
 
         ' ==========================================
-        ' CALENDAR CLICK HANDLERS
+        ' CALENDAR DROPDOWN HANDLERS
         ' ==========================================
-        ' These methods manually open the dropdown when the button is clicked
-
         Private Sub OvertimeDate_Click(sender As Object, e As RoutedEventArgs)
+            Dim minDate As DateTime = DateTime.Today
+            If dtOvertimeDate.SelectedDate.HasValue AndAlso dtOvertimeDate.SelectedDate.Value < DateTime.Today Then
+                minDate = dtOvertimeDate.SelectedDate.Value
+            End If
+
+            dtOvertimeDate.DisplayDateStart = minDate
             dtOvertimeDate.IsDropDownOpen = True
         End Sub
 
         Private Sub CashAdvanceDate_Click(sender As Object, e As RoutedEventArgs)
+            Dim minDate As DateTime = DateTime.Today
+            If CashAdvanceDatePicker.SelectedDate.HasValue AndAlso CashAdvanceDatePicker.SelectedDate.Value < DateTime.Today Then
+                minDate = CashAdvanceDatePicker.SelectedDate.Value
+            End If
+
+            CashAdvanceDatePicker.DisplayDateStart = minDate
             CashAdvanceDatePicker.IsDropDownOpen = True
         End Sub
 
         Private Sub RequestDate_Click(sender As Object, e As RoutedEventArgs)
+            Dim minDate As DateTime = DateTime.Today
+            If RequestDate.SelectedDate.HasValue AndAlso RequestDate.SelectedDate.Value < DateTime.Today Then
+                minDate = RequestDate.SelectedDate.Value
+            End If
+
+            RequestDate.DisplayDateStart = minDate
             RequestDate.IsDropDownOpen = True
         End Sub
 
-        ' Add this handler to your EditOverTime class
         Private Sub ApprovalDate_Click(sender As Object, e As RoutedEventArgs)
-            ' This manually opens the calendar dropdown when you click the button
-            If ApprovalDate IsNot Nothing Then
-                ApprovalDate.IsDropDownOpen = True
+            Dim minDate As DateTime = DateTime.Today
+            If ApprovalDate.SelectedDate.HasValue AndAlso ApprovalDate.SelectedDate.Value < DateTime.Today Then
+                minDate = ApprovalDate.SelectedDate.Value
             End If
+
+            ApprovalDate.DisplayDateStart = minDate
+            ApprovalDate.IsDropDownOpen = True
         End Sub
 
         ' Add these handlers to your EditOverTime class
@@ -81,16 +101,14 @@ Namespace DPC.Views.Misc.OverTime
             ProcessUpdate("Pending") ' Or whatever status you use for a standard save
         End Sub
 
-        ' Updated ProcessUpdate to use the specific status
+        ' Updated ProcessUpdate to use the specific status and save to MySQL
         Private Sub ProcessUpdate(newStatus As String)
             If TargetEditRecord IsNot Nothing Then
-                ' Save existing fields
+                ' 1. Update the local object with the new data
                 TargetEditRecord.EmployeeName = AutoCompleteTextBox.Text
                 TargetEditRecord.JobTitle = JobTitle.Text
                 TargetEditRecord.Department = Department.Text
                 TargetEditRecord.TotalHours = txtHours.Text
-
-                ' --- SAVE NEW EDITED FIELDS ---
                 TargetEditRecord.EmployeeID = EmployeeID.Text
                 TargetEditRecord.Supervisor = SupervisorName.Text
                 TargetEditRecord.StartTime = txtStartTime.Text
@@ -105,19 +123,55 @@ Namespace DPC.Views.Misc.OverTime
 
                 TargetEditRecord.Status = newStatus
 
-                ' Update the shared list
+                ' 2. UPDATE THE MYSQL DATABASE
+                Dim connStr As String = SplashScreen.GetDatabaseConnection().ConnectionString()
+                Try
+                    Using conn As New MySqlConnection(connStr)
+                        conn.Open()
+
+                        ' SQL Update Command matching the fields you load in ManageTimeoutRequests
+                        Dim query As String = "UPDATE overtime_requests SET EmployeeName=@EmployeeName, JobTitle=@JobTitle, Department=@Department, TotalHours=@TotalHours, EmployeeID=@EmployeeID, Supervisor=@Supervisor, StartTime=@StartTime, EndTime=@EndTime, Reason=@Reason, Remarks=@Remarks, RequestedBy=@RequestedBy, RequestDate=@RequestDate, Status=@Status WHERE OvertimeID=@OvertimeID"
+
+                        Using cmd As New MySqlCommand(query, conn)
+                            cmd.Parameters.AddWithValue("@EmployeeName", TargetEditRecord.EmployeeName)
+                            cmd.Parameters.AddWithValue("@JobTitle", TargetEditRecord.JobTitle)
+                            cmd.Parameters.AddWithValue("@Department", TargetEditRecord.Department)
+                            cmd.Parameters.AddWithValue("@TotalHours", TargetEditRecord.TotalHours)
+                            cmd.Parameters.AddWithValue("@EmployeeID", TargetEditRecord.EmployeeID)
+                            cmd.Parameters.AddWithValue("@Supervisor", TargetEditRecord.Supervisor)
+                            cmd.Parameters.AddWithValue("@StartTime", TargetEditRecord.StartTime)
+                            cmd.Parameters.AddWithValue("@EndTime", TargetEditRecord.EndTime)
+                            cmd.Parameters.AddWithValue("@Reason", TargetEditRecord.Reason)
+                            cmd.Parameters.AddWithValue("@Remarks", TargetEditRecord.Remarks)
+                            cmd.Parameters.AddWithValue("@RequestedBy", TargetEditRecord.RequestedBy)
+                            cmd.Parameters.AddWithValue("@RequestDate", TargetEditRecord.RequestDate)
+                            cmd.Parameters.AddWithValue("@Status", TargetEditRecord.Status)
+                            cmd.Parameters.AddWithValue("@OvertimeID", TargetEditRecord.OvertimeID)
+
+                            cmd.ExecuteNonQuery()
+                        End Using
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show("Error updating database: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return ' Stop execution here so we don't navigate away if the DB update fails
+                End Try
+
+                ' 3. Update the shared list for the UI
                 Dim index = ManageTimeoutRequests.GlobalOvertimeList.IndexOf(TargetEditRecord)
                 If index >= 0 Then
-                    ManageTimeoutRequests.GlobalOvertimeList(index) = TargetEditRecord
+                    ManageTimeoutRequests.GlobalOvertimeList.RemoveAt(index)
+                    ManageTimeoutRequests.GlobalOvertimeList.Insert(index, TargetEditRecord)
                 End If
             End If
 
             MessageBox.Show($"Request {newStatus} Successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
 
-            ' Use the correct navigation name to avoid the "View Not Found" error
+            ' Navigate back to the main list
             DPC.Data.Helpers.ViewLoader.DynamicView.NavigateToView("manageovertimerequests", Me)
         End Sub
 
 
+
     End Class
+
 End Namespace
