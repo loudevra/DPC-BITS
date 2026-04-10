@@ -24,7 +24,6 @@ Namespace DPC.Views.Dashboard
                 TxtMonthSales.Text = "+" & monthSales.ToString("N2")
                 TxtYearlySales.Text = "+" & yearlySales.ToString("N2")
             Catch ex As Exception
-                Debug.WriteLine("Error loading sales data: " & ex.Message)
             End Try
         End Sub
 
