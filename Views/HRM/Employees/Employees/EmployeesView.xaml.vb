@@ -40,24 +40,24 @@ Namespace DPC.Views.HRM.Employees.Employees
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
                     Dim query As String = "SELECT e.*, r.RoleName, l.LocationName FROM employee e " &
-                                          "JOIN userroles r ON e.UserRoleID = r.RoleID " &
-                                          "JOIN businesslocation l ON e.BusinessLocationID = l.LocationID " &
-                                          "ORDER BY e.CreatedAt DESC"
+                      "LEFT JOIN userroles r ON e.UserRoleID = r.RoleID " &
+                      "LEFT JOIN businesslocation l ON e.BusinessLocationID = l.LocationID " &
+                      "ORDER BY e.CreatedAt DESC"
                     Using cmd As New MySqlCommand(query, conn)
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
                                 Employees.Add(New Employee() With {
-                                    .EmployeeID = reader("EmployeeID").ToString(),
-                                    .Username = reader("Username").ToString(),
-                                    .Department = reader("Department").ToString(),
-                                    .Status = reader("Status").ToString(),
-                                    .Email = reader("Email").ToString(),
-                                    .Name = reader("Name").ToString(),
-                                    .RoleName = reader("RoleName").ToString(),
-                                    .LocationName = reader("LocationName").ToString(),
-                                    .CreatedAt = Convert.ToDateTime(reader("CreatedAt")),
-                                    .UpdatedAt = Convert.ToDateTime(reader("UpdatedAt"))
-                                })
+    .EmployeeID = reader("EmployeeID").ToString(),
+    .Username = reader("Username").ToString(),
+    .Department = If(IsDBNull(reader("Department")), "", reader("Department").ToString()),
+    .Status = If(IsDBNull(reader("Status")), "", reader("Status").ToString()),
+    .Email = reader("Email").ToString(),
+    .Name = reader("Name").ToString(),
+    .RoleName = If(IsDBNull(reader("RoleName")), "", reader("RoleName").ToString()),
+    .LocationName = If(IsDBNull(reader("LocationName")), "", reader("LocationName").ToString()),
+    .CreatedAt = Convert.ToDateTime(reader("CreatedAt")),
+    .UpdatedAt = Convert.ToDateTime(reader("UpdatedAt"))
+})
                             End While
                         End Using
                     End Using
