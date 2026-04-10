@@ -382,7 +382,53 @@ Namespace DPC.Views.CRM
                                          RemoveHandler window.SizeChanged, sizeChangedHandler
                                      End Sub
         End Sub
+        ' Add this method inside your CRMClients class
 
+        ' ---------------------------------------------------------------
+        '  OPEN CLIENT FILE VIEW
+        ' ---------------------------------------------------------------
+        Private Sub OpenClientFileView(sender As Object, e As RoutedEventArgs)
+            Try
+                Dim button As Button = TryCast(sender, Button)
+                If button Is Nothing Then Return
+
+                ' Extract the Client object from the clicked row
+                Dim selectedClient As Client = TryCast(button.DataContext, Client)
+                If selectedClient Is Nothing Then Return
+
+                ' Find the main application window (DPC.Base)
+                Dim mainWindow As DPC.Base = Nothing
+                For Each w As Window In Application.Current.Windows
+                    If TypeOf w Is DPC.Base Then
+                        mainWindow = DirectCast(w, DPC.Base)
+                        Exit For
+                    End If
+                Next
+
+                If mainWindow IsNot Nothing Then
+                    ' Initialize the FileView
+                    Dim fileViewControl As New FileView()
+
+                    ' Pass the client data to the FileView so it knows whose files to load
+                    fileViewControl.LoadClientData(selectedClient)
+
+                    ' Navigate to the FileView
+                    mainWindow.CurrentView = fileViewControl
+
+                    ' Close any open popups (from your cell click logic) just in case
+                    If CellValuePopup.IsOpen Then
+                        CellValuePopup.IsOpen = False
+                    End If
+                Else
+                    ' Fallback if dynamic view navigation is mapped
+                    ViewLoader.DynamicView.NavigateToView("fileview", Me)
+                End If
+
+            Catch ex As Exception
+                System.Diagnostics.Debug.WriteLine($"DEBUG: Exception in OpenClientFileView: {ex.Message}")
+                MessageBox.Show($"Error opening client files: {ex.Message}", "Navigation Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+        End Sub
 
 
     End Class

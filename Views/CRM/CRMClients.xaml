@@ -271,15 +271,31 @@
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="150">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="FontFamily" Value="Lexend"/>
-                                <Setter Property="TextWrapping" Value="NoWrap"/>
-                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
+                    <DataGridTemplateColumn Header="Name" Width="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="{Binding Name}" 
+                    Background="Transparent" 
+                    BorderThickness="0" 
+                    Cursor="Hand" 
+                    HorizontalAlignment="Left"
+                    Click="OpenClientFileView"
+                    ToolTip="View Client Files">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <TextBlock Text="{TemplateBinding Content}" 
+                                   FontFamily="Lexend" 
+                                   Foreground="#60A5FA"
+                                   TextDecorations="Underline"
+                                   TextWrapping="NoWrap" 
+                                   TextTrimming="CharacterEllipsis"
+                                   VerticalAlignment="Center"/>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Type" Binding="{Binding ClientType}" Width="130">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
