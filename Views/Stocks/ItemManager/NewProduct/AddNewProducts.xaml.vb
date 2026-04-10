@@ -9,6 +9,7 @@ Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
 Imports MaterialDesignThemes.Wpf
 Imports Microsoft.Win32
+Imports MySql.Data.MySqlClient
 Namespace DPC.Views.Stocks.ItemManager.NewProduct
     Public Class AddNewProducts
         Inherits UserControl
@@ -100,6 +101,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         Private Sub AddNewProducts_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
             InitializeMarkupUI()
             InitializeUIElements()
+            ApplyRolePermissions()
 
             ' Brand Search
             Dim cbTextBox As TextBox = CType(ComboBoxBrand.Template.FindName("PART_EditableTextBox", ComboBoxBrand), TextBox)
@@ -333,6 +335,65 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
             Dim existingVariations As List(Of ProductVariation) = ProductController.GetProductVariations()
             If existingVariations IsNot Nothing Then
                 ProductController.UpdateProductVariationText(existingVariations, TxtProductVariation)
+            End If
+        End Sub
+        ' --- SECURITY TOOLKIT: HIDE SENSITIVE PANELS FROM SALES ---
+        ' Class-level variable to track if the user is Sales
+        Private isSalesUser As Boolean = False
+
+        ' --- SECURITY TOOLKIT: LOCK SENSITIVE INPUTS ---
+        ' Class-level variable to track if the user is Sales
+
+
+        ' --- SECURITY TOOLKIT: LOCK SENSITIVE INPUTS ---
+        Private Sub ApplyRolePermissions()
+            ' Fetch role based on the logged-in user's cached email
+            Dim query As String = "SELECT ur.RoleName FROM employee e JOIN userroles ur ON e.UserRoleID = ur.RoleID WHERE e.Email = @email"
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@email", CacheOnLoggedInEmail)
+                        Dim roleName As Object = cmd.ExecuteScalar()
+
+                        ' Check if the role contains "Sales"
+                        If roleName IsNot Nothing AndAlso roleName.ToString().ToLower().Contains("sales") Then
+                            isSalesUser = True
+                        End If
+                    End Using
+                Catch ex As Exception
+                    Console.WriteLine("Error checking role: " & ex.Message)
+                End Try
+            End Using
+
+            ' If Sales, hide ONLY the Retail Price input and inject Admin message
+            If isSalesUser Then
+                Dim LockTextBox = Sub(txt As TextBox)
+                                      If txt Is Nothing Then Return
+
+                                      ' Hide the textbox (your CalculateSellingPrice will still update it invisibly!)
+                                      txt.Visibility = Visibility.Collapsed
+                                      txt.Text = "0"
+
+                                      ' Inject the Admin Message into the same container
+                                      Dim parentGrid As Grid = TryCast(txt.Parent, Grid)
+                                      If parentGrid IsNot Nothing Then
+                                          Dim adminMsg As New TextBlock With {
+                            .Text = "🔒 Admin Access Only",
+                            .Foreground = New SolidColorBrush(Color.FromRgb(210, 54, 54)),
+                            .FontWeight = FontWeights.SemiBold,
+                            .VerticalAlignment = VerticalAlignment.Center,
+                            .Margin = New Thickness(10, 0, 0, 0),
+                            .FontFamily = New FontFamily("Lexend")
+                        }
+                                          Grid.SetColumn(adminMsg, Grid.GetColumn(txt))
+                                          parentGrid.Children.Add(adminMsg)
+                                      End If
+                                  End Sub
+
+                ' ONLY lock the Product Selling Price
+                LockTextBox(TxtRetailPrice)
             End If
         End Sub
 #End Region
@@ -715,6 +776,7 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                                                    End Sub
             popupAddSubCategory.IsOpen = True
         End Sub
+
 
 #Region "Markup and Price Calculation"
         Private Sub CalculateSellingPrice()
