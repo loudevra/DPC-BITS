@@ -89,6 +89,8 @@ Namespace DPC.Views.Auth
                                 Dim permCmd As New MySqlCommand(permQuery, permConn)
                                 Dim permReader = permCmd.ExecuteReader()
                                 Dim SalesPerm As Boolean = False
+                                Dim ProjectPerm As Boolean = False
+                                Dim AccountsPerm As Boolean = False
 
                                 If permReader.Read() Then
                                     SalesPerm = Convert.ToBoolean(permReader("Sales"))
