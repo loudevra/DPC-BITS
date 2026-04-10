@@ -380,8 +380,7 @@
                                             CellStyle="{StaticResource CenteredCellStyle}"/>
                         <DataGridTextColumn Header="Warehouse" Binding="{Binding Warehouse}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#555555"
                                             CellStyle="{StaticResource CenteredCellStyle}"/>
-                        <DataGridTextColumn Header="Markup Price" Binding="{Binding SellingPrice}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#555555"
-                                            CellStyle="{StaticResource CenteredCellStyle}"/>
+                        <DataGridTextColumn x:Name="colSellingPrice" Header="Selling Price" Binding="{Binding SellingPrice}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#555555" CellStyle="{StaticResource CenteredCellStyle}"/>
                         <DataGridTextColumn Header="Buying Price" Binding="{Binding BuyingPrice}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#555555"
                                             CellStyle="{StaticResource CenteredCellStyle}"/>
                         <DataGridTextColumn Header="Stock Qty" Binding="{Binding StockQuantity}" Width="Auto" MinWidth="90" FontFamily="Lexend" Foreground="#555555"
