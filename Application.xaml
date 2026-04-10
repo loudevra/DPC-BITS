@@ -4,7 +4,8 @@
     xmlns:local="clr-namespace:DPC.DPC.Data.Converters"
     xmlns:local2="clr-namespace:DPC.DPC.Data.Converters.ValueConverter"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-    StartupUri="SplashScreen.xaml">
+    StartupUri="SplashScreen.xaml"
+ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
