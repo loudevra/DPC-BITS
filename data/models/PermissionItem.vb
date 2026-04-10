@@ -3,17 +3,15 @@
 Public Class PermissionItem
     Implements INotifyPropertyChanged
 
+    Public Event PropertyChanged As PropertyChangedEventHandler _
+        Implements INotifyPropertyChanged.PropertyChanged
+
+    Protected Sub OnPropertyChanged(propertyName As String)
+        RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
+    End Sub
+
+    ' --- ID and Name ---
     Private _id As Integer
-    Private _name As String
-    Private _hasInventoryManager As Boolean
-    Private _hasSalesPerson As Boolean
-    Private _hasSalesManager As Boolean
-    Private _hasBusinessManager As Boolean
-    Private _hasBusinessOwner As Boolean
-    Private _hasProjectManager As Boolean
-
-    Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
-
     Public Property Id As Integer
         Get
             Return _id
@@ -26,6 +24,7 @@ Public Class PermissionItem
         End Set
     End Property
 
+    Private _name As String
     Public Property Name As String
         Get
             Return _name
@@ -38,6 +37,8 @@ Public Class PermissionItem
         End Set
     End Property
 
+    ' --- Original 6 Roles ---
+    Private _hasInventoryManager As Boolean
     Public Property HasInventoryManager As Boolean
         Get
             Return _hasInventoryManager
@@ -50,6 +51,7 @@ Public Class PermissionItem
         End Set
     End Property
 
+    Private _hasSalesPerson As Boolean
     Public Property HasSalesPerson As Boolean
         Get
             Return _hasSalesPerson
@@ -62,6 +64,7 @@ Public Class PermissionItem
         End Set
     End Property
 
+    Private _hasSalesManager As Boolean
     Public Property HasSalesManager As Boolean
         Get
             Return _hasSalesManager
@@ -74,6 +77,7 @@ Public Class PermissionItem
         End Set
     End Property
 
+    Private _hasBusinessManager As Boolean
     Public Property HasBusinessManager As Boolean
         Get
             Return _hasBusinessManager
@@ -86,6 +90,7 @@ Public Class PermissionItem
         End Set
     End Property
 
+    Private _hasBusinessOwner As Boolean
     Public Property HasBusinessOwner As Boolean
         Get
             Return _hasBusinessOwner
@@ -98,6 +103,7 @@ Public Class PermissionItem
         End Set
     End Property
 
+    Private _hasProjectManager As Boolean
     Public Property HasProjectManager As Boolean
         Get
             Return _hasProjectManager
@@ -110,7 +116,46 @@ Public Class PermissionItem
         End Set
     End Property
 
-    Protected Sub OnPropertyChanged(propertyName As String)
-        RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
-    End Sub
+    ' --- 3 New Roles ---
+    Private _hasAdministrator As Boolean
+    Public Property HasAdministrator As Boolean
+        Get
+            Return _hasAdministrator
+        End Get
+        Set(value As Boolean)
+            If _hasAdministrator <> value Then
+                _hasAdministrator = value
+                OnPropertyChanged("HasAdministrator")
+            End If
+        End Set
+    End Property
+
+    Private _hasIT As Boolean
+    Public Property HasIT As Boolean
+
+        Get
+            Return _hasIT
+        End Get
+        Set(value As Boolean)
+            If _hasIT <> value Then
+                _hasIT = value
+                OnPropertyChanged("HasIT")
+            End If
+        End Set
+    End Property
+
+    Private _hasTech As Boolean
+    Public Property HasTech As Boolean
+        Get
+            Return _hasTech
+        End Get
+        Set(value As Boolean)
+            If _hasTech <> value Then
+                _hasTech = value
+                OnPropertyChanged("HasTech")
+            End If
+        End Set
+    End Property
+
 End Class
+

@@ -48,7 +48,7 @@ Namespace DPC
             RoleName = _roleName
 
             ' Load Sidebar
-            defaultSidebar = New Sidebar(RoleName)
+            defaultSidebar = New Sidebar()
             SidebarContainer.Child = defaultSidebar
 
             'MessageBox.Show(defaultSidebar.RoleName)
@@ -179,5 +179,10 @@ Namespace DPC
         Protected Sub RaisePropertyChanged(propertyName As String)
             RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propertyName))
         End Sub
+
+        Private Sub Base_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
+        End Sub
+
     End Class
 End Namespace
+

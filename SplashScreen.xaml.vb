@@ -115,7 +115,7 @@ Namespace DPC
             }
 
             Dim client As New MongoClient(settings)
-            Return client.GetDatabase($"{EnvLoader.GetEnv("MDB_GETDB")}") 
+            Return client.GetDatabase($"{EnvLoader.GetEnv("MDB_GETDB")}")
         End Function
 
         Public Shared Function GetGridFSConnection() As GridFSBucket
@@ -124,3 +124,5 @@ Namespace DPC
 
     End Class
 End Namespace
+
+
