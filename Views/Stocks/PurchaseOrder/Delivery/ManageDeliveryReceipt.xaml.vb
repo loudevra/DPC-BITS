@@ -21,9 +21,17 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         Private _isInitialized As Boolean = False
         Private _currentDRNumber As String
 
+        ' User access control properties
+        Private _currentUserID As String
+        Private _currentUserRole As String
+        Private _isAdmin As Boolean = False
+
         Public Sub New()
             InitializeComponent()
             SetupDatePickers()
+
+            ' Initialize user access control
+            InitializeUserAccess()
 
             ' Initialize the search delay timer
             _typingTimer = New DispatcherTimer With {
@@ -34,6 +42,54 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             ' Load data when the control is ready
             AddHandler Me.Loaded, AddressOf UserControl_Loaded
         End Sub
+
+        ''' <summary>
+        ''' Initialize user access control based on logged-in user
+        ''' </summary>
+        Private Sub InitializeUserAccess()
+            Try
+                ' Get current user ID from global cache
+                _currentUserID = CacheOnEmployeeID
+
+                ' Get user role from database
+                _currentUserRole = GetCurrentUserRole(_currentUserID)
+
+                ' Check if user is admin (has full access)
+                _isAdmin = (_currentUserRole = "Administrator" OrElse _currentUserRole = "Business Owner")
+
+                ' Display access level in UI (optional)
+                If Not _isAdmin Then
+                    Debug.WriteLine($"User {_currentUserID} has restricted access to delivery receipts")
+                End If
+            Catch ex As Exception
+                MessageBox.Show($"Error initializing user access: {ex.Message}", "Access Control Error", MessageBoxButton.OK, MessageBoxImage.Warning)
+                _isAdmin = False ' Default to restricted access on error
+            End Try
+        End Sub
+
+        ''' <summary>
+        ''' Get the role of the current user from the database
+        ''' </summary>
+        Private Function GetCurrentUserRole(employeeID As String) As String
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim query As String = "SELECT r.RoleName FROM employee e " &
+                                        "INNER JOIN userroles r ON e.UserRoleID = r.RoleID " &
+                                        "WHERE e.EmployeeID = @EmployeeID"
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@EmployeeID", employeeID)
+                        Dim result As Object = cmd.ExecuteScalar()
+                        If result IsNot DBNull.Value AndAlso result IsNot Nothing Then
+                            Return result.ToString()
+                        End If
+                    End Using
+                End Using
+            Catch ex As Exception
+                Debug.WriteLine($"Error getting user role: {ex.Message}")
+            End Try
+            Return "User" ' Default role
+        End Function
 
         Private Sub UserControl_Loaded(sender As Object, e As RoutedEventArgs)
             If Not _isInitialized Then
@@ -47,7 +103,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
         End Sub
 
         ''' <summary>
-        ''' Loads Delivery Receipt data into the DataGrid based on the selected limit
+        ''' Loads Delivery Receipt data into the DataGrid based on the selected limit and user access
         ''' </summary>
         Public Sub LoadData()
             Try
@@ -57,8 +113,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     limit = Convert.ToInt32(CType(cmbLimit.SelectedItem, ComboBoxItem).Content)
                 End If
 
-                ' Call the DeliveryReceiptController to fetch records
-                Dim receipts = DeliveryReceiptController.GetDeliveryReceipts(limit)
+                ' Call the DeliveryReceiptController to fetch records with user filtering
+                Dim receipts = DeliveryReceiptController.GetDeliveryReceipts(limit, _currentUserID, _isAdmin)
 
                 FormatDeliveryReceiptsForDisplay(receipts)
                 dataGrid.ItemsSource = receipts
@@ -119,11 +175,19 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
         ''' <summary>
         ''' Logic for the "Edit" button inside the DataGrid rows
+        ''' Only allows editing if user owns the record or is admin
         ''' </summary>
         Private Sub OpenEditDeliveryReceipt(sender As Object, e As RoutedEventArgs)
             Dim receipt As UniversalTransactionModel = TryCast(dataGrid.SelectedItem, UniversalTransactionModel)
 
             If receipt IsNot Nothing Then
+                ' Check access control
+                If Not _isAdmin AndAlso receipt.CreatedBy <> _currentUserID Then
+                    MessageBox.Show("You do not have permission to edit this delivery receipt.",
+                                  "Access Denied", MessageBoxButton.OK, MessageBoxImage.Warning)
+                    Return
+                End If
+
                 TransactionState.ResetRecord()
 
                 Dim fullReceiptData = DeliveryReceiptController.GetDeliveryReceiptByDRNumber(receipt.DocumentNumber)
@@ -141,6 +205,13 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
         Private Sub OpenContinueDeliveryReceipt(sender As Object, e As RoutedEventArgs)
             Dim receipt As UniversalTransactionModel = TryCast(dataGrid.SelectedItem, UniversalTransactionModel)
+
+            ' Check access control for continuing delivery
+            If Not _isAdmin AndAlso receipt.CreatedBy <> _currentUserID Then
+                MessageBox.Show("You do not have permission to continue this delivery receipt.",
+                              "Access Denied", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Return
+            End If
 
             DeliveryDetails.ClearDeliveryDetails()
 
@@ -194,7 +265,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
                         If balance > 0 Then
                             Dim newItem = New Dictionary(Of String, String)(masterItem)
-                            newItem("Quantity") = balance.ToString() 
+                            newItem("Quantity") = balance.ToString()
                             newItem("MaxAllowed") = balance.ToString()
                             remainingList.Add(newItem)
                         End If
@@ -210,12 +281,20 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
         ''' <summary>
         ''' Logic for the "Delete" button inside the DataGrid rows
+        ''' Only allows deletion if user owns the record or is admin
         ''' </summary>
         Private Sub DeleteDeliveryReceipt(sender As Object, e As RoutedEventArgs)
-            Dim receipt As DeliveryReceiptModel = TryCast(dataGrid.SelectedItem, DeliveryReceiptModel)
+            Dim receipt As UniversalTransactionModel = TryCast(dataGrid.SelectedItem, UniversalTransactionModel)
             If receipt Is Nothing Then Return
 
-            Dim result = MessageBox.Show($"Are you sure you want to delete Delivery Receipt {receipt.DRNumber}?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning)
+            ' Check access control
+            If Not _isAdmin AndAlso receipt.CreatedBy <> _currentUserID Then
+                MessageBox.Show("You do not have permission to delete this delivery receipt.",
+                              "Access Denied", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Return
+            End If
+
+            Dim result = MessageBox.Show($"Are you sure you want to delete Delivery Receipt {receipt.DocumentNumber}?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning)
 
             If result = MessageBoxResult.Yes Then
                 Try
@@ -223,7 +302,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                         conn.Open()
                         Using cmd As New MySqlCommand(query, conn)
-                            cmd.Parameters.AddWithValue("@drNumber", receipt.DRNumber)
+                            cmd.Parameters.AddWithValue("@drNumber", receipt.DocumentNumber)
                             cmd.ExecuteNonQuery()
                         End Using
                     End Using
@@ -254,8 +333,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
                     limit = Convert.ToInt32(CType(cmbLimit.SelectedItem, ComboBoxItem).Content)
                 End If
 
-                ' Optional: Add date filter parameters if your controller supports it
-                Dim results = DeliveryReceiptController.SearchDeliveryReceipts(SearchText.Text.Trim(), limit)
+                ' Use user-filtered search
+                Dim results = DeliveryReceiptController.SearchDeliveryReceipts(SearchText.Text.Trim(), limit, _currentUserID, _isAdmin)
                 FormatDeliveryReceiptsForDisplay(results)
                 dataGrid.ItemsSource = results
             Catch ex As Exception
@@ -286,12 +365,12 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
         Private Sub StartDatePicker_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs)
             startDateViewModel.SelectedDate = StartDatePicker.SelectedDate
-            PerformSearch() ' Re-run search on date change
+            If _isInitialized Then PerformSearch() ' Re-run search on date change
         End Sub
 
         Private Sub DueDatePicker_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs)
             dueDateViewModel.SelectedDate = DueDatePicker.SelectedDate
-            PerformSearch() ' Re-run search on date change
+            If _isInitialized Then PerformSearch() ' Re-run search on date change
         End Sub
 
         ' ==========================================
@@ -321,19 +400,19 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
                         ' 5. Loop through the current items in the DataGrid and write them safely
                         For Each obj In dataGrid.Items
-                            Dim item As DeliveryReceiptModel = TryCast(obj, DeliveryReceiptModel)
+                            Dim item As UniversalTransactionModel = TryCast(obj, UniversalTransactionModel)
 
                             If item IsNot Nothing Then
                                 ' Using string interpolation safely handles Null/Empty data automatically
                                 ' We wrap everything in double quotes to prevent internal commas from breaking columns
-                                Dim drNum As String = $"{item.DRNumber}".Replace("""", """""")
-                                Dim invRef As String = $"{item.ReferenceInvoice}".Replace("""", """""")
-                                Dim drDate As String = $"{item.DRDate}".Replace("""", """""")
-                                Dim status As String = $"{item.DeliveryStatus}".Replace("""", """""")
+                                Dim drNum As String = $"{item.DocumentNumber}".Replace("""", """""")
+                                Dim invRef As String = $"{item.DocumentReference}".Replace("""", """""")
+                                Dim drDate As String = $"{item.DocumentDate}".Replace("""", """""")
+                                Dim status As String = If(item.IsFullyDelivered, "Complete", "Partial").Replace("""", """""")
                                 Dim client As String = $"{item.ClientName}".Replace("""", """""")
                                 Dim shipping As String = $"{item.ShippingMethod}".Replace("""", """""")
-                                Dim prepBy As String = $"{item.Username}".Replace("""", """""")
-                                Dim sysDate As String = $"{item.DateAddedDisplay}".Replace("""", """""")
+                                Dim prepBy As String = $"{item.PreparedBy}".Replace("""", """""")
+                                Dim sysDate As String = $"{item.DateAdded}".Replace("""", """""")
 
                                 writer.WriteLine($"""{drNum}"",""{invRef}"",""{drDate}"",""{status}"",""{client}"",""{shipping}"",""{prepBy}"",""{sysDate}""")
                             End If

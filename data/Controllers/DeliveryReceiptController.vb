@@ -28,8 +28,9 @@ Namespace DPC.Data.Controllers
             Try
                 Dim checkDuplicateQuery As String = "SELECT COUNT(*) FROM deliveryreceipts WHERE DRNumber = @DRNumber"
 
-                Dim addQuery As String = "INSERT INTO deliveryreceipts (DRNumber, ReferenceInvoice, DRDate, ClientName, ClientDetails, DeliveryNotes, ShippingMethod, DeliveryStatus, ApprovedBy, PaymentTerm, OrderItems, Username, DateAdded) " &
-                                         "VALUES (@DRNumber, @ReferenceInvoice, @DRDate, @ClientName, @ClientDetails, @DeliveryNotes, @ShippingMethod, @DeliveryStatus, @ApprovedBy, @PaymentTerm, @OrderItems, @Username, NOW())"
+                ' UPDATED: Added CreatedBy field
+                Dim addQuery As String = "INSERT INTO deliveryreceipts (DRNumber, ReferenceInvoice, DRDate, ClientName, ClientDetails, DeliveryNotes, ShippingMethod, DeliveryStatus, ApprovedBy, PaymentTerm, OrderItems, Username, CreatedBy, DateAdded) " &
+                                         "VALUES (@DRNumber, @ReferenceInvoice, @DRDate, @ClientName, @ClientDetails, @DeliveryNotes, @ShippingMethod, @DeliveryStatus, @ApprovedBy, @PaymentTerm, @OrderItems, @Username, @CreatedBy, NOW())"
 
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
@@ -60,6 +61,8 @@ Namespace DPC.Data.Controllers
                                 addCmd.Parameters.AddWithValue("@PaymentTerm", PaymentTerm)
                                 addCmd.Parameters.AddWithValue("@OrderItems", OrderItems)
                                 addCmd.Parameters.AddWithValue("@Username", Username)
+                                ' ADDED: Set the current user as the creator
+                                addCmd.Parameters.AddWithValue("@CreatedBy", CacheOnEmployeeID)
 
                                 addCmd.ExecuteNonQuery()
                                 transaction.Commit()
@@ -89,119 +92,181 @@ Namespace DPC.Data.Controllers
             End Try
         End Function
 
-        Public Shared Function GetDeliveryReceipts(limit As Integer) As ObservableCollection(Of UniversalTransactionModel)
+        ''' <summary>
+        ''' Gets delivery receipts with user-based filtering
+        ''' </summary>
+        Public Shared Function GetDeliveryReceipts(limit As Integer, currentUserID As String, isAdmin As Boolean) As ObservableCollection(Of UniversalTransactionModel)
             Dim receipts As New ObservableCollection(Of UniversalTransactionModel)
+
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "
-                SELECT 
-                    DRNumber, ReferenceInvoice, DRDate, ClientName, 
-                    ClientDetails, DeliveryNotes, ShippingMethod, 
-                    DeliveryStatus, ApprovedBy, PaymentTerm, 
-                    OrderItems, Username, DateAdded 
-                FROM deliveryreceipts 
-                ORDER BY DateAdded DESC 
-                LIMIT @limit"
+
+                    Dim query As String
+                    If isAdmin Then
+                        ' Admin sees all records
+                        query = "SELECT * FROM deliveryreceipts ORDER BY dateAdded DESC LIMIT @Limit"
+                    Else
+                        ' Regular users see only their own records
+                        query = "SELECT * FROM deliveryreceipts WHERE CreatedBy = @CreatedBy ORDER BY dateAdded DESC LIMIT @Limit"
+                    End If
 
                     Using cmd As New MySqlCommand(query, conn)
-                        cmd.Parameters.AddWithValue("@limit", limit)
+                        cmd.Parameters.AddWithValue("@Limit", limit)
+                        If Not isAdmin Then
+                            cmd.Parameters.AddWithValue("@CreatedBy", currentUserID)
+                        End If
 
                         Using reader As MySqlDataReader = cmd.ExecuteReader()
                             While reader.Read()
-                                Dim jsonString As String = If(reader("OrderItems") Is DBNull.Value, "[]", reader("OrderItems").ToString())
-                                Dim itemsCollection As ObservableCollection(Of OrderItems)
-                                Try
-                                    Dim deserializedList = JsonConvert.DeserializeObject(Of List(Of OrderItems))(jsonString)
-                                    itemsCollection = New ObservableCollection(Of OrderItems)(deserializedList)
-                                Catch
-                                    itemsCollection = New ObservableCollection(Of OrderItems)()
-                                End Try
-
-                                receipts.Add(New UniversalTransactionModel() With {
-                            .DocumentNumber = reader("DRNumber").ToString(),
-                            .DocumentReference = reader("ReferenceInvoice").ToString(),
-                            .DocumentDate = If(reader("DRDate") Is DBNull.Value, "-", reader("DRDate").ToString()),
-                            .ClientName = reader("ClientName").ToString(),
-                            .ClientDetails = If(reader("ClientDetails") Is DBNull.Value, String.Empty, reader("ClientDetails").ToString()),
-                            .Notes = If(reader("DeliveryNotes") Is DBNull.Value, String.Empty, reader("DeliveryNotes").ToString()),
-                            .ShippingMethod = reader("ShippingMethod").ToString(),
-                            .Status = reader("DeliveryStatus").ToString(),
-                            .ApprovedBy = If(reader("ApprovedBy") Is DBNull.Value, "-", reader("ApprovedBy").ToString()),
-                            .PaymentTerm = If(reader("PaymentTerm") Is DBNull.Value, "-", reader("PaymentTerm").ToString()),
-                            .OrderItems = itemsCollection,
-                            .RawItemsJson = jsonString,
-                            .SalesRep = reader("Username").ToString(),
-                            .DateAdded = If(reader("DateAdded") Is DBNull.Value, DateTime.MinValue, Convert.ToDateTime(reader("DateAdded")).ToString("MMM dd, yyyy"))
-                        })
+                                receipts.Add(MapReaderToUniversalModel(reader))
                             End While
                         End Using
                     End Using
                 End Using
-
             Catch ex As Exception
-                Debug.WriteLine("Error in GetDeliveryReceipts: " & ex.Message)
+                MessageBox.Show($"Error loading delivery receipts: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
 
             Return receipts
         End Function
 
+        ''' <summary>
+        ''' Search delivery receipts with user-based filtering
+        ''' </summary>
+        Public Shared Function SearchDeliveryReceipts(searchTerm As String, limit As Integer, currentUserID As String, isAdmin As Boolean) As ObservableCollection(Of UniversalTransactionModel)
+            Dim results As New ObservableCollection(Of UniversalTransactionModel)
+
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+
+                    Dim query As String
+                    If isAdmin Then
+                        ' Admin searches all records
+                        query = "SELECT * FROM deliveryreceipts WHERE " &
+                       "(DRNumber LIKE @SearchTerm OR ReferenceInvoice LIKE @SearchTerm OR ClientName LIKE @SearchTerm) " &
+                       "ORDER BY dateAdded DESC LIMIT @Limit"
+                    Else
+                        ' Regular users search only their own records
+                        query = "SELECT * FROM deliveryreceipts WHERE CreatedBy = @CreatedBy AND " &
+                       "(DRNumber LIKE @SearchTerm OR ReferenceInvoice LIKE @SearchTerm OR ClientName LIKE @SearchTerm) " &
+                       "ORDER BY dateAdded DESC LIMIT @Limit"
+                    End If
+
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@SearchTerm", "%" & searchTerm & "%")
+                        cmd.Parameters.AddWithValue("@Limit", limit)
+                        If Not isAdmin Then
+                            cmd.Parameters.AddWithValue("@CreatedBy", currentUserID)
+                        End If
+
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
+                            While reader.Read()
+                                results.Add(MapReaderToUniversalModel(reader))
+                            End While
+                        End Using
+                    End Using
+                End Using
+            Catch ex As Exception
+                MessageBox.Show($"Error searching delivery receipts: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+
+            Return results
+        End Function
+
+        Private Shared Function MapReaderToUniversalModel(reader As MySqlDataReader) As UniversalTransactionModel
+            Return New UniversalTransactionModel With {
+        .DocumentNumber = If(reader("DRNumber") IsNot DBNull.Value, reader("DRNumber").ToString(), ""),
+        .DocumentReference = If(reader("ReferenceInvoice") IsNot DBNull.Value, reader("ReferenceInvoice").ToString(), ""),
+        .DocumentDate = If(reader("DRDate") IsNot DBNull.Value, reader("DRDate").ToString(), "-"),
+        .ClientName = If(reader("ClientName") IsNot DBNull.Value, reader("ClientName").ToString(), ""),
+        .ClientDetails = If(reader("ClientDetails") IsNot DBNull.Value, reader("ClientDetails").ToString(), ""),
+        .ShippingMethod = If(reader("ShippingMethod") IsNot DBNull.Value, reader("ShippingMethod").ToString(), ""),
+        .PreparedBy = If(reader("Username") IsNot DBNull.Value, reader("Username").ToString(), ""),
+        .ApprovedBy = If(reader("ApprovedBy") IsNot DBNull.Value, reader("ApprovedBy").ToString(), ""),
+        .PaymentTerm = If(reader("PaymentTerm") IsNot DBNull.Value, reader("PaymentTerm").ToString(), ""),
+        .Notes = If(reader("DeliveryNotes") IsNot DBNull.Value, reader("DeliveryNotes").ToString(), ""),
+        .RawItemsJson = If(reader("OrderItems") IsNot DBNull.Value, reader("OrderItems").ToString(), "[]"),
+        .DateAdded = If(reader("dateAdded") IsNot DBNull.Value, reader.GetDateTime("dateAdded").ToString("MMM d, yyyy"), ""),
+        .CreatedBy = If(reader("CreatedBy") IsNot DBNull.Value, reader("CreatedBy").ToString(), "")
+    }
+        End Function
+
+        ''' <summary>
+        ''' Gets a single delivery receipt by DR Number for editing
+        ''' </summary>
         Public Shared Function GetDeliveryReceiptByDRNumber(drNumber As String) As UniversalTransactionModel
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Dim query As String = "SELECT * FROM deliveryreceipts WHERE drNumber = @dr"
+
+                    Dim query As String = "SELECT * FROM deliveryreceipts WHERE DRNumber = @DRNumber LIMIT 1"
 
                     Using cmd As New MySqlCommand(query, conn)
-                        cmd.Parameters.AddWithValue("@dr", drNumber)
-                        Using reader = cmd.ExecuteReader()
+                        cmd.Parameters.AddWithValue("@DRNumber", drNumber)
+
+                        Using reader As MySqlDataReader = cmd.ExecuteReader()
                             If reader.Read() Then
-                                Return MapReaderToDeliveryModel(reader)
+                                Dim receipt = MapReaderToUniversalModel(reader)
+
+                                ' Parse the OrderItems JSON into the ObservableCollection
+                                If Not String.IsNullOrEmpty(receipt.RawItemsJson) Then
+                                    Try
+                                        Dim itemsList = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, String)))(receipt.RawItemsJson)
+
+                                        If itemsList IsNot Nothing Then
+                                            receipt.OrderItems.Clear()
+
+                                            For Each dict In itemsList
+                                                Dim newItem As New OrderItems()
+
+                                                newItem.ProductName = If(dict.ContainsKey("ProductName"), dict("ProductName"), "")
+                                                newItem.Quantity = If(dict.ContainsKey("Quantity"), dict("Quantity"), "0")
+                                                newItem.Description = If(dict.ContainsKey("Description"), dict("Description"), "")
+                                                newItem.ProductDescription = If(dict.ContainsKey("ProductDescription"), dict("ProductDescription"), "")
+                                                newItem.UnitPrice = If(dict.ContainsKey("UnitPrice"), dict("UnitPrice"),
+                                                                    If(dict.ContainsKey("Rate"), dict("Rate"), "0.00"))
+                                                newItem.LinePrice = If(dict.ContainsKey("LinePrice"), dict("LinePrice"),
+                                                                    If(dict.ContainsKey("Amount"), dict("Amount"), "0.00"))
+
+                                                Dim isHeaderVal As Boolean = False
+                                                If dict.ContainsKey("IsHeaderRow") Then
+                                                    Boolean.TryParse(dict("IsHeaderRow").ToString(), isHeaderVal)
+                                                End If
+                                                newItem.IsHeaderRow = isHeaderVal
+                                                newItem.IsCategoryHeader = isHeaderVal
+
+                                                Dim isSubtotalVal As Boolean = False
+                                                If dict.ContainsKey("IsSubtotalRow") Then
+                                                    Boolean.TryParse(dict("IsSubtotalRow").ToString(), isSubtotalVal)
+                                                ElseIf dict.ContainsKey("IsSubotalRow") Then
+                                                    Boolean.TryParse(dict("IsSubotalRow").ToString(), isSubtotalVal)
+                                                End If
+                                                newItem.IsSubtotalRow = isSubtotalVal
+
+                                                newItem.ProductDescriptionVisibility = If(String.IsNullOrWhiteSpace(newItem.ProductDescription),
+                                                             Visibility.Collapsed, Visibility.Visible)
+
+                                                receipt.OrderItems.Add(newItem)
+                                            Next
+                                        End If
+                                    Catch jsonEx As Exception
+                                        Debug.WriteLine($"Error parsing delivery items JSON: {jsonEx.Message}")
+                                    End Try
+                                End If
+
+                                Return receipt
                             End If
                         End Using
                     End Using
                 End Using
             Catch ex As Exception
-                Debug.WriteLine("Error fetching full DR: " & ex.Message)
+                Debug.WriteLine($"Error in GetDeliveryReceiptByDRNumber: {ex.Message}")
+                MessageBox.Show($"Error retrieving delivery receipt: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
+
             Return Nothing
-        End Function
-
-        Private Shared Function MapReaderToDeliveryModel(reader As MySqlDataReader) As UniversalTransactionModel
-            ' 1. Capture the JSON string safely
-            Dim jsonItems As String = If(reader("orderItems") Is DBNull.Value, "[]", reader("orderItems").ToString())
-
-            ' 2. Convert JSON string to ObservableCollection
-            Dim itemsCollection As New ObservableCollection(Of OrderItems)()
-            Try
-                If Not String.IsNullOrWhiteSpace(jsonItems) Then
-                    Dim list = JsonConvert.DeserializeObject(Of List(Of OrderItems))(jsonItems)
-                    itemsCollection = New ObservableCollection(Of OrderItems)(list)
-                End If
-            Catch ex As Exception
-                Debug.WriteLine("Error parsing OrderItems JSON: " & ex.Message)
-            End Try
-
-            ' 3. Return the populated Model
-            Return New UniversalTransactionModel With {
-        .DocumentNumber = reader("drNumber").ToString(),
-        .DocumentReference = reader("ReferenceInvoice").ToString(),
-        .ClientName = reader("clientName").ToString(),
-        .ClientDetails = reader("clientDetails").ToString(),
-        .DocumentDate = If(reader("drDate") Is DBNull.Value, "", Convert.ToDateTime(reader("drDate")).ToString("MMM dd, yyyy")),
-        .ShippingMethod = reader("shippingMethod").ToString(),
-        .Notes = reader("deliveryNotes").ToString(),
-        .ApprovedBy = reader("approvedBy").ToString(),
-        .PaymentTerm = reader("paymentTerm").ToString(),
-        .OrderItems = itemsCollection,
-        .RawItemsJson = jsonItems,
-        .Status = reader("deliveryStatus").ToString(),
-        .DateAdded = If(reader("DateAdded") Is DBNull.Value, DateTime.MinValue, Convert.ToDateTime(reader("DateAdded")).ToString("MMM dd, yyyy"))
-    }
-        End Function
-
-        Public Shared Function SearchDeliveryReceipts()
-            Return New ObservableCollection(Of UniversalTransactionModel)()
         End Function
 
         Public Shared Function GetAccumulatedDeliveryTotals(invoiceNo As String) As Dictionary(Of String, Integer)

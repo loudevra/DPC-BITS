@@ -200,7 +200,7 @@
                             </TextBlock>
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToManageQuote">
-                                    <TextBlock Text="Manage Private Cost Estimate" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
+                                    <TextBlock Text="Manage Cost Estimate" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                                 <TextBlock.ToolTip>
                                     <ToolTip Content="View and manage all cost estimates." Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
