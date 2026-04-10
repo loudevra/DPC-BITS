@@ -263,16 +263,30 @@
                         <DataGridTemplateColumn Header="Actions" Width="100">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Border BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="5" Background="White" Padding="6,4" HorizontalAlignment="Left">
+                                    <Border BorderThickness="0" CornerRadius="5" Background="White" Padding="6,4" HorizontalAlignment="Left">
                                         <StackPanel Orientation="Horizontal">
                                             <Button Click="BtnEdit_Click" Background="Transparent" BorderThickness="0" Padding="0" Margin="0,0,12,0" Cursor="Hand" Width="20" Height="20">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="4">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Button.Template>
                                                 <materialDesign:PackIcon Kind="SquareEditOutline" Foreground="#10B981" Width="18" Height="18" VerticalAlignment="Center"/>
                                             </Button>
 
                                             <Button Click="BtnDelete_Click" Background="Transparent" BorderThickness="0" Padding="0" Cursor="Hand" Width="20" Height="20">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="4">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Button.Template>
                                                 <materialDesign:PackIcon Kind="TrashCanOutline" Foreground="#EF4444" Width="18" Height="18" VerticalAlignment="Center"/>
                                             </Button>
-                                            </StackPanel>
+                                        </StackPanel>
                                     </Border>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
