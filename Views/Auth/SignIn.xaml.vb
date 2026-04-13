@@ -103,8 +103,6 @@ Namespace DPC.Views.Auth
                                     If SalesPerm Then landingView = "walkinorder"
                                 ElseIf roleLower.Contains("manager") AndAlso roleLower.Contains("business") Then
                                     If ProjectPerm Then landingView = "manageproject"
-                                ElseIf roleLower.Contains("owner") Then
-                                    If AccountsPerm Then landingView = "manageaccounts"
                                 ElseIf roleLower.Contains("admin") Then
                                     landingView = "dashboard"
                                 End If
@@ -114,8 +112,6 @@ Namespace DPC.Views.Auth
                                         landingView = "walkinorder"
                                     ElseIf ProjectPerm Then
                                         landingView = "manageproject"
-                                    ElseIf AccountsPerm Then
-                                        landingView = "manageaccounts"
                                     End If
                                 End If
                             End Using
@@ -123,6 +119,7 @@ Namespace DPC.Views.Auth
                             landingView = "dashboard"
                         End Try
 
+                        PermissionCache.LoadForRole(Role)
                         Dim baseWindow As New Base(Role) With {
                             .CurrentView = ViewLoader.DynamicView.Load(landingView)
                         }
@@ -134,8 +131,8 @@ Namespace DPC.Views.Auth
                 Catch ex As Exception
                     Try
                         Dim baseWindow As New Base("") With {
-                            .CurrentView = ViewLoader.DynamicView.Load("dashboard")
-                        }
+            .CurrentView = ViewLoader.DynamicView.Load("dashboard")
+        }
                         baseWindow.Show()
                         Dim currentWindow As Window = Window.GetWindow(Me)
                         currentWindow?.Close()
@@ -204,3 +201,4 @@ Namespace DPC.Views.Auth
 
     End Class
 End Namespace
+

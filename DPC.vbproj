@@ -709,7 +709,6 @@
     <Compile Include="Data\Controllers\Misc\EditCashAdvanceRequestController.vb" />
     <Compile Include="Data\Controllers\Misc\ManageCashAdvanceController.vb" />
     <Compile Include="Data\Controllers\Misc\NewCashAdvanceController.vb" />
-    <Compile Include="Data\Controllers\Permissions\PermissionItem.vb" />
     <Compile Include="Data\Controllers\ProductCategoryController.vb" />
     <Compile Include="Data\Controllers\Product\CreateProduct.vb" />
     <Compile Include="Data\Controllers\Product\DeleteProduct.vb" />
@@ -745,6 +744,7 @@
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
     <Compile Include="Data\DataModules\BillingDetails.vb" />
+    <Compile Include="Data\Helpers\PermissionCache.vb" />
     <Compile Include="Data\Helpers\DeliveryState.vb" />
     <Compile Include="Data\Helpers\TransactionState.vb" />
     <Compile Include="Data\Models\DeliveryReceiptModel.vb" />
@@ -2506,6 +2506,7 @@
     <Folder Include="API\" />
     <Folder Include="Config\" />
     <Folder Include="Data\Animations\" />
+    <Folder Include="Data\Controllers\Permissions\" />
     <Folder Include="Installer\" />
     <Folder Include="Themes\" />
     <Folder Include="Views\DataReports\GraphicalReports\" />

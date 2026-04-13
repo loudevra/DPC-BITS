@@ -1,5 +1,4 @@
-﻿' Sidebar.xaml.vb
-Imports System.Windows
+﻿Imports System.Windows
 Imports System.Windows.Controls
 Imports System.Windows.Media.Animation
 Imports DPC.DPC.Components.UI
@@ -14,338 +13,296 @@ Namespace DPC.Components.Navigation
     Public Class Sidebar
         Inherits UserControl
 
-        Private Shared RoleName As String
-
-        Private Shared ReadOnly Property IsPrivileged As Boolean
-            Get
-                Return RoleName = "Administrator" OrElse RoleName = "Business Owner"
-            End Get
-        End Property
-
         Private IsExpanded As Boolean = True
         Public Event LogoButtonClick As RoutedEventHandler
         Public Event SidebarToggled(isExpanded As Boolean)
-        Private Shared Sales, Stock, Crm, Project, Accounts, Miscellaneous, AssignProject, CustomerProfile, Employees, Reports, Delete, POS, SalesEdit, StockEdit As Boolean
+        Private _permissionTimer As System.Windows.Threading.DispatcherTimer
 
-        Public Sub New(Optional _roleName As String = Nothing)
+        Public Sub New()
             InitializeComponent()
-
-            RoleName = _roleName
-
-            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                Try
-                    conn.Open()
-                    Dim query As String = "SELECT * FROM permissions WHERE Role = '" & RoleName & "'"
-                    Dim cmd As New MySqlCommand(query, conn)
-                    Dim reader = cmd.ExecuteReader()
-                    While (reader.Read)
-                        Sales = Convert.ToBoolean(reader("Sales"))
-                        Stock = Convert.ToBoolean(reader("Stock"))
-                        Crm = Convert.ToBoolean(reader("Crm"))
-                        Project = Convert.ToBoolean(reader("Project"))
-                        Accounts = Convert.ToBoolean(reader("Accounts"))
-                        Miscellaneous = Convert.ToBoolean(reader("Miscellaneous"))
-                        AssignProject = Convert.ToBoolean(reader("Assign Project"))
-                        CustomerProfile = Convert.ToBoolean(reader("Customer Profile"))
-                        Employees = Convert.ToBoolean(reader("Employees"))
-                        Reports = Convert.ToBoolean(reader("Reports"))
-                        Delete = Convert.ToBoolean(reader("Delete"))
-                        POS = Convert.ToBoolean(reader("POS"))
-                        SalesEdit = Convert.ToBoolean(reader("Sales Edit"))
-                        StockEdit = Convert.ToBoolean(reader("Stock Edit"))
-                    End While
-                Catch ex As Exception
-
-                End Try
-            End Using
-
             CheckUpdateVisibility()
             VerNum.Text = My.Application.Info.Version.ToString()
-
-            ' Attach event handlers dynamically
             AddHandler SidebarLogoButton.Click, AddressOf SidebarLogoButton_Click
-            ' Apply visual styles to indicate unavailable items
             ApplyPermissionStyles()
         End Sub
 
-        ''' <summary>
-        ''' Apply gray styling to sidebar items that the current role cannot access.
-        ''' Items remain visible but are dimmed to indicate lack of permission.
-        ''' </summary>
         Private Sub ApplyPermissionStyles()
-            Dim isAdmin As Boolean = IsPrivileged
+            Dim GrayOut = Sub(btn As Button)
+                              If btn Is Nothing Then Return
+                              Try
+                                  Dim sp = TryCast(btn.Content, StackPanel)
+                                  If sp IsNot Nothing Then
+                                      For Each child As UIElement In sp.Children
+                                          If TypeOf child Is TextBlock Then
+                                              CType(child, TextBlock).Foreground = Brushes.Gray
+                                          ElseIf TypeOf child Is PackIcon Then
+                                              CType(child, PackIcon).Foreground = Brushes.Gray
+                                          End If
+                                      Next
+                                  Else
+                                      btn.Foreground = Brushes.Gray
+                                  End If
+                              Catch
+                              End Try
+                          End Sub
 
-            ' Helper to gray out a button's icon and text
-            Dim GrayOutButton = Sub(btn As Button)
-                                    If btn Is Nothing Then Return
-                                    Try
-                                        Dim sp = TryCast(btn.Content, StackPanel)
-                                        If sp IsNot Nothing Then
-                                            For Each child As UIElement In sp.Children
-                                                If TypeOf child Is TextBlock Then
-                                                    CType(child, TextBlock).Foreground = Brushes.Gray
-                                                ElseIf TypeOf child Is PackIcon Then
-                                                    CType(child, PackIcon).Foreground = Brushes.Gray
-                                                End If
-                                            Next
-                                        Else
-                                            btn.Foreground = Brushes.Gray
-                                        End If
-                                    Catch
-                                    End Try
-                                End Sub
+            Dim UnGrayOut = Sub(btn As Button)
+                                If btn Is Nothing Then Return
+                                Try
+                                    Dim sp = TryCast(btn.Content, StackPanel)
+                                    If sp IsNot Nothing Then
+                                        For Each child As UIElement In sp.Children
+                                            If TypeOf child Is TextBlock Then
+                                                CType(child, TextBlock).Foreground = Brushes.White
+                                            ElseIf TypeOf child Is PackIcon Then
+                                                CType(child, PackIcon).Foreground = Brushes.White
+                                            End If
+                                        Next
+                                    Else
+                                        btn.Foreground = Brushes.White
+                                    End If
+                                Catch
+                                End Try
+                            End Sub
 
-            ' Apply per-permission
-            If Not (Sales Or isAdmin) Then GrayOutButton(BtnSales)
+            ' Reset all first
+            UnGrayOut(BtnDashboard)
+            UnGrayOut(BtnSales)
+            UnGrayOut(BtnStocks)
+            UnGrayOut(BtnCRM)
+            UnGrayOut(BtnProjects)
+            UnGrayOut(BtnDataReports)
+            UnGrayOut(BtnMiscellaneous)
+            UnGrayOut(BtnHRM)
 
-            ' UPDATE: Allow Sales users to see the Stocks button clearly
-            If Not (Stock Or Sales Or isAdmin) Then GrayOutButton(BtnStocks)
+            ' Dashboard
+            If Not PermissionCache.Can("Dashboard") Then GrayOut(BtnDashboard)
 
-            If Not (Crm Or isAdmin) Then GrayOutButton(BtnCRM)
-            If Not (Project Or isAdmin) Then GrayOutButton(BtnProjects)
-            If Not (Accounts Or isAdmin) Then GrayOutButton(BtnAccounts)
-            If Not (Reports Or isAdmin) Then GrayOutButton(BtnDataReports)
-            If Not (Employees Or isAdmin) Then GrayOutButton(BtnHRM)
-            If Not (Miscellaneous Or isAdmin) Then GrayOutButton(BtnMiscellaneous)
-            If Not (Project Or isAdmin) Then GrayOutButton(BtnPromoCodes)
+            ' Sales
+            If Not PermissionCache.Can("Sales") Then GrayOut(BtnSales)
+
+            ' Stocks
+            If Not PermissionCache.CanAny("Stocks", "Sales") Then GrayOut(BtnStocks)
+
+            ' CRM
+            If Not PermissionCache.Can("CRM") Then GrayOut(BtnCRM)
+
+            ' Project
+            If Not PermissionCache.Can("Project") Then GrayOut(BtnProjects)
+
+            ' Data & Reports
+            If Not PermissionCache.Can("Data & Reports") Then GrayOut(BtnDataReports)
+
+            ' Miscellaneous
+            If Not PermissionCache.Can("Miscellaneous") Then GrayOut(BtnMiscellaneous)
+
+            ' HRM
+            If Not PermissionCache.Can("HRM") Then GrayOut(BtnHRM)
+
+            ' Software Updates
+            If Not PermissionCache.Can("Software Updates") Then
+                BtnSoftwareUpdates.Visibility = Visibility.Collapsed
+            Else
+                BtnSoftwareUpdates.Visibility = Visibility.Visible
+            End If
+
         End Sub
 
-        ''' <summary>
-        ''' Toggles the sidebar width and hides text when collapsed.
-        ''' </summary>
+        ' ---- Navigation Handlers ----
+
+        Private Sub OpenDashboard(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("dashboard", Me)
+        End Sub
+
+        Private Sub OpenSales(sender As Object, e As RoutedEventArgs)
+            If PermissionCache.Can("Sales") Then
+                Dim popupMenu As New PopUpMenuSales()
+                popupMenu.ShowPopup(Me, sender)
+            Else
+                MessageBox.Show("Access not permitted. Consult with admin.")
+            End If
+        End Sub
+
+        Private Sub OpenStocksPopup(sender As Object, e As RoutedEventArgs)
+            If PermissionCache.CanAny("Stocks", "Sales") Then
+                Dim popupMenu As New PopUpMenuStocks()
+                popupMenu.ShowPopup(Me, sender)
+            Else
+                MessageBox.Show("Access not permitted. Consult with admin.")
+            End If
+        End Sub
+
+        Private Sub OpenCRM(sender As Object, e As RoutedEventArgs)
+            If PermissionCache.Can("CRM") Then
+                Dim popupMenu As New PopUpMenuCRM()
+                popupMenu.ShowPopup(Me, sender)
+            Else
+                MessageBox.Show("Access not permitted. Consult with admin.")
+            End If
+        End Sub
+
+        Private Sub OpenProject(sender As Object, e As RoutedEventArgs)
+            If PermissionCache.Can("Project") Then
+                Dim popupMenu As New PopUpMenuProjects(
+                    PermissionCache.Can("Project"),
+                    PermissionCache.CurrentRole)
+                popupMenu.ShowPopup(Me, sender)
+            Else
+                MessageBox.Show("Access not permitted. Consult with admin.")
+            End If
+        End Sub
+
+        Private Sub OpenPromoCodes(sender As Object, e As RoutedEventArgs)
+            If PermissionCache.Can("Project") Then
+                Dim popupMenu As New PopUpMenuPromoCodes()
+                popupMenu.ShowPopup(Me, sender)
+            Else
+                MessageBox.Show("Access not permitted. Consult with admin.")
+            End If
+        End Sub
+
+        Private Sub OpenDataReports(sender As Object, e As RoutedEventArgs)
+            If PermissionCache.Can("Data & Reports") Then
+                Dim popupMenu As New PopUpMenuDataReports()
+                popupMenu.ShowPopup(Me, sender)
+            Else
+                MessageBox.Show("Access not permitted. Consult with admin.")
+            End If
+        End Sub
+
+        Private Sub OpenHRM(sender As Object, e As RoutedEventArgs)
+            If PermissionCache.Can("HRM") Then
+                Dim popupMenu As New PopUpMenuHRM()
+                popupMenu.ShowPopup(Me, sender)
+            Else
+                MessageBox.Show("Access not permitted. Consult with admin.")
+            End If
+        End Sub
+
+        Private Sub OpenAccounts(sender As Object, e As RoutedEventArgs)
+            If PermissionCache.Can("Dashboard") Then
+                Dim popupMenu As New PopUpMenuAccounts()
+                popupMenu.ShowPopup(Me, sender)
+            Else
+                MessageBox.Show("Access not permitted. Consult with admin.")
+            End If
+        End Sub
+
+        Private Sub OpenMiscellaneous(sender As Object, e As RoutedEventArgs)
+            If PermissionCache.Can("Miscellaneous") Then
+                Dim popupMenu As New PopUpMenuMiscelleneous()
+                popupMenu.ShowPopup(Me, sender)
+            Else
+                MessageBox.Show("Access not permitted. Consult with admin.")
+            End If
+        End Sub
+
+        ' ---- Logout ----
+
+        Private Sub Logout(sender As Object, e As RoutedEventArgs)
+            If _permissionTimer IsNot Nothing Then _permissionTimer.Stop()
+            PermissionCache.Clear()
+            EmployeeLoginHistoryController.AddLogOutHistory(CacheLogInHistoryID)
+            Dim mainWindow As New MainWindow()
+            Application.Current.MainWindow = mainWindow
+            mainWindow.Show()
+            Dim currentWindow As Window = Window.GetWindow(Me)
+            If currentWindow IsNot Nothing Then currentWindow.Close()
+        End Sub
+
+        ' ---- Auto Refresh Timer ----
+
+        Private Sub RefreshPermissions(sender As Object, e As EventArgs)
+            PermissionCache.LoadForRole(PermissionCache.CurrentRole)
+            ApplyPermissionStyles()
+        End Sub
+
+        ' ---- Sidebar Toggle ----
+
         Private Sub ToggleSidebar()
             Dim sidebarAnimation As New DoubleAnimation()
             Dim newSidebarWidth As Double
 
-            ' Get the parent window (Base.xaml)
             Dim baseWindow As Base = TryCast(Window.GetWindow(Me), Base)
-            If baseWindow Is Nothing Then Exit Sub ' Ensure the base window exists
+            If baseWindow Is Nothing Then Exit Sub
 
-            ' Expand or Collapse Logic
             If IsExpanded Then
-                newSidebarWidth = 80 ' Collapse Sidebar
+                newSidebarWidth = 80
                 SidebarContainer.HorizontalAlignment = HorizontalAlignment.Left
             Else
-                newSidebarWidth = 260 ' Expand Sidebar
+                newSidebarWidth = 260
                 SidebarContainer.HorizontalAlignment = HorizontalAlignment.Left
             End If
 
-            ' Sidebar Width Animation
             sidebarAnimation.To = newSidebarWidth
             sidebarAnimation.Duration = TimeSpan.FromSeconds(0.6)
-            sidebarAnimation.EasingFunction = New QuadraticEase() With {.EasingMode = EasingMode.EaseInOut}
+            sidebarAnimation.EasingFunction = New QuadraticEase() With {
+                .EasingMode = EasingMode.EaseInOut}
 
-            ' Apply Animation to Sidebar
             SidebarContainer.BeginAnimation(WidthProperty, sidebarAnimation)
 
-            ' Handle UI Visibility AFTER animation completes
-            AddHandler sidebarAnimation.Completed, Sub()
-                                                       If Not IsExpanded Then
-                                                           UserProfile.Visibility = Visibility.Collapsed
+            AddHandler sidebarAnimation.Completed,
+                Sub()
+                    If Not IsExpanded Then
+                        UserProfile.Visibility = Visibility.Collapsed
+                        For Each child As UIElement In SidebarMenu.Children
+                            If TypeOf child Is Button Then
+                                Dim btn As Button = CType(child, Button)
+                                If TypeOf btn.Content Is StackPanel AndAlso
+                                   CType(btn.Content, StackPanel).Children.Count > 1 Then
+                                    CType(btn.Content, StackPanel).Children(1).Visibility =
+                                        Visibility.Collapsed
+                                End If
+                            End If
+                        Next
+                        SidebarContainer.Style = CType(FindResource("CollapsedSidebarStyle"), Style)
+                    Else
+                        UserProfile.Visibility = Visibility.Visible
+                        For Each child As UIElement In SidebarMenu.Children
+                            If TypeOf child Is Button Then
+                                Dim btn As Button = CType(child, Button)
+                                If TypeOf btn.Content Is StackPanel AndAlso
+                                   CType(btn.Content, StackPanel).Children.Count > 1 Then
+                                    CType(btn.Content, StackPanel).Children(1).Visibility =
+                                        Visibility.Visible
+                                End If
+                            End If
+                        Next
+                        SidebarContainer.Style = CType(FindResource("ExpandedSidebarStyle"), Style)
+                    End If
+                End Sub
 
-                                                           For Each child As UIElement In SidebarMenu.Children
-                                                               If TypeOf child Is Button Then
-                                                                   Dim btn As Button = CType(child, Button)
-                                                                   If TypeOf btn.Content Is StackPanel AndAlso CType(btn.Content, StackPanel).Children.Count > 1 Then
-                                                                       CType(btn.Content, StackPanel).Children(1).Visibility = Visibility.Collapsed
-                                                                   End If
-                                                               End If
-                                                           Next
-
-                                                           SidebarContainer.Style = CType(FindResource("CollapsedSidebarStyle"), Style)
-
-                                                       Else
-                                                           UserProfile.Visibility = Visibility.Visible
-
-                                                           For Each child As UIElement In SidebarMenu.Children
-                                                               If TypeOf child Is Button Then
-                                                                   Dim btn As Button = CType(child, Button)
-                                                                   If TypeOf btn.Content Is StackPanel AndAlso CType(btn.Content, StackPanel).Children.Count > 1 Then
-                                                                       CType(btn.Content, StackPanel).Children(1).Visibility = Visibility.Visible
-                                                                   End If
-                                                               End If
-                                                           Next
-
-                                                           SidebarContainer.Style = CType(FindResource("ExpandedSidebarStyle"), Style)
-                                                       End If
-                                                   End Sub
-
-            ' Toggle state
             IsExpanded = Not IsExpanded
-
             RaiseEvent SidebarToggled(IsExpanded)
         End Sub
 
-        ' Handles the Software Updates button click event
-        Private Async Sub BtnSoftwareUpdates_Click(sender As Object, e As RoutedEventArgs)
-            Await SoftwareUpdateHelper.CheckForUpdate()
-        End Sub
-
-        ' Visibility of the Software Updates button based on update availability
-        Private Async Sub CheckUpdateVisibility()
-            Dim isUpdateAvailable = Await SoftwareUpdateHelper.IsUpdateAvailable()
-            BtnSoftwareUpdates.Visibility = If(isUpdateAvailable, Visibility.Visible, Visibility.Collapsed)
-        End Sub
-
-        ''' <summary>
-        ''' Handles sidebar logo button click to toggle sidebar.
-        ''' </summary>
         Private Sub SidebarLogoButton_Click(sender As Object, e As RoutedEventArgs)
             ToggleSidebar()
             RaiseEvent LogoButtonClick(Me, e)
         End Sub
 
-        ''' <summary>
-        ''' Opens the Dashboard.
-        ''' </summary>
-        Private Sub OpenDashboard(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("dashboard", Me)
+        Private Async Sub BtnSoftwareUpdates_Click(sender As Object, e As RoutedEventArgs)
+            Await SoftwareUpdateHelper.CheckForUpdate()
         End Sub
 
-        ''' <summary>
-        ''' Opens the Sales popup menu.
-        ''' </summary>
-        Private Sub OpenSales(sender As Object, e As RoutedEventArgs)
-            If Sales = True Or IsPrivileged Then
-                Dim popupMenu As New PopUpMenuSales()
-                Dim button As Button = CType(sender, Button)
-                Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
-                popupMenu.ShowPopup(Me, sender)
-            Else
-                MessageBox.Show("Access not permitted. Consult with admin")
-            End If
+        Private Async Sub CheckUpdateVisibility()
+            Dim isUpdateAvailable = Await SoftwareUpdateHelper.IsUpdateAvailable()
+            BtnSoftwareUpdates.Visibility = If(isUpdateAvailable,
+                                               Visibility.Visible,
+                                               Visibility.Collapsed)
         End Sub
 
-        ''' <summary>
-        ''' Opens the Stocks popup menu.
-        ''' </summary>
-        Private Sub OpenStocksPopup(sender As Object, e As RoutedEventArgs)
-            ' UPDATE: Added "Or Sales = True" to grant access
-            If Stock = True Or Sales = True Or IsPrivileged Then
-                Dim popupMenu As New PopUpMenuStocks()
-                Dim button As Button = CType(sender, Button)
-                Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
-                popupMenu.ShowPopup(Me, sender)
-            Else
-                MessageBox.Show("Access not permitted. Consult with admin")
-            End If
-        End Sub
-
-        ''' <summary>
-        ''' Opens the CRM popup menu.
-        ''' </summary>
-        Private Sub OpenCRM(sender As Object, e As RoutedEventArgs)
-            If Crm = True Or IsPrivileged Then
-                Dim popupMenu As New PopUpMenuCRM()
-                Dim button As Button = CType(sender, Button)
-                Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
-                popupMenu.ShowPopup(Me, sender)
-            Else
-                MessageBox.Show("Access not permitted. Consult with admin")
-            End If
-        End Sub
-
-        ''' <summary>
-        ''' Opens the Projects popup menu.
-        ''' </summary>
-        Private Sub OpenProject(sender As Object, e As RoutedEventArgs)
-            If Project = True Or AssignProject = True Or IsPrivileged Then
-                Dim popupMenu As New PopUpMenuProjects(AssignProject, RoleName)
-                Dim button As Button = CType(sender, Button)
-                Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
-                popupMenu.ShowPopup(Me, sender)
-            Else
-                MessageBox.Show("Access not permitted. Consult with admin")
-            End If
-        End Sub
-
-        ''' <summary>
-        ''' Opens the Promo Codes popup menu.
-        ''' </summary>
-        Private Sub OpenPromoCodes(sender As Object, e As RoutedEventArgs)
-            If Project = True Or IsPrivileged Then
-                Dim popupMenu As New PopUpMenuPromoCodes()
-                Dim button As Button = CType(sender, Button)
-                Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
-                popupMenu.ShowPopup(Me, sender)
-            Else
-                MessageBox.Show("Access not permitted. Consult with admin")
-            End If
-        End Sub
-
-        ''' <summary>
-        ''' Opens the Data Reports popup menu.
-        ''' </summary>
-        Private Sub OpenDataReports(sender As Object, e As RoutedEventArgs)
-            If Reports = True Or IsPrivileged Then
-                Dim popupMenu As New PopUpMenuDataReports()
-                Dim button As Button = CType(sender, Button)
-                Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
-                popupMenu.ShowPopup(Me, sender)
-            Else
-                MessageBox.Show("Access not permitted. Consult with admin")
-            End If
-        End Sub
-
-        ''' <summary>
-        ''' Opens the HRM popup menu.
-        ''' </summary>
-        Private Sub OpenHRM(sender As Object, e As RoutedEventArgs)
-            If Employees = True Or IsPrivileged Then
-                Dim popupMenu As New PopUpMenuHRM()
-                Dim button As Button = CType(sender, Button)
-                Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
-                popupMenu.ShowPopup(Me, sender)
-            Else
-                MessageBox.Show("Access not permitted. Consult with admin")
-            End If
-        End Sub
-
-        ''' <summary>
-        ''' Opens the Accounts popup menu.
-        ''' </summary>
-        Private Sub OpenAccounts(sender As Object, e As RoutedEventArgs)
-            If Accounts = True Or IsPrivileged Then
-                Dim popupMenu As New PopUpMenuAccounts()
-                Dim button As Button = CType(sender, Button)
-                Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
-                popupMenu.ShowPopup(Me, sender)
-            Else
-                MessageBox.Show("Access not permitted. Consult with admin")
-            End If
-        End Sub
-
-        ''' <summary>
-        ''' Opens the Miscellaneous popup menu.
-        ''' </summary>
-        Private Sub OpenMiscellaneous(sender As Object, e As RoutedEventArgs)
-            If Miscellaneous = True Or IsPrivileged Then
-                Dim popupMenu As New PopUpMenuMiscelleneous()
-                Dim button As Button = CType(sender, Button)
-                Dim buttonPosition As Point = button.TransformToAncestor(Me).Transform(New Point(0, 0))
-                popupMenu.ShowPopup(Me, sender)
-            Else
-                MessageBox.Show("Access not permitted. Consult with admin")
-            End If
-        End Sub
-
-        ''' <summary>
-        ''' Logs out and navigates back to the MainWindow.
-        ''' </summary>
-        Private Sub Logout(sender As Object, e As RoutedEventArgs)
-            EmployeeLoginHistoryController.AddLogOutHistory(CacheLogInHistoryID)
-            Dim mainWindow As New MainWindow()
-            Application.Current.MainWindow = mainWindow
-            mainWindow.Show()
-
-            Dim currentWindow As Window = Window.GetWindow(Me)
-            If currentWindow IsNot Nothing Then currentWindow.Close()
-        End Sub
-
-        ' Reflects the User who logged in
         Private Sub Sidebar_Loaded(sender As Object, e As RoutedEventArgs)
             UserName.Text = CacheOnLoggedInName
             UserEmail.Text = CacheOnLoggedInEmail
+
+            ' Start auto-refresh timer — checks DB every 10 seconds
+            _permissionTimer = New System.Windows.Threading.DispatcherTimer()
+            _permissionTimer.Interval = TimeSpan.FromSeconds(10)
+            AddHandler _permissionTimer.Tick, AddressOf RefreshPermissions
+            _permissionTimer.Start()
         End Sub
+
     End Class
 End Namespace
+
