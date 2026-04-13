@@ -163,8 +163,9 @@ Namespace DPC.Data.Controllers
         ''' Inserts a new Billing Statement into the walkinbilling table
         Public Shared Function InsertBillingStatement(bm As BillingModel) As Boolean
             Try
-                Dim query As String = "INSERT INTO walkinbilling (billingNumber, billingDate, DRNo, clientID, companyRep, salesRep, preparedBy, approvedBy, paymentTerms, orderItems, warehouseID, base64img, taxProperty, discountProperty, deliveryFee, installationFee, totalTax, totalDiscount, totalAmount, billingNote, bankDetails, accName, accNo, remarks, dateAdded) " &
-                                     "VALUES (@billingNumber, @billingDate, @DRNo, @clientID, @companyRep, @salesRep, @preparedBy, @approvedBy, @paymentTerms, @orderItems, @warehouseID, @base64img, @taxProperty, @discountProperty, @deliveryFee, @installationFee, @totalTax, @totalDiscount, @totalAmount, @billingNote, @bankDetails, @accName, @accNo, @remarks, NOW())"
+                ' Updated query to include CreatedBy field
+                Dim query As String = "INSERT INTO walkinbilling (billingNumber, billingDate, DRNo, clientID, companyRep, salesRep, preparedBy, approvedBy, paymentTerms, orderItems, warehouseID, base64img, taxProperty, discountProperty, deliveryFee, installationFee, totalTax, totalDiscount, totalAmount, billingNote, bankDetails, accName, accNo, remarks, CreatedBy, dateAdded) " &
+                                     "VALUES (@billingNumber, @billingDate, @DRNo, @clientID, @companyRep, @salesRep, @preparedBy, @approvedBy, @paymentTerms, @orderItems, @warehouseID, @base64img, @taxProperty, @discountProperty, @deliveryFee, @installationFee, @totalTax, @totalDiscount, @totalAmount, @billingNote, @bankDetails, @accName, @accNo, @remarks, @CreatedBy, NOW())"
 
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
@@ -193,12 +194,18 @@ Namespace DPC.Data.Controllers
                         cmd.Parameters.AddWithValue("@accName", bm.AccName)
                         cmd.Parameters.AddWithValue("@accNo", bm.AccNo)
                         cmd.Parameters.AddWithValue("@remarks", bm.Remarks)
+                        ' Add the current user's ID as the creator
+                        cmd.Parameters.AddWithValue("@CreatedBy", CacheOnEmployeeID)
 
-                        Return cmd.ExecuteNonQuery() > 0
+                        Dim result As Boolean = cmd.ExecuteNonQuery() > 0
+
+                        If result Then
+                            MessageBox.Show($"Successfully Added the Billing Statement With Number {bm.BillingNumber}")
+                        End If
+
+                        Return result
                     End Using
                 End Using
-
-                MessageBox.Show($"Successfully Added the Billing Statement With Number {bm.BillingNumber}")
             Catch ex As Exception
                 MessageBox.Show("Failed to save billing statement: " & ex.Message)
                 Return False
@@ -208,6 +215,7 @@ Namespace DPC.Data.Controllers
         Public Shared Function UpdateBillingStatement(bm As BillingModel) As Boolean
             Try
                 ' SQL Query - Updates all fields where the billingNumber matches
+                ' NOTE: CreatedBy is NOT updated - it should remain the original creator
                 Dim query As String = "UPDATE walkinbilling SET " &
                              "billingDate = @billingDate, " &
                              "DRNo = @DRNo, " &
@@ -256,8 +264,8 @@ Namespace DPC.Data.Controllers
                                 cmd.Parameters.AddWithValue("@base64img", If(String.IsNullOrEmpty(bm.Base64img), "", bm.Base64img))
                                 cmd.Parameters.AddWithValue("@taxProperty", bm.TaxProperty)
                                 cmd.Parameters.AddWithValue("@discountProperty", bm.DiscountProperty)
-                                cmd.Parameters.AddWithValue("@DeliveryFee", bm.DeliveryFee)
-                                cmd.Parameters.AddWithValue("@InstallationFee", bm.InstallationFee)
+                                cmd.Parameters.AddWithValue("@deliveryFee", bm.DeliveryFee)
+                                cmd.Parameters.AddWithValue("@installationFee", bm.InstallationFee)
                                 cmd.Parameters.AddWithValue("@totalTax", bm.TotalTax)
                                 cmd.Parameters.AddWithValue("@totalDiscount", bm.TotalDiscount)
                                 cmd.Parameters.AddWithValue("@totalAmount", bm.TotalAmount)
@@ -266,18 +274,19 @@ Namespace DPC.Data.Controllers
                                 cmd.Parameters.AddWithValue("@accName", If(String.IsNullOrEmpty(bm.AccName), "", bm.AccName))
                                 cmd.Parameters.AddWithValue("@accNo", If(String.IsNullOrEmpty(bm.AccNo), "", bm.AccNo))
                                 cmd.Parameters.AddWithValue("@remarks", If(String.IsNullOrEmpty(bm.Remarks), "", bm.Remarks))
+                                ' NOTE: CreatedBy is intentionally NOT included - it should never change
 
                                 Dim rowsAffected As Integer = cmd.ExecuteNonQuery()
 
                                 If rowsAffected > 0 Then
                                     transaction.Commit()
+                                    MessageBox.Show($"Successfully Updated the Billing Statement With Number {bm.BillingNumber}")
                                     Return True
                                 Else
                                     transaction.Rollback()
                                     Return False
                                 End If
                             End Using
-                            MessageBox.Show($"Successfully Updated the Billing Statement With Number {bm.BillingNumber}")
                         Catch ex As Exception
                             transaction.Rollback()
                             Throw ex

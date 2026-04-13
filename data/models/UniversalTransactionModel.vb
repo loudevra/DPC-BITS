@@ -28,6 +28,7 @@ Namespace DPC.Data.Models
         Public Property SalesRep As String = ""
         Public Property PreparedBy As String = ""
         Public Property ApprovedBy As String = ""
+        Public Property CreatedBy As String = ""
 
         ' --- 4. WAREHOUSE & LOGISTICS ---
         Public Property WarehouseName As String = ""
