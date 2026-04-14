@@ -6,179 +6,241 @@ Imports System.Windows.Data
 Imports System.IO
 Imports Microsoft.Win32
 Imports System.Text
+Imports MySql.Data.MySqlClient
 
 Namespace DPC.Views.HRM.Employees.Attendance
     Public Class AttendanceEmployee
         Inherits UserControl
 
-        ' Data storage that automatically updates the UI
         Private AttendanceList As New ObservableCollection(Of AttendanceRecord)()
-        Private currentId As Integer = 1
 
         Public Sub New()
             InitializeComponent()
-            ' Bind the DataGrid to our collection
             dataGrid.ItemsSource = AttendanceList
+            LoadAttendanceFromDatabase()
         End Sub
 
-        ' 1. Open Add Popup
+        Private Sub LoadAttendanceFromDatabase()
+            Try
+                AttendanceList.Clear()
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Using cmd As New MySqlCommand(
+                        "SELECT ID, EmployeeName, AttendanceDate, TimeIn, TimeOut, Note
+                           FROM attendance
+                          ORDER BY ID", conn)
+                        Using reader = cmd.ExecuteReader()
+                            While reader.Read()
+                                AttendanceList.Add(New AttendanceRecord With {
+                                    .ID = Convert.ToInt32(reader("ID")),
+                                    .EmployeeName = reader("EmployeeName").ToString(),
+                                    .AttendanceDate = reader("AttendanceDate").ToString(),
+                                    .TimeIn = reader("TimeIn").ToString(),
+                                    .TimeOut = reader("TimeOut").ToString(),
+                                    .Note = If(IsDBNull(reader("Note")), "", reader("Note").ToString())
+                                })
+                            End While
+                        End Using
+                    End Using
+                End Using
+            Catch ex As Exception
+                MessageBox.Show("Error loading attendance: " & ex.Message, "Database Error",
+                                MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+        End Sub
+
         Private Sub AddAttendanceControl(sender As Object, e As RoutedEventArgs)
             Dim addAttendanceControl As New DPC.Components.Forms.AddAttendance()
-
-            ' Subscribe to the custom Add event from the popup
             AddHandler addAttendanceControl.OnAttendanceAdded, AddressOf HandleNewAttendance
-
             Dim parentWindow = Window.GetWindow(Me)
             PopupHelper.OpenPopupWithControl(sender, addAttendanceControl, "windowcenter", True, -50, 0, parentWindow)
         End Sub
 
-        ' 2. Method triggered when the Add popup fires a success event
-        Private Sub HandleNewAttendance(employeeName As String, attendanceDate As String, timeIn As String, timeOut As String, note As String)
-            Dim newRecord As New AttendanceRecord With {
-                .ID = currentId,
-                .EmployeeName = employeeName,
-                .AttendanceDate = attendanceDate,
-                .TimeIn = timeIn,
-                .TimeOut = timeOut,
-                .Note = note
-            }
+        Private Sub HandleNewAttendance(employeeName As String, attendanceDate As String,
+                                        timeIn As String, timeOut As String, note As String)
+            Try
+                Dim newId As Integer
 
-            AttendanceList.Add(newRecord)
-            currentId += 1
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Using cmd As New MySqlCommand(
+                        "INSERT INTO attendance (EmployeeName, AttendanceDate, TimeIn, TimeOut, Note)
+                         VALUES (@emp, @date, @tin, @tout, @note);
+                         SELECT LAST_INSERT_ID();", conn)
+
+                        cmd.Parameters.AddWithValue("@emp", employeeName)
+                        cmd.Parameters.AddWithValue("@date", attendanceDate)
+                        cmd.Parameters.AddWithValue("@tin", timeIn)
+                        cmd.Parameters.AddWithValue("@tout", timeOut)
+                        cmd.Parameters.AddWithValue("@note", note)
+                        newId = Convert.ToInt32(cmd.ExecuteScalar())
+                    End Using
+                End Using
+
+                AttendanceList.Add(New AttendanceRecord With {
+                    .ID = newId,
+                    .EmployeeName = employeeName,
+                    .AttendanceDate = attendanceDate,
+                    .TimeIn = timeIn,
+                    .TimeOut = timeOut,
+                    .Note = note
+                })
+
+            Catch ex As Exception
+                MessageBox.Show("Error saving attendance: " & ex.Message, "Database Error",
+                                MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
         End Sub
 
-        ' 3. Triggered every time the user types a letter in the search box
         Private Sub txtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
             If dataGrid Is Nothing OrElse dataGrid.ItemsSource Is Nothing Then Return
-
             Dim view As ICollectionView = CollectionViewSource.GetDefaultView(dataGrid.ItemsSource)
-
             If view IsNot Nothing Then
                 view.Filter = AddressOf FilterAttendance
                 view.Refresh()
             End If
         End Sub
 
-        ' 4. Checks each row to see if it matches the search text
         Private Function FilterAttendance(item As Object) As Boolean
             Dim record As AttendanceRecord = TryCast(item, AttendanceRecord)
             If record Is Nothing Then Return False
-
             Dim searchText As String = txtSearch.Text.ToLower()
-
             If String.IsNullOrWhiteSpace(searchText) Then Return True
-
             Return (record.EmployeeName IsNot Nothing AndAlso record.EmployeeName.ToLower().Contains(searchText)) OrElse
                    (record.AttendanceDate IsNot Nothing AndAlso record.AttendanceDate.ToLower().Contains(searchText)) OrElse
                    (record.Note IsNot Nothing AndAlso record.Note.ToLower().Contains(searchText))
         End Function
 
-        ' 5. Export to Excel functionality
         Private Sub BtnExportExcel_Click(sender As Object, e As RoutedEventArgs)
             If dataGrid.Items.Count = 0 Then
-                MessageBox.Show("There is no data to export.", "Export Empty", MessageBoxButton.OK, MessageBoxImage.Information)
+                MessageBox.Show("There is no data to export.", "Export Empty",
+                                MessageBoxButton.OK, MessageBoxImage.Information)
                 Return
             End If
 
-            Dim saveFileDialog As New SaveFileDialog()
-            saveFileDialog.Filter = "Excel CSV File (*.csv)|*.csv"
-            saveFileDialog.FileName = "EmployeeAttendance_" & DateTime.Now.ToString("yyyyMMdd") & ".csv"
+            Dim dlg As New SaveFileDialog()
+            dlg.Filter = "Excel CSV File (*.csv)|*.csv"
+            dlg.FileName = "EmployeeAttendance_" & DateTime.Now.ToString("yyyyMMdd") & ".csv"
 
-            If saveFileDialog.ShowDialog() = True Then
+            If dlg.ShowDialog() = True Then
                 Try
-                    Dim csvContent As New StringBuilder()
-                    csvContent.AppendLine("ID,Employee Name,Date,Time In,Time Out,Note")
-
+                    Dim csv As New StringBuilder()
+                    csv.AppendLine("ID,Employee Name,Date,Time In,Time Out,Note")
                     For Each item In dataGrid.Items
-                        Dim record As AttendanceRecord = TryCast(item, AttendanceRecord)
-                        If record IsNot Nothing Then
-                            Dim noteSafe As String = """" & (If(record.Note, "")).Replace("""", """""") & """"
-                            Dim row As String = $"{record.ID},{record.EmployeeName},{record.AttendanceDate},{record.TimeIn},{record.TimeOut},{noteSafe}"
-                            csvContent.AppendLine(row)
+                        Dim r As AttendanceRecord = TryCast(item, AttendanceRecord)
+                        If r IsNot Nothing Then
+                            Dim noteSafe As String = """" & (If(r.Note, "")).Replace("""", """""") & """"
+                            csv.AppendLine($"{r.ID},{r.EmployeeName},{r.AttendanceDate},{r.TimeIn},{r.TimeOut},{noteSafe}")
                         End If
                     Next
-
-                    File.WriteAllText(saveFileDialog.FileName, csvContent.ToString())
-                    MessageBox.Show("Data successfully exported to Excel!", "Export Success", MessageBoxButton.OK, MessageBoxImage.Information)
-
+                    File.WriteAllText(dlg.FileName, csv.ToString())
+                    MessageBox.Show("Data successfully exported!", "Export Success",
+                                   MessageBoxButton.OK, MessageBoxImage.Information)
                 Catch ex As Exception
-                    MessageBox.Show("Error exporting data: " & ex.Message, "Export Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    MessageBox.Show("Error exporting: " & ex.Message, "Export Error",
+                                   MessageBoxButton.OK, MessageBoxImage.Error)
                 End Try
             End If
         End Sub
 
-        ' 6. DELETE Functionality
         Private Sub BtnDelete_Click(sender As Object, e As RoutedEventArgs)
             Dim btn As Button = TryCast(sender, Button)
-            If btn IsNot Nothing Then
-                Dim record As AttendanceRecord = TryCast(btn.DataContext, AttendanceRecord)
+            If btn Is Nothing Then Return
 
-                If record IsNot Nothing Then
-                    Dim result = MessageBox.Show($"Are you sure you want to delete the attendance record for {record.EmployeeName}?",
-                                                 "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning)
+            Dim record As AttendanceRecord = TryCast(btn.DataContext, AttendanceRecord)
+            If record Is Nothing Then Return
 
-                    If result = MessageBoxResult.Yes Then
-                        AttendanceList.Remove(record)
-                    End If
-                End If
-            End If
+            Dim result = MessageBox.Show(
+                $"Are you sure you want to delete the attendance record for {record.EmployeeName}?",
+                "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning)
+
+            If result <> MessageBoxResult.Yes Then Return
+
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Using cmd As New MySqlCommand(
+                        "DELETE FROM attendance WHERE ID = @id", conn)
+                        cmd.Parameters.AddWithValue("@id", record.ID)
+                        cmd.ExecuteNonQuery()
+                    End Using
+                End Using
+                AttendanceList.Remove(record)
+            Catch ex As Exception
+                MessageBox.Show("Error deleting record: " & ex.Message, "Database Error",
+                                MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
         End Sub
 
-        ' 7. EDIT Functionality (With Calendar Sync Fix)
         Private Sub BtnEdit_Click(sender As Object, e As RoutedEventArgs)
             Dim btn As Button = TryCast(sender, Button)
-            If btn IsNot Nothing Then
-                Dim record As AttendanceRecord = TryCast(btn.DataContext, AttendanceRecord)
+            If btn Is Nothing Then Return
 
-                If record IsNot Nothing Then
-                    Dim editForm As New DPC.Components.Forms.AddAttendance()
+            Dim record As AttendanceRecord = TryCast(btn.DataContext, AttendanceRecord)
+            If record Is Nothing Then Return
 
-                    ' --- CHANGE UI TO LOOK LIKE AN EDIT FORM ---
-                    editForm.TxtTitle.Text = "Edit Attendance"
-                    editForm.TxtBtnAdd.Text = "Update"
-                    editForm.IconTitle.Kind = MaterialDesignThemes.Wpf.PackIconKind.SquareEditOutline
+            Dim editForm As New DPC.Components.Forms.AddAttendance()
+            editForm.TxtTitle.Text = "Edit Attendance"
+            editForm.TxtBtnAdd.Text = "Update"
+            editForm.IconTitle.Kind = MaterialDesignThemes.Wpf.PackIconKind.SquareEditOutline
+            editForm.TxtEmployee.Text = record.EmployeeName
+            editForm.TxtNote.Text = record.Note
+            editForm.TxtDateDisplay.Text = record.AttendanceDate
+            editForm.TpStartTime.Text = record.TimeIn
+            editForm.TpEndTime.Text = record.TimeOut
 
-                    ' Set text boxes
-                    editForm.TxtEmployee.Text = record.EmployeeName
-                    editForm.TxtNote.Text = record.Note
-                    editForm.TxtDateDisplay.Text = record.AttendanceDate
-                    editForm.TpStartTime.Text = record.TimeIn
-                    editForm.TpEndTime.Text = record.TimeOut
-
-                    ' --> NEW FIX: Sync the hidden calendar so it knows we are editing an older date!
-                    Dim parsedDate As DateTime
-                    If DateTime.TryParse(record.AttendanceDate, parsedDate) Then
-                        editForm.SingleDatePicker.SelectedDate = parsedDate
-                    End If
-
-                    ' Intercept the Add event to update existing record
-                    AddHandler editForm.OnAttendanceAdded, Sub(empName, attDate, tIn, tOut, noteVal)
-                                                               Dim updatedRecord As New AttendanceRecord With {
-                                                                   .ID = record.ID,
-                                                                   .EmployeeName = empName,
-                                                                   .AttendanceDate = attDate,
-                                                                   .TimeIn = tIn,
-                                                                   .TimeOut = tOut,
-                                                                   .Note = noteVal
-                                                               }
-
-                                                               Dim index = AttendanceList.IndexOf(record)
-                                                               If index >= 0 Then
-                                                                   AttendanceList(index) = updatedRecord
-                                                               End If
-                                                           End Sub
-
-                    Dim parentWindow = Window.GetWindow(Me)
-                    PopupHelper.OpenPopupWithControl(sender, editForm, "windowcenter", True, -50, 0, parentWindow)
-                End If
+            Dim parsedDate As DateTime
+            If DateTime.TryParse(record.AttendanceDate, parsedDate) Then
+                editForm.SingleDatePicker.SelectedDate = parsedDate
             End If
-        End Sub
 
+            AddHandler editForm.OnAttendanceAdded,
+                Sub(empName, attDate, tIn, tOut, noteVal)
+                    Try
+                        Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                            conn.Open()
+                            Using cmd As New MySqlCommand(
+                                "UPDATE attendance
+                                    SET EmployeeName   = @emp,
+                                        AttendanceDate = @date,
+                                        TimeIn         = @tin,
+                                        TimeOut        = @tout,
+                                        Note           = @note
+                                  WHERE ID = @id", conn)
+                                cmd.Parameters.AddWithValue("@emp", empName)
+                                cmd.Parameters.AddWithValue("@date", attDate)
+                                cmd.Parameters.AddWithValue("@tin", tIn)
+                                cmd.Parameters.AddWithValue("@tout", tOut)
+                                cmd.Parameters.AddWithValue("@note", noteVal)
+                                cmd.Parameters.AddWithValue("@id", record.ID)
+                                cmd.ExecuteNonQuery()
+                            End Using
+                        End Using
+
+                        Dim index = AttendanceList.IndexOf(record)
+                        If index >= 0 Then
+                            AttendanceList(index) = New AttendanceRecord With {
+                                .ID = record.ID,
+                                .EmployeeName = empName,
+                                .AttendanceDate = attDate,
+                                .TimeIn = tIn,
+                                .TimeOut = tOut,
+                                .Note = noteVal
+                            }
+                        End If
+
+                    Catch ex As Exception
+                        MessageBox.Show("Error updating record: " & ex.Message, "Database Error",
+                                        MessageBoxButton.OK, MessageBoxImage.Error)
+                    End Try
+                End Sub
+
+            Dim parentWindow = Window.GetWindow(Me)
+            PopupHelper.OpenPopupWithControl(sender, editForm, "windowcenter", True, -50, 0, parentWindow)
+        End Sub
 
     End Class
 
-
-    ' Our Data Model mapping to the table columns
     Public Class AttendanceRecord
         Public Property ID As Integer
         Public Property EmployeeName As String
