@@ -1,22 +1,21 @@
 ﻿Imports System.Collections.ObjectModel
 Imports System.Windows
 Imports System.Windows.Controls
-Imports System.ComponentModel
-Imports System.Windows.Data
 Imports System.IO
 Imports Microsoft.Win32
 Imports System.Text
 Imports MySql.Data.MySqlClient
+Imports System.Linq
 
 Namespace DPC.Views.HRM.Employees.Attendance
     Public Class AttendanceEmployee
         Inherits UserControl
 
         Private AttendanceList As New ObservableCollection(Of AttendanceRecord)()
+        Private _pageSize As Integer = 10
 
         Public Sub New()
             InitializeComponent()
-            dataGrid.ItemsSource = AttendanceList
             LoadAttendanceFromDatabase()
         End Sub
 
@@ -43,10 +42,37 @@ Namespace DPC.Views.HRM.Employees.Attendance
                         End Using
                     End Using
                 End Using
+                RefreshDisplay()
             Catch ex As Exception
                 MessageBox.Show("Error loading attendance: " & ex.Message, "Database Error",
                                 MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
+        End Sub
+
+        Private Sub RefreshDisplay()
+            Dim searchText As String = If(txtSearch?.Text, "").ToLower()
+
+            Dim filtered = AttendanceList.Where(Function(r)
+                                                    If String.IsNullOrWhiteSpace(searchText) Then Return True
+                                                    Return (r.EmployeeName?.ToLower().Contains(searchText) = True) OrElse
+                                                           (r.AttendanceDate?.ToLower().Contains(searchText) = True) OrElse
+                                                           (r.Note?.ToLower().Contains(searchText) = True)
+                                                End Function).Take(_pageSize).ToList()
+
+            dataGrid.ItemsSource = filtered
+        End Sub
+
+        Private Sub CmbShowCount_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+            If Not IsLoaded Then Return   ' ← add this guard
+            Dim selected = TryCast(CmbShowCount.SelectedItem, ComboBoxItem)
+            If selected IsNot Nothing Then
+                _pageSize = Convert.ToInt32(selected.Content)
+                RefreshDisplay()
+            End If
+        End Sub
+
+        Private Sub txtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
+            RefreshDisplay()
         End Sub
 
         Private Sub AddAttendanceControl(sender As Object, e As RoutedEventArgs)
@@ -60,14 +86,12 @@ Namespace DPC.Views.HRM.Employees.Attendance
                                         timeIn As String, timeOut As String, note As String)
             Try
                 Dim newId As Integer
-
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
                     Using cmd As New MySqlCommand(
                         "INSERT INTO attendance (EmployeeName, AttendanceDate, TimeIn, TimeOut, Note)
                          VALUES (@emp, @date, @tin, @tout, @note);
                          SELECT LAST_INSERT_ID();", conn)
-
                         cmd.Parameters.AddWithValue("@emp", employeeName)
                         cmd.Parameters.AddWithValue("@date", attendanceDate)
                         cmd.Parameters.AddWithValue("@tin", timeIn)
@@ -85,6 +109,7 @@ Namespace DPC.Views.HRM.Employees.Attendance
                     .TimeOut = timeOut,
                     .Note = note
                 })
+                RefreshDisplay()
 
             Catch ex As Exception
                 MessageBox.Show("Error saving attendance: " & ex.Message, "Database Error",
@@ -92,27 +117,8 @@ Namespace DPC.Views.HRM.Employees.Attendance
             End Try
         End Sub
 
-        Private Sub txtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
-            If dataGrid Is Nothing OrElse dataGrid.ItemsSource Is Nothing Then Return
-            Dim view As ICollectionView = CollectionViewSource.GetDefaultView(dataGrid.ItemsSource)
-            If view IsNot Nothing Then
-                view.Filter = AddressOf FilterAttendance
-                view.Refresh()
-            End If
-        End Sub
-
-        Private Function FilterAttendance(item As Object) As Boolean
-            Dim record As AttendanceRecord = TryCast(item, AttendanceRecord)
-            If record Is Nothing Then Return False
-            Dim searchText As String = txtSearch.Text.ToLower()
-            If String.IsNullOrWhiteSpace(searchText) Then Return True
-            Return (record.EmployeeName IsNot Nothing AndAlso record.EmployeeName.ToLower().Contains(searchText)) OrElse
-                   (record.AttendanceDate IsNot Nothing AndAlso record.AttendanceDate.ToLower().Contains(searchText)) OrElse
-                   (record.Note IsNot Nothing AndAlso record.Note.ToLower().Contains(searchText))
-        End Function
-
         Private Sub BtnExportExcel_Click(sender As Object, e As RoutedEventArgs)
-            If dataGrid.Items.Count = 0 Then
+            If AttendanceList.Count = 0 Then
                 MessageBox.Show("There is no data to export.", "Export Empty",
                                 MessageBoxButton.OK, MessageBoxImage.Information)
                 Return
@@ -126,12 +132,9 @@ Namespace DPC.Views.HRM.Employees.Attendance
                 Try
                     Dim csv As New StringBuilder()
                     csv.AppendLine("ID,Employee Name,Date,Time In,Time Out,Note")
-                    For Each item In dataGrid.Items
-                        Dim r As AttendanceRecord = TryCast(item, AttendanceRecord)
-                        If r IsNot Nothing Then
-                            Dim noteSafe As String = """" & (If(r.Note, "")).Replace("""", """""") & """"
-                            csv.AppendLine($"{r.ID},{r.EmployeeName},{r.AttendanceDate},{r.TimeIn},{r.TimeOut},{noteSafe}")
-                        End If
+                    For Each r In AttendanceList
+                        Dim noteSafe As String = """" & (If(r.Note, "")).Replace("""", """""") & """"
+                        csv.AppendLine($"{r.ID},{r.EmployeeName},{r.AttendanceDate},{r.TimeIn},{r.TimeOut},{noteSafe}")
                     Next
                     File.WriteAllText(dlg.FileName, csv.ToString())
                     MessageBox.Show("Data successfully exported!", "Export Success",
@@ -153,19 +156,18 @@ Namespace DPC.Views.HRM.Employees.Attendance
             Dim result = MessageBox.Show(
                 $"Are you sure you want to delete the attendance record for {record.EmployeeName}?",
                 "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Warning)
-
             If result <> MessageBoxResult.Yes Then Return
 
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
-                    Using cmd As New MySqlCommand(
-                        "DELETE FROM attendance WHERE ID = @id", conn)
+                    Using cmd As New MySqlCommand("DELETE FROM attendance WHERE ID = @id", conn)
                         cmd.Parameters.AddWithValue("@id", record.ID)
                         cmd.ExecuteNonQuery()
                     End Using
                 End Using
                 AttendanceList.Remove(record)
+                RefreshDisplay()
             Catch ex As Exception
                 MessageBox.Show("Error deleting record: " & ex.Message, "Database Error",
                                 MessageBoxButton.OK, MessageBoxImage.Error)
@@ -228,6 +230,7 @@ Namespace DPC.Views.HRM.Employees.Attendance
                                 .Note = noteVal
                             }
                         End If
+                        RefreshDisplay()
 
                     Catch ex As Exception
                         MessageBox.Show("Error updating record: " & ex.Message, "Database Error",

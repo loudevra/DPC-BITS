@@ -168,7 +168,7 @@
     </UserControl.Resources>
 
     <Grid>
-        <Grid Margin="20">
+            <Grid Margin="20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -209,13 +209,15 @@
                             <materialDesign:PackIcon Kind="MicrosoftExcel" Width="25" Height="25"/>
                         </Button>
                         <TextBlock Text="Show" FontSize="14" Margin="10,0,5,0" Height="18" FontWeight="Regular" FontFamily="Lexend" Foreground="#474747" VerticalAlignment="Center" />
-                        <ComboBox Width="75" Style="{StaticResource RoundedComboBoxStyle}" Height="29">
-                            <ComboBoxItem Content="10" IsSelected="True"/>
-                            <ComboBoxItem Content="25"/>
-                            <ComboBoxItem Content="50"/>
-                            <ComboBoxItem Content="100"/>
-                        </ComboBox>
-                    </StackPanel>
+                            <ComboBox x:Name="CmbShowCount"
+                                      SelectionChanged="CmbShowCount_SelectionChanged"
+                                      Width="75" Style="{StaticResource RoundedComboBoxStyle}" Height="29">
+                                <ComboBoxItem Content="10" IsSelected="True"/>
+                                <ComboBoxItem Content="25"/>
+                                <ComboBoxItem Content="50"/>
+                                <ComboBoxItem Content="100"/>
+                            </ComboBox>
+                        </StackPanel>
 
                     <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
                         <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Width="211" Height="34">
@@ -254,11 +256,11 @@
 
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="#" Binding="{Binding ID}" Width="Auto" FontFamily="Lexend" Foreground="#333333"/>
-                        <DataGridTextColumn Header="Employee Name" Binding="{Binding EmployeeName}" Width="*" MinWidth="150" FontFamily="Lexend" Foreground="#333333"/>
+                        <DataGridTextColumn Header="Employee Name" Binding="{Binding EmployeeName}" Width="200" MinWidth="150" FontFamily="Lexend" Foreground="#333333"/>
                         <DataGridTextColumn Header="Date" Binding="{Binding AttendanceDate}" Width="Auto" MinWidth="120" FontFamily="Lexend" Foreground="#333333"/>
                         <DataGridTextColumn Header="Time In" Binding="{Binding TimeIn}" Width="Auto" MinWidth="120" FontFamily="Lexend" Foreground="#333333"/>
                         <DataGridTextColumn Header="Time Out" Binding="{Binding TimeOut}" Width="Auto" MinWidth="120" FontFamily="Lexend" Foreground="#333333"/>
-                        <DataGridTextColumn Header="Note" Binding="{Binding Note}" Width="*" MinWidth="150" FontFamily="Lexend" Foreground="#333333"/>
+                        <DataGridTextColumn Header="Note" Binding="{Binding Note}" Width="200" MinWidth="150" FontFamily="Lexend" Foreground="#333333"/>
 
                         <DataGridTemplateColumn Header="Actions" Width="100">
                             <DataGridTemplateColumn.CellTemplate>
