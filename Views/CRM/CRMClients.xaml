@@ -232,14 +232,18 @@
                         <Setter Property="FontFamily" Value="Lexend"/>
                         <Setter Property="FontSize" Value="13"/>
                         <Setter Property="FontWeight" Value="SemiBold"/>
-                        <Setter Property="Foreground" Value="#474747"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="Background" Value="#474747"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
                         <Setter Property="VerticalContentAlignment" Value="Center"/>
-                        <Setter Property="Padding" Value="10,5"/>
-                        <Setter Property="Background" Value="White"/>
+                        <Setter Property="Padding" Value="12,8"/>
+
+                        <Setter Property="SeparatorBrush" Value="#5A5A5A"/>
+                        <Setter Property="SeparatorVisibility" Value="Visible"/>
+                        <Setter Property="BorderThickness" Value="0,0,1,0"/>
+                        <Setter Property="BorderBrush" Value="#5A5A5A"/>
                     </Style>
                 </DataGrid.ColumnHeaderStyle>
-
                 <DataGrid.CellStyle>
                     <Style TargetType="DataGridCell">
                         <Setter Property="Padding" Value="10,5"/>
@@ -275,21 +279,21 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button Content="{Binding Name}" 
-                    Background="Transparent" 
-                    BorderThickness="0" 
-                    Cursor="Hand" 
-                    HorizontalAlignment="Left"
-                    Click="OpenClientFileView"
-                    ToolTip="View Client Files">
+                                        Background="Transparent" 
+                                        BorderThickness="0" 
+                                        Cursor="Hand" 
+                                        HorizontalAlignment="Left"
+                                        Click="OpenClientFileView"
+                                        ToolTip="View Client Files">
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
                                             <TextBlock Text="{TemplateBinding Content}" 
-                                   FontFamily="Lexend" 
-                                   Foreground="#60A5FA"
-                                   TextDecorations="Underline"
-                                   TextWrapping="NoWrap" 
-                                   TextTrimming="CharacterEllipsis"
-                                   VerticalAlignment="Center"/>
+                                                       FontFamily="Lexend" 
+                                                       Foreground="#60A5FA"
+                                                       TextDecorations="Underline"
+                                                       TextWrapping="NoWrap" 
+                                                       TextTrimming="CharacterEllipsis"
+                                                       VerticalAlignment="Center"/>
                                         </ControlTemplate>
                                     </Button.Template>
                                 </Button>

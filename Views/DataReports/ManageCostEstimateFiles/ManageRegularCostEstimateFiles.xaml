@@ -9,15 +9,12 @@
              Background="#D9D9D9">
 
     <UserControl.Resources>
-        <!-- Boolean to Visibility Converter -->
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
-        <!-- Border Style -->
         <Style x:Key="RoundedBorderStyle" TargetType="Border">
             <Setter Property="CornerRadius" Value="15"/>
         </Style>
 
-        <!-- Button Style -->
         <Style x:Key="RoundedButtonStyle" TargetType="Button">
             <Setter Property="Template">
                 <Setter.Value>
@@ -31,7 +28,6 @@
             <Setter Property="Cursor" Value="Hand"/>
         </Style>
 
-        <!-- Action Button Style -->
         <Style x:Key="ActionButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#456B2E"/>
             <Setter Property="Foreground" Value="White"/>
@@ -59,7 +55,6 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Icon Button Style (for Download and Delete) -->
         <Style x:Key="IconButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -83,7 +78,6 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Upload Button Style -->
         <Style x:Key="UploadButtonStyle" TargetType="Button" BasedOn="{StaticResource ActionButtonStyle}">
             <Setter Property="Background" Value="#456B2E"/>
             <Setter Property="Padding" Value="20,10"/>
@@ -102,13 +96,11 @@
                     BorderBrush="{TemplateBinding BorderBrush}" 
                     BorderThickness="1">
                             <Grid>
-                                <!-- Define two columns, Content on left, Arrow on right -->
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="35" />
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Selected Item Content -->
                                 <ContentPresenter Name="ContentSite"
                                       IsHitTestVisible="False"
                                       Content="{TemplateBinding SelectionBoxItem}"
@@ -116,7 +108,6 @@
                                       VerticalAlignment="Center"
                                       Margin="10,0,5,0"/>
 
-                                <!-- Arrow Button (Right) -->
                                 <ToggleButton Name="ToggleButton" 
                                   Grid.Column="1"
                                   Focusable="False"
@@ -146,19 +137,16 @@
                                     </ToggleButton.Style>
                                 </ToggleButton>
 
-                                <!-- Dropdown Items -->
                                 <Popup Name="Popup"
                            Placement="Bottom"
                            IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
                            AllowsTransparency="True"
                            Focusable="False"
                            MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-                                    <!-- MATCH WIDTH -->
                                     <Border Style="{StaticResource RoundedBorderStyle}" 
                                 Background="White" 
                                 BorderBrush="Black"
                                 Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-                                        <!-- MATCH WIDTH -->
                                         <ScrollViewer>
                                             <StackPanel>
                                                 <ItemsPresenter/>
@@ -173,14 +161,12 @@
             </Setter>
         </Style>
 
-        <!-- TextBox Style  -->
         <Style x:Key="RoundedTextboxStyle" TargetType="TextBox">
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="FontFamily" Value="Lexend"/>
         </Style>
 
-        <!-- DatePicker Style -->
         <Style x:Key="RoundedDatePickerStyle" TargetType="DatePicker">
             <Setter Property="Background" Value="White"/>
             <Setter Property="BorderBrush" Value="Black"/>
@@ -203,7 +189,6 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <!-- Text Box for Date Display -->
                                 <DatePickerTextBox x:Name="PART_TextBox"
                                                    Grid.Column="0"
                                                    Margin="10,0,0,0"
@@ -214,7 +199,6 @@
                                                    FontFamily="{TemplateBinding FontFamily}"
                                                    FontSize="{TemplateBinding FontSize}"/>
 
-                                <!-- Watermark TextBlock -->
                                 <TextBlock Grid.Column="0"
                                           Margin="10,0,0,0"
                                           VerticalAlignment="Center"
@@ -234,7 +218,6 @@
                                     </TextBlock.Style>
                                 </TextBlock>
 
-                                <!-- Clear Button -->
                                 <Button x:Name="PART_ClearButton"
                                         Grid.Column="1"
                                         Width="20"
@@ -259,7 +242,7 @@
                                                                 CornerRadius="10"
                                                                 Padding="2">
                                                             <ContentPresenter HorizontalAlignment="Center" 
-                                                                            VerticalAlignment="Center"/>
+                                                                              VerticalAlignment="Center"/>
                                                         </Border>
                                                     </ControlTemplate>
                                                 </Setter.Value>
@@ -273,7 +256,6 @@
                                     </Button.Style>
                                 </Button>
 
-                                <!-- Calendar Button -->
                                 <Button x:Name="PART_Button"
                                         Grid.Column="2"
                                         Width="30"
@@ -289,7 +271,6 @@
                                                              Foreground="#474747"/>
                                 </Button>
 
-                                <!-- Calendar Popup -->
                                 <Popup x:Name="PART_Popup"
                                        AllowsTransparency="True"
                                        Placement="Bottom"
@@ -302,7 +283,6 @@
             </Setter>
         </Style>
 
-        <!-- DataGrid Style -->
         <Style x:Key="DataGridStyle" TargetType="DataGrid">
             <Setter Property="Background" Value="White"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -321,7 +301,6 @@
             <Setter Property="FontSize" Value="12"/>
         </Style>
 
-        <!-- DataGrid Column Header Style -->
         <Style x:Key="DataGridColumnHeaderStyle" TargetType="DataGridColumnHeader">
             <Setter Property="Background" Value="#456B2E"/>
             <Setter Property="Foreground" Value="White"/>
@@ -334,7 +313,6 @@
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
         </Style>
 
-        <!-- DataGrid Cell Style -->
         <Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding" Value="15,10"/>
@@ -360,7 +338,6 @@
             </Style.Triggers>
         </Style>
 
-        <!-- DataGrid Row Style -->
         <Style x:Key="DataGridRowStyle" TargetType="DataGridRow">
             <Setter Property="Background" Value="White"/>
             <Style.Triggers>
@@ -377,16 +354,11 @@
     <Grid x:Name="mainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Header Section -->
             <RowDefinition Height="Auto"/>
-            <!-- Options Bar -->
             <RowDefinition Height="*"/>
-            <!-- DataGrid Section -->
             <RowDefinition Height="Auto"/>
-            <!-- Pagination Section -->
         </Grid.RowDefinitions>
 
-        <!-- Title and Upload Button - Static at top -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20,20,20,10">
             <TextBlock Text="Manage Regular Cost Estimate Files"
                        FontWeight="SemiBold"
@@ -410,7 +382,6 @@
             </Button>
         </StackPanel>
 
-        <!-- Options Bar - Static with controls -->
         <StackPanel VerticalAlignment="Center" Grid.Row="1" Margin="20,10">
             <Border Style="{StaticResource RoundedBorderStyle}" BorderThickness="0" Background="white" Padding="10" CornerRadius="10">
                 <Grid>
@@ -452,7 +423,6 @@
                         <ComboBoxItem Content="100"/>
                     </ComboBox>
 
-                    <!-- File Code Filter Label -->
                     <StackPanel Grid.Column="3" Orientation="Horizontal" Margin="10,0">
                         <TextBlock Text="File Code" 
                            FontSize="14" 
@@ -462,7 +432,6 @@
                            FontFamily="Lexend"/>
                     </StackPanel>
 
-                    <!-- File Code Filter ComboBox -->
                     <ComboBox x:Name="cboFileCode" 
                       Style="{StaticResource RoundedComboBoxStyle}" 
                       Grid.Column="4" 
@@ -477,7 +446,6 @@
                         <ComboBoxItem Content="HHCE"/>
                     </ComboBox>
 
-                    <!-- Upload Date Picker -->
                     <DatePicker x:Name="dpUploadDate" 
                                 Style="{StaticResource RoundedDatePickerStyle}"
                                 Grid.Column="5"
@@ -485,9 +453,8 @@
                                 Margin="10,0,0,0"
                                 MinWidth="120"
                                 SelectedDateChanged="DpUploadDate_SelectedDateChanged"/>
-                                
 
-                    <!-- SEARCH BAR -->
+
                     <StackPanel Grid.Column="6" Margin="20,0,0,0">
                         <Border Style="{StaticResource RoundedBorderStyle}"
                         BorderThickness="1"
@@ -538,7 +505,6 @@
             </Border>
         </StackPanel>
 
-        <!-- DataGrid Section - Scrollable Content -->
         <Border Grid.Row="2" 
                 Style="{StaticResource RoundedBorderStyle}" 
                 Background="White" 
@@ -551,13 +517,11 @@
                           CellStyle="{StaticResource DataGridCellStyle}"
                           RowStyle="{StaticResource DataGridRowStyle}">
                     <DataGrid.Columns>
-                        <!-- File Name Column -->
                         <DataGridTextColumn Header="File Name" 
                                           Binding="{Binding FileName}" 
                                           Width="2*"
                                           MinWidth="200"/>
 
-                        <!-- File Size Column -->
                         <DataGridTextColumn Header="File Size" 
                                           Binding="{Binding FileSize}" 
                                           Width="Auto"
@@ -570,25 +534,33 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <!-- Upload Date Column -->
                         <DataGridTextColumn Header="Upload Date" 
                                           Binding="{Binding UploadDate, StringFormat='{}{0:MMM dd, yyyy HH:mm}'}" 
                                           Width="Auto"
                                           MinWidth="150"/>
 
-                        <!-- Content Type Column -->
                         <DataGridTextColumn Header="Type" 
                                           Binding="{Binding ContentType}" 
                                           Width="Auto"
                                           MinWidth="100"/>
 
-                        <!-- Actions Column -->
-                        <DataGridTemplateColumn Header="Actions" Width="Auto" MinWidth="100">
+                        <DataGridTemplateColumn Header="Actions" Width="Auto" MinWidth="130">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 
-                                        <!-- Download Icon Button -->
+                                        <Button x:Name="btnPreview"
+                                                Style="{StaticResource IconButton}"
+                                                ToolTip="Preview File"
+                                                Tag="{Binding}"
+                                                Margin="5,0"
+                                                Click="BtnPreview_Click">
+                                            <materialDesign:PackIcon Kind="EyeOutline"
+                                                                     Width="20"
+                                                                     Height="20"
+                                                                     Foreground="#1976D2"/>
+                                        </Button>
+
                                         <Button x:Name="btnDownload"
                                                 Style="{StaticResource IconButton}"
                                                 ToolTip="Download"
@@ -601,7 +573,6 @@
                                                                      Foreground="#456B2E"/>
                                         </Button>
 
-                                        <!-- Delete Icon Button -->
                                         <Button x:Name="btnDelete"
                                                 Style="{StaticResource IconButton}"
                                                 ToolTip="Delete"
@@ -623,13 +594,11 @@
             </ScrollViewer>
         </Border>
 
-        <!-- Pagination Section - Fixed at bottom -->
         <StackPanel x:Name="paginationPanel" 
                     Grid.Row="3" 
                     Orientation="Horizontal" 
                     HorizontalAlignment="Center" 
                     Margin="0,15,0,20">
-            <!-- Pagination controls will be added here programmatically -->
         </StackPanel>
     </Grid>
 </UserControl>
