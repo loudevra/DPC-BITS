@@ -70,82 +70,64 @@ Namespace DPC.Components.Navigation
 
             ' Dashboard
             If PermissionCache.Can("Dashboard") Then
-                BtnDashboard.IsEnabled = True
                 UnGrayOut(BtnDashboard)
             Else
-                BtnDashboard.IsEnabled = False
                 GrayOut(BtnDashboard)
             End If
 
             ' Sales
             If PermissionCache.Can("Sales") Then
-                BtnSales.IsEnabled = True
                 UnGrayOut(BtnSales)
             Else
-                BtnSales.IsEnabled = False
                 GrayOut(BtnSales)
             End If
 
             ' Stocks
             If PermissionCache.Can("Stocks") Then
-                BtnStocks.IsEnabled = True
                 UnGrayOut(BtnStocks)
             Else
-                BtnStocks.IsEnabled = False
                 GrayOut(BtnStocks)
             End If
 
             ' CRM
             If PermissionCache.Can("CRM") Then
-                BtnCRM.IsEnabled = True
                 UnGrayOut(BtnCRM)
             Else
-                BtnCRM.IsEnabled = False
                 GrayOut(BtnCRM)
             End If
 
             ' Project
             If PermissionCache.Can("Project") Then
-                BtnProjects.IsEnabled = True
                 UnGrayOut(BtnProjects)
             Else
-                BtnProjects.IsEnabled = False
                 GrayOut(BtnProjects)
             End If
 
             ' Data & Reports
             If PermissionCache.Can("Data & Reports") Then
-                BtnDataReports.IsEnabled = True
                 UnGrayOut(BtnDataReports)
             Else
-                BtnDataReports.IsEnabled = False
                 GrayOut(BtnDataReports)
             End If
 
             ' Miscellaneous
             If PermissionCache.Can("Miscellaneous") Then
-                BtnMiscellaneous.IsEnabled = True
                 UnGrayOut(BtnMiscellaneous)
             Else
-                BtnMiscellaneous.IsEnabled = False
                 GrayOut(BtnMiscellaneous)
             End If
 
             ' HRM
             If PermissionCache.Can("HRM") Then
-                BtnHRM.IsEnabled = True
                 UnGrayOut(BtnHRM)
             Else
-                BtnHRM.IsEnabled = False
                 GrayOut(BtnHRM)
             End If
 
             ' Software Updates
             If PermissionCache.Can("Software Updates") Then
-                BtnSoftwareUpdates.IsEnabled = True
                 UnGrayOut(BtnSoftwareUpdates)
             Else
-                BtnSoftwareUpdates.IsEnabled = False
                 GrayOut(BtnSoftwareUpdates)
             End If
 
@@ -154,7 +136,11 @@ Namespace DPC.Components.Navigation
         ' ---- Navigation Handlers ----
 
         Private Sub OpenDashboard(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("dashboard", Me)
+            If PermissionCache.Can("Dashboard") Then
+                ViewLoader.DynamicView.NavigateToView("dashboard", Me)
+            Else
+                MessageBox.Show("Access not permitted. Consult with admin.")
+            End If
         End Sub
 
         Private Sub OpenSales(sender As Object, e As RoutedEventArgs)
@@ -325,7 +311,11 @@ Namespace DPC.Components.Navigation
         End Sub
 
         Private Async Sub BtnSoftwareUpdates_Click(sender As Object, e As RoutedEventArgs)
-            Await SoftwareUpdateHelper.CheckForUpdate()
+            If PermissionCache.Can("Software Updates") Then
+                Await SoftwareUpdateHelper.CheckForUpdate()
+            Else
+                MessageBox.Show("Access not permitted. Consult with admin.")
+            End If
         End Sub
 
         Private Async Sub CheckUpdateVisibility()
