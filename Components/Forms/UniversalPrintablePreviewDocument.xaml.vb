@@ -13,6 +13,7 @@ Imports MaterialDesignThemes.Wpf
 Imports MongoDB.Bson
 Imports MongoDB.Driver
 Imports MongoDB.Driver.GridFS
+Imports MySql.Data.MySqlClient
 Imports Newtonsoft.Json
 Imports PdfSharp.Drawing
 Imports PdfSharp.Pdf
@@ -336,6 +337,124 @@ Namespace DPC.Components.Forms
         End Sub
 #End Region
 
+        Private Sub DeductProductStock(items As ObservableCollection(Of OrderItems))
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+
+                    Dim successCount As Integer = 0
+                    Dim failCount As Integer = 0
+
+                    For Each item In items
+                        Try
+                            ' Skip header rows
+                            If item.IsHeaderRow Then
+                                Continue For
+                            End If
+
+                            Dim productNameFull As String = ""
+                            Dim productName As String = productNameFull
+
+                            If Not String.IsNullOrEmpty(item.Description) Then
+                                productNameFull = item.Description
+                            ElseIf Not String.IsNullOrEmpty(item.ProductDescription) Then
+                                productNameFull = item.ProductDescription
+                            Else
+                                Debug.WriteLine("WARNING: No product name found in item!")
+                                Debug.WriteLine("Available properties - Quantity: " & item.Quantity & " | Description: " & item.Description)
+                                failCount += 1
+                                Continue For
+                            End If
+
+                            ' Extract product name if it includes ProductID
+                            If productNameFull.Contains(" - ") Then
+                                Dim parts As String() = productNameFull.Split("-"c)
+                                productName = parts(1)
+                            End If
+
+                            Dim quantitySold As Integer = CInt(item.Quantity)
+
+                            Debug.WriteLine("Looking for product: '" & productName & "' | Quantity to deduct: " & quantitySold)
+
+                            ' Find the product ID and variation type
+                            Dim getProductQuery As String = "SELECT productID, productVariation FROM product WHERE productName = @productName LIMIT 1"
+                            Dim productID As String = ""
+                            Dim hasVariation As Boolean = False
+
+                            Using cmd As New MySqlCommand(getProductQuery, conn)
+                                cmd.Parameters.AddWithValue("@productName", productName)
+                                Using reader = cmd.ExecuteReader()
+                                    If reader.Read() Then
+                                        productID = reader("productID").ToString()
+                                        hasVariation = Convert.ToBoolean(reader("productVariation"))
+                                        Debug.WriteLine("✓ Found product ID: " & productID & " | Has Variation: " & hasVariation)
+                                    Else
+                                        Debug.WriteLine("✗ Product NOT FOUND: '" & productName & "'")
+                                        failCount += 1
+                                        Continue For
+                                    End If
+                                End Using
+                            End Using
+
+                            ' Determine which table to update
+                            Dim tableToUpdate As String = If(hasVariation, "productvariationstock", "productnovariation")
+                            Debug.WriteLine("Will update table: " & tableToUpdate)
+
+                            ' Get current stock
+                            Dim getStockQuery As String = "SELECT stockUnit FROM " & tableToUpdate & " WHERE productID = @productID LIMIT 1"
+                            Dim currentStock As Integer = 0
+
+                            Using cmd As New MySqlCommand(getStockQuery, conn)
+                                cmd.Parameters.AddWithValue("@productID", productID)
+                                Dim result = cmd.ExecuteScalar()
+                                If result IsNot Nothing Then
+                                    currentStock = CInt(result)
+                                    Debug.WriteLine("Current stock: " & currentStock)
+                                Else
+                                    Debug.WriteLine("No stock record found for product " & productID)
+                                    failCount += 1
+                                    Continue For
+                                End If
+                            End Using
+
+                            ' Calculate new stock
+                            Dim newStock As Integer = currentStock - quantitySold
+                            Debug.WriteLine("New stock will be: " & newStock)
+
+                            ' Update stock
+                            Dim updateStockQuery As String = "UPDATE " & tableToUpdate & " SET stockUnit = @newStock, dateModified = NOW() WHERE productID = @productID"
+
+                            Using cmd As New MySqlCommand(updateStockQuery, conn)
+                                cmd.Parameters.AddWithValue("@newStock", newStock)
+                                cmd.Parameters.AddWithValue("@productID", productID)
+                                Dim rowsAffected = cmd.ExecuteNonQuery()
+
+                                If rowsAffected > 0 Then
+                                    Debug.WriteLine("✓ Stock updated successfully!")
+                                    successCount += 1
+                                Else
+                                    Debug.WriteLine("✗ No rows were updated")
+                                    failCount += 1
+                                End If
+                            End Using
+
+                        Catch itemEx As Exception
+                            Debug.WriteLine("Error processing item: " & itemEx.Message)
+                            failCount += 1
+                        End Try
+                    Next
+
+                    Debug.WriteLine("=== STOCK DEDUCTION SUMMARY ===")
+                    Debug.WriteLine("Successful: " & successCount)
+                    Debug.WriteLine("Failed: " & failCount)
+
+                End Using
+            Catch ex As Exception
+                MessageBox.Show("Error updating stock: " & ex.Message, "Stock Update Error", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Debug.WriteLine("CRITICAL ERROR: " & ex.Message)
+            End Try
+        End Sub
+
 #Region "6. Printing & PDF"
         Private Sub SavePrint(sender As Object, e As RoutedEventArgs)
             Try
@@ -364,9 +483,13 @@ Namespace DPC.Components.Forms
                 Dim docName As String = data.DocumentNumber
 
                 Dim path As String = SaveAsPDF(docName)
+                MessageBox.Show("Transaction saved and stock updated successfully!")
+
                 If Not String.IsNullOrEmpty(path) Then
                     If Not SavePdfPathToMongoDB(path, data.DocumentNumber, CacheOnLoggedInName) Then Exit Sub
                     SaveToDb()
+                    DPC.Views.Stocks.ItemManager.ProductManager.ManageProducts.RefreshProductsStatic()
+                    MessageBox.Show("Transaction saved and stock updated successfully!")
                 End If
             Catch ex As Exception
                 MessageBox.Show("Save Error: " & ex.Message)
@@ -510,7 +633,14 @@ Namespace DPC.Components.Forms
                     success = BillingController.InsertBillingStatement(bm)
                 End If
 
+                Debug.WriteLine("=== SaveToDb() called ===")
+                Debug.WriteLine("success value: " & success)
+                Debug.WriteLine("data.OrderItems count: " & data.OrderItems.Count)
+
+
                 If success Then
+                    DeductProductStockFromJson(json)
+
                     Dim _showDelivery As Boolean = False
 
                     Dim result As MessageBoxResult = MessageBox.Show("Walk-in billing submitted successfully! Do you want to create a Delivery Receipt for this billing?",
@@ -549,6 +679,8 @@ Namespace DPC.Components.Forms
                 End If
 
                 If success Then
+                    DeductProductStockFromJson(json)
+
                     Dim _showDelivery As Boolean = False
 
                     Dim result As MessageBoxResult = MessageBox.Show("Quote submitted successfully! Do you want to create a Billing Statement for this Quote?",
@@ -572,6 +704,149 @@ Namespace DPC.Components.Forms
                 ViewLoader.DynamicView.NavigateToView(data.CreatePath, Me)
             End If
         End Sub
+
+        Private Sub DeductProductStockFromJson(jsonString As String)
+            Try
+                Debug.WriteLine("=== DeductProductStockFromJson called ===")
+
+                Dim items = JsonConvert.DeserializeObject(Of List(Of Dictionary(Of String, Object)))(jsonString)
+
+                Debug.WriteLine("Items count: " & items.Count)
+
+                If items Is Nothing OrElse items.Count = 0 Then
+                    Debug.WriteLine("No items to deduct!")
+                    Return
+                End If
+
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+
+                    Dim successCount As Integer = 0
+                    Dim failCount As Integer = 0
+
+                    For Each item In items
+                        Try
+                            ' Skip header rows
+                            If item.ContainsKey("IsHeaderRow") AndAlso item("IsHeaderRow").ToString().ToLower() = "true" Then
+                                Debug.WriteLine("Skipping header row")
+                                Continue For
+                            End If
+
+                            ' Get product name from ProductName key
+                            If Not item.ContainsKey("ProductName") Then
+                                Debug.WriteLine("Item missing ProductName key")
+                                failCount += 1
+                                Continue For
+                            End If
+
+                            Dim productName As String = item("ProductName").ToString().Trim()
+
+                            If String.IsNullOrEmpty(productName) Then
+                                Debug.WriteLine("ProductName is empty")
+                                failCount += 1
+                                Continue For
+                            End If
+
+                            Dim quantitySold As Integer = 0
+                            If item.ContainsKey("Quantity") Then
+                                Integer.TryParse(item("Quantity").ToString(), quantitySold)
+                            End If
+
+                            If quantitySold <= 0 Then
+                                Debug.WriteLine("Quantity is 0 or invalid for: " & productName)
+                                failCount += 1
+                                Continue For
+                            End If
+
+                            Debug.WriteLine("Looking for product: '" & productName & "' | Quantity to deduct: " & quantitySold)
+
+                            ' Find product
+                            Dim getProductQuery As String = "SELECT productID, productVariation FROM product WHERE productName = @productName LIMIT 1"
+                            Dim productID As String = ""
+                            Dim hasVariation As Boolean = False
+
+                            Using cmd As New MySqlCommand(getProductQuery, conn)
+                                cmd.Parameters.AddWithValue("@productName", productName)
+                                Using reader = cmd.ExecuteReader()
+                                    If reader.Read() Then
+                                        productID = reader("productID").ToString()
+                                        hasVariation = Convert.ToBoolean(reader("productVariation"))
+                                        Debug.WriteLine("✓ Found product ID: " & productID & " | Has Variation: " & hasVariation)
+                                    Else
+                                        Debug.WriteLine("✗ Product NOT FOUND: '" & productName & "'")
+                                        failCount += 1
+                                        Continue For
+                                    End If
+                                End Using
+                            End Using
+
+                            ' Determine table
+                            Dim tableToUpdate As String = If(hasVariation, "productvariationstock", "productnovariation")
+                            Debug.WriteLine("Will update table: " & tableToUpdate)
+
+                            ' Get current stock
+                            Dim getStockQuery As String = "SELECT stockUnit FROM " & tableToUpdate & " WHERE productID = @productID LIMIT 1"
+                            Dim currentStock As Integer = 0
+
+                            Using cmd As New MySqlCommand(getStockQuery, conn)
+                                cmd.Parameters.AddWithValue("@productID", productID)
+                                Dim result = cmd.ExecuteScalar()
+                                If result IsNot Nothing Then
+                                    currentStock = CInt(result)
+                                    Debug.WriteLine("Current stock: " & currentStock)
+                                Else
+                                    Debug.WriteLine("No stock record found")
+                                    failCount += 1
+                                    Continue For
+                                End If
+                            End Using
+
+                            ' Update stock
+                            Dim newStock As Integer = currentStock - quantitySold
+                            Debug.WriteLine("New stock will be: " & newStock)
+
+                            Dim updateStockQuery As String = "UPDATE " & tableToUpdate & " SET stockUnit = @newStock, dateModified = NOW() WHERE productID = @productID"
+
+                            Using cmd As New MySqlCommand(updateStockQuery, conn)
+                                cmd.Parameters.AddWithValue("@newStock", newStock)
+                                cmd.Parameters.AddWithValue("@productID", productID)
+                                Dim rowsAffected = cmd.ExecuteNonQuery()
+
+                                If rowsAffected > 0 Then
+                                    Debug.WriteLine("✓ Stock updated successfully! New stock: " & newStock)
+                                    successCount += 1
+                                Else
+                                    Debug.WriteLine("✗ No rows updated")
+                                    failCount += 1
+                                End If
+                            End Using
+
+                        Catch itemEx As Exception
+                            Debug.WriteLine("Error processing item: " & itemEx.Message)
+                            failCount += 1
+                        End Try
+                    Next
+
+                    Debug.WriteLine("=== STOCK DEDUCTION SUMMARY ===")
+                    Debug.WriteLine("Successful: " & successCount)
+                    Debug.WriteLine("Failed: " & failCount)
+
+                    If successCount > 0 Then
+                        Try
+                            DPC.Views.Stocks.ItemManager.ProductManager.ManageProducts.RefreshProductsStatic()
+                        Catch ex As Exception
+                            Debug.WriteLine("Could not refresh product UI: " & ex.Message)
+                        End Try
+                    End If
+
+                End Using
+            Catch ex As Exception
+                MessageBox.Show("Error updating stock: " & ex.Message, "Stock Update Error", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Debug.WriteLine("CRITICAL ERROR: " & ex.Message)
+            End Try
+        End Sub
+
+
 
         Private Shared Function SavePdfPathToMongoDB(path As String, qNum As String, user As String) As Boolean
             Try
@@ -598,6 +873,26 @@ Namespace DPC.Components.Forms
             IsEditMode = TransactionState.ActiveRecord.IsEditMode
         End Sub
 
+        Private Shared Function FindVisualChild(Of T As DependencyObject)(parent As DependencyObject) As T
+            If parent Is Nothing Then Return Nothing
+
+            Dim numVisualChildren As Integer = VisualTreeHelper.GetChildrenCount(parent)
+            For i As Integer = 0 To numVisualChildren - 1
+                Dim child As DependencyObject = VisualTreeHelper.GetChild(parent, i)
+                If child IsNot Nothing Then
+                    Dim correctlyTyped As T = TryCast(child, T)
+                    If correctlyTyped IsNot Nothing Then
+                        Return correctlyTyped
+                    End If
+                    Dim descendant As T = FindVisualChild(Of T)(child)
+                    If descendant IsNot Nothing Then
+                        Return descendant
+                    End If
+                End If
+            Next
+            Return Nothing
+        End Function
+
         Public Sub DisplaySignaturePreview()
             Dim data = TransactionState.ActiveRecord
             Dim grid As New Grid()
@@ -618,6 +913,17 @@ Namespace DPC.Components.Forms
             Grid.SetRow(warn, 1)
             grid.Children.Add(warn)
             BrowseFile.Child = grid
+        End Sub
+
+        ' Example logic inside your Save/Confirm transaction method
+        Public Sub ConfirmTransaction()
+            ' ... Your existing logic to save the transaction ...
+
+            ' 1. EXECUTE THE DEDUCTION/ADDITION SQL
+            ' Update productnovariation SET stockUnit = stockUnit - @qty WHERE productID = @id
+
+            ' 2. TRIGGER THE REFRESH
+            DPC.Views.Stocks.ItemManager.ProductManager.ManageProducts.RefreshProductsStatic()
         End Sub
 
         Public Function CreateSignatureWarningText() As TextBlock
