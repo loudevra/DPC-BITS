@@ -1,0 +1,853 @@
+﻿{
+  "entries": [
+    {
+      "keywords": [
+        "hello",
+        "hi",
+        "hey",
+        "good morning",
+        "good afternoon",
+        "good evening",
+        "help",
+        "what can you do",
+        "guide",
+        "assist",
+        "start"
+      ],
+      "answer": "Hi there! I'm your DPC POS Guide. I can help you with:\n\n- Sales - Quotes, Invoices, Billing, POS\n- Stocks - Products, Categories, Suppliers, Warehouses\n- CRM - Clients, Client Groups\n- HRM - Employees, Attendance, Payroll, Salaries\n- Accounts - Transactions, Balance Sheets\n- Reports - Data Reports, Statements\n- Promo Codes & Subscriptions\n- Misc - Calendar, Cash Advance, Documents, Leave\n- Projects & To-Do Lists\n\nJust type your question and I'll guide you!"
+    },
+    {
+      "keywords": [
+        "thank",
+        "thanks",
+        "thank you",
+        "salamat",
+        "maraming salamat",
+        "ok thanks",
+        "got it"
+      ],
+      "answer": "You're welcome! Feel free to ask anytime if you need help with the DPC POS system."
+    },
+    {
+      "keywords": [
+        "what is dpc",
+        "about dpc",
+        "about this system",
+        "what is this system"
+      ],
+      "answer": "DPC is a comprehensive Point of Sales and Business Management System that includes:\n\n- Sales & Invoicing (Quotes, Billing, POS)\n- Stock & Inventory Management\n- Customer Relationship Management (CRM)\n- Human Resource Management (HRM)\n- Accounting & Financial Reports\n- Project Management\n- Promo Codes & Subscriptions\n- Document Management\n\nIt is designed to help businesses manage all operations from one platform."
+    },
+    {
+      "keywords": [
+        "login",
+        "sign in",
+        "log in",
+        "signin",
+        "how to login",
+        "cant login",
+        "cannot login"
+      ],
+      "answer": "To Login to DPC POS:\n1. Open the application - the Sign In screen will appear.\n2. Enter your Email and Password.\n3. Click 'Sign In'.\n\nIf you forgot your password:\n- Click 'Forgot Password' on the login screen.\n- Enter your registered email address.\n- Check your email for the verification code.\n- Enter the code and set your new password."
+    },
+    {
+      "keywords": [
+        "forgot password",
+        "reset password",
+        "change password",
+        "cant remember password",
+        "password reset"
+      ],
+      "answer": "To Reset your Password:\n1. On the Sign In screen, click 'Forgot Password'.\n2. Enter your registered email address.\n3. Click Send - a verification code will be emailed to you.\n4. Enter the verification code on the Verify Code screen.\n5. Set your new password and confirm it.\n6. Click Save - you can now log in with your new password."
+    },
+    {
+      "keywords": [
+        "logout",
+        "log out",
+        "sign out",
+        "exit",
+        "close app"
+      ],
+      "answer": "To Logout:\n- Click your profile or account icon.\n- Select 'Logout' or 'Sign Out'.\n\nTip: Always log out when leaving your workstation to keep your account secure."
+    },
+    {
+      "keywords": [
+        "clock in",
+        "clock out",
+        "attendance",
+        "time in",
+        "time out",
+        "clock icon",
+        "duty"
+      ],
+      "answer": "To Clock In or Clock Out:\n1. Click the Clock icon in the top navigation bar.\n2. If you are clocked out - clicking it will Clock you IN.\n3. If you are clocked in - clicking it will Clock you OUT.\n4. Your attendance time is automatically recorded in the system.\n\nNote: Make sure to clock in at the start of your shift and clock out at the end."
+    },
+    {
+      "keywords": [
+        "dashboard",
+        "home",
+        "main screen",
+        "overview",
+        "summary"
+      ],
+      "answer": "The Dashboard is your main overview screen. It shows:\n\n- Sales summary and recent transactions\n- Stock alerts and low inventory warnings\n- Pending invoices and quotations\n- Recent customer activity\n- Quick access to all major modules\n\nClick 'Dashboard' in the sidebar to return to it anytime."
+    },
+    {
+      "keywords": [
+        "quotation",
+        "quote",
+        "create quote",
+        "make quote",
+        "new quote",
+        "new quotation",
+        "create quotation"
+      ],
+      "answer": "To create a Quotation:\n1. Go to Sales - Quotes from the sidebar.\n2. Click 'New Quote'.\n3. Search and select the customer name.\n4. Enter the Quote Date and Valid-Until Date.\n5. Add line items - fill in Description, Qty, and Unit Price.\n6. The system auto-computes Subtotal, 12% VAT, Discounts, and Grand Total.\n7. Click Save as Draft, Print PDF, or Convert to Invoice.\n\nAlways fill in the customer name before saving."
+    },
+    {
+      "keywords": [
+        "edit quote",
+        "update quote",
+        "modify quote",
+        "change quote"
+      ],
+      "answer": "To Edit a Quotation:\n1. Go to Sales - Quotes.\n2. Find the quotation in the list.\n3. Click the Edit button (pencil icon).\n4. Make your changes to the items, dates, or customer.\n5. Click Save to update.\n\nNote: You cannot edit a quotation that has already been converted to an Invoice."
+    },
+    {
+      "keywords": [
+        "delete quote",
+        "remove quote",
+        "cancel quote"
+      ],
+      "answer": "To Delete a Quotation:\n1. Go to Sales - Quotes.\n2. Find the quotation you want to delete.\n3. Click the Delete button.\n4. A confirmation dialog will appear - click Confirm to proceed.\n\nDeleted quotations cannot be recovered. Make sure you want to permanently remove it."
+    },
+    {
+      "keywords": [
+        "convert to invoice",
+        "convert quote",
+        "quotation to invoice",
+        "quote to billing"
+      ],
+      "answer": "To Convert a Quotation to an Invoice:\n1. Open the existing Quotation from Sales - Quotes.\n2. Click the 'Convert to Invoice' button.\n3. Review all the details.\n4. Adjust any fields if needed.\n5. Click Save.\n\nIMPORTANT: Never create a brand new Invoice if a Quotation already exists - always use Convert to Invoice to avoid duplicates."
+    },
+    {
+      "keywords": [
+        "government quote",
+        "government quotation",
+        "cost estimate government",
+        "gov quote"
+      ],
+      "answer": "To create a Government Quotation:\n1. Go to Sales - Quotes - New Quote Government.\n2. Fill in the government agency details.\n3. Add the required line items with Description, Qty, Unit Price.\n4. The system computes the total with appropriate tax settings.\n5. Save, Print, or Submit as needed.\n\nGovernment quotations follow a separate format from regular quotations."
+    },
+    {
+      "keywords": [
+        "cost estimate",
+        "estimate",
+        "new cost estimate"
+      ],
+      "answer": "To create a Cost Estimate:\n1. Go to Sales - Quotes - Cost Estimate.\n2. Select Regular or Government type.\n3. Fill in the client details and project description.\n4. Add all line items with quantities and unit costs.\n5. The system computes the total cost automatically.\n6. Click Save, Print PDF, or Export."
+    },
+    {
+      "keywords": [
+        "invoice",
+        "billing",
+        "billing statement",
+        "make invoice",
+        "create invoice",
+        "new invoice",
+        "sales invoice"
+      ],
+      "answer": "To create a Billing Statement / Invoice:\n1. Go to Sales - Quotes - Billing Statement or Sales - Saless - Sales Invoices.\n2. Click 'New Invoice' (or Convert from a Quotation).\n3. Fill in: Bill To (customer), Invoice Date, Due Date, and Payment Terms.\n4. Add line items with Description, Qty, and Unit Price.\n5. Set the Status: Unpaid, Partial, or Paid.\n6. Click Save.\n\nInvoice numbers are AUTO-GENERATED - never change them manually."
+    },
+    {
+      "keywords": [
+        "delete invoice",
+        "remove invoice",
+        "cancel invoice"
+      ],
+      "answer": "To Delete an Invoice:\n1. Go to Sales - Saless - Sales Invoices.\n2. Find the invoice in the list.\n3. Click the Delete button.\n4. Confirm the deletion in the dialog box.\n\nDeleting an invoice is permanent. Make sure payments and records are properly noted before deleting."
+    },
+    {
+      "keywords": [
+        "payment",
+        "partial payment",
+        "record payment",
+        "pay invoice",
+        "balance",
+        "amount paid",
+        "mark as paid"
+      ],
+      "answer": "To record a Payment on an Invoice:\n1. Open the existing Invoice.\n2. Enter the Amount Paid in the payment field.\n3. If not fully paid, set Status to 'Partial'.\n4. Click Save - the Balance Due updates automatically.\n5. When fully paid, set Status to 'Paid'.\n\nTip: You can record multiple partial payments until the balance is zero."
+    },
+    {
+      "keywords": [
+        "payment terms",
+        "net 30",
+        "net 15",
+        "cod",
+        "due date",
+        "terms",
+        "cash on delivery"
+      ],
+      "answer": "Payment Terms explained:\n\n- Net 30 - Payment is due 30 days after the Invoice Date.\n- Net 15 - Payment is due 15 days after the Invoice Date.\n- COD (Cash on Delivery) - Payment is collected upon delivery.\n\nAlways set the correct Payment Terms before saving the Invoice."
+    },
+    {
+      "keywords": [
+        "invoice number",
+        "invoice no",
+        "auto generated",
+        "change invoice number",
+        "invoice numbering"
+      ],
+      "answer": "About Invoice Numbers:\n- Invoice numbers are AUTO-GENERATED by the system.\n- You should NEVER manually change or edit the Invoice Number.\n- Each invoice gets a unique number to keep records accurate and traceable.\n- The format is set by the system and cannot be customized per transaction."
+    },
+    {
+      "keywords": [
+        "credit note",
+        "credit notes",
+        "refund",
+        "return invoice",
+        "reverse invoice"
+      ],
+      "answer": "To create a Credit Note:\n1. Go to Sales - Credit Notes.\n2. Click 'New Credit Note'.\n3. Select the original Invoice you are crediting.\n4. Enter the reason and amount to be credited.\n5. Click Save.\n\nCredit Notes are used to reverse or reduce the amount on an existing invoice - useful for returns or billing corrections."
+    },
+    {
+      "keywords": [
+        "subscription",
+        "new subscription",
+        "recurring",
+        "subscription invoice",
+        "manage subscription"
+      ],
+      "answer": "To manage Subscriptions:\n1. Go to Sales - Subscriptions.\n2. Click 'New Subscription Invoice' to create a recurring billing.\n3. Select the customer and set the subscription period.\n4. Add the services/products included.\n5. Set the billing frequency.\n6. Click Save.\n\nYou can change subscription status using the Status options (Active, Cancelled, Expired)."
+    },
+    {
+      "keywords": [
+        "email invoice",
+        "send invoice",
+        "email quote",
+        "send quote",
+        "email customer",
+        "send email",
+        "email generator"
+      ],
+      "answer": "To Send an Invoice or Quote by Email:\n1. Go to Sales - Email Generator.\n2. Select the Invoice or Quotation to send.\n3. Enter or confirm the customer's email address.\n4. Customize the email message if needed.\n5. Click Send Email.\n\nYou can also send via SMS using the Send SMS option in the same module."
+    },
+    {
+      "keywords": [
+        "pos",
+        "cashier",
+        "walk in",
+        "counter",
+        "cart",
+        "point of sale",
+        "open pos",
+        "pos screen"
+      ],
+      "answer": "To use the POS / Cashier screen:\n1. Click the Cart icon in the top navigation bar, or go to POS from the sidebar.\n2. The POS screen opens for walk-in counter sales.\n3. Search or scan items to add them to the cart.\n4. Adjust quantities as needed.\n5. Apply discounts if required.\n6. Click Payment and select the payment method.\n7. Complete the transaction and print the receipt."
+    },
+    {
+      "keywords": [
+        "pos payment",
+        "cashier payment",
+        "process payment",
+        "payment gateway",
+        "card payment",
+        "cash payment"
+      ],
+      "answer": "To Process a POS Payment:\n1. After adding all items to the cart, click 'Payment'.\n2. The Payment Gateway screen opens.\n3. Select the payment method:\n   - Cash\n   - Credit/Debit Card\n   - Credit Payment\n   - Subscription Payment\n4. Enter the amount received.\n5. The system calculates the change automatically.\n6. Click Confirm to complete the transaction."
+    },
+    {
+      "keywords": [
+        "pos invoice",
+        "pos receipt",
+        "sales pos invoice",
+        "manage pos",
+        "pos sales"
+      ],
+      "answer": "To view POS Invoices:\n1. Go to Sales - POS Sales - Manage POS Invoices.\n2. You can search, filter, and view all completed POS transactions.\n3. Click on any invoice to view or print the receipt.\n4. Use the filter options to search by date, customer, or amount."
+    },
+    {
+      "keywords": [
+        "walk in client",
+        "walkin",
+        "walk-in",
+        "new walk in",
+        "walk in customer"
+      ],
+      "answer": "To process a Walk-In Client order:\n1. Go to Stocks - Walk In, or use the POS module.\n2. Click 'Add New Walk-In Client' if the customer is not registered.\n3. Enter the customer's basic details.\n4. Add items to their order.\n5. Process payment and print the billing statement.\n\nWalk-in clients don't need to be registered in the CRM to complete a sale."
+    },
+    {
+      "keywords": [
+        "pos register",
+        "register",
+        "open register",
+        "cash register",
+        "start register"
+      ],
+      "answer": "To open a POS Register:\n1. Go to the POS module.\n2. Click 'Open Register' or 'POS Register'.\n3. Enter the opening cash amount.\n4. Click Confirm to start the session.\n\nAt the end of your shift, close the register and enter the closing cash to reconcile the day's sales."
+    },
+    {
+      "keywords": [
+        "discount",
+        "apply discount",
+        "deduction",
+        "promo",
+        "reduce price"
+      ],
+      "answer": "To apply a Discount on a Quotation or Invoice:\n1. Open the Quotation or Invoice.\n2. Find the Discount field.\n3. Enter a fixed peso amount (e.g. 500) or a percentage (e.g. 10%).\n4. The system automatically deducts it from the total.\n5. Always apply the discount BEFORE saving or printing.\n\nYou can also use the Apply Discount pop-out from the CRM module for client-specific discounts."
+    },
+    {
+      "keywords": [
+        "promo code",
+        "coupon",
+        "voucher",
+        "add promo",
+        "new promo",
+        "manage promo",
+        "discount code"
+      ],
+      "answer": "To manage Promo Codes:\n1. Go to Promo Codes from the sidebar.\n2. Click 'Add Promo Code' to create a new one.\n3. Fill in: Code Name, Discount Type (Fixed or Percentage), Discount Value, Validity Dates.\n4. Click Save.\n\nTo use a promo code:\n- When creating an invoice or POS sale, enter the promo code in the Promo Code field.\n- The discount will be applied automatically if the code is valid.\n\nTo update or delete a promo code, go to Manage Promo Codes."
+    },
+    {
+      "keywords": [
+        "delete coupon",
+        "remove promo",
+        "delete promo code",
+        "deactivate coupon"
+      ],
+      "answer": "To Delete a Promo Code:\n1. Go to Promo Codes - Manage Promo Codes.\n2. Find the promo code you want to remove.\n3. Click the Delete button next to it.\n4. Confirm the deletion.\n\nDeactivated or expired promo codes will no longer work at checkout."
+    },
+    {
+      "keywords": [
+        "item",
+        "product",
+        "add item",
+        "add product",
+        "new item",
+        "new product",
+        "create product",
+        "catalog"
+      ],
+      "answer": "To add a new Product:\n1. Go to Stocks - Item Manager - New Product.\n2. Click 'Add New Products'.\n3. Fill in:\n   - Item Code\n   - Category and Subcategory\n   - Brand\n   - Description\n   - Unit Price\n   - Stock Quantity\n   - Unit of Measure (pcs/box/set/kg)\n   - VAT Type (VATable 12% / VAT Exempt / Zero-Rated)\n4. Add product variations if needed.\n5. Upload a product image (optional).\n6. Click Save."
+    },
+    {
+      "keywords": [
+        "edit product",
+        "update product",
+        "modify product",
+        "change product price",
+        "change product details"
+      ],
+      "answer": "To Edit a Product:\n1. Go to Stocks - Item Manager - Product Manager - Manage Products.\n2. Search for the product.\n3. Click the Edit button.\n4. Update the fields you need to change (price, quantity, description, etc.).\n5. Click Save to apply the changes."
+    },
+    {
+      "keywords": [
+        "delete product",
+        "remove product",
+        "archive product"
+      ],
+      "answer": "To Delete a Product:\n1. Go to Stocks - Item Manager - Product Manager - Manage Products.\n2. Find the product.\n3. Click the Delete button.\n4. Confirm the deletion in the dialog box.\n\nDeleting a product will remove it from the catalog. Make sure it's not linked to any active invoices before deleting."
+    },
+    {
+      "keywords": [
+        "product variation",
+        "variation",
+        "size variation",
+        "color variation",
+        "add variation"
+      ],
+      "answer": "To add Product Variations:\n1. When creating or editing a product, scroll to the Variations section.\n2. Click 'Add Variation'.\n3. Enter the variation details (e.g. Size: Small/Medium/Large or Color: Red/Blue).\n4. Set the price and stock for each variation.\n5. Click Save.\n\nVariations allow one product to have multiple options with different prices or stock levels."
+    },
+    {
+      "keywords": [
+        "product batch",
+        "batch edit",
+        "bulk edit products",
+        "batch update"
+      ],
+      "answer": "To Batch Edit Products:\n1. Go to Stocks - Item Manager - New Product - Product Batch Edit.\n2. Select multiple products using the checkboxes.\n3. Apply changes to all selected products at once (e.g. price update, category change).\n4. Click Save to apply the batch changes.\n\nThis is useful when you need to update many products at the same time."
+    },
+    {
+      "keywords": [
+        "consumable",
+        "consumables",
+        "add consumable",
+        "office supply",
+        "supplies"
+      ],
+      "answer": "To manage Consumables:\n1. Go to Stocks - Item Manager - Consumables.\n2. Click 'Add Consumables' to add a new consumable item.\n3. Fill in the item name, quantity, unit, and other details.\n4. Click Save.\n\nConsumables are tracked separately from regular products - typically for office supplies or materials used internally."
+    },
+    {
+      "keywords": [
+        "product label",
+        "label",
+        "print label",
+        "barcode label",
+        "stock label",
+        "custom label",
+        "standard label"
+      ],
+      "answer": "To print Product Labels:\n1. Go to Stocks - Products Label.\n2. Choose Standard Label or Custom Label.\n3. Select the products you want to print labels for.\n4. Set the label size and format.\n5. Click Print Preview to review.\n6. Click Print to print the labels.\n\nLabels can include product name, price, barcode, and other details."
+    },
+    {
+      "keywords": [
+        "category",
+        "add category",
+        "new category",
+        "product category",
+        "categories"
+      ],
+      "answer": "To add a Product Category:\n1. Go to Stocks - Product Categories - Add New Category.\n2. Enter the Category Name.\n3. Add a description if needed.\n4. Click Save.\n\nYou can also add Subcategories under each main category to further organize your products."
+    },
+    {
+      "keywords": [
+        "subcategory",
+        "sub category",
+        "add subcategory"
+      ],
+      "answer": "To add a Subcategory:\n1. Go to Stocks - Product Categories.\n2. Click on the Category you want to add a subcategory to.\n3. Click 'Add Subcategory'.\n4. Enter the subcategory name.\n5. Click Save.\n\nSubcategories help organize products into more specific groups under a main category."
+    },
+    {
+      "keywords": [
+        "brand",
+        "add brand",
+        "new brand",
+        "edit brand",
+        "delete brand",
+        "manage brands"
+      ],
+      "answer": "To manage Product Brands:\n1. Go to Stocks - Suppliers - Manage Brands.\n2. Click 'Add Brand' to add a new brand.\n3. Enter the Brand Name and any other details.\n4. Click Save.\n\nTo Edit a brand: Click the Edit button next to the brand name.\nTo Delete a brand: Click the Delete button and confirm."
+    },
+    {
+      "keywords": [
+        "supplier",
+        "add supplier",
+        "new supplier",
+        "manage supplier",
+        "vendor"
+      ],
+      "answer": "To add a new Supplier:\n1. Go to Stocks - Suppliers - New Supplier.\n2. Click 'Add New Supplier'.\n3. Fill in:\n   - Supplier Name\n   - Contact Person\n   - Phone Number\n   - Email Address\n   - Address\n4. Click Save.\n\nTo manage existing suppliers, go to Stocks - Suppliers - Manage Suppliers."
+    },
+    {
+      "keywords": [
+        "edit supplier",
+        "update supplier",
+        "modify supplier"
+      ],
+      "answer": "To Edit a Supplier:\n1. Go to Stocks - Suppliers - Manage Suppliers.\n2. Find the supplier in the list.\n3. Click the Edit button.\n4. Update the necessary details.\n5. Click Save."
+    },
+    {
+      "keywords": [
+        "purchase order",
+        "new order",
+        "po",
+        "order from supplier",
+        "buy stock",
+        "restock"
+      ],
+      "answer": "To create a Purchase Order:\n1. Go to Stocks - Purchase Order - New Order.\n2. Select the Supplier.\n3. Add the items you want to order with their quantities and unit costs.\n4. Set the expected delivery date.\n5. Click Confirm Purchase Order.\n\nYou can manage all purchase orders from Stocks - Purchase Order - Manage Orders."
+    },
+    {
+      "keywords": [
+        "delivery receipt",
+        "delivery",
+        "receive order",
+        "new delivery",
+        "manage delivery"
+      ],
+      "answer": "To process a Delivery Receipt:\n1. Go to Stocks - Purchase Order - Delivery - New Delivery.\n2. Select the related Purchase Order.\n3. Confirm the items and quantities received.\n4. Note any discrepancies if items are missing or damaged.\n5. Click Save to update the stock levels.\n\nYou can view all deliveries under Manage Delivery Receipt."
+    },
+    {
+      "keywords": [
+        "warehouse",
+        "add warehouse",
+        "new warehouse",
+        "manage warehouse",
+        "storage location"
+      ],
+      "answer": "To manage Warehouses:\n1. Go to Stocks - Warehouses.\n2. Click 'Add Warehouse' to add a new storage location.\n3. Enter the Warehouse Name and Address.\n4. Click Save.\n\nTo Edit: Click the Edit button next to the warehouse.\nTo Delete: Click Delete and confirm.\n\nWarehouses help you track stock at different physical locations."
+    },
+    {
+      "keywords": [
+        "stocks transfer",
+        "transfer stock",
+        "move stock",
+        "transfer inventory",
+        "stock movement"
+      ],
+      "answer": "To Transfer Stock between Warehouses:\n1. Go to Stocks - Stocks Transfer.\n2. Select the Source Warehouse (where stock is coming from).\n3. Select the Destination Warehouse (where stock is going to).\n4. Add the items and quantities to transfer.\n5. Click Save to complete the transfer.\n\nThe stock levels at both warehouses will update automatically."
+    },
+    {
+      "keywords": [
+        "stock return",
+        "return stock",
+        "supplier return",
+        "customer return",
+        "return item"
+      ],
+      "answer": "To process a Stock Return:\n1. Go to Stocks - Stock Return.\n2. Choose:\n   - Customers Records - for items returned by customers\n   - Suppliers Records - for items returned to suppliers\n3. Select the original transaction.\n4. Enter the items and quantities being returned.\n5. Add the reason for the return.\n6. Click Save."
+    },
+    {
+      "keywords": [
+        "vat",
+        "tax",
+        "12%",
+        "vatable",
+        "vat exempt",
+        "zero rated",
+        "value added tax"
+      ],
+      "answer": "About VAT in the DPC system:\n\n- VATable (12%) - VAT is automatically added to the item price. Used for regular taxable goods and services.\n- VAT Exempt - No VAT is added. For items exempted by law.\n- Zero-Rated - VAT rate is 0%. Typically for exports or special transactions.\n\nVAT is computed automatically based on the VAT Type set per item. You only need to set the correct type when adding or editing a product."
+    },
+    {
+      "keywords": [
+        "client",
+        "customer",
+        "add client",
+        "new client",
+        "add customer",
+        "new customer",
+        "register client"
+      ],
+      "answer": "To add a new Client:\n1. Go to CRM from the sidebar.\n2. Click 'New Residential Client' for individual customers, or use the Corporate option for company accounts.\n3. Fill in:\n   - Personal Info (Name, Email, Phone)\n   - Billing Address\n   - Shipping Address\n   - Other Settings\n4. Click Save.\n\nClients are stored in the CRM and can be searched from the Top Navigation Bar search."
+    },
+    {
+      "keywords": [
+        "search customer",
+        "find customer",
+        "look up customer",
+        "search client",
+        "find client"
+      ],
+      "answer": "To search for a Customer or Client:\n1. Use the Search Bar in the top navigation bar.\n2. Type the customer or client name.\n3. Click the Search (magnify) icon.\n4. Select the correct customer from the results.\n\nTheir details will be pulled into the current transaction automatically. Always select the customer BEFORE saving any Quotation or Invoice."
+    },
+    {
+      "keywords": [
+        "edit client",
+        "update client",
+        "modify client",
+        "edit customer",
+        "update customer"
+      ],
+      "answer": "To Edit a Client:\n1. Go to CRM - CRM Clients.\n2. Search for the client.\n3. Click on their name or the Edit button.\n4. Update their Personal Info, Billing Address, Shipping Address, or Other Settings.\n5. Click Save."
+    },
+    {
+      "keywords": [
+        "client group",
+        "customer group",
+        "group clients",
+        "add client group",
+        "new client group"
+      ],
+      "answer": "To create a Client Group:\n1. Go to CRM - Client Group.\n2. Click 'Add New Client Group'.\n3. Enter the Group Name and description.\n4. Add clients to the group.\n5. Click Save.\n\nClient Groups are useful for applying group-level discounts or managing bulk customers like corporate accounts."
+    },
+    {
+      "keywords": [
+        "support ticket",
+        "crm ticket",
+        "customer complaint",
+        "issue ticket",
+        "raise ticket"
+      ],
+      "answer": "To create a Support Ticket:\n1. Go to CRM - Support Ticket.\n2. Click 'New Ticket'.\n3. Select the client and fill in the issue details.\n4. Set the priority level.\n5. Click Save.\n\nSupport tickets help track and resolve customer issues or complaints systematically."
+    },
+    {
+      "keywords": [
+        "employee",
+        "add employee",
+        "new employee",
+        "hire employee",
+        "create employee"
+      ],
+      "answer": "To add a new Employee:\n1. Go to HRM - Employees - Add Employee.\n2. Fill in:\n   - Personal Information (Name, Birthday, Address)\n   - Contact Details (Phone, Email)\n   - Department\n   - Position/Role\n   - Employment Date\n3. Set their permissions and access level.\n4. Click Save.\n\nThe employee can then log in using the credentials set during registration."
+    },
+    {
+      "keywords": [
+        "edit employee",
+        "update employee",
+        "modify employee",
+        "change employee details"
+      ],
+      "answer": "To Edit an Employee:\n1. Go to HRM - Employees - Employees View.\n2. Find the employee in the list.\n3. Click their name or the Edit button.\n4. Update the necessary information.\n5. Click Save."
+    },
+    {
+      "keywords": [
+        "delete employee",
+        "remove employee",
+        "terminate employee",
+        "fire employee"
+      ],
+      "answer": "To Delete or Remove an Employee:\n1. Go to HRM - Employees - Employees View.\n2. Find the employee.\n3. Click the Delete button.\n4. Confirm the deletion.\n\nDeleting an employee removes their access to the system. Make sure all their records (payroll, attendance) are settled before removing."
+    },
+    {
+      "keywords": [
+        "department",
+        "add department",
+        "new department",
+        "manage department",
+        "departments"
+      ],
+      "answer": "To manage Departments:\n1. Go to HRM - Departments.\n2. Click 'Add Department' to create a new one.\n3. Enter the Department Name.\n4. Click Save.\n\nTo Edit: Click the Edit button next to the department.\nTo Delete: Click Delete and confirm.\n\nDepartments are used to organize employees in the HRM module."
+    },
+    {
+      "keywords": [
+        "employee attendance",
+        "attendance",
+        "dtr",
+        "daily time record",
+        "attendance record",
+        "manage attendance"
+      ],
+      "answer": "To view or manage Attendance:\n1. Go to HRM - Employees - Attendance.\n2. View the daily attendance records of all employees.\n3. Use 'Add Attendance' to manually add a record if needed.\n4. Filter by date range or employee name.\n\nAttendance is also automatically recorded when employees use the Clock In/Clock Out button in the top navigation."
+    },
+    {
+      "keywords": [
+        "holiday",
+        "add holiday",
+        "public holiday",
+        "employee holiday",
+        "holiday list"
+      ],
+      "answer": "To manage Holidays:\n1. Go to HRM - Employees - Holidays.\n2. Click 'Add Holiday'.\n3. Enter the Holiday Name and Date.\n4. Set the type (Regular or Special Non-Working).\n5. Click Save.\n\nHolidays affect payroll computation - rest days and holidays are automatically factored in."
+    },
+    {
+      "keywords": [
+        "salary",
+        "employee salary",
+        "update salary",
+        "salaries",
+        "basic pay"
+      ],
+      "answer": "To manage Employee Salaries:\n1. Go to HRM - Salaries - Employee Salaries.\n2. Find the employee.\n3. Click Update Salary.\n4. Enter the new salary amount.\n5. Click Save.\n\nSalary changes are tracked in the system for payroll history. You can also view salary details via the HRM Employer Salaries Modal."
+    },
+    {
+      "keywords": [
+        "payroll",
+        "process payroll",
+        "payroll transaction",
+        "generate payroll",
+        "payroll computation"
+      ],
+      "answer": "To process Payroll:\n1. Go to HRM - Payroll - Payroll Transaction.\n2. Select the pay period (date range).\n3. The system computes each employee's pay based on:\n   - Basic salary\n   - Attendance and overtime\n   - Holidays\n   - Deductions\n4. Review the payroll summary.\n5. Click Confirm to finalize and generate payslips."
+    },
+    {
+      "keywords": [
+        "permission",
+        "employee permission",
+        "access control",
+        "user role",
+        "role permission",
+        "set permission"
+      ],
+      "answer": "To set Employee Permissions:\n1. Go to HRM - Permissions - Permissions Employee.\n2. Select the employee.\n3. Enable or disable access to specific modules (e.g. Sales, Stocks, HRM, Accounts).\n4. Click Save.\n\nPermissions control what each employee can view or do in the system."
+    },
+    {
+      "keywords": [
+        "leave",
+        "employee leave",
+        "leave request",
+        "file leave",
+        "apply leave",
+        "leave form"
+      ],
+      "answer": "To file a Leave Request:\n1. Go to Misc - Employee Leave - Employee Leave Request Form.\n2. Select the employee name.\n3. Choose the Leave Type (Vacation, Sick, Emergency, etc.).\n4. Enter the Leave Dates.\n5. Add a reason.\n6. Click Submit.\n\nManagers can approve or reject leave requests from Misc - Employee Leave - Manage Employee Leave Requests."
+    },
+    {
+      "keywords": [
+        "overtime",
+        "overtime request",
+        "ot request",
+        "extra hours",
+        "file overtime"
+      ],
+      "answer": "To file an Overtime Request:\n1. Go to Misc - Overtime Form - Overtime Request Form.\n2. Select the employee.\n3. Enter the date and number of overtime hours.\n4. Add the reason for overtime.\n5. Click Submit.\n\nManagers can manage overtime requests from Misc - Overtime Form - Manage Timeout Requests."
+    },
+    {
+      "keywords": [
+        "accounts",
+        "manage accounts",
+        "account",
+        "financial account",
+        "chart of accounts"
+      ],
+      "answer": "To manage Accounts:\n1. Go to Accounts from the sidebar.\n2. The Accounts module includes:\n   - Manage Accounts - view and manage financial accounts\n   - Balance Sheets - view assets, liabilities, and equity\n   - Transactions - view all financial transactions\n   - Income and Expense tracking\n3. Click 'Add Account' to create a new financial account."
+    },
+    {
+      "keywords": [
+        "transaction",
+        "new transaction",
+        "add transaction",
+        "financial transaction",
+        "record transaction"
+      ],
+      "answer": "To add a new Transaction:\n1. Go to Accounts - Manage Accounts - Add New Transaction.\n2. Select the Account.\n3. Choose the Transaction Type (Income or Expense).\n4. Enter the Amount, Date, and Description.\n5. Click Save.\n\nAll transactions are reflected in the Balance Sheet and financial reports."
+    },
+    {
+      "keywords": [
+        "balance sheet",
+        "financial report",
+        "assets",
+        "liabilities",
+        "equity"
+      ],
+      "answer": "To view the Balance Sheet:\n1. Go to Accounts - Balance Sheets.\n2. The balance sheet shows:\n   - Assets - what the business owns\n   - Liabilities - what the business owes\n   - Equity - owner's stake\n3. Use the date filter to view the balance sheet for a specific period."
+    },
+    {
+      "keywords": [
+        "stocks transfer account",
+        "account transfer",
+        "fund transfer",
+        "transfer funds"
+      ],
+      "answer": "To Transfer Funds between Accounts:\n1. Go to Accounts - Manage Accounts - Add New Transfer.\n2. Select the Source Account.\n3. Select the Destination Account.\n4. Enter the Amount and Date.\n5. Add a note or description.\n6. Click Save."
+    },
+    {
+      "keywords": [
+        "customer details account",
+        "account statement",
+        "customer account",
+        "account history"
+      ],
+      "answer": "To view a Customer's Account Statement:\n1. Go to Accounts - Customers - Account Statement.\n2. Search for the customer.\n3. The statement shows all invoices, payments, and balances for that customer.\n4. You can filter by date range and export or print the statement."
+    },
+    {
+      "keywords": [
+        "cash advance",
+        "cash advance request",
+        "new cash advance",
+        "request cash advance"
+      ],
+      "answer": "To file a Cash Advance Request:\n1. Go to Misc - Cash Advance - Cash Advance New Request.\n2. Enter the employee name and amount requested.\n3. Add the reason for the cash advance.\n4. Click Submit.\n\nManagers can approve or reject requests from Misc - Cash Advance - Manage Cash Advance Requests.\nApproved cash advances can be printed from Preview Print Cash Advance Request Form."
+    },
+    {
+      "keywords": [
+        "report",
+        "data report",
+        "generate report",
+        "sales report",
+        "view report"
+      ],
+      "answer": "To view Data Reports:\n1. Go to Data Reports from the sidebar.\n2. Available reports include:\n   - Business Registers - DTR and graphical reports\n   - Statements - Account and Customer statements\n   - Cost Estimate Files (Regular and Government)\n   - Summary Reports\n   - Graphical Reports\n3. Use date filters to narrow down the report period.\n4. Click Export or Print to save the report."
+    },
+    {
+      "keywords": [
+        "summary report",
+        "graphical report",
+        "business register",
+        "dtr report"
+      ],
+      "answer": "To access specific Reports:\n\n- Summary Reports - Go to Data Reports - Summary Reports Tab. Shows totals for sales, payments, and transactions.\n- Graphical Reports - Go to Data Reports - Graphical Reports Tab. Displays charts and visual summaries.\n- Business Registers - Go to Data Reports - Business Registers - DTR Business Registers.\n- Statements - Go to Data Reports - Statements for customer and account-specific reports."
+    },
+    {
+      "keywords": [
+        "upload file",
+        "upload document",
+        "upload online",
+        "export file online"
+      ],
+      "answer": "To Upload a File Online:\n1. Go to Data Reports - Upload File Online.\n2. Select the file or report you want to upload.\n3. Choose the destination or storage option.\n4. Click Upload.\n\nThis feature allows you to share reports or documents with external stakeholders."
+    },
+    {
+      "keywords": [
+        "project",
+        "add project",
+        "new project",
+        "manage project",
+        "create project"
+      ],
+      "answer": "To create a new Project:\n1. Go to Project from the sidebar.\n2. Click 'Add Project' (there are 3 steps):\n   - Step 1 - Enter Project Name, Client, and Description.\n   - Step 2 - Set the Project Timeline and Budget.\n   - Step 3 - Add Team Members and assign tasks.\n3. Click Save to create the project.\n\nManage all projects from Project - Manage Project."
+    },
+    {
+      "keywords": [
+        "task",
+        "to do",
+        "todo",
+        "new task",
+        "add task",
+        "manage task",
+        "task list"
+      ],
+      "answer": "To manage Tasks (To-Do List):\n1. Go to Project - To-Do List.\n2. Click 'New Task' to add a task.\n3. Fill in:\n   - Task Name\n   - Assigned To (employee)\n   - Due Date\n   - Priority Level\n4. Click Save.\n\nYou can edit tasks from Edit Task and view all tasks in Manage Task."
+    },
+    {
+      "keywords": [
+        "project support ticket",
+        "project ticket",
+        "project issue"
+      ],
+      "answer": "To create a Project Support Ticket:\n1. Go to Project - Support Tickets.\n2. Click 'New Ticket'.\n3. Select the related project and describe the issue.\n4. Set the priority.\n5. Click Save.\n\nSupport tickets within a project help track issues and bugs specific to that project."
+    },
+    {
+      "keywords": [
+        "calendar",
+        "event",
+        "add event",
+        "schedule",
+        "view calendar"
+      ],
+      "answer": "To use the Calendar:\n1. Go to Misc - Calendar - Calendar View.\n2. View all scheduled events and important dates.\n3. Click 'Add Event' to schedule a new event.\n4. Enter the Event Name, Date, Time, and Description.\n5. Click Save.\n\nThe calendar shows company events, deadlines, and employee holidays."
+    },
+    {
+      "keywords": [
+        "document",
+        "add document",
+        "new document",
+        "manage document",
+        "pull out form",
+        "file document"
+      ],
+      "answer": "To manage Documents:\n1. Go to Misc - Documents.\n2. Click 'Add Document' to upload or create a new document.\n3. Fill in the document details and attach the file.\n4. Click Save.\n\nYou can also create Pull Out Forms from Misc - Documents - Pull Out Form for inventory pull-out requests."
+    },
+    {
+      "keywords": [
+        "print",
+        "pdf",
+        "print invoice",
+        "print quotation",
+        "export pdf",
+        "export",
+        "print receipt"
+      ],
+      "answer": "To Print or Export as PDF:\n1. Open the Quotation, Invoice, or any document.\n2. Click the 'Print PDF' or 'Print' button.\n3. A preview window will appear.\n4. Review the content before printing.\n5. Click Print or Save as PDF.\n\nTip: Always double-check all item quantities and prices before printing or sending to the customer."
+    },
+    {
+      "keywords": [
+        "export excel",
+        "excel export",
+        "download excel",
+        "export data"
+      ],
+      "answer": "To Export data to Excel:\n1. Go to the module you want to export (e.g. Sales, Stocks, Reports).\n2. Click the Export or Excel button.\n3. Choose the date range or filter if prompted.\n4. The file will be downloaded as an Excel (.xlsx) file.\n\nExcel exports are available in most list views across the system."
+    },
+    {
+      "keywords": [
+        "business location",
+        "location",
+        "change location",
+        "store location",
+        "branch"
+      ],
+      "answer": "To change the Business Location:\n1. Click the Map Marker / Location icon in the top navigation bar.\n2. A list of available business locations will appear.\n3. Select the location you want to switch to.\n4. The system will reload with the selected location's data.\n\nThis is useful if your business has multiple branches or store locations."
+    },
+    {
+      "keywords": [
+        "notification",
+        "bell",
+        "alerts",
+        "unread notification",
+        "notification badge"
+      ],
+      "answer": "To view Notifications:\n1. Click the Bell icon in the top navigation bar.\n2. A red badge shows the number of unread notifications.\n3. Clicking the bell opens the Notification Modal.\n4. All notifications are marked as read automatically when you open the panel.\n\nNotifications include employee login history, system alerts, and important updates."
+    },
+    {
+      "keywords": [
+        "update",
+        "software update",
+        "new version",
+        "upgrade",
+        "latest version"
+      ],
+      "answer": "To check for Software Updates:\n- The system automatically checks for updates on startup.\n- If a new version is available, a notification will appear.\n- Click 'Update Now' to download and install the latest version.\n- The system will restart after the update is complete.\n\nAlways keep your DPC POS updated to get the latest features and security fixes."
+    }
+  ]
+}

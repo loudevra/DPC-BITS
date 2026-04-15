@@ -683,6 +683,9 @@
     <Compile Include="Components\Forms\ViewPrintDeletePopUp.xaml.vb">
       <DependentUpon>ViewPrintDeletePopUp.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Navigation\ChatBotWindow.xaml.vb">
+      <DependentUpon>ChatBotWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Navigation\TopNavbar.xaml.vb">
       <DependentUpon>TopNavBar.xaml</DependentUpon>
     </Compile>
@@ -1598,6 +1601,10 @@
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
     </Page>
+    <Page Include="Components\Navigation\ChatBotWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\Navigation\Sidebar.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2502,6 +2509,9 @@
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
     </EmbeddedResource>
+    <Content Include="Assets\knowledge-data\knowledge.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Data\Models\.editorconfig" />
     <None Include="DPC_TemporaryKey.pfx" />
     <None Include="My Project\app.manifest" />
