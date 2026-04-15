@@ -28,9 +28,42 @@
                 <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                     <TextBlock Text="Employees:" Foreground="#555555" FontSize="14" FontWeight="SemiBold" Margin="0,0,5,0" />
                 </StackPanel>
-                <Border Style="{StaticResource RoundedBorderStyle}" Margin="0,0,0,10" Padding="10,0">
-                    <TextBox x:Name="TxtEmployee" Style="{StaticResource RoundedTextboxStyle}" FontFamily="Lexend" Foreground="#555555" FontWeight="SemiBold" CharacterCasing="Upper"/>
-                </Border>
+
+                <!-- Wrap in a Grid so the Popup anchors correctly -->
+                <Grid x:Name="EmployeeFieldGrid" Margin="0,0,0,10">
+                    <Border Style="{StaticResource RoundedBorderStyle}" Padding="10,0">
+                        <TextBox x:Name="TxtEmployee"
+                 Style="{StaticResource RoundedTextboxStyle}"
+                 FontFamily="Lexend"
+                 Foreground="#555555"
+                 FontWeight="SemiBold"
+                 CharacterCasing="Upper"
+                 TextChanged="TxtEmployee_TextChanged"
+                 PreviewKeyDown="TxtEmployee_PreviewKeyDown"
+                 LostFocus="TxtEmployee_LostFocus"/>
+                    </Border>
+
+                    <Popup x:Name="SuggestionPopup"
+           PlacementTarget="{Binding ElementName=EmployeeFieldGrid}"
+           Placement="Bottom"
+           StaysOpen="False"
+           AllowsTransparency="True"
+           PopupAnimation="Fade"
+           Width="{Binding ActualWidth, ElementName=EmployeeFieldGrid}">
+                        <Border Background="White" BorderBrush="#CCCCCC" BorderThickness="1" CornerRadius="8">
+                            <ListBox x:Name="SuggestionList"
+                     MaxHeight="160"
+                     FontFamily="Lexend"
+                     Foreground="#555555"
+                     FontWeight="SemiBold"
+                     FontSize="13"
+                     BorderThickness="0"
+                     Background="Transparent"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     MouseLeftButtonUp="SuggestionList_MouseLeftButtonUp"/>
+                        </Border>
+                    </Popup>
+                </Grid>
 
                 <StackPanel Margin="0,10">
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
