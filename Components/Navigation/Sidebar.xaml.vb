@@ -27,6 +27,8 @@ Namespace DPC.Components.Navigation
         End Sub
 
         Private Sub ApplyPermissionStyles()
+
+            ' Helper function to turn text and icons Gray
             Dim GrayOut = Sub(btn As Button)
                               If btn Is Nothing Then Return
                               Try
@@ -46,6 +48,7 @@ Namespace DPC.Components.Navigation
                               End Try
                           End Sub
 
+            ' Helper function to turn text and icons back to White
             Dim UnGrayOut = Sub(btn As Button)
                                 If btn Is Nothing Then Return
                                 Try
@@ -65,45 +68,85 @@ Namespace DPC.Components.Navigation
                                 End Try
                             End Sub
 
-            ' Reset all first
-            UnGrayOut(BtnDashboard)
-            UnGrayOut(BtnSales)
-            UnGrayOut(BtnStocks)
-            UnGrayOut(BtnCRM)
-            UnGrayOut(BtnProjects)
-            UnGrayOut(BtnDataReports)
-            UnGrayOut(BtnMiscellaneous)
-            UnGrayOut(BtnHRM)
-
             ' Dashboard
-            If Not PermissionCache.Can("Dashboard") Then GrayOut(BtnDashboard)
+            If PermissionCache.Can("Dashboard") Then
+                BtnDashboard.IsEnabled = True
+                UnGrayOut(BtnDashboard)
+            Else
+                BtnDashboard.IsEnabled = False
+                GrayOut(BtnDashboard)
+            End If
 
             ' Sales
-            If Not PermissionCache.Can("Sales") Then GrayOut(BtnSales)
+            If PermissionCache.Can("Sales") Then
+                BtnSales.IsEnabled = True
+                UnGrayOut(BtnSales)
+            Else
+                BtnSales.IsEnabled = False
+                GrayOut(BtnSales)
+            End If
 
             ' Stocks
-            If Not PermissionCache.Can("Stocks") Then GrayOut(BtnStocks)
+            If PermissionCache.Can("Stocks") Then
+                BtnStocks.IsEnabled = True
+                UnGrayOut(BtnStocks)
+            Else
+                BtnStocks.IsEnabled = False
+                GrayOut(BtnStocks)
+            End If
 
             ' CRM
-            If Not PermissionCache.Can("CRM") Then GrayOut(BtnCRM)
+            If PermissionCache.Can("CRM") Then
+                BtnCRM.IsEnabled = True
+                UnGrayOut(BtnCRM)
+            Else
+                BtnCRM.IsEnabled = False
+                GrayOut(BtnCRM)
+            End If
 
             ' Project
-            If Not PermissionCache.Can("Project") Then GrayOut(BtnProjects)
+            If PermissionCache.Can("Project") Then
+                BtnProjects.IsEnabled = True
+                UnGrayOut(BtnProjects)
+            Else
+                BtnProjects.IsEnabled = False
+                GrayOut(BtnProjects)
+            End If
 
             ' Data & Reports
-            If Not PermissionCache.Can("Data & Reports") Then GrayOut(BtnDataReports)
+            If PermissionCache.Can("Data & Reports") Then
+                BtnDataReports.IsEnabled = True
+                UnGrayOut(BtnDataReports)
+            Else
+                BtnDataReports.IsEnabled = False
+                GrayOut(BtnDataReports)
+            End If
 
             ' Miscellaneous
-            If Not PermissionCache.Can("Miscellaneous") Then GrayOut(BtnMiscellaneous)
+            If PermissionCache.Can("Miscellaneous") Then
+                BtnMiscellaneous.IsEnabled = True
+                UnGrayOut(BtnMiscellaneous)
+            Else
+                BtnMiscellaneous.IsEnabled = False
+                GrayOut(BtnMiscellaneous)
+            End If
 
             ' HRM
-            If Not PermissionCache.Can("HRM") Then GrayOut(BtnHRM)
+            If PermissionCache.Can("HRM") Then
+                BtnHRM.IsEnabled = True
+                UnGrayOut(BtnHRM)
+            Else
+                BtnHRM.IsEnabled = False
+                GrayOut(BtnHRM)
+            End If
 
             ' Software Updates
-            If Not PermissionCache.Can("Software Updates") Then
-                BtnSoftwareUpdates.Visibility = Visibility.Collapsed
+            If PermissionCache.Can("Software Updates") Then
+                BtnSoftwareUpdates.IsEnabled = True
+                UnGrayOut(BtnSoftwareUpdates)
             Else
-                BtnSoftwareUpdates.Visibility = Visibility.Visible
+                BtnSoftwareUpdates.IsEnabled = False
+                GrayOut(BtnSoftwareUpdates)
             End If
 
         End Sub
@@ -287,9 +330,14 @@ Namespace DPC.Components.Navigation
 
         Private Async Sub CheckUpdateVisibility()
             Dim isUpdateAvailable = Await SoftwareUpdateHelper.IsUpdateAvailable()
-            BtnSoftwareUpdates.Visibility = If(isUpdateAvailable,
-                                               Visibility.Visible,
-                                               Visibility.Collapsed)
+
+            ' Software updates has an additional check: is an update even available on Github/server?
+            ' This stacks with the Permission rule.
+            If isUpdateAvailable AndAlso PermissionCache.Can("Software Updates") Then
+                BtnSoftwareUpdates.Visibility = Visibility.Visible
+            ElseIf Not isUpdateAvailable Then
+                BtnSoftwareUpdates.Visibility = Visibility.Collapsed
+            End If
         End Sub
 
         Private Sub Sidebar_Loaded(sender As Object, e As RoutedEventArgs)
@@ -305,4 +353,3 @@ Namespace DPC.Components.Navigation
 
     End Class
 End Namespace
-
