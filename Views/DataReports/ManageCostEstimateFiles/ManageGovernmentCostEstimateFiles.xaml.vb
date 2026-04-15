@@ -1,7 +1,10 @@
-﻿Imports System.Collections.ObjectModel
+﻿
+
+Imports System.Collections.ObjectModel
 Imports System.ComponentModel
 Imports System.Data
 Imports System.Data.Common
+Imports System.Diagnostics ' <--- ADDED for Preview functionality
 Imports System.IO
 Imports System.Threading.Tasks
 Imports System.Windows.Controls
@@ -217,13 +220,49 @@ Namespace DPC.Views.DataReports.ManageGovernmentCostEstimateFiles
 #Region "File Operations"
 
         ''' <summary>
+        ''' Downloads the file to the Windows Temp folder and opens it with the default system viewer
+        ''' </summary>
+        Private Async Function PreviewFile(fileId As String, fileName As String) As Task
+            Try
+                mainGrid.IsEnabled = False
+                Cursor = Cursors.Wait
+
+                ' Define the path to the system Temp directory
+                Dim tempFolder As String = Path.GetTempPath()
+
+                ' To avoid file locks if the user previews the same file twice, append a timestamp
+                Dim uniqueFileName As String = $"{Path.GetFileNameWithoutExtension(fileName)}_{DateTime.Now.ToString("HHmmss")}{Path.GetExtension(fileName)}"
+                Dim tempFilePath As String = Path.Combine(tempFolder, uniqueFileName)
+
+                ' Download the file from GridFS to the Temp directory
+                Await Task.Run(Async Function()
+                                   Using fileStream As New FileStream(tempFilePath, FileMode.Create, FileAccess.Write)
+                                       Await _gridFS.DownloadToStreamAsync(New ObjectId(fileId), fileStream)
+                                   End Using
+                               End Function)
+
+                ' Open the file using the default Windows application
+                Dim pInfo As New ProcessStartInfo(tempFilePath) With {
+                    .UseShellExecute = True
+                }
+                Process.Start(pInfo)
+
+            Catch ex As Exception
+                MessageBox.Show($"Error previewing file: {ex.Message}", "Preview Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            Finally
+                mainGrid.IsEnabled = True
+                Cursor = Cursors.Arrow
+            End Try
+        End Function
+
+        ''' <summary>
         ''' Downloads a file from GridFS
         ''' </summary>
         Public Async Function DownloadFile(fileId As String, fileName As String) As Task(Of Boolean)
             Try
                 ' Open save file dialog
                 Dim saveDialog As New SaveFileDialog With {
-                    .FileName = fileName,
+                    .fileName = fileName,
                     .Filter = "All Files (*.*)|*.*"
                 }
 
@@ -308,13 +347,13 @@ Namespace DPC.Views.DataReports.ManageGovernmentCostEstimateFiles
                                        Using fileStream As New FileStream(openDialog.FileName, FileMode.Open, FileAccess.Read)
                                            ' Create metadata for the file
                                            Dim options As New GridFSUploadOptions With {
-    .Metadata = New BsonDocument From {
-        {"contentType", Path.GetExtension(openDialog.FileName)}, ' <--- THIS LINE GRABS THE FILE TYPE
-        {"uploadedBy", Environment.UserName},
-        {"uploadedDate", DateTime.UtcNow},
-        {"originalPath", openDialog.FileName}
-    }
-}
+                                               .Metadata = New BsonDocument From {
+                                                   {"contentType", Path.GetExtension(openDialog.FileName)},
+                                                   {"uploadedBy", Environment.UserName},
+                                                   {"uploadedDate", DateTime.UtcNow},
+                                                   {"originalPath", openDialog.FileName}
+                                               }
+                                           }
 
                                            ' Upload to GridFS (automatically stores in fs.files and fs.chunks)
                                            Await _gridFS.UploadFromStreamAsync(Path.GetFileName(openDialog.FileName), fileStream, options)
@@ -473,6 +512,19 @@ Namespace DPC.Views.DataReports.ManageGovernmentCostEstimateFiles
 #End Region
 
 #Region "Event Handlers"
+
+        ''' <summary>
+        ''' Preview button click handler
+        ''' </summary>
+        Private Async Sub BtnPreview_Click(sender As Object, e As RoutedEventArgs)
+            Dim btn = TryCast(sender, Button)
+            If btn IsNot Nothing Then
+                Dim fileModel = TryCast(btn.Tag, CostEstimateFileModel)
+                If fileModel IsNot Nothing Then
+                    Await PreviewFile(fileModel.FileId, fileModel.FileName)
+                End If
+            End If
+        End Sub
 
         ''' <summary>
         ''' Handles search text change

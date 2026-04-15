@@ -28,7 +28,10 @@
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="🔍" Foreground="#475569" FontSize="12" VerticalAlignment="Center" Margin="0,0,10,0"/>
+
+                    <Path Data="M15.5,14L20.5,19L19,20.5L14,15.5V14.71L13.73,14.43C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.43,13.73L14.71,14H15.5M9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14Z" 
+                          Fill="#475569" Width="16" Height="16" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,10,0"/>
+
                     <TextBox Grid.Column="1" Text="Search Files" Foreground="#94A3B8" BorderThickness="0" 
                              VerticalAlignment="Center" Background="Transparent" FontSize="13" TextChanged="TextBox_TextChanged"/>
                 </Grid>
@@ -46,7 +49,8 @@
                     <Border Background="White" CornerRadius="12" Padding="25" Margin="0,0,0,20">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
-                                <TextBlock Text="👤" Foreground="#475569" FontSize="18" VerticalAlignment="Center"/>
+                                <Path Data="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" 
+                                      Fill="#475569" Width="20" Height="20" Stretch="Uniform" VerticalAlignment="Center"/>
                                 <TextBlock Text= "Client Profile" Foreground="#2A3547" FontSize="16" FontWeight="SemiBold" Margin="10,0,0,0" VerticalAlignment="Center"/>
                             </StackPanel>
 
@@ -82,7 +86,8 @@
                     <Border Background="White" CornerRadius="12" Padding="25" Margin="0,0,0,20">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
-                                <TextBlock Text="📍" Foreground="#475569" FontSize="18" VerticalAlignment="Center"/>
+                                <Path Data="M12,11.5A2.5,2.5 0 0,1 9.5,9A2.5,2.5 0 0,1 12,6.5A2.5,2.5 0 0,1 14.5,9A2.5,2.5 0 0,1 12,11.5M12,2A7,7 0 0,0 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9A7,7 0 0,0 12,2Z" 
+                                      Fill="#475569" Width="20" Height="20" Stretch="Uniform" VerticalAlignment="Center"/>
                                 <TextBlock Text="Billing Address" Foreground="#2A3547" FontSize="16" FontWeight="SemiBold" Margin="10,0,0,0" VerticalAlignment="Center"/>
                             </StackPanel>
 
@@ -132,15 +137,15 @@
 
                     <Grid Grid.Row="0" Margin="0,0,0,25">
                         <StackPanel Orientation="Horizontal">
-                            <Path Data="M 2.5,4 C 2.5,2.895 3.395,2 4.5,2 L 10.5,2 L 12.5,4 L 21.5,4 C 22.605,4 23.5,4.895 23.5,6 L 23.5,18 C 23.5,19.105 22.605,20 21.5,20 L 4.5,20 C 3.395,20 2.5,19.105 2.5,18 L 2.5,4 Z" 
-                                  Fill="#475569" Width="22" Height="18" Stretch="Fill"/>
+                            <Path Data="M19,20H4C2.89,20 2,19.1 2,18V6C2,4.89 2.89,4 4,4H10L12,6H19A2,2 0 0,1 21,8H21L4,8V18L6.14,10H23.21L20.93,18.5C20.7,19.37 19.92,20 19,20Z" 
+                                  Fill="#475569" Width="22" Height="18" Stretch="Uniform" VerticalAlignment="Center"/>
                             <TextBlock Text="Client Documents" Foreground="#1E293B" FontSize="18" FontWeight="SemiBold" Margin="12,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Grid>
 
-                    <Grid Grid.Row="1" Margin="40,0,0,15">
+                    <Grid Grid.Row="1" Margin="25,0,0,15">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="5*"/>
+                            <ColumnDefinition Width="6*"/>
                             <ColumnDefinition Width="3*"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Text="Document Name" Foreground="#94A3B8" FontSize="13" FontWeight="SemiBold"/>
@@ -152,56 +157,30 @@
 
                             <Expander Background="Transparent" BorderThickness="0" Margin="0,0,0,10">
                                 <Expander.Header>
-                                    <StackPanel Orientation="Horizontal" Margin="0,10">
-                                        <Path Data="M10,4H4c-1.1,0-1.99,.9-1.99,2L2,18c0,1.1,.9,2,2,2h16c1.1,0,2-.9,2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" Fill="#CBD5E1" Width="22" Height="18" Stretch="Fill" Margin="0,0,15,0"/>
-                                        <TextBlock Text="CE (Cost Estimates)" Foreground="#475569" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,5">
+                                        <Path Data="M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8A2,2 0 0,0 20,6H12L10,4Z" 
+                                              Fill="#CBD5E1" Width="20" Height="18" Stretch="Uniform" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="CE (Cost Estimates)" Foreground="#334155" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </Expander.Header>
 
-                                <ItemsControl x:Name="CEFilesList" Margin="40,5,0,15">
+                                <ItemsControl x:Name="CEFilesList" Margin="35,5,0,5">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Grid Margin="0,8">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="5*"/>
+                                                    <ColumnDefinition Width="6*"/>
                                                     <ColumnDefinition Width="3*"/>
                                                 </Grid.ColumnDefinitions>
 
-                                                <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                                    <Path Data="M 14,2 L 6,2 C 4.895,2 4,2.895 4,4 L 4,20 C 4,21.105 4.895,22 6,22 L 18,22 C 19.105,22 20,21.105 20,20 L 20,8 L 14,2 Z" Fill="#475569" Width="14" Height="18" Stretch="Fill" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                                                    <Button Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="0" Click="OpenFile_Click" ToolTip="Open Cost Estimate PDF">
-                                                        <TextBlock Text="{Binding FileName}" VerticalAlignment="Center" Foreground="#1E293B" FontSize="13" FontWeight="SemiBold" TextDecorations="Underline"/>
-                                                    </Button>
-                                                </StackPanel>
-
-                                                <TextBlock Grid.Column="1" Text="{Binding DateCreated}" VerticalAlignment="Center" Foreground="#64748B" FontSize="13"/>
-                                            </Grid>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </Expander>
-
-                            <Expander Background="Transparent" BorderThickness="0" Margin="0,0,0,10">
-                                <Expander.Header>
-                                    <StackPanel Orientation="Horizontal" Margin="0,10">
-                                        <Path Data="M10,4H4c-1.1,0-1.99,.9-1.99,2L2,18c0,1.1,.9,2,2,2h16c1.1,0,2-.9,2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" Fill="#CBD5E1" Width="22" Height="18" Stretch="Fill" Margin="0,0,15,0"/>
-                                        <TextBlock Text="BS (Billing Statements)" Foreground="#475569" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                </Expander.Header>
-
-                                <ItemsControl x:Name="BSFilesList" Margin="40,5,0,15">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Grid Margin="0,8">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="5*"/>
-                                                    <ColumnDefinition Width="3*"/>
-                                                </Grid.ColumnDefinitions>
-
-                                                <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                                    <Path Data="M 14,2 L 6,2 C 4.895,2 4,2.895 4,4 L 4,20 C 4,21.105 4.895,22 6,22 L 18,22 C 19.105,22 20,21.105 20,20 L 20,8 L 14,2 Z" Fill="#475569" Width="14" Height="18" Stretch="Fill" VerticalAlignment="Center" Margin="0,0,10,0"/>
-
-                                                    <Button Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="0" Click="OpenFile_Click" ToolTip="Open Billing Statement">
+                                                <Grid Grid.Column="0" Margin="0,0,20,0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Path Grid.Column="0" Data="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2Z" 
+                                                          Fill="#64748B" Width="14" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                                    <Button Grid.Column="1" Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="0" Click="OpenFile_Click" ToolTip="{Binding FileName}">
                                                         <Button.Template>
                                                             <ControlTemplate TargetType="Button">
                                                                 <Border Background="Transparent">
@@ -209,11 +188,10 @@
                                                                 </Border>
                                                             </ControlTemplate>
                                                         </Button.Template>
-                                                        <TextBlock Text="{Binding FileName}" Foreground="#1E293B" FontSize="13" FontWeight="SemiBold" TextDecorations="Underline"/>
+                                                        <TextBlock Text="{Binding FileName}" Foreground="#1E293B" FontSize="13" FontWeight="SemiBold" TextDecorations="Underline" TextTrimming="CharacterEllipsis"/>
                                                     </Button>
-                                                </StackPanel>
-
-                                                <TextBlock Grid.Column="1" Text="{Binding DateCreated}" VerticalAlignment="Center" Foreground="#64748B" FontSize="13"/>
+                                                </Grid>
+                                                <TextBlock Grid.Column="1" Text="{Binding DateCreated}" VerticalAlignment="Center" Foreground="#94A3B8" FontSize="13"/>
                                             </Grid>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
@@ -222,22 +200,131 @@
 
                             <Expander Background="Transparent" BorderThickness="0" Margin="0,0,0,10">
                                 <Expander.Header>
-                                    <StackPanel Orientation="Horizontal" Margin="0,10">
-                                        <Path Data="M10,4H4c-1.1,0-1.99,.9-1.99,2L2,18c0,1.1,.9,2,2,2h16c1.1,0,2-.9,2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" Fill="#CBD5E1" Width="22" Height="18" Stretch="Fill" Margin="0,0,15,0"/>
-                                        <TextBlock Text="DR (Delivery Receipts)" Foreground="#475569" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,5">
+                                        <Path Data="M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8A2,2 0 0,0 20,6H12L10,4Z" 
+                                              Fill="#CBD5E1" Width="20" Height="18" Stretch="Uniform" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="BS (Billing Statements)" Foreground="#334155" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </Expander.Header>
-                                <TextBlock Text="No Delivery Receipts found." Margin="40,5,0,15" Foreground="#94A3B8" FontSize="12" FontStyle="Italic"/>
+
+                                <ItemsControl x:Name="BSFilesList" Margin="35,5,0,5">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,8">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="6*"/>
+                                                    <ColumnDefinition Width="3*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <Grid Grid.Column="0" Margin="0,0,20,0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Path Grid.Column="0" Data="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2Z" 
+                                                          Fill="#64748B" Width="14" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                                    <Button Grid.Column="1" Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="0" Click="OpenFile_Click" ToolTip="{Binding FileName}">
+                                                        <Button.Template>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border Background="Transparent">
+                                                                    <ContentPresenter VerticalAlignment="Center"/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                        <TextBlock Text="{Binding FileName}" Foreground="#1E293B" FontSize="13" FontWeight="SemiBold" TextDecorations="Underline" TextTrimming="CharacterEllipsis"/>
+                                                    </Button>
+                                                </Grid>
+                                                <TextBlock Grid.Column="1" Text="{Binding DateCreated}" VerticalAlignment="Center" Foreground="#94A3B8" FontSize="13"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
                             </Expander>
 
                             <Expander Background="Transparent" BorderThickness="0" Margin="0,0,0,10">
                                 <Expander.Header>
-                                    <StackPanel Orientation="Horizontal" Margin="0,10">
-                                        <Path Data="M10,4H4c-1.1,0-1.99,.9-1.99,2L2,18c0,1.1,.9,2,2,2h16c1.1,0,2-.9,2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" Fill="#CBD5E1" Width="22" Height="18" Stretch="Fill" Margin="0,0,15,0"/>
-                                        <TextBlock Text="SOA (Statement of Account)" Foreground="#475569" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,5">
+                                        <Path Data="M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8A2,2 0 0,0 20,6H12L10,4Z" 
+                                              Fill="#CBD5E1" Width="20" Height="18" Stretch="Uniform" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="DR (Delivery Receipts)" Foreground="#334155" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </Expander.Header>
-                                <TextBlock Text="No Statement of Accounts found." Margin="40,5,0,15" Foreground="#94A3B8" FontSize="12" FontStyle="Italic"/>
+
+                                <ItemsControl x:Name="DRFilesList" Margin="35,5,0,5">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,8">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="6*"/>
+                                                    <ColumnDefinition Width="3*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <Grid Grid.Column="0" Margin="0,0,20,0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Path Grid.Column="0" Data="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2Z" 
+                                                          Fill="#64748B" Width="14" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                                    <Button Grid.Column="1" Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="0" Click="OpenFile_Click" ToolTip="{Binding FileName}">
+                                                        <Button.Template>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border Background="Transparent">
+                                                                    <ContentPresenter VerticalAlignment="Center"/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                        <TextBlock Text="{Binding FileName}" Foreground="#1E293B" FontSize="13" FontWeight="SemiBold" TextDecorations="Underline" TextTrimming="CharacterEllipsis"/>
+                                                    </Button>
+                                                </Grid>
+                                                <TextBlock Grid.Column="1" Text="{Binding DateCreated}" VerticalAlignment="Center" Foreground="#94A3B8" FontSize="13"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Expander>
+
+                            <Expander Background="Transparent" BorderThickness="0" Margin="0,0,0,10">
+                                <Expander.Header>
+                                    <StackPanel Orientation="Horizontal" Margin="0,5">
+                                        <Path Data="M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8A2,2 0 0,0 20,6H12L10,4Z" 
+                                              Fill="#CBD5E1" Width="20" Height="18" Stretch="Uniform" Margin="0,0,15,0" VerticalAlignment="Center"/>
+                                        <TextBlock Text="SOA (Statement of Account)" Foreground="#334155" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Expander.Header>
+
+                                <ItemsControl x:Name="SOAFilesList" Margin="35,5,0,5">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,8">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="6*"/>
+                                                    <ColumnDefinition Width="3*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <Grid Grid.Column="0" Margin="0,0,20,0">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Path Grid.Column="0" Data="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2Z" 
+                                                          Fill="#64748B" Width="14" Height="18" Stretch="Uniform" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                                    <Button Grid.Column="1" Background="Transparent" BorderThickness="0" Cursor="Hand" Padding="0" Click="OpenFile_Click" ToolTip="{Binding FileName}">
+                                                        <Button.Template>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border Background="Transparent">
+                                                                    <ContentPresenter VerticalAlignment="Center"/>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                        <TextBlock Text="{Binding FileName}" Foreground="#1E293B" FontSize="13" FontWeight="SemiBold" TextDecorations="Underline" TextTrimming="CharacterEllipsis"/>
+                                                    </Button>
+                                                </Grid>
+                                                <TextBlock Grid.Column="1" Text="{Binding DateCreated}" VerticalAlignment="Center" Foreground="#94A3B8" FontSize="13"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
                             </Expander>
 
                         </StackPanel>
