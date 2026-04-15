@@ -30,6 +30,19 @@ Namespace DPC.Views.Auth
             PerformSignIn()
         End Sub
 
+        Private Shared ReadOnly RoleLandingMap As New Dictionary(Of String, String)(StringComparer.OrdinalIgnoreCase) From {
+    {"Administrator", "dashboard"},
+    {"Business Manager", "dashboard"},
+    {"Business Owner", "dashboard"},
+    {"Inventory Manager", "stocks"},
+    {"IT", "dashboard"},
+    {"Project Manager", "manageproject"},
+    {"Sales Manager", "walkinorder"},
+    {"Sales Person", "walkinorder"},
+    {"Tech", "manageproject"}
+}
+        Private Const DefaultLandingView As String = "dashboard"
+
         Private Sub PerformSignIn()
             If isProcessing Then Return
             isProcessing = True
@@ -78,68 +91,47 @@ Namespace DPC.Views.Auth
                     Dim query As String = "SELECT RoleName FROM userroles WHERE RoleID = " & UserRoleID
                     Dim cmd As New MySqlCommand(query, conn)
                     Dim reader = cmd.ExecuteReader()
-                    While (reader.Read)
-                        Dim Role As String = reader.GetString("RoleName")
-                        Dim landingView As String = "dashboard"
 
-                        Try
-                            Using permConn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                                permConn.Open()
-                                Dim permQuery As String = "SELECT * FROM permissions WHERE Role = '" & Role & "'"
-                                Dim permCmd As New MySqlCommand(permQuery, permConn)
-                                Dim permReader = permCmd.ExecuteReader()
-                                Dim SalesPerm As Boolean = False
-                                Dim ProjectPerm As Boolean = False
-                                Dim AccountsPerm As Boolean = False
+                    If Not reader.Read() Then
+                        FallbackToDashboard()
+                        Return
+                    End If
 
-                                If permReader.Read() Then
-                                    SalesPerm = Convert.ToBoolean(permReader("Sales"))
-                                    ProjectPerm = Convert.ToBoolean(permReader("Project"))
-                                    AccountsPerm = Convert.ToBoolean(permReader("Accounts"))
-                                End If
+                    Dim role As String = reader.GetString("RoleName")
+                    reader.Close()
 
-                                Dim roleLower = Role.ToLower()
-                                If roleLower.Contains("sales") Then
-                                    If SalesPerm Then landingView = "walkinorder"
-                                ElseIf roleLower.Contains("manager") AndAlso roleLower.Contains("business") Then
-                                    If ProjectPerm Then landingView = "manageproject"
-                                ElseIf roleLower.Contains("admin") Then
-                                    landingView = "dashboard"
-                                End If
+                    ' Determine landing view from the map, fall back to default
+                    Dim landingView As String = DefaultLandingView
+                    For Each entry In RoleLandingMap
+                        If role.IndexOf(entry.Key, StringComparison.OrdinalIgnoreCase) >= 0 Then
+                            landingView = entry.Value
+                            Exit For
+                        End If
+                    Next
 
-                                If landingView = "dashboard" Then
-                                    If SalesPerm Then
-                                        landingView = "walkinorder"
-                                    ElseIf ProjectPerm Then
-                                        landingView = "manageproject"
-                                    End If
-                                End If
-                            End Using
-                        Catch exPerm As Exception
-                            landingView = "dashboard"
-                        End Try
+                    PermissionCache.LoadForRole(role)
 
-                        PermissionCache.LoadForRole(Role)
-                        Dim baseWindow As New Base(Role) With {
-                            .CurrentView = ViewLoader.DynamicView.Load(landingView)
-                        }
-                        baseWindow.Show()
+                    Dim baseWindow As New Base(role) With {
+                .CurrentView = ViewLoader.DynamicView.Load(landingView)
+            }
+                    baseWindow.Show()
+                    Window.GetWindow(Me)?.Close()
 
-                        Dim currentWindow As Window = Window.GetWindow(Me)
-                        currentWindow?.Close()
-                    End While
                 Catch ex As Exception
-                    Try
-                        Dim baseWindow As New Base("") With {
-            .CurrentView = ViewLoader.DynamicView.Load("dashboard")
-        }
-                        baseWindow.Show()
-                        Dim currentWindow As Window = Window.GetWindow(Me)
-                        currentWindow?.Close()
-                    Catch
-                    End Try
+                    FallbackToDashboard()
                 End Try
             End Using
+        End Sub
+
+        Private Sub FallbackToDashboard()
+            Try
+                Dim baseWindow As New Base("") With {
+            .CurrentView = ViewLoader.DynamicView.Load(DefaultLandingView)
+        }
+                baseWindow.Show()
+                Window.GetWindow(Me)?.Close()
+            Catch
+            End Try
         End Sub
 
         Private Sub OnLoginError()

@@ -57,8 +57,8 @@ Namespace DPC
             Dim topNavBar As New TopNavBar()
             TopNavBarContainer.Content = topNavBar
 
-            ' Set default view using DynamicView
-            CurrentView = ViewLoader.DynamicView.Load("dashboard")
+            ' Set default view based on permissions
+            CurrentView = ViewLoader.DynamicView.Load(GetDefaultPermittedView())
 
             ' Bind data context to this class for ContentPresenter binding
             Me.DataContext = Me
@@ -71,6 +71,40 @@ Namespace DPC
             AddHandler topNavBar.RestoreDefaultSidebar, AddressOf RestoreDefaultSidebar
 
         End Sub
+
+        Private Function GetDefaultPermittedView() As String
+            Select Case RoleName.ToLower().Trim()
+                Case "administrator"
+                    Return "dashboard"
+                Case "business manager"
+                    Return "dashboard"
+                Case "business owner"
+                    Return "dashboard"
+                Case "inventory manager"
+                    Return "stocks"         ' Their primary function
+                Case "it"
+                    Return "miscellaneous"  ' Their primary access besides dashboard
+                Case "project manager"
+                    Return "projects"       ' Their primary function
+                Case "sales manager"
+                    Return "sales"          ' Their primary function
+                Case "sales person"
+                    Return "sales"          ' Their primary function
+                Case "tech"
+                    Return "projects"       ' Their primary function
+                Case Else
+                    ' Fallback: first permitted view
+                    If PermissionCache.Can("Dashboard") Then Return "dashboard"
+                    If PermissionCache.Can("Sales") Then Return "sales"
+                    If PermissionCache.Can("Stocks") Then Return "stocks"
+                    If PermissionCache.Can("CRM") Then Return "crm"
+                    If PermissionCache.Can("Project") Then Return "projects"
+                    If PermissionCache.Can("Data & Reports") Then Return "datareports"
+                    If PermissionCache.Can("Miscellaneous") Then Return "miscellaneous"
+                    If PermissionCache.Can("HRM") Then Return "hrm"
+                    Return "noaccess"
+            End Select
+        End Function
 
         ' Load POS Form into the sidebar and ensure sidebar is expanded
         Private Sub LoadPOSForm()

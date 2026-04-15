@@ -111,7 +111,11 @@ Namespace DPC.Components.Navigation
         ' ---- Navigation Handlers ----
 
         Private Sub OpenDashboard(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("dashboard", Me)
+            If PermissionCache.Can("Dashboard") Then
+                ViewLoader.DynamicView.NavigateToView("dashboard", Me)
+            Else
+                MessageBox.Show("Access not permitted. Consult with admin.")
+            End If
         End Sub
 
         Private Sub OpenSales(sender As Object, e As RoutedEventArgs)
