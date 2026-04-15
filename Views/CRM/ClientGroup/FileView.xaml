@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DPC"
              mc:Ignorable="d" 
-             d:DesignHeight="800" d:DesignWidth="1400">
+             d:DesignHeight="800" d:DesignWidth="1400"
+             FontFamily="Lexend" FontWeight="Light">
     <Grid Background="#F4F6F9">
         <Grid.RowDefinitions>
             <RowDefinition Height="90"/>
@@ -20,7 +21,7 @@
                 <ColumnDefinition Width="300"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Text="File Manager" FontSize="26" FontWeight="Bold" Foreground="#2A3547" VerticalAlignment="Center"/>
+            <TextBlock Text="Client Information" FontSize="26" FontWeight="Bold" Foreground="#2A3547" VerticalAlignment="Center"/>
 
             <Border Grid.Column="3" Background="White" CornerRadius="17.5" Height="35" VerticalAlignment="Center" Padding="15,0" BorderBrush="#E2E8F0" BorderThickness="1">
                 <Grid>
@@ -40,8 +41,8 @@
 
         <Grid Grid.Row="1" Margin="30,0,30,30">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="4*"/>
-                <ColumnDefinition Width="6*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
             <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" BorderThickness="0" Margin="0,0,20,0">
