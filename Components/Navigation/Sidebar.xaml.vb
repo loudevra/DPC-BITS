@@ -153,7 +153,7 @@ Namespace DPC.Components.Navigation
         End Sub
 
         Private Sub OpenStocksPopup(sender As Object, e As RoutedEventArgs)
-            If PermissionCache.CanAny("Stocks", "Sales") Then
+            If PermissionCache.Can("Stocks") Then
                 Dim popupMenu As New PopUpMenuStocks()
                 popupMenu.ShowPopup(Me, sender)
             Else
