@@ -82,7 +82,7 @@ Namespace DPC.Components.Navigation
             If Not PermissionCache.Can("Sales") Then GrayOut(BtnSales)
 
             ' Stocks
-            If Not PermissionCache.CanAny("Stocks", "Sales") Then GrayOut(BtnStocks)
+            If Not PermissionCache.Can("Stocks") Then GrayOut(BtnStocks)
 
             ' CRM
             If Not PermissionCache.Can("CRM") Then GrayOut(BtnCRM)
