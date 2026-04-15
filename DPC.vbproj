@@ -703,6 +703,7 @@
     <Compile Include="Data\Controllers\EmployeeController.vb" />
     <Compile Include="Data\Controllers\CalendarController.vb" />
     <Compile Include="Data\Controllers\EmployeeLoginHistoryController.vb" />
+    <Compile Include="Data\Controllers\EventStore.vb" />
     <Compile Include="Data\Controllers\HRM\FilesController.vb" />
     <Compile Include="Data\Controllers\HRM\HRMController.vb" />
     <Compile Include="Data\Controllers\ManageProductsController.vb" />
@@ -1056,6 +1057,12 @@
     </Compile>
     <Compile Include="Views\HRM\Employees\Salaries\EmployeeSalaries.xaml.vb">
       <DependentUpon>EmployeeSalaries.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc\Calendar\Addevent.xaml.vb">
+      <DependentUpon>Addevent.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Misc\Calendar\calendarview.xaml.vb">
+      <DependentUpon>calendarview.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Misc\CashAdvance\CashAdvanceNewRequest.xaml.vb">
       <DependentUpon>CashAdvanceNewRequest.xaml</DependentUpon>
@@ -2054,6 +2061,14 @@
     <Page Include="Views\HRM\Employees\Salaries\EmployeeSalaries.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Misc\Calendar\Addevent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Misc\Calendar\calendarview.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Misc\CashAdvance\CashAdvanceNewRequest.xaml">
       <SubType>Designer</SubType>
