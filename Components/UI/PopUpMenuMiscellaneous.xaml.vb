@@ -115,12 +115,12 @@ Namespace DPC.Components.UI
 
         Private Sub NavigateToViewCalendar(sender As Object, e As RoutedEventArgs)
             ' Implementation for navigating to View Calendar
-            ViewLoader.DynamicView.NavigateToView("viewcalendar", Me)
+            ViewLoader.DynamicView.NavigateToView("calendarview", Me)
         End Sub
 
         Private Sub NavigateToAddEvent(sender As Object, e As RoutedEventArgs)
-            ' Implementation for navigating to Add Event
-
+            ' Navigate to the Add Event view
+            ViewLoader.DynamicView.NavigateToView("addevent", Me)
         End Sub
 
         Private Sub NavigateToUploadDocument(sender As Object, e As RoutedEventArgs)
@@ -179,6 +179,7 @@ Namespace DPC.Components.UI
         Private Sub NavigateToManageEmployeeLeaveRequests(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("manageemployeeleaverequests", Me)
         End Sub
+
 
     End Class
 End Namespace

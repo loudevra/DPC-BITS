@@ -321,6 +321,12 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "previewprintemployeeleave"
                         Return New DPC.Views.Misc.EmployeeLeave.PreviewPrintEmployeeLeave()
 
+                        ' Misc Navigation
+                    Case "calendarview"
+                        Return New calendarview()
+                    Case "addevent"
+                        Return New AddEvent()
+
                     Case Else
                         ' Return a placeholder UserControl with error text
                         Dim errorContent As New TextBlock With {
@@ -497,6 +503,11 @@ Namespace DPC.Data.Helpers.ViewLoader
             ElseIf typeName = "walkinneworder" Then
                 Return "walkinorder"
 
+                ' Misc Navigation
+            ElseIf typeName = "calendarview" Then
+                Return "calendarview"
+            ElseIf typeName = "addevent" Then      ' <-- ADD THESE TWO LINES
+                Return "addevent"
 
                 ' Accounts Navigation
             ElseIf typeName = "manageaccounts" Then
