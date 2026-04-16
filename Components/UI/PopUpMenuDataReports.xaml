@@ -1,12 +1,11 @@
 ﻿<UserControl x:Class="DPC.Components.UI.PopUpMenuDataReports"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-    Height="Auto" Width="Auto"
-    Background="Transparent">
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             Height="Auto" Width="Auto"
+             Background="Transparent">
 
     <UserControl.Resources>
-        <!-- Hyperlink Styling -->
         <Style TargetType="Hyperlink">
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="TextDecorations" Value="{x:Null}"/>
@@ -18,14 +17,12 @@
             </Style.Triggers>
         </Style>
 
-        <!-- Submenu Item Style -->
         <Style x:Key="SubmenuItemStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="#d4d4d4"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="Margin" Value="25,3,0,3"/>
         </Style>
 
-        <!-- Main Menu Item Style -->
         <Style x:Key="MainMenuItemStyle" TargetType="TextBlock">
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="FontFamily" Value="Lexend"/>
@@ -35,7 +32,6 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
 
-        <!-- Vertical Line Style -->
         <Style x:Key="VerticalLineStyle" TargetType="Border">
             <Setter Property="Width" Value="1"/>
             <Setter Property="Background" Value="#444444"/>
@@ -44,7 +40,6 @@
         </Style>
     </UserControl.Resources>
 
-    <!-- Main Grid to center the content -->
     <Grid Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -57,11 +52,9 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- The Card is now in the center column/row -->
         <materialDesign:Card Grid.Column="1" Grid.Row="1" Background="#0F0F0F" UniformCornerRadius="0" Margin="0" Width="285">
             <StackPanel Orientation="Vertical" Margin="35,0,0,0">
 
-                <!-- Business Registers Section -->
                 <Grid Margin="0,8,0,8">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -72,15 +65,13 @@
                         <Hyperlink Click="NavigateToBusinessregister" >
                             <TextBlock Text="Business Registers" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
-                                                                                    <TextBlock.ToolTip>
-<ToolTip Content="Maintain and review official business records." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                        <TextBlock.ToolTip>
+                            <ToolTip Content="Maintain and review official business records." 
+                                     Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
+                        </TextBlock.ToolTip>
                     </TextBlock>
                 </Grid>
 
-                <!-- Files -->
                 <StackPanel>
                     <Grid Margin="0,8,0,0">
                         <Grid.ColumnDefinitions>
@@ -92,33 +83,28 @@
                             <TextBlock Text="Manage Files" Style="{StaticResource MainMenuItemStyle}"/>
                             <TextBlock.ToolTip>
                                 <ToolTip Content="Upload, view, and organize all company files." 
-                                         Style="{StaticResource SpeechBubbleToolTip}"
-                                         Placement="Top"/>
+                                         Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
                             </TextBlock.ToolTip>
                         </TextBlock>
                     </Grid>
 
-                    <!-- Submenu items with vertical lines -->
                     <Grid Margin="24,3,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Vertical line -->
                         <Rectangle Width="1" Fill="#444444" HorizontalAlignment="Left" Margin="0,0,0,0"/>
 
-                        <!-- Submenu items -->
                         <StackPanel Grid.Column="1">
-                            
+
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToRegularFiles" >
                                     <TextBlock Text="Regular CE" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                                 <TextBlock.ToolTip>
                                     <ToolTip Content="Manage files for regular customers." 
-                                             Style="{StaticResource SpeechBubbleToolTip}"
-                                             Placement="Top"/>
+                                             Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
                                 </TextBlock.ToolTip>
                             </TextBlock>
 
@@ -128,16 +114,14 @@
                                 </Hyperlink>
                                 <TextBlock.ToolTip>
                                     <ToolTip Content="Manage files for government projects." 
-                                             Style="{StaticResource SpeechBubbleToolTip}"
-                                             Placement="Top"/>
+                                             Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
                                 </TextBlock.ToolTip>
                             </TextBlock>
-                            
+
                         </StackPanel>
                     </Grid>
                 </StackPanel>
 
-                <!-- Upload File -->
                 <Grid Margin="0,8,0,8">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -148,15 +132,57 @@
                         <Hyperlink Click="NavigateToUploadFile" >
                             <TextBlock Text="Upload File" Style="{StaticResource MainMenuItemStyle}"/>
                         </Hyperlink>
-                                                                                    <TextBlock.ToolTip>
-<ToolTip Content="Upload new files to the system." 
-                Style="{StaticResource SpeechBubbleToolTip}"
-                    Placement="Top"/>
-                 </TextBlock.ToolTip>
+                        <TextBlock.ToolTip>
+                            <ToolTip Content="Upload new files to the system." 
+                                     Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
+                        </TextBlock.ToolTip>
                     </TextBlock>
                 </Grid>
 
-                <!-- Statements Section -->
+                <StackPanel>
+                    <Grid Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <materialDesign:PackIcon Kind="FileDocumentEditOutline" Foreground="White" Width="20" Height="20" Margin="10,0,0,0"/>
+                        <TextBlock Grid.Column="1">
+                            <Hyperlink>
+                                <TextBlock Text="Pull Out Forms" Style="{StaticResource MainMenuItemStyle}"/>
+                            </Hyperlink>
+                        </TextBlock>
+                    </Grid>
+
+                    <Grid Margin="24,3,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Rectangle Width="1" Fill="#444444" HorizontalAlignment="Left" Margin="0,0,0,0"/>
+
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Margin="10,3,0,3">
+                                <Hyperlink Click="NavigateToViewPOR">
+                                    <TextBlock Text="Pull Out Form" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
+                                </Hyperlink>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="Generate a form to withdraw or request documents." 
+                                             Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
+                                </TextBlock.ToolTip>
+                            </TextBlock>
+                            <TextBlock Margin="10,3,0,3">
+                                <Hyperlink Click="NavigateToManagePullOutForm">
+                                    <TextBlock Text="Manage Pull Out Form" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
+                                </Hyperlink>
+                                <TextBlock.ToolTip>
+                                    <ToolTip Content="View, edit, or track pull out form requests." 
+                                             Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
+                                </TextBlock.ToolTip>
+                            </TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+
                 <StackPanel Visibility="Collapsed">
                     <Grid Margin="0,8,0,0">
                         <Grid.ColumnDefinitions>
@@ -171,17 +197,14 @@
                         </TextBlock>
                     </Grid>
 
-                    <!-- Submenu items with vertical lines -->
                     <Grid Margin="24,3,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Vertical line -->
                         <Rectangle Width="1" Fill="#444444" HorizontalAlignment="Left" Margin="0,0,0,0"/>
 
-                        <!-- Submenu items -->
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToAccountStatements">
@@ -212,7 +235,6 @@
                     </Grid>
                 </StackPanel>
 
-                <!-- Graphical Reports Section -->
                 <StackPanel Visibility="Collapsed">
                     <Grid Margin="0,8,0,0">
                         <Grid.ColumnDefinitions>
@@ -227,17 +249,14 @@
                         </TextBlock>
                     </Grid>
 
-                    <!-- Submenu items with vertical lines -->
                     <Grid Margin="24,3,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Vertical line -->
                         <Rectangle Width="1" Fill="#444444" HorizontalAlignment="Left" Margin="0,0,0,0"/>
 
-                        <!-- Submenu items -->
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToProductCategoriesReport">
@@ -278,7 +297,6 @@
                     </Grid>
                 </StackPanel>
 
-                <!-- Summary & Report Section -->
                 <StackPanel Visibility="Collapsed">
                     <Grid Margin="0,8,0,0">
                         <Grid.ColumnDefinitions>
@@ -293,17 +311,14 @@
                         </TextBlock>
                     </Grid>
 
-                    <!-- Submenu items with vertical lines -->
                     <Grid Margin="24,3,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Vertical line -->
                         <Rectangle Width="1" Fill="#444444" HorizontalAlignment="Left" Margin="0,0,0,0"/>
 
-                        <!-- Submenu items -->
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToStatisticsReport">

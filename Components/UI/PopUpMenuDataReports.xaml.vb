@@ -237,22 +237,24 @@ Namespace DPC.Components.UI
         End Sub
 
         Private Sub NavigateToRegularFiles(sender As Object, e As RoutedEventArgs)
-            ' Open Payroll view
             ViewLoader.DynamicView.NavigateToView("hrmmanageregularcostestimatefiles", Me)
         End Sub
         Private Sub NavigateToGovernmentFiles(sender As Object, e As RoutedEventArgs)
-            ' Open Payroll view
             ViewLoader.DynamicView.NavigateToView("hrmmanagegovernmentcostestimatefiles", Me)
         End Sub
         Private Sub NavigateToUploadFile(sender As Object, e As RoutedEventArgs)
-            ' Open Payroll view
             ViewLoader.DynamicView.NavigateToView("hrmuploadfiles", Me)
         End Sub
 
+        ' Moved from Miscellaneous
+        Private Sub NavigateToViewPOR(sender As Object, e As RoutedEventArgs)
+            ViewLoader.DynamicView.NavigateToView("pulloutreceipt", Me)
+        End Sub
 
-
-
-
+        Private Sub NavigateToManagePullOutForm(sender As Object, e As RoutedEventArgs)
+            ' Implementation for navigating to pull out form
+            ' ViewLoader.DynamicView.NavigateToView("managepulloutform", Me) ' Uncomment or handle as needed
+        End Sub
 
         ''' <summary>
         ''' This method is used in the XAML to handle navigation for all buttons

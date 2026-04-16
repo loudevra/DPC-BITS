@@ -123,36 +123,12 @@ Namespace DPC.Components.UI
             ViewLoader.DynamicView.NavigateToView("addevent", Me)
         End Sub
 
-        Private Sub NavigateToUploadDocument(sender As Object, e As RoutedEventArgs)
-            ' Implementation for navigating to Upload Document
-
-        End Sub
-
-        Private Sub NavigateToViewDocuments(sender As Object, e As RoutedEventArgs)
-            ' Implementation for navigating to View Documents
-            ViewLoader.DynamicView.NavigateToView("viewdocuments", Me)
-        End Sub
-
-        Private Sub NavigateToManagePullOutForm(sender As Object, e As RoutedEventArgs)
-            ' Implementation for navigating to pull out form
-
-        End Sub
-
-
         Private Sub NavigateToCashAdvanceNewRequest(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("cashadvancenewrequest", Me)
         End Sub
-        'Private Sub NavigateToOvertimeRequestForm(sender As Object, e As RoutedEventArgs)
-        '   ViewLoader.DynamicView.NavigateToView("overtimeform", Me)
-        ' End Sub
 
         Private Sub NavigateToManageCashAdvanceRequests(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("managecashadvancerequests", Me)
-        End Sub
-
-        Private Sub NavigateToViewPOR(sender As Object, e As RoutedEventArgs)
-            ' Implementation for navigating to View Documents
-            ViewLoader.DynamicView.NavigateToView("pulloutreceipt", Me)
         End Sub
 
         ' ==========================================
@@ -179,7 +155,6 @@ Namespace DPC.Components.UI
         Private Sub NavigateToManageEmployeeLeaveRequests(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("manageemployeeleaverequests", Me)
         End Sub
-
 
     End Class
 End Namespace
