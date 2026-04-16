@@ -7,6 +7,7 @@ Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
 Imports MongoDB.Bson
 Imports MongoDB.Driver.GridFS
+Imports MySql.Data.MySqlClient
 Imports Newtonsoft.Json
 Imports PdfSharp.Drawing
 Imports PdfSharp.Pdf
@@ -320,6 +321,8 @@ Namespace DPC.Components.Forms
             StatementDetails.Approved = Nothing
         End Sub
 
+
+
         Private Sub SaveToDB()
             Dim itemsJSON As String = JsonConvert.SerializeObject(itemOrder, Formatting.Indented)
             Dim InvoiceDate As String = Date.Now.ToString("yyyy-MM-dd")
@@ -330,19 +333,151 @@ Namespace DPC.Components.Forms
             Dim DateParsed As Date = Date.Parse(StatementDetails.DueDateCache)
             Dim DueDateFormatted As String = DateParsed.ToString("yyyy-MM-dd")
 
+            Address = ""
             For Each child In BillAddress.Children
                 Address += child.Text & Environment.NewLine
             Next
 
-            Dim success As Boolean = PurchaseOrderController.InsertInvoicePurchaseOrder(InvoiceNumber.Text, InvoiceDate, DueDateFormatted, Address, itemsJSON, DeliveryString, TaxString, TotalCostString, base64Image, Approved.Text, PaymentTerms.Text, noteBox.Text)
+            Try
+                Debug.WriteLine("===== SAVETODB CALLED =====")
+                Debug.WriteLine("itemOrder count: " & itemOrder.Count)
+                For i As Integer = 0 To itemOrder.Count - 1
+                    Debug.WriteLine("  Item " & i & ": " & itemOrder(i)("ItemName") & " | Qty: " & itemOrder(i)("Quantity"))
+                Next
 
-            If success Then
-                SaveToMongo(InvoiceNumberCache)
-                MessageBox.Show("Added to database")
-            End If
+                Dim success As Boolean = PurchaseOrderController.InsertInvoicePurchaseOrder(InvoiceNumber.Text, InvoiceDate, DueDateFormatted, Address, itemsJSON, DeliveryString, TaxString, TotalCostString, base64Image, Approved.Text, PaymentTerms.Text, noteBox.Text)
+
+                Debug.WriteLine("Invoice insertion success: " & success)
+
+                If success Then
+                    Debug.WriteLine("===== CALLING DeductProductStock =====")
+                    DeductProductStock(itemOrder)
+                    Debug.WriteLine("===== DeductProductStock COMPLETED =====")
+
+                    SaveToMongo(InvoiceNumberCache)
+                    MessageBox.Show("Added to database - Stock updated!")
+                Else
+                    Debug.WriteLine("ERROR: Invoice insertion failed!")
+                    MessageBox.Show("Failed to insert invoice")
+                End If
+
+            Catch ex As Exception
+                Debug.WriteLine("CRITICAL ERROR in SaveToDB: " & ex.Message)
+                Debug.WriteLine(ex.StackTrace)
+                MessageBox.Show("Error: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
 
             ClearCache()
             ViewLoader.DynamicView.NavigateToView("neworder", Me)
+        End Sub
+
+        ''' <summary>
+        ''' Deducts product stock quantities from the productnovariation table
+        ''' based on items sold in the billing statement
+        ''' </summary>
+        Private Sub DeductProductStock(items As List(Of Dictionary(Of String, String)))
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+
+                    Dim successCount As Integer = 0
+                    Dim failCount As Integer = 0
+
+                    For Each item In items
+                        Try
+                            ' Extract the product name (handle "ProductID - ProductName" format)
+                            Dim productNameFull As String = item("ItemName")
+                            Dim productName As String = productNameFull
+
+                            ' If the format includes ProductID, extract only the name part
+                            If productNameFull.Contains(" - ") Then
+                                Dim parts As String() = productNameFull.Split("-"c)
+                                productName = parts(1)  ' Get the part after " - "
+                            End If
+
+                            Dim quantitySold As Integer = CInt(item("Quantity"))
+
+                            ' DEBUG: Show what we're looking for
+                            Debug.WriteLine("Looking for product: '" & productName & "' | Quantity to deduct: " & quantitySold)
+
+                            ' Step 1: Find the product ID and variation type
+                            Dim getProductQuery As String = "SELECT productID, productVariation FROM product WHERE productName = @productName LIMIT 1"
+                            Dim productID As String = ""
+                            Dim hasVariation As Boolean = False
+
+                            Using cmd As New MySqlCommand(getProductQuery, conn)
+                                cmd.Parameters.AddWithValue("@productName", productName)
+                                Using reader = cmd.ExecuteReader()
+                                    If reader.Read() Then
+                                        productID = reader("productID").ToString()
+                                        hasVariation = Convert.ToBoolean(reader("productVariation"))
+                                        Debug.WriteLine("✓ Found product ID: " & productID & " | Has Variation: " & hasVariation)
+                                    Else
+                                        Debug.WriteLine("✗ Product NOT FOUND in database: '" & productName & "'")
+                                        failCount += 1
+                                        Continue For
+                                    End If
+                                End Using
+                            End Using
+
+                            ' Step 2: Determine which table to update
+                            Dim tableToUpdate As String = If(hasVariation, "productvariationstock", "productnovariation")
+                            Debug.WriteLine("Will update table: " & tableToUpdate)
+
+                            ' Step 3: Get the current stock
+                            Dim getStockQuery As String = "SELECT stockUnit FROM " & tableToUpdate & " WHERE productID = @productID LIMIT 1"
+                            Dim currentStock As Integer = 0
+
+                            Using cmd As New MySqlCommand(getStockQuery, conn)
+                                cmd.Parameters.AddWithValue("@productID", productID)
+                                Dim result = cmd.ExecuteScalar()
+                                If result IsNot Nothing Then
+                                    currentStock = CInt(result)
+                                    Debug.WriteLine("Current stock: " & currentStock)
+                                Else
+                                    Debug.WriteLine("No stock record found for product " & productID)
+                                    failCount += 1
+                                    Continue For
+                                End If
+                            End Using
+
+                            ' Step 4: Calculate new stock
+                            Dim newStock As Integer = currentStock - quantitySold
+                            Debug.WriteLine("New stock will be: " & newStock)
+
+                            ' Step 5: Update the stock
+                            Dim updateStockQuery As String = "UPDATE " & tableToUpdate & " SET stockUnit = @newStock, dateModified = NOW() WHERE productID = @productID"
+
+                            Using cmd As New MySqlCommand(updateStockQuery, conn)
+                                cmd.Parameters.AddWithValue("@newStock", newStock)
+                                cmd.Parameters.AddWithValue("@productID", productID)
+                                Dim rowsAffected = cmd.ExecuteNonQuery()
+
+                                If rowsAffected > 0 Then
+                                    Debug.WriteLine("✓ Stock updated successfully!")
+                                    successCount += 1
+                                Else
+                                    Debug.WriteLine("✗ No rows were updated")
+                                    failCount += 1
+                                End If
+                            End Using
+
+                        Catch itemEx As Exception
+                            Debug.WriteLine("Error processing item: " & itemEx.Message)
+                            failCount += 1
+                        End Try
+                    Next
+
+                    ' Final summary
+                    Debug.WriteLine("=== STOCK DEDUCTION SUMMARY ===")
+                    Debug.WriteLine("Successful: " & successCount)
+                    Debug.WriteLine("Failed: " & failCount)
+
+                End Using
+            Catch ex As Exception
+                MessageBox.Show("Error updating stock: " & ex.Message, "Stock Update Error", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Debug.WriteLine("CRITICAL ERROR: " & ex.Message)
+            End Try
         End Sub
 
         Private Async Sub SaveToMongo(docName As String)
@@ -464,5 +599,3 @@ Namespace DPC.Components.Forms
     End Class
 
 End Namespace
-
-
