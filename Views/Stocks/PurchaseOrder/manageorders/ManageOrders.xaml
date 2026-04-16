@@ -239,14 +239,14 @@
 
                 <!-- Right Controls (Date Range & Search) -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                    <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200">
+                    <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Height="30">
                         <Grid>
                             <TextBox x:Name="SearchText" Height="Auto" Margin="10,0,30,0" VerticalAlignment="Center" VerticalContentAlignment="Center" BorderThickness="0"
-                                 FontFamily="Lexend" Background="Transparent" HorizontalAlignment="Stretch" Focusable="True" TextChanged="TextBox_TextChanged"/>
-                            <materialDesign:PackIcon Kind="Magnify" Width="20" Height="20" Foreground="Black" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+             FontFamily="Lexend" Background="Transparent" HorizontalAlignment="Stretch" Focusable="True" TextChanged="TextBox_TextChanged"/>
+                            <materialDesign:PackIcon Kind="Magnify" Width="20" Height="20" Foreground="Black" HorizontalAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Center"/>
                         </Grid>
                     </Border>
-                    <Border Style="{StaticResource RoundedGridStyle}" HorizontalAlignment="Right" Margin="10" MinWidth="250">
+                    <Border Style="{StaticResource RoundedGridStyle}" HorizontalAlignment="Right" Margin="10" MinWidth="250" Height="30">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
