@@ -2,42 +2,43 @@
 Imports System.Windows.Controls
 Imports System.Windows.Media
 
-Public Class Addevent
-    ' Signal to tell the main window to swap back to the calendar
-    Public Event OnSaveCompleted()
+Namespace DPC.Views.Misc.Calendar
 
-    Private Sub BtnSave_Click(sender As Object, e As RoutedEventArgs)
+    Public Class Addevent
 
-        ' Validation
-        If String.IsNullOrWhiteSpace(TxtEventTitle.Text) OrElse DpEventDate.SelectedDate Is Nothing OrElse CmbEventType.SelectedItem Is Nothing Then
-            MessageBox.Show("Please fill out all fields before saving.", "Missing Information", MessageBoxButton.OK, MessageBoxImage.Warning)
-            Return
-        End If
+        Public Event OnSaveCompleted()
 
-        ' Parse the pastel color from the ComboBox Tag
-        Dim selectedItem As ComboBoxItem = CType(CmbEventType.SelectedItem, ComboBoxItem)
-        Dim colorHex As String = selectedItem.Tag.ToString()
-        Dim brushConverter As New BrushConverter()
-        Dim eventColor As SolidColorBrush = CType(brushConverter.ConvertFrom(colorHex), SolidColorBrush)
+        Private Sub BtnSave_Click(sender As Object, e As RoutedEventArgs)
+            If String.IsNullOrWhiteSpace(TxtEventTitle.Text) OrElse
+               DpEventDate.SelectedDate Is Nothing OrElse
+               CmbEventType.SelectedItem Is Nothing Then
+                MessageBox.Show("Please fill out all fields before saving.",
+                                "Missing Information", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Return
+            End If
 
-        ' Create the AppEvent object
-        Dim newEvent As New AppEvent() With {
-            .Title = TxtEventTitle.Text,
-            .EventDate = DpEventDate.SelectedDate.Value,
-            .EventColor = eventColor
-        }
+            Dim selectedItem As ComboBoxItem = CType(CmbEventType.SelectedItem, ComboBoxItem)
+            Dim category As String = selectedItem.Content.ToString()
 
-        ' Save it
-        EventStore.AddNewEvent(newEvent)
-        MessageBox.Show("Event added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+            Dim newEvent As New AppEvent() With {
+                .Title = TxtEventTitle.Text,
+                .EventDate = DpEventDate.SelectedDate.Value,
+                .Category = category,
+                .EventColor = AppEvent.GetColorForCategory(category)
+            }
 
-        ' Clear fields
-        TxtEventTitle.Clear()
-        DpEventDate.SelectedDate = Nothing
-        CmbEventType.SelectedIndex = -1
+            EventStore.AddNewEvent(newEvent)
 
-        ' Return to calendar view
-        RaiseEvent OnSaveCompleted()
+            MessageBox.Show("Event added successfully!", "Success",
+                            MessageBoxButton.OK, MessageBoxImage.Information)
 
-    End Sub
-End Class
+            TxtEventTitle.Clear()
+            DpEventDate.SelectedDate = Nothing
+            CmbEventType.SelectedIndex = -1
+
+            RaiseEvent OnSaveCompleted()
+        End Sub
+
+    End Class
+
+End Namespace

@@ -325,7 +325,7 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "calendarview"
                         Return New calendarview()
                     Case "addevent"
-                        Return New AddEvent()
+                        Return New DPC.Views.Misc.Calendar.Addevent()
 
                     Case Else
                         ' Return a placeholder UserControl with error text
