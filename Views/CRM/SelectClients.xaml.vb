@@ -131,15 +131,25 @@ Namespace DPC.Views.CRM
 
         Private Sub UpdateSelection()
             If selectedType = "Residential" Then
+                ' Select Residential
                 ResidentialButton.BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#333"))
                 ResidentialButton.BorderThickness = New Thickness(3)
+                ResidentialCheck.Visibility = Visibility.Visible
+
+                ' Deselect Corporate
                 CorporationalButton.BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
                 CorporationalButton.BorderThickness = New Thickness(2)
+                CorporateCheck.Visibility = Visibility.Hidden
             Else
+                ' Select Corporate
                 CorporationalButton.BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#333"))
                 CorporationalButton.BorderThickness = New Thickness(3)
+                CorporateCheck.Visibility = Visibility.Visible
+
+                ' Deselect Residential
                 ResidentialButton.BorderBrush = New SolidColorBrush(ColorConverter.ConvertFromString("#AEAEAE"))
                 ResidentialButton.BorderThickness = New Thickness(2)
+                ResidentialCheck.Visibility = Visibility.Hidden
             End If
         End Sub
 
