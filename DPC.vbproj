@@ -707,6 +707,7 @@
     <Compile Include="Data\Controllers\CalendarController.vb" />
     <Compile Include="Data\Controllers\EmployeeLoginHistoryController.vb" />
     <Compile Include="Data\Controllers\EventStore.vb" />
+    <Compile Include="Data\Controllers\HRM\HolidayController.vb" />
     <Compile Include="Data\Controllers\HRM\FilesController.vb" />
     <Compile Include="Data\Controllers\HRM\HRMController.vb" />
     <Compile Include="Data\Controllers\ManageProductsController.vb" />
