@@ -59,7 +59,6 @@
                     <ComboBoxItem Content="Meeting" Tag="#DDD6FE"/>
                     <ComboBoxItem Content="Deadline" Tag="#FECACA"/>
                     <ComboBoxItem Content="Salary Payout" Tag="#BBF7D0"/>
-                    <ComboBoxItem Content="Onsite Visit" Tag="#FED7AA"/>
                     <ComboBoxItem Content="Holiday" Tag="#BFDBFE"/>
                 </ComboBox>
 
