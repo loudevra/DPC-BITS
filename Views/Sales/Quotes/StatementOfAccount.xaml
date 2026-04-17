@@ -1,0 +1,433 @@
+﻿<UserControl x:Class="StatementOfAccount"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="1200" d:DesignWidth="800" Background="White">
+
+    <Grid Margin="20">
+        <Border BorderBrush="Black" BorderThickness="2">
+            <StackPanel>
+                <Border BorderBrush="Black" BorderThickness="0,0,0,1" Padding="10,5">
+                    <TextBlock Text="DREAM PC BUILD AND IT SOLUTIONS INC." FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
+                </Border>
+
+                <Border BorderBrush="Black" BorderThickness="0,0,0,1" Padding="5">
+                    <TextBlock Text="STATEMENT OF ACCOUNT" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+                </Border>
+
+                <Grid Margin="5,2,10,2">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock Text="Date:" Margin="0,0,20,0"/>
+                        <TextBlock x:Name="docDate" Text="January 30, 2026" TextDecorations="Underline"/>
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel Margin="5,0,5,10">
+                    <TextBlock Text="BILL FROM: DREAM PC BUILD AND IT SOLUTIONS INC." FontWeight="Bold" FontSize="11"/>
+                    <TextBlock Text="ADDRESS: UNIT2A &amp; 2B LEGENDA BUILDING CIRCUMFERENTIAL RD. BRGY. SAN ROQUE ANTIPOLO CITY, RIZAL 1870" FontSize="11"/>
+                    <TextBlock Text="CONTACT NUMBER: PHONE: +639650323543 TEL: 02-8801-4252" FontSize="11"/>
+                    <TextBlock Text="TIN: 779-529-308-000" FontSize="11"/>
+
+                    <TextBlock x:Name="docClientName" Text="BILL TO: PHILIPPINE MERCHANT MARINE ACADEMY" FontWeight="Bold" FontSize="11" Margin="0,15,0,0"/>
+                    <TextBlock Text="ADDRESS: SAN NARCISO, ZAMBALES" FontSize="11"/>
+                    <TextBlock Text="CONTACT NUMBER: 047-913-4396" FontSize="11"/>
+                    <TextBlock Text="TIN:" FontSize="11"/>
+
+                    <TextBlock Text="PROJECT TITLE: ICT EQUIPMENT, TOOLS, AND SMART TV FOR COMPUTER LABORATORY" FontWeight="Bold" FontSize="11" Margin="0,15,0,0"/>
+
+                    <TextBlock x:Name="docPONo" Text="PO NO.: 2025-10-0093" FontSize="11"/>
+                    <TextBlock Text="SI NO.: 077" FontSize="11"/>
+                    <TextBlock Text="DR NO.: DR-PMMA-ZAMBALES-CS26-8004/DR-PMMA-ZAMBALES-CS26-8002" FontSize="11"/>
+                    <TextBlock Text="BS NO.: BS-PMMA-ZAMBALES-CS26-8001" FontSize="11"/>
+                </StackPanel>
+
+                <Border BorderBrush="Black" BorderThickness="0,2,0,2">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Background="#808080" Padding="5">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="50"/>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="100"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="DATE" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" FontSize="11"/>
+                                <TextBlock Grid.Column="1" Text="DESCRIPTION" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" FontSize="11"/>
+                                <TextBlock Grid.Column="2" Text="QTY" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" FontSize="11"/>
+                                <TextBlock Grid.Column="3" Text="AMOUNT" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" FontSize="11"/>
+                                <TextBlock Grid.Column="4" Text="PAYMENT" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" FontSize="11"/>
+                                <TextBlock Grid.Column="5" Text="BALANCE" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" FontSize="11"/>
+                            </Grid>
+                        </Border>
+
+                        <Grid Grid.Row="1" Margin="0,5,0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                                <TextBlock Text="1/30/2026" FontSize="11"/>
+                                <TextBlock Text=" " FontSize="11" Height="100"/>
+                                <TextBlock Text="1/20/2026" FontSize="11"/>
+                                <TextBlock Text="1/30/2026" FontSize="11"/>
+                                <TextBlock Text="1/30/2026" FontSize="11"/>
+                                <TextBlock Text="1/20/2026" FontSize="11"/>
+                                <TextBlock Text="1/20/2026" FontSize="11"/>
+                                <TextBlock Text="1/20/2026" FontSize="11"/>
+                                <TextBlock Text="1/30/2026" FontSize="11"/>
+                                <TextBlock Text="1/20/2026" FontSize="11"/>
+                                <TextBlock Text="1/20/2026" FontSize="11"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                                <TextBlock Text="DESKTOP COMPUTER" FontWeight="Bold" FontSize="11" HorizontalAlignment="Center"/>
+                                <TextBlock Text="PROCESSOR: 6 CORES 12 THREADS (AMD RYZEN 5&#x0a;5600GT)&#x0a;RAM: 16GB (2X8GB) 2666MT/s DDR4 CL16 DIMM&#x0a;CASING: DESKTOP CASING W/700 WATTS POWER&#x0a;SUPPLY&#x0a;STOARGE: 256GB SSD NVME&#x0a;MOTHERBOARD: A520M DS3H AC&#x0a;MOUSE AND KEYBOARD: USB TYPE&#x0a;WINDOWS 11 PRO PRODUCT KEY LICENSE&#x0a;MONITOR: 23.8&quot; IPS 60 HZ FHD VGA/HDMI" FontSize="10" TextWrapping="Wrap" Margin="20,0,0,0"/>
+                                <TextBlock Text="650 VA UPS UNINTERRUPTIBLE POWER SUPPLY" FontSize="11" HorizontalAlignment="Right"/>
+                                <TextBlock Text="POWER SUPPLY AC ADAPTER WITH POWER CHORD" FontSize="11" HorizontalAlignment="Right"/>
+                                <TextBlock Text="MOUSE AND KEYBOARD: USB TYPE" FontSize="11" HorizontalAlignment="Right"/>
+                                <TextBlock Text="MONITOR: 23.8&quot; IPS 60 HZ FHD VGA/HDMI" FontSize="11" HorizontalAlignment="Right"/>
+                                <TextBlock Text="RJ45 CRIMPING TOOLS FOR PASS THROUGH" FontSize="11" HorizontalAlignment="Right"/>
+                                <TextBlock Text="NETWORK CABLE TESTER" FontSize="11" HorizontalAlignment="Right"/>
+                                <TextBlock Text="INDUSTRIAL SCREEW DRIVER" FontSize="11" HorizontalAlignment="Right"/>
+                                <TextBlock Text="RJ45 PASS THROUGH CONNECTORS" FontSize="11" HorizontalAlignment="Right"/>
+                                <TextBlock Text="65&quot; QLED SMART TV" FontSize="11" HorizontalAlignment="Right"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                                <TextBlock Text="7" FontSize="11"/>
+                                <TextBlock Text=" " FontSize="11" Height="100"/>
+                                <TextBlock Text="25" FontSize="11"/>
+                                <TextBlock Text="5" FontSize="11"/>
+                                <TextBlock Text="7" FontSize="11"/>
+                                <TextBlock Text="18" FontSize="11"/>
+                                <TextBlock Text="25" FontSize="11"/>
+                                <TextBlock Text="25" FontSize="11"/>
+                                <TextBlock Text="25" FontSize="11"/>
+                                <TextBlock Text="1,000" FontSize="11"/>
+                                <TextBlock Text="1" FontSize="11"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="3">
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="35,380.80" HorizontalAlignment="Right" FontSize="11"/>
+                                </Grid>
+                                <TextBlock Text=" " FontSize="11" Height="100"/>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="2,500.00" HorizontalAlignment="Right" FontSize="11"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="616.00" HorizontalAlignment="Right" FontSize="11"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="504.00" HorizontalAlignment="Right" FontSize="11"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="4,480.00" HorizontalAlignment="Right" FontSize="11"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="900.00" HorizontalAlignment="Right" FontSize="11"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="800.00" HorizontalAlignment="Right" FontSize="11"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="450.00" HorizontalAlignment="Right" FontSize="11"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="20.00" HorizontalAlignment="Right" FontSize="11"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="67,999.00" HorizontalAlignment="Right" FontSize="11"/>
+                                </Grid>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="4">
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="-" HorizontalAlignment="Right" FontSize="11" Margin="0,0,10,0"/>
+                                </Grid>
+                                <TextBlock Text=" " FontSize="11" Height="100"/>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="-" HorizontalAlignment="Right" FontSize="11" Margin="0,0,10,0"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="-" HorizontalAlignment="Right" FontSize="11" Margin="0,0,10,0"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="-" HorizontalAlignment="Right" FontSize="11" Margin="0,0,10,0"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="-" HorizontalAlignment="Right" FontSize="11" Margin="0,0,10,0"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="-" HorizontalAlignment="Right" FontSize="11" Margin="0,0,10,0"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="-" HorizontalAlignment="Right" FontSize="11" Margin="0,0,10,0"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="-" HorizontalAlignment="Right" FontSize="11" Margin="0,0,10,0"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="-" HorizontalAlignment="Right" FontSize="11" Margin="0,0,10,0"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="-" HorizontalAlignment="Right" FontSize="11" Margin="0,0,10,0"/>
+                                </Grid>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="5" Margin="0,0,5,0">
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="247,665.60" HorizontalAlignment="Right" FontSize="11"/>
+                                </Grid>
+                                <TextBlock Text=" " FontSize="11" Height="100"/>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="62,500.00" HorizontalAlignment="Right" FontSize="11"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="3,080.00" HorizontalAlignment="Right" FontSize="11"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="3,528.00" HorizontalAlignment="Right" FontSize="11"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="80,640.00" HorizontalAlignment="Right" FontSize="11"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="22,500.00" HorizontalAlignment="Right" FontSize="11"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="20,000.00" HorizontalAlignment="Right" FontSize="11"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="11,250.00" HorizontalAlignment="Right" FontSize="11"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="20,000.00" HorizontalAlignment="Right" FontSize="11"/>
+                                </Grid>
+                                <Grid>
+                                    <TextBlock Text="₱" HorizontalAlignment="Left" FontSize="11"/>
+                                    <TextBlock Text="67,999.00" HorizontalAlignment="Right" FontSize="11"/>
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Row="2" Margin="0,5,5,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="SUBTOTAL (VAT Inclusive)" FontWeight="Bold" FontSize="11" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                            <Grid Grid.Column="1">
+                                <TextBlock Text="₱" FontWeight="Bold" FontSize="11" HorizontalAlignment="Left"/>
+                                <TextBlock Text="539,162.60" FontWeight="Bold" FontSize="11" HorizontalAlignment="Right"/>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <Border BorderBrush="Black" BorderThickness="0,0,0,2">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Background="#595959" Padding="2">
+                            <TextBlock Text="PAYMENT DETAILS" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" FontSize="11"/>
+                        </Border>
+
+                        <Border Grid.Row="1" Background="#808080" Padding="2">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="150"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="DATE" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" FontSize="11"/>
+                                <TextBlock Grid.Column="1" Text="REFERENCE" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" FontSize="11"/>
+                                <TextBlock Grid.Column="2" Text="AMOUNT PAID (P)" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" FontSize="11"/>
+                            </Grid>
+                        </Border>
+
+                        <Grid Grid.Row="2" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="150"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="1/30/2025" HorizontalAlignment="Center" FontSize="11"/>
+                            <TextBlock Grid.Column="1" Text="ICT EQUIPMENT, TOOLS, AND SMART TV FOR COMPUTER LABORATORY" HorizontalAlignment="Center" FontSize="11"/>
+                            <Grid Grid.Column="2" Margin="0,0,5,0">
+                                <TextBlock Text="₱" FontSize="11" HorizontalAlignment="Left"/>
+                                <TextBlock Text="-" FontSize="11" HorizontalAlignment="Right"/>
+                            </Grid>
+                        </Grid>
+
+                        <Border Grid.Row="3" Background="#E6E6E6" Padding="5" Margin="400,0,0,0">
+                            <StackPanel>
+                                <Grid Margin="0,0,5,5">
+                                    <TextBlock Text="TOTAL PAYMENT:" FontWeight="Bold" FontSize="11" HorizontalAlignment="Left"/>
+                                    <TextBlock Text="₱" FontWeight="Bold" FontSize="11" HorizontalAlignment="Right" Margin="0,0,50,0"/>
+                                    <TextBlock Text="-" FontWeight="Bold" FontSize="11" HorizontalAlignment="Right"/>
+                                </Grid>
+                                <Grid Margin="0,0,5,0">
+                                    <TextBlock Text="Outstanding Balance (Before LD):" FontWeight="Bold" FontSize="11" HorizontalAlignment="Left"/>
+                                    <TextBlock Text="₱" FontWeight="Bold" FontSize="11" HorizontalAlignment="Right" Margin="0,0,65,0"/>
+                                    <TextBlock Text="539,162.60" FontWeight="Bold" FontSize="11" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <Border BorderBrush="Black" BorderThickness="0,0,0,2">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Background="#595959" Padding="2">
+                            <TextBlock Text="LIQUIDATED DAMAGES (LD) COMPUTATION" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" FontSize="11"/>
+                        </Border>
+
+                        <TextBlock Grid.Row="1" Text="Basis: One-tenth of one percent (0.1%) of the total contract price per day of delay" FontSize="11" Margin="5"/>
+
+                        <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,5,0,10">
+                            <TextBlock Text="Contract Amount: ₱ 539,162.60" FontSize="11" HorizontalAlignment="Center"/>
+                            <TextBlock Text="LD Rate: 0.1% per day" FontSize="11" HorizontalAlignment="Center" Margin="0,2"/>
+                            <TextBlock Text="LD per Day: ₱ 539.16" FontSize="11" HorizontalAlignment="Center"/>
+                            <TextBlock Text="No. of Days Delayed: 28 days" FontSize="11" HorizontalAlignment="Center" Margin="0,2"/>
+                            <TextBlock Text="₱ 539.16 × 28 days = ₱ 15,096.48" FontWeight="Bold" FontSize="11" HorizontalAlignment="Center" Margin="0,5,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Border BorderBrush="Black" BorderThickness="0,0,0,2">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Background="#595959" Padding="2">
+                            <TextBlock Text="DELIVERY &amp; CONTRACT INFORMATION" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" FontSize="11"/>
+                        </Border>
+
+                        <StackPanel Grid.Row="1" Margin="5">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Signed Purchase Order Date: " FontWeight="Bold" FontSize="11"/>
+                                <TextBlock Text="November 18, 2025" FontSize="11"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Contract Delivery Period: " FontWeight="Bold" FontSize="11"/>
+                                <TextBlock Text="45 Calendar Days" FontSize="11"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Required Delivery Date: " FontWeight="Bold" FontSize="11"/>
+                                <TextBlock Text="January 2, 2026" FontSize="11"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Actual Completion of Delivery Date: " FontWeight="Bold" FontSize="11"/>
+                                <TextBlock Text="January 30, 2026" FontSize="11"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" Background="#595959" Padding="2">
+                        <TextBlock Text="SUMMARY OF ACCOUNT" Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" FontSize="11"/>
+                    </Border>
+
+                    <Grid Grid.Row="1" Margin="5,5,5,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="100"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="ICT EQUIPMENT, TOOLS, AND SMART TV FOR COMPUTER LABORATORY" FontSize="11" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Outstanding Balance" FontSize="11" HorizontalAlignment="Right" Margin="0,2,20,0"/>
+                            <TextBlock Text="Less: Liquidated Damages" FontSize="11" HorizontalAlignment="Right" Margin="0,2,20,0"/>
+                            <TextBlock Text="Net Amount Due (VAT Inclusive)" FontWeight="Bold" FontSize="12" HorizontalAlignment="Right" Margin="0,5,20,0"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Margin="0,0,5,0">
+                            <Grid>
+                                <TextBlock Text="₱" FontSize="11" HorizontalAlignment="Left"/>
+                                <TextBlock x:Name="docContractAmt" Text="539,162.60" FontSize="11" HorizontalAlignment="Right"/>
+                            </Grid>
+                            <Grid Margin="0,2,0,0">
+                                <TextBlock Text="₱" FontSize="11" HorizontalAlignment="Left"/>
+                                <TextBlock x:Name="docOutstandingBalance" Text="539,162.60" FontSize="11" HorizontalAlignment="Right"/>
+                            </Grid>
+                            <Grid Margin="0,2,0,0">
+                                <TextBlock Text="₱" FontSize="11" HorizontalAlignment="Left"/>
+                                <TextBlock x:Name="docLiquidatedDamages" Text="15,096.48" FontSize="11" HorizontalAlignment="Right"/>
+                            </Grid>
+                            <Border BorderBrush="Black" BorderThickness="0,1,0,0" Margin="0,2,0,0">
+                                <Grid Margin="0,3,0,0">
+                                    <TextBlock Text="₱" FontWeight="Bold" FontSize="12" HorizontalAlignment="Left"/>
+                                    <TextBlock x:Name="docNetAmtDue" Text="524,066.12" FontWeight="Bold" FontSize="12" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

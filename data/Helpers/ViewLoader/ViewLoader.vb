@@ -13,7 +13,6 @@ Namespace DPC.Data.Helpers.ViewLoader
     ''' </summary>
     Public Class ViewLoader
         Public Sub New()
-
         End Sub
 
         ''' <summary>
@@ -24,9 +23,7 @@ Namespace DPC.Data.Helpers.ViewLoader
         Public Shared Function Load(viewName As String) As UserControl
             Try
                 Select Case viewName.ToLower()
-                    ' Add new cases here for each view you want to load
 
-                    ' Dashboard Navigation
                     Case "dashboard"
                         Return New Dashboard.Dashboard()
 
@@ -68,11 +65,13 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "suppliersrecords"
                         Return New Stocks.StockReturn.SupplierRecords.SuppliersRecords()
 
-                    ' Promo Codes Navigation
+                    ' Promo Codes
                     Case "promocodes"
                         Return New PromoCodes.ManagePromoCodes()
                     Case "addpromocode"
                         Return New PromoCodes.AddPromoCode()
+
+                    ' Purchase Order / Delivery / Walk-in
                     Case "newwalkinclient"
                         Return New Stocks.PurchaseOrder.WalkIn.AddNewWalkInClient()
                     Case "walkinorder"
@@ -101,34 +100,24 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New CRM.CRMCorporationalTabStructured()
                     Case "selectclients"
                         Return New CRM.SelectClients()
-                        Return New CRM.CRMNewResidentialClient
                     Case "businnessregisters"
                         Return New DPC.Views.DataReports.BusinessRegisters.DTRBusinessRegisters()
                     Case "generatestatement"
                         Return New DPC.Views.DataReports.Statements.DTRTabStructured()
 
-                    ' Employees Navigation
+                    ' Employees / HRM
                     Case "permissions"
                         Return New HRM.Employees.Permissions.PermissionsEmployee()
-                    'Holidays Navigation
                     Case "holidays"
                         Return New HRM.Employees.Holidays.EmployeeHolidays()
-                    'Payroll Navigation
                     Case "payrolltransaction"
                         Return New HRM.Employees.Payroll.PayrollTransaction()
-                    'Salaries Navigation
                     Case "salaries"
                         Return New HRM.Employees.Salaries.EmployeeSalaries()
                     Case "addnewsalaries"
                         Return New HRM.Employees.Employees.AddEmployee()
-                    Case "addpromocode"
-                        Return New DPC.Views.PromoCodes.AddPromoCode()
-                    Case "editbrand"
-                        Return New DPC.Components.Forms.EditBrand()
-                    'Departments Navigation
                     Case "departments"
                         Return New HRM.Departments.DepartmentsView()
-                    'Attendance Navigation
                     Case "attendance"
                         Return New HRM.Employees.Attendance.AttendanceEmployee()
                     Case "addnewemployee"
@@ -137,10 +126,30 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New HRM.Employees.Employees.EmployeesView()
                     Case "hrmeditemployee"
                         Return New HRM.Employees.Employees.EditEmployee()
+
+                    ' Project
                     Case "addproject"
                         Return New Views.Project.AddProject1()
+                    Case "newproject"
+                        Return New Project.AddProject1()
+                    Case "addproject2"
+                        Return New Project.AddProject2()
+                    Case "addproject3"
+                        Return New Project.AddProject3()
+                    Case "manageproject"
+                        Return New Project.ManageProject()
+                    Case "todolist"
+                        Return New Project.ToDoList()
+                    Case "newtask"
+                        Return New NewTask()
+                    Case "managetask"
+                        Return New ManageTask()
+                    Case "edittask"
+                        Return New EditTask()
+                    Case "editproject"
+                        Return New EditProject()
 
-                    ' Sales Module Navigation
+                    ' Sales Module
                     Case "salesnewinvoice"
                         Return New Views.Sales.Saless.SalesNewInvoice()
                     Case "manageposinvoices"
@@ -153,15 +162,12 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Sales.Quotes.NewQuote()
                     Case "managewalkin"
                         Return New Sales.Quotes.ManageWalkInClients()
-                    Case "managewalkin"
-                        Return New Sales.Quotes.NewQuoteGovernment()
                     Case "salesquotegovernmentmanage"
                         Return New Sales.Quotes.ManageQuoteGovernment()
                     Case "creditnote"
                         Return New Sales.CreditNotes.CreditNotes()
                     Case "newsubscriptioninvoice"
                         Return New Sales.Subscriptions.NewSubscriptionInvoice()
-
                     Case "salesnewposinvoice"
                         Return New Views.POS.SalesNewInvoice()
                     Case "salesnewposinvoicemobile"
@@ -191,97 +197,61 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "addclienttabs"
                         Return New Accounts.Transactions.ClientAddTabs.AddClientTabs()
 
-                    ' Project Navigation
-                    ' Project Navigation
-                    Case "newproject"
-                        Return New Project.AddProject1()
-                    Case "addproject2"
-                        Return New Project.AddProject2()
-                    Case "addproject3"
-                        Return New Project.AddProject3()
-                    Case "manageproject"
-                        Return New Project.ManageProject()
-                    Case "todolist"
-                        Return New Project.ToDoList()
-                    Case "newtask"
-                        Return New NewTask()
-                    Case "managetask"
-                        Return New ManageTask()
-                    Case "edittask"
-                        Return New EditTask()
-                    Case "editproject"
-                        Return New EditProject()
-
-                    ' Sales Cost Estimate Navigation
+                    ' Cost Estimates
                     Case "costestimate"
                         Return New Sales.Quotes.CostEstimate()
                     Case "costestimategovernment"
                         Return New Sales.Quotes.CostEstimateGovernment()
-
                     Case "editquote"
                         Return New Sales.Quotes.EditQuote()
-                    'Case "previewprintquoteeditedquote"
-                    '    Return New DPC.Components.Forms.PreviewPrintEditedQuote()
-
                     Case "universaleditablepreviewdocument"
                         Return New DPC.Components.Forms.UniversalEditablePreviewDocument()
                     Case "universalprintablepreviewdocument"
                         Return New DPC.Components.Forms.UniversalPrintablePreviewDocument()
 
-                    ' Sales Billing Estimate Navigation
+                    ' Sales Billing Estimate / Statement of Account
                     Case "billingestimate"
                         Return New Sales.Quotes.BillingStatement()
-                    ' New Quote Navigation
                     Case "navigatetoquotes"
                         Return New Sales.Quotes.NewQuote()
-                    ' Print Preview for Quotes
-                    'Case "printpreviewquotes"
-                    '    Return New DPC.Components.Forms.PreviewPrintQuote()
-                    ' Print Preview for Quotes Government
-                    'Case "printpreviewquotesgovernment"
-                    '    Return New DPC.Components.Forms.PreviewPrintQuoteGovernment()
-                    ' New Subscription Navigation
                     Case "newsubscriptions"
                         Return New Sales.Subscriptions.NewSubscriptionInvoice()
-                    ' Subscription Navigation
                     Case "subscriptions"
                         Return New Sales.Subscriptions.Subscriptions()
+                    Case "statementofaccount"
+                        Return New StatementOfAccountForm()
+                    Case "managestatementofaccount"
+                        Return New ManageStatementOfAccount()
 
+                    ' Purchase / Preview
                     Case "purchaseorderstatement"
                         Return New Stocks.PurchaseOrder.NewOrder.BillingStatement()
                     Case "printpreview"
                         Return New DPC.Components.Forms.PreviewPrintStatement()
-
-                    Case "purchaseorderstatement"
-                        Return New Stocks.PurchaseOrder.NewOrder.BillingStatement()
-
                     Case "addcustomlabel"
                         Return New Stocks.ProductsLabel.CustomLabel.CustomLabel()
                     Case "addstandardlabel"
                         Return New Stocks.ProductsLabel.StandardLabel.StandardLabel()
                     Case "managedeliveryreceipt"
                         Return New Stocks.PurchaseOrder.Delivery.ManageDeliveryReceipt()
-
                     Case "editsuppliers"
                         Return New Stocks.Suppliers.NewSupplier.EditSuppliers()
 
-                    ' Pull Out Form Navigation
+                    ' Pull Out Form
                     Case "pulloutreceipt"
-                        Return New Misc.Documents.PullOutForm
+                        Return New Misc.Documents.PullOutForm()
                     Case "pulloutpreview"
                         Return New DPC.Components.Forms.PreviewPulloutReceipt()
 
-                    ' POS Navigation
+                    ' POS Navigation continued
                     Case "navigatetobillingstatement"
                         Return New Stocks.PurchaseOrder.WalkIn.WalkInBillingStatement()
-
                     Case "previewwalkinclientprintstatement"
                         Return New Stocks.PurchaseOrder.WalkIn.PreviewWalkinClientPrintStatement()
-
                     Case "navigatetocostestimate"
                         Return New Sales.Quotes.CostEstimate()
 
-                    'DataReports - Upload Files Navigation
+                    ' DataReports - Upload
                     Case "hrmuploadfiles"
                         Return New Views.DataReports.UploadFileOnline.UploadFileOnline()
                     Case "hrmmanageregularcostestimatefiles"
@@ -289,7 +259,7 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "hrmmanagegovernmentcostestimatefiles"
                         Return New Views.DataReports.ManageGovernmentCostEstimateFiles.ManageGovernmentCostEstimateFiles()
 
-                    'Misc - Cash Advance Navigation
+                    ' Misc - Cash Advance
                     Case "cashadvancenewrequest"
                         Return New Views.Misc.CashAdvance.CashAdvanceNewRequest()
                     Case "managecashadvancerequests"
@@ -299,7 +269,7 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "previewprintcashadvancerequestform"
                         Return New Views.Misc.CashAdvance.PreviewPrintCashAdvanceRequestForm()
 
-                    'Misc - Overtime Navigation
+                    ' Misc - Overtime
                     Case "overtimerequestform"
                         Return New Views.Misc.OverTime.OverTimeRequestForm()
                     Case "manageovertimerequests"
@@ -309,9 +279,7 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "previewprintovertimerequestform"
                         Return New Views.Misc.OverTime.PreviewPrintOverTimeRequestForm()
 
-                    ' ==========================================
-                    ' Misc - Employee Leave Navigation
-                    ' ==========================================
+                    ' Misc - Employee Leave
                     Case "employeeleaverequestform"
                         Return New DPC.Views.Misc.EmployeeLeave.EmployeeLeaveRequestForm()
                     Case "manageemployeeleaverequests"
@@ -321,14 +289,13 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "previewprintemployeeleave"
                         Return New DPC.Views.Misc.EmployeeLeave.PreviewPrintEmployeeLeave()
 
-                        ' Misc Navigation
+                    ' Calendar
                     Case "calendarview"
                         Return New calendarview()
                     Case "addevent"
-                        Return New AddEvent()
+                        Return New Addevent()
 
                     Case Else
-                        ' Return a placeholder UserControl with error text
                         Dim errorContent As New TextBlock With {
                             .Text = $"View Not found: {viewName}",
                             .FontSize = 20,
@@ -339,7 +306,6 @@ Namespace DPC.Data.Helpers.ViewLoader
                 End Select
             Catch ex As Exception
                 MessageBox.Show($"Error loading view '{viewName}': {ex.Message}")
-                ' Return an error UserControl in case of exception
                 Dim errorContent As New TextBlock With {
                     .Text = $"Error loading view: {viewName}",
                     .FontSize = 20,
@@ -358,245 +324,101 @@ Namespace DPC.Data.Helpers.ViewLoader
             If view Is Nothing Then Return String.Empty
 
             Dim typeName As String = view.GetType().Name.ToLower()
-            ' Check if the type name is a known view type
 
-            ' Dashboard Navigation
-            If typeName = "dashboard" Then
-                Return "dashboard"
+            If typeName = "dashboard" Then Return "dashboard"
+            If typeName = "stockstransfer" Then Return "stocks.stocktransfer"
+            If typeName = "newsuppliers" Then Return "newsuppliers"
+            If typeName = "managesuppliers" Then Return "managesuppliers"
+            If typeName = "managebrands" Then Return "managebrands"
+            If typeName = "warehouses" Then Return "warehouses"
+            If typeName = "productcategories" Then Return "productcategories"
+            If typeName = "manageproducts" Then Return "manageproducts"
+            If typeName = "newproducts" Then Return "newproducts"
+            If typeName = "batcheditproductvar" Then Return "batcheditproductvar"
+            If typeName = "productvariationdetails" Then Return "productvariationdetails"
+            If typeName = "customlabel" Then Return "customlabel"
+            If typeName = "standardlabel" Then Return "standardlabel"
+            If typeName = "manageorder" Then Return "manageorder"
+            If typeName = "customersrecord" Then Return "customersrecord"
+            If typeName = "suppliersrecord" Then Return "suppliersrecord"
+            If typeName = "editproduct" Then Return "editproduct"
+            If typeName = "managestatementofaccount" Then Return "managestatementofaccount"
+            If typeName = "previewwalkinclientprintstatement" Then Return "previewwalkinclientprintstatement"
+            If typeName = "hrmmanagecostestimatefiles" Then Return "hrmmanagecostestimatefiles"
+            If typeName = "managedeliveryreceipt" Then Return "managedeliveryreceipt"
+            If typeName = "promocodes" Then Return "promocodes"
+            If typeName = "addpromocode" Then Return "addpromocode"
+            If typeName = "permissions" Then Return "permissions"
+            If typeName = "holidays" Then Return "holidays"
+            If typeName = "clientgroups" Then Return "clientgroups"
+            If typeName = "addnewclientgroup" Then Return "addnewclientgroup"
+            If typeName = "manageclients" Then Return "manageclients"
+            If typeName = "managetickets" Then Return "managetickets"
+            If typeName = "newresidentialclient" Then Return "newresidentialclient"
+            If typeName = "newcorporationalclient" Then Return "newcorporationalclient"
+            If typeName = "businnessregisters" Then Return "businnessregisters"
+            If typeName = "generatestatement" Then Return "generatestatement"
+            If typeName = "selectclients" Then Return "selectclients"
+            If typeName = "salaries" Then Return "salaries"
+            If typeName = "editbrand" Then Return "editbrand"
+            If typeName = "departments" Then Return "departments"
+            If typeName = "attendance" Then Return "attendance"
+            If typeName = "payrolltransaction" Then Return "payrolltransaction"
+            If typeName = "addnewemployee" Then Return "addnewemployee"
+            If typeName = "hrmeditemployee" Then Return "hrmeditemployee"
+            If typeName = "viewemployee" Then Return "viewemployee"
+            If typeName = "salesnewinvoice" Then Return "salesnewinvoice"
+            If typeName = "manageposinvoices" Then Return "manageposinvoices"
+            If typeName = "salesinvoices" Then Return "salesinvoices"
+            If typeName = "salesquote" Then Return "salesquote"
+            If typeName = "newquote" Then Return "salesnewquote"
+            If typeName = "printpreviewquotes" Then Return "printpreviewquotes"
+            If typeName = "creditnote" Then Return "creditnote"
+            If typeName = "newsubscriptioninvoice" Then Return "newsubscriptioninvoice"
+            If typeName = "editquote" Then Return "editquote"
+            If typeName = "previewprintquoteeditedquote" Then Return "previewprintquoteeditedquote"
+            If typeName = "quote" Then Return "quote"
+            If typeName = "walkinneworder" Then Return "walkinorder"
+            If typeName = "calendarview" Then Return "calendarview"
+            If typeName = "addevent" Then Return "addevent"
+            If typeName = "manageaccounts" Then Return "manageaccounts"
+            If typeName = "accountsexpense" Then Return "accountsexpense"
+            If typeName = "accountsincome" Then Return "accountsincome"
+            If typeName = "viewtransactions" Then Return "viewtransactions"
+            If typeName = "addnewtransaction" Then Return "addnewtransaction"
+            If typeName = "balancesheets" Then Return "balancesheets"
+            If typeName = "accountstatement" Then Return "accountstatement"
+            If typeName = "addnewtransfer" Then Return "addnewtransfer"
+            If typeName = "clienttransactions" Then Return "clienttransactions"
+            If typeName = "navaddaccount" Then Return "navaddaccount"
+            If typeName = "statementofaccountform" Then Return "statementofaccount"
+            If typeName = "hrmuploadfiles" Then Return "hrmuploadfiles"
+            If typeName = "newproject" Then Return "newproject"
+            If typeName = "editsuppliers" Then Return "editsuppliers"
+            If typeName = "addproject2" Then Return "addproject2"
+            If typeName = "addproject3" Then Return "addproject3"
+            If typeName = "manageproject" Then Return "manageproject"
+            If typeName = "todolist" Then Return "todolist"
+            If typeName = "newtask" Then Return "newtask"
+            If typeName = "managetask" Then Return "managetask"
+            If typeName = "edittask" Then Return "edittask"
+            If typeName = "purchaseorderstatement" Then Return "purchaseorderstatement"
+            If typeName = "printpreview" Then Return "printpreview"
+            If typeName = "cashadvancenewrequest" Then Return "cashadvancenewrequest"
+            If typeName = "managecashadvancerequests" Then Return "managecashadvancerequests"
+            If typeName = "editcashadvancerequest" Then Return "editcashadvancerequest"
+            If typeName = "previewprintcashadvancerequestform" Then Return "previewprintcashadvancerequestform"
+            If typeName = "overtimerequestform" Then Return "overtimerequestform"
+            If typeName = "manageovertimerequests" Then Return "manageovertimerequests"
+            If typeName = "editovertime" Then Return "editovertime"
+            If typeName = "previewprintovertimerequestform" Then Return "previewprintovertimerequestform"
+            If typeName = "employeeleaverequestform" Then Return "employeeleaverequestform"
+            If typeName = "manageemployeeleaverequests" Then Return "manageemployeeleaverequests"
+            If typeName = "pulloutreceipt" Then Return "pulloutreceipt"
+            If typeName = "pulloutpreview" Then Return "pulloutpreview"
+            If typeName = "consumables" Then Return "consumables"
 
-                ' Stocks Navigation
-            ElseIf typeName = "stockstransfer" Then
-                Return "stocks.stocktransfer"
-            ElseIf typeName = "newsuppliers" Then
-                Return "newsuppliers"
-            ElseIf typeName = "managesuppliers" Then
-                Return "managesuppliers"
-            ElseIf typeName = "managebrands" Then
-                Return "managebrands"
-            ElseIf typeName = "warehouses" Then
-                Return "warehouses"
-            ElseIf typeName = "productcategories" Then
-                Return "productcategories"
-            ElseIf typeName = "manageproducts" Then
-                Return "manageproducts"
-            ElseIf typeName = "newproducts" Then
-                Return "newproducts"
-            ElseIf typeName = "batcheditproductvar" Then
-                Return "batcheditproductvar"
-            ElseIf typeName = "productvariationdetails" Then
-                Return "productvariationdetails"
-            ElseIf typeName = "customlabel" Then
-                Return "customlabel"
-            ElseIf typeName = "standardlabel" Then
-                Return "standardlabel"
-            ElseIf typeName = "manageorder" Then
-                Return "manageorder"
-            ElseIf typeName = "standardlabel" Then
-                Return "standardlabel"
-            ElseIf typeName = "customersrecord" Then
-                Return "customersrecord"
-            ElseIf typeName = "suppliersrecord" Then
-                Return "suppliersrecord"
-            ElseIf typeName = "editproduct" Then
-                Return "editproduct"
-
-            ElseIf typeName = "previewwalkinclientprintstatement" Then
-                Return "previewwalkinclientprintstatement"
-
-            ElseIf typeName = "hrmmanagecostestimatefiles" Then
-                Return "hrmmanagecostestimatefiles"
-            ElseIf typeName = "managedeliveryreceipt" Then
-                Return "managedeliveryreceipt"
-
-                ' Promo Codes Navigation
-            ElseIf typeName = "promocodes" Then
-                Return "promocodes"
-
-            ElseIf typeName = "addpromocode" Then
-                Return "addpromocode"
-
-                ' Employees Navigation
-            ElseIf typeName = "permissions" Then
-                Return "permissions"
-
-            ElseIf typeName = "holidays" Then
-                Return "holidays"
-
-                ' ClientGroup Navigation
-            ElseIf typeName = "clientgroups" Then
-                Return "clientgroups"
-
-                ' AddnewClientGroup Navigation
-            ElseIf typeName = "addnewclientgroup" Then
-                Return "addnewclientgroup"
-
-                ' Client Navigation
-            ElseIf typeName = "manageclients" Then
-                Return "manageclients"
-                ' Tickets Navigation
-            ElseIf typeName = "managetickets" Then
-                Return "managetickets"
-            ElseIf typeName = "newresidentialclient" Then
-                Return "newresidentialclient"
-
-            ElseIf typeName = "newcorporationalclient" Then
-                Return "newcorporationalclient"
-
-            ElseIf typeName = "businnessregisters" Then
-                Return "businnessregisters"
-            ElseIf typeName = "generatestatement" Then
-                Return "generatestatement"
-
-                ' Select Client Navigation
-            ElseIf typeName = "selectclients" Then
-                Return "selectclients"
-
-                ' Salaries Navigation
-            ElseIf typeName = "salaries" Then
-                Return "salaries"
-
-                ' addpromocode Navigation
-            ElseIf typeName = "addpromocode" Then
-                Return "addpromocode"
-
-                ' EditBrand Navigation
-            ElseIf typeName = "editbrand" Then
-                Return "editbrand"
-                ' departments Navigation
-            ElseIf typeName = "departments" Then
-                Return "departments"
-                ' attendance Navigation
-            ElseIf typeName = "attendance" Then
-                Return "attendance"
-                ' Payroll Navigation
-            ElseIf typeName = "payrolltransaction" Then
-                Return "payrolltransaction"
-            ElseIf typeName = "addnewemployee" Then
-                Return "addnewemployee"
-            ElseIf typeName = "hrmeditemployee" Then
-                Return "hrmeditemployee"
-            ElseIf typeName = "viewemployee" Then
-                Return "viewemployee"
-                ' Sales Module Navigation
-            ElseIf typeName = "salesnewinvoice" Then
-                Return "salesnewinvoice"
-            ElseIf typeName = "manageposinvoices" Then
-                Return "manageposinvoices"
-            ElseIf typeName = "salesinvoices" Then
-                Return "salesinvoices"
-            ElseIf typeName = "salesquote" Then
-                Return "salesquote"
-            ElseIf typeName = "newquote" Then
-                Return "salesnewquote"
-            ElseIf typeName = "printpreviewquotes" Then
-                Return "printpreviewquotes"
-            ElseIf typeName = "creditnote" Then
-                Return "creditnote"
-            ElseIf typeName = "newsubscriptioninvoice" Then
-                Return "newsubscriptioninvoice"
-            ElseIf typeName = "editquote" Then
-                Return "editquote"
-            ElseIf typeName = "previewprintquoteeditedquote" Then
-                Return "previewprintquoteeditedquote"
-            ElseIf typeName = "quote" Then
-                Return "quote"
-            ElseIf typeName = "walkinneworder" Then
-                Return "walkinorder"
-
-                ' Misc Navigation
-            ElseIf typeName = "calendarview" Then
-                Return "calendarview"
-            ElseIf typeName = "addevent" Then      ' <-- ADD THESE TWO LINES
-                Return "addevent"
-
-                ' Accounts Navigation
-            ElseIf typeName = "manageaccounts" Then
-                Return "manageaccounts"
-            ElseIf typeName = "accountsexpense" Then
-                Return "accountsexpense"
-            ElseIf typeName = "accountsincome" Then
-                Return "accountsincome"
-            ElseIf typeName = "viewtransactions" Then
-                Return "viewtransactions"
-            ElseIf typeName = "addnewtransaction" Then
-                Return "addnewtransaction"
-            ElseIf typeName = "balancesheets" Then
-                Return "balancesheets"
-            ElseIf typeName = "accountstatement" Then
-                Return "accountstatement"
-            ElseIf typeName = "addnewtransfer" Then
-                Return "addnewtransfer"
-            ElseIf typeName = "clienttransactions" Then
-                Return "clienttransactions"
-            ElseIf typeName = "navaddaccount" Then
-                Return "navaddaccount"
-
-                ' DataReports Navigation
-            ElseIf typeName = "hrmuploadfiles" Then
-                Return "hrmuploadfiles"
-
-                ' Projects Navigation
-                ' Projects Navigation
-            ElseIf typeName = "newproject" Then
-                Return "newproject"
-            ElseIf typeName = "editsuppliers" Then
-                Return "editsuppliers"
-            ElseIf typeName = "addproject2" Then
-                Return "addproject2"
-            ElseIf typeName = "addproject3" Then
-                Return "addproject3"
-            ElseIf typeName = "manageproject" Then
-                Return "manageproject"
-            ElseIf typeName = "todolist" Then
-                Return "todolist"
-            ElseIf typeName = "newtask" Then
-                Return "newtask"
-            ElseIf typeName = "managetask" Then
-                Return "managetask"
-            ElseIf typeName = "edittask" Then
-                Return "edittask"
-
-
-            ElseIf typeName = "purchaseorderstatement" Then
-                Return "purchaseorderstatement"
-            ElseIf typeName = "printpreview" Then
-                Return "printpreview"
-            ElseIf typeName = "cashadvancenewrequest" Then
-                Return "cashadvancenewrequest"
-            ElseIf typeName = "managecashadvancerequests" Then
-                Return "managecashadvancerequests"
-            ElseIf typeName = "editcashadvancerequest" Then
-                Return "editcashadvancerequest"
-            ElseIf typeName = "previewprintcashadvancerequestform" Then
-                Return "previewprintcashadvancerequestform"
-
-            ElseIf typeName = "overtimerequestform" Then
-                Return "overtimerequestform"
-            ElseIf typeName = "manageovertimerequests" Then
-                Return "manageovertimerequests"
-            ElseIf typeName = "editovertime" Then
-                Return "editovertime"
-            ElseIf typeName = "previewprintovertimerequestform" Then
-                Return "previewprintovertimerequestform"
-
-                ' ==========================================
-                ' Misc - Employee Leave Navigation
-                ' ==========================================
-            ElseIf typeName = "employeeleaverequestform" Then
-                Return "employeeleaverequestform"
-            ElseIf typeName = "manageemployeeleaverequests" Then
-                Return "manageemployeeleaverequests"
-
-            ElseIf typeName = "pulloutreceipt" Then
-                Return "pulloutreceipt"
-            ElseIf typeName = "pulloutpreview" Then
-                Return "pulloutpreview"
-
-            ElseIf typeName = "consumables" Then
-                Return "consumables"
-            Else
-                Return typeName
-            End If
+            Return typeName
         End Function
     End Class
 End Namespace
