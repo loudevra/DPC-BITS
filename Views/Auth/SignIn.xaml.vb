@@ -51,18 +51,31 @@ Namespace DPC.Views.Auth
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     Try
                         conn.Open()
-                        Dim query As String = "SELECT UserRoleID FROM employee WHERE Username = '" & username & "'"
+                        ' UPDATED QUERY: Select ID as well so we can store it in GlobalVariables
+                        Dim query As String = "SELECT EmployeeID, UserRoleID FROM employee WHERE Username = @user"
                         Dim cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@user", username)
+
                         Dim reader = cmd.ExecuteReader()
-                        While (reader.Read)
+                        If reader.Read() Then
                             UserRoleID = reader.GetInt32("UserRoleID")
-                        End While
+
+                            ' ═══ CRITICAL FIX ═══
+                            ' Store the logged-in user data globally so the ChatBot can see it
+                            DPC.Data.Helpers.GlobalVariables.CurrentUserName = username
+                            DPC.Data.Helpers.GlobalVariables.CacheOnEmployeeID = reader.GetInt32("EmployeeID")
+                            ' ════════════════════
+                        End If
+                        reader.Close()
                     Catch ex As Exception
+                        ' Log error if needed
                     End Try
                 End Using
 
                 SessionManager.SetSessionTokens(accessToken, refreshToken)
                 confirmationModal.ShowSuccess("Login Successful!")
+
+                ' Note: After this, your code usually navigates to the Dashboard/MainWindow
             Else
                 confirmationModal.ShowError("Invalid username or password." & vbCrLf & "Please try again.")
                 realPassword = ""
