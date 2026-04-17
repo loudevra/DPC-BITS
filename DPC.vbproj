@@ -748,6 +748,7 @@
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
     <Compile Include="Data\DataModules\BillingDetails.vb" />
+    <Compile Include="Data\Helpers\GlobalVariables.vb" />
     <Compile Include="Data\Helpers\PermissionCache.vb" />
     <Compile Include="Data\Helpers\DeliveryState.vb" />
     <Compile Include="Data\Helpers\TransactionState.vb" />

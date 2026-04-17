@@ -7,14 +7,15 @@ Imports System.Threading.Tasks
 Imports Newtonsoft.Json.Linq
 Imports MySql.Data.MySqlClient
 Imports System.Windows.Threading
+Imports DPC.Data ' Ensure this matches the namespace of your GlobalVariables class
 
 Namespace DPC.Components.Navigation.ChatBot
 
     Public Class ChatBotWindow
 
         ' ═══ IDENTITY & STATE ═══
-        ' Set this from your Login/NavBar: chatWindow.CurrentLoggedInUser = loggedInName
-        Public Property CurrentLoggedInUser As String = "POS_USER"
+        ' Defaults to MachineName, but TopNavBar will override this with GlobalVariables.CurrentUserName
+        Public Property CurrentLoggedInUser As String = System.Environment.MachineName
 
         Private _knowledgeBase As JArray = Nothing
         Private _isTyping As Boolean = False
@@ -25,7 +26,7 @@ Namespace DPC.Components.Navigation.ChatBot
         Public Sub New()
             InitializeComponent()
 
-            ' Setup polling for both Admin replies and Other User messages
+            ' Setup polling for Live Chat
             _liveChatTimer = New DispatcherTimer()
             _liveChatTimer.Interval = TimeSpan.FromSeconds(2)
             AddHandler _liveChatTimer.Tick, AddressOf SyncMessagesWithDatabase
@@ -34,6 +35,7 @@ Namespace DPC.Components.Navigation.ChatBot
         ' 1. LOADED EVENT
         Public Async Sub Window_Loaded(sender As Object, e As RoutedEventArgs)
             LoadKnowledgeBase()
+            ' Use the property which should now hold the real username
             Await AddAIBubbleAsync($"SYSTEM INITIALIZED." & vbNewLine & $"Welcome, {CurrentLoggedInUser}. Type 'Live Support' to chat.")
         End Sub
 
@@ -44,7 +46,7 @@ Namespace DPC.Components.Navigation.ChatBot
             Me.Top = SystemParameters.WorkArea.Height - Me.Height - 60
         End Sub
 
-        ' 3. SEND MESSAGE (Main Entry Point)
+        ' 3. SEND MESSAGE
         Public Async Sub SendMessage(sender As Object, e As RoutedEventArgs)
             Dim userText As String = UserInput.Text.Trim()
             If String.IsNullOrWhiteSpace(userText) OrElse _isTyping Then Return
@@ -52,13 +54,12 @@ Namespace DPC.Components.Navigation.ChatBot
             UserInput.Clear()
 
             If _isLiveChat Then
-                ' ──── MODE: MULTI-USER CHAT ────
-                ' We save to DB. The Sync Timer will pull it back and display it on the right.
                 StatusText.Text = "SENDING..."
                 Await SaveUserMessageToDb(userText)
+                ' We don't call AddUserBubble here because SyncMessagesWithDatabase will 
+                ' pick it up from the DB and display it for us instantly.
                 StatusText.Text = "LIVE SUPPORT • ONLINE"
             Else
-                ' ──── MODE: AI ASSISTANT ────
                 AddUserBubble(userText)
                 _isTyping = True
                 StatusText.Text = "THINKING..."
@@ -77,19 +78,21 @@ Namespace DPC.Components.Navigation.ChatBot
             UserInput.Focus()
         End Sub
 
-        ' 4. SWITCH TO LIVE SUPPORT (Environment Switch)
+        ' 4. SWITCH TO LIVE SUPPORT
         Public Async Function SwitchToLiveChat() As Task
             _isLiveChat = True
-
-            ' UI Changes for Live Mode
             ChatTitle.Text = "COMMUNITY CHAT"
             StatusText.Text = "TRANSFERRING..."
             StatusText.Foreground = New SolidColorBrush(Color.FromRgb(105, 240, 174))
             ModeIndicator.Fill = New SolidColorBrush(Color.FromRgb(105, 240, 174))
             ToggleLiveBtn.Foreground = New SolidColorBrush(Color.FromRgb(105, 240, 174))
 
-            Await AddAIBubbleAsync("Entering Live Mode. You can now chat with other active users.")
+            Await AddAIBubbleAsync("Entering Live Mode. Loading recent messages...")
+
+            ' Reset ID so SyncMessages knows to load history
+            _lastMessageId = 0
             _liveChatTimer.Start()
+
             StatusText.Text = "LIVE SUPPORT • ONLINE"
         End Function
 
@@ -98,7 +101,6 @@ Namespace DPC.Components.Navigation.ChatBot
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     Await conn.OpenAsync()
-                    ' Save as CurrentLoggedInUser. 
                     Dim query As String = "INSERT INTO chat_messages (sender_name, message, is_from_admin) VALUES (@sender, @msg, 0)"
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@sender", CurrentLoggedInUser)
@@ -112,33 +114,51 @@ Namespace DPC.Components.Navigation.ChatBot
         End Function
 
         Private Async Sub SyncMessagesWithDatabase(sender As Object, e As EventArgs)
+            _liveChatTimer.Stop()
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     Await conn.OpenAsync()
-                    ' Pull ANY message we haven't seen yet
-                    Dim query As String = "SELECT id, sender_name, message FROM chat_messages WHERE id > @lastId ORDER BY id ASC"
-                    Using cmd As New MySqlCommand(query, conn)
-                        cmd.Parameters.AddWithValue("@lastId", _lastMessageId)
-                        Using reader = Await cmd.ExecuteReaderAsync()
-                            While Await reader.ReadAsync()
-                                _lastMessageId = reader.GetInt32("id")
-                                Dim sName As String = reader.GetString("sender_name")
-                                Dim sMsg As String = reader.GetString("message")
 
-                                ' Determine if this message is mine or someone else's
-                                If sName = CurrentLoggedInUser Then
-                                    AddUserBubble(sMsg) ' Display my message on the right
-                                Else
-                                    ' Display their message on the left with their name
-                                    Await AddAIBubbleAsync("[" & sName.ToUpper() & "]: " & sMsg)
-                                End If
-                            End While
+                    ' FIRST RUN: Load last 20 messages for context
+                    If _lastMessageId = 0 Then
+                        Dim historyQuery As String = "SELECT id, sender_name, message FROM (SELECT id, sender_name, message FROM chat_messages ORDER BY id DESC LIMIT 20) AS sub ORDER BY id ASC"
+                        Using cmdH As New MySqlCommand(historyQuery, conn)
+                            Using readerH = Await cmdH.ExecuteReaderAsync()
+                                While Await readerH.ReadAsync()
+                                    DisplayIncomingMessage(readerH.GetInt32("id"), readerH.GetString("sender_name"), readerH.GetString("message"))
+                                End While
+                            End Using
                         End Using
-                    End Using
+                    Else
+                        ' REGULAR POLLING: Load only new messages
+                        Dim query As String = "SELECT id, sender_name, message FROM chat_messages WHERE id > @lastId ORDER BY id ASC"
+                        Using cmd As New MySqlCommand(query, conn)
+                            cmd.Parameters.AddWithValue("@lastId", _lastMessageId)
+                            Using reader = Await cmd.ExecuteReaderAsync()
+                                While Await reader.ReadAsync()
+                                    DisplayIncomingMessage(reader.GetInt32("id"), reader.GetString("sender_name"), reader.GetString("message"))
+                                End While
+                            End Using
+                        End Using
+                    End If
                 End Using
-            Catch
-                ' Database busy
+            Catch ex As Exception
+                ' Handle connection errors silently or log them
+            Finally
+                _liveChatTimer.Start()
             End Try
+        End Sub
+
+        ' Helper to route messages to the correct bubble type
+        Private Sub DisplayIncomingMessage(id As Integer, senderName As String, msgText As String)
+            _lastMessageId = Math.Max(_lastMessageId, id)
+
+            If senderName.Equals(CurrentLoggedInUser, StringComparison.OrdinalIgnoreCase) Then
+                AddUserBubble(msgText)
+            Else
+                ' Use a non-blocking call for the AI/Other User bubble
+                Dim ignore = AddAIBubbleAsync("[" & senderName.ToUpper() & "]: " & msgText)
+            End If
         End Sub
 
         ' 6. KNOWLEDGE BASE HELPERS
@@ -183,7 +203,7 @@ Namespace DPC.Components.Navigation.ChatBot
                 currentText &= letter
                 txt.Text = currentText
                 ScrollToBottom()
-                Await Task.Delay(15)
+                Await Task.Delay(10) ' Faster typing feel
             Next
         End Function
 
@@ -199,7 +219,9 @@ Namespace DPC.Components.Navigation.ChatBot
         End Sub
 
         Private Sub ScrollToBottom()
-            MessageScroll.ScrollToEnd()
+            If MessageScroll IsNot Nothing Then
+                MessageScroll.ScrollToEnd()
+            End If
         End Sub
 
         ' 8. EVENT HANDLERS
@@ -215,27 +237,22 @@ Namespace DPC.Components.Navigation.ChatBot
             Me.Hide()
         End Sub
 
-        ' 9. TOGGLE SUPPORT MODE
         Public Async Sub ToggleSupportMode(sender As Object, e As RoutedEventArgs)
             If Not _isLiveChat Then
                 Await SwitchToLiveChat()
             Else
-                ' Change back to AI Environment
                 _isLiveChat = False
                 _liveChatTimer.Stop()
-
-                ' UI FEEDBACK
                 ChatTitle.Text = "POS GUIDE AI"
                 StatusText.Text = "SYSTEM ACTIVE"
                 StatusText.Foreground = New SolidColorBrush(Colors.Gray)
                 ModeIndicator.Fill = Brushes.White
                 ToggleLiveBtn.Foreground = Brushes.White
-
-                Await AddAIBubbleAsync("Environment Switched: DREAM-AI is now assisting you.")
+                Await AddAIBubbleAsync("Environment Switched: AI Assistant is now active.")
             End If
         End Sub
 
-        ' 10. QUICK SUGGESTIONS
+        ' 9. QUICK SUGGESTIONS
         Public Sub QuickAsk_Quotation(sender As Object, e As RoutedEventArgs)
             UserInput.Text = "How do I create a quotation?"
             SendMessage(sender, e)
