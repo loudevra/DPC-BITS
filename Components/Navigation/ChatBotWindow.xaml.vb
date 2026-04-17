@@ -7,14 +7,13 @@ Imports System.Threading.Tasks
 Imports Newtonsoft.Json.Linq
 Imports MySql.Data.MySqlClient
 Imports System.Windows.Threading
-Imports DPC.Data ' Ensure this matches the namespace of your GlobalVariables class
+Imports DPC.Data
 
 Namespace DPC.Components.Navigation.ChatBot
 
     Public Class ChatBotWindow
 
         ' ═══ IDENTITY & STATE ═══
-        ' Defaults to MachineName, but TopNavBar will override this with GlobalVariables.CurrentUserName
         Public Property CurrentLoggedInUser As String = System.Environment.MachineName
 
         Private _knowledgeBase As JArray = Nothing
@@ -35,7 +34,6 @@ Namespace DPC.Components.Navigation.ChatBot
         ' 1. LOADED EVENT
         Public Async Sub Window_Loaded(sender As Object, e As RoutedEventArgs)
             LoadKnowledgeBase()
-            ' Use the property which should now hold the real username
             Await AddAIBubbleAsync($"SYSTEM INITIALIZED." & vbNewLine & $"Welcome, {CurrentLoggedInUser}. Type 'Live Support' to chat.")
         End Sub
 
@@ -55,9 +53,13 @@ Namespace DPC.Components.Navigation.ChatBot
 
             If _isLiveChat Then
                 StatusText.Text = "SENDING..."
+
+                ' FIX: Add your own bubble immediately for that instant Messenger feel
+                AddUserBubble(userText)
+
+                ' Save to DB in background
                 Await SaveUserMessageToDb(userText)
-                ' We don't call AddUserBubble here because SyncMessagesWithDatabase will 
-                ' pick it up from the DB and display it for us instantly.
+
                 StatusText.Text = "LIVE SUPPORT • ONLINE"
             Else
                 AddUserBubble(userText)
@@ -89,10 +91,19 @@ Namespace DPC.Components.Navigation.ChatBot
 
             Await AddAIBubbleAsync("Entering Live Mode. Loading recent messages...")
 
-            ' Reset ID so SyncMessages knows to load history
-            _lastMessageId = 0
-            _liveChatTimer.Start()
+            ' FIX: Reset ID and get current Max ID so we only poll for NEW messages
+            Try
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                    conn.Open()
+                    Dim cmd As New MySqlCommand("SELECT MAX(id) FROM chat_messages", conn)
+                    Dim result = cmd.ExecuteScalar()
+                    _lastMessageId = If(IsDBNull(result), 0, Convert.ToInt32(result))
+                End Using
+            Catch
+                _lastMessageId = 0
+            End Try
 
+            _liveChatTimer.Start()
             StatusText.Text = "LIVE SUPPORT • ONLINE"
         End Function
 
@@ -101,6 +112,7 @@ Namespace DPC.Components.Navigation.ChatBot
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     Await conn.OpenAsync()
+                    ' Using parameters to handle special characters and security
                     Dim query As String = "INSERT INTO chat_messages (sender_name, message, is_from_admin) VALUES (@sender, @msg, 0)"
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@sender", CurrentLoggedInUser)
@@ -114,51 +126,44 @@ Namespace DPC.Components.Navigation.ChatBot
         End Function
 
         Private Async Sub SyncMessagesWithDatabase(sender As Object, e As EventArgs)
-            _liveChatTimer.Stop()
+            _liveChatTimer.Stop() ' Pause to prevent overlapping calls
             Try
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     Await conn.OpenAsync()
 
-                    ' FIRST RUN: Load last 20 messages for context
-                    If _lastMessageId = 0 Then
-                        Dim historyQuery As String = "SELECT id, sender_name, message FROM (SELECT id, sender_name, message FROM chat_messages ORDER BY id DESC LIMIT 20) AS sub ORDER BY id ASC"
-                        Using cmdH As New MySqlCommand(historyQuery, conn)
-                            Using readerH = Await cmdH.ExecuteReaderAsync()
-                                While Await readerH.ReadAsync()
-                                    DisplayIncomingMessage(readerH.GetInt32("id"), readerH.GetString("sender_name"), readerH.GetString("message"))
-                                End While
-                            End Using
+                    ' REGULAR POLLING: Load only new messages
+                    Dim query As String = "SELECT id, sender_name, message FROM chat_messages WHERE id > @lastId ORDER BY id ASC"
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@lastId", _lastMessageId)
+                        Using reader = Await cmd.ExecuteReaderAsync()
+                            While Await reader.ReadAsync()
+                                Dim msgId As Integer = reader.GetInt32("id")
+                                Dim sName As String = reader.GetString("sender_name")
+                                Dim msgContent As String = reader.GetString("message")
+
+                                ' Update the tracker
+                                _lastMessageId = msgId
+
+                                ' FIX: Only add a bubble if it came from the OTHER device
+                                If Not sName.Equals(CurrentLoggedInUser, StringComparison.OrdinalIgnoreCase) Then
+                                    Me.Dispatcher.Invoke(Sub()
+                                                             DisplayIncomingMessage(msgId, sName, msgContent)
+                                                         End Sub)
+                                End If
+                            End While
                         End Using
-                    Else
-                        ' REGULAR POLLING: Load only new messages
-                        Dim query As String = "SELECT id, sender_name, message FROM chat_messages WHERE id > @lastId ORDER BY id ASC"
-                        Using cmd As New MySqlCommand(query, conn)
-                            cmd.Parameters.AddWithValue("@lastId", _lastMessageId)
-                            Using reader = Await cmd.ExecuteReaderAsync()
-                                While Await reader.ReadAsync()
-                                    DisplayIncomingMessage(reader.GetInt32("id"), reader.GetString("sender_name"), reader.GetString("message"))
-                                End While
-                            End Using
-                        End Using
-                    End If
+                    End Using
                 End Using
             Catch ex As Exception
-                ' Handle connection errors silently or log them
+                ' Handle connection errors
             Finally
                 _liveChatTimer.Start()
             End Try
         End Sub
 
-        ' Helper to route messages to the correct bubble type
         Private Sub DisplayIncomingMessage(id As Integer, senderName As String, msgText As String)
-            _lastMessageId = Math.Max(_lastMessageId, id)
-
-            If senderName.Equals(CurrentLoggedInUser, StringComparison.OrdinalIgnoreCase) Then
-                AddUserBubble(msgText)
-            Else
-                ' Use a non-blocking call for the AI/Other User bubble
-                Dim ignore = AddAIBubbleAsync("[" & senderName.ToUpper() & "]: " & msgText)
-            End If
+            ' This is now primarily called for messages from other users
+            Dim ignore = AddAIBubbleAsync("[" & senderName.ToUpper() & "]: " & msgText)
         End Sub
 
         ' 6. KNOWLEDGE BASE HELPERS
@@ -203,7 +208,7 @@ Namespace DPC.Components.Navigation.ChatBot
                 currentText &= letter
                 txt.Text = currentText
                 ScrollToBottom()
-                Await Task.Delay(10) ' Faster typing feel
+                Await Task.Delay(10)
             Next
         End Function
 
