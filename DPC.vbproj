@@ -1235,6 +1235,15 @@
     <Compile Include="Views\Sales\Quotes\Quote.xaml.vb">
       <DependentUpon>Quote.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Sales\Quotes\StatementOfAccount.xaml.vb">
+      <DependentUpon>StatementOfAccount.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\Quotes\StatementofAccount\ManageStatementOfAccount.xaml.vb">
+      <DependentUpon>ManageStatementOfAccount.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\Quotes\StatementofAccount\StatementOfAccountForm.xaml.vb">
+      <DependentUpon>StatementOfAccountForm.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Sales\Saless\SalesInvoices.xaml.vb">
       <DependentUpon>SalesInvoices.xaml</DependentUpon>
     </Compile>
@@ -2295,6 +2304,18 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Sales\Quotes\Quote.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Quotes\StatementOfAccount.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Quotes\StatementofAccount\ManageStatementOfAccount.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Quotes\StatementofAccount\StatementOfAccountForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
