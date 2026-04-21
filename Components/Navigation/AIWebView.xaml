@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="DPC.Components.Navigation.AIWebView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             Height="Auto" Width="Auto">
+
+    <Grid x:Name="BrowserContainer" Background="White">
+        <TextBlock x:Name="LoadingText" 
+                   Text="Initializing Browser..." 
+                   VerticalAlignment="Center" 
+                   HorizontalAlignment="Center" 
+                   Foreground="Gray"/>
+    </Grid>
+</UserControl>

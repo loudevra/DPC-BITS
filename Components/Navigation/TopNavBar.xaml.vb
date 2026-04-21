@@ -11,6 +11,15 @@ Imports MySql.Data.MySqlClient
 
 Namespace DPC.Components.Navigation
     Partial Public Class TopNavBar
+
+        ' 1. Declare the event here
+        Public Event NavigateToAI As EventHandler
+
+        ' 2. This is the sub linked to your AI Button click in XAML
+        Private Sub ShowMessagesAI(sender As Object, e As RoutedEventArgs)
+            ' Trigger the event so Base.xaml.vb can hear it
+            RaiseEvent NavigateToAI(Me, EventArgs.Empty)
+        End Sub
         ' Events for navigation
         Public Event NavigateToPOS()
         Public Event RestoreDefaultSidebar()

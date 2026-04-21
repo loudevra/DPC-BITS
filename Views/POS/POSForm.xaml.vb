@@ -171,6 +171,13 @@ Namespace DPC.Views.POS
                                      End Sub
         End Sub
 
+        Private Sub btnBack_Click(sender As Object, e As RoutedEventArgs)
+            ' Find the Base window and call the Public ClosePOS method
+            Dim mainWindow As Base = TryCast(Window.GetWindow(Me), Base)
+            If mainWindow IsNot Nothing Then
+                mainWindow.ClosePOS()
+            End If
+        End Sub
         Private Sub NavigateToBillingStatement(sender As Object, e As RoutedEventArgs)
             ViewLoader.DynamicView.NavigateToView("navigatetobillingstatement", Me)
         End Sub
