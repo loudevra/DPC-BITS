@@ -117,19 +117,16 @@ Namespace DPC.Components.Navigation
                 _chatBot = New ChatBotWindow()
                 _chatBot.Owner = Window.GetWindow(Me)
 
-                ' 2. FIX: Assign the real username here.
-                ' If you have a variable like 'CurrentEmployeeName' or 'CacheOnEmployeeID', use it.
-                ' For testing purposes, you can use:
-                ' _chatBot.CurrentLoggedInUser = Environment.MachineName ' Uses the PC name (Laptop vs Desktop)
-
-                ' Ideally, use your app's logged-in variable:
-                _chatBot.CurrentLoggedInUser = GlobalVariables.CurrentUserName ' Replace with your actual username variable
+                ' ═══ FIX: REMOVED THE LINE BELOW ═══
+                ' _chatBot.CurrentLoggedInUser = GlobalVariables.CurrentUserName 
+                ' This was causing the Read-Only error. The ChatBot now handles this internally.
             End If
 
             If _chatBot.IsVisible Then
                 ' Second click hides it (toggle behaviour)
                 _chatBot.Hide()
             Else
+                ' Use the method we added to fix the "Not a member" error
                 _chatBot.PositionNearNavBar(Window.GetWindow(Me))
                 _chatBot.Show()
                 _chatBot.Activate()
