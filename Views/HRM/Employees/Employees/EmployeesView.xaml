@@ -170,7 +170,11 @@
                                     </Button>
 
                                     <TextBlock Text="Show" FontSize="14" Margin="10,0,5,0" Height="19" FontFamily="Lexend" Foreground="#474747"/>
-                                    <ComboBox Width="75" Style="{StaticResource RoundedComboBoxStyle}" Height="28">
+                                    <ComboBox x:Name="ComboPageSize" 
+                                              Width="75" 
+                                              Style="{StaticResource RoundedComboBoxStyle}" 
+                                              Height="28"
+                                              SelectionChanged="ComboPageSize_SelectionChanged">
                                         <ComboBoxItem Content="10" IsSelected="True"/>
                                         <ComboBoxItem Content="25"/>
                                         <ComboBoxItem Content="50"/>
