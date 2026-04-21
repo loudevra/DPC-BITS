@@ -5,46 +5,78 @@ Imports System.Windows.Input
 Imports System.Windows.Media
 Imports System.Threading.Tasks
 Imports Newtonsoft.Json.Linq
-Imports MySql.Data.MySqlClient
 Imports System.Windows.Threading
 Imports DPC.Data
+' MongoDB Driver Imports
+Imports MongoDB.Driver
+Imports MongoDB.Bson
 
 Namespace DPC.Components.Navigation.ChatBot
 
     Public Class ChatBotWindow
 
-        ' ═══ IDENTITY & STATE ═══
+        ' ═══ IDENTITY & MONGO STATE ═══
         Public Property CurrentLoggedInUser As String = System.Environment.MachineName
+
+        Private _db As IMongoDatabase
+        Private _msgCollection As IMongoCollection(Of BsonDocument)
+        Private _accCollection As IMongoCollection(Of BsonDocument)
 
         Private _knowledgeBase As JArray = Nothing
         Private _isTyping As Boolean = False
         Private _isLiveChat As Boolean = False
         Private _liveChatTimer As DispatcherTimer
-        Private _lastMessageId As Integer = 0
+        Private _lastMessageId As ObjectId = ObjectId.Empty
 
         Public Sub New()
             InitializeComponent()
 
-            ' Setup polling for Live Chat
+            ' 1. Setup polling for Live Chat
             _liveChatTimer = New DispatcherTimer()
-            _liveChatTimer.Interval = TimeSpan.FromSeconds(2)
+            _liveChatTimer.Interval = TimeSpan.FromSeconds(1.5)
             AddHandler _liveChatTimer.Tick, AddressOf SyncMessagesWithDatabase
+
+            ' 2. Initialize MongoDB
+            Try
+                _db = SplashScreen.GetMongoDatabaseConnection()
+                _msgCollection = _db.GetCollection(Of BsonDocument)("chat_messages")
+                _accCollection = _db.GetCollection(Of BsonDocument)("accounts")
+
+                SeedtestAccounts()
+            Catch ex As Exception
+                ' Silent fail if DB is offline
+            End Try
         End Sub
 
-        ' 1. LOADED EVENT
+        ' ═══ SEEDING TEST ACCOUNTS ═══
+        Private Async Sub SeedtestAccounts()
+            Try
+                Dim count = Await _accCollection.CountDocumentsAsync(New BsonDocument())
+                If count = 0 Then
+                    Dim testUsers As New List(Of BsonDocument) From {
+                        New BsonDocument From {{"username", "@SalesP1"}, {"password", "password123"}, {"role", "Sales"}},
+                        New BsonDocument From {{"username", "admin"}, {"password", "admin123"}, {"role", "Administrator"}}
+                    }
+                    Await _accCollection.InsertManyAsync(testUsers)
+                End If
+            Catch
+            End Try
+        End Sub
+
+        ' ═══ WINDOW EVENTS ═══
         Public Async Sub Window_Loaded(sender As Object, e As RoutedEventArgs)
             LoadKnowledgeBase()
             Await AddAIBubbleAsync($"SYSTEM INITIALIZED." & vbNewLine & $"Welcome, {CurrentLoggedInUser}. Type 'Live Support' to chat.")
         End Sub
 
-        ' 2. POSITIONING
+        ' Fixed: Added this back so TopNavBar can find it
         Public Sub PositionNearNavBar(ownerWindow As Window)
             If ownerWindow Is Nothing Then Return
             Me.Left = SystemParameters.WorkArea.Width - Me.Width - 20
             Me.Top = SystemParameters.WorkArea.Height - Me.Height - 60
         End Sub
 
-        ' 3. SEND MESSAGE
+        ' ═══ CHAT LOGIC ═══
         Public Async Sub SendMessage(sender As Object, e As RoutedEventArgs)
             Dim userText As String = UserInput.Text.Trim()
             If String.IsNullOrWhiteSpace(userText) OrElse _isTyping Then Return
@@ -53,13 +85,8 @@ Namespace DPC.Components.Navigation.ChatBot
 
             If _isLiveChat Then
                 StatusText.Text = "SENDING..."
-
-                ' FIX: Add your own bubble immediately for that instant Messenger feel
                 AddUserBubble(userText)
-
-                ' Save to DB in background
-                Await SaveUserMessageToDb(userText)
-
+                Await SaveUserMessageToMongo(userText)
                 StatusText.Text = "LIVE SUPPORT • ONLINE"
             Else
                 AddUserBubble(userText)
@@ -80,93 +107,76 @@ Namespace DPC.Components.Navigation.ChatBot
             UserInput.Focus()
         End Sub
 
-        ' 4. SWITCH TO LIVE SUPPORT
-        Public Async Function SwitchToLiveChat() As Task
-            _isLiveChat = True
-            ChatTitle.Text = "COMMUNITY CHAT"
-            StatusText.Text = "TRANSFERRING..."
-            StatusText.Foreground = New SolidColorBrush(Color.FromRgb(105, 240, 174))
-            ModeIndicator.Fill = New SolidColorBrush(Color.FromRgb(105, 240, 174))
-            ToggleLiveBtn.Foreground = New SolidColorBrush(Color.FromRgb(105, 240, 174))
-
-            Await AddAIBubbleAsync("Entering Live Mode. Loading recent messages...")
-
-            ' FIX: Reset ID and get current Max ID so we only poll for NEW messages
+        ' ═══ MONGO OPERATIONS ═══
+        Private Async Function SaveUserMessageToMongo(msg As String) As Task
             Try
-                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                    conn.Open()
-                    Dim cmd As New MySqlCommand("SELECT MAX(id) FROM chat_messages", conn)
-                    Dim result = cmd.ExecuteScalar()
-                    _lastMessageId = If(IsDBNull(result), 0, Convert.ToInt32(result))
-                End Using
+                Dim doc As New BsonDocument From {
+                    {"sender_name", CurrentLoggedInUser},
+                    {"message", msg},
+                    {"timestamp", DateTime.UtcNow},
+                    {"is_from_admin", 0}
+                }
+                Await _msgCollection.InsertOneAsync(doc)
             Catch
-                _lastMessageId = 0
-            End Try
-
-            _liveChatTimer.Start()
-            StatusText.Text = "LIVE SUPPORT • ONLINE"
-        End Function
-
-        ' 5. DATABASE OPERATIONS
-        Private Async Function SaveUserMessageToDb(msg As String) As Task
-            Try
-                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                    Await conn.OpenAsync()
-                    ' Using parameters to handle special characters and security
-                    Dim query As String = "INSERT INTO chat_messages (sender_name, message, is_from_admin) VALUES (@sender, @msg, 0)"
-                    Using cmd As New MySqlCommand(query, conn)
-                        cmd.Parameters.AddWithValue("@sender", CurrentLoggedInUser)
-                        cmd.Parameters.AddWithValue("@msg", msg)
-                        Await cmd.ExecuteNonQueryAsync()
-                    End Using
-                End Using
-            Catch ex As Exception
                 StatusText.Text = "OFFLINE"
             End Try
         End Function
 
+        ' Fixed: Resolved the 'Gt' (Greater Than) error for ObjectId
         Private Async Sub SyncMessagesWithDatabase(sender As Object, e As EventArgs)
-            _liveChatTimer.Stop() ' Pause to prevent overlapping calls
+            _liveChatTimer.Stop()
             Try
-                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                    Await conn.OpenAsync()
+                ' This specifically uses the MongoDB Filter Builder for ObjectIds
+                Dim filter = Builders(Of BsonDocument).Filter.Gt(Of ObjectId)("_id", _lastMessageId)
+                Dim sort = Builders(Of BsonDocument).Sort.Ascending("_id")
 
-                    ' REGULAR POLLING: Load only new messages
-                    Dim query As String = "SELECT id, sender_name, message FROM chat_messages WHERE id > @lastId ORDER BY id ASC"
-                    Using cmd As New MySqlCommand(query, conn)
-                        cmd.Parameters.AddWithValue("@lastId", _lastMessageId)
-                        Using reader = Await cmd.ExecuteReaderAsync()
-                            While Await reader.ReadAsync()
-                                Dim msgId As Integer = reader.GetInt32("id")
-                                Dim sName As String = reader.GetString("sender_name")
-                                Dim msgContent As String = reader.GetString("message")
+                Dim newMessages = Await _msgCollection.Find(filter).Sort(sort).ToListAsync()
 
-                                ' Update the tracker
-                                _lastMessageId = msgId
+                For Each doc In newMessages
+                    Dim msgId = doc("_id").AsObjectId
+                    Dim sName = doc("sender_name").AsString
+                    Dim msgContent = doc("message").AsString
 
-                                ' FIX: Only add a bubble if it came from the OTHER device
-                                If Not sName.Equals(CurrentLoggedInUser, StringComparison.OrdinalIgnoreCase) Then
-                                    Me.Dispatcher.Invoke(Sub()
-                                                             DisplayIncomingMessage(msgId, sName, msgContent)
-                                                         End Sub)
-                                End If
-                            End While
-                        End Using
-                    End Using
-                End Using
-            Catch ex As Exception
-                ' Handle connection errors
+                    _lastMessageId = msgId
+
+                    If Not sName.Equals(CurrentLoggedInUser, StringComparison.OrdinalIgnoreCase) Then
+                        Me.Dispatcher.Invoke(Sub()
+                                                 Dim ignore = AddAIBubbleAsync($"[{sName.ToUpper()}]: {msgContent}")
+                                             End Sub)
+                    End If
+                Next
+            Catch
             Finally
                 _liveChatTimer.Start()
             End Try
         End Sub
 
-        Private Sub DisplayIncomingMessage(id As Integer, senderName As String, msgText As String)
-            ' This is now primarily called for messages from other users
-            Dim ignore = AddAIBubbleAsync("[" & senderName.ToUpper() & "]: " & msgText)
-        End Sub
+        ' ═══ MODE SWITCH ═══
+        Public Async Function SwitchToLiveChat() As Task
+            _isLiveChat = True
+            ChatTitle.Text = "COMMUNITY CHAT"
+            StatusText.Text = "TRANSFERRING..."
 
-        ' 6. KNOWLEDGE BASE HELPERS
+            StatusText.Foreground = New SolidColorBrush(Color.FromRgb(105, 240, 174))
+            ModeIndicator.Fill = New SolidColorBrush(Color.FromRgb(105, 240, 174))
+            ToggleLiveBtn.Foreground = New SolidColorBrush(Color.FromRgb(105, 240, 174))
+
+            Try
+                Dim latest = Await _msgCollection.Find(New BsonDocument()).Sort(Builders(Of BsonDocument).Sort.Descending("_id")).Limit(1).FirstOrDefaultAsync()
+                If latest IsNot Nothing Then
+                    _lastMessageId = latest("_id").AsObjectId
+                End If
+            Catch
+                _lastMessageId = ObjectId.Empty
+            End Try
+
+            _liveChatTimer.Start()
+            StatusText.Text = "LIVE SUPPORT • ONLINE"
+            Await AddAIBubbleAsync("Connected to Wireless Live Chat.")
+        End Function
+
+        ' ═══ KNOWLEDGE BASE HELPERS ═══
+        ' Fixed: Re-added LoadKnowledgeBase
         Private Sub LoadKnowledgeBase()
             Try
                 Dim filePath As String = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "knowledge-data", "knowledge.json")
@@ -178,6 +188,7 @@ Namespace DPC.Components.Navigation.ChatBot
             End Try
         End Sub
 
+        ' Fixed: Re-added GetAnswer
         Private Function GetAnswer(userQuestion As String) As String
             Try
                 If _knowledgeBase Is Nothing Then Return "Knowledge base not loaded."
@@ -193,7 +204,24 @@ Namespace DPC.Components.Navigation.ChatBot
             Return "Inquiry not recognized. Type 'Live Support' to speak with a human."
         End Function
 
-        ' 7. UI HELPERS
+        ' ═══ QUICK ASK BUTTONS (FIXED) ═══
+        ' These methods solve the errors shown in image_772a41.png
+        Public Sub QuickAsk_Quotation(sender As Object, e As RoutedEventArgs)
+            UserInput.Text = "How to create a quotation?"
+            SendMessage(Nothing, Nothing)
+        End Sub
+
+        Public Sub QuickAsk_Billing(sender As Object, e As RoutedEventArgs)
+            UserInput.Text = "How to process billing?"
+            SendMessage(Nothing, Nothing)
+        End Sub
+
+        Public Sub QuickAsk_Items(sender As Object, e As RoutedEventArgs)
+            UserInput.Text = "How to add new items?"
+            SendMessage(Nothing, Nothing)
+        End Sub
+
+        ' ═══ UI BUBBLE GENERATORS ═══
         Private Async Function AddAIBubbleAsync(message As String) As Task
             Dim bubble As New Border() With {.Style = CType(Resources("AIBubble"), Style)}
             Dim txt As New TextBlock() With {
@@ -208,7 +236,7 @@ Namespace DPC.Components.Navigation.ChatBot
                 currentText &= letter
                 txt.Text = currentText
                 ScrollToBottom()
-                Await Task.Delay(10)
+                Await Task.Delay(5)
             Next
         End Function
 
@@ -224,12 +252,10 @@ Namespace DPC.Components.Navigation.ChatBot
         End Sub
 
         Private Sub ScrollToBottom()
-            If MessageScroll IsNot Nothing Then
-                MessageScroll.ScrollToEnd()
-            End If
+            If MessageScroll IsNot Nothing Then MessageScroll.ScrollToEnd()
         End Sub
 
-        ' 8. EVENT HANDLERS
+        ' ═══ UI EVENT HANDLERS ═══
         Public Sub UserInput_KeyDown(sender As Object, e As KeyEventArgs)
             If e.Key = Key.Enter Then
                 e.Handled = True
@@ -256,22 +282,5 @@ Namespace DPC.Components.Navigation.ChatBot
                 Await AddAIBubbleAsync("Environment Switched: AI Assistant is now active.")
             End If
         End Sub
-
-        ' 9. QUICK SUGGESTIONS
-        Public Sub QuickAsk_Quotation(sender As Object, e As RoutedEventArgs)
-            UserInput.Text = "How do I create a quotation?"
-            SendMessage(sender, e)
-        End Sub
-
-        Public Sub QuickAsk_Billing(sender As Object, e As RoutedEventArgs)
-            UserInput.Text = "How do I make a billing statement?"
-            SendMessage(sender, e)
-        End Sub
-
-        Public Sub QuickAsk_Items(sender As Object, e As RoutedEventArgs)
-            UserInput.Text = "How do I add items or products?"
-            SendMessage(sender, e)
-        End Sub
-
     End Class
 End Namespace
