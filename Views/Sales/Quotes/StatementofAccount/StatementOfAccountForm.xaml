@@ -4,10 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:materialDesignThemes="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="1400" d:DesignWidth="1100" Background="#D9D9D9" 
-             FontFamily="Lexend" FontWeight="Light">
+             FontFamily="Lexend">
     <UserControl.Resources>
         <Style x:Key="RoundedBorderStyle" TargetType="Border">
             <Setter Property="CornerRadius" Value="8"/>
@@ -20,7 +19,6 @@
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Padding" Value="8,5"/>
             <Setter Property="FontFamily" Value="Lexend"/>
-            <Setter Property="FontWeight" Value="Light"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
         <Style x:Key="ModernDataGridHeaderStyle" TargetType="Border">
@@ -32,7 +30,6 @@
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Padding" Value="5"/>
-            <Setter Property="FontWeight" Value="Light"/>
         </Style>
         <Style TargetType="{x:Type DatePickerTextBox}">
             <Setter Property="Background" Value="Transparent"/>
@@ -51,7 +48,6 @@
                 <materialDesign:PackIcon Kind="FileDocumentEditOutline" Width="30" Height="30" Foreground="#474747" VerticalAlignment="Center" Margin="0,0,10,0"/>
                 <TextBlock Text="Statement of Account" FontWeight="SemiBold" FontSize="25" Foreground="#474747" VerticalAlignment="Center"/>
             </StackPanel>
-
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Click="BtnReset_Click" Style="{StaticResource MaterialDesignFlatButton}" Foreground="#D23636">
                     <StackPanel Orientation="Horizontal">
@@ -79,7 +75,6 @@
 
                     <StackPanel Grid.Column="0" Margin="0,0,15,0">
                         <TextBlock Text="Search Client / Bill To:" FontWeight="SemiBold" Foreground="#474747" Margin="0,0,0,5"/>
-
                         <Border x:Name="SearchBorder" Style="{StaticResource RoundedBorderStyle}" Height="40" Margin="0,0,0,0">
                             <Grid>
                                 <TextBox x:Name="txtSearchCustomer" TextChanged="txtSearchCustomer_TextChanged" Style="{StaticResource RoundedTextboxStyle}"/>
@@ -161,22 +156,42 @@
                             <StackPanel>
                                 <TextBlock Text="SOA No." FontWeight="SemiBold" Margin="0,0,0,5"/>
                                 <Border Style="{StaticResource RoundedBorderStyle}" Height="40" Margin="0,0,0,10" Background="#F0F0F0">
-                                    <TextBox x:Name="txtSOANo" 
-                 Style="{StaticResource RoundedTextboxStyle}" 
-                 Foreground="#1D3242" 
-                 FontWeight="Bold"
-                 IsReadOnly="True" 
-                 ToolTip="This number is automatically generated and cannot be edited."/>
+                                    <TextBox x:Name="txtSOANo" Style="{StaticResource RoundedTextboxStyle}" Foreground="#1D3242" FontWeight="Bold" IsReadOnly="True" ToolTip="This number is automatically generated and cannot be edited."/>
                                 </Border>
                             </StackPanel>
+
                             <TextBlock Text="Statement Date:" FontWeight="SemiBold" Margin="0,0,0,5"/>
                             <Border Style="{StaticResource RoundedBorderStyle}" Height="40" Margin="0,0,0,10" Background="#F5F5F5">
-                                <DatePicker x:Name="dpStatementDate" Margin="5,0"/>
+                                <Grid>
+                                    <DatePicker x:Name="dpStatementDate" Visibility="Hidden"/>
+                                    <Button x:Name="StatementDateButton" Click="StatementDateButton_Click" Style="{StaticResource DateButtonStyle}" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Stretch" Padding="10,0">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding SelectedDate, ElementName=dpStatementDate, StringFormat='{}{0:MM/dd/yyyy}'}" VerticalAlignment="Center" Grid.Column="0"/>
+                                            <materialDesign:PackIcon Kind="CalendarMonth" Grid.Column="1" Foreground="#474747"/>
+                                        </Grid>
+                                    </Button>
+                                </Grid>
                             </Border>
 
                             <TextBlock Text="Signed Purchase Order Date:" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                            <Border Style="{StaticResource RoundedBorderStyle}" Height="40" Margin="0,0,0,10">
-                                <DatePicker x:Name="dpPODate" Margin="5,0"/>
+                            <Border Style="{StaticResource RoundedBorderStyle}" Height="40" Margin="0,0,0,10" Background="#F5F5F5">
+                                <Grid>
+                                    <DatePicker x:Name="dpPODate" Visibility="Hidden"/>
+                                    <Button x:Name="PODateButton" Click="PODateButton_Click" Style="{StaticResource DateButtonStyle}" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Stretch" Padding="10,0">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding SelectedDate, ElementName=dpPODate, StringFormat='{}{0:MM/dd/yyyy}'}" VerticalAlignment="Center" Grid.Column="0"/>
+                                            <materialDesign:PackIcon Kind="CalendarMonth" Grid.Column="1" Foreground="#474747"/>
+                                        </Grid>
+                                    </Button>
+                                </Grid>
                             </Border>
 
                             <TextBlock Text="Contract Delivery Period (Days):" FontWeight="SemiBold" Margin="0,0,0,5"/>
@@ -185,13 +200,37 @@
                             </Border>
 
                             <TextBlock Text="Required Delivery Date:" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                            <Border Style="{StaticResource RoundedBorderStyle}" Height="40" Margin="0,0,0,10">
-                                <DatePicker x:Name="dpRequiredDate" Margin="5,0"/>
+                            <Border Style="{StaticResource RoundedBorderStyle}" Height="40" Margin="0,0,0,10" Background="#F5F5F5">
+                                <Grid>
+                                    <DatePicker x:Name="dpRequiredDate" Visibility="Hidden"/>
+                                    <Button x:Name="RequiredDateButton" Click="RequiredDateButton_Click" Style="{StaticResource DateButtonStyle}" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Stretch" Padding="10,0">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding SelectedDate, ElementName=dpRequiredDate, StringFormat='{}{0:MM/dd/yyyy}'}" VerticalAlignment="Center" Grid.Column="0"/>
+                                            <materialDesign:PackIcon Kind="CalendarMonth" Grid.Column="1" Foreground="#474747"/>
+                                        </Grid>
+                                    </Button>
+                                </Grid>
                             </Border>
 
                             <TextBlock Text="Actual Completion Date:" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                            <Border Style="{StaticResource RoundedBorderStyle}" Height="40">
-                                <DatePicker x:Name="dpCompletionDate" Margin="5,0"/>
+                            <Border Style="{StaticResource RoundedBorderStyle}" Height="40" Background="#F5F5F5">
+                                <Grid>
+                                    <DatePicker x:Name="dpCompletionDate" Visibility="Hidden"/>
+                                    <Button x:Name="CompletionDateButton" Click="CompletionDateButton_Click" Style="{StaticResource DateButtonStyle}" Background="Transparent" BorderThickness="0" HorizontalContentAlignment="Stretch" Padding="10,0">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding SelectedDate, ElementName=dpCompletionDate, StringFormat='{}{0:MM/dd/yyyy}'}" VerticalAlignment="Center" Grid.Column="0"/>
+                                            <materialDesign:PackIcon Kind="CalendarMonth" Grid.Column="1" Foreground="#474747"/>
+                                        </Grid>
+                                    </Button>
+                                </Grid>
                             </Border>
                         </StackPanel>
                     </Border>
@@ -200,7 +239,6 @@
                 <Border Grid.Row="1" Background="White" CornerRadius="8" BorderBrush="#AEAEAE" BorderThickness="1" Margin="0,0,0,20" Padding="15">
                     <StackPanel>
                         <TextBlock Text="1. Line Items" FontSize="16" FontWeight="Bold" Foreground="#1D3242" Margin="0,0,0,10"/>
-
                         <Border Style="{StaticResource ModernDataGridHeaderStyle}" CornerRadius="5,5,0,0">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -220,9 +258,7 @@
                                 <TextBlock Grid.Column="5" Text="BALANCE (P)" Foreground="White" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center"/>
                             </Grid>
                         </Border>
-
                         <StackPanel x:Name="LineItemsContainer" Margin="0,0,0,5"/>
-
                         <Button Click="AddLineItem_Click" HorizontalAlignment="Center" Margin="0,10,0,0" Style="{StaticResource MaterialDesignOutlinedButton}" BorderBrush="#1D3242" Foreground="#1D3242" Height="35">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="PlaylistAdd" Margin="0,0,5,0" VerticalAlignment="Center"/>
@@ -235,7 +271,6 @@
                 <Border Grid.Row="2" Background="White" CornerRadius="8" BorderBrush="#AEAEAE" BorderThickness="1" Margin="0,0,0,20" Padding="15">
                     <StackPanel>
                         <TextBlock Text="2. Payment Details" FontSize="16" FontWeight="Bold" Foreground="#1D3242" Margin="0,0,0,10"/>
-
                         <Border Style="{StaticResource ModernDataGridHeaderStyle}" CornerRadius="5,5,0,0">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -249,9 +284,7 @@
                                 <TextBlock Grid.Column="2" Text="AMOUNT PAID (P)" Foreground="White" FontWeight="SemiBold" FontSize="12" HorizontalAlignment="Center"/>
                             </Grid>
                         </Border>
-
                         <StackPanel x:Name="PaymentDetailsContainer" Margin="0,0,0,5"/>
-
                         <Button Click="AddPaymentRow_Click" HorizontalAlignment="Center" Margin="0,10,0,0" Style="{StaticResource MaterialDesignOutlinedButton}" BorderBrush="#1D3242" Foreground="#1D3242" Height="35">
                             <StackPanel Orientation="Horizontal">
                                 <materialDesign:PackIcon Kind="CashPlus" Margin="0,0,5,0" VerticalAlignment="Center"/>
@@ -271,17 +304,14 @@
                     <Border Grid.Column="0" Background="White" CornerRadius="15" Padding="20" BorderBrush="#AEAEAE" BorderThickness="1">
                         <StackPanel>
                             <TextBlock Text="Liquidated Damages (LD) Params" FontSize="18" FontWeight="Bold" Foreground="#1D3242" Margin="0,0,0,15"/>
-
                             <TextBlock Text="Contract Amount (₱):" FontWeight="SemiBold" Margin="0,0,0,5"/>
                             <Border Style="{StaticResource RoundedBorderStyle}" Height="40" Margin="0,0,0,10">
                                 <TextBox x:Name="txtContractAmount" Style="{StaticResource RoundedTextboxStyle}" TextChanged="CalculationTrigger_TextChanged"/>
                             </Border>
-
                             <TextBlock Text="LD Rate (% per day):" FontWeight="SemiBold" Margin="0,0,0,5"/>
                             <Border Style="{StaticResource RoundedBorderStyle}" Height="40" Margin="0,0,0,10">
                                 <TextBox x:Name="txtLDRate" Style="{StaticResource RoundedTextboxStyle}" Text="0.1" TextChanged="CalculationTrigger_TextChanged"/>
                             </Border>
-
                             <TextBlock Text="No. of Days Delayed:" FontWeight="SemiBold" Margin="0,0,0,5"/>
                             <Border Style="{StaticResource RoundedBorderStyle}" Height="40" Margin="0,0,0,10">
                                 <TextBox x:Name="txtDaysDelayed" Style="{StaticResource RoundedTextboxStyle}" Text="0" TextChanged="CalculationTrigger_TextChanged"/>
@@ -295,29 +325,23 @@
                                 <TextBlock Text="Subtotal (VAT Inclusive)" Foreground="#555555"/>
                                 <TextBlock x:Name="lblSubtotal" Text="₱ 0.00" HorizontalAlignment="Right" Foreground="#D23636" FontWeight="Bold"/>
                             </Grid>
-
                             <Grid Margin="0,0,0,8">
                                 <TextBlock Text="Total Payment Made" Foreground="#555555"/>
                                 <TextBlock x:Name="lblTotalPayment" Text="₱ 0.00" HorizontalAlignment="Right" Foreground="#D23636" FontWeight="Bold"/>
                             </Grid>
-
                             <Grid Margin="0,0,0,8">
                                 <TextBlock Text="Outstanding Balance (Before LD)" Foreground="#555555"/>
                                 <TextBlock x:Name="lblOutstandingBalance" Text="₱ 0.00" HorizontalAlignment="Right" Foreground="Black" FontWeight="Bold"/>
                             </Grid>
-
                             <Grid Margin="0,0,0,8">
                                 <TextBlock Text="Less: Liquidated Damages" Foreground="#555555"/>
                                 <TextBlock x:Name="lblLiquidatedDamages" Text="₱ 0.00" HorizontalAlignment="Right" Foreground="#D23636" FontWeight="Bold"/>
                             </Grid>
-
                             <Separator Margin="0,10" Background="#AEAEAE"/>
-
                             <Grid Margin="0,0,0,20">
                                 <TextBlock Text="GRAND TOTAL" FontSize="18" FontWeight="Bold" Foreground="#1D3242" VerticalAlignment="Center"/>
                                 <TextBlock x:Name="lblNetAmountDue" Text="₱ 0.00" FontSize="24" HorizontalAlignment="Right" Foreground="#1D5642" FontWeight="Bold"/>
                             </Grid>
-                            
 
                             <Button Click="GenerateStatement_Click" Height="50" Background="#1D5642" BorderBrush="#1D5642" Style="{StaticResource MaterialDesignRaisedButton}" materialDesign:ButtonAssist.CornerRadius="25">
                                 <StackPanel Orientation="Horizontal">
@@ -328,8 +352,14 @@
                         </StackPanel>
                     </Border>
                 </Grid>
-
             </Grid>
         </ScrollViewer>
+
+        <Grid x:Name="PreviewOverlay" Grid.Row="0" Grid.RowSpan="2" Visibility="Collapsed" Background="#E4E4E4" Panel.ZIndex="100">
+            <Border Background="Transparent" Margin="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <ContentControl x:Name="PreviewContainer" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            </Border>
+        </Grid>
+
     </Grid>
 </UserControl>
