@@ -696,6 +696,7 @@
     <Compile Include="Data\Cache\CacheNewProject.vb" />
     <Compile Include="Data\Cache\EditCashAdvanceRequestCache.vb" />
     <Compile Include="Data\Controllers\Account\AccountController.vb" />
+    <Compile Include="Data\Controllers\AppEvent.vb" />
     <Compile Include="Data\Controllers\AuthController.vb" />
     <Compile Include="Data\Controllers\BIllingController.vb" />
     <Compile Include="Data\Controllers\BrandController.vb" />

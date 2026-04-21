@@ -2,6 +2,7 @@
 Imports System.Windows.Media
 Imports System.Windows
 Imports System.Linq
+Imports System.Threading.Tasks
 
 Public Class calendarview
 
@@ -13,11 +14,16 @@ Public Class calendarview
         Days = New ObservableCollection(Of CalendarDay)()
         CalendarGrid.ItemsSource = Days
 
-        ' Subscribe to the global event store trigger
         AddHandler EventStore.OnEventAdded, AddressOf RefreshCalendar
 
-        currentDisplayDate = DateTime.Now
-        GenerateCalendar(currentDisplayDate)
+        ' Load from DB in background so UI doesn't freeze
+        Task.Run(Sub()
+                     EventStore.LoadAllEvents()
+                     Application.Current.Dispatcher.Invoke(Sub()
+                                                               currentDisplayDate = DateTime.Now
+                                                               GenerateCalendar(currentDisplayDate)
+                                                           End Sub)
+                 End Sub)
     End Sub
 
     ' Safely refresh UI when an event is added from another control

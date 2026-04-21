@@ -293,7 +293,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "calendarview"
                         Return New calendarview()
                     Case "addevent"
-                        Return New Addevent()
+                        Return New DPC.Views.Misc.Calendar.Addevent()
+
 
                     Case Else
                         Dim errorContent As New TextBlock With {
