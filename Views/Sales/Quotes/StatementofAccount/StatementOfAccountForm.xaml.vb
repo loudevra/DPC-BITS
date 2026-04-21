@@ -8,6 +8,8 @@ Imports System.Windows.Threading
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Model
 Imports DPC.DPC.Data.Models
+Imports DPC.DPC.Views.SOA
+
 Public Class StatementOfAccountForm
     Private lineItemCount As Integer = 0
     Private paymentItemCount As Integer = 0
@@ -20,6 +22,7 @@ Public Class StatementOfAccountForm
     Private _productPopups As New Dictionary(Of String, Popup)
     Private _productListBoxes As New Dictionary(Of String, ListBox)
     Private _productTypingTimers As New Dictionary(Of String, DispatcherTimer)
+
     Public Sub New()
         InitializeComponent()
         _typingTimer = New DispatcherTimer With {.Interval = TimeSpan.FromMilliseconds(300)}
@@ -31,6 +34,7 @@ Public Class StatementOfAccountForm
         ' Set the automatic number on initialization
         GenerateAutoSOANumber()
     End Sub
+
 #Region "Form Reset Logic"
     Private Sub BtnReset_Click(sender As Object, e As RoutedEventArgs)
         Dim result = MessageBox.Show("Are you sure you want to reset the entire form?", "Confirm Reset", MessageBoxButton.YesNo, MessageBoxImage.Warning)
@@ -59,8 +63,8 @@ Public Class StatementOfAccountForm
         AddPaymentDetailUI()
         UpdateSummaryTotals()
         GenerateAutoSOANumber()
-        UpdateSummaryTotals()
     End Sub
+
     Private Sub ClearDynamicContainer(container As StackPanel)
         If container Is Nothing Then Return
         For Each child As UIElement In container.Children
@@ -79,7 +83,23 @@ Public Class StatementOfAccountForm
         Next
         container.Children.Clear()
     End Sub
+    Private Sub StatementDateButton_Click(sender As Object, e As RoutedEventArgs)
+        dpStatementDate.IsDropDownOpen = True
+    End Sub
+
+    Private Sub PODateButton_Click(sender As Object, e As RoutedEventArgs)
+        dpPODate.IsDropDownOpen = True
+    End Sub
+
+    Private Sub RequiredDateButton_Click(sender As Object, e As RoutedEventArgs)
+        dpRequiredDate.IsDropDownOpen = True
+    End Sub
+
+    Private Sub CompletionDateButton_Click(sender As Object, e As RoutedEventArgs)
+        dpCompletionDate.IsDropDownOpen = True
+    End Sub
 #End Region
+
 #Region "Autocomplete for Clients"
     Private Sub txtSearchCustomer_TextChanged(sender As Object, e As TextChangedEventArgs)
         _typingTimer.Stop()
@@ -123,6 +143,7 @@ Public Class StatementOfAccountForm
         TxtClientDetails.Text = details
     End Sub
 #End Region
+
 #Region "Dynamic Line Items"
     Private Sub AddLineItem_Click(sender As Object, e As RoutedEventArgs)
         AddLineItemUI()
@@ -139,23 +160,28 @@ Public Class StatementOfAccountForm
         grid.ColumnDefinitions.Add(New ColumnDefinition() With {.Width = New GridLength(110)})
         grid.ColumnDefinitions.Add(New ColumnDefinition() With {.Width = New GridLength(110)})
         grid.ColumnDefinitions.Add(New ColumnDefinition() With {.Width = New GridLength(50)})
+
         Dim borderDate = CreateDatePickerWrapped($"txtLineDate_{rowIdx}")
         Dim borderDesc = CreateProductSearchBoxWrapped($"txtLineDesc_{rowIdx}")
         Dim borderQty = CreateInputBoxWrapped("1", $"txtLineQty_{rowIdx}", HorizontalAlignment.Center)
         Dim borderAmount = CreateInputBoxWrapped("0.00", $"txtLineAmount_{rowIdx}", HorizontalAlignment.Right)
         Dim borderPayment = CreateInputBoxWrapped("0.00", $"txtLinePayment_{rowIdx}", HorizontalAlignment.Right)
         Dim borderBalance = CreateInputBoxWrapped("0.00", $"txtLineBalance_{rowIdx}", HorizontalAlignment.Right, False, True)
+
         AddHandler _dynamicTextBoxes($"txtLineQty_{rowIdx}").TextChanged, AddressOf LineItemCalculation_TextChanged
         AddHandler _dynamicTextBoxes($"txtLineAmount_{rowIdx}").TextChanged, AddressOf LineItemCalculation_TextChanged
         AddHandler _dynamicTextBoxes($"txtLinePayment_{rowIdx}").TextChanged, AddressOf LineItemCalculation_TextChanged
+
         Grid.SetColumn(borderDate, 0)
         Grid.SetColumn(borderDesc, 1)
         Grid.SetColumn(borderQty, 2)
         Grid.SetColumn(borderAmount, 3)
         Grid.SetColumn(borderPayment, 4)
         Grid.SetColumn(borderBalance, 5)
+
         Dim btnDelete = CreateDeleteButton(mainBorder, LineItemsContainer)
         Grid.SetColumn(btnDelete, 6)
+
         grid.Children.Add(borderDate)
         grid.Children.Add(borderDesc)
         grid.Children.Add(borderQty)
@@ -165,9 +191,11 @@ Public Class StatementOfAccountForm
         grid.Children.Add(btnDelete)
         mainBorder.Child = grid
         LineItemsContainer.Children.Add(mainBorder)
+
         CalculateRowBalance(rowIdx)
         UpdateSummaryTotals()
     End Sub
+
     Private Sub LineItemCalculation_TextChanged(sender As Object, e As TextChangedEventArgs)
         Dim txt = CType(sender, TextBox)
         If txt.Name Is Nothing Then Return
@@ -179,6 +207,7 @@ Public Class StatementOfAccountForm
             UpdateSummaryTotals()
         End If
     End Sub
+
     Private Sub CalculateRowBalance(rowIndex As Integer)
         Try
             Dim qtyBox = _dynamicTextBoxes($"txtLineQty_{rowIndex}")
@@ -196,6 +225,7 @@ Public Class StatementOfAccountForm
         End Try
     End Sub
 #End Region
+
 #Region "Dynamic Payment Details"
     Private Sub AddPaymentRow_Click(sender As Object, e As RoutedEventArgs)
         AddPaymentDetailUI()
@@ -227,10 +257,12 @@ Public Class StatementOfAccountForm
         UpdateSummaryTotals()
     End Sub
 #End Region
+
 #Region "Calculations & Summary"
     Public Sub CalculationTrigger_TextChanged(sender As Object, e As TextChangedEventArgs)
         UpdateSummaryTotals()
     End Sub
+
     Private Sub UpdateSummaryTotals()
         Dim subtotal As Decimal = 0
         Dim totalPayment As Decimal = 0
@@ -281,60 +313,103 @@ Public Class StatementOfAccountForm
         ' ONLY proceed if the form is completely filled up
         If Not IsFormValid() Then Exit Sub
 
-        ' --- EVERYTHING BELOW ONLY RUNS IF VALIDATION PASSES ---
-
-        ' 1. Collect data
+        ' 1. Collect all form data into the expanded model
         Dim newStatement As New StatementModel With {
-        .SOANo = txtSOANo.Text,
-        .ClientName = txtSearchCustomer.Text,
-        .StatementDate = If(dpStatementDate.SelectedDate.HasValue, dpStatementDate.SelectedDate.Value.ToString("MMM dd, yyyy"), DateTime.Now.ToString("MMM dd, yyyy")),
-        .PONo = txtPONo.Text,
-        .ContractAmount = txtContractAmount.Text,
-        .NetAmountDue = lblNetAmountDue.Text.Replace("₱", "").Trim()
-    }
+            .SOANo = txtSOANo.Text,
+            .ClientName = txtSearchCustomer.Text,
+            .ClientDetails = TxtClientDetails.Text,
+            .ProjectTitle = txtProjectTitle.Text,
+            .StatementDate = If(dpStatementDate.SelectedDate.HasValue, dpStatementDate.SelectedDate.Value.ToString("MMMM dd, yyyy"), DateTime.Now.ToString("MMMM dd, yyyy")),
+            .PONo = txtPONo.Text,
+            .SINo = txtSINo.Text,
+            .DRNo = txtDRNo.Text,
+            .BSNo = txtBSNo.Text,
+            .PODate = If(dpPODate.SelectedDate.HasValue, dpPODate.SelectedDate.Value.ToString("MMMM dd, yyyy"), ""),
+            .DeliveryPeriod = txtDeliveryPeriod.Text,
+            .RequiredDate = If(dpRequiredDate.SelectedDate.HasValue, dpRequiredDate.SelectedDate.Value.ToString("MMMM dd, yyyy"), ""),
+            .CompletionDate = If(dpCompletionDate.SelectedDate.HasValue, dpCompletionDate.SelectedDate.Value.ToString("MMMM dd, yyyy"), ""),
+            .ContractAmount = txtContractAmount.Text,
+            .Subtotal = lblSubtotal.Text.Replace("₱", "").Trim(),
+            .TotalPayment = lblTotalPayment.Text.Replace("₱", "").Trim(),
+            .OutstandingBalance = lblOutstandingBalance.Text.Replace("₱", "").Trim(),
+            .LiquidatedDamages = lblLiquidatedDamages.Text.Replace("₱", "").Trim(),
+            .NetAmountDue = lblNetAmountDue.Text.Replace("₱", "").Trim(),
+            .LDDaysDelayed = txtDaysDelayed.Text,
+            .LDRate = txtLDRate.Text
+        }
 
-        ' 2. Save and Print
+        ' Calculate LD per day for the print view
+        Dim ldAmount As Decimal = 0
+        Dim contractAmt As Decimal = 0
+        Dim rate As Decimal = 0
+        If Decimal.TryParse(txtContractAmount.Text.Replace(",", ""), contractAmt) AndAlso Decimal.TryParse(txtLDRate.Text, rate) Then
+            ldAmount = contractAmt * (rate / 100)
+        End If
+        newStatement.LDPerDay = ldAmount.ToString("N2")
+
+        ' Extract Dynamic Line Items
+        For Each key In _dynamicTextBoxes.Keys
+            If key.StartsWith("txtLineDesc_") Then
+                Dim rowIdxStr = key.Split("_"c)(1)
+                Dim item As New LineItemModel()
+                item.Description = _dynamicTextBoxes($"txtLineDesc_{rowIdxStr}").Text
+                item.Qty = _dynamicTextBoxes($"txtLineQty_{rowIdxStr}").Text
+                item.Amount = _dynamicTextBoxes($"txtLineAmount_{rowIdxStr}").Text
+                item.Payment = _dynamicTextBoxes($"txtLinePayment_{rowIdxStr}").Text
+                item.Balance = _dynamicTextBoxes($"txtLineBalance_{rowIdxStr}").Text
+
+                If _dynamicDatePickers.ContainsKey($"txtLineDate_{rowIdxStr}") AndAlso _dynamicDatePickers($"txtLineDate_{rowIdxStr}").SelectedDate.HasValue Then
+                    item.DateStr = _dynamicDatePickers($"txtLineDate_{rowIdxStr}").SelectedDate.Value.ToString("MM/dd/yyyy")
+                End If
+                newStatement.LineItems.Add(item)
+            End If
+        Next
+
+        ' Extract Dynamic Payments
+        For Each key In _dynamicTextBoxes.Keys
+            If key.StartsWith("txtPayRef_") Then
+                Dim rowIdxStr = key.Split("_"c)(1)
+                Dim pItem As New PaymentItemModel()
+                pItem.Reference = _dynamicTextBoxes($"txtPayRef_{rowIdxStr}").Text
+                pItem.AmountPaid = _dynamicTextBoxes($"txtPayAmount_{rowIdxStr}").Text
+
+                If _dynamicDatePickers.ContainsKey($"txtPayDate_{rowIdxStr}") AndAlso _dynamicDatePickers($"txtPayDate_{rowIdxStr}").SelectedDate.HasValue Then
+                    pItem.DateStr = _dynamicDatePickers($"txtPayDate_{rowIdxStr}").SelectedDate.Value.ToString("MM/dd/yyyy")
+                End If
+                newStatement.PaymentItems.Add(pItem)
+            End If
+        Next
+
+        ' 2. Save
         ManageStatementOfAccount.StatementList.Add(newStatement)
 
-        Dim printLayout As New StatementOfAccount(newStatement)
-        Dim printWindow As New Window With {
-        .Title = "Generated SOA: " & newStatement.SOANo,
-        .Content = printLayout,
-        .Width = 850,
-        .Height = 900,
-        .WindowStartupLocation = WindowStartupLocation.CenterScreen
-    }
-        printWindow.ShowDialog()
+        ' === POPUP THE PREVIEW IN THE SAME WINDOW ===
+        ' Instantiate the preview with the data
+        Dim printLayout As New SOAPreview(newStatement)
+
+        ' Assign it to the container overlay
+        PreviewContainer.Content = printLayout
+
+        ' Show the overlay grid inside the same view
+        PreviewOverlay.Visibility = Visibility.Visible
 
         ' 3. Refresh
         GenerateAutoSOANumber()
     End Sub
-    Private Sub BtnManageStatements_Click(sender As Object, e As RoutedEventArgs)
-        ' Add your navigation logic here to switch to the ManageStatementOfAccount view
-        ' Example: ViewLoader.LoadView(New ManageStatementOfAccount())
-        MessageBox.Show("Navigating to Manage Statements...")
-    End Sub
+
     Private Function IsFormValid() As Boolean
-        ' 1. Check Client
         If _selectedClient Is Nothing OrElse String.IsNullOrWhiteSpace(txtSearchCustomer.Text) Then
             MessageBox.Show("Please select a valid Client first.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
             Return False
         End If
-
-        ' 2. Check Project Title
         If String.IsNullOrWhiteSpace(txtProjectTitle.Text) Then
             MessageBox.Show("Project Title is required.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
             Return False
         End If
-
-        ' 3. Check if there are Line Items
         If LineItemsContainer.Children.Count = 0 Then
             MessageBox.Show("Please add at least one Line Item.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
             Return False
         End If
-
-        ' 4. Check if the first Line Item has a description and amount
-        ' We check the first row as a minimum requirement
         If _dynamicTextBoxes.ContainsKey("txtLineDesc_1") Then
             If String.IsNullOrWhiteSpace(_dynamicTextBoxes("txtLineDesc_1").Text) OrElse
            Val(_dynamicTextBoxes("txtLineAmount_1").Text) <= 0 Then
@@ -342,19 +417,16 @@ Public Class StatementOfAccountForm
                 Return False
             End If
         End If
-
         Return True
     End Function
-
-
 #End Region
+
 #Region "UI Helpers"
     Private Function CreateProductSearchBoxWrapped(name As String) As Border
         Dim popupKey As String = $"Popup_{name}"
         Dim listBoxKey As String = $"Lst_{name}"
         Dim timerKey As String = $"Timer_{name}"
 
-        ' The TextBox for Description/Product Name
         Dim txt As New TextBox With {
         .Name = name,
         .Style = CType(Me.FindResource("RoundedTextboxStyle"), Style),
@@ -362,19 +434,16 @@ Public Class StatementOfAccountForm
         .TextWrapping = TextWrapping.Wrap,
         .MinHeight = 35
     }
-
         _dynamicTextBoxes(name) = txt
         If Me.FindName(name) IsNot Nothing Then Me.UnregisterName(name)
         Me.RegisterName(txt.Name, txt)
 
-        ' Suggestion ListBox
         Dim suggestionList As New ListBox With {.Name = listBoxKey, .MaxHeight = 150, .Background = Brushes.White}
         Dim factory As New FrameworkElementFactory(GetType(TextBlock))
         factory.SetBinding(TextBlock.TextProperty, New Binding("ProductName"))
         factory.SetValue(TextBlock.PaddingProperty, New Thickness(10, 5, 10, 5))
         suggestionList.ItemTemplate = New DataTemplate() With {.VisualTree = factory}
 
-        ' Popup
         Dim popup As New Popup With {
         .Name = popupKey,
         .StaysOpen = False,
@@ -382,17 +451,14 @@ Public Class StatementOfAccountForm
         .Placement = PlacementMode.Bottom,
         .Child = New Border With {.Background = Brushes.White, .BorderBrush = Brushes.LightGray, .BorderThickness = New Thickness(1), .Child = suggestionList}
     }
-
         _productListBoxes(listBoxKey) = suggestionList
         _productPopups(popupKey) = popup
 
-        ' Search Timer (Debounce)
         Dim typingTimer As New DispatcherTimer With {.Interval = TimeSpan.FromMilliseconds(300)}
         AddHandler typingTimer.Tick, Sub()
                                          typingTimer.Stop()
                                          Dim keyword = txt.Text.Trim()
                                          If keyword.Length >= 2 Then
-                                             ' Fetches from your existing QuotesController
                                              Dim results = QuotesController.SearchProductsByName(keyword, WarehouseID)
                                              suggestionList.ItemsSource = results
                                              popup.Width = txt.ActualWidth
@@ -405,8 +471,6 @@ Public Class StatementOfAccountForm
                                         typingTimer.Start()
                                     End Sub
 
-        ' AUTO-PRICE LOGIC: When item is selected
-        ' Inside CreateProductSearchBoxWrapped...
         AddHandler suggestionList.SelectionChanged, Sub()
                                                         If suggestionList.SelectedItem IsNot Nothing Then
                                                             Dim selectedProduct = CType(suggestionList.SelectedItem, ProductDataModel)
@@ -416,16 +480,9 @@ Public Class StatementOfAccountForm
                                                             If parts.Length >= 2 Then
                                                                 Dim rowIndex As Integer
                                                                 If Integer.TryParse(parts(1), rowIndex) Then
-
-                                                                    ' 1. Find the Unit Price/Amount Box (txtLineAmount_X)
                                                                     Dim rateBoxKey = $"txtLineAmount_{rowIndex}"
-
                                                                     If _dynamicTextBoxes.ContainsKey(rateBoxKey) Then
-                                                                        ' 2. Assign the price from the Database
-                                                                        ' Use SellingPrice or BuyingPrice depending on your model
                                                                         _dynamicTextBoxes(rateBoxKey).Text = selectedProduct.SellingPrice.ToString("F2")
-
-                                                                        ' 3. Force the Row Balance and Grand Total to refresh
                                                                         CalculateRowBalance(rowIndex)
                                                                         UpdateSummaryTotals()
                                                                     End If
@@ -447,6 +504,7 @@ Public Class StatementOfAccountForm
         .Child = grid
     }
     End Function
+
     Private Function CreateInputBoxWrapped(defaultText As String, name As String, alignment As HorizontalAlignment, Optional multiLine As Boolean = False, Optional isReadOnly As Boolean = False) As Border
         Dim txt As New TextBox With {.Name = name, .Text = defaultText, .Style = CType(Me.FindResource("RoundedTextboxStyle"), Style), .HorizontalContentAlignment = alignment, .Margin = New Thickness(0), .BorderBrush = Brushes.Transparent, .BorderThickness = New Thickness(0), .Background = Brushes.Transparent, .IsReadOnly = isReadOnly}
         If multiLine Then
@@ -461,6 +519,7 @@ Public Class StatementOfAccountForm
         Dim border As New Border With {.BorderBrush = CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush), .BorderThickness = New Thickness(1), .Background = If(isReadOnly, CType(New BrushConverter().ConvertFrom("#F9F9F9"), Brush), CType(New BrushConverter().ConvertFrom("#FFFFFF"), Brush)), .CornerRadius = New CornerRadius(8), .Margin = New Thickness(2, 0, 2, 0), .Padding = New Thickness(2), .Child = txt}
         Return border
     End Function
+
     Private Function CreateDatePickerWrapped(name As String) As Border
         Dim dp As New DatePicker With {.Name = name, .Background = Brushes.Transparent, .BorderThickness = New Thickness(0), .Padding = New Thickness(5), .VerticalAlignment = VerticalAlignment.Center, .HorizontalAlignment = HorizontalAlignment.Stretch}
         If name.StartsWith("txtLineDate_") AndAlso name <> "txtLineDate_1" Then
@@ -479,6 +538,7 @@ Public Class StatementOfAccountForm
         Dim border As New Border With {.BorderBrush = CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush), .BorderThickness = New Thickness(1), .Background = CType(New BrushConverter().ConvertFrom("#FFFFFF"), Brush), .CornerRadius = New CornerRadius(8), .Margin = New Thickness(2, 0, 2, 0), .Padding = New Thickness(0), .Child = dp}
         Return border
     End Function
+
     Private Sub DatePicker_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs)
         Dim dp = CType(sender, DatePicker)
         If dp.Name Is Nothing OrElse Not dp.SelectedDate.HasValue Then Return
@@ -497,6 +557,7 @@ Public Class StatementOfAccountForm
             Next
         End If
     End Sub
+
     Private Function CreateDeleteButton(containerToRemove As UIElement, targetPanel As StackPanel) As Button
         Dim deleteButton As New Button With {.Background = Brushes.Transparent, .BorderBrush = Brushes.Transparent, .Padding = New Thickness(0), .Cursor = Cursors.Hand, .Width = 35, .Height = 35, .ToolTip = "Remove Entry", .VerticalAlignment = VerticalAlignment.Center}
         Dim icon As New MaterialDesignThemes.Wpf.PackIcon With {.Kind = MaterialDesignThemes.Wpf.PackIconKind.PlaylistRemove, .Foreground = CType(New BrushConverter().ConvertFrom("#D23636"), Brush), .Width = 30, .Height = 30, .HorizontalAlignment = HorizontalAlignment.Center, .VerticalAlignment = VerticalAlignment.Center}
@@ -504,6 +565,7 @@ Public Class StatementOfAccountForm
         AddHandler deleteButton.Click, Sub(sender As Object, e As RoutedEventArgs) HandleRowDeletion(containerToRemove, targetPanel)
         Return deleteButton
     End Function
+
     Private Sub HandleRowDeletion(containerToRemove As UIElement, targetPanel As StackPanel)
         targetPanel.Children.Remove(containerToRemove)
         Dim keysToRemove As New List(Of String)
@@ -529,6 +591,7 @@ Public Class StatementOfAccountForm
         Next
         UpdateSummaryTotals()
     End Sub
+
     Private Iterator Function FindVisualChildren(Of T As DependencyObject)(depObj As DependencyObject) As IEnumerable(Of T)
         If depObj IsNot Nothing Then
             For i As Integer = 0 To VisualTreeHelper.GetChildrenCount(depObj) - 1
@@ -543,24 +606,19 @@ Public Class StatementOfAccountForm
         End If
     End Function
 #End Region
+
     Private Sub GenerateAutoSOANumber()
         Try
-            ' Format: SOA - [YEAR] - [SEQUENTIAL NUMBER]
             Dim prefix As String = "SOA-" & DateTime.Now.Year.ToString() & "-"
             Dim nextNumber As Integer = 1
 
-            ' Check if StatementList has items to find the last used number
-            ' Replace ManageStatementOfAccount.StatementList with your DB query if necessary
             If ManageStatementOfAccount.StatementList IsNot Nothing AndAlso ManageStatementOfAccount.StatementList.Count > 0 Then
-
-                ' Find the highest current number for the current year
                 Dim lastSOA = ManageStatementOfAccount.StatementList _
                     .Where(Function(s) s.SOANo.StartsWith(prefix)) _
                     .OrderByDescending(Function(s) s.SOANo) _
                     .FirstOrDefault()
 
                 If lastSOA IsNot Nothing Then
-                    ' Extract the number after the last hyphen
                     Dim lastPart As String = lastSOA.SOANo.Split("-"c).Last()
                     Dim lastNumericValue As Integer
                     If Integer.TryParse(lastPart, lastNumericValue) Then
@@ -568,15 +626,9 @@ Public Class StatementOfAccountForm
                     End If
                 End If
             End If
-
-            ' Format to 4 digits (e.g., SOA-2026-0001)
             txtSOANo.Text = prefix & nextNumber.ToString("D4")
-
         Catch ex As Exception
-            ' Fallback if logic fails
             txtSOANo.Text = "SOA-NEW"
         End Try
     End Sub
-
-
 End Class
