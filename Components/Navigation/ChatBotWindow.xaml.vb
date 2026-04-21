@@ -16,7 +16,11 @@ Namespace DPC.Components.Navigation.ChatBot
     Public Class ChatBotWindow
 
         ' ═══ IDENTITY & MONGO STATE ═══
-        Public Property CurrentLoggedInUser As String = System.Environment.MachineName
+        Public ReadOnly Property CurrentLoggedInUser As String
+            Get
+                Return DPC.Data.Helpers.GlobalVariables.CurrentUserName
+            End Get
+        End Property
 
         Private _db As IMongoDatabase
         Private _msgCollection As IMongoCollection(Of BsonDocument)
