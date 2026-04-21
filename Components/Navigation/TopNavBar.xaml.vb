@@ -103,18 +103,27 @@ Namespace DPC.Components.Navigation
 
             LoadNotificationBadge()
 
-            Dim notifModal As New DPC.Components.ConfirmationModals.NotificationModal(CacheOnEmployeeID)
+            Dim notifModal As New DPC.Components.ConfirmationModals.NotificationModal(GlobalVariables.CacheOnEmployeeID)
             notifModal.ShowDialog()
         End Sub
 
         ' ── CHATBOT BUTTON (Email icon) ────────────────────────────
+        ' ── CHATBOT BUTTON (Email icon) ────────────────────────────
         Private Sub ShowMessages(sender As Object, e As RoutedEventArgs)
             RaiseEvent RestoreDefaultSidebar()
 
-            ' Create a fresh instance if none exists or the window was closed
+            ' 1. Create a fresh instance if none exists or the window was closed
             If _chatBot Is Nothing OrElse Not _chatBot.IsLoaded Then
                 _chatBot = New ChatBotWindow()
                 _chatBot.Owner = Window.GetWindow(Me)
+
+                ' 2. FIX: Assign the real username here.
+                ' If you have a variable like 'CurrentEmployeeName' or 'CacheOnEmployeeID', use it.
+                ' For testing purposes, you can use:
+                ' _chatBot.CurrentLoggedInUser = Environment.MachineName ' Uses the PC name (Laptop vs Desktop)
+
+                ' Ideally, use your app's logged-in variable:
+                _chatBot.CurrentLoggedInUser = GlobalVariables.CurrentUserName ' Replace with your actual username variable
             End If
 
             If _chatBot.IsVisible Then

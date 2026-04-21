@@ -708,6 +708,7 @@
     <Compile Include="Data\Controllers\CalendarController.vb" />
     <Compile Include="Data\Controllers\EmployeeLoginHistoryController.vb" />
     <Compile Include="Data\Controllers\EventStore.vb" />
+    <Compile Include="Data\Controllers\HRM\HolidayController.vb" />
     <Compile Include="Data\Controllers\HRM\FilesController.vb" />
     <Compile Include="Data\Controllers\HRM\HRMController.vb" />
     <Compile Include="Data\Controllers\ManageProductsController.vb" />
@@ -749,6 +750,7 @@
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
     <Compile Include="Data\DataModules\BillingDetails.vb" />
+    <Compile Include="Data\Helpers\GlobalVariables.vb" />
     <Compile Include="Data\Helpers\PermissionCache.vb" />
     <Compile Include="Data\Helpers\DeliveryState.vb" />
     <Compile Include="Data\Helpers\TransactionState.vb" />
@@ -1235,6 +1237,21 @@
     </Compile>
     <Compile Include="Views\Sales\Quotes\Quote.xaml.vb">
       <DependentUpon>Quote.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\Quotes\StatementOfAccount.xaml.vb">
+      <DependentUpon>StatementOfAccount.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\Quotes\StatementofAccount\ManageStatementOfAccount.xaml.vb">
+      <DependentUpon>ManageStatementOfAccount.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\Quotes\StatementofAccount\PreviewPrintStatementOfAccount.xaml.vb">
+      <DependentUpon>PreviewPrintStatementOfAccount.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\Quotes\StatementofAccount\SOAPreview.xaml.vb">
+      <DependentUpon>SOAPreview.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\Quotes\StatementofAccount\StatementOfAccountForm.xaml.vb">
+      <DependentUpon>StatementOfAccountForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Sales\Saless\SalesInvoices.xaml.vb">
       <DependentUpon>SalesInvoices.xaml</DependentUpon>
@@ -2296,6 +2313,26 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Sales\Quotes\Quote.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Quotes\StatementOfAccount.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Quotes\StatementofAccount\ManageStatementOfAccount.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Quotes\StatementofAccount\PreviewPrintStatementOfAccount.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Quotes\StatementofAccount\SOAPreview.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Quotes\StatementofAccount\StatementOfAccountForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
