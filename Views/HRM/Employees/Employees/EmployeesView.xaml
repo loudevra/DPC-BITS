@@ -193,6 +193,7 @@
                             <StackPanel>
                                 <DataGrid x:Name="EmployeesDataGrid"
                                   AutoGenerateColumns="False"
+                                  PreviewMouseWheel="DataGrid_PreviewMouseWheel"
                                   CanUserAddRows="False"
                                   CanUserResizeRows="False"
                                   CanUserResizeColumns="False"

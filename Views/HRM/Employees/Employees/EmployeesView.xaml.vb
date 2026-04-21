@@ -33,6 +33,22 @@ Namespace DPC.Views.HRM.Employees.Employees
         ''' <summary>
         ''' Load Employees from Database
         ''' </summary>
+        ''' 
+        Private Sub DataGrid_PreviewMouseWheel(sender As Object, e As MouseWheelEventArgs)
+            If Not e.Handled Then
+                e.Handled = True
+                Dim eventArg As New MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
+                eventArg.RoutedEvent = UIElement.MouseWheelEvent
+                eventArg.Source = sender
+
+                ' Find the parent to bubble the event up
+                Dim parent As UIElement = TryCast(DirectCast(sender, Control).Parent, UIElement)
+                If parent IsNot Nothing Then
+                    parent.RaiseEvent(eventArg)
+                End If
+            End If
+        End Sub
+
         Private Sub LoadEmployees()
             Employees.Clear()
 
