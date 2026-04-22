@@ -11,6 +11,13 @@ Imports DPC.DPC.Data.Models
 Imports DPC.DPC.Views.SOA
 
 Public Class StatementOfAccountForm
+
+    ' -------------------------------------------------------------------------
+    ' VARIABLES & STATE TRACKING
+    ' -------------------------------------------------------------------------
+    Private _isEditMode As Boolean = False
+    Private _editingRecord As StatementModel
+
     Private lineItemCount As Integer = 0
     Private paymentItemCount As Integer = 0
     Public WarehouseID As Integer = 12
@@ -23,6 +30,11 @@ Public Class StatementOfAccountForm
     Private _productListBoxes As New Dictionary(Of String, ListBox)
     Private _productTypingTimers As New Dictionary(Of String, DispatcherTimer)
 
+    ' -------------------------------------------------------------------------
+    ' CONSTRUCTORS
+    ' -------------------------------------------------------------------------
+
+    ' Default Constructor (Used for ADDING a new statement)
     Public Sub New()
         InitializeComponent()
         _typingTimer = New DispatcherTimer With {.Interval = TimeSpan.FromMilliseconds(300)}
@@ -31,8 +43,66 @@ Public Class StatementOfAccountForm
         AddLineItemUI()
         AddPaymentDetailUI()
 
-        ' Set the automatic number on initialization
         GenerateAutoSOANumber()
+    End Sub
+
+    ' Overloaded Constructor (Used for EDITING an existing statement)
+    Public Sub New(statementToEdit As StatementModel)
+        Me.New() ' Calls the default constructor above to initialize the UI first
+
+        _isEditMode = True
+        _editingRecord = statementToEdit
+
+        PopulateFormForEdit()
+    End Sub
+
+    ' -------------------------------------------------------------------------
+    ' POPULATE FOR EDIT
+    ' -------------------------------------------------------------------------
+    Private Sub PopulateFormForEdit()
+        txtSOANo.Text = _editingRecord.SOANo
+        txtSearchCustomer.Text = _editingRecord.ClientName
+        TxtClientDetails.Text = _editingRecord.ClientDetails
+        txtProjectTitle.Text = _editingRecord.ProjectTitle
+        txtPONo.Text = _editingRecord.PONo
+        txtSINo.Text = _editingRecord.SINo
+        txtDRNo.Text = _editingRecord.DRNo
+        txtBSNo.Text = _editingRecord.BSNo
+        txtDeliveryPeriod.Text = _editingRecord.DeliveryPeriod
+        txtContractAmount.Text = _editingRecord.ContractAmount
+        txtDaysDelayed.Text = _editingRecord.LDDaysDelayed
+        txtLDRate.Text = _editingRecord.LDRate
+
+        ' Safely parse dates
+        Dim pDate As Date
+        If Date.TryParse(_editingRecord.StatementDate, pDate) Then dpStatementDate.SelectedDate = pDate
+        If Date.TryParse(_editingRecord.PODate, pDate) Then dpPODate.SelectedDate = pDate
+        If Date.TryParse(_editingRecord.RequiredDate, pDate) Then dpRequiredDate.SelectedDate = pDate
+        If Date.TryParse(_editingRecord.CompletionDate, pDate) Then dpCompletionDate.SelectedDate = pDate
+
+        ' Rebuild the saved Line Items
+        ClearDynamicContainer(LineItemsContainer)
+        lineItemCount = 0
+        If _editingRecord.LineItems IsNot Nothing AndAlso _editingRecord.LineItems.Count > 0 Then
+            For Each item In _editingRecord.LineItems
+                AddLineItemUI(item)
+            Next
+        Else
+            AddLineItemUI() ' Keep at least one empty row
+        End If
+
+        ' Rebuild the saved Payments
+        ClearDynamicContainer(PaymentDetailsContainer)
+        paymentItemCount = 0
+        If _editingRecord.PaymentItems IsNot Nothing AndAlso _editingRecord.PaymentItems.Count > 0 Then
+            For Each pItem In _editingRecord.PaymentItems
+                AddPaymentDetailUI(pItem)
+            Next
+        Else
+            AddPaymentDetailUI()
+        End If
+
+        UpdateSummaryTotals()
     End Sub
 
 #Region "Form Reset Logic"
@@ -62,7 +132,10 @@ Public Class StatementOfAccountForm
         AddLineItemUI()
         AddPaymentDetailUI()
         UpdateSummaryTotals()
-        GenerateAutoSOANumber()
+
+        If Not _isEditMode Then
+            GenerateAutoSOANumber()
+        End If
     End Sub
 
     Private Sub ClearDynamicContainer(container As StackPanel)
@@ -83,6 +156,7 @@ Public Class StatementOfAccountForm
         Next
         container.Children.Clear()
     End Sub
+
     Private Sub StatementDateButton_Click(sender As Object, e As RoutedEventArgs)
         dpStatementDate.IsDropDownOpen = True
     End Sub
@@ -111,6 +185,7 @@ Public Class StatementOfAccountForm
         End If
         _typingTimer.Start()
     End Sub
+
     Private Sub OnTypingTimerTick(sender As Object, e As EventArgs)
         _typingTimer.Stop()
         _clients = ClientController.SearchClient(txtSearchCustomer.Text)
@@ -118,6 +193,7 @@ Public Class StatementOfAccountForm
         AutoCompletePopup.IsOpen = _clients.Count > 0
         AutoCompletePopup.Width = SearchBorder.ActualWidth
     End Sub
+
     Private Sub LstItems_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
         If LstItems.SelectedItem IsNot Nothing Then
             _selectedClient = CType(LstItems.SelectedItem, Client)
@@ -129,6 +205,7 @@ Public Class StatementOfAccountForm
             LstItems.SelectedItem = Nothing
         End If
     End Sub
+
     Private Sub UpdateSupplierDetails(client As Client)
         If TxtClientDetails Is Nothing OrElse client Is Nothing Then Return
         Dim details As String = $"Representative Name: {client.Representative}{Environment.NewLine}" &
@@ -148,7 +225,8 @@ Public Class StatementOfAccountForm
     Private Sub AddLineItem_Click(sender As Object, e As RoutedEventArgs)
         AddLineItemUI()
     End Sub
-    Private Sub AddLineItemUI()
+
+    Private Sub AddLineItemUI(Optional prefillItem As LineItemModel = Nothing)
         lineItemCount += 1
         Dim rowIdx As Integer = lineItemCount
         Dim mainBorder As New Border With {.Margin = New Thickness(0, 2, 0, 2), .Padding = New Thickness(0, 5, 0, 5), .Background = Brushes.Transparent}
@@ -161,12 +239,27 @@ Public Class StatementOfAccountForm
         grid.ColumnDefinitions.Add(New ColumnDefinition() With {.Width = New GridLength(110)})
         grid.ColumnDefinitions.Add(New ColumnDefinition() With {.Width = New GridLength(50)})
 
+        ' Extract prefill values or use defaults
+        Dim qtyDef = If(prefillItem IsNot Nothing AndAlso Not String.IsNullOrEmpty(prefillItem.Qty), prefillItem.Qty, "1")
+        Dim amtDef = If(prefillItem IsNot Nothing AndAlso Not String.IsNullOrEmpty(prefillItem.Amount), prefillItem.Amount, "0.00")
+        Dim payDef = If(prefillItem IsNot Nothing AndAlso Not String.IsNullOrEmpty(prefillItem.Payment), prefillItem.Payment, "0.00")
+        Dim balDef = If(prefillItem IsNot Nothing AndAlso Not String.IsNullOrEmpty(prefillItem.Balance), prefillItem.Balance, "0.00")
+
         Dim borderDate = CreateDatePickerWrapped($"txtLineDate_{rowIdx}")
         Dim borderDesc = CreateProductSearchBoxWrapped($"txtLineDesc_{rowIdx}")
-        Dim borderQty = CreateInputBoxWrapped("1", $"txtLineQty_{rowIdx}", HorizontalAlignment.Center)
-        Dim borderAmount = CreateInputBoxWrapped("0.00", $"txtLineAmount_{rowIdx}", HorizontalAlignment.Right)
-        Dim borderPayment = CreateInputBoxWrapped("0.00", $"txtLinePayment_{rowIdx}", HorizontalAlignment.Right)
-        Dim borderBalance = CreateInputBoxWrapped("0.00", $"txtLineBalance_{rowIdx}", HorizontalAlignment.Right, False, True)
+        Dim borderQty = CreateInputBoxWrapped(qtyDef, $"txtLineQty_{rowIdx}", HorizontalAlignment.Center)
+        Dim borderAmount = CreateInputBoxWrapped(amtDef, $"txtLineAmount_{rowIdx}", HorizontalAlignment.Right)
+        Dim borderPayment = CreateInputBoxWrapped(payDef, $"txtLinePayment_{rowIdx}", HorizontalAlignment.Right)
+        Dim borderBalance = CreateInputBoxWrapped(balDef, $"txtLineBalance_{rowIdx}", HorizontalAlignment.Right, False, True)
+
+        ' Apply Description and Date if prefilling
+        If prefillItem IsNot Nothing Then
+            _dynamicTextBoxes($"txtLineDesc_{rowIdx}").Text = prefillItem.Description
+            Dim pDate As Date
+            If Date.TryParse(prefillItem.DateStr, pDate) Then
+                _dynamicDatePickers($"txtLineDate_{rowIdx}").SelectedDate = pDate
+            End If
+        End If
 
         AddHandler _dynamicTextBoxes($"txtLineQty_{rowIdx}").TextChanged, AddressOf LineItemCalculation_TextChanged
         AddHandler _dynamicTextBoxes($"txtLineAmount_{rowIdx}").TextChanged, AddressOf LineItemCalculation_TextChanged
@@ -230,7 +323,8 @@ Public Class StatementOfAccountForm
     Private Sub AddPaymentRow_Click(sender As Object, e As RoutedEventArgs)
         AddPaymentDetailUI()
     End Sub
-    Private Sub AddPaymentDetailUI()
+
+    Private Sub AddPaymentDetailUI(Optional prefillItem As PaymentItemModel = Nothing)
         paymentItemCount += 1
         Dim rowIdx As Integer = paymentItemCount
         Dim mainBorder As New Border With {.Margin = New Thickness(0, 2, 0, 2), .Padding = New Thickness(0, 5, 0, 5), .Background = Brushes.Transparent}
@@ -239,15 +333,32 @@ Public Class StatementOfAccountForm
         grid.ColumnDefinitions.Add(New ColumnDefinition() With {.Width = New GridLength(1, GridUnitType.Star)})
         grid.ColumnDefinitions.Add(New ColumnDefinition() With {.Width = New GridLength(150)})
         grid.ColumnDefinitions.Add(New ColumnDefinition() With {.Width = New GridLength(50)})
+
+        ' Extract prefill values or use defaults
+        Dim refDef = If(prefillItem IsNot Nothing, prefillItem.Reference, "")
+        Dim amtDef = If(prefillItem IsNot Nothing AndAlso Not String.IsNullOrEmpty(prefillItem.AmountPaid), prefillItem.AmountPaid, "0.00")
+
         Dim borderDate = CreateDatePickerWrapped($"txtPayDate_{rowIdx}")
-        Dim borderRef = CreateInputBoxWrapped("", $"txtPayRef_{rowIdx}", HorizontalAlignment.Left)
-        Dim borderAmount = CreateInputBoxWrapped("0.00", $"txtPayAmount_{rowIdx}", HorizontalAlignment.Right)
+        Dim borderRef = CreateInputBoxWrapped(refDef, $"txtPayRef_{rowIdx}", HorizontalAlignment.Left)
+        Dim borderAmount = CreateInputBoxWrapped(amtDef, $"txtPayAmount_{rowIdx}", HorizontalAlignment.Right)
+
+        ' Apply Date if prefilling
+        If prefillItem IsNot Nothing Then
+            Dim pDate As Date
+            If Date.TryParse(prefillItem.DateStr, pDate) Then
+                _dynamicDatePickers($"txtPayDate_{rowIdx}").SelectedDate = pDate
+            End If
+        End If
+
         AddHandler _dynamicTextBoxes($"txtPayAmount_{rowIdx}").TextChanged, AddressOf CalculationTrigger_TextChanged
+
         Grid.SetColumn(borderDate, 0)
         Grid.SetColumn(borderRef, 1)
         Grid.SetColumn(borderAmount, 2)
+
         Dim btnDelete = CreateDeleteButton(mainBorder, PaymentDetailsContainer)
         Grid.SetColumn(btnDelete, 3)
+
         grid.Children.Add(borderDate)
         grid.Children.Add(borderRef)
         grid.Children.Add(borderAmount)
@@ -380,27 +491,59 @@ Public Class StatementOfAccountForm
             End If
         Next
 
-        ' 2. Save
-        ManageStatementOfAccount.StatementList.Add(newStatement)
+        ' 2. Save or Update
+        If _isEditMode Then
+            ' UPDATE EXISTING RECORD
+            _editingRecord.ClientName = newStatement.ClientName
+            _editingRecord.ClientDetails = newStatement.ClientDetails
+            _editingRecord.ProjectTitle = newStatement.ProjectTitle
+            _editingRecord.StatementDate = newStatement.StatementDate
+            _editingRecord.PONo = newStatement.PONo
+            _editingRecord.SINo = newStatement.SINo
+            _editingRecord.DRNo = newStatement.DRNo
+            _editingRecord.BSNo = newStatement.BSNo
+            _editingRecord.PODate = newStatement.PODate
+            _editingRecord.DeliveryPeriod = newStatement.DeliveryPeriod
+            _editingRecord.RequiredDate = newStatement.RequiredDate
+            _editingRecord.CompletionDate = newStatement.CompletionDate
+            _editingRecord.ContractAmount = newStatement.ContractAmount
+            _editingRecord.Subtotal = newStatement.Subtotal
+            _editingRecord.TotalPayment = newStatement.TotalPayment
+            _editingRecord.OutstandingBalance = newStatement.OutstandingBalance
+            _editingRecord.LiquidatedDamages = newStatement.LiquidatedDamages
+            _editingRecord.NetAmountDue = newStatement.NetAmountDue
+            _editingRecord.LDDaysDelayed = newStatement.LDDaysDelayed
+            _editingRecord.LDRate = newStatement.LDRate
+            _editingRecord.LDPerDay = newStatement.LDPerDay
+            _editingRecord.LineItems = newStatement.LineItems
+            _editingRecord.PaymentItems = newStatement.PaymentItems
+
+            ' Preview the updated record
+            Dim printLayout As New SOAPreview(_editingRecord)
+            PreviewContainer.Content = printLayout
+        Else
+            ' ADD NEW RECORD
+            ManageStatementOfAccount.StatementList.Add(newStatement)
+
+            ' Preview the new record
+            Dim printLayout As New SOAPreview(newStatement)
+            PreviewContainer.Content = printLayout
+
+            ' 3. Refresh SOA Number for next add
+            GenerateAutoSOANumber()
+        End If
 
         ' === POPUP THE PREVIEW IN THE SAME WINDOW ===
-        ' Instantiate the preview with the data
-        Dim printLayout As New SOAPreview(newStatement)
-
-        ' Assign it to the container overlay
-        PreviewContainer.Content = printLayout
-
-        ' Show the overlay grid inside the same view
         PreviewOverlay.Visibility = Visibility.Visible
-
-        ' 3. Refresh
-        GenerateAutoSOANumber()
     End Sub
 
     Private Function IsFormValid() As Boolean
         If _selectedClient Is Nothing OrElse String.IsNullOrWhiteSpace(txtSearchCustomer.Text) Then
-            MessageBox.Show("Please select a valid Client first.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
-            Return False
+            ' Check if it's Edit Mode (client might be loaded dynamically without searching)
+            If Not _isEditMode Then
+                MessageBox.Show("Please select a valid Client first.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Return False
+            End If
         End If
         If String.IsNullOrWhiteSpace(txtProjectTitle.Text) Then
             MessageBox.Show("Project Title is required.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning)

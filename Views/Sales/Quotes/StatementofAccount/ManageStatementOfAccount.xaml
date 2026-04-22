@@ -113,184 +113,202 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <Grid>
 
-        <Grid Grid.Row="0" Margin="0,0,0,15">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="Manage Statement of Account" FontSize="32" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#555555" VerticalAlignment="Center"/>
-            <StackPanel VerticalAlignment="Center" Grid.Column="1">
-                <Button x:Name="BtnAddStatement" HorizontalAlignment="Right" Style="{StaticResource AddStatementButtonStyle}" Margin="20,0,0,0" Height="35" Click="BtnAddStatement_Click" Cursor="Hand">
-                    <StackPanel Orientation="Horizontal">
-                        <materialDesign:PackIcon Kind="Plus" Width="20" Height="20" Foreground="#FDFDFD" VerticalAlignment="Center"/>
-                        <TextBlock Text="Add Statement" FontSize="14" Foreground="#FDFDFD" Margin="5,0,0,0" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Button>
-            </StackPanel>
-        </Grid>
+        <Grid x:Name="MainViewGrid" Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <Border Grid.Row="1" Padding="10" Background="White" CornerRadius="10" BorderBrush="White" Margin="0,0,0,15">
-            <Grid>
+            <Grid Grid.Row="0" Margin="0,0,0,15">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-
-                <StackPanel Grid.Column="0" Orientation="Horizontal">
-                    <Button Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" Foreground="White" Width="60" Height="30" Cursor="Hand" Click="ExportToExcel">
-                        <materialDesign:PackIcon Kind="MicrosoftExcel" Width="20" Height="20"/>
+                <TextBlock Grid.Column="0" Text="Manage Statement of Account" FontSize="32" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#555555" VerticalAlignment="Center"/>
+                <StackPanel VerticalAlignment="Center" Grid.Column="1">
+                    <Button x:Name="BtnAddStatement" HorizontalAlignment="Right" Style="{StaticResource AddStatementButtonStyle}" Margin="20,0,0,0" Height="35" Click="BtnAddStatement_Click" Cursor="Hand">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Plus" Width="20" Height="20" Foreground="#FDFDFD" VerticalAlignment="Center"/>
+                            <TextBlock Text="Add Quote" FontSize="14" Foreground="#FDFDFD" Margin="5,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
                     </Button>
-
-                    <Border Width="1.5" Height="25" Background="#D9D9D9" Margin="15,0,15,0" VerticalAlignment="Center"/>
-
-                    <ComboBox x:Name="cmbLimit" Width="70" Style="{StaticResource RoundedComboBoxStyle}" Height="30">
-                        <ComboBoxItem Content="10" IsSelected="True"/>
-                        <ComboBoxItem Content="25"/>
-                        <ComboBoxItem Content="50"/>
-                        <ComboBoxItem Content="100"/>
-                    </ComboBox>
-
-                    <Border Style="{StaticResource RoundedGridStyle}" Margin="15,0,10,0" MinWidth="160" Height="30">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <DatePicker x:Name="FilterDatePicker" SelectedDate="{Binding SelectedDate, Mode=TwoWay}" Visibility="Hidden" SelectedDateChanged="FilterDatePicker_SelectedDateChanged" />
-
-                            <Button x:Name="FilterDateButton" Grid.Column="0" Background="Transparent" BorderThickness="0" HorizontalAlignment="Stretch" Click="FilterDateButton_Click" Cursor="Hand">
-                                <TextBlock x:Name="FilterDateText" Text="Select Date" FontFamily="Lexend" FontSize="12" VerticalAlignment="Center" Foreground="#AEAEAE" Margin="10,0,5,0"/>
-                            </Button>
-
-                            <Button x:Name="ClearDateButton" Grid.Column="1" Background="Transparent" BorderThickness="0" Width="20" Height="20" Margin="0,0,5,0" VerticalAlignment="Center" Click="ClearDateButton_Click" ToolTip="Clear date filter" Visibility="Collapsed" Cursor="Hand">
-                                <materialDesign:PackIcon Kind="Close" Width="16" Height="16" Foreground="#AEAEAE"/>
-                            </Button>
-
-                            <materialDesign:PackIcon Kind="Calendar" Width="18" Height="18" Foreground="Black" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="2" Margin="0,0,10,0"/>
-                        </Grid>
-                    </Border>
-
-                    <Button x:Name="btnViewGrid" Style="{StaticResource IconButton}" Cursor="Hand">
-                        <materialDesign:PackIcon Kind="ViewGridOutline" Width="22" Height="22" Margin="10" Foreground="#555555"/>
-                    </Button>
-
-                    <Button x:Name="btnMenuFilter" Style="{StaticResource IconButton}" Cursor="Hand">
-                        <materialDesign:PackIcon Kind="FormatListBulleted" Width="22" Height="22" Margin="10" Foreground="#555555"/>
-                    </Button>
-                </StackPanel>
-
-                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Border Style="{StaticResource RoundedGridStyle}" Width="220" Height="30">
-                        <Grid>
-                            <TextBox x:Name="SearchText" BorderThickness="0" Background="Transparent" FontFamily="Lexend" Style="{StaticResource RoundedTextboxStyle}" Height="22" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="10,0,30,0" TextChanged="SearchText_TextChanged" />
-                            <materialDesign:PackIcon Kind="Magnify" Width="20" Height="20" Foreground="#AEAEAE" Margin="0,0,10,0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                        </Grid>
-                    </Border>
                 </StackPanel>
             </Grid>
-        </Border>
 
-        <Border Grid.Row="2" Background="White" CornerRadius="10">
+            <Border Grid.Row="1" Padding="10" Background="White" CornerRadius="10" BorderBrush="White" Margin="0,0,0,15">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-            <DataGrid Name="dataGrid" 
-                      AutoGenerateColumns="False" 
-                      CanUserAddRows="False" 
-                      HeadersVisibility="Column" 
-                      GridLinesVisibility="None" 
-                      RowBackground="White" 
-                      AlternatingRowBackground="#F4F4F4" 
-                      BorderThickness="0" 
-                      Background="Transparent"
-                      FontFamily="Lexend" 
-                      IsReadOnly="True"
-                      RowHeight="50"
-                      Margin="0,0,0,10"
-                      ScrollViewer.CanContentScroll="True"
-                      ScrollViewer.VerticalScrollBarVisibility="Auto"
-                      ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <Button Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" Foreground="White" Width="60" Height="30" Cursor="Hand" Click="ExportToExcel">
+                            <materialDesign:PackIcon Kind="MicrosoftExcel" Width="20" Height="20"/>
+                        </Button>
 
-                <DataGrid.RowStyle>
-                    <Style TargetType="DataGridRow">
-                        <Setter Property="BorderThickness" Value="0"/>
-                        <Setter Property="Margin" Value="0"/>
-                    </Style>
-                </DataGrid.RowStyle>
+                        <Border Width="1.5" Height="25" Background="#D9D9D9" Margin="15,0,15,0" VerticalAlignment="Center"/>
 
-                <DataGrid.ColumnHeaderStyle>
-                    <Style TargetType="DataGridColumnHeader">
-                        <Setter Property="FontFamily" Value="Lexend"/>
-                        <Setter Property="FontSize" Value="13"/>
-                        <Setter Property="FontWeight" Value="SemiBold"/>
-                        <Setter Property="Foreground" Value="#555555"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Left"/>
-                        <Setter Property="VerticalContentAlignment" Value="Center"/>
-                        <Setter Property="Padding" Value="15,12"/>
-                        <Setter Property="Background" Value="White"/>
-                        <Setter Property="BorderBrush" Value="#EAEAEA"/>
-                        <Setter Property="BorderThickness" Value="0,0,0,2"/>
-                    </Style>
-                </DataGrid.ColumnHeaderStyle>
+                        <ComboBox x:Name="cmbLimit" Width="70" Style="{StaticResource RoundedComboBoxStyle}" Height="30">
+                            <ComboBoxItem Content="10" IsSelected="True"/>
+                            <ComboBoxItem Content="25"/>
+                            <ComboBoxItem Content="50"/>
+                            <ComboBoxItem Content="100"/>
+                        </ComboBox>
 
-                <DataGrid.CellStyle>
-                    <Style TargetType="DataGridCell">
-                        <Setter Property="Padding" Value="15,0"/>
-                        <Setter Property="FontSize" Value="13"/>
-                        <Setter Property="Foreground" Value="#333333"/>
-                        <Setter Property="BorderThickness" Value="0"/>
-                        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="DataGridCell">
-                                    <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
-                                        <ContentPresenter VerticalAlignment="Center"/>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </DataGrid.CellStyle>
+                        <Border Style="{StaticResource RoundedGridStyle}" Margin="15,0,10,0" MinWidth="160" Height="30">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
 
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="SOA No." Binding="{Binding SOANo}" Width="Auto" MinWidth="120"/>
+                                <DatePicker x:Name="FilterDatePicker" SelectedDate="{Binding SelectedDate, Mode=TwoWay}" Visibility="Hidden" SelectedDateChanged="FilterDatePicker_SelectedDateChanged" />
 
-                    <DataGridTextColumn Header="Client Name" Binding="{Binding ClientName}" Width="*" MinWidth="180"/>
+                                <Button x:Name="FilterDateButton" Grid.Column="0" Background="Transparent" BorderThickness="0" HorizontalAlignment="Stretch" Click="FilterDateButton_Click" Cursor="Hand">
+                                    <TextBlock x:Name="FilterDateText" Text="Select Date" FontFamily="Lexend" FontSize="12" VerticalAlignment="Center" Foreground="#AEAEAE" Margin="10,0,5,0"/>
+                                </Button>
 
-                    <DataGridTextColumn Header="Date" Binding="{Binding StatementDate}" Width="Auto" MinWidth="100"/>
-                    <DataGridTextColumn Header="PO No." Binding="{Binding PONo}" Width="Auto" MinWidth="90"/>
-                    <DataGridTextColumn Header="Amount" Binding="{Binding ContractAmount}" Width="Auto" MinWidth="110"/>
-                    <DataGridTextColumn Header="Net Due" Binding="{Binding NetAmountDue}" Width="Auto" MinWidth="110"/>
+                                <Button x:Name="ClearDateButton" Grid.Column="1" Background="Transparent" BorderThickness="0" Width="20" Height="20" Margin="0,0,5,0" VerticalAlignment="Center" Click="ClearDateButton_Click" ToolTip="Clear date filter" Visibility="Collapsed" Cursor="Hand">
+                                    <materialDesign:PackIcon Kind="Close" Width="16" Height="16" Foreground="#AEAEAE"/>
+                                </Button>
 
-                    <DataGridTemplateColumn Header="Actions" Width="100">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <Button Width="30" Height="30" Background="Transparent" BorderThickness="0" Margin="0,0,5,0" ToolTip="Edit" Click="OpenEditStatement" Cursor="Hand">
-                                        <materialDesign:PackIcon Kind="SquareEditOutline" Width="20" Height="20" Foreground="#52C69D"/>
-                                    </Button>
-                                    <Button Width="30" Height="30" Background="Transparent" BorderThickness="0" Margin="0" ToolTip="Delete" Click="DeleteStatement" Cursor="Hand">
-                                        <materialDesign:PackIcon Kind="DeleteOutline" Width="20" Height="20" Foreground="#E65E5E"/>
-                                    </Button>
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
-        </Border>
+                                <materialDesign:PackIcon Kind="Calendar" Width="18" Height="18" Foreground="Black" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Column="2" Margin="0,0,10,0"/>
+                            </Grid>
+                        </Border>
 
-        <Popup x:Name="CellValuePopup" Placement="Mouse" AllowsTransparency="True" StaysOpen="False">
-            <Border Background="White" BorderBrush="Black" BorderThickness="1" Padding="10" CornerRadius="8">
-                <TextBlock x:Name="PopupText" FontFamily="Lexend" FontSize="14" Foreground="Black" TextWrapping="Wrap" MaxWidth="300"/>
+                        <Button x:Name="btnViewGrid" Style="{StaticResource IconButton}" Cursor="Hand">
+                            <materialDesign:PackIcon Kind="ViewGridOutline" Width="22" Height="22" Margin="10" Foreground="#555555"/>
+                        </Button>
+
+                        <Button x:Name="btnMenuFilter" Style="{StaticResource IconButton}" Cursor="Hand">
+                            <materialDesign:PackIcon Kind="FormatListBulleted" Width="22" Height="22" Margin="10" Foreground="#555555"/>
+                        </Button>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Border Style="{StaticResource RoundedGridStyle}" Width="220" Height="30">
+                            <Grid>
+                                <TextBox x:Name="SearchText" BorderThickness="0" Background="Transparent" FontFamily="Lexend" Style="{StaticResource RoundedTextboxStyle}" Height="22" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="10,0,30,0" TextChanged="SearchText_TextChanged" />
+                                <materialDesign:PackIcon Kind="Magnify" Width="20" Height="20" Foreground="#AEAEAE" Margin="0,0,10,0" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </Grid>
             </Border>
-        </Popup>
+
+            <Border Grid.Row="2" Background="White" CornerRadius="10">
+
+                <DataGrid Name="dataGrid" 
+                          AutoGenerateColumns="False" 
+                          CanUserAddRows="False" 
+                          HeadersVisibility="Column" 
+                          GridLinesVisibility="None" 
+                          RowBackground="White" 
+                          AlternatingRowBackground="#F4F4F4" 
+                          BorderThickness="0" 
+                          Background="Transparent"
+                          FontFamily="Lexend" 
+                          IsReadOnly="True"
+                          RowHeight="50"
+                          Margin="0,0,0,10"
+                          ScrollViewer.CanContentScroll="True"
+                          ScrollViewer.VerticalScrollBarVisibility="Auto"
+                          ScrollViewer.HorizontalScrollBarVisibility="Auto">
+
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="Margin" Value="0"/>
+                        </Style>
+                    </DataGrid.RowStyle>
+
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="FontFamily" Value="Lexend"/>
+                            <Setter Property="FontSize" Value="13"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                            <Setter Property="Foreground" Value="#555555"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            <Setter Property="Padding" Value="15,12"/>
+                            <Setter Property="Background" Value="White"/>
+                            <Setter Property="BorderBrush" Value="#EAEAEA"/>
+                            <Setter Property="BorderThickness" Value="0,0,0,2"/>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+
+                    <DataGrid.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Padding" Value="15,0"/>
+                            <Setter Property="FontSize" Value="13"/>
+                            <Setter Property="Foreground" Value="#333333"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="DataGridCell">
+                                        <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
+                                            <ContentPresenter VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </DataGrid.CellStyle>
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="SOA No." Binding="{Binding SOANo}" Width="Auto" MinWidth="120"/>
+                        <DataGridTextColumn Header="Client Name" Binding="{Binding ClientName}" Width="*" MinWidth="180"/>
+                        <DataGridTextColumn Header="Date" Binding="{Binding StatementDate}" Width="Auto" MinWidth="100"/>
+                        <DataGridTextColumn Header="PO No." Binding="{Binding PONo}" Width="Auto" MinWidth="90"/>
+                        <DataGridTextColumn Header="Amount" Binding="{Binding ContractAmount}" Width="Auto" MinWidth="110"/>
+                        <DataGridTextColumn Header="Net Due" Binding="{Binding NetAmountDue}" Width="Auto" MinWidth="110"/>
+
+                        <DataGridTemplateColumn Header="Actions" Width="100">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <Button Width="30" Height="30" Background="Transparent" BorderThickness="0" Margin="0,0,5,0" ToolTip="Edit" Click="OpenEditStatement" Cursor="Hand">
+                                            <materialDesign:PackIcon Kind="SquareEditOutline" Width="20" Height="20" Foreground="#52C69D"/>
+                                        </Button>
+                                        <Button Width="30" Height="30" Background="Transparent" BorderThickness="0" Margin="0" ToolTip="Delete" Click="DeleteStatement" Cursor="Hand">
+                                            <materialDesign:PackIcon Kind="DeleteOutline" Width="20" Height="20" Foreground="#E65E5E"/>
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
+            <Popup x:Name="CellValuePopup" Placement="Mouse" AllowsTransparency="True" StaysOpen="False">
+                <Border Background="White" BorderBrush="Black" BorderThickness="1" Padding="10" CornerRadius="8">
+                    <TextBlock x:Name="PopupText" FontFamily="Lexend" FontSize="14" Foreground="Black" TextWrapping="Wrap" MaxWidth="300"/>
+                </Border>
+            </Popup>
+        </Grid>
+
+        <Grid x:Name="EditOverlay" Visibility="Collapsed" Background="#D9D9D9" Panel.ZIndex="100">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Button Grid.Row="0" Margin="25,20,0,0" HorizontalAlignment="Left" Background="Transparent" BorderThickness="0" Click="CloseEditOverlay_Click" Cursor="Hand">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="ArrowLeft" Width="24" Height="24" Foreground="#474747" VerticalAlignment="Center"/>
+                    <TextBlock Text="Back to Statement List" FontSize="16" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                </StackPanel>
+            </Button>
+
+            <ContentControl x:Name="EditContainer" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="0,10,0,0"/>
+        </Grid>
+
     </Grid>
 </UserControl>
