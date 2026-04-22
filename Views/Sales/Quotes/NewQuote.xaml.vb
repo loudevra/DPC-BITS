@@ -20,6 +20,8 @@ Imports NuGet.Protocol.Plugins
 Namespace DPC.Views.Sales.Quotes
     ' Note - The value of defau
     Public Class NewQuote
+        Private _originalGrandTotal As Decimal = 0
+        Private _isTaxApplied As Boolean = False
         ' Autocomplete
         Private rowCount As Integer = 0
         Private MyDynamicGrid As Grid
@@ -1252,8 +1254,25 @@ Namespace DPC.Views.Sales.Quotes
                 CostEstimateDetails.CETotalAmountCache = "₱ " & finalGrandTotal.ToString("N2")
             End If
 
-            txtGrandTotal.Text = "₱" & finalGrandTotal.ToString("N2")
+            ' Store the original grand total BEFORE applying tax toggle
+            _originalGrandTotal = finalGrandTotal
+
+            If _isTaxApplied Then
+                ' If tax is already applied, recalculate with the new original value
+                Dim grandTotalWithTax As Decimal = _originalGrandTotal + totalTaxAmount
+                txtGrandTotal.Text = "₱" & grandTotalWithTax.ToString("N2")
+            Else
+                ' Otherwise just show the base grand total
+                txtGrandTotal.Text = "₱" & finalGrandTotal.ToString("N2")
+            End If
+
             CostEstimateDetails.CETotalBaseAmount = "₱" & subtotalAmount.ToString("N2")
+
+            ' Reset tax application when grand total is recalculated
+            If _isTaxApplied Then
+                _isTaxApplied = False
+                UpdateGrandTotalDisplay()
+            End If
         End Sub
 
         ' This function is for updating the value of tax whenever there is changes
@@ -1299,6 +1318,25 @@ Namespace DPC.Views.Sales.Quotes
             Next
 
             txtTotalDiscount.Text = "₱" & totalDiscount.ToString("N2")
+
+
+            ' Reset tax application when grand total is recalculated
+            If _isTaxApplied Then
+                _isTaxApplied = False
+
+
+                ' Reset toggle switch appearance to OFF
+                Dim toggleButton = TryCast(ApplyTaxToggle, Button)
+                If toggleButton IsNot Nothing Then
+                    toggleButton.Background = CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush)
+                    toggleButton.Margin = New Thickness(2, 2, 0, 0)
+
+                    Dim icon = TryCast(toggleButton.Content, MaterialDesignThemes.Wpf.PackIcon)
+                    If icon IsNot Nothing Then
+                        icon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Close
+                    End If
+                End If
+            End If
         End Sub
 
         Private Sub txtDeliveryFee_TextChange(sender As Object, e As TextChangedEventArgs)
@@ -1306,7 +1344,14 @@ Namespace DPC.Views.Sales.Quotes
             Dim tb = DirectCast(sender, TextBox)
 
             Dim rawInput As String = tb.Text.Replace(",", "").Trim()
-            Dim cleanInput As String = Regex.Replace(rawInput, "[^0-9]", "")
+            ' Allow numbers and one decimal point
+            Dim cleanInput As String = Regex.Replace(rawInput, "[^0-9.]", "")
+
+            ' Prevent multiple decimal points
+            Dim decimalCount = cleanInput.Count(Function(c) c = "."c)
+            If decimalCount > 1 Then
+                cleanInput = cleanInput.Substring(0, cleanInput.LastIndexOf("."))
+            End If
 
             RemoveHandler tb.TextChanged, AddressOf txtDeliveryFee_TextChange
 
@@ -1314,16 +1359,11 @@ Namespace DPC.Views.Sales.Quotes
                 tb.Text = ""
                 lblFee.Text = "₱ 0"
             Else
-                Dim val As Long = 0
-                If Long.TryParse(cleanInput, val) Then
-                    lblFee.Text = $"₱ {val:N0}"
-
-                    Dim caretIndex = tb.CaretIndex
-                    Dim oldLength = tb.Text.Length
-
-                    tb.Text = val.ToString("N0")
-
-                    tb.CaretIndex = Math.Max(0, caretIndex + (tb.Text.Length - oldLength))
+                Dim val As Decimal = 0
+                If Decimal.TryParse(cleanInput, val) Then
+                    ' Display exactly what user typed
+                    lblFee.Text = $"₱ {cleanInput}"
+                    tb.Text = cleanInput
                 End If
             End If
 
@@ -1336,7 +1376,14 @@ Namespace DPC.Views.Sales.Quotes
             Dim tb = DirectCast(sender, TextBox)
 
             Dim rawInput As String = tb.Text.Replace(",", "").Trim()
-            Dim cleanInput As String = Regex.Replace(rawInput, "[^0-9]", "")
+            ' Allow numbers and one decimal point
+            Dim cleanInput As String = Regex.Replace(rawInput, "[^0-9.]", "")
+
+            ' Prevent multiple decimal points
+            Dim decimalCount = cleanInput.Count(Function(c) c = "."c)
+            If decimalCount > 1 Then
+                cleanInput = cleanInput.Substring(0, cleanInput.LastIndexOf("."))
+            End If
 
             RemoveHandler tb.TextChanged, AddressOf txtInstallationFee_TextChanged
 
@@ -1344,16 +1391,11 @@ Namespace DPC.Views.Sales.Quotes
                 tb.Text = ""
                 lblInstallationFee.Text = "₱ 0"
             Else
-                Dim val As Long = 0
-                If Long.TryParse(cleanInput, val) Then
-                    lblInstallationFee.Text = $"₱ {val:N0}"
-
-                    Dim caretIndex = tb.CaretIndex
-                    Dim oldLength = tb.Text.Length
-
-                    tb.Text = val.ToString("N0")
-
-                    tb.CaretIndex = Math.Max(0, caretIndex + (tb.Text.Length - oldLength))
+                Dim val As Decimal = 0
+                If Decimal.TryParse(cleanInput, val) Then
+                    ' Display exactly what user typed
+                    lblInstallationFee.Text = $"₱ {cleanInput}"
+                    tb.Text = cleanInput
                 End If
             End If
 
@@ -1525,6 +1567,53 @@ Namespace DPC.Views.Sales.Quotes
                 txtQuoteNumber.CaretIndex = txtQuoteNumber.Text.Length
             End If
         End Sub
+
+        Private Sub ApplyTaxToggle_Click(sender As Object, e As RoutedEventArgs)
+            _isTaxApplied = Not _isTaxApplied
+            UpdateGrandTotalDisplay()
+        End Sub
+
+        Private Sub UpdateGrandTotalDisplay()
+            Dim taxText = txtTotalTax.Text.Replace("₱", "").Replace(",", "").Trim()
+            Dim taxAmount As Decimal = 0
+
+            Decimal.TryParse(taxText, taxAmount)
+
+            Dim toggleButton = TryCast(ApplyTaxToggle, Button)
+
+            If _isTaxApplied Then
+                ' Switch ON - Show grand total WITH tax
+                Dim grandTotalWithTax As Decimal = _originalGrandTotal + taxAmount
+                txtGrandTotal.Text = "₱" & grandTotalWithTax.ToString("N2")
+
+                If toggleButton IsNot Nothing Then
+                    toggleButton.Background = CType(New BrushConverter().ConvertFrom("#1D5642"), Brush) ' Green
+                    toggleButton.Margin = New Thickness(24, 2, 0, 0) ' Move circle to right
+
+
+                    Dim icon = TryCast(toggleButton.Content, MaterialDesignThemes.Wpf.PackIcon)
+                    If icon IsNot Nothing Then
+                        icon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Check
+                    End If
+                End If
+            Else
+                ' Switch OFF - Show grand total WITHOUT tax
+                txtGrandTotal.Text = "₱" & _originalGrandTotal.ToString("N2")
+
+                If toggleButton IsNot Nothing Then
+                    toggleButton.Background = CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush) ' Gray
+                    toggleButton.Margin = New Thickness(2, 2, 0, 0) ' Move circle to left
+
+
+                    Dim icon = TryCast(toggleButton.Content, MaterialDesignThemes.Wpf.PackIcon)
+                    If icon IsNot Nothing Then
+                        icon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Close
+                    End If
+                End If
+            End If
+        End Sub
+
+
 #End Region
 
 #Region "Generate the Quote Before saving"
