@@ -78,9 +78,12 @@ Namespace DPC.Views.CRM
             End If
         End Sub
 
+        ' --- NUMBER VALIDATION ---
         Private Sub txtInput_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
-            ' Regex allows digits, symbols, and space
-            ' Removed regex restriction as per your code
+            Dim pattern As String = "^[0-9!@#$%^&*()_\-+=\.,:;?/ ]$"
+            If Not System.Text.RegularExpressions.Regex.IsMatch(e.Text, pattern) Then
+                e.Handled = True
+            End If
         End Sub
 
         ' --- ADD CLIENT BUTTON ---
