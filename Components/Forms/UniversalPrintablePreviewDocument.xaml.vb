@@ -377,12 +377,12 @@ Namespace DPC.Components.Forms
                             Debug.WriteLine("Looking for product: '" & productName & "' | Quantity to deduct: " & quantitySold)
 
                             ' Find the product ID and variation type
-                            Dim getProductQuery As String = "SELECT productID, productVariation FROM product WHERE productName = @productName LIMIT 1"
+                            Dim getProductQuery As String = "SELECT productID, productVariation FROM product WHERE TRIM(productName) = TRIM(@productName) LIMIT 1"
                             Dim productID As String = ""
                             Dim hasVariation As Boolean = False
 
                             Using cmd As New MySqlCommand(getProductQuery, conn)
-                                cmd.Parameters.AddWithValue("@productName", productName)
+                                cmd.Parameters.AddWithValue("@productName", productName.Trim())
                                 Using reader = cmd.ExecuteReader()
                                     If reader.Read() Then
                                         productID = reader("productID").ToString()
@@ -390,6 +390,7 @@ Namespace DPC.Components.Forms
                                         Debug.WriteLine("✓ Found product ID: " & productID & " | Has Variation: " & hasVariation)
                                     Else
                                         Debug.WriteLine("✗ Product NOT FOUND: '" & productName & "'")
+                                        Debug.WriteLine("  Searching for (trimmed/upper): '" & productName.Trim().ToUpper() & "'")
                                         failCount += 1
                                         Continue For
                                     End If
@@ -760,13 +761,27 @@ Namespace DPC.Components.Forms
 
                             Debug.WriteLine("Looking for product: '" & productName & "' | Quantity to deduct: " & quantitySold)
 
-                            ' Find product
-                            Dim getProductQuery As String = "SELECT productID, productVariation FROM product WHERE productName = @productName LIMIT 1"
+
+                            Dim debugQuery As String = "SELECT productID, productName FROM product LIMIT 5"
+                            Debug.WriteLine("=== DATABASE PRODUCTS (Sample) ===")
+                            Using debugCmd As New MySqlCommand(debugQuery, conn)
+                                Using debugReader = debugCmd.ExecuteReader()
+                                    While debugReader.Read()
+                                        Dim dbProductName As String = debugReader("productName").ToString()
+                                        Debug.WriteLine("  DB: '" & dbProductName & "' (trimmed upper: '" & dbProductName.Trim().ToUpper() & "')")
+                                    End While
+                                End Using
+                            End Using
+                            Debug.WriteLine("Searching for (trimmed upper): '" & productName.Trim().ToUpper() & "'")
+                            Debug.WriteLine("=== END DATABASE SAMPLE ===")
+
+
+                            Dim getProductQuery As String = "SELECT productID, productVariation FROM product WHERE TRIM(UPPER(productName)) = TRIM(UPPER(@productName)) LIMIT 1"
                             Dim productID As String = ""
                             Dim hasVariation As Boolean = False
 
                             Using cmd As New MySqlCommand(getProductQuery, conn)
-                                cmd.Parameters.AddWithValue("@productName", productName)
+                                cmd.Parameters.AddWithValue("@productName", productName.Trim())
                                 Using reader = cmd.ExecuteReader()
                                     If reader.Read() Then
                                         productID = reader("productID").ToString()
