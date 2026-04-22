@@ -288,6 +288,8 @@
                             <ComboBoxItem Content="25"/>
                             <ComboBoxItem Content="50"/>
                             <ComboBoxItem Content="100"/>
+                            <ComboBoxItem Content="500"/>
+                            <ComboBoxItem Content="1000"/>
                         </ComboBox>
                     </StackPanel>
 
@@ -383,7 +385,7 @@
                         <DataGridTextColumn x:Name="colSellingPrice" Header="Selling Price" Binding="{Binding SellingPrice}" Width="0.9*" MinWidth="100" FontFamily="Lexend" Foreground="#555555" CellStyle="{StaticResource CenteredCellStyle}"/>
                         <DataGridTextColumn Header="Buying Price" Binding="{Binding BuyingPrice}" Width="0.9*" MinWidth="100" FontFamily="Lexend" Foreground="#555555"
                                             CellStyle="{StaticResource CenteredCellStyle}"/>
-                        <DataGridTextColumn Header="Stock Qty" Binding="{Binding StockQuantity}" Width="0.7*" MinWidth="85" FontFamily="Lexend" Foreground="#555555"
+                        <DataGridTextColumn Header="Stock Qty" Binding="{Binding StockQuantity}" Width="0.7*" MinWidth="85" FontFamily="Lexend" Foreground="Red"
                                             CellStyle="{StaticResource CenteredCellStyle}"/>
                         <DataGridTextColumn Header="Alert" Binding="{Binding AlertQuantity}" Width="0.6*" MinWidth="70" FontFamily="Lexend" Foreground="#555555"
                                             CellStyle="{StaticResource CenteredCellStyle}"/>

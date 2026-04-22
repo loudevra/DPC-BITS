@@ -202,7 +202,7 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" Orientation="Horizontal">
-                        <Button Click="ExportToExcel_Click" Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" Foreground="White" Width="75"  Height="29" Margin="10,0,0,0">
+                        <Button Click="ExportToExcel_Click" Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" Foreground="White" Width="75" Height="29" Margin="10,0,0,0">
                             <materialDesign:PackIcon Kind="MicrosoftExcel" Width="25" Height="25"/>
                         </Button>
 
@@ -219,14 +219,14 @@
                         <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Width="211" Height="34">
                             <Grid>
                                 <TextBox BorderThickness="0" 
-         Background="Transparent" 
-         FontFamily="Lexend" 
-         Name="txtSearch" 
-         TextChanged="txtSearch_TextChanged"
-         Style="{StaticResource RoundedTextboxStyle}" 
-         Height="23" 
-         Margin="20,0,20,0" 
-         VerticalAlignment="Center" />
+                                         Background="Transparent" 
+                                         FontFamily="Lexend" 
+                                         Name="txtSearch" 
+                                         TextChanged="txtSearch_TextChanged"
+                                         Style="{StaticResource RoundedTextboxStyle}" 
+                                         Height="23" 
+                                         Margin="20,0,20,0" 
+                                         VerticalAlignment="Center" />
                             </Grid>
                         </Border>
                     </StackPanel>
@@ -261,12 +261,15 @@
                             <Setter Property="FontFamily" Value="Lexend"/>
                             <Setter Property="FontSize" Value="13"/>
                             <Setter Property="FontWeight" Value="SemiBold"/>
-                            <Setter Property="Foreground" Value="#474747"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="Background" Value="#474747"/>
                             <Setter Property="HorizontalContentAlignment" Value="Center"/>
                             <Setter Property="VerticalContentAlignment" Value="Center"/>
-                            <Setter Property="Padding" Value="10,5"/>
-                            <Setter Property="SeparatorBrush" Value="#DDDDDD"/>
+                            <Setter Property="Padding" Value="12,8"/>
+                            <Setter Property="SeparatorBrush" Value="#5A5A5A"/>
                             <Setter Property="SeparatorVisibility" Value="Visible"/>
+                            <Setter Property="BorderThickness" Value="0,0,1,0"/>
+                            <Setter Property="BorderBrush" Value="#5A5A5A"/>
                         </Style>
                     </DataGrid.ColumnHeaderStyle>
 
@@ -275,18 +278,19 @@
                         <DataGridTextColumn Header="From" Binding="{Binding FromDate}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#474747" ElementStyle="{StaticResource CenterText}"/>
                         <DataGridTextColumn Header="To" Binding="{Binding ToDate}" Width="Auto" MinWidth="100" FontFamily="Lexend" Foreground="#474747" ElementStyle="{StaticResource CenterText}"/>
                         <DataGridTextColumn Header="Days" Binding="{Binding Days}" Width="Auto" MinWidth="80" FontFamily="Lexend" Foreground="#474747" ElementStyle="{StaticResource CenterText}"/>
-
                         <DataGridTextColumn Header="Note" Binding="{Binding Note}" Width="*" MinWidth="100" FontFamily="Lexend" Foreground="#474747" ElementStyle="{StaticResource CenterText}"/>
+
                         <DataGridTemplateColumn Header="Actions" Width="Auto" MinWidth="100">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Border BorderThickness="0" CornerRadius="6" Background="White" 
-                    HorizontalAlignment="Center" VerticalAlignment="Center" 
-                    Padding="10,4" Margin="0,2,10,2">
+                                            HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                            Padding="10,4" Margin="0,2,10,2">
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+
                                             <Button Click="BtnEdit_Click" 
-                            CommandParameter="{Binding}" 
-                            Background="Transparent" BorderThickness="0" Padding="0" Height="22" Width="22" Margin="0,0,12,0" Cursor="Hand">
+                                                    CommandParameter="{Binding}" 
+                                                    Background="Transparent" BorderThickness="0" Padding="0" Height="22" Width="22" Margin="0,0,12,0" Cursor="Hand">
                                                 <Button.Template>
                                                     <ControlTemplate TargetType="Button">
                                                         <Border Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="4">
@@ -298,8 +302,8 @@
                                             </Button>
 
                                             <Button Click="BtnDelete_Click" 
-                            CommandParameter="{Binding}" 
-                            Background="Transparent" BorderThickness="0" Padding="0" Height="22" Width="22" Cursor="Hand">
+                                                    CommandParameter="{Binding}" 
+                                                    Background="Transparent" BorderThickness="0" Padding="0" Height="22" Width="22" Cursor="Hand">
                                                 <Button.Template>
                                                     <ControlTemplate TargetType="Button">
                                                         <Border Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="4">
@@ -309,6 +313,7 @@
                                                 </Button.Template>
                                                 <materialDesign:PackIcon Kind="TrashCanOutline" Foreground="#FF4C4C" Width="18" Height="18"/>
                                             </Button>
+
                                         </StackPanel>
                                     </Border>
                                 </DataTemplate>

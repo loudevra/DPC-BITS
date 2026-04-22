@@ -27,6 +27,8 @@ Namespace DPC.Components.Navigation
         End Sub
 
         Private Sub ApplyPermissionStyles()
+
+            ' Helper function to turn text and icons Gray
             Dim GrayOut = Sub(btn As Button)
                               If btn Is Nothing Then Return
                               Try
@@ -46,6 +48,7 @@ Namespace DPC.Components.Navigation
                               End Try
                           End Sub
 
+            ' Helper function to turn text and icons back to White
             Dim UnGrayOut = Sub(btn As Button)
                                 If btn Is Nothing Then Return
                                 Try
@@ -65,45 +68,67 @@ Namespace DPC.Components.Navigation
                                 End Try
                             End Sub
 
-            ' Reset all first
-            UnGrayOut(BtnDashboard)
-            UnGrayOut(BtnSales)
-            UnGrayOut(BtnStocks)
-            UnGrayOut(BtnCRM)
-            UnGrayOut(BtnProjects)
-            UnGrayOut(BtnDataReports)
-            UnGrayOut(BtnMiscellaneous)
-            UnGrayOut(BtnHRM)
-
             ' Dashboard
-            If Not PermissionCache.Can("Dashboard") Then GrayOut(BtnDashboard)
+            If PermissionCache.Can("Dashboard") Then
+                UnGrayOut(BtnDashboard)
+            Else
+                GrayOut(BtnDashboard)
+            End If
 
             ' Sales
-            If Not PermissionCache.Can("Sales") Then GrayOut(BtnSales)
+            If PermissionCache.Can("Sales") Then
+                UnGrayOut(BtnSales)
+            Else
+                GrayOut(BtnSales)
+            End If
 
             ' Stocks
-            If Not PermissionCache.Can("Stocks") Then GrayOut(BtnStocks)
+            If PermissionCache.Can("Stocks") Then
+                UnGrayOut(BtnStocks)
+            Else
+                GrayOut(BtnStocks)
+            End If
 
             ' CRM
-            If Not PermissionCache.Can("CRM") Then GrayOut(BtnCRM)
+            If PermissionCache.Can("CRM") Then
+                UnGrayOut(BtnCRM)
+            Else
+                GrayOut(BtnCRM)
+            End If
 
             ' Project
-            If Not PermissionCache.Can("Project") Then GrayOut(BtnProjects)
+            If PermissionCache.Can("Project") Then
+                UnGrayOut(BtnProjects)
+            Else
+                GrayOut(BtnProjects)
+            End If
 
             ' Data & Reports
-            If Not PermissionCache.Can("Data & Reports") Then GrayOut(BtnDataReports)
+            If PermissionCache.Can("Data & Reports") Then
+                UnGrayOut(BtnDataReports)
+            Else
+                GrayOut(BtnDataReports)
+            End If
 
             ' Miscellaneous
-            If Not PermissionCache.Can("Miscellaneous") Then GrayOut(BtnMiscellaneous)
+            If PermissionCache.Can("Miscellaneous") Then
+                UnGrayOut(BtnMiscellaneous)
+            Else
+                GrayOut(BtnMiscellaneous)
+            End If
 
             ' HRM
-            If Not PermissionCache.Can("HRM") Then GrayOut(BtnHRM)
+            If PermissionCache.Can("HRM") Then
+                UnGrayOut(BtnHRM)
+            Else
+                GrayOut(BtnHRM)
+            End If
 
             ' Software Updates
-            If Not PermissionCache.Can("Software Updates") Then
-                BtnSoftwareUpdates.Visibility = Visibility.Collapsed
+            If PermissionCache.Can("Software Updates") Then
+                UnGrayOut(BtnSoftwareUpdates)
             Else
-                BtnSoftwareUpdates.Visibility = Visibility.Visible
+                GrayOut(BtnSoftwareUpdates)
             End If
 
         End Sub
@@ -111,7 +136,11 @@ Namespace DPC.Components.Navigation
         ' ---- Navigation Handlers ----
 
         Private Sub OpenDashboard(sender As Object, e As RoutedEventArgs)
-            ViewLoader.DynamicView.NavigateToView("dashboard", Me)
+            If PermissionCache.Can("Dashboard") Then
+                ViewLoader.DynamicView.NavigateToView("dashboard", Me)
+            Else
+                MessageBox.Show("Access not permitted. Consult with admin.")
+            End If
         End Sub
 
         Private Sub OpenSales(sender As Object, e As RoutedEventArgs)
@@ -124,7 +153,7 @@ Namespace DPC.Components.Navigation
         End Sub
 
         Private Sub OpenStocksPopup(sender As Object, e As RoutedEventArgs)
-            If PermissionCache.CanAny("Stocks", "Sales") Then
+            If PermissionCache.Can("Stocks") Then
                 Dim popupMenu As New PopUpMenuStocks()
                 popupMenu.ShowPopup(Me, sender)
             Else
@@ -282,14 +311,23 @@ Namespace DPC.Components.Navigation
         End Sub
 
         Private Async Sub BtnSoftwareUpdates_Click(sender As Object, e As RoutedEventArgs)
-            Await SoftwareUpdateHelper.CheckForUpdate()
+            If PermissionCache.Can("Software Updates") Then
+                Await SoftwareUpdateHelper.CheckForUpdate()
+            Else
+                MessageBox.Show("Access not permitted. Consult with admin.")
+            End If
         End Sub
 
         Private Async Sub CheckUpdateVisibility()
             Dim isUpdateAvailable = Await SoftwareUpdateHelper.IsUpdateAvailable()
-            BtnSoftwareUpdates.Visibility = If(isUpdateAvailable,
-                                               Visibility.Visible,
-                                               Visibility.Collapsed)
+
+            ' Software updates has an additional check: is an update even available on Github/server?
+            ' This stacks with the Permission rule.
+            If isUpdateAvailable AndAlso PermissionCache.Can("Software Updates") Then
+                BtnSoftwareUpdates.Visibility = Visibility.Visible
+            ElseIf Not isUpdateAvailable Then
+                BtnSoftwareUpdates.Visibility = Visibility.Collapsed
+            End If
         End Sub
 
         Private Sub Sidebar_Loaded(sender As Object, e As RoutedEventArgs)
@@ -305,4 +343,3 @@ Namespace DPC.Components.Navigation
 
     End Class
 End Namespace
-

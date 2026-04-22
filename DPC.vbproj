@@ -87,6 +87,27 @@
   <PropertyGroup>
     <ManifestKeyFile>DPC_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DocumentationFile>DPC.xml</DocumentationFile>
+    <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036,42314</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DocumentationFile>DPC.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+    <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036,42314</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="BouncyCastle.Cryptography, Version=2.0.0.0, Culture=neutral, PublicKeyToken=072edcf4a5328938, processorArchitecture=MSIL">
       <HintPath>packages\BouncyCastle.Cryptography.2.5.1\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
@@ -208,6 +229,15 @@
     </Reference>
     <Reference Include="Microsoft.IO.RecyclableMemoryStream, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.IO.RecyclableMemoryStream.3.0.1\lib\netstandard2.0\Microsoft.IO.RecyclableMemoryStream.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.3912.50, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Web.WebView2.1.0.3912.50\lib\net462\Microsoft.Web.WebView2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.WinForms, Version=1.0.3912.50, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Web.WebView2.1.0.3912.50\lib\net462\Microsoft.Web.WebView2.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.Wpf, Version=1.0.3912.50, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Web.WebView2.1.0.3912.50\lib\net462\Microsoft.Web.WebView2.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Win32.Registry, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Win32.Registry.5.0.0\lib\net461\Microsoft.Win32.Registry.dll</HintPath>
@@ -683,6 +713,12 @@
     <Compile Include="Components\Forms\ViewPrintDeletePopUp.xaml.vb">
       <DependentUpon>ViewPrintDeletePopUp.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\Navigation\AIWebView.xaml.vb">
+      <DependentUpon>AIWebView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Navigation\ChatBotWindow.xaml.vb">
+      <DependentUpon>ChatBotWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Navigation\TopNavbar.xaml.vb">
       <DependentUpon>TopNavBar.xaml</DependentUpon>
     </Compile>
@@ -693,6 +729,7 @@
     <Compile Include="Data\Cache\CacheNewProject.vb" />
     <Compile Include="Data\Cache\EditCashAdvanceRequestCache.vb" />
     <Compile Include="Data\Controllers\Account\AccountController.vb" />
+    <Compile Include="Data\Controllers\AppEvent.vb" />
     <Compile Include="Data\Controllers\AuthController.vb" />
     <Compile Include="Data\Controllers\BIllingController.vb" />
     <Compile Include="Data\Controllers\BrandController.vb" />
@@ -704,6 +741,7 @@
     <Compile Include="Data\Controllers\CalendarController.vb" />
     <Compile Include="Data\Controllers\EmployeeLoginHistoryController.vb" />
     <Compile Include="Data\Controllers\EventStore.vb" />
+    <Compile Include="Data\Controllers\HRM\HolidayController.vb" />
     <Compile Include="Data\Controllers\HRM\FilesController.vb" />
     <Compile Include="Data\Controllers\HRM\HRMController.vb" />
     <Compile Include="Data\Controllers\ManageProductsController.vb" />
@@ -745,6 +783,7 @@
     <Compile Include="Data\Converters\RoleToBooleanConverter.vb" />
     <Compile Include="Data\Converters\ValueConverter\HalfWidthConverter.vb" />
     <Compile Include="Data\DataModules\BillingDetails.vb" />
+    <Compile Include="Data\Helpers\GlobalVariables.vb" />
     <Compile Include="Data\Helpers\PermissionCache.vb" />
     <Compile Include="Data\Helpers\DeliveryState.vb" />
     <Compile Include="Data\Helpers\TransactionState.vb" />
@@ -1232,6 +1271,21 @@
     <Compile Include="Views\Sales\Quotes\Quote.xaml.vb">
       <DependentUpon>Quote.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Sales\Quotes\StatementOfAccount.xaml.vb">
+      <DependentUpon>StatementOfAccount.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\Quotes\StatementofAccount\ManageStatementOfAccount.xaml.vb">
+      <DependentUpon>ManageStatementOfAccount.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\Quotes\StatementofAccount\PreviewPrintStatementOfAccount.xaml.vb">
+      <DependentUpon>PreviewPrintStatementOfAccount.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\Quotes\StatementofAccount\SOAPreview.xaml.vb">
+      <DependentUpon>SOAPreview.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Sales\Quotes\StatementofAccount\StatementOfAccountForm.xaml.vb">
+      <DependentUpon>StatementOfAccountForm.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Sales\Saless\SalesInvoices.xaml.vb">
       <DependentUpon>SalesInvoices.xaml</DependentUpon>
     </Compile>
@@ -1597,6 +1651,14 @@
     <Page Include="Components\Forms\ViewPrintDeletePopUp.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Components\Navigation\AIWebView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\Navigation\ChatBotWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\Navigation\Sidebar.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -2291,6 +2353,26 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Sales\Quotes\StatementOfAccount.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Quotes\StatementofAccount\ManageStatementOfAccount.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Quotes\StatementofAccount\PreviewPrintStatementOfAccount.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Quotes\StatementofAccount\SOAPreview.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Sales\Quotes\StatementofAccount\StatementOfAccountForm.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Sales\Saless\SalesInvoices.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2502,6 +2584,9 @@
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
     </EmbeddedResource>
+    <Content Include="Assets\knowledge-data\knowledge.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Data\Models\.editorconfig" />
     <None Include="DPC_TemporaryKey.pfx" />
     <None Include="My Project\app.manifest" />
@@ -2573,7 +2658,9 @@
     <Error Condition="!Exists('packages\MaterialDesignThemes.5.2.1\build\MaterialDesignThemes.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\MaterialDesignThemes.5.2.1\build\MaterialDesignThemes.targets'))" />
     <Error Condition="!Exists('packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets'))" />
     <Error Condition="!Exists('packages\ZstdSharp.0.7.2\build\ZstdSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\ZstdSharp.0.7.2\build\ZstdSharp.targets'))" />
+    <Error Condition="!Exists('packages\Microsoft.Web.WebView2.1.0.3912.50\build\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.Web.WebView2.1.0.3912.50\build\Microsoft.Web.WebView2.targets'))" />
   </Target>
   <Import Project="packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets" Condition="Exists('packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets')" />
   <Import Project="packages\ZstdSharp.0.7.2\build\ZstdSharp.targets" Condition="Exists('packages\ZstdSharp.0.7.2\build\ZstdSharp.targets')" />
+  <Import Project="packages\Microsoft.Web.WebView2.1.0.3912.50\build\Microsoft.Web.WebView2.targets" Condition="Exists('packages\Microsoft.Web.WebView2.1.0.3912.50\build\Microsoft.Web.WebView2.targets')" />
 </Project>

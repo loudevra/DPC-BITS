@@ -73,7 +73,7 @@
                 <!-- Zip Code -->
                 <TextBlock Text="ZIP Code:" Margin="0,5,0,10" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#474747"/>
                 <Border Style="{StaticResource RoundedBorderStyle}" Width="772">
-                    <TextBox x:Name="txtZipCode" Height="30" Margin="0,5,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="734"  FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747" TextChanged="TxtToUpper_TextChanged"/>
+                    <TextBox x:Name="txtZipCode" MaxLength="4" Height="30" Margin="0,5,0,5" Style="{StaticResource RoundedTextboxStyle}" Width="734"  FontFamily="Lexend" FontWeight="SemiBold" Foreground="#474747" TextChanged="TxtToUpper_TextChanged" PreviewTextInput="txtZipCode_PreviewTextInput"/>
                 </Border>
             </StackPanel>
 

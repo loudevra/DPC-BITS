@@ -14,6 +14,10 @@ Imports Microsoft.Win32
 Imports Newtonsoft.Json
 Imports PdfSharp.Drawing
 Imports PdfSharp.Pdf
+Imports MongoDB.Driver.GridFS
+Imports MongoDB.Bson
+
+
 
 ' This MUST match the x:Class in the XAML exactly, minus the class name
 Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
@@ -212,12 +216,177 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
             If _currentPageIndex < _pageMap.Count - 1 Then RenderPages(_currentPageIndex + 1)
         End Sub
 
+        Private Sub RenderToPdfPage(element As FrameworkElement, page As PdfPage)
+            Try
+                Dim dpi As Integer = 300
+                Dim layoutWidth = element.ActualWidth
+                Dim layoutHeight = element.ActualHeight
+
+                If layoutWidth = 0 OrElse layoutHeight = 0 Then
+                    Throw New InvalidOperationException("Element has invalid dimensions")
+                End If
+
+                Dim pixelWidth = CInt(layoutWidth * dpi / 96)
+                Dim pixelHeight = CInt(layoutHeight * dpi / 96)
+
+                Dim rtb As New RenderTargetBitmap(pixelWidth, pixelHeight, dpi, dpi, PixelFormats.Pbgra32)
+                element.Measure(New Size(layoutWidth, layoutHeight))
+                element.Arrange(New Rect(0, 0, layoutWidth, layoutHeight))
+                element.UpdateLayout()
+                rtb.Render(element)
+
+                Dim encoder As New PngBitmapEncoder()
+                encoder.Frames.Add(BitmapFrame.Create(rtb))
+
+                Using stream As New MemoryStream()
+                    encoder.Save(stream)
+                    stream.Position = 0
+
+                    Using gfx As XGraphics = XGraphics.FromPdfPage(page)
+                        Dim image = XImage.FromStream(stream)
+                        gfx.DrawImage(image, 0, 0, page.Width, page.Height)
+                    End Using
+                End Using
+
+            Catch ex As Exception
+                Throw New Exception($"Error rendering to PDF page: {ex.Message}", ex)
+            End Try
+        End Sub
+
+        Private Shared Function SavePdfPathToMongoDB(filePath As String, drNumber As String, uploadedBy As String) As Boolean
+            Try
+                If String.IsNullOrEmpty(filePath) Then Return False
+
+                Dim gridFS As GridFSBucket = SplashScreen.GetGridFSConnection()
+
+                Using fileStream As New FileStream(filePath, FileMode.Open, FileAccess.Read)
+                    Dim options As New GridFSUploadOptions() With {
+                .Metadata = New BsonDocument From {
+                    {"uploadedBy", uploadedBy},
+                    {"uploadedAt", BsonDateTime.Create(DateTime.UtcNow)},
+                    {"source", "delivery-receipt"},
+                    {"drNumber", drNumber},
+                    {"pdfFilePath", filePath}
+                }
+            }
+
+                    gridFS.UploadFromStream(Path.GetFileName(filePath), fileStream, options)
+                End Using
+                Return True
+            Catch ex As Exception
+                MessageBox.Show("Error saving PDF to MongoDB: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                Return False
+            End Try
+        End Function
+
+
+        Private Function SaveAsPDF(docName As String) As String
+            Dim dlg As New Microsoft.Win32.SaveFileDialog() With {
+        .FileName = docName & ".pdf",
+        .Filter = "PDF Files (.pdf)|.pdf"
+    }
+
+            If dlg.ShowDialog() = True Then
+                Try
+                    Dim pdf As New PdfDocument()
+                    Dim page As PdfPage = pdf.AddPage()
+
+                    ' Use the actual border dimensions (in device-independent units)
+                    Dim layoutWidth = 816.0  ' PrintAreaBorder width
+                    Dim layoutHeight = 1344.0  ' PrintAreaBorder height
+
+                    ' Convert to inches (96 DPI)
+                    page.Width = XUnit.FromInch(layoutWidth / 96)
+                    page.Height = XUnit.FromInch(layoutHeight / 96)
+
+                    ' Render to page
+                    RenderToPdfPage(PrintPreview, page)
+
+                    pdf.Save(dlg.FileName)
+                    MessageBox.Show($"PDF saved to: {dlg.FileName}")
+
+                    Return dlg.FileName
+
+                Catch ex As Exception
+                    MessageBox.Show($"Error creating PDF: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return Nothing
+                End Try
+            Else
+                Return Nothing
+            End If
+        End Function
+
+        Private Sub SaveToDb()
+            Try
+                Dim receipt As DeliveryReceiptModel = TryCast(DeliveryState.CurrentReceipt, DeliveryReceiptModel)
+                If receipt Is Nothing Then Return
+
+                Dim jsonItems As String = JsonConvert.SerializeObject(receipt.OrderItems)
+
+
+                Dim deliveryStatus As String = If(receipt.DeliveryStatus?.Length > 50,
+                                         receipt.DeliveryStatus.Substring(0, 50),
+                                         receipt.DeliveryStatus)
+
+                Dim shippingMethod As String = If(receipt.ShippingMethod?.Length > 100,
+                                          receipt.ShippingMethod.Substring(0, 100),
+                                          receipt.ShippingMethod)
+
+                Dim success As Boolean = DeliveryReceiptController.InsertDeliveryReceipt(
+                    receipt.DRNumber,
+                    receipt.DocumentReference,
+                    receipt.DRDate,
+                    receipt.ClientName,
+                    receipt.ClientDetails,
+                    receipt.DeliveryNotes,
+                    shippingMethod,
+                    deliveryStatus,
+                    receipt.ApprovedBy,
+                    receipt.PaymentTerm,
+                    jsonItems,
+                    CacheOnLoggedInName
+        )
+
+                If success Then
+                    MessageBox.Show("Delivery receipt saved to database successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                    ViewLoader.DynamicView.NavigateToCachedView("newdelivery", Me)
+                Else
+                    MessageBox.Show("Failed to save delivery receipt to database.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                End If
+
+            Catch ex As Exception
+                MessageBox.Show("Error saving to database: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
+        End Sub
+
         Private Sub SaveDb_Click(sender As Object, e As RoutedEventArgs)
-            ' Saving logic
+            Try
+                Dim receipt As DeliveryReceiptModel = TryCast(DeliveryState.CurrentReceipt, DeliveryReceiptModel)
+                If receipt Is Nothing Then
+                    MessageBox.Show("No receipt data found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return
+                End If
+
+                Dim docName As String = receipt.DRNumber
+                Dim savedPath As String = SaveAsPDF(docName)
+
+                If Not SavePdfPathToMongoDB(savedPath, receipt.DRNumber, CacheOnLoggedInName) Then Exit Sub
+
+                If Not String.IsNullOrEmpty(savedPath) Then
+                    SaveToDb()
+                    MessageBox.Show("Delivery receipt saved successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                Else
+                    MessageBox.Show("PDF save cancelled. Data not saved.")
+                End If
+            Catch ex As Exception
+                MessageBox.Show("Error saving to database: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            End Try
         End Sub
 
         Private Sub SavePrint(sender As Object, e As RoutedEventArgs)
             ' Printing logic
         End Sub
+
+
     End Class
 End Namespace

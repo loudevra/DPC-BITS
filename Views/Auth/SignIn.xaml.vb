@@ -51,18 +51,31 @@ Namespace DPC.Views.Auth
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     Try
                         conn.Open()
-                        Dim query As String = "SELECT UserRoleID FROM employee WHERE Username = '" & username & "'"
+                        ' UPDATED QUERY: Select ID as well so we can store it in GlobalVariables
+                        Dim query As String = "SELECT EmployeeID, UserRoleID FROM employee WHERE Username = @user"
                         Dim cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@user", username)
+
                         Dim reader = cmd.ExecuteReader()
-                        While (reader.Read)
+                        If reader.Read() Then
                             UserRoleID = reader.GetInt32("UserRoleID")
-                        End While
+
+                            ' ═══ CRITICAL FIX ═══
+                            ' Store the logged-in user data globally so the ChatBot can see it
+                            DPC.Data.Helpers.GlobalVariables.CurrentUserName = username
+                            DPC.Data.Helpers.GlobalVariables.CacheOnEmployeeID = reader.GetInt32("EmployeeID")
+                            ' ════════════════════
+                        End If
+                        reader.Close()
                     Catch ex As Exception
+                        ' Log error if needed
                     End Try
                 End Using
 
                 SessionManager.SetSessionTokens(accessToken, refreshToken)
                 confirmationModal.ShowSuccess("Login Successful!")
+
+                ' Note: After this, your code usually navigates to the Dashboard/MainWindow
             Else
                 confirmationModal.ShowError("Invalid username or password." & vbCrLf & "Please try again.")
                 realPassword = ""
@@ -75,64 +88,61 @@ Namespace DPC.Views.Auth
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
                     conn.Open()
-                    Dim query As String = "SELECT RoleName FROM userroles WHERE RoleID = " & UserRoleID
+                    Dim query As String = "SELECT RoleName FROM userroles WHERE RoleID = @roleId"
                     Dim cmd As New MySqlCommand(query, conn)
-                    Dim reader = cmd.ExecuteReader()
-                    While (reader.Read)
-                        Dim Role As String = reader.GetString("RoleName")
-                        Dim landingView As String = "dashboard"
+                    cmd.Parameters.AddWithValue("@roleId", UserRoleID)
 
-                        Try
-                            Using permConn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                                permConn.Open()
-                                Dim permQuery As String = "SELECT * FROM permissions WHERE Role = '" & Role & "'"
-                                Dim permCmd As New MySqlCommand(permQuery, permConn)
-                                Dim permReader = permCmd.ExecuteReader()
-                                Dim SalesPerm As Boolean = False
-                                Dim ProjectPerm As Boolean = False
-                                Dim AccountsPerm As Boolean = False
+                    Using reader = cmd.ExecuteReader()
+                        If reader.Read() Then
+                            Dim Role As String = reader.GetString("RoleName")
 
-                                If permReader.Read() Then
-                                    SalesPerm = Convert.ToBoolean(permReader("Sales"))
-                                    ProjectPerm = Convert.ToBoolean(permReader("Project"))
-                                    AccountsPerm = Convert.ToBoolean(permReader("Accounts"))
-                                End If
+                            ' 1. LOAD PERMISSIONS FIRST!
+                            PermissionCache.LoadForRole(Role)
 
-                                Dim roleLower = Role.ToLower()
-                                If roleLower.Contains("sales") Then
-                                    If SalesPerm Then landingView = "walkinorder"
-                                ElseIf roleLower.Contains("manager") AndAlso roleLower.Contains("business") Then
-                                    If ProjectPerm Then landingView = "manageproject"
-                                ElseIf roleLower.Contains("admin") Then
-                                    landingView = "dashboard"
-                                End If
+                            ' 2. DETERMINE LANDING VIEW
+                            Dim landingView As String = ""
+                            Dim roleLower = Role.ToLower()
 
-                                If landingView = "dashboard" Then
-                                    If SalesPerm Then
-                                        landingView = "walkinorder"
-                                    ElseIf ProjectPerm Then
-                                        landingView = "manageproject"
-                                    End If
-                                End If
-                            End Using
-                        Catch exPerm As Exception
-                            landingView = "dashboard"
-                        End Try
+                            ' Specific Routing based on your roles
+                            If roleLower.Contains("sales") AndAlso PermissionCache.Can("Sales") Then
+                                landingView = "walkinorder"
 
-                        PermissionCache.LoadForRole(Role)
-                        Dim baseWindow As New Base(Role) With {
-                            .CurrentView = ViewLoader.DynamicView.Load(landingView)
-                        }
-                        baseWindow.Show()
+                            ElseIf (roleLower.Contains("tech") OrElse roleLower.Contains("project")) AndAlso PermissionCache.Can("Project") Then
+                                landingView = "manageproject"
 
-                        Dim currentWindow As Window = Window.GetWindow(Me)
-                        currentWindow?.Close()
-                    End While
+                                ' Universal Fallback: Route them to whatever they CAN see
+                            ElseIf PermissionCache.Can("Dashboard") Then
+                                landingView = "dashboard"
+                            ElseIf PermissionCache.Can("Sales") Then
+                                landingView = "walkinorder"
+                            ElseIf PermissionCache.Can("Project") Then
+                                landingView = "manageproject"
+                            ElseIf PermissionCache.Can("Stocks") Then
+                                landingView = "stocks" ' (Change to your actual stocks view name if different)
+                            ElseIf PermissionCache.Can("CRM") Then
+                                landingView = "crm" ' (Change to your actual crm view name if different)
+                            Else
+                                ' Absolute fallback
+                                landingView = "dashboard"
+                            End If
+
+                            ' 3. LOAD THE WINDOW
+                            Dim baseWindow As New Base(Role) With {
+                                .CurrentView = ViewLoader.DynamicView.Load(landingView)
+                            }
+                            baseWindow.Show()
+
+                            Dim currentWindow As Window = Window.GetWindow(Me)
+                            currentWindow?.Close()
+                        End If
+                    End Using
                 Catch ex As Exception
+                    ' Fallback in case of database error
                     Try
+                        PermissionCache.LoadForRole("Administrator") ' Safe default
                         Dim baseWindow As New Base("") With {
-            .CurrentView = ViewLoader.DynamicView.Load("dashboard")
-        }
+                            .CurrentView = ViewLoader.DynamicView.Load("dashboard")
+                        }
                         baseWindow.Show()
                         Dim currentWindow As Window = Window.GetWindow(Me)
                         currentWindow?.Close()

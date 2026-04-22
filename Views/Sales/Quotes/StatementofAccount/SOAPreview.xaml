@@ -1,0 +1,367 @@
+﻿<UserControl x:Class="DPC.Views.SOA.SOAPreview"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             Background="#E4E4E4" FontFamily="Lexend"
+             HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+             d:DesignHeight="1200" d:DesignWidth="1100">
+
+    <UserControl.Resources>
+        <Style x:Key="BlackGridHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="Black"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="BorderThickness" Value="0,0,1,0"/>
+            <Setter Property="BorderBrush" Value="#333333"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="GreyGridHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#666666"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="BorderThickness" Value="0,0,1,0"/>
+            <Setter Property="BorderBrush" Value="#444444"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Background="White" Height="70">
+            <Button x:Name="BtnBack" Click="BtnBack_Click" HorizontalAlignment="Left" Margin="20,0,0,0" Background="Transparent" BorderThickness="0" Foreground="#555555" Cursor="Hand">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="ChevronLeft" VerticalAlignment="Center" Width="20" Height="20"/>
+                    <TextBlock Text="Back to Statement Form" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="16" Margin="5,0,0,0"/>
+                </StackPanel>
+            </Button>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Border BorderBrush="#CCCCCC" BorderThickness="1" CornerRadius="15" Padding="15,5" Background="Transparent" Margin="0,0,20,0">
+                    <TextBlock Text="&#171; Previous" Foreground="#999999" FontWeight="SemiBold" FontSize="12"/>
+                </Border>
+                <TextBlock Text="Page 1 of 1" FontWeight="Bold" Foreground="#1D3242" VerticalAlignment="Center" FontSize="14"/>
+                <Border BorderBrush="#CCCCCC" BorderThickness="1" CornerRadius="15" Padding="25,5" Background="Transparent" Margin="20,0,0,0">
+                    <TextBlock Text="Next &#187;" Foreground="#999999" FontWeight="SemiBold" FontSize="12"/>
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" VerticalAlignment="Stretch">
+
+            <Viewbox Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="10,20,10,40">
+
+                <Border Background="White" Width="950" Padding="40" CornerRadius="5">
+                    <Border.Effect>
+                        <DropShadowEffect Color="Black" Opacity="0.1" BlurRadius="10" ShadowDepth="2"/>
+                    </Border.Effect>
+
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10">
+                            <Button x:Name="BtnHideImages" Click="BtnHideImages_Click" Style="{StaticResource MaterialDesignFlatButton}" Foreground="#666666" Padding="5" Height="Auto">
+                                <StackPanel>
+                                    <materialDesign:PackIcon Kind="ImageOff" Width="26" Height="26" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="Hide Images" FontSize="10" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                </StackPanel>
+                            </Button>
+                            <Button x:Name="BtnViewImages" Click="BtnViewImages_Click" Style="{StaticResource MaterialDesignFlatButton}" Foreground="#1D3242" Margin="10,0,0,0" Padding="5" Height="Auto">
+                                <StackPanel>
+                                    <materialDesign:PackIcon Kind="ImageOutline" Width="26" Height="26" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="View" FontSize="10" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+
+                        <Separator Background="#CCCCCC" Margin="0,0,0,30"/>
+
+                        <Grid Margin="0,0,0,30">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                <Image x:Name="LogoImage" Source="/Assets/images/logo.png" Width="60" Height="60" VerticalAlignment="Center" Margin="0,0,10,0">
+                                    <Image.Style>
+                                        <Style TargetType="Image">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                            <Style.Triggers>
+                                                <Trigger Property="Source" Value="{x:Null}">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+
+                                <StackPanel Grid.Row="0" HorizontalAlignment="Left" Orientation="Horizontal" Margin="0,10,0,17">
+                                    <Image Source="/Assets/images/logosidebarBlack.png" Stretch="Fill" Width="234" Height="75"/>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <TextBlock Grid.Column="2" Text="Page 1 of 1" Foreground="#666666" VerticalAlignment="Top" FontSize="11"/>
+                        </Grid>
+
+                        <TextBlock Text="STATEMENT OF ACCOUNT" FontSize="22" FontWeight="Bold" FontFamily="Arial" HorizontalAlignment="Center" Margin="0,0,0,30"/>
+
+                        <Grid Margin="0,0,0,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="60"/>
+                                <ColumnDefinition Width="220"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Client Name/Company:" FontSize="12" Margin="0,0,0,3" Foreground="Black"/>
+                                <TextBlock Text="Client Details:" FontSize="12" Margin="0,0,0,3" Foreground="Black"/>
+                                <TextBlock Text="Project Title:" FontSize="12" Margin="0,15,0,3" Foreground="Black"/>
+                                <TextBlock Text="PO No. / SI No.:" FontSize="12" Margin="0,0,0,3" Foreground="Black"/>
+                                <TextBlock Text="DR No. / BS No.:" FontSize="12" Margin="0,0,0,3" Foreground="Black"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" Margin="5,0,20,0">
+                                <TextBlock Text="{Binding ClientName}" FontSize="12" Margin="0,0,0,3" Foreground="Black" TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding ClientDetails}" FontSize="12" Margin="0,0,0,3" Foreground="Black" TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding ProjectTitle}" FontSize="12" Margin="0,15,0,3" Foreground="Black" TextWrapping="Wrap"/>
+                                <TextBlock FontSize="12" Margin="0,0,0,3" Foreground="Black" TextWrapping="Wrap">
+                                    <Run Text="{Binding PONo}"/>
+                                    <Run Text=" / "/>
+                                    <Run Text="{Binding SINo}"/>
+                                </TextBlock>
+                                <TextBlock FontSize="12" Margin="0,0,0,3" Foreground="Black" TextWrapping="Wrap">
+                                    <Run Text="{Binding DRNo}"/>
+                                    <Run Text=" / "/>
+                                    <Run Text="{Binding BSNo}"/>
+                                </TextBlock>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,10,0">
+                                <TextBlock Text="SOA No:" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" Height="25" Foreground="Black"/>
+                                <TextBlock Text="Date:" FontSize="12" FontWeight="Bold" VerticalAlignment="Center" Height="25" Foreground="Black"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="3">
+                                <Border BorderBrush="#999999" BorderThickness="1,1,1,0" Height="25">
+                                    <TextBlock Text="{Binding SOANo}" FontWeight="Bold" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black"/>
+                                </Border>
+                                <Border BorderBrush="#999999" BorderThickness="1" Height="25">
+                                    <TextBlock Text="{Binding StatementDate}" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Black"/>
+                                </Border>
+                                <TextBlock Text="NOT VALID WITHOUT DREAM PC VERIFIED STAMP" Foreground="Red" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,10,0,0" Width="203" Height="26"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Border BorderThickness="1" BorderBrush="Black" Background="White">
+                            <StackPanel>
+                                <DataGrid x:Name="dgSOAItems" ItemsSource="{Binding LineItems}" AutoGenerateColumns="False" HeadersVisibility="Column" 
+                                          CanUserAddRows="False" IsReadOnly="True" BorderThickness="0" Background="White" RowBackground="White"
+                                          ColumnHeaderStyle="{StaticResource BlackGridHeaderStyle}" GridLinesVisibility="All" HorizontalGridLinesBrush="LightGray" VerticalGridLinesBrush="LightGray">
+                                    <DataGrid.Columns>
+                                        <DataGridTemplateColumn x:Name="ColImage" Header="Image" Width="80">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Image Source="{Binding ImagePath}" Width="40" Height="40" Margin="5"/>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTextColumn Header="Date" Binding="{Binding DateStr}" Width="90">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                    <Setter Property="FontSize" Value="11"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="TextWrapping" Value="Wrap"/>
+                                                    <Setter Property="FontSize" Value="11"/>
+                                                    <Setter Property="Margin" Value="5,0"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="Qty" Binding="{Binding Qty}" Width="60">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                    <Setter Property="FontSize" Value="11"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="Amount" Binding="{Binding Amount, StringFormat='₱ {0}'}" Width="110">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                    <Setter Property="FontSize" Value="11"/>
+                                                    <Setter Property="Margin" Value="0,0,5,0"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="Payment" Binding="{Binding Payment, StringFormat='₱ {0}'}" Width="110">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                    <Setter Property="FontSize" Value="11"/>
+                                                    <Setter Property="Margin" Value="0,0,5,0"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="Balance" Binding="{Binding Balance, StringFormat='₱ {0}'}" Width="110">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                    <Setter Property="FontSize" Value="11"/>
+                                                    <Setter Property="Margin" Value="0,0,10,0"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+
+                                <Grid Margin="10,10,10,15">
+                                    <TextBlock Text="SUBTOTAL (VAT Inclusive) ₱" FontWeight="Bold" FontSize="11" HorizontalAlignment="Right" Margin="0,0,100,0"/>
+                                    <TextBlock Text="{Binding Subtotal}" FontWeight="Bold" FontSize="11" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                                </Grid>
+
+                                <Border Background="#666666" Padding="5">
+                                    <TextBlock Text="PAYMENT DETAILS" Foreground="White" FontWeight="Bold" FontSize="11" HorizontalAlignment="Center"/>
+                                </Border>
+
+                                <DataGrid x:Name="dgPaymentDetails" ItemsSource="{Binding PaymentItems}" AutoGenerateColumns="False" HeadersVisibility="Column" 
+                                          CanUserAddRows="False" IsReadOnly="True" BorderThickness="0" Background="White" RowBackground="White"
+                                          ColumnHeaderStyle="{StaticResource GreyGridHeaderStyle}" GridLinesVisibility="All" HorizontalGridLinesBrush="LightGray" VerticalGridLinesBrush="LightGray">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="DATE" Binding="{Binding DateStr}" Width="150">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="FontSize" Value="11"/>
+                                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="REFERENCE" Binding="{Binding Reference}" Width="*">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="FontSize" Value="11"/>
+                                                    <Setter Property="Margin" Value="10,0,0,0"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                        <DataGridTextColumn Header="AMOUNT PAID (P)" Binding="{Binding AmountPaid, StringFormat='₱ {0}'}" Width="200">
+                                            <DataGridTextColumn.ElementStyle>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                    <Setter Property="FontSize" Value="11"/>
+                                                    <Setter Property="Margin" Value="0,0,10,0"/>
+                                                </Style>
+                                            </DataGridTextColumn.ElementStyle>
+                                        </DataGridTextColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+
+                                <Grid Margin="0,10,10,15" HorizontalAlignment="Right" Width="300">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="TOTAL PAYMENT:" FontWeight="Bold" FontSize="11"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding TotalPayment, StringFormat='₱ {0}'}" FontWeight="Bold" FontSize="11" HorizontalAlignment="Right"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Outstanding Balance (Before LD):" FontWeight="Bold" FontSize="11" Margin="0,5,0,0"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding OutstandingBalance, StringFormat='₱ {0}'}" FontWeight="Bold" FontSize="11" Margin="0,5,0,0" HorizontalAlignment="Right"/>
+                                </Grid>
+
+                                <Border Background="#666666" Padding="5">
+                                    <TextBlock Text="LIQUIDATED DAMAGES (LD) COMPUTATION" Foreground="White" FontWeight="Bold" FontSize="11" HorizontalAlignment="Center"/>
+                                </Border>
+
+                                <StackPanel Margin="10,15,10,15">
+                                    <TextBlock Text="Basis: One-tenth of one percent (0.1%) of the total contract price per day of delay" FontSize="11"/>
+                                    <StackPanel HorizontalAlignment="Center" Margin="0,10,0,0">
+                                        <TextBlock Text="{Binding ContractAmount, StringFormat='Contract Amount: ₱ {0}'}" FontSize="11" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding LDRate, StringFormat='LD Rate: {0}% per day'}" FontSize="11" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding LDPerDay, StringFormat='LD per Day: ₱ {0}'}" FontSize="11" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding LDDaysDelayed, StringFormat='No. of Days Delayed: {0} days'}" FontSize="11" HorizontalAlignment="Center"/>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,0">
+                                            <TextBlock Text="₱ " FontWeight="Bold" FontSize="11"/>
+                                            <TextBlock Text="{Binding LDPerDay}" FontWeight="Bold" FontSize="11"/>
+                                            <TextBlock Text=" × " FontWeight="Bold" FontSize="11"/>
+                                            <TextBlock Text="{Binding LDDaysDelayed}" FontWeight="Bold" FontSize="11"/>
+                                            <TextBlock Text=" days = ₱ " FontWeight="Bold" FontSize="11"/>
+                                            <TextBlock Text="{Binding LiquidatedDamages}" FontWeight="Bold" FontSize="11"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <Border Background="#666666" Padding="5">
+                                    <TextBlock Text="DELIVERY &amp; CONTRACT INFORMATION" Foreground="White" FontWeight="Bold" FontSize="11" HorizontalAlignment="Center"/>
+                                </Border>
+
+                                <StackPanel Margin="10,10,10,15">
+                                    <TextBlock FontSize="11"><Run FontWeight="Bold" Text="Signed Purchase Order Date: "/> <Run Text="{Binding PODate}"/></TextBlock>
+                                    <TextBlock FontSize="11"><Run FontWeight="Bold" Text="Contract Delivery Period: "/> <Run Text="{Binding DeliveryPeriod}"/></TextBlock>
+                                    <TextBlock FontSize="11"><Run FontWeight="Bold" Text="Required Delivery Date: "/> <Run Text="{Binding RequiredDate}"/></TextBlock>
+                                    <TextBlock FontSize="11"><Run FontWeight="Bold" Text="Actual Completion of Delivery Date: "/> <Run Text="{Binding CompletionDate}"/></TextBlock>
+                                </StackPanel>
+
+                                <Border Background="#666666" Padding="5">
+                                    <TextBlock Text="SUMMARY OF ACCOUNT" Foreground="White" FontWeight="Bold" FontSize="11" HorizontalAlignment="Center"/>
+                                </Border>
+
+                                <Grid Margin="10,10,10,20">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="150"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="{Binding ProjectTitle}" FontSize="11" TextWrapping="Wrap" HorizontalAlignment="Center" FontWeight="Bold" Margin="0,0,0,10"/>
+                                        <TextBlock Text="Outstanding Balance" FontSize="11" HorizontalAlignment="Right" Margin="0,5,20,0"/>
+                                        <TextBlock Text="Less: Liquidated Damages" FontSize="11" HorizontalAlignment="Right" Margin="0,2,20,0"/>
+                                        <TextBlock Text="Net Amount Due (VAT Inclusive)" FontWeight="Bold" FontSize="12" HorizontalAlignment="Right" Margin="0,5,20,0"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="" Height="25"/>
+                                        <Grid Margin="0,5,0,0">
+                                            <TextBlock Text="₱" FontSize="11" HorizontalAlignment="Left"/>
+                                            <TextBlock Text="{Binding OutstandingBalance}" FontSize="11" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                        <Grid Margin="0,2,0,0">
+                                            <TextBlock Text="₱" FontSize="11" HorizontalAlignment="Left"/>
+                                            <TextBlock Text="{Binding LiquidatedDamages}" FontSize="11" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                        <Border BorderBrush="Black" BorderThickness="0,1,0,0" Margin="0,2,0,0">
+                                            <Grid Margin="0,3,0,0">
+                                                <TextBlock Text="₱" FontWeight="Bold" FontSize="12" HorizontalAlignment="Left"/>
+                                                <TextBlock Text="{Binding NetAmountDue}" FontWeight="Bold" FontSize="12" HorizontalAlignment="Right"/>
+                                            </Grid>
+                                        </Border>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+            </Viewbox>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

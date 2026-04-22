@@ -19,6 +19,7 @@ Imports DPC.DPC.Components.ConfirmationModals
 Imports System.Threading.Tasks
 
 Namespace DPC.Views.Stocks.ItemManager.ProductManager
+
     Public Class ManageProducts
         Inherits UserControl
 
@@ -48,10 +49,48 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
             AddHandler Me.Loaded, AddressOf UserControl_Loaded
         End Sub
 
+        Public Shared Event StockUpdatedEvent As EventHandler
+
+        ' Static method to refresh from anywhere in the application
+        Public Shared Sub RefreshProductsStatic()
+            Try
+                Dim mainWindow As Window = Application.Current.MainWindow
+                If mainWindow IsNot Nothing Then
+                    Dim manageProductsControl = FindVisualChild(Of ManageProducts)(mainWindow)
+                    If manageProductsControl IsNot Nothing Then
+                        Debug.WriteLine("Refreshing ManageProducts via static method...")
+                        manageProductsControl.LoadData()
+                    End If
+                End If
+            Catch ex As Exception
+                Debug.WriteLine("Error refreshing products: " & ex.Message)
+            End Try
+        End Sub
+
+        Private Shared Function FindVisualChild(Of T As DependencyObject)(parent As DependencyObject) As T
+            If parent Is Nothing Then Return Nothing
+
+            Dim numVisualChildren As Integer = VisualTreeHelper.GetChildrenCount(parent)
+            For i As Integer = 0 To numVisualChildren - 1
+                Dim child As DependencyObject = VisualTreeHelper.GetChild(parent, i)
+                If child IsNot Nothing Then
+                    Dim correctlyTyped As T = TryCast(child, T)
+                    If correctlyTyped IsNot Nothing Then
+                        Return correctlyTyped
+                    End If
+                    Dim descendant As T = FindVisualChild(Of T)(child)
+                    If descendant IsNot Nothing Then
+                        Return descendant
+                    End If
+                End If
+            Next
+            Return Nothing
+        End Function
+
         Private Sub UserControl_Loaded(sender As Object, e As RoutedEventArgs)
             If Not _isInitialized Then
                 LoadData()
-                ApplyRolePermissions() ' ADD THIS LINE
+                ApplyRolePermissions()
                 _isInitialized = True
             End If
         End Sub
@@ -180,18 +219,18 @@ LIMIT @pageSize OFFSET @offset;
 
                             ' Get total count for stats (lightweight query)
                             Dim countQuery As String = "
-                        SELECT 
-                            COUNT(*) AS Total,
-                            SUM(CASE WHEN TotalStock > 0 THEN 1 ELSE 0 END) AS InStock,
-                            SUM(CASE WHEN TotalStock = 0 THEN 1 ELSE 0 END) AS StockOut
-                        FROM (
-                            SELECT p.productID,
-                                SUM(COALESCE(pnv.stockUnit, 0) + COALESCE(pvs.stockUnit, 0)) AS TotalStock
-                            FROM product p
-                            LEFT JOIN productnovariation pnv ON p.productID = pnv.productID AND p.productVariation = 0
-                            LEFT JOIN productvariationstock pvs ON p.productID = pvs.productID AND p.productVariation = 1
-                            GROUP BY p.productID
-                        ) AS StockSummary"
+                      SELECT 
+                      COUNT(*) AS Total,
+                      SUM(TotalStock) AS InStock, -- Changed from CASE WHEN TotalStock > 0...
+                      SUM(CASE WHEN TotalStock = 0 THEN 1 ELSE 0 END) AS StockOut
+                      FROM (
+                      SELECT p.productID,
+                      SUM(COALESCE(pnv.stockUnit, 0) + COALESCE(pvs.stockUnit, 0)) AS TotalStock
+                      FROM product p
+                      LEFT JOIN productnovariation pnv ON p.productID = pnv.productID AND p.productVariation = 0
+                      LEFT JOIN productvariationstock pvs ON p.productID = pvs.productID AND p.productVariation = 1
+                      GROUP BY p.productID
+                      ) AS StockSummary"
 
                             Using countCmd As New MySqlCommand(countQuery, conn)
                                 Using reader = countCmd.ExecuteReader()

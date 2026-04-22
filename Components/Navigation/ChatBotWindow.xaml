@@ -1,0 +1,176 @@
+﻿<Window x:Class="DPC.Components.Navigation.ChatBot.ChatBotWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="POS Guide AI"
+        Height="550" Width="380"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        Topmost="True"
+        Loaded="Window_Loaded">
+
+    <Window.Resources>
+        <FontFamily x:Key="LexendFont">Lexend, Segoe UI, Roboto, sans-serif</FontFamily>
+
+        <Style x:Key="UserBubble" TargetType="Border">
+            <Setter Property="Background" Value="#1A1A1A"/>
+            <Setter Property="CornerRadius" Value="18,18,2,18"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Margin" Value="60,4,12,4"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="MaxWidth" Value="260"/>
+        </Style>
+
+        <Style x:Key="AIBubble" TargetType="Border">
+            <Setter Property="Background" Value="#F2F2F2"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="18,18,18,2"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Margin" Value="12,4,60,4"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="MaxWidth" Value="260"/>
+        </Style>
+
+        <Style x:Key="HighlightText" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="{StaticResource LexendFont}"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+    </Window.Resources>
+
+    <Border CornerRadius="24"
+            Background="White"
+            BorderBrush="#000000"
+            BorderThickness="2"
+            Margin="10">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="25" ShadowDepth="8" Opacity="0.15" Color="#000000"/>
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="65"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="65"/>
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" CornerRadius="22,22,0,0" Background="#000000">
+                <Grid Margin="18,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="0">
+                        <Ellipse x:Name="ModeIndicator" Width="10" Height="10" Fill="#00FF00" Margin="0,0,10,0">
+                            <Ellipse.Effect>
+                                <BlurEffect Radius="4"/>
+                            </Ellipse.Effect>
+                        </Ellipse>
+                        <StackPanel>
+                            <TextBlock x:Name="ChatTitle" Text="POS GUIDE AI"
+                           FontFamily="{StaticResource LexendFont}"
+                           Foreground="White" FontSize="14" FontWeight="Bold"/>
+                            <TextBlock x:Name="StatusText" Text="SYSTEM ACTIVE"
+                           FontFamily="{StaticResource LexendFont}"
+                           Foreground="#808080" FontSize="9" FontWeight="Bold"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <Button Grid.Column="2" 
+                x:Name="ToggleLiveBtn"
+                Background="Transparent" BorderThickness="0" 
+                Foreground="White" Margin="0,0,5,0"
+                ToolTip="Switch to Live Support"
+                Click="ToggleSupportMode">
+                        <materialDesign:PackIcon Kind="Headset" Width="20" Height="20"/>
+                    </Button>
+
+                    <Button Grid.Column="3"
+                Background="Transparent" BorderThickness="0"
+                Foreground="White" Width="36" Height="36"
+                Click="CloseChat">
+                        <materialDesign:PackIcon Kind="Close" Width="20" Height="20"/>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <ScrollViewer Grid.Row="1"
+                          x:Name="MessageScroll"
+                          VerticalScrollBarVisibility="Hidden"
+                          Padding="0,10">
+                <StackPanel x:Name="MessageContainer" Margin="0,5"/>
+            </ScrollViewer>
+
+            <Border Grid.Row="2" Padding="10,8" Background="White">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                Content="QUOTATION"
+                                FontFamily="{StaticResource LexendFont}"
+                                FontWeight="Bold" FontSize="10" 
+                                Foreground="Black" BorderBrush="Black" BorderThickness="1.5"
+                                Margin="4,0" Height="30" Padding="12,0"
+                                Click="QuickAsk_Quotation"/>
+                        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                Content="BILLING"
+                                FontFamily="{StaticResource LexendFont}"
+                                FontWeight="Bold" FontSize="10" 
+                                Foreground="Black" BorderBrush="Black" BorderThickness="1.5"
+                                Margin="4,0" Height="30" Padding="12,0"
+                                Click="QuickAsk_Billing"/>
+                        <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                Content="ADD ITEMS"
+                                FontFamily="{StaticResource LexendFont}"
+                                FontWeight="Bold" FontSize="10" 
+                                Foreground="Black" BorderBrush="Black" BorderThickness="1.5"
+                                Margin="4,0" Height="30" Padding="12,0"
+                                Click="QuickAsk_Items"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <Border Grid.Row="3"
+                    CornerRadius="0,0,22,22"
+                    BorderBrush="#F0F0F0"
+                    BorderThickness="0,1,0,0"
+                    Background="White">
+                <Grid Margin="15,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox x:Name="UserInput"
+                             Grid.Column="0"
+                             materialDesign:HintAssist.Hint="Type your command..."
+                             FontFamily="{StaticResource LexendFont}"
+                             FontWeight="Bold"
+                             FontSize="14"
+                             BorderThickness="0"
+                             VerticalContentAlignment="Center"
+                             KeyDown="UserInput_KeyDown"/>
+
+                    <Button Grid.Column="1"
+                            x:Name="SendButton"
+                            Background="Black"
+                            Width="42" Height="42"
+                            Click="SendMessage"
+                            Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                            Foreground="White"
+                            BorderThickness="0">
+                        <materialDesign:PackIcon Kind="ArrowUp" Width="22" Height="22"/>
+                    </Button>
+                </Grid>
+            </Border>
+
+        </Grid>
+    </Border>
+</Window>

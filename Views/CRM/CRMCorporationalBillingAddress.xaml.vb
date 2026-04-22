@@ -43,6 +43,14 @@ Namespace DPC.Views.CRM
             AddHandler txtZipCode.TextChanged, AddressOf TxtToUpper_TextChanged
         End Sub
 
+        Private Sub txtZipCode_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
+            ' This only allows digits (0-9)
+            ' If the character typed is NOT a digit, we set e.Handled to True to block it
+            If Not Char.IsDigit(e.Text, e.Text.Length - 1) Then
+                e.Handled = True
+            End If
+        End Sub
+
         ' --- MEMORY MANAGEMENT ---
         Private Sub SaveToMemory(sender As Object, e As RoutedEventArgs)
             ' 1. Save to Local Memory

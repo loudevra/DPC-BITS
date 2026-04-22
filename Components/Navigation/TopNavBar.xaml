@@ -93,7 +93,10 @@
                 </Grid>
             </Button>
             <Button Style="{StaticResource IconButton}" Click="ShowMessages">
-                <materialDesign:PackIcon Kind="Email" Width="24" Height="24" Margin="10,0,0,0"/>
+                <materialDesign:PackIcon Kind="FacebookMessenger" Width="24" Height="24" Margin="10,0,0,0"/>
+            </Button>
+            <Button Style="{StaticResource IconButton}" Click="ShowMessagesAI">
+                <materialDesign:PackIcon Kind="MessageBadgeOutline" Width="24" Height="24" Margin="10,0,0,0"/>
             </Button>
             <Button Style="{StaticResource IconButton}" Click="ToggleClockInOut">
                 <materialDesign:PackIcon x:Name="ClockIcon" Kind="ClockOutline" Width="24" Height="24" Margin="10,0,0,0"/>
