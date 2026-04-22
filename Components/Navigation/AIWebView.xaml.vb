@@ -16,7 +16,7 @@ Namespace DPC.Components.Navigation
 
                 ' If this fails, it might be a runtime version issue
                 Await webView.EnsureCoreWebView2Async(Nothing)
-                webView.Source = New Uri("https://chatmehere-red.vercel.app/")
+                webView.Source = New Uri("https://dream-pc-build-message.vercel.app/")
 
                 ' Hide loading text once browser is ready
                 LoadingText.Visibility = Visibility.Collapsed
