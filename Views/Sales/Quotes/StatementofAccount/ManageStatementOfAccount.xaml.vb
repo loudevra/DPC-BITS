@@ -4,11 +4,16 @@ Imports System.Windows.Controls
 Imports System.Windows.Input
 Imports ClosedXML.Excel ' Make sure to add this at the very top of your file
 Imports Microsoft.Win32
+Imports System.IO
+Imports System.Threading.Tasks
+Imports MongoDB.Bson
+Imports MongoDB.Driver.GridFS
 
 Public Class ManageStatementOfAccount
     ' Use the StatementModel to hold your Data
     Public Shared StatementList As New ObservableCollection(Of StatementModel)
     Private Property StatementCollectionView As System.ComponentModel.ICollectionView
+
     Public Sub New()
         InitializeComponent()
 
@@ -19,15 +24,56 @@ Public Class ManageStatementOfAccount
         StatementCollectionView = CollectionViewSource.GetDefaultView(StatementList)
     End Sub
 
-
     ' -------------------------------------------------------------------------
-    ' EVENT HANDLERS
+    ' OVERLAY NAVIGATION LOGIC (Stays in One Tab)
     ' -------------------------------------------------------------------------
 
     Private Sub BtnAddStatement_Click(sender As Object, e As RoutedEventArgs)
-        ' Add your navigation logic here to go to the StatementOfAccountForm
-        MessageBox.Show("Navigate to Add Statement Form...")
+        ' Open the ADD form in the overlay
+        Dim addForm As New StatementOfAccountForm()
+        EditContainer.Content = addForm
+
+        ' Hide grid, show overlay
+        MainViewGrid.Visibility = Visibility.Collapsed
+        EditOverlay.Visibility = Visibility.Visible
     End Sub
+
+    Private Sub OpenEditStatement(sender As Object, e As RoutedEventArgs)
+        Dim btn = TryCast(sender, Button)
+        If btn IsNot Nothing Then
+            Dim record = TryCast(btn.DataContext, StatementModel)
+            If record IsNot Nothing Then
+
+                ' Open the EDIT form inside the overlay
+                Dim editForm As New StatementOfAccountForm(record)
+                EditContainer.Content = editForm
+
+                ' Hide grid, show overlay
+                MainViewGrid.Visibility = Visibility.Collapsed
+                EditOverlay.Visibility = Visibility.Visible
+
+            End If
+        End If
+    End Sub
+
+    Private Sub CloseEditOverlay_Click(sender As Object, e As RoutedEventArgs)
+        ' Close the overlay and return to the DataGrid
+        EditOverlay.Visibility = Visibility.Collapsed
+        MainViewGrid.Visibility = Visibility.Visible
+
+        ' Clear the form memory
+        EditContainer.Content = Nothing
+
+        ' Refresh the Grid to show any updates
+        If StatementCollectionView IsNot Nothing Then
+            StatementCollectionView.Refresh()
+        End If
+    End Sub
+
+
+    ' -------------------------------------------------------------------------
+    ' EXPORT & UPLOAD EVENTS
+    ' -------------------------------------------------------------------------
 
     Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
         ' 1. Check if there is data to export
@@ -86,6 +132,74 @@ Public Class ManageStatementOfAccount
         End If
     End Sub
 
+    ''' <summary>
+    ''' Placeholder event for generating a PDF and syncing it to GridFS
+    ''' You can bind this to a new button in your XAML (e.g., btnExportToPdf)
+    ''' </summary>
+    Private Async Sub ExportToPDF(sender As Object, e As RoutedEventArgs)
+        Try
+            ' 1. Define where the temporary/local PDF will be saved
+            Dim tempPdfPath As String = Path.Combine(Path.GetTempPath(), $"Statement_Report_{DateTime.Now:yyyyMMddHHmmss}.pdf")
+            Dim newDbFileName As String = $"SOA-{DateTime.Now:yyyyMMddHHmmss}.pdf"
+
+            ' ---------------------------------------------------------
+            ' [INSERT YOUR PDF GENERATION CODE HERE]
+            ' Example: MyPdfGenerator.CreateStatementPdf(StatementList, tempPdfPath)
+            ' ---------------------------------------------------------
+
+            ' Simulated PDF creation for testing purposes (Remove this in production)
+            File.WriteAllText(tempPdfPath, "Dummy PDF Content")
+
+            ' 2. Check if the PDF was created successfully
+            If File.Exists(tempPdfPath) Then
+                ' 3. Call the silent upload function to push it to the Regular Cost Estimates GridFS
+                Dim uploadSuccess = Await UploadPdfToRegularCostEstimateAsync(tempPdfPath, newDbFileName)
+
+                If uploadSuccess Then
+                    MessageBox.Show("PDF generated and seamlessly synced to Regular Cost Estimates!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                End If
+
+                ' Optional: Delete the local temp file after successful upload
+                ' File.Delete(tempPdfPath)
+            End If
+
+        Catch ex As Exception
+            MessageBox.Show("Error generating or uploading PDF: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+        End Try
+    End Sub
+
+    ''' <summary>
+    ''' Silently uploads a generated PDF directly to the Regular Cost Estimate GridFS database.
+    ''' </summary>
+    Private Async Function UploadPdfToRegularCostEstimateAsync(pdfFilePath As String, fileName As String) As Task(Of Boolean)
+        Try
+            ' Grab the exact same GridFS connection used by the Cost Estimate module
+            Dim gridFS = DPC.SplashScreen.GetGridFSConnection()
+
+            ' Read the newly created PDF file
+            Using fileStream As New FileStream(pdfFilePath, FileMode.Open, FileAccess.Read)
+
+                ' Attach metadata to match your Regular Cost Estimate format
+                Dim options As New GridFSUploadOptions With {
+                    .Metadata = New BsonDocument From {
+                        {"contentType", ".pdf"},
+                        {"uploadedBy", Environment.UserName},
+                        {"uploadedDate", DateTime.UtcNow},
+                        {"originalPath", pdfFilePath},
+                        {"source", "StatementOfAccount"}
+                    }
+                }
+
+                ' Upload to the database
+                Await gridFS.UploadFromStreamAsync(fileName, fileStream, options)
+            End Using
+
+            Return True
+        Catch ex As Exception
+            MessageBox.Show($"Error saving PDF to the Cost Estimate database: {ex.Message}", "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+            Return False
+        End Try
+    End Function
 
     ' -------------------------------------------------------------------------
     ' DATE FILTER LOGIC
@@ -118,7 +232,6 @@ Public Class ManageStatementOfAccount
     Private Sub ApplyAllFilters()
         If StatementCollectionView IsNot Nothing Then
             ' 1. Pull values from the UI controls
-            ' Use "SearchText.Text" (the name of your TextBox)
             Dim searchString As String = SearchText.Text.ToLower()
             Dim selectedDate As Date? = FilterDatePicker.SelectedDate
 
@@ -130,7 +243,7 @@ Public Class ManageStatementOfAccount
                                                  Dim matchesSearch As Boolean = True
                                                  If Not String.IsNullOrWhiteSpace(searchString) Then
                                                      matchesSearch = (item.SOANo IsNot Nothing AndAlso item.SOANo.ToLower().Contains(searchString)) OrElse
-                                                                (item.ClientName IsNot Nothing AndAlso item.ClientName.ToLower().Contains(searchString))
+                                                                     (item.ClientName IsNot Nothing AndAlso item.ClientName.ToLower().Contains(searchString))
                                                  End If
 
                                                  ' 3. LOGIC: Date Filter
@@ -153,11 +266,12 @@ Public Class ManageStatementOfAccount
             StatementCollectionView.Refresh()
         End If
     End Sub
-    ' Ensure this sub is exactly named as it is in your XAML Click event
+
     Private Sub FilterDateButton_Click(sender As Object, e As RoutedEventArgs)
         ' This opens the date picker dropdown when the button is clicked
         FilterDatePicker.IsDropDownOpen = True
     End Sub
+
     Private Sub SearchText_TextChanged(sender As Object, e As TextChangedEventArgs)
         ' Simply call the combined filter method
         ApplyAllFilters()
@@ -167,27 +281,13 @@ Public Class ManageStatementOfAccount
         ' Logic to show popup if a cell text is too long
     End Sub
 
-    Private Sub OpenEditStatement(sender As Object, e As RoutedEventArgs)
-        Dim btn = TryCast(sender, Button)
-        If btn IsNot Nothing Then
-            Dim record = TryCast(btn.DataContext, StatementModel)
-            If record IsNot Nothing Then
-                MessageBox.Show("Editing SOA: " & record.SOANo)
-            End If
-        End If
-    End Sub
     ' -------------------------------------------------------------------------
-    ' ACTION BUTTON EVENTS FOR CLIENTS
+    ' ACTION BUTTON EVENTS FOR CLIENTS & STATEMENTS
     ' -------------------------------------------------------------------------
 
     Private Sub OpenEditClient(sender As Object, e As RoutedEventArgs)
         Dim btn = TryCast(sender, Button)
         If btn IsNot Nothing Then
-            ' Change "ClientModel" to whatever class name you use for your clients
-            ' Dim record = TryCast(btn.DataContext, ClientModel)
-            ' If record IsNot Nothing Then
-            '     MessageBox.Show("Editing Client: " & record.ClientName)
-            ' End If
             MessageBox.Show("Edit Client Clicked!")
         End If
     End Sub
@@ -197,11 +297,6 @@ Public Class ManageStatementOfAccount
         If result = MessageBoxResult.Yes Then
             Dim btn = TryCast(sender, Button)
             If btn IsNot Nothing Then
-                ' Change "ClientModel" to whatever class name you use for your clients
-                ' Dim record = TryCast(btn.DataContext, ClientModel)
-                ' If record IsNot Nothing Then
-                '     YourClientObservableCollection.Remove(record)
-                ' End If
                 MessageBox.Show("Client Deleted!")
             End If
         End If
@@ -225,8 +320,6 @@ End Class
 ' -------------------------------------------------------------------------
 ' DATA MODEL
 ' -------------------------------------------------------------------------
-' Make sure this is in your correct namespace if you use them, e.g., Namespace Models
-
 Public Class StatementModel
     ' Existing properties
     Public Property SOANo As String
@@ -235,7 +328,7 @@ Public Class StatementModel
     Public Property ContractAmount As String
     Public Property NetAmountDue As String
 
-    ' New properties to fix the errors
+    ' New properties
     Public Property ClientDetails As String
     Public Property ProjectTitle As String
     Public Property PONo As String
