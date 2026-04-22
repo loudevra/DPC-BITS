@@ -121,6 +121,42 @@ Namespace DPC.Data.Controllers
             End If
         End Sub
 
+        ''' <summary>
+        ''' Ensures that only decimal values can be input in a TextBox
+        ''' </summary>
+        Public Shared Sub DecimalOnlyTextInputHandler(sender As Object, e As TextCompositionEventArgs)
+            ' Allow numbers 0-9 and decimal point
+            For Each c As Char In e.Text
+                If Not (Char.IsDigit(c) Or c = ".") Then
+                    e.Handled = True
+                    Return
+                End If
+            Next
+
+            ' Prevent multiple decimal points
+            Dim textBox = CType(sender, TextBox)
+            If e.Text.Contains(".") AndAlso textBox.Text.Contains(".") Then
+                e.Handled = True
+            End If
+        End Sub
+
+        ''' <summary>
+        ''' Ensures that only decimal values can be pasted into a TextBox
+        ''' </summary>
+        Public Shared Sub DecimalOnlyPasteHandler(sender As Object, e As DataObjectPastingEventArgs)
+            If e.DataObject.GetDataPresent(GetType(String)) Then
+                Dim pastedText = CType(e.DataObject.GetData(GetType(String)), String)
+
+                ' Check if pasted text contains only numbers and at most one decimal point
+                Dim decimalCount As Integer = pastedText.Count(Function(c) c = "."c)
+                If Not pastedText.All(Function(c) Char.IsDigit(c) Or c = ".") OrElse decimalCount > 1 Then
+                    e.CancelCommand()
+                End If
+            Else
+                e.CancelCommand()
+            End If
+        End Sub
+
         Public Shared Sub ProcessStockUnitsEntry(txtStockUnits As TextBox, mainContainer As Panel)
             Dim stockUnits As Integer
 
