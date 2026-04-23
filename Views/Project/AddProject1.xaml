@@ -178,7 +178,9 @@
                                  VerticalContentAlignment="Center"
                                  Background="Transparent"
                                  BorderThickness="0"
-                                 TextChanged="TxtToUpper_TextChanged"/>
+                                 TextChanged="TxtToUpper_TextChanged"
+                                 PreviewTextInput="txtZipCode_PreviewTextInput"
+/>
                     </Border>
                 </Grid>
 

@@ -52,6 +52,8 @@ Namespace DPC.Views.Project
             AddHandler Me.Loaded, AddressOf AddProject1_Loaded
         End Sub
 
+
+
         ' =========================================================
         ' SETUP DATE PICKERS
         ' =========================================================
@@ -101,7 +103,6 @@ Namespace DPC.Views.Project
             cmbStatus.SelectedIndex = _savedStatusIndex
             cmbRemarks.SelectedIndex = _savedRemarksIndex
             cmbAssignSales.SelectedIndex = _savedAssignSalesIndex
-            txtBidDocsLink.Text = _savedBidDocsLink
 
             If Not String.IsNullOrWhiteSpace(_savedNote) Then
                 EditorBox.Document.Blocks.Clear()
@@ -131,7 +132,6 @@ Namespace DPC.Views.Project
             AddHandler cmbStatus.SelectionChanged, AddressOf SaveComboToMemory
             AddHandler cmbRemarks.SelectionChanged, AddressOf SaveComboToMemory
             AddHandler cmbAssignSales.SelectionChanged, AddressOf SaveComboToMemory
-            AddHandler txtBidDocsLink.TextChanged, AddressOf SaveTextToMemory
             AddHandler EditorBox.TextChanged, AddressOf SaveEditorToMemory
         End Sub
 
@@ -147,7 +147,6 @@ Namespace DPC.Views.Project
             _savedAreaOfDelivery = txtAreaOfDelivery.Text
             _savedABC = txtABC.Text
             _savedBidRFQOffer = txtBidRFQOffer.Text
-            _savedBidDocsLink = txtBidDocsLink.Text
         End Sub
 
         Private Sub SaveComboToMemory(sender As Object, e As SelectionChangedEventArgs)
@@ -192,6 +191,17 @@ Namespace DPC.Views.Project
                 tb.Text = upper
                 tb.SelectionStart = Math.Min(caretPos, tb.Text.Length)
                 AddHandler tb.TextChanged, AddressOf TxtToUpper_TextChanged
+            End If
+        End Sub
+
+        ' =========================================================
+        ' NUMBER ONLY
+        ' =========================================================
+        Private Sub txtZipCode_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
+            ' This only allows digits (0-9)
+            ' If the character typed is NOT a digit, we set e.Handled to True to block it
+            If Not Char.IsDigit(e.Text, e.Text.Length - 1) Then
+                e.Handled = True
             End If
         End Sub
 
@@ -319,7 +329,6 @@ Namespace DPC.Views.Project
                 .Status = selectedStatus,
                 .Remarks = selectedRemarks,
                 .AssignSales = selectedAssignSales,
-                .BidDocsLink = txtBidDocsLink.Text,
                 .Note = noteText
             }
 
@@ -363,7 +372,6 @@ Namespace DPC.Views.Project
             cmbStatus.SelectedIndex = -1
             cmbRemarks.SelectedIndex = -1
             cmbAssignSales.SelectedIndex = -1
-            txtBidDocsLink.Clear()
             EditorBox.Document.Blocks.Clear()
 
             ' ViewModels
