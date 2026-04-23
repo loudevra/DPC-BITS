@@ -1239,18 +1239,23 @@ Namespace DPC.Views.Sales.Quotes
             Decimal.TryParse(txtDeliveryFee.Text.Replace("₱", "").Replace(",", "").Trim(), deliveryFee)
             Decimal.TryParse(txtInstallationFee.Text.Replace("₱", "").Replace(",", "").Trim(), installationFee)
 
-            UpdateTotalTax()
-
             Dim rawTax = txtTotalTax.Text.Replace("₱", "").Replace(",", "").Trim()
             Decimal.TryParse(rawTax, totalTaxAmount)
 
             Dim finalGrandTotal As Decimal = 0
+            Dim baseForTaxCalculation As Decimal = subtotalAmount + deliveryFee + installationFee
 
             If _TaxSelection Then
-                finalGrandTotal = subtotalAmount + deliveryFee + installationFee + totalTaxAmount
+                ' When toggle is ON: Calculate tax from the sum of subtotal + delivery + installation
+                Dim calculatedTaxAmount As Decimal = baseForTaxCalculation * 0.12D
+                finalGrandTotal = baseForTaxCalculation + calculatedTaxAmount
                 CostEstimateDetails.CETotalAmountCache = "₱ " & finalGrandTotal.ToString("N2")
             Else
-                finalGrandTotal = subtotalAmount + deliveryFee + installationFee
+                ' When toggle is OFF: Tax comes from subtotal only * 0.12
+                Dim calculatedTaxAmount As Decimal = subtotalAmount * 0.12D
+                finalGrandTotal = baseForTaxCalculation
+                ' Update the tax display to reflect subtotal-only calculation
+                txtTotalTax.Text = "₱" & calculatedTaxAmount.ToString("N2")
                 CostEstimateDetails.CETotalAmountCache = "₱ " & finalGrandTotal.ToString("N2")
             End If
 
@@ -1574,22 +1579,41 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Sub UpdateGrandTotalDisplay()
-            Dim taxText = txtTotalTax.Text.Replace("₱", "").Replace(",", "").Trim()
-            Dim taxAmount As Decimal = 0
+            ' Get the base amount (subtotal + delivery + installation)
+            Dim baseAmountText = txtGrandTotal.Text.Replace("₱", "").Replace(",", "").Trim()
+            Dim baseAmount As Decimal = 0
 
-            Decimal.TryParse(taxText, taxAmount)
+            ' Calculate base: subtotal + delivery + installation
+            Dim subtotal As Decimal = 0
+            Dim delivery As Decimal = 0
+            Dim installation As Decimal = 0
+
+            ' Get subtotal from CostEstimateDetails
+            Dim subtotalText = CostEstimateDetails.CETotalBaseAmount.Replace("₱", "").Trim()
+            Decimal.TryParse(subtotalText, subtotal)
+
+            ' Get delivery fee
+            Decimal.TryParse(txtDeliveryFee.Text.Replace("₱", "").Replace(",", "").Trim(), delivery)
+
+            ' Get installation fee
+            Decimal.TryParse(txtInstallationFee.Text.Replace("₱", "").Replace(",", "").Trim(), installation)
+
+            baseAmount = subtotal + delivery + installation
 
             Dim toggleButton = TryCast(ApplyTaxToggle, Button)
 
             If _isTaxApplied Then
-                ' Switch ON - Show grand total WITH tax
-                Dim grandTotalWithTax As Decimal = _originalGrandTotal + taxAmount
+                ' Switch ON - Calculate tax from (subtotal + delivery + installation) * 0.12
+                Dim recalculatedTax As Decimal = baseAmount * 0.12D
+                Dim grandTotalWithTax As Decimal = baseAmount + recalculatedTax
+
+                ' Update BOTH the grand total AND the tax display
                 txtGrandTotal.Text = "₱" & grandTotalWithTax.ToString("N2")
+                txtTotalTax.Text = "₱" & recalculatedTax.ToString("N2")
 
                 If toggleButton IsNot Nothing Then
                     toggleButton.Background = CType(New BrushConverter().ConvertFrom("#1D5642"), Brush) ' Green
                     toggleButton.Margin = New Thickness(24, 2, 0, 0) ' Move circle to right
-
 
                     Dim icon = TryCast(toggleButton.Content, MaterialDesignThemes.Wpf.PackIcon)
                     If icon IsNot Nothing Then
@@ -1597,13 +1621,16 @@ Namespace DPC.Views.Sales.Quotes
                     End If
                 End If
             Else
-                ' Switch OFF - Show grand total WITHOUT tax
-                txtGrandTotal.Text = "₱" & _originalGrandTotal.ToString("N2")
+                ' Switch OFF - Tax comes from subtotal only * 0.12
+                Dim subtotalOnlyTax As Decimal = subtotal * 0.12D
+
+                ' Update BOTH the grand total AND the tax display
+                txtGrandTotal.Text = "₱" & baseAmount.ToString("N2")
+                txtTotalTax.Text = "₱" & subtotalOnlyTax.ToString("N2")
 
                 If toggleButton IsNot Nothing Then
                     toggleButton.Background = CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush) ' Gray
                     toggleButton.Margin = New Thickness(2, 2, 0, 0) ' Move circle to left
-
 
                     Dim icon = TryCast(toggleButton.Content, MaterialDesignThemes.Wpf.PackIcon)
                     If icon IsNot Nothing Then
