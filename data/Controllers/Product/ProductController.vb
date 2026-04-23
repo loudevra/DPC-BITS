@@ -310,6 +310,21 @@ Namespace DPC.Data.Controllers
             LogicProduct.IntegerOnlyPasteHandler(sender, e)
         End Sub
 
+        '''<summary>
+        ''' Ensures that only decimal values can be input in a TextBox
+        ''' </summary>
+        Public Shared Sub DecimalOnlyTextInputHandler(sender As Object, e As TextCompositionEventArgs)
+            LogicProduct.DecimalOnlyTextInputHandler(sender, e)
+        End Sub
+
+
+        ''' <summary>
+        ''' Ensures that only decimal values can be pasted into a TextBox
+        ''' </summary>
+        Public Shared Sub DecimalOnlyPasteHandler(sender As Object, e As DataObjectPastingEventArgs)
+            LogicProduct.DecimalOnlyPasteHandler(sender, e)
+        End Sub
+
         ''' <summary>
         ''' Processes stock units entry and updates UI accordingly
         ''' </summary>
@@ -583,4 +598,5 @@ Namespace DPC.Data.Controllers
 
 #End Region
     End Class
+
 End Namespace

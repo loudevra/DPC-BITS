@@ -1,5 +1,4 @@
-﻿
-Imports System.IO
+﻿Imports System.IO
 Imports System.Reflection
 Imports System.Windows.Controls.Primitives
 Imports System.Windows.Threading
@@ -295,6 +294,15 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
         Public Sub IntegerOnlyPasteHandler(sender As Object, e As DataObjectPastingEventArgs)
             ProductController.IntegerOnlyPasteHandler(sender, e)
         End Sub
+
+        Public Sub DecimalOnlyTextInputHandler(sender As Object, e As TextCompositionEventArgs)
+            ProductController.DecimalOnlyTextInputHandler(sender, e)
+        End Sub
+
+        Public Sub DecimalOnlyPasteHandler(sender As Object, e As DataObjectPastingEventArgs)
+            ProductController.DecimalOnlyPasteHandler(sender, e)
+        End Sub
+
         Private Sub Toggle_Click(sender As Object, e As RoutedEventArgs)
             ProductController.VariationChecker(Toggle, StackPanelVariation, StackPanelWarehouse,
                 StackPanelRetailPrice, StackPanelOrderPrice, StackPanelTaxRate,

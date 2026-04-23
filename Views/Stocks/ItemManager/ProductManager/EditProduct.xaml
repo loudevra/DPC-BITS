@@ -181,7 +181,7 @@
                             <!--Sub Category Value-->
                             <ComboBox x:Name="ComboBoxSubCategory" Style="{StaticResource RoundedComboBoxStyle}" Width="Auto" Height="40" SelectedIndex="0" Margin="0"/>
                         </StackPanel>
-                        
+
 
                         <StackPanel Margin="0,10">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
@@ -278,8 +278,8 @@
                                         <!-- TextBox with Rounded Style -->
                                         <!-- Product Purchase Order Value-->
                                         <TextBox x:Name="TxtPurchaseOrder" Style="{StaticResource RoundedTextboxStyle}" Margin="0,0,25,0" Grid.Column="1"
-                PreviewTextInput="IntegerOnlyTextInputHandler"
-                DataObject.Pasting="IntegerOnlyPasteHandler"/>
+                 PreviewTextInput="DecimalOnlyTextInputHandler"
+                 DataObject.Pasting="DecimalOnlyPasteHandler"/>
                                     </Grid>
                                 </Border>
                             </StackPanel>
@@ -354,9 +354,9 @@
                                         <!-- TextBox with Rounded Style -->
                                         <!-- Product Retail Price Value-->
                                         <TextBox x:Name="TxtRetailPrice" Style="{StaticResource RoundedTextboxStyle}" Margin="0,0,25,0" Grid.Column="1" 
-                        PreviewTextInput="IntegerOnlyTextInputHandler"
-                        DataObject.Pasting="IntegerOnlyPasteHandler"
-                        IsReadOnly="True"/>
+                         PreviewTextInput="DecimalOnlyTextInputHandler"
+                         DataObject.Pasting="DecimalOnlyPasteHandler"
+                         IsReadOnly="True"/>
                                     </Grid>
                                 </Border>
                             </StackPanel>
@@ -378,8 +378,8 @@
                                     <!-- TextBox with Rounded Style -->
                                     <!-- Default Tax Rate-->
                                     <TextBox x:Name="TxtDefaultTax" Style="{StaticResource RoundedTextboxStyle}" Margin="25,0,0,0" Grid.Column="0"
-                                    PreviewTextInput="IntegerOnlyTextInputHandler"
-                                    DataObject.Pasting="IntegerOnlyPasteHandler"/>
+                                    PreviewTextInput="DecimalOnlyTextInputHandler"
+                                    DataObject.Pasting="DecimalOnlyPasteHandler"/>
 
                                     <!-- Icon with Vertical Centering -->
                                     <materialDesign:PackIcon Kind="PercentOutline" Width="25" Height="20" Margin="0,0,10,0" VerticalAlignment="Center" Grid.Column="1"/>

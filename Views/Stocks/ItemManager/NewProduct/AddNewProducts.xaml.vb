@@ -1,5 +1,4 @@
-﻿' AddNewProducts.xaml.vb
-Imports System.IO
+﻿Imports System.IO
 Imports System.Text
 Imports System.Windows.Controls.Primitives
 Imports System.Windows.Threading
@@ -401,6 +400,14 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
 #Region "Event Handlers"
         Public Sub IntegerOnlyTextInputHandler(sender As Object, e As TextCompositionEventArgs)
             ProductController.IntegerOnlyTextInputHandler(sender, e)
+        End Sub
+
+        Public Sub DecimalOnlyTextInputHandler(sender As Object, e As TextCompositionEventArgs)
+            ProductController.DecimalOnlyTextInputHandler(sender, e)
+        End Sub
+
+        Public Sub DecimalOnlyPasteHandler(sender As Object, e As DataObjectPastingEventArgs)
+            ProductController.DecimalOnlyPasteHandler(sender, e)
         End Sub
 
         Public Sub IntegerOnlyPasteHandler(sender As Object, e As DataObjectPastingEventArgs)

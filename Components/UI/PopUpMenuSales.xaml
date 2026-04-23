@@ -174,7 +174,7 @@
                         <StackPanel Grid.Column="1">
                             <TextBlock Margin="10,3,0,3">
                                 <Hyperlink Click="NavigateToNewQuote">
-                                    <TextBlock Text="New Private Cost Estimate" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
+                                    <TextBlock Text="New Cost Estimate" Foreground="#d4d4d4" FontSize="13" FontFamily="Lexend"/>
                                 </Hyperlink>
                                 <TextBlock.ToolTip>
                                     <ToolTip Content="Create a new cost estimate for projects or services." Style="{StaticResource SpeechBubbleToolTip}" Placement="Top"/>
