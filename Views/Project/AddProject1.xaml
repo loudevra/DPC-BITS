@@ -177,7 +177,8 @@
                                  HorizontalAlignment="Stretch"
                                  VerticalContentAlignment="Center"
                                  Background="Transparent"
-                                 BorderThickness="0"/>
+                                 BorderThickness="0"
+                                 TextChanged="TxtToUpper_TextChanged"/>
                     </Border>
                 </Grid>
 
