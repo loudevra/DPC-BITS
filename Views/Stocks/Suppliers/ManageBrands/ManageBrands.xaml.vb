@@ -1,4 +1,6 @@
-﻿Imports System.Collections.ObjectModel
+﻿
+
+Imports System.Collections.ObjectModel
 Imports System.ComponentModel
 Imports System.Data
 Imports System.Windows.Controls
@@ -22,6 +24,7 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
 
         Private _paginationHelper As PaginationHelper
         Private _searchFilterHelper As SearchFilterHelper
+        Private _originalBrandList As ObservableCollection(Of Object)
 
         Public Sub New(lblPageInfo As TextBlock)
             InitializeComponent()
@@ -67,11 +70,6 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
             e.Row.Header = (e.Row.GetIndex() + 1).ToString()
         End Sub
 
-        Private Sub TxtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
-            If _searchFilterHelper IsNot Nothing Then
-                _searchFilterHelper.SearchText = txtSearch.Text
-            End If
-        End Sub
 
         Private Sub ExportToExcel(sender As Object, e As RoutedEventArgs)
             If dataGrid Is Nothing Then Return
@@ -137,6 +135,9 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
                     MessageBox.Show("Error retrieving brand data: " & ex.Message, "Data Error", MessageBoxButton.OK, MessageBoxImage.Error)
                     allBrands = New ObservableCollection(Of Object)()
                 End Try
+
+                ' ADD THIS LINE: Store the original list before passing it to pagination
+                _originalBrandList = allBrands
 
                 paginationPanel.Children.Clear()
                 _paginationHelper = New PaginationHelper(dataGrid, paginationPanel)
@@ -281,6 +282,27 @@ Namespace DPC.Views.Stocks.Suppliers.ManageBrands
                                      End Sub
 
             popup.IsOpen = True
+        End Sub
+        Private Sub TxtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
+            ' Ensure data is loaded before trying to search
+            If _originalBrandList Is Nothing OrElse _paginationHelper Is Nothing Then Return
+
+            Dim searchText As String = txtSearch.Text.ToLower().Trim()
+
+            If String.IsNullOrWhiteSpace(searchText) Then
+                ' If the search box is empty, restore the full original list
+                _paginationHelper.AllItems = _originalBrandList
+            Else
+                ' Filter the original list checking Name, Category, and SubCategory
+                Dim filteredList = _originalBrandList.Cast(Of Brand)().Where(Function(b) _
+                    (b.Name IsNot Nothing AndAlso b.Name.ToLower().Contains(searchText)) OrElse
+                    (b.Category IsNot Nothing AndAlso b.Category.ToLower().Contains(searchText)) OrElse
+                    (b.SubCategory IsNot Nothing AndAlso b.SubCategory.ToLower().Contains(searchText))
+                ).ToList()
+
+                ' Push the filtered results to the pagination helper
+                _paginationHelper.AllItems = New ObservableCollection(Of Object)(filteredList)
+            End If
         End Sub
 
 

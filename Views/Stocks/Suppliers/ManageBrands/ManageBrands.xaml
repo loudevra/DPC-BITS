@@ -225,33 +225,30 @@
                         <ComboBoxItem Content="50"/>
                         <ComboBoxItem Content="100"/>
                     </ComboBox>
-                    <StackPanel Grid.Column="4">
-                        <Border Style="{StaticResource RoundedBorderStyle}" 
-                                BorderThickness="1" 
-                                BorderBrush="Black"
-                                Background="White"
-                                Padding="0">
+                    <StackPanel Grid.Column="4" VerticalAlignment="Center">
+                        <Border Background="White" BorderBrush="#474747" BorderThickness="1.5" CornerRadius="20" Height="40">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
+
                                 <TextBox Grid.Column="0" 
-                                    Style="{StaticResource RoundedTextboxStyle}" 
-                                    Margin="15,8,10,8" 
-                                    Name="txtSearch"
-                                    Foreground="#999999"
-                                    CaretBrush="Black"
-                                    VerticalAlignment="Center"/>
-                                <StackPanel Grid.Column="1" 
-                                    VerticalAlignment="Center" 
-                                    HorizontalAlignment="Right"
-                                    Margin="0,0,12,0">
-                                    <materialDesign:PackIcon Kind="Magnify" 
-                                         Width="18" 
-                                         Height="18" 
-                                         Foreground="#999999"/>
-                                </StackPanel>
+                                         Style="{StaticResource RoundedTextboxStyle}" 
+                                         Margin="15,0,5,0" 
+                                         VerticalAlignment="Center"
+                                         VerticalContentAlignment="Center"
+                                         Foreground="#474747"
+                                         CaretBrush="#474747"
+                                         Name="txtSearch" />
+
+                                <materialDesign:PackIcon Grid.Column="1" 
+                                                         Kind="Magnify" 
+                                                         Width="22" Height="22" 
+                                                         Foreground="#474747" 
+                                                         HorizontalAlignment="Right" 
+                                                         VerticalAlignment="Center" 
+                                                         Margin="5,0,15,0"/>
                             </Grid>
                         </Border>
                     </StackPanel>

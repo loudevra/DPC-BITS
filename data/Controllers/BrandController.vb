@@ -1,19 +1,20 @@
-﻿Imports System.Collections.ObjectModel
+﻿
+
+Imports System.Collections.ObjectModel
 Imports DPC.DPC.Data.Model
 Imports MySql.Data.MySqlClient
-
 
 Namespace DPC.Data.Controllers
     Public Class BrandController
         Public Shared Function GetBrands() As ObservableCollection(Of Brand)
             Dim brandList As New ObservableCollection(Of Brand)()
-            Dim query As String = "SELECT b.brandID, b.BrandName, 
-                            c.CategoryName AS Category,
-                            s.SubCategoryName AS SubCategory,
-                            (SELECT COUNT(*) FROM supplier WHERE brandID = b.brandID) AS TotalSupplier
-                            FROM brand b
-                            LEFT JOIN category c ON b.categoryID = c.categoryID
-                            LEFT JOIN subcategory s ON b.subcategoryID = s.subcategoryID"
+            Dim query As String = "SELECT b.brandID, b.BrandName, " &
+                                  "c.CategoryName AS Category, " &
+                                  "s.SubCategoryName AS SubCategory, " &
+                                  "(SELECT COUNT(*) FROM supplier WHERE brandID = b.brandID) AS TotalSupplier " &
+                                  "FROM brand b " &
+                                  "LEFT JOIN category c ON b.categoryID = c.categoryID " &
+                                  "LEFT JOIN subcategory s ON b.subcategoryID = s.subcategoryID"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
@@ -49,19 +50,7 @@ Namespace DPC.Data.Controllers
                 Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                     conn.Open()
 
-                    ' Check for duplicate brand
-                    Dim checkQuery As String = "SELECT COUNT(*) FROM brand WHERE brandName = @BrandName"
-                    Using checkCmd As New MySqlCommand(checkQuery, conn)
-                        checkCmd.Parameters.AddWithValue("@BrandName", brandName)
-                        Dim result As Object = checkCmd.ExecuteScalar()
-                        Dim count As Integer = If(result IsNot DBNull.Value, Convert.ToInt32(result), 0)
-                        If count > 0 Then
-                            MessageBox.Show("Brand already exists.")
-                            Return
-                        End If
-                    End Using
-
-                    ' Insert brand with categoryID and subcategoryID
+                    ' Insert brand with categoryID and subcategoryID (DUPLICATE CHECK FULLY REMOVED)
                     Dim query As String = "INSERT INTO brand (BrandName, categoryID, subcategoryID) VALUES (@BrandName, @CategoryID, @SubCategoryID)"
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@BrandName", brandName)
@@ -89,29 +78,6 @@ Namespace DPC.Data.Controllers
 
                     If brandId.HasValue AndAlso brandId.Value > 0 Then
                         ' UPDATE MODE
-                        Dim existsQuery As String = "SELECT COUNT(*) FROM brand WHERE BrandID = @BrandID"
-                        Using existsCmd As New MySqlCommand(existsQuery, conn)
-                            existsCmd.Parameters.AddWithValue("@BrandID", brandId.Value)
-                            Dim result As Object = existsCmd.ExecuteScalar()
-                            Dim count As Integer = If(result IsNot DBNull.Value, Convert.ToInt32(result), 0)
-                            If count = 0 Then
-                                MessageBox.Show("Brand not found.")
-                                Return
-                            End If
-                        End Using
-
-                        Dim checkQuery As String = "SELECT COUNT(*) FROM brand WHERE brandName = @BrandName AND BrandID <> @BrandID"
-                        Using checkCmd As New MySqlCommand(checkQuery, conn)
-                            checkCmd.Parameters.AddWithValue("@BrandName", brandName)
-                            checkCmd.Parameters.AddWithValue("@BrandID", brandId.Value)
-                            Dim result As Object = checkCmd.ExecuteScalar()
-                            Dim count As Integer = If(result IsNot DBNull.Value, Convert.ToInt32(result), 0)
-                            If count > 0 Then
-                                MessageBox.Show("Brand name already exists.")
-                                Return
-                            End If
-                        End Using
-
                         Dim updateQuery As String = "UPDATE brand SET BrandName = @BrandName WHERE BrandID = @BrandID"
                         Using updateCmd As New MySqlCommand(updateQuery, conn)
                             updateCmd.Parameters.AddWithValue("@BrandName", brandName)
@@ -124,18 +90,7 @@ Namespace DPC.Data.Controllers
                             End If
                         End Using
                     Else
-                        ' INSERT MODE
-                        Dim checkQuery As String = "SELECT COUNT(*) FROM brand WHERE brandName = @BrandName"
-                        Using checkCmd As New MySqlCommand(checkQuery, conn)
-                            checkCmd.Parameters.AddWithValue("@BrandName", brandName)
-                            Dim result As Object = checkCmd.ExecuteScalar()
-                            Dim count As Integer = If(result IsNot DBNull.Value, Convert.ToInt32(result), 0)
-                            If count > 0 Then
-                                MessageBox.Show("Brand already exists.")
-                                Return
-                            End If
-                        End Using
-
+                        ' INSERT MODE (DUPLICATE CHECK FULLY REMOVED)
                         Dim insertQuery As String = "INSERT INTO brand (BrandName) VALUES (@BrandName)"
                         Using insertCmd As New MySqlCommand(insertQuery, conn)
                             insertCmd.Parameters.AddWithValue("@BrandName", brandName)
