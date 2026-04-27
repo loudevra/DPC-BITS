@@ -1,57 +1,79 @@
-﻿' ProjectController.vb (UPDATED: resolve AssignedToName whether AssignedTo stores ID or Name)
-Imports MySql.Data.MySqlClient
+﻿Imports MySql.Data.MySqlClient
 Imports DPC.DPC.Data.Helpers
 
 Namespace DPC.Data.Controllers
     Public Class ProjectController
 
+        ' =========================================================
+        ' CREATE
+        ' =========================================================
         Public Shared Function CreateProject(proj As DPC.Data.Model.Project) As Boolean
-            Dim query As String = "INSERT INTO project (ProjectName, Status, Customer, Budget, StartDate, DueDate, " &
-                                  "CalculationMode, LinkToCalendar, AssignedTo, Note, CreatedAt, UpdatedAt) " &
-                                  "VALUES (@ProjectName, @Status, @Customer, @Budget, @StartDate, @DueDate, " &
-                                  "@CalculationMode, @LinkToCalendar, @AssignedTo, @Note, @CreatedAt, @UpdatedAt)"
+            Dim query As String =
+                "INSERT INTO project (" &
+                "  ProjectDate, ReferenceNumber, ProjectTitle, Category, ProjectType, " &
+                "  ContactPerson, ContactNumber, EmailAddress, AreaOfDelivery, " &
+                "  PreBidDate, ClosingDate, ABC, BidRFQOffer, ReceiveDate, " &
+                "  ModeOfSubmission, Status, Remarks, AssignSales, Note, " &
+                "  CreatedAt, UpdatedAt" &
+                ") VALUES (" &
+                "  @ProjectDate, @ReferenceNumber, @ProjectTitle, @Category, @ProjectType, " &
+                "  @ContactPerson, @ContactNumber, @EmailAddress, @AreaOfDelivery, " &
+                "  @PreBidDate, @ClosingDate, @ABC, @BidRFQOffer, @ReceiveDate, " &
+                "  @ModeOfSubmission, @Status, @Remarks, @AssignSales, @Note, " &
+                "  @CreatedAt, @UpdatedAt" &
+                ")"
+
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
                     conn.Open()
                     Using cmd As New MySqlCommand(query, conn)
-                        cmd.Parameters.AddWithValue("@ProjectName", proj.ProjectName)
-                        cmd.Parameters.AddWithValue("@Status", If(proj.Status, DBNull.Value))
-                        cmd.Parameters.AddWithValue("@Customer", If(proj.Customer, DBNull.Value))
-                        cmd.Parameters.AddWithValue("@Budget", proj.Budget)
-                        cmd.Parameters.AddWithValue("@StartDate", If(proj.StartDate.HasValue, proj.StartDate.Value, DBNull.Value))
-                        cmd.Parameters.AddWithValue("@DueDate", If(proj.DueDate.HasValue, proj.DueDate.Value, DBNull.Value))
-                        cmd.Parameters.AddWithValue("@CalculationMode", If(proj.CalculationMode, DBNull.Value))
-                        cmd.Parameters.AddWithValue("@LinkToCalendar", proj.LinkToCalendar)
-                        cmd.Parameters.AddWithValue("@AssignedTo", If(String.IsNullOrWhiteSpace(proj.AssignedTo), DBNull.Value, proj.AssignedTo))
-                        cmd.Parameters.AddWithValue("@Note", If(proj.Note, DBNull.Value))
+                        cmd.Parameters.AddWithValue("@ProjectDate", If(proj.ProjectDate.HasValue, proj.ProjectDate.Value, DBNull.Value))
+                        cmd.Parameters.AddWithValue("@ReferenceNumber", If(String.IsNullOrWhiteSpace(proj.ReferenceNumber), DBNull.Value, proj.ReferenceNumber))
+                        cmd.Parameters.AddWithValue("@ProjectTitle", proj.ProjectTitle)
+                        cmd.Parameters.AddWithValue("@Category", If(String.IsNullOrWhiteSpace(proj.Category), DBNull.Value, proj.Category))
+                        cmd.Parameters.AddWithValue("@ProjectType", If(String.IsNullOrWhiteSpace(proj.ProjectType), DBNull.Value, proj.ProjectType))
+                        cmd.Parameters.AddWithValue("@ContactPerson", If(String.IsNullOrWhiteSpace(proj.ContactPerson), DBNull.Value, proj.ContactPerson))
+                        cmd.Parameters.AddWithValue("@ContactNumber", If(String.IsNullOrWhiteSpace(proj.ContactNumber), DBNull.Value, proj.ContactNumber))
+                        cmd.Parameters.AddWithValue("@EmailAddress", If(String.IsNullOrWhiteSpace(proj.EmailAddress), DBNull.Value, proj.EmailAddress))
+                        cmd.Parameters.AddWithValue("@AreaOfDelivery", If(String.IsNullOrWhiteSpace(proj.AreaOfDelivery), DBNull.Value, proj.AreaOfDelivery))
+                        cmd.Parameters.AddWithValue("@PreBidDate", If(proj.PreBidDate.HasValue, proj.PreBidDate.Value, DBNull.Value))
+                        cmd.Parameters.AddWithValue("@ClosingDate", If(proj.ClosingDate.HasValue, proj.ClosingDate.Value, DBNull.Value))
+                        cmd.Parameters.AddWithValue("@ABC", proj.ABC)
+                        cmd.Parameters.AddWithValue("@BidRFQOffer", proj.BidRFQOffer)
+                        cmd.Parameters.AddWithValue("@ReceiveDate", If(proj.ReceiveDate.HasValue, proj.ReceiveDate.Value, DBNull.Value))
+                        cmd.Parameters.AddWithValue("@ModeOfSubmission", If(String.IsNullOrWhiteSpace(proj.ModeOfSubmission), DBNull.Value, proj.ModeOfSubmission))
+                        cmd.Parameters.AddWithValue("@Status", If(String.IsNullOrWhiteSpace(proj.Status), DBNull.Value, proj.Status))
+                        cmd.Parameters.AddWithValue("@Remarks", If(String.IsNullOrWhiteSpace(proj.Remarks), DBNull.Value, proj.Remarks))
+                        cmd.Parameters.AddWithValue("@AssignSales", If(String.IsNullOrWhiteSpace(proj.AssignSales), DBNull.Value, proj.AssignSales))
+                        cmd.Parameters.AddWithValue("@Note", If(String.IsNullOrWhiteSpace(proj.Note), DBNull.Value, proj.Note))
                         cmd.Parameters.AddWithValue("@CreatedAt", DateTime.Now)
                         cmd.Parameters.AddWithValue("@UpdatedAt", DateTime.Now)
+
                         Dim result As Integer = cmd.ExecuteNonQuery()
                         Return result > 0
                     End Using
                 Catch ex As Exception
-                    MessageBox.Show("Error creating project: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    MessageBox.Show("Error creating project: " & ex.Message,
+                                    "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
                     Return False
                 End Try
             End Using
         End Function
 
+        ' =========================================================
+        ' READ ALL
+        ' =========================================================
         Public Shared Function GetProjects() As List(Of DPC.Data.Model.Project)
             Dim results As New List(Of DPC.Data.Model.Project)()
 
-            ' UPDATED LOGIC:
-            ' - If AssignedTo looks numeric => treat as EmployeeID and join by ID
-            ' - Else treat it as already being a name and use it directly
             Dim query As String =
-                "SELECT p.ProjectID, p.ProjectName, p.Status, p.Customer, p.Budget, " &
-                "p.StartDate, p.DueDate, p.CalculationMode, p.LinkToCalendar, p.AssignedTo, p.Note, " &
-                "CASE " &
-                "  WHEN p.AssignedTo REGEXP '^[0-9]+$' THEN IFNULL(e.Name, '') " &
-                "  ELSE IFNULL(p.AssignedTo, '') " &
-                "END AS AssignedToName " &
-                "FROM project p " &
-                "LEFT JOIN employee e ON CAST(e.EmployeeID AS CHAR) = p.AssignedTo " &
-                "ORDER BY p.ProjectID DESC"
+                "SELECT ProjectID, ProjectDate, ReferenceNumber, ProjectTitle, " &
+                "       Category, ProjectType, ContactPerson, ContactNumber, " &
+                "       EmailAddress, AreaOfDelivery, PreBidDate, ClosingDate, " &
+                "       ABC, BidRFQOffer, ReceiveDate, ModeOfSubmission, " &
+                "       Status, Remarks, AssignSales, Note, CreatedAt, UpdatedAt " &
+                "FROM project " &
+                "ORDER BY ProjectID DESC"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
                 Try
@@ -61,27 +83,123 @@ Namespace DPC.Data.Controllers
                             While reader.Read()
                                 results.Add(New DPC.Data.Model.Project With {
                                     .ProjectID = Convert.ToInt32(reader("ProjectID")),
-                                    .ProjectName = reader("ProjectName").ToString(),
+                                    .ProjectDate = If(IsDBNull(reader("ProjectDate")), Nothing, CType(reader("ProjectDate"), DateTime?)),
+                                    .ReferenceNumber = If(IsDBNull(reader("ReferenceNumber")), "", reader("ReferenceNumber").ToString()),
+                                    .ProjectTitle = If(IsDBNull(reader("ProjectTitle")), "", reader("ProjectTitle").ToString()),
+                                    .Category = If(IsDBNull(reader("Category")), "", reader("Category").ToString()),
+                                    .ProjectType = If(IsDBNull(reader("ProjectType")), "", reader("ProjectType").ToString()),
+                                    .ContactPerson = If(IsDBNull(reader("ContactPerson")), "", reader("ContactPerson").ToString()),
+                                    .ContactNumber = If(IsDBNull(reader("ContactNumber")), "", reader("ContactNumber").ToString()),
+                                    .EmailAddress = If(IsDBNull(reader("EmailAddress")), "", reader("EmailAddress").ToString()),
+                                    .AreaOfDelivery = If(IsDBNull(reader("AreaOfDelivery")), "", reader("AreaOfDelivery").ToString()),
+                                    .PreBidDate = If(IsDBNull(reader("PreBidDate")), Nothing, CType(reader("PreBidDate"), DateTime?)),
+                                    .ClosingDate = If(IsDBNull(reader("ClosingDate")), Nothing, CType(reader("ClosingDate"), DateTime?)),
+                                    .ABC = If(IsDBNull(reader("ABC")), 0L, Convert.ToInt64(reader("ABC"))),
+                                    .BidRFQOffer = If(IsDBNull(reader("BidRFQOffer")), 0L, Convert.ToInt64(reader("BidRFQOffer"))),
+                                    .ReceiveDate = If(IsDBNull(reader("ReceiveDate")), Nothing, CType(reader("ReceiveDate"), DateTime?)),
+                                    .ModeOfSubmission = If(IsDBNull(reader("ModeOfSubmission")), "", reader("ModeOfSubmission").ToString()),
                                     .Status = If(IsDBNull(reader("Status")), "", reader("Status").ToString()),
-                                    .Customer = If(IsDBNull(reader("Customer")), "", reader("Customer").ToString()),
-                                    .Budget = If(IsDBNull(reader("Budget")), 0L, Convert.ToInt64(reader("Budget"))),
-                                    .StartDate = If(IsDBNull(reader("StartDate")), Nothing, CType(reader("StartDate"), Date?)),
-                                    .DueDate = If(IsDBNull(reader("DueDate")), Nothing, CType(reader("DueDate"), Date?)),
-                                    .CalculationMode = If(IsDBNull(reader("CalculationMode")), "", reader("CalculationMode").ToString()),
-                                    .LinkToCalendar = If(IsDBNull(reader("LinkToCalendar")), False, Convert.ToBoolean(reader("LinkToCalendar"))),
-                                    .AssignedTo = If(IsDBNull(reader("AssignedTo")), "", reader("AssignedTo").ToString()),
-                                    .AssignedToName = If(IsDBNull(reader("AssignedToName")), "", reader("AssignedToName").ToString()),
-                                    .Note = If(IsDBNull(reader("Note")), "", reader("Note").ToString())
+                                    .Remarks = If(IsDBNull(reader("Remarks")), "", reader("Remarks").ToString()),
+                                    .AssignSales = If(IsDBNull(reader("AssignSales")), "", reader("AssignSales").ToString()),
+                                    .Note = If(IsDBNull(reader("Note")), "", reader("Note").ToString()),
+                                    .CreatedAt = If(IsDBNull(reader("CreatedAt")), Nothing, CType(reader("CreatedAt"), DateTime?)),
+                                    .UpdatedAt = If(IsDBNull(reader("UpdatedAt")), Nothing, CType(reader("UpdatedAt"), DateTime?))
                                 })
                             End While
                         End Using
                     End Using
                 Catch ex As Exception
-                    MessageBox.Show("Error loading projects: " & ex.Message, "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    MessageBox.Show("Error loading projects: " & ex.Message,
+                                    "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 End Try
             End Using
 
             Return results
+        End Function
+
+        ' =========================================================
+        ' UPDATE
+        ' =========================================================
+        Public Shared Function UpdateProject(proj As DPC.Data.Model.Project) As Boolean
+            Dim query As String =
+                "UPDATE project SET " &
+                "  ProjectDate       = @ProjectDate, " &
+                "  ReferenceNumber   = @ReferenceNumber, " &
+                "  ProjectTitle      = @ProjectTitle, " &
+                "  Category          = @Category, " &
+                "  ProjectType       = @ProjectType, " &
+                "  ContactPerson     = @ContactPerson, " &
+                "  ContactNumber     = @ContactNumber, " &
+                "  EmailAddress      = @EmailAddress, " &
+                "  AreaOfDelivery    = @AreaOfDelivery, " &
+                "  PreBidDate        = @PreBidDate, " &
+                "  ClosingDate       = @ClosingDate, " &
+                "  ABC               = @ABC, " &
+                "  BidRFQOffer       = @BidRFQOffer, " &
+                "  ReceiveDate       = @ReceiveDate, " &
+                "  ModeOfSubmission  = @ModeOfSubmission, " &
+                "  Status            = @Status, " &
+                "  Remarks           = @Remarks, " &
+                "  AssignSales       = @AssignSales, " &
+                "  Note              = @Note, " &
+                "  UpdatedAt         = @UpdatedAt " &
+                "WHERE ProjectID = @ProjectID"
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@ProjectID", proj.ProjectID)
+                        cmd.Parameters.AddWithValue("@ProjectDate", If(proj.ProjectDate.HasValue, proj.ProjectDate.Value, DBNull.Value))
+                        cmd.Parameters.AddWithValue("@ReferenceNumber", If(String.IsNullOrWhiteSpace(proj.ReferenceNumber), DBNull.Value, proj.ReferenceNumber))
+                        cmd.Parameters.AddWithValue("@ProjectTitle", proj.ProjectTitle)
+                        cmd.Parameters.AddWithValue("@Category", If(String.IsNullOrWhiteSpace(proj.Category), DBNull.Value, proj.Category))
+                        cmd.Parameters.AddWithValue("@ProjectType", If(String.IsNullOrWhiteSpace(proj.ProjectType), DBNull.Value, proj.ProjectType))
+                        cmd.Parameters.AddWithValue("@ContactPerson", If(String.IsNullOrWhiteSpace(proj.ContactPerson), DBNull.Value, proj.ContactPerson))
+                        cmd.Parameters.AddWithValue("@ContactNumber", If(String.IsNullOrWhiteSpace(proj.ContactNumber), DBNull.Value, proj.ContactNumber))
+                        cmd.Parameters.AddWithValue("@EmailAddress", If(String.IsNullOrWhiteSpace(proj.EmailAddress), DBNull.Value, proj.EmailAddress))
+                        cmd.Parameters.AddWithValue("@AreaOfDelivery", If(String.IsNullOrWhiteSpace(proj.AreaOfDelivery), DBNull.Value, proj.AreaOfDelivery))
+                        cmd.Parameters.AddWithValue("@PreBidDate", If(proj.PreBidDate.HasValue, proj.PreBidDate.Value, DBNull.Value))
+                        cmd.Parameters.AddWithValue("@ClosingDate", If(proj.ClosingDate.HasValue, proj.ClosingDate.Value, DBNull.Value))
+                        cmd.Parameters.AddWithValue("@ABC", proj.ABC)
+                        cmd.Parameters.AddWithValue("@BidRFQOffer", proj.BidRFQOffer)
+                        cmd.Parameters.AddWithValue("@ReceiveDate", If(proj.ReceiveDate.HasValue, proj.ReceiveDate.Value, DBNull.Value))
+                        cmd.Parameters.AddWithValue("@ModeOfSubmission", If(String.IsNullOrWhiteSpace(proj.ModeOfSubmission), DBNull.Value, proj.ModeOfSubmission))
+                        cmd.Parameters.AddWithValue("@Status", If(String.IsNullOrWhiteSpace(proj.Status), DBNull.Value, proj.Status))
+                        cmd.Parameters.AddWithValue("@Remarks", If(String.IsNullOrWhiteSpace(proj.Remarks), DBNull.Value, proj.Remarks))
+                        cmd.Parameters.AddWithValue("@AssignSales", If(String.IsNullOrWhiteSpace(proj.AssignSales), DBNull.Value, proj.AssignSales))
+                        cmd.Parameters.AddWithValue("@Note", If(String.IsNullOrWhiteSpace(proj.Note), DBNull.Value, proj.Note))
+                        cmd.Parameters.AddWithValue("@UpdatedAt", DateTime.Now)
+
+                        Dim result As Integer = cmd.ExecuteNonQuery()
+                        Return result > 0
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show("Error updating project: " & ex.Message,
+                                    "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return False
+                End Try
+            End Using
+        End Function
+
+        ' =========================================================
+        ' DELETE
+        ' =========================================================
+        Public Shared Function DeleteProject(projectID As Integer) As Boolean
+            Dim query As String = "DELETE FROM project WHERE ProjectID = @ProjectID"
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@ProjectID", projectID)
+                        Return cmd.ExecuteNonQuery() > 0
+                    End Using
+                Catch ex As Exception
+                    MessageBox.Show("Error deleting project: " & ex.Message,
+                                    "Database Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    Return False
+                End Try
+            End Using
         End Function
 
     End Class

@@ -14,7 +14,9 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="15" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="15"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
@@ -46,33 +48,33 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ComboBox">
-                        <Border Style="{StaticResource RoundedBorderStyle}" 
-                    Background="{TemplateBinding Background}" 
-                    BorderBrush="{TemplateBinding BorderBrush}" 
-                    BorderThickness="1">
+                        <Border Style="{StaticResource RoundedBorderStyle}"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1">
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="35" />
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="35"/>
                                 </Grid.ColumnDefinitions>
 
                                 <ContentPresenter Name="ContentSite"
-                                      IsHitTestVisible="False"
-                                      Content="{TemplateBinding SelectionBoxItem}"
-                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                      VerticalAlignment="Center"
-                                      Margin="10,0,5,0"/>
+                                                  IsHitTestVisible="False"
+                                                  Content="{TemplateBinding SelectionBoxItem}"
+                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                  VerticalAlignment="Center"
+                                                  Margin="10,0,5,0"/>
 
-                                <ToggleButton Name="ToggleButton" 
-                                  Grid.Column="1"
-                                  Focusable="False"
-                                  IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
-                                  Background="Transparent"
-                                  BorderBrush="Transparent"
-                                  BorderThickness="0"
-                                  HorizontalAlignment="Right"
-                                  VerticalAlignment="Center"
-                                  Margin="0,0,5,0">
+                                <ToggleButton Name="ToggleButton"
+                                              Grid.Column="1"
+                                              Focusable="False"
+                                              IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              HorizontalAlignment="Right"
+                                              VerticalAlignment="Center"
+                                              Margin="0,0,5,0">
                                     <ToggleButton.Style>
                                         <Style TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
                                             <Setter Property="Background" Value="Transparent"/>
@@ -93,15 +95,15 @@
                                 </ToggleButton>
 
                                 <Popup Name="Popup"
-                           Placement="Bottom"
-                           IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
-                           AllowsTransparency="True"
-                           Focusable="False"
-                           MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-                                    <Border Style="{StaticResource RoundedBorderStyle}" 
-                                Background="White" 
-                                BorderBrush="#AEAEAE"
-                                Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                       Placement="Bottom"
+                                       IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                       AllowsTransparency="True"
+                                       Focusable="False"
+                                       MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                    <Border Style="{StaticResource RoundedBorderStyle}"
+                                            Background="White"
+                                            BorderBrush="#AEAEAE"
+                                            Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
                                         <ScrollViewer>
                                             <StackPanel>
                                                 <ItemsPresenter/>
@@ -140,9 +142,11 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- ══ HEADER + SUMMARY CARDS ══ -->
         <StackPanel Grid.Row="0" Margin="0,0,0,15">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,10">
-                <TextBlock Text="Projects" FontSize="32" FontWeight="SemiBold" FontFamily="Lexend" Foreground="#555555" Width="287" Height="44"/>
+                <TextBlock Text="Projects" FontSize="32" FontWeight="SemiBold" FontFamily="Lexend"
+                           Foreground="#555555" Width="287" Height="44"/>
             </StackPanel>
 
             <Grid Margin="0,0,0,5">
@@ -153,58 +157,79 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="15,5,15,5" Width="Auto" Margin="0,0,5,0" Height="80">
+                <!-- AWARDED -->
+                <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="15,5,15,5"
+                        Width="Auto" Margin="0,0,5,0" Height="80">
                     <Grid>
                         <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
-                            <TextBlock x:Name="tbWaiting" Text="0" FontSize="32" FontWeight="Bold" Foreground="#E5D18E"/>
-                            <TextBlock Text="Waiting" FontSize="14" FontWeight="SemiBold" Foreground="#E5D18E"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <Ellipse Width="55" Height="55" Fill="#FFF6D8" VerticalAlignment="Center"/>
-                            <materialDesign:PackIcon Kind="ClockOutline" Width="40" Height="40" Foreground="#E5D18E" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="-54,0,0,0"/>
-                        </StackPanel>
-                    </Grid>
-                </Border>
-                <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="15,5,15,5" Width="Auto" Margin="5,0,5,0" Height="80">
-                    <Grid>
-                        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
-                            <TextBlock x:Name="tbProcessing" Text="0" FontSize="32" FontWeight="Bold" Foreground="#86BCD5"/>
-                            <TextBlock Text="Processing" FontSize="14" FontWeight="SemiBold" Foreground="#86BCD5"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                            <Ellipse Width="55" Height="55" Fill="#BEE4F7" VerticalAlignment="Center"/>
-                            <materialDesign:PackIcon Kind="Cached" Width="40" Height="40" Foreground="#68B8DF" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="-54,0,0,0"/>
-                        </StackPanel>
-                    </Grid>
-                </Border>
-                <Border Grid.Column="2" Background="White" CornerRadius="8" Padding="15,5,15,5" Width="Auto" Margin="5,0,5,0" Height="80">
-                    <Grid>
-                        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
-                            <TextBlock x:Name="tbSolved" Text="0" FontSize="32" FontWeight="Bold" Foreground="#89AC74"/>
-                            <TextBlock Text="Solved " FontSize="14" FontWeight="SemiBold" Foreground="#89AC74"/>
+                            <TextBlock x:Name="tbAwarded" Text="0" FontSize="32" FontWeight="Bold" Foreground="#89AC74"/>
+                            <TextBlock Text="Awarded" FontSize="14" FontWeight="SemiBold" Foreground="#89AC74"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
                             <Ellipse Width="55" Height="55" Fill="#DEF9CE" VerticalAlignment="Center"/>
-                            <materialDesign:PackIcon Kind="CheckboxMarkedOutline" Width="40" Height="40" Foreground="#89AC74" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="-54,0,0,0"/>
+                            <materialDesign:PackIcon Kind="CheckboxMarkedOutline" Width="40" Height="40"
+                                                     Foreground="#89AC74" VerticalAlignment="Center"
+                                                     HorizontalAlignment="Center" Margin="-54,0,0,0"/>
                         </StackPanel>
                     </Grid>
                 </Border>
-                <Border Grid.Column="3" Background="White" CornerRadius="8" Padding="15,5,15,5" Width="Auto" Margin="5,0,5,0" Height="80">
+
+                <!-- ON-GOING -->
+                <Border Grid.Column="1" Background="White" CornerRadius="8" Padding="15,5,15,5"
+                        Width="Auto" Margin="5,0,5,0" Height="80">
                     <Grid>
                         <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
-                            <TextBlock x:Name="tbTotal" Text="0" FontSize="32" FontWeight="Bold" Foreground="#E65E5E"/>
+                            <TextBlock x:Name="tbOnGoing" Text="0" FontSize="32" FontWeight="Bold" Foreground="#86BCD5"/>
+                            <TextBlock Text="On-Going" FontSize="14" FontWeight="SemiBold" Foreground="#86BCD5"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <Ellipse Width="55" Height="55" Fill="#BEE4F7" VerticalAlignment="Center"/>
+                            <materialDesign:PackIcon Kind="Cached" Width="40" Height="40"
+                                                     Foreground="#68B8DF" VerticalAlignment="Center"
+                                                     HorizontalAlignment="Center" Margin="-54,0,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- COMPLETED -->
+                <Border Grid.Column="2" Background="White" CornerRadius="8" Padding="15,5,15,5"
+                        Width="Auto" Margin="5,0,5,0" Height="80">
+                    <Grid>
+                        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
+                            <TextBlock x:Name="tbCompleted" Text="0" FontSize="32" FontWeight="Bold" Foreground="#E5D18E"/>
+                            <TextBlock Text="Completed" FontSize="14" FontWeight="SemiBold" Foreground="#E5D18E"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                            <Ellipse Width="55" Height="55" Fill="#FFF6D8" VerticalAlignment="Center"/>
+                            <materialDesign:PackIcon Kind="ClipboardCheckOutline" Width="40" Height="40"
+                                                     Foreground="#E5D18E" VerticalAlignment="Center"
+                                                     HorizontalAlignment="Center" Margin="-54,0,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- CANCELLED -->
+                <Border Grid.Column="3" Background="White" CornerRadius="8" Padding="15,5,15,5"
+                        Width="Auto" Margin="5,0,5,0" Height="80">
+                    <Grid>
+                        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
+                            <TextBlock x:Name="tbCancelled" Text="0" FontSize="32" FontWeight="Bold" Foreground="#E65E5E"/>
                             <TextBlock Text="Cancelled" FontSize="14" FontWeight="SemiBold" Foreground="#E65E5E"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
                             <Ellipse Width="55" Height="55" Fill="#FFCDD2" VerticalAlignment="Center"/>
-                            <materialDesign:PackIcon Kind="ChartPieOutline" Width="40" Height="40" Foreground="#E65E5E" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="-54,0,0,0"/>
+                            <materialDesign:PackIcon Kind="CloseCircleOutline" Width="40" Height="40"
+                                                     Foreground="#E65E5E" VerticalAlignment="Center"
+                                                     HorizontalAlignment="Center" Margin="-54,0,0,0"/>
                         </StackPanel>
                     </Grid>
                 </Border>
             </Grid>
         </StackPanel>
 
-        <Border Grid.Row="1" Padding="5" Background="White" CornerRadius="10" BorderBrush="White" Margin="0,0,0,15" >
+        <!-- ══ TOOLBAR ══ -->
+        <Border Grid.Row="1" Padding="5" Background="White" CornerRadius="10"
+                BorderBrush="White" Margin="0,0,0,15">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -212,17 +237,21 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal">
-                    <Button x:Name="btnExportExcel" Click="BtnExportExcel_Click" Style="{StaticResource RoundedButtonStyle}" Background="#456B2E" Foreground="White" Width="75" Height="29" Margin="10,0,10,0">
+                    <Button x:Name="btnExportExcel" Click="BtnExportExcel_Click"
+                            Style="{StaticResource RoundedButtonStyle}"
+                            Background="#456B2E" Foreground="White"
+                            Width="75" Height="29" Margin="10,0,10,0">
                         <materialDesign:PackIcon Kind="MicrosoftExcel" Width="25" Height="25"/>
                     </Button>
 
-                    <ComboBox x:Name="cmbPageSize" SelectionChanged="CmbPageSize_SelectionChanged" Width="75" Style="{StaticResource RoundedComboBoxStyle}" Height="28" Foreground="#AEAEAE" Margin="0,0,10,0">
+                    <ComboBox x:Name="cmbPageSize" SelectionChanged="CmbPageSize_SelectionChanged"
+                              Width="75" Style="{StaticResource RoundedComboBoxStyle}"
+                              Height="28" Foreground="#AEAEAE" Margin="0,0,10,0">
                         <ComboBoxItem Content="10" IsSelected="True"/>
                         <ComboBoxItem Content="25"/>
                         <ComboBoxItem Content="50"/>
                         <ComboBoxItem Content="100"/>
                     </ComboBox>
-
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
@@ -255,19 +284,23 @@
                                     </Style>
                                 </TextBlock.Style>
                             </TextBlock>
-                            <materialDesign:PackIcon Kind="Magnify" Width="25" Height="26" Foreground="#AEAEAE" 
-                                                     HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0"
-                                                     IsHitTestVisible="False"/>
+                            <materialDesign:PackIcon Kind="Magnify" Width="25" Height="26"
+                                                     Foreground="#AEAEAE"
+                                                     HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                     Margin="0,0,5,0" IsHitTestVisible="False"/>
                         </Grid>
                     </Border>
                 </StackPanel>
             </Grid>
         </Border>
 
-        <Border Grid.Row="2" Background="White" CornerRadius="8" BorderBrush="#D4E3F0" BorderThickness="1" ClipToBounds="True" Margin="0,0,0,15">
+        <!-- ══ DATA GRID ══ -->
+        <Border Grid.Row="2" Background="White" CornerRadius="8"
+                BorderBrush="#D4E3F0" BorderThickness="1"
+                ClipToBounds="True" Margin="0,0,0,15">
             <DataGrid x:Name="ProjectDataGrid"
                       VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Disabled"
+                      HorizontalScrollBarVisibility="Auto"
                       AutoGenerateColumns="False"
                       CanUserAddRows="False"
                       HeadersVisibility="Column"
@@ -302,11 +335,57 @@
                 </DataGrid.Resources>
 
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="#"               Binding="{Binding ProjectID}"        Width="50" ElementStyle="{StaticResource TextCell}"/>
 
-                    <DataGridTextColumn Header="Project"  Binding="{Binding ProjectName}"      Width="*" ElementStyle="{StaticResource TextCell}"/>
+                    <!-- # -->
+                    <DataGridTextColumn Header="#"
+                                        Binding="{Binding ProjectID}"
+                                        Width="45"
+                                        ElementStyle="{StaticResource TextCell}"/>
 
-                    <DataGridTemplateColumn Header="Status" Width="120">
+                    <!-- Date -->
+                    <DataGridTextColumn Header="Date"
+                                        Binding="{Binding ProjectDate, StringFormat='{}{0:MMM dd, yyyy}'}"
+                                        Width="105"
+                                        ElementStyle="{StaticResource TextCell}"/>
+
+                    <!-- Reference Number -->
+                    <DataGridTextColumn Header="Ref #"
+                                        Binding="{Binding ReferenceNumber}"
+                                        Width="120"
+                                        ElementStyle="{StaticResource TextCell}"/>
+
+                    <!-- Project Title -->
+                    <DataGridTextColumn Header="Project Title"
+                                        Binding="{Binding ProjectTitle}"
+                                        Width="*"
+                                        ElementStyle="{StaticResource TextCell}"/>
+
+                    <!-- Category -->
+                    <DataGridTextColumn Header="Category"
+                                        Binding="{Binding Category}"
+                                        Width="130"
+                                        ElementStyle="{StaticResource TextCell}"/>
+
+                    <!-- Project Type -->
+                    <DataGridTextColumn Header="Type"
+                                        Binding="{Binding ProjectType}"
+                                        Width="80"
+                                        ElementStyle="{StaticResource TextCell}"/>
+
+                    <!-- ABC -->
+                    <DataGridTextColumn Header="ABC"
+                                        Binding="{Binding ABC, StringFormat='{}{0:N0}'}"
+                                        Width="110"
+                                        ElementStyle="{StaticResource TextCell}"/>
+
+                    <!-- Closing Date -->
+                    <DataGridTextColumn Header="Closing Date"
+                                        Binding="{Binding ClosingDate, StringFormat='{}{0:MMM dd, yyyy}'}"
+                                        Width="105"
+                                        ElementStyle="{StaticResource TextCell}"/>
+
+                    <!-- Status (colored dot) -->
+                    <DataGridTemplateColumn Header="Status" Width="130">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
@@ -315,72 +394,81 @@
                                             <Style TargetType="Ellipse">
                                                 <Setter Property="Fill" Value="Gray"/>
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Status}" Value="Waiting">
-                                                        <Setter Property="Fill" Value="#E5D18E"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Status}" Value="Processing">
-                                                        <Setter Property="Fill" Value="#86BCD5"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Status}" Value="Solved">
+                                                    <DataTrigger Binding="{Binding Status}" Value="AWARDED">
                                                         <Setter Property="Fill" Value="#89AC74"/>
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Status}" Value="Cancelled">
+                                                    <DataTrigger Binding="{Binding Status}" Value="COMPLETED">
+                                                        <Setter Property="Fill" Value="#E5D18E"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="CANCELLED">
                                                         <Setter Property="Fill" Value="#E65E5E"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="ON-GOING">
+                                                        <Setter Property="Fill" Value="#86BCD5"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="FOR FOLLOW-UP">
+                                                        <Setter Property="Fill" Value="#F4A261"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="FOR EMAIL">
+                                                        <Setter Property="Fill" Value="#A78BFA"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </Ellipse.Style>
                                     </Ellipse>
-                                    <TextBlock Text="{Binding Status}" VerticalAlignment="Center" FontFamily="Lexend" FontSize="12"/>
+                                    <TextBlock Text="{Binding Status}" VerticalAlignment="Center"
+                                               FontFamily="Lexend" FontSize="12"/>
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="Customer"      Binding="{Binding Customer}"         Width="*" ElementStyle="{StaticResource TextCell}"/>
+                    <!-- Remarks -->
+                    <DataGridTextColumn Header="Remarks"
+                                        Binding="{Binding Remarks}"
+                                        Width="100"
+                                        ElementStyle="{StaticResource TextCell}"/>
 
-                    <DataGridTextColumn Header="ABC"           Binding="{Binding Budget, StringFormat='{}{0:N0}'}" Width="0.8*" ElementStyle="{StaticResource TextCell}"/>
-                    <DataGridTextColumn Header="Start Date"    Binding="{Binding StartDate, StringFormat='{}{0:MMM dd, yyyy}'}"  Width="105" ElementStyle="{StaticResource TextCell}"/>
-                    <DataGridTextColumn Header="Due Date"      Binding="{Binding DueDate, StringFormat='{}{0:MMM dd, yyyy}'}"    Width="105" ElementStyle="{StaticResource TextCell}"/>
-                    <DataGridTextColumn Header="Assigned To"   Binding="{Binding AssignedToName}" Width="*" ElementStyle="{StaticResource TextCell}"/>
+                    <!-- Assign Sales -->
+                    <DataGridTextColumn Header="Sales"
+                                        Binding="{Binding AssignSales}"
+                                        Width="90"
+                                        ElementStyle="{StaticResource TextCell}"/>
 
+                    <!-- Actions -->
                     <DataGridTemplateColumn Header="Actions" Width="90">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <Button Width="30" Height="30"
-                                            Background="White"
+                                    <Button Width="30" Height="30" Background="White"
                                             Margin="0,0,5,0"
                                             Tag="{Binding ProjectID}"
                                             Click="BtnEdit_Click">
                                         <Button.Template>
                                             <ControlTemplate TargetType="Button">
-                                                <Border Background="{TemplateBinding Background}" 
-                                                        CornerRadius="5"
-                                                        BorderThickness="0">
-                                                    <materialDesign:PackIcon Kind="SquareEditOutline" 
+                                                <Border Background="{TemplateBinding Background}"
+                                                        CornerRadius="5" BorderThickness="0">
+                                                    <materialDesign:PackIcon Kind="SquareEditOutline"
                                                                              Width="16" Height="16"
                                                                              Foreground="#52C69D"
-                                                                             HorizontalAlignment="Center" 
+                                                                             HorizontalAlignment="Center"
                                                                              VerticalAlignment="Center"/>
                                                 </Border>
                                             </ControlTemplate>
                                         </Button.Template>
                                     </Button>
 
-                                    <Button Width="30" Height="30"
-                                            Background="White"
+                                    <Button Width="30" Height="30" Background="White"
                                             Tag="{Binding ProjectID}"
                                             Click="BtnDelete_Click">
                                         <Button.Template>
                                             <ControlTemplate TargetType="Button">
-                                                <Border Background="{TemplateBinding Background}" 
-                                                        CornerRadius="5"
-                                                        BorderThickness="0">
-                                                    <materialDesign:PackIcon Kind="TrashCanOutline" 
+                                                <Border Background="{TemplateBinding Background}"
+                                                        CornerRadius="5" BorderThickness="0">
+                                                    <materialDesign:PackIcon Kind="TrashCanOutline"
                                                                              Width="16" Height="16"
                                                                              Foreground="#C0392B"
-                                                                             HorizontalAlignment="Center" 
+                                                                             HorizontalAlignment="Center"
                                                                              VerticalAlignment="Center"/>
                                                 </Border>
                                             </ControlTemplate>
@@ -390,10 +478,12 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
+
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
 
+        <!-- ══ PAGINATION ══ -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
             <Border Background="White" CornerRadius="30" Padding="10,5" BorderThickness="2" BorderBrush="#adadad">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">

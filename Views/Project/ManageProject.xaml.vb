@@ -9,6 +9,9 @@ Namespace DPC.Views.Project
     Public Class ManageProject
         Inherits UserControl
 
+        ' ── Shared slot: EditProject reads this on load ──────────
+        Public Shared SelectedProject As DPC.Data.Model.Project = Nothing
+
         Private _projectID As String
         Private _allProjects As List(Of DPC.Data.Model.Project)
         Private _filteredProjects As List(Of DPC.Data.Model.Project)
@@ -21,6 +24,9 @@ Namespace DPC.Views.Project
             LoadData()
         End Sub
 
+        ' =========================================================
+        ' LOAD DATA
+        ' =========================================================
         Public Sub LoadData()
             Try
                 _allProjects = DPC.Data.Controllers.ProjectController.GetProjects()
@@ -32,37 +38,38 @@ Namespace DPC.Views.Project
                 ApplyPagination()
                 UpdateStatusCounts()
             Catch ex As Exception
-                MessageBox.Show("Error retrieving project data: " & ex.Message, "Data Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                MessageBox.Show("Error retrieving project data: " & ex.Message,
+                                "Data Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Sub
 
+        ' =========================================================
+        ' STATUS SUMMARY CARDS
+        ' =========================================================
         Private Sub UpdateStatusCounts()
             If _filteredProjects Is Nothing Then
-                tbWaiting.Text = "0"
-                tbProcessing.Text = "0"
-                tbSolved.Text = "0"
-                tbTotal.Text = "0"
+                tbAwarded.Text = "0"
+                tbOnGoing.Text = "0"
+                tbCompleted.Text = "0"
+                tbCancelled.Text = "0"
                 Return
             End If
 
-            Dim waiting = _filteredProjects.Where(Function(p) String.Equals(p.Status, "Waiting", StringComparison.OrdinalIgnoreCase)).Count()
-            Dim processing = _filteredProjects.Where(Function(p) String.Equals(p.Status, "Processing", StringComparison.OrdinalIgnoreCase)).Count()
-            Dim solved = _filteredProjects.Where(Function(p) String.Equals(p.Status, "Solved", StringComparison.OrdinalIgnoreCase)).Count()
-            Dim cancelled = _filteredProjects.Where(Function(p) String.Equals(p.Status, "Cancelled", StringComparison.OrdinalIgnoreCase)).Count()
+            Dim awarded = _filteredProjects.Where(Function(p) String.Equals(p.Status, "AWARDED", StringComparison.OrdinalIgnoreCase)).Count()
+            Dim ongoing = _filteredProjects.Where(Function(p) String.Equals(p.Status, "ON-GOING", StringComparison.OrdinalIgnoreCase)).Count()
+            Dim completed = _filteredProjects.Where(Function(p) String.Equals(p.Status, "COMPLETED", StringComparison.OrdinalIgnoreCase)).Count()
+            Dim cancelled = _filteredProjects.Where(Function(p) String.Equals(p.Status, "CANCELLED", StringComparison.OrdinalIgnoreCase)).Count()
 
-            tbWaiting.Text = waiting.ToString()
-            tbProcessing.Text = processing.ToString()
-            tbSolved.Text = solved.ToString()
-
-            ' tbTotal shows Cancelled count
-            tbTotal.Text = cancelled.ToString()
+            tbAwarded.Text = awarded.ToString()
+            tbOnGoing.Text = ongoing.ToString()
+            tbCompleted.Text = completed.ToString()
+            tbCancelled.Text = cancelled.ToString()
         End Sub
 
         ' =========================================================
-        ' NEW: PAGE SIZE DROP-DOWN LOGIC (SHOW FUNCTION)
+        ' PAGE SIZE DROP-DOWN
         ' =========================================================
         Private Sub CmbPageSize_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
-            ' Don't try to change the page size if data hasn't loaded yet
             If _allProjects Is Nothing Then Return
 
             Dim combo = TryCast(sender, ComboBox)
@@ -72,13 +79,16 @@ Namespace DPC.Views.Project
                     Dim newSize As Integer
                     If Integer.TryParse(selectedItem.Content.ToString(), newSize) Then
                         _pageSize = newSize
-                        _currentPage = 1 ' Reset back to the first page
+                        _currentPage = 1
                         ApplyPagination()
                     End If
                 End If
             End If
         End Sub
 
+        ' =========================================================
+        ' PAGINATION
+        ' =========================================================
         Private Sub ApplyPagination()
             If _filteredProjects Is Nothing Then Return
 
@@ -116,7 +126,9 @@ Namespace DPC.Views.Project
                 End If
 
                 Dim factory As New FrameworkElementFactory(GetType(Border))
-                factory.SetBinding(Border.BackgroundProperty, New Binding("Background") With {.RelativeSource = New RelativeSource(RelativeSourceMode.TemplatedParent)})
+                factory.SetBinding(Border.BackgroundProperty,
+                    New Binding("Background") With {
+                        .RelativeSource = New RelativeSource(RelativeSourceMode.TemplatedParent)})
                 factory.SetValue(Border.CornerRadiusProperty, New CornerRadius(15))
                 Dim cp As New FrameworkElementFactory(GetType(ContentPresenter))
                 cp.SetValue(ContentPresenter.HorizontalAlignmentProperty, HorizontalAlignment.Center)
@@ -151,6 +163,9 @@ Namespace DPC.Views.Project
             End If
         End Sub
 
+        ' =========================================================
+        ' SEARCH
+        ' =========================================================
         Private Sub TxtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
             If _allProjects Is Nothing Then Return
 
@@ -160,10 +175,13 @@ Namespace DPC.Views.Project
                 _filteredProjects = _allProjects
             Else
                 _filteredProjects = _allProjects.Where(Function(p)
-                                                           Return (p.ProjectName?.ToLower().Contains(keyword)) OrElse
+                                                           Return (p.ProjectTitle?.ToLower().Contains(keyword)) OrElse
+                                                                  (p.ReferenceNumber?.ToLower().Contains(keyword)) OrElse
+                                                                  (p.Category?.ToLower().Contains(keyword)) OrElse
+                                                                  (p.ProjectType?.ToLower().Contains(keyword)) OrElse
                                                                   (p.Status?.ToLower().Contains(keyword)) OrElse
-                                                                  (p.Customer?.ToLower().Contains(keyword)) OrElse
-                                                                  (p.AssignedToName?.ToLower().Contains(keyword)) OrElse
+                                                                  (p.Remarks?.ToLower().Contains(keyword)) OrElse
+                                                                  (p.AssignSales?.ToLower().Contains(keyword)) OrElse
                                                                   (p.ProjectID.ToString().Contains(keyword))
                                                        End Function).ToList()
             End If
@@ -173,6 +191,9 @@ Namespace DPC.Views.Project
             UpdateStatusCounts()
         End Sub
 
+        ' =========================================================
+        ' EDIT
+        ' =========================================================
         Private Sub BtnEdit_Click(sender As Object, e As RoutedEventArgs)
             Dim btn = TryCast(sender, Button)
             If btn Is Nothing Then Return
@@ -181,18 +202,14 @@ Namespace DPC.Views.Project
             Dim project = _allProjects?.FirstOrDefault(Function(p) p.ProjectID.ToString() = projectID)
 
             If project IsNot Nothing Then
-                CacheProjectID = project.ProjectID.ToString()
-                CacheProjectName = project.ProjectName
-                CacheProjectStatus = project.Status
-                CacheProjectCustomer = project.Customer
-                CacheProjectBudget = project.Budget.ToString()
-                CacheProjectStartDate = project.StartDate
-                CacheProjectDueDate = project.DueDate
-                CacheProjectAssignedTo = project.AssignedTo
+                SelectedProject = project
                 ViewLoader.DynamicView.NavigateToView("editproject", Me)
             End If
         End Sub
 
+        ' =========================================================
+        ' DELETE
+        ' =========================================================
         Private Sub BtnDelete_Click(sender As Object, e As RoutedEventArgs)
             Dim btn = TryCast(sender, Button)
             If btn Is Nothing Then Return
@@ -222,10 +239,13 @@ Namespace DPC.Views.Project
             End Try
         End Sub
 
-        ' --- EXCEL EXPORT FUNCTIONALITY ---
+        ' =========================================================
+        ' EXCEL / CSV EXPORT
+        ' =========================================================
         Private Sub BtnExportExcel_Click(sender As Object, e As RoutedEventArgs)
             If _filteredProjects Is Nothing OrElse _filteredProjects.Count = 0 Then
-                MessageBox.Show("There are no projects to export.", "Empty Data", MessageBoxButton.OK, MessageBoxImage.Information)
+                MessageBox.Show("There are no projects to export.", "Empty Data",
+                                MessageBoxButton.OK, MessageBoxImage.Information)
                 Return
             End If
 
@@ -237,27 +257,44 @@ Namespace DPC.Views.Project
                 Try
                     Dim sb As New System.Text.StringBuilder()
 
-                    sb.AppendLine("Project ID,Project Name,Status,Customer,Budget,Start Date,Due Date,Assigned To")
+                    sb.AppendLine("Project ID,Date,Reference Number,Project Title,Category,Project Type," &
+                                  "Contact Person,Contact Number,Email Address,Area of Delivery," &
+                                  "Pre-Bid Date,Closing Date,ABC,Bid/RFQ Offer,Receive Date," &
+                                  "Mode of Submission,Status,Remarks,Assign Sales,Note")
 
                     For Each p In _filteredProjects
                         Dim row As New List(Of String) From {
                             EscapeCsv(p.ProjectID.ToString()),
-                            EscapeCsv(p.ProjectName),
+                            EscapeCsv(If(p.ProjectDate.HasValue, p.ProjectDate.Value.ToString("MMM dd, yyyy"), "")),
+                            EscapeCsv(p.ReferenceNumber),
+                            EscapeCsv(p.ProjectTitle),
+                            EscapeCsv(p.Category),
+                            EscapeCsv(p.ProjectType),
+                            EscapeCsv(p.ContactPerson),
+                            EscapeCsv(p.ContactNumber),
+                            EscapeCsv(p.EmailAddress),
+                            EscapeCsv(p.AreaOfDelivery),
+                            EscapeCsv(If(p.PreBidDate.HasValue, p.PreBidDate.Value.ToString("MMM dd, yyyy"), "")),
+                            EscapeCsv(If(p.ClosingDate.HasValue, p.ClosingDate.Value.ToString("MMM dd, yyyy"), "")),
+                            EscapeCsv(p.ABC.ToString("N0")),
+                            EscapeCsv(p.BidRFQOffer.ToString("N0")),
+                            EscapeCsv(If(p.ReceiveDate.HasValue, p.ReceiveDate.Value.ToString("MMM dd, yyyy"), "")),
+                            EscapeCsv(p.ModeOfSubmission),
                             EscapeCsv(p.Status),
-                            EscapeCsv(p.Customer),
-                            EscapeCsv(p.Budget.ToString()),
-                            EscapeCsv(If(p.StartDate IsNot Nothing, p.StartDate.ToString(), "")),
-                            EscapeCsv(If(p.DueDate IsNot Nothing, p.DueDate.ToString(), "")),
-                            EscapeCsv(p.AssignedToName)
+                            EscapeCsv(p.Remarks),
+                            EscapeCsv(p.AssignSales),
+                            EscapeCsv(p.Note)
                         }
                         sb.AppendLine(String.Join(",", row))
                     Next
 
                     System.IO.File.WriteAllText(sfd.FileName, sb.ToString())
-                    MessageBox.Show("Exported successfully! You can now open this file in Excel.", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                    MessageBox.Show("Exported successfully! You can now open this file in Excel.",
+                                    "Success", MessageBoxButton.OK, MessageBoxImage.Information)
 
                 Catch ex As Exception
-                    MessageBox.Show("Error exporting data: " & ex.Message, "Export Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    MessageBox.Show("Error exporting data: " & ex.Message,
+                                    "Export Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 End Try
             End If
         End Sub

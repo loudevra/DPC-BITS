@@ -14,91 +14,155 @@ Namespace DPC.Views.Project
     Partial Public Class AddProject1
         Inherits UserControl
 
-        Private startDateViewModel As New CalendarController.SingleCalendar()
-        Private dueDateViewModel As New CalendarController.SingleCalendar()
-
-        ' Store EmployeeID for saving (fits VARCHAR(20))
-        Private AssignedEmployeeID As String = Nothing
+        Private dateViewModel As New CalendarController.SingleCalendar()
+        Private preBidDateViewModel As New CalendarController.SingleCalendar()
+        Private closingDateViewModel As New CalendarController.SingleCalendar()
+        Private receiveDateViewModel As New CalendarController.SingleCalendar()
 
         ' =========================================================
         ' 1. INTERNAL MEMORY (Keeps data alive across tabs)
         ' =========================================================
-        Private Shared _savedProjectName As String = ""
-        Private Shared _savedCustomer As String = ""
-        Private Shared _savedBudget As String = ""
+        Private Shared _savedDate As DateTime? = Nothing
+        Private Shared _savedReferenceNumber As String = ""
+        Private Shared _savedProjectTitle As String = ""
+        Private Shared _savedCategoryIndex As Integer = -1
+        Private Shared _savedProjectTypeIndex As Integer = -1
+        Private Shared _savedContactPerson As String = ""
+        Private Shared _savedContactNumber As String = ""
+        Private Shared _savedEmailAddress As String = ""
+        Private Shared _savedAreaOfDelivery As String = ""
+        Private Shared _savedPreBidDate As DateTime? = Nothing
+        Private Shared _savedClosingDate As DateTime? = Nothing
+        Private Shared _savedABC As String = ""
+        Private Shared _savedBidRFQOffer As String = ""
+        Private Shared _savedReceiveDate As DateTime? = Nothing
+        Private Shared _savedModeIndex As Integer = -1
         Private Shared _savedStatusIndex As Integer = -1
-        Private Shared _savedStartDate As DateTime? = Nothing
-        Private Shared _savedDueDate As DateTime? = Nothing
-        Private Shared _savedDueDateOnlyChecked As Boolean = True
+        Private Shared _savedRemarksIndex As Integer = -1
+        Private Shared _savedAssignSalesIndex As Integer = -1
+        Private Shared _savedBidDocsLink As String = ""
         Private Shared _savedNote As String = ""
 
         Public Sub New()
             InitializeComponent()
             SetupDatePickers()
+            RestoreFields()
+            WireAutoSaveHandlers()
 
-            Dim statuses As New List(Of StatusItem) From {
-                New StatusItem With {.Label = "Waiting", .Color = New SolidColorBrush(Color.FromRgb(229, 209, 142))},
-                New StatusItem With {.Label = "Processing", .Color = New SolidColorBrush(Color.FromRgb(134, 188, 213))},
-                New StatusItem With {.Label = "Solved", .Color = New SolidColorBrush(Color.FromRgb(137, 172, 116))},
-                New StatusItem With {.Label = "Cancelled", .Color = New SolidColorBrush(Color.FromRgb(230, 94, 94))}
-            }
+            AddHandler Me.Loaded, AddressOf AddProject1_Loaded
+        End Sub
 
-            cmbStatus.ItemsSource = statuses
 
-            ' 2. RESTORE DATA FROM MEMORY
-            txtName.Text = _savedProjectName
-            txtCustomer.Text = _savedCustomer
-            txtBudget.Text = _savedBudget
+
+        ' =========================================================
+        ' SETUP DATE PICKERS
+        ' =========================================================
+        Public Sub SetupDatePickers()
+            DatePicker.DataContext = dateViewModel
+            DateButton.DataContext = dateViewModel
+
+            PreBidDatePicker.DataContext = preBidDateViewModel
+            PreBidDateButton.DataContext = preBidDateViewModel
+
+            ClosingDatePicker.DataContext = closingDateViewModel
+            ClosingDateButton.DataContext = closingDateViewModel
+
+            ReceiveDatePicker.DataContext = receiveDateViewModel
+            ReceiveDateButton.DataContext = receiveDateViewModel
+        End Sub
+
+        ' =========================================================
+        ' 2. RESTORE DATA FROM MEMORY
+        ' =========================================================
+        Private Sub RestoreFields()
+            DatePicker.SelectedDate = _savedDate
+            dateViewModel.SelectedDate = _savedDate
+
+            txtReferenceNumber.Text = _savedReferenceNumber
+            txtProjectTitle.Text = _savedProjectTitle
+            cmbCategory.SelectedIndex = _savedCategoryIndex
+            cmbProjectType.SelectedIndex = _savedProjectTypeIndex
+            txtContactPerson.Text = _savedContactPerson
+            txtContactNumber.Text = _savedContactNumber
+            txtEmailAddress.Text = _savedEmailAddress
+            txtAreaOfDelivery.Text = _savedAreaOfDelivery
+
+            PreBidDatePicker.SelectedDate = _savedPreBidDate
+            preBidDateViewModel.SelectedDate = _savedPreBidDate
+
+            ClosingDatePicker.SelectedDate = _savedClosingDate
+            closingDateViewModel.SelectedDate = _savedClosingDate
+
+            txtABC.Text = _savedABC
+            txtBidRFQOffer.Text = _savedBidRFQOffer
+
+            ReceiveDatePicker.SelectedDate = _savedReceiveDate
+            receiveDateViewModel.SelectedDate = _savedReceiveDate
+
+            cmbModeOfSubmission.SelectedIndex = _savedModeIndex
             cmbStatus.SelectedIndex = _savedStatusIndex
-
-            StartDatePicker.SelectedDate = _savedStartDate
-            startDateViewModel.SelectedDate = _savedStartDate
-
-            DueDatePicker.SelectedDate = _savedDueDate
-            dueDateViewModel.SelectedDate = _savedDueDate
-
-            RadBtnDueDateOnly.IsChecked = _savedDueDateOnlyChecked
-            RadBtnStartDueDate.IsChecked = Not _savedDueDateOnlyChecked
+            cmbRemarks.SelectedIndex = _savedRemarksIndex
+            cmbAssignSales.SelectedIndex = _savedAssignSalesIndex
 
             If Not String.IsNullOrWhiteSpace(_savedNote) Then
                 EditorBox.Document.Blocks.Clear()
                 EditorBox.Document.Blocks.Add(New Paragraph(New Run(_savedNote)))
             End If
-
-            ' 3. AUTO-SAVE HANDLERS (Added AFTER restoring to prevent overwriting)
-            AddHandler txtName.TextChanged, AddressOf SaveTextToMemory
-            AddHandler txtCustomer.TextChanged, AddressOf SaveTextToMemory
-            AddHandler txtBudget.TextChanged, AddressOf SaveTextToMemory
-            AddHandler cmbStatus.SelectionChanged, AddressOf SaveComboToMemory
-            AddHandler StartDatePicker.SelectedDateChanged, AddressOf SaveDatesToMemory
-            AddHandler DueDatePicker.SelectedDateChanged, AddressOf SaveDatesToMemory
-            AddHandler RadBtnDueDateOnly.Checked, AddressOf SaveRadioToMemory
-            AddHandler RadBtnStartDueDate.Checked, AddressOf SaveRadioToMemory
-            AddHandler EditorBox.TextChanged, AddressOf SaveEditorToMemory
-
-            AddHandler Me.Loaded, AddressOf AddProject1_Loaded
         End Sub
 
         ' =========================================================
-        ' MEMORY MANAGEMENT (Auto-saving as you type)
+        ' 3. WIRE AUTO-SAVE HANDLERS (after restoring to avoid overwrite)
+        ' =========================================================
+        Private Sub WireAutoSaveHandlers()
+            AddHandler DatePicker.SelectedDateChanged, AddressOf SaveDateToMemory
+            AddHandler txtReferenceNumber.TextChanged, AddressOf SaveTextToMemory
+            AddHandler txtProjectTitle.TextChanged, AddressOf SaveTextToMemory
+            AddHandler cmbCategory.SelectionChanged, AddressOf SaveComboToMemory
+            AddHandler cmbProjectType.SelectionChanged, AddressOf SaveComboToMemory
+            AddHandler txtContactPerson.TextChanged, AddressOf SaveTextToMemory
+            AddHandler txtContactNumber.TextChanged, AddressOf SaveTextToMemory
+            AddHandler txtEmailAddress.TextChanged, AddressOf SaveTextToMemory
+            AddHandler txtAreaOfDelivery.TextChanged, AddressOf SaveTextToMemory
+            AddHandler PreBidDatePicker.SelectedDateChanged, AddressOf SaveDateToMemory
+            AddHandler ClosingDatePicker.SelectedDateChanged, AddressOf SaveDateToMemory
+            AddHandler txtABC.TextChanged, AddressOf SaveTextToMemory
+            AddHandler txtBidRFQOffer.TextChanged, AddressOf SaveTextToMemory
+            AddHandler ReceiveDatePicker.SelectedDateChanged, AddressOf SaveDateToMemory
+            AddHandler cmbModeOfSubmission.SelectionChanged, AddressOf SaveComboToMemory
+            AddHandler cmbStatus.SelectionChanged, AddressOf SaveComboToMemory
+            AddHandler cmbRemarks.SelectionChanged, AddressOf SaveComboToMemory
+            AddHandler cmbAssignSales.SelectionChanged, AddressOf SaveComboToMemory
+            AddHandler EditorBox.TextChanged, AddressOf SaveEditorToMemory
+        End Sub
+
+        ' =========================================================
+        ' MEMORY SAVERS
         ' =========================================================
         Private Sub SaveTextToMemory(sender As Object, e As TextChangedEventArgs)
-            _savedProjectName = txtName.Text
-            _savedCustomer = txtCustomer.Text
-            _savedBudget = txtBudget.Text
+            _savedReferenceNumber = txtReferenceNumber.Text
+            _savedProjectTitle = txtProjectTitle.Text
+            _savedContactPerson = txtContactPerson.Text
+            _savedContactNumber = txtContactNumber.Text
+            _savedEmailAddress = txtEmailAddress.Text
+            _savedAreaOfDelivery = txtAreaOfDelivery.Text
+            _savedABC = txtABC.Text
+            _savedBidRFQOffer = txtBidRFQOffer.Text
         End Sub
 
         Private Sub SaveComboToMemory(sender As Object, e As SelectionChangedEventArgs)
+            _savedCategoryIndex = cmbCategory.SelectedIndex
+            _savedProjectTypeIndex = cmbProjectType.SelectedIndex
+            _savedModeIndex = cmbModeOfSubmission.SelectedIndex
             _savedStatusIndex = cmbStatus.SelectedIndex
+            _savedRemarksIndex = cmbRemarks.SelectedIndex
+            _savedAssignSalesIndex = cmbAssignSales.SelectedIndex
         End Sub
 
-        Private Sub SaveDatesToMemory(sender As Object, e As SelectionChangedEventArgs)
-            _savedStartDate = StartDatePicker.SelectedDate
-            _savedDueDate = DueDatePicker.SelectedDate
-        End Sub
-
-        Private Sub SaveRadioToMemory(sender As Object, e As RoutedEventArgs)
-            _savedDueDateOnlyChecked = RadBtnDueDateOnly.IsChecked.GetValueOrDefault(True)
+        Private Sub SaveDateToMemory(sender As Object, e As SelectionChangedEventArgs)
+            _savedDate = DatePicker.SelectedDate
+            _savedPreBidDate = PreBidDatePicker.SelectedDate
+            _savedClosingDate = ClosingDatePicker.SelectedDate
+            _savedReceiveDate = ReceiveDatePicker.SelectedDate
         End Sub
 
         Private Sub SaveEditorToMemory(sender As Object, e As TextChangedEventArgs)
@@ -106,163 +170,44 @@ Namespace DPC.Views.Project
         End Sub
 
         ' =========================================================
-        ' EXISTING LOGIC BELOW
+        ' LOADED — nothing to auto-fill since Assign Sales is now a dropdown
         ' =========================================================
-
         Private Sub AddProject1_Loaded(sender As Object, e As RoutedEventArgs)
-            ' Display full name (whatever sidebar cache has)
-            txtAssignTo.Text = CacheOnLoggedInName
-            ' Resolve EmployeeID to save
-            ResolveAssignedEmployeeID()
+            ' No auto-fill needed; cmbAssignSales is user-selected
         End Sub
 
-        ' Prefer Email; fallback to Name.
-        Private Sub ResolveAssignedEmployeeID()
-            AssignedEmployeeID = Nothing
-
-            Dim email As String = CacheOnLoggedInEmail
-            Dim nm As String = CacheOnLoggedInName
-
-            If String.IsNullOrWhiteSpace(email) AndAlso String.IsNullOrWhiteSpace(nm) Then Return
-
-            Try
-                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                    conn.Open()
-
-                    If Not String.IsNullOrWhiteSpace(email) Then
-                        Dim q1 As String = "SELECT EmployeeID FROM employee WHERE Email = @e LIMIT 1"
-                        Using cmd As New MySqlCommand(q1, conn)
-                            cmd.Parameters.AddWithValue("@e", email.Trim())
-                            Dim result = cmd.ExecuteScalar()
-                            If result IsNot Nothing AndAlso result IsNot DBNull.Value Then
-                                AssignedEmployeeID = result.ToString()
-                                Return
-                            End If
-                        End Using
-                    End If
-
-                    If Not String.IsNullOrWhiteSpace(nm) Then
-                        Dim q2 As String = "SELECT EmployeeID FROM employee WHERE Name = @n LIMIT 1"
-                        Using cmd As New MySqlCommand(q2, conn)
-                            cmd.Parameters.AddWithValue("@n", nm.Trim())
-                            Dim result = cmd.ExecuteScalar()
-                            If result IsNot Nothing AndAlso result IsNot DBNull.Value Then
-                                AssignedEmployeeID = result.ToString()
-                                Return
-                            End If
-                        End Using
-                    End If
-                End Using
-            Catch ex As Exception
-                ' optional: MessageBox.Show(ex.Message)
-            End Try
-        End Sub
-
-        Private Sub TxtToUpper_TextChanged(sender As Object, e As TextChangedEventArgs) Handles txtName.TextChanged
+        ' =========================================================
+        ' TO-UPPER HANDLER (TextBoxes that need uppercase)
+        ' =========================================================
+        Private Sub TxtToUpper_TextChanged(sender As Object, e As TextChangedEventArgs)
             Dim tb = TryCast(sender, TextBox)
             If tb Is Nothing Then Return
 
-            Dim originalSelectionStart = tb.SelectionStart
-            Dim originalSelectionLength = tb.SelectionLength
-            Dim originalText = tb.Text
+            Dim caretPos As Integer = tb.SelectionStart
+            Dim upper As String = tb.Text.ToUpperInvariant()
 
-            Dim upperText = originalText.ToUpperInvariant()
-
-            If Not String.Equals(originalText, upperText, StringComparison.Ordinal) Then
+            If Not String.Equals(tb.Text, upper, StringComparison.Ordinal) Then
                 RemoveHandler tb.TextChanged, AddressOf TxtToUpper_TextChanged
-                tb.Text = upperText
-                tb.SelectionStart = Math.Min(originalSelectionStart, tb.Text.Length)
-                tb.SelectionLength = originalSelectionLength
+                tb.Text = upper
+                tb.SelectionStart = Math.Min(caretPos, tb.Text.Length)
                 AddHandler tb.TextChanged, AddressOf TxtToUpper_TextChanged
             End If
         End Sub
 
-        Public Sub SetupDatePickers()
-            StartDatePicker.DataContext = startDateViewModel
-            StartDateButton.DataContext = startDateViewModel
-
-            DueDatePicker.DataContext = dueDateViewModel
-            DueDateButton.DataContext = dueDateViewModel
-        End Sub
-
-        Private Sub Button_Click_1(sender As Object, e As RoutedEventArgs)
-            ' 1. Validations
-            If String.IsNullOrWhiteSpace(txtName.Text) Then
-                MessageBox.Show("Project Name is required.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning)
-                Return
-            End If
-
-            ' Ensure we have the Employee ID
-            If String.IsNullOrWhiteSpace(AssignedEmployeeID) Then
-                ResolveAssignedEmployeeID()
-            End If
-
-            ' 2. Data Preparation
-            Dim noteText As String = New TextRange(EditorBox.Document.ContentStart, EditorBox.Document.ContentEnd).Text.Trim()
-            Dim selectedStatus = TryCast(cmbStatus.SelectedItem, StatusItem)
-            Dim rawBudget As Long
-            Long.TryParse(txtBudget.Text.Replace(",", ""), rawBudget)
-
-            Dim proj As New DPC.Data.Model.Project With {
-                .ProjectName = txtName.Text,
-                .Status = If(selectedStatus IsNot Nothing, selectedStatus.Label, Nothing),
-                .Customer = txtCustomer.Text,
-                .Budget = rawBudget,
-                .StartDate = StartDatePicker.SelectedDate,
-                .DueDate = DueDatePicker.SelectedDate,
-                .CalculationMode = If(RadBtnDueDateOnly.IsChecked, "Due Date Only", "Start to Due Date"),
-                .LinkToCalendar = False,
-                .AssignedTo = AssignedEmployeeID,
-                .Note = noteText
-            }
-
-            ' 3. Save to Database
-            Dim success As Boolean = DPC.Data.Controllers.ProjectController.CreateProject(proj)
-
-            ' 4. Post-Save Logic
-            If success Then
-                MessageBox.Show("Project added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
-
-                ' IMPORTANT: Clear the shared memory so the next "Add Project" starts fresh
-                ClearFields()
-
-                ' NAVIGATE BACK TO THE PROJECT LIST
-                ' Using your ViewLoader helper
-                ViewLoader.DynamicView.NavigateToView("manageproject", Me)
+        ' =========================================================
+        ' NUMBER ONLY
+        ' =========================================================
+        Private Sub txtZipCode_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
+            ' This only allows digits (0-9)
+            ' If the character typed is NOT a digit, we set e.Handled to True to block it
+            If Not Char.IsDigit(e.Text, e.Text.Length - 1) Then
+                e.Handled = True
             End If
         End Sub
 
-        Private Sub ClearFields()
-            ' Clear UI
-            txtName.Clear()
-            txtCustomer.Clear()
-            txtBudget.Clear()
-            cmbStatus.SelectedIndex = -1
-
-            startDateViewModel.SelectedDate = Nothing
-            dueDateViewModel.SelectedDate = Nothing
-            StartDatePicker.SelectedDate = Nothing
-            DueDatePicker.SelectedDate = Nothing
-
-            EditorBox.Document.Blocks.Clear()
-            RadBtnDueDateOnly.IsChecked = True
-
-            txtAssignTo.Text = CacheOnLoggedInName
-            ResolveAssignedEmployeeID()
-
-            ' Clear Local Shared Memory
-            _savedProjectName = ""
-            _savedCustomer = ""
-            _savedBudget = ""
-            _savedStatusIndex = -1
-            _savedStartDate = Nothing
-            _savedDueDate = Nothing
-            _savedDueDateOnlyChecked = True
-            _savedNote = ""
-
-            txtName.Focus()
-        End Sub
-
+        ' =========================================================
+        ' BUDGET / NUMERIC FORMATTER
+        ' =========================================================
         Private Sub txtBudget_TextChanged(sender As Object, e As TextChangedEventArgs)
             Dim tb = TryCast(sender, TextBox)
             If tb Is Nothing Then Return
@@ -278,8 +223,7 @@ Namespace DPC.Views.Project
                 Dim formatted As String = number.ToString("N0")
                 Dim caretOffset As Integer = tb.Text.Length - tb.CaretIndex
                 tb.Text = formatted
-                Dim newCaret As Integer = Math.Max(0, formatted.Length - caretOffset)
-                tb.CaretIndex = newCaret
+                tb.CaretIndex = Math.Max(0, formatted.Length - caretOffset)
             Else
                 If tb.Text.Length > 0 Then
                     tb.Text = tb.Text.Remove(tb.Text.Length - 1)
@@ -291,53 +235,179 @@ Namespace DPC.Views.Project
         End Sub
 
         ' =========================================================
-        ' DATE PICKER CLICK HANDLERS (With Past-Date Restrictions)
+        ' DATE PICKER CLICK HANDLERS
         ' =========================================================
-        Private Sub StartDateButton_Click(sender As Object, e As RoutedEventArgs) Handles StartDateButton.Click
-            Dim minDate As DateTime = DateTime.Today
-            If StartDatePicker.SelectedDate.HasValue AndAlso StartDatePicker.SelectedDate.Value < DateTime.Today Then
-                minDate = StartDatePicker.SelectedDate.Value
-            End If
-
-            StartDatePicker.DisplayDateStart = minDate
-            StartDatePicker.IsDropDownOpen = True
+        Private Sub DateButton_Click(sender As Object, e As RoutedEventArgs) Handles DateButton.Click
+            DatePicker.DisplayDateStart = DateTime.Today
+            DatePicker.IsDropDownOpen = True
         End Sub
 
-        Private Sub DueDateButton_Click(sender As Object, e As RoutedEventArgs) Handles DueDateButton.Click
-            Dim minDate As DateTime = DateTime.Today
-            If DueDatePicker.SelectedDate.HasValue AndAlso DueDatePicker.SelectedDate.Value < DateTime.Today Then
-                minDate = DueDatePicker.SelectedDate.Value
-            End If
-
-            DueDatePicker.DisplayDateStart = minDate
-            DueDatePicker.IsDropDownOpen = True
+        Private Sub PreBidDateButton_Click(sender As Object, e As RoutedEventArgs) Handles PreBidDateButton.Click
+            PreBidDatePicker.DisplayDateStart = DateTime.Today
+            PreBidDatePicker.IsDropDownOpen = True
         End Sub
 
-        Private Sub StartDatePicker_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs) Handles StartDatePicker.SelectedDateChanged
+        Private Sub ClosingDateButton_Click(sender As Object, e As RoutedEventArgs) Handles ClosingDateButton.Click
+            ClosingDatePicker.DisplayDateStart = DateTime.Today
+            ClosingDatePicker.IsDropDownOpen = True
+        End Sub
+
+        Private Sub ReceiveDateButton_Click(sender As Object, e As RoutedEventArgs) Handles ReceiveDateButton.Click
+            ReceiveDatePicker.DisplayDateStart = DateTime.Today
+            ReceiveDatePicker.IsDropDownOpen = True
+        End Sub
+
+        ' =========================================================
+        ' DATE PICKER SELECTION CHANGED HANDLERS
+        ' =========================================================
+        Private Sub DatePicker_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs) Handles DatePicker.SelectedDateChanged
+            SyncDateViewModel(sender, dateViewModel, DateButton)
+        End Sub
+
+        Private Sub PreBidDatePicker_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs) Handles PreBidDatePicker.SelectedDateChanged
+            SyncDateViewModel(sender, preBidDateViewModel, PreBidDateButton)
+        End Sub
+
+        Private Sub ClosingDatePicker_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs) Handles ClosingDatePicker.SelectedDateChanged
+            SyncDateViewModel(sender, closingDateViewModel, ClosingDateButton)
+        End Sub
+
+        Private Sub ReceiveDatePicker_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs) Handles ReceiveDatePicker.SelectedDateChanged
+            SyncDateViewModel(sender, receiveDateViewModel, ReceiveDateButton)
+        End Sub
+
+        Private Sub SyncDateViewModel(sender As Object, vm As CalendarController.SingleCalendar, btn As Button)
             Dim dp = TryCast(sender, DatePicker)
-            If dp IsNot Nothing AndAlso dp.DataContext IsNot Nothing Then
-                Dim vm = TryCast(dp.DataContext, CalendarController.SingleCalendar)
-                If vm IsNot Nothing Then
-                    vm.SelectedDate = dp.SelectedDate
-                    Dim be = BindingOperations.GetBindingExpression(StartDateButton, Button.DataContextProperty)
-                    If be IsNot Nothing Then be.UpdateTarget()
-                End If
+            If dp Is Nothing OrElse dp.DataContext Is Nothing Then Return
+            vm.SelectedDate = dp.SelectedDate
+            Dim be = BindingOperations.GetBindingExpression(btn, Button.DataContextProperty)
+            If be IsNot Nothing Then be.UpdateTarget()
+        End Sub
+
+        ' =========================================================
+        ' SAVE / SUBMIT
+        ' =========================================================
+        Private Sub Button_Click_1(sender As Object, e As RoutedEventArgs)
+            ' Validation
+            If String.IsNullOrWhiteSpace(txtProjectTitle.Text) Then
+                MessageBox.Show("Project Title is required.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning)
+                Return
+            End If
+
+            ' Get selected dropdown text values
+            Dim selectedCategory As String = GetComboText(cmbCategory)
+            Dim selectedProjectType As String = GetComboText(cmbProjectType)
+            Dim selectedMode As String = GetComboText(cmbModeOfSubmission)
+            Dim selectedStatus As String = GetComboText(cmbStatus)
+            Dim selectedRemarks As String = GetComboText(cmbRemarks)
+            Dim selectedAssignSales As String = GetComboText(cmbAssignSales)
+
+            Dim noteText As String = New TextRange(EditorBox.Document.ContentStart, EditorBox.Document.ContentEnd).Text.Trim()
+
+            Dim rawABC As Long
+            Long.TryParse(txtABC.Text.Replace(",", ""), rawABC)
+
+            Dim rawBidOffer As Long
+            Long.TryParse(txtBidRFQOffer.Text.Replace(",", ""), rawBidOffer)
+
+            Dim proj As New DPC.Data.Model.Project With {
+                .ProjectDate = DatePicker.SelectedDate,
+                .ReferenceNumber = txtReferenceNumber.Text,
+                .ProjectTitle = txtProjectTitle.Text,
+                .Category = selectedCategory,
+                .ProjectType = selectedProjectType,
+                .ContactPerson = txtContactPerson.Text,
+                .ContactNumber = txtContactNumber.Text,
+                .EmailAddress = txtEmailAddress.Text,
+                .AreaOfDelivery = txtAreaOfDelivery.Text,
+                .PreBidDate = PreBidDatePicker.SelectedDate,
+                .ClosingDate = ClosingDatePicker.SelectedDate,
+                .ABC = rawABC,
+                .BidRFQOffer = rawBidOffer,
+                .ReceiveDate = ReceiveDatePicker.SelectedDate,
+                .ModeOfSubmission = selectedMode,
+                .Status = selectedStatus,
+                .Remarks = selectedRemarks,
+                .AssignSales = selectedAssignSales,
+                .Note = noteText
+            }
+
+            Dim success As Boolean = DPC.Data.Controllers.ProjectController.CreateProject(proj)
+
+            If success Then
+                MessageBox.Show("Project added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information)
+                ClearFields()
+                ViewLoader.DynamicView.NavigateToView("manageproject", Me)
             End If
         End Sub
 
-        Private Sub DueDatePicker_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs) Handles DueDatePicker.SelectedDateChanged
-            Dim dp = TryCast(sender, DatePicker)
-            If dp IsNot Nothing AndAlso dp.DataContext IsNot Nothing Then
-                Dim vm = TryCast(dp.DataContext, CalendarController.SingleCalendar)
-                If vm IsNot Nothing Then
-                    vm.SelectedDate = dp.SelectedDate
-                    Dim be = BindingOperations.GetBindingExpression(DueDateButton, Button.DataContextProperty)
-                    If be IsNot Nothing Then be.UpdateTarget()
-                End If
-            End If
+        ' Helper to safely get ComboBox selected text
+        Private Function GetComboText(cmb As ComboBox) As String
+            If cmb.SelectedItem Is Nothing Then Return Nothing
+            Dim item = TryCast(cmb.SelectedItem, ComboBoxItem)
+            If item IsNot Nothing Then Return item.Content?.ToString()
+            Return cmb.SelectedItem.ToString()
+        End Function
+
+        ' =========================================================
+        ' CLEAR ALL FIELDS
+        ' =========================================================
+        Private Sub ClearFields()
+            ' UI
+            DatePicker.SelectedDate = Nothing
+            txtReferenceNumber.Clear()
+            txtProjectTitle.Clear()
+            cmbCategory.SelectedIndex = -1
+            cmbProjectType.SelectedIndex = -1
+            txtContactPerson.Clear()
+            txtContactNumber.Clear()
+            txtEmailAddress.Clear()
+            txtAreaOfDelivery.Clear()
+            PreBidDatePicker.SelectedDate = Nothing
+            ClosingDatePicker.SelectedDate = Nothing
+            txtABC.Clear()
+            txtBidRFQOffer.Clear()
+            ReceiveDatePicker.SelectedDate = Nothing
+            cmbModeOfSubmission.SelectedIndex = -1
+            cmbStatus.SelectedIndex = -1
+            cmbRemarks.SelectedIndex = -1
+            cmbAssignSales.SelectedIndex = -1
+            EditorBox.Document.Blocks.Clear()
+
+            ' ViewModels
+            dateViewModel.SelectedDate = Nothing
+            preBidDateViewModel.SelectedDate = Nothing
+            closingDateViewModel.SelectedDate = Nothing
+            receiveDateViewModel.SelectedDate = Nothing
+
+            ' Shared memory
+            _savedDate = Nothing
+            _savedReferenceNumber = ""
+            _savedProjectTitle = ""
+            _savedCategoryIndex = -1
+            _savedProjectTypeIndex = -1
+            _savedContactPerson = ""
+            _savedContactNumber = ""
+            _savedEmailAddress = ""
+            _savedAreaOfDelivery = ""
+            _savedPreBidDate = Nothing
+            _savedClosingDate = Nothing
+            _savedABC = ""
+            _savedBidRFQOffer = ""
+            _savedReceiveDate = Nothing
+            _savedModeIndex = -1
+            _savedStatusIndex = -1
+            _savedRemarksIndex = -1
+            _savedAssignSalesIndex = -1
+            _savedBidDocsLink = ""
+            _savedNote = ""
+
+            txtProjectTitle.Focus()
         End Sub
 
-        ' (Rich Text Editor Formatting Buttons stay the exact same as you had them)
+        ' =========================================================
+        ' RICH TEXT EDITOR FORMATTING
+        ' =========================================================
         Private Sub Format_Bold_Click(sender As Object, e As RoutedEventArgs)
             EditingCommands.ToggleBold.Execute(Nothing, EditorBox)
         End Sub
@@ -433,8 +503,7 @@ Namespace DPC.Views.Project
             If Not EditorBox.Selection.IsEmpty Then
                 Dim selectedText As String = EditorBox.Selection.Text
                 EditorBox.Selection.Text = ""
-                Dim newRun As New Run(selectedText)
-                Dim newLink As New Hyperlink(newRun)
+                Dim newLink As New Hyperlink(New Run(selectedText))
                 newLink.NavigateUri = New Uri(url)
                 AddHandler newLink.RequestNavigate, AddressOf Hyperlink_RequestNavigate
                 InsertLinkAtCaret(newLink)
@@ -447,8 +516,7 @@ Namespace DPC.Views.Project
             If EditorBox.CaretPosition.Paragraph IsNot Nothing Then
                 EditorBox.CaretPosition.Paragraph.Inlines.Add(link)
             Else
-                Dim para As New Paragraph(link)
-                EditorBox.Document.Blocks.Add(para)
+                EditorBox.Document.Blocks.Add(New Paragraph(link))
             End If
         End Sub
 
@@ -458,13 +526,13 @@ Namespace DPC.Views.Project
         End Sub
 
         Private Sub Insert_Image_Click(sender As Object, e As RoutedEventArgs)
-            Dim openFileDialog As New OpenFileDialog()
-            openFileDialog.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp;*.gif"
-            If openFileDialog.ShowDialog() = True Then
+            Dim dlg As New OpenFileDialog()
+            dlg.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp;*.gif"
+            If dlg.ShowDialog() = True Then
                 Try
                     Dim bitmap As New BitmapImage()
                     bitmap.BeginInit()
-                    bitmap.UriSource = New Uri(openFileDialog.FileName)
+                    bitmap.UriSource = New Uri(dlg.FileName)
                     bitmap.CacheOption = BitmapCacheOption.OnLoad
                     bitmap.EndInit()
 
@@ -490,21 +558,9 @@ Namespace DPC.Views.Project
         Private isFullscreen As Boolean = False
         Private Sub Toggle_Fullscreen_Click(sender As Object, e As RoutedEventArgs)
             isFullscreen = Not isFullscreen
-            If isFullscreen Then
-                EditorBox.Height = 600
-                EditorBox.VerticalScrollBarVisibility = ScrollBarVisibility.Visible
-            Else
-                EditorBox.Height = 250
-            End If
+            EditorBox.Height = If(isFullscreen, 600, 250)
+            EditorBox.VerticalScrollBarVisibility = If(isFullscreen, ScrollBarVisibility.Visible, ScrollBarVisibility.Auto)
         End Sub
 
-        Private Sub cmbStatus_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles cmbStatus.SelectionChanged
-        End Sub
-
-    End Class
-
-    Public Class StatusItem
-        Public Property Label As String
-        Public Property Color As SolidColorBrush
     End Class
 End Namespace

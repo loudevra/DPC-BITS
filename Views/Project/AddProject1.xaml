@@ -1,6 +1,6 @@
-﻿<!-- AddProject1.xaml (FULL FILE, UPDATED)
-     - Removes the Assign-to dropdown
-     - Displays FULL logged-in name in a read-only TextBox
+﻿<!-- AddProject1.xaml (UPDATED v3)
+     - Fields reordered logically to mirror spreadsheet column order
+     - Dropdowns added for: Category, Project Type, Mode of Submission, Status, Remarks
 -->
 <UserControl x:Class="DPC.Views.Project.AddProject1"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -15,6 +15,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!-- Header -->
         <Border Grid.Row="0" Background="#D9D9D9" Padding="20,10" Panel.ZIndex="10">
             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                 <materialDesign:PackIcon Kind="FilePlusOutline" Width="40" Height="40" Margin="0,0,15,0" Foreground="#474747" />
@@ -29,9 +30,69 @@
 
             <StackPanel Width="800" Margin="40" HorizontalAlignment="Center">
 
-                <TextBlock Text="Project Name:" Margin="0,0,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                <!-- ══════════════════════════════════════
+                     SECTION 1 — Basic Info
+                ══════════════════════════════════════ -->
+
+                <!-- ── ROW: Date | Reference Number ── -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Date -->
+                    <TextBlock Text="Date:" Grid.Column="0" Margin="0,0,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Grid.Column="0" Margin="0,26,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="35"/>
+                            </Grid.ColumnDefinitions>
+                            <DatePicker x:Name="DatePicker" Style="{StaticResource SingleDatePickerStyle}"
+                                        SelectedDateChanged="DatePicker_SelectedDateChanged"
+                                        Opacity="0" IsHitTestVisible="False"/>
+                            <materialDesign:PackIcon Kind="Calendar" Width="25" Height="25"
+                                                     Foreground="#474747" VerticalAlignment="Center"
+                                                     HorizontalAlignment="Left" Grid.Column="1"/>
+                            <Button x:Name="DateButton" Grid.Column="0" Style="{StaticResource DateButtonStyle}"
+                                    Click="DateButton_Click" HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left" Margin="10,0,0,0">
+                                <TextBlock Text="{Binding ElementName=DatePicker, Path=SelectedDate,
+                                           StringFormat='{}{0:MMM dd, yyyy}', TargetNullValue='Select date'}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ElementName=DatePicker, Path=SelectedDate}" Value="{x:Null}">
+                                                    <Setter Property="Foreground" Value="#999"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Button>
+                        </Grid>
+                    </Border>
+
+                    <!-- Reference Number -->
+                    <TextBlock Text="Reference Number:" Grid.Column="2" Margin="0,0,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Grid.Column="2" Margin="0,26,0,0">
+                        <TextBox x:Name="txtReferenceNumber"
+                                 Height="40"
+                                 Style="{StaticResource RoundedTextboxStyle}"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalContentAlignment="Center"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 TextChanged="TxtToUpper_TextChanged"/>
+                    </Border>
+                </Grid>
+
+                <!-- ── Project Title (full width) ── -->
+                <TextBlock Text="Project Title:" Margin="0,20,0,10" FontWeight="SemiBold" Foreground="#474747"/>
                 <Border Style="{StaticResource RoundedBorderStyle}">
-                    <TextBox x:Name="txtName"
+                    <TextBox x:Name="txtProjectTitle"
                              Height="40"
                              Style="{StaticResource RoundedTextboxStyle}"
                              HorizontalAlignment="Stretch"
@@ -41,149 +102,364 @@
                              TextChanged="TxtToUpper_TextChanged"/>
                 </Border>
 
-                <TextBlock Text="Status:" Margin="0,20,0,10" FontWeight="SemiBold" Foreground="#474747"/>
-                <Border Style="{StaticResource RoundedBorderStyle}">
-                    <ComboBox x:Name="cmbStatus"
-                              Style="{StaticResource RoundedComboBoxStyle}"
-                              HorizontalAlignment="Stretch"
-                              Height="40"
-                              SelectedIndex="0"
-                              Background="Transparent"
-                              BorderThickness="0">
-
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <Ellipse Width="10" Height="10"
-                                             Fill="{Binding Color}"
-                                             Margin="4,0,10,0"
-                                             VerticalAlignment="Center"/>
-                                    <TextBlock Text="{Binding Label}"
-                                               FontFamily="Lexend"
-                                               FontSize="13"
-                                               Foreground="#474747"
-                                               VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                </Border>
-
-                <TextBlock Text="Customer:" Margin="0,20,0,10" FontWeight="SemiBold" Foreground="#474747"/>
-                <Border Style="{StaticResource RoundedBorderStyle}">
-                    <TextBox x:Name="txtCustomer"
-                             Height="40"
-                             Style="{StaticResource RoundedTextboxStyle}"
-                             HorizontalAlignment="Stretch"
-                             VerticalContentAlignment="Center"
-                             Background="Transparent"
-                             BorderThickness="0"
-                             TextChanged="TxtToUpper_TextChanged"/>
-                </Border>
-
-                <TextBlock Text="ABC:" Margin="0,20,0,10" FontWeight="SemiBold" Foreground="#474747"/>
-                <Border Style="{StaticResource RoundedBorderStyle}">
-                    <TextBox x:Name="txtBudget"
-                             Height="40"
-                             Style="{StaticResource RoundedTextboxStyle}"
-                             HorizontalAlignment="Stretch"
-                             VerticalContentAlignment="Center"
-                             Background="Transparent"
-                             BorderThickness="0"
-                             TextChanged="txtBudget_TextChanged"/>
-                </Border>
-
+                <!-- ── ROW: Category (dropdown) | Project Type (dropdown) ── -->
                 <Grid Margin="0,20,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="30"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
 
-                    <TextBlock Text="Start Date:" Grid.Column="0" Grid.Row="0" Margin="0,0,0,10" FontWeight="SemiBold" Foreground="#474747"/>
-                    <Border Style="{StaticResource RoundedBorderStyle}" Grid.Column="0" Grid.Row="1">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="35"/>
-                            </Grid.ColumnDefinitions>
-                            <DatePicker x:Name="StartDatePicker" Style="{StaticResource SingleDatePickerStyle}" SelectedDateChanged="StartDatePicker_SelectedDateChanged" Opacity="0" IsHitTestVisible="False"/>
-                            <materialDesign:PackIcon Kind="Calendar" Width="25" Height="25" Foreground="#474747" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="1"/>
-                            <Button x:Name="StartDateButton" Grid.Column="0" Style="{StaticResource DateButtonStyle}" Click="StartDateButton_Click" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Margin="10,0,0,0">
-                                <TextBlock Text="{Binding ElementName=StartDatePicker, Path=SelectedDate, StringFormat='{}{0:MMM dd, yyyy}', TargetNullValue='Select date'}">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding ElementName=StartDatePicker, Path=SelectedDate}" Value="{x:Null}">
-                                                    <Setter Property="Foreground" Value="#999"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-                            </Button>
-                        </Grid>
+                    <!-- Category -->
+                    <TextBlock Text="Category:" Grid.Column="0" Margin="0,0,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Grid.Column="0" Margin="0,26,0,0">
+                        <ComboBox x:Name="cmbCategory"
+                                  Style="{StaticResource RoundedComboBoxStyle}"
+                                  HorizontalAlignment="Stretch"
+                                  Height="40"
+                                  Background="Transparent"
+                                  BorderThickness="0">
+                            <ComboBoxItem Content="DESKTOP COMPUTER"/>
+                            <ComboBoxItem Content="CCTV"/>
+                            <ComboBoxItem Content="NETWORK INFRA"/>
+                            <ComboBoxItem Content="FDAS"/>
+                            <ComboBoxItem Content="PUBLIC ADDRESS"/>
+                            <ComboBoxItem Content="DOORLOCK"/>
+                            <ComboBoxItem Content="ICT EQUIPMENTS (MIXED)"/>
+                            <ComboBoxItem Content="PROJECTOR"/>
+                        </ComboBox>
                     </Border>
 
-                    <TextBlock Text="Due Date:" Grid.Column="2" Grid.Row="0" Margin="0,0,0,10" FontWeight="SemiBold" Foreground="#474747"/>
-                    <Border Style="{StaticResource RoundedBorderStyle}" Grid.Column="2" Grid.Row="1">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="35"/>
-                            </Grid.ColumnDefinitions>
-                            <DatePicker x:Name="DueDatePicker" Style="{StaticResource SingleDatePickerStyle}" SelectedDateChanged="DueDatePicker_SelectedDateChanged" Opacity="0" IsHitTestVisible="False"/>
-                            <materialDesign:PackIcon Kind="Calendar" Width="25" Height="25" Foreground="#474747" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="1"/>
-                            <Button x:Name="DueDateButton" Grid.Column="0" Style="{StaticResource DateButtonStyle}" Click="DueDateButton_Click" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Margin="10,0,0,0">
-                                <TextBlock Text="{Binding ElementName=DueDatePicker, Path=SelectedDate, StringFormat='{}{0:MMM dd, yyyy}', TargetNullValue='Select date'}">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding ElementName=DueDatePicker, Path=SelectedDate}" Value="{x:Null}">
-                                                    <Setter Property="Foreground" Value="#999"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-                            </Button>
-                        </Grid>
+                    <!-- Project Type -->
+                    <TextBlock Text="Project Type:" Grid.Column="2" Margin="0,0,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Grid.Column="2" Margin="0,26,0,0">
+                        <ComboBox x:Name="cmbProjectType"
+                                  Style="{StaticResource RoundedComboBoxStyle}"
+                                  HorizontalAlignment="Stretch"
+                                  Height="40"
+                                  Background="Transparent"
+                                  BorderThickness="0">
+                            <ComboBoxItem Content="BIDDING"/>
+                            <ComboBoxItem Content="RFQ"/>
+                        </ComboBox>
                     </Border>
-
-                    <Button Style="{StaticResource RoundedButtonStyle}" Grid.Column="0" Grid.Row="2" Margin="0,20,0,0" HorizontalAlignment="Stretch">
-                        <RadioButton x:Name="RadBtnDueDateOnly" Margin="10" GroupName="CalculationMode" IsChecked="True" Content="Due Date Only" Foreground="#474747" FontWeight="SemiBold" FontSize="14"/>
-                    </Button>
-                    <Button Style="{StaticResource RoundedButtonStyle}" Grid.Column="2" Grid.Row="2" Margin="0,20,0,0" HorizontalAlignment="Stretch">
-                        <RadioButton x:Name="RadBtnStartDueDate" Margin="10" GroupName="CalculationMode" Content="Start to Due Date" Foreground="#474747" FontWeight="SemiBold" FontSize="14"/>
-                    </Button>
-
-                    <CheckBox Content="Link to Calendar" Grid.Row="3" Grid.ColumnSpan="3" Margin="0,20,0,0" FontWeight="SemiBold" Foreground="#474747"/>
                 </Grid>
 
-                <!-- FULL NAME DISPLAY (no dropdown) -->
-                <TextBlock Text="Assign to:" Margin="0,20,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                <!-- ══════════════════════════════════════
+                     SECTION 2 — Contact Info
+                ══════════════════════════════════════ -->
+
+                <!-- ── ROW: Contact Person | Contact Number ── -->
+                <Grid Margin="0,20,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Contact Person:" Grid.Column="0" Margin="0,0,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Grid.Column="0" Margin="0,26,0,0">
+                        <TextBox x:Name="txtContactPerson"
+                                 Height="40"
+                                 Style="{StaticResource RoundedTextboxStyle}"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalContentAlignment="Center"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 TextChanged="TxtToUpper_TextChanged"/>
+                    </Border>
+
+                    <TextBlock Text="Contact Number:" Grid.Column="2" Margin="0,0,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Grid.Column="2" Margin="0,26,0,0">
+                        <TextBox x:Name="txtContactNumber"
+                                 Height="40"
+                                 Style="{StaticResource RoundedTextboxStyle}"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalContentAlignment="Center"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 TextChanged="TxtToUpper_TextChanged"
+                                 PreviewTextInput="txtZipCode_PreviewTextInput"
+/>
+                    </Border>
+                </Grid>
+
+                <!-- ── Email Address ── -->
+                <TextBlock Text="Email Address:" Margin="0,20,0,10" FontWeight="SemiBold" Foreground="#474747"/>
                 <Border Style="{StaticResource RoundedBorderStyle}">
-                    <TextBox x:Name="txtAssignTo"
+                    <TextBox x:Name="txtEmailAddress"
+                             Height="40"
+                             Style="{StaticResource RoundedTextboxStyle}"
+                             HorizontalAlignment="Stretch"
+                             VerticalContentAlignment="Center"
+                             Background="Transparent"
+                             BorderThickness="0"/>
+                </Border>
+
+                <!-- ── Area of Delivery ── -->
+                <TextBlock Text="Area of Delivery:" Margin="0,20,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                <Border Style="{StaticResource RoundedBorderStyle}">
+                    <TextBox x:Name="txtAreaOfDelivery"
                              Height="40"
                              Style="{StaticResource RoundedTextboxStyle}"
                              HorizontalAlignment="Stretch"
                              VerticalContentAlignment="Center"
                              Background="Transparent"
                              BorderThickness="0"
-                             IsReadOnly="True"
-                             Foreground="#474747"/>
+                             TextChanged="TxtToUpper_TextChanged"/>
                 </Border>
 
-                <TextBlock Text="Note:" Margin="0,20,0,5" FontWeight="SemiBold" Foreground="#474747"/>
+                <!-- ══════════════════════════════════════
+                     SECTION 3 — Dates &amp; Financials
+                ══════════════════════════════════════ -->
+
+                <!-- ── ROW: Pre-Bid Date and Time | Closing Date ── -->
+                <Grid Margin="0,20,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Pre-Bid Date and Time -->
+                    <TextBlock Text="Pre-Bid Date and Time:" Grid.Column="0" Margin="0,0,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Grid.Column="0" Margin="0,26,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="35"/>
+                            </Grid.ColumnDefinitions>
+                            <DatePicker x:Name="PreBidDatePicker" Style="{StaticResource SingleDatePickerStyle}"
+                                        SelectedDateChanged="PreBidDatePicker_SelectedDateChanged"
+                                        Opacity="0" IsHitTestVisible="False"/>
+                            <materialDesign:PackIcon Kind="CalendarClock" Width="25" Height="25"
+                                                     Foreground="#474747" VerticalAlignment="Center"
+                                                     HorizontalAlignment="Left" Grid.Column="1"/>
+                            <Button x:Name="PreBidDateButton" Grid.Column="0" Style="{StaticResource DateButtonStyle}"
+                                    Click="PreBidDateButton_Click" HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left" Margin="10,0,0,0">
+                                <TextBlock Text="{Binding ElementName=PreBidDatePicker, Path=SelectedDate,
+                                           StringFormat='{}{0:MMM dd, yyyy}', TargetNullValue='Select date &amp; time'}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ElementName=PreBidDatePicker, Path=SelectedDate}" Value="{x:Null}">
+                                                    <Setter Property="Foreground" Value="#999"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Button>
+                        </Grid>
+                    </Border>
+
+                    <!-- Closing Date -->
+                    <TextBlock Text="Closing Date:" Grid.Column="2" Margin="0,0,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Grid.Column="2" Margin="0,26,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="35"/>
+                            </Grid.ColumnDefinitions>
+                            <DatePicker x:Name="ClosingDatePicker" Style="{StaticResource SingleDatePickerStyle}"
+                                        SelectedDateChanged="ClosingDatePicker_SelectedDateChanged"
+                                        Opacity="0" IsHitTestVisible="False"/>
+                            <materialDesign:PackIcon Kind="Calendar" Width="25" Height="25"
+                                                     Foreground="#474747" VerticalAlignment="Center"
+                                                     HorizontalAlignment="Left" Grid.Column="1"/>
+                            <Button x:Name="ClosingDateButton" Grid.Column="0" Style="{StaticResource DateButtonStyle}"
+                                    Click="ClosingDateButton_Click" HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left" Margin="10,0,0,0">
+                                <TextBlock Text="{Binding ElementName=ClosingDatePicker, Path=SelectedDate,
+                                           StringFormat='{}{0:MMM dd, yyyy}', TargetNullValue='Select date'}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ElementName=ClosingDatePicker, Path=SelectedDate}" Value="{x:Null}">
+                                                    <Setter Property="Foreground" Value="#999"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Button>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <!-- ── ROW: ABC | Bid/RFQ Offer ── -->
+                <Grid Margin="0,20,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- ABC -->
+                    <TextBlock Text="ABC:" Grid.Column="0" Margin="0,0,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Grid.Column="0" Margin="0,26,0,0">
+                        <TextBox x:Name="txtABC"
+                                 Height="40"
+                                 Style="{StaticResource RoundedTextboxStyle}"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalContentAlignment="Center"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 TextChanged="txtBudget_TextChanged"/>
+                    </Border>
+
+                    <!-- Bid/RFQ Offer -->
+                    <TextBlock Text="Bid/RFQ Offer:" Grid.Column="2" Margin="0,0,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Grid.Column="2" Margin="0,26,0,0">
+                        <TextBox x:Name="txtBidRFQOffer"
+                                 Height="40"
+                                 Style="{StaticResource RoundedTextboxStyle}"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalContentAlignment="Center"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 TextChanged="txtBudget_TextChanged"/>
+                    </Border>
+                </Grid>
+
+                <!-- ══════════════════════════════════════
+                     SECTION 4 — Submission Info
+                ══════════════════════════════════════ -->
+
+                <!-- ── ROW: Receive Date/Time | Mode of Submission (dropdown) ── -->
+                <Grid Margin="0,20,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Receive Date/Time -->
+                    <TextBlock Text="Receive Date/Time:" Grid.Column="0" Margin="0,0,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Grid.Column="0" Margin="0,26,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="35"/>
+                            </Grid.ColumnDefinitions>
+                            <DatePicker x:Name="ReceiveDatePicker" Style="{StaticResource SingleDatePickerStyle}"
+                                        SelectedDateChanged="ReceiveDatePicker_SelectedDateChanged"
+                                        Opacity="0" IsHitTestVisible="False"/>
+                            <materialDesign:PackIcon Kind="CalendarClock" Width="25" Height="25"
+                                                     Foreground="#474747" VerticalAlignment="Center"
+                                                     HorizontalAlignment="Left" Grid.Column="1"/>
+                            <Button x:Name="ReceiveDateButton" Grid.Column="0" Style="{StaticResource DateButtonStyle}"
+                                    Click="ReceiveDateButton_Click" HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Left" Margin="10,0,0,0">
+                                <TextBlock Text="{Binding ElementName=ReceiveDatePicker, Path=SelectedDate,
+                                           StringFormat='{}{0:MMM dd, yyyy}', TargetNullValue='Select date &amp; time'}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ElementName=ReceiveDatePicker, Path=SelectedDate}" Value="{x:Null}">
+                                                    <Setter Property="Foreground" Value="#999"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Button>
+                        </Grid>
+                    </Border>
+
+                    <!-- Mode of Submission -->
+                    <TextBlock Text="Mode of Submission:" Grid.Column="2" Margin="0,0,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Grid.Column="2" Margin="0,26,0,0">
+                        <ComboBox x:Name="cmbModeOfSubmission"
+                                  Style="{StaticResource RoundedComboBoxStyle}"
+                                  HorizontalAlignment="Stretch"
+                                  Height="40"
+                                  Background="Transparent"
+                                  BorderThickness="0">
+                            <ComboBoxItem Content="EMAIL"/>
+                            <ComboBoxItem Content="PHYSICAL"/>
+                            <ComboBoxItem Content="ONLINE"/>
+                            <ComboBoxItem Content="COURIER"/>
+                        </ComboBox>
+                    </Border>
+                </Grid>
+
+                <!-- ══════════════════════════════════════
+                     SECTION 5 — Status, Remarks &amp; Assignment
+                ══════════════════════════════════════ -->
+
+                <!-- ── ROW: Status (dropdown) | Remarks (dropdown) ── -->
+                <Grid Margin="0,20,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Status -->
+                    <TextBlock Text="Status:" Grid.Column="0" Margin="0,0,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Grid.Column="0" Margin="0,26,0,0">
+                        <ComboBox x:Name="cmbStatus"
+                                  Style="{StaticResource RoundedComboBoxStyle}"
+                                  HorizontalAlignment="Stretch"
+                                  Height="40"
+                                  Background="Transparent"
+                                  BorderThickness="0">
+                            <ComboBoxItem Content="AWARDED"/>
+                            <ComboBoxItem Content="COMPLETED"/>
+                            <ComboBoxItem Content="CANCELLED"/>
+                            <ComboBoxItem Content="ON-GOING"/>
+                            <ComboBoxItem Content="FOR FOLLOW-UP"/>
+                            <ComboBoxItem Content="FOR EMAIL"/>
+                        </ComboBox>
+                    </Border>
+
+                    <!-- Remarks -->
+                    <TextBlock Text="Remarks:" Grid.Column="2" Margin="0,0,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                    <Border Style="{StaticResource RoundedBorderStyle}" Grid.Column="2" Margin="0,26,0,0">
+                        <ComboBox x:Name="cmbRemarks"
+                                  Style="{StaticResource RoundedComboBoxStyle}"
+                                  HorizontalAlignment="Stretch"
+                                  Height="40"
+                                  Background="Transparent"
+                                  BorderThickness="0">
+                            <ComboBoxItem Content="DONE"/>
+                            <ComboBoxItem Content="CANCELLED"/>
+                            <ComboBoxItem Content="ON-GOING"/>
+                            <ComboBoxItem Content="RE-BID"/>
+                        </ComboBox>
+                    </Border>
+                </Grid>
+
+                <!-- ── Assign Sales (dropdown) ── -->
+                <TextBlock Text="Assign Sales:" Margin="0,20,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                <Border Style="{StaticResource RoundedBorderStyle}">
+                    <ComboBox x:Name="cmbAssignSales"
+                              Style="{StaticResource RoundedComboBoxStyle}"
+                              HorizontalAlignment="Stretch"
+                              Height="40"
+                              Background="Transparent"
+                              BorderThickness="0">
+                        <ComboBoxItem Content="CLARK"/>
+                        <ComboBoxItem Content="ALBI"/>
+                        <ComboBoxItem Content="MAE"/>
+                        <ComboBoxItem Content="PARVIT"/>
+                        <ComboBoxItem Content="ALECKS"/>
+                        <ComboBoxItem Content="ZACH"/>
+                        <ComboBoxItem Content="JOANNA"/>
+                    </ComboBox>
+                </Border>
+
+                <!-- ══════════════════════════════════════
+                     SECTION 6 — Note (Rich Text Editor)
+                ══════════════════════════════════════ -->
+
+                <TextBlock Text="Bid Docs Link:" Margin="0,20,0,5" FontWeight="SemiBold" Foreground="#474747"/>
 
                 <DockPanel LastChildFill="True" Margin="0,0,0,10">
-                    <Border DockPanel.Dock="Top" Background="#A9A9A9" Padding="4" CornerRadius="12,12,0,0" BorderThickness="1,1,1,0" BorderBrush="#545454">
+                    <Border DockPanel.Dock="Top" Background="#A9A9A9" Padding="4"
+                            CornerRadius="12,12,0,0" BorderThickness="1,1,1,0" BorderBrush="#545454">
                         <UniformGrid Columns="24">
                             <Button ToolTip="Bold" Padding="0" Click="Format_Bold_Click">
                                 <materialDesign:PackIcon Kind="FormatBold" Width="18" Height="18" Foreground="#474747"/>
@@ -203,14 +479,12 @@
                             <Button ToolTip="Superscript" Padding="0" Click="Format_Superscript_Click">
                                 <materialDesign:PackIcon Kind="FormatSuperscript" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-
                             <ComboBox x:Name="cmbFontSize" Height="22" Padding="2" FontSize="10" SelectionChanged="FontSize_SelectionChanged">
                                 <ComboBoxItem Content="14" IsSelected="True"/>
                                 <ComboBoxItem Content="16"/>
                                 <ComboBoxItem Content="18"/>
                                 <ComboBoxItem Content="24"/>
                             </ComboBox>
-
                             <Button ToolTip="Font Color" Padding="0" Click="Format_TextColor_Click">
                                 <materialDesign:PackIcon Kind="Palette" Width="18" Height="18" Foreground="#A070C0"/>
                             </Button>
@@ -220,14 +494,12 @@
                             <Button ToolTip="Clear" Padding="0" Click="Format_Clear_Click">
                                 <materialDesign:PackIcon Kind="Eraser" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-
                             <Button ToolTip="Undo" Padding="0" Command="ApplicationCommands.Undo" CommandTarget="{Binding ElementName=EditorBox}">
                                 <materialDesign:PackIcon Kind="Undo" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
                             <Button ToolTip="Redo" Padding="0" Command="ApplicationCommands.Redo" CommandTarget="{Binding ElementName=EditorBox}">
                                 <materialDesign:PackIcon Kind="Redo" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-
                             <Button ToolTip="List" Padding="0" Click="Format_List_Click">
                                 <materialDesign:PackIcon Kind="FormatListBulleted" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
@@ -243,14 +515,12 @@
                             <Button ToolTip="Justify" Padding="0" Click="Format_AlignJustify_Click">
                                 <materialDesign:PackIcon Kind="FormatAlignJustify" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-
                             <Button ToolTip="Indent" Padding="0" Click="Format_IndentInc_Click">
                                 <materialDesign:PackIcon Kind="FormatIndentIncrease" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
                             <Button ToolTip="Outdent" Padding="0" Click="Format_IndentDec_Click">
                                 <materialDesign:PackIcon Kind="FormatIndentDecrease" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
-
                             <Button ToolTip="Quote" Padding="0" Click="Insert_Quote_Click">
                                 <materialDesign:PackIcon Kind="FormatQuoteClose" Width="18" Height="18" Foreground="#474747"/>
                             </Button>
@@ -268,7 +538,8 @@
                             </Button>
                         </UniformGrid>
                     </Border>
-                    <Border Background="White" CornerRadius="0,0,12,12" BorderBrush="#545454" BorderThickness="1,0,1,1" ClipToBounds="True">
+                    <Border Background="White" CornerRadius="0,0,12,12"
+                            BorderBrush="#545454" BorderThickness="1,0,1,1" ClipToBounds="True">
                         <RichTextBox x:Name="EditorBox"
                                      IsDocumentEnabled="True"
                                      Background="White"
@@ -280,12 +551,12 @@
                     </Border>
                 </DockPanel>
 
+                <!-- ── Submit Button ── -->
                 <Grid Margin="0,30,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-
                     <Button Grid.Column="1"
                             Content="Add Project"
                             Width="140" Height="40"
@@ -302,6 +573,7 @@
                         </Button.Template>
                     </Button>
                 </Grid>
+
             </StackPanel>
         </ScrollViewer>
     </Grid>
