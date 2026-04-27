@@ -364,7 +364,7 @@
                                     <TextBlock Text="GRAND TOTAL" FontSize="18" FontWeight="Bold" Foreground="#1D3242"/>
                                     <TextBlock x:Name="txtGrandTotal" Text="₱ 0.00" FontSize="24" HorizontalAlignment="Right" FontWeight="Bold" Foreground="#1D5642"/>
                                 </Grid>
-                                <TextBlock Text="Apply Tax:" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="#474747"/>
+                                <TextBlock Text="Apply Tax:" FontWeight="SemiBold" Margin="0,0,60,0" Foreground="#474747" Height="24"/>
                                 <Border Width="56" Height="32" Background="#E0E0E0" CornerRadius="16" BorderBrush="#AEAEAE" BorderThickness="1" HorizontalAlignment="Left">
                                     <Grid>
                                         <Button x:Name="ApplyTaxToggle" 

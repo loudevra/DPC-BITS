@@ -23,6 +23,8 @@ Imports SharpCompress.Readers.Tar
 
 Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
     Public Class WalkInNewOrder
+        Private _isTaxApplied As Boolean = False
+        Private _originalGrandTotal As Decimal = 0
         ' Autocomplete
         Private rowCount As Integer = 0
         Private MyDynamicGrid As Grid
@@ -331,6 +333,19 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
         Private Sub txtReferenceNumber_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
             If Not e.Text.All(AddressOf Char.IsDigit) Then
+                e.Handled = True
+            End If
+        End Sub
+
+        Private Sub DecimalValidation_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
+            Dim txt = TryCast(sender, TextBox)
+            ' Allow digits and a single decimal point
+            Dim regex As New Regex("^[0-9.]+$")
+
+            If Not regex.IsMatch(e.Text) Then
+                e.Handled = True
+            ElseIf e.Text = "." AndAlso txt.Text.Contains(".") Then
+                ' Block if there is already a decimal point
                 e.Handled = True
             End If
         End Sub
@@ -1249,12 +1264,30 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 End If
             Next
 
-            Decimal.TryParse(txtDeliveryFee.Text.Replace("₱", "").Replace(",", "").Trim(), deliveryFee)
-            Decimal.TryParse(txtInstallationFee.Text.Replace("₱", "").Replace(",", "").Trim(), installationFee)
+            Decimal.TryParse(txtDeliveryFee.Text.Replace(",", "").Trim(), deliveryFee)
+            Decimal.TryParse(txtInstallationFee.Text.Replace(",", "").Trim(), installationFee)
+
+            lblFee.Text = deliveryFee.ToString("N2")
+            lblInstallationFee.Text = installationFee.ToString("N2")
 
             UpdateTotalTax()
             Dim rawTax = txtTotalTax.Text.Replace("₱", "").Replace(",", "").Trim()
             Decimal.TryParse(rawTax, totalTaxAmount)
+
+            Dim grandTotal = subtotalAmount + deliveryFee + installationFee
+
+            ' Store the original grand total BEFORE applying tax toggle
+            _originalGrandTotal = grandTotal
+
+            ' Display the grand total (will be updated by UpdateGrandTotalDisplay if toggle is on)
+            If _isTaxApplied Then
+                ' If tax is already applied, recalculate with the new original value
+                Dim grandTotalWithTax As Decimal = _originalGrandTotal + totalTaxAmount
+                txtGrandTotal.Text = "₱ " & grandTotalWithTax.ToString("N2")
+            Else
+                ' Otherwise just show the base grand total
+                txtGrandTotal.Text = "₱ " & grandTotal.ToString("N2")
+            End If
 
             Dim finalGrandTotal As Decimal = 0
 
@@ -1266,10 +1299,17 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
                 CostEstimateDetails.CETotalAmountCache = "₱ " & finalGrandTotal.ToString("N2")
             End If
 
+            CostEstimateDetails.CETotalAmountCache = "₱ " & finalGrandTotal.ToString("N2")
             BLSubtotalAmountCache = (subtotalAmount).ToString("F2")
-            txtGrandTotal.Text = "₱ " & finalGrandTotal.ToString("N2")
+            StatementDetails.TotalCostCache = finalGrandTotal.ToString("F2")
 
             StatementDetails.TotalCostCache = finalGrandTotal.ToString("F2")
+
+            ' Reset tax application when grand total is recalculated
+            If _isTaxApplied Then
+                _isTaxApplied = False
+                UpdateGrandTotalDisplay()
+            End If
         End Sub
 
         ' This function is for updating the value of tax whenever there is changes
@@ -1316,63 +1356,56 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             txtTotalDiscount.Text = "₱ " & totalDiscount.ToString("N2")
         End Sub
 
-        Private Sub txtDeliveryFee_TextChange(sender As Object, e As TextChangedEventArgs)
-            If Not _isInitialized Then Return
-            Dim tb = DirectCast(sender, TextBox)
+        Private Sub ApplyTaxToggle_Click(sender As Object, e As RoutedEventArgs)
+            _isTaxApplied = Not _isTaxApplied ' Toggle the state
+            UpdateGrandTotalDisplay()
+        End Sub
 
-            Dim rawInput As String = tb.Text.Replace(",", "").Trim()
-            Dim cleanInput As String = Regex.Replace(rawInput, "[^0-9]", "")
+        Private Sub UpdateGrandTotalDisplay()
+            Dim taxText = txtTotalTax.Text.Replace("₱", "").Replace(",", "").Trim()
+            Dim taxAmount As Decimal = 0
 
-            RemoveHandler tb.TextChanged, AddressOf txtDeliveryFee_TextChange
+            Decimal.TryParse(taxText, taxAmount)
 
-            If String.IsNullOrEmpty(cleanInput) Then
-                tb.Text = ""
-                lblFee.Text = "₱ 0"
+            Dim toggleButton = TryCast(ApplyTaxToggle, Button)
+
+            If _isTaxApplied Then
+                ' Switch ON - Show grand total WITH tax
+                Dim grandTotalWithTax As Decimal = _originalGrandTotal + taxAmount
+                txtGrandTotal.Text = "₱ " & grandTotalWithTax.ToString("N2")
+
+                If toggleButton IsNot Nothing Then
+                    toggleButton.Background = CType(New BrushConverter().ConvertFrom("#1D5642"), Brush) ' Green
+                    toggleButton.Margin = New Thickness(24, 2, 0, 0) ' Move circle to right
+
+                    ' Change icon to checkmark
+                    Dim icon = TryCast(toggleButton.Content, MaterialDesignThemes.Wpf.PackIcon)
+                    If icon IsNot Nothing Then
+                        icon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Check
+                    End If
+                End If
             Else
-                Dim val As Long = 0
-                If Long.TryParse(cleanInput, val) Then
-                    lblFee.Text = $"₱ {val:N0}"
+                ' Switch OFF - Show grand total WITHOUT tax
+                txtGrandTotal.Text = "₱ " & _originalGrandTotal.ToString("N2")
 
-                    Dim caretIndex = tb.CaretIndex
-                    Dim oldLength = tb.Text.Length
+                If toggleButton IsNot Nothing Then
+                    toggleButton.Background = CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush) ' Gray
+                    toggleButton.Margin = New Thickness(2, 2, 0, 0) ' Move circle to left
 
-                    tb.Text = val.ToString("N0")
-
-                    tb.CaretIndex = Math.Max(0, caretIndex + (tb.Text.Length - oldLength))
+                    ' Change icon to X
+                    Dim icon = TryCast(toggleButton.Content, MaterialDesignThemes.Wpf.PackIcon)
+                    If icon IsNot Nothing Then
+                        icon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Close
+                    End If
                 End If
             End If
+        End Sub
 
-            AddHandler tb.TextChanged, AddressOf txtDeliveryFee_TextChange
+        Private Sub txtDeliveryFee_TextChange(sender As Object, e As TextChangedEventArgs) Handles txtDeliveryFee.TextChanged
             UpdateGrandTotal()
         End Sub
 
-        Public Sub txtInstallationFee_TextChanged(sender As Object, e As TextChangedEventArgs)
-            If Not _isInitialized Then Return
-            Dim tb = DirectCast(sender, TextBox)
-
-            Dim rawInput As String = tb.Text.Replace(",", "").Trim()
-            Dim cleanInput As String = Regex.Replace(rawInput, "[^0-9]", "")
-
-            RemoveHandler tb.TextChanged, AddressOf txtInstallationFee_TextChanged
-
-            If String.IsNullOrEmpty(cleanInput) Then
-                tb.Text = ""
-                lblInstallationFee.Text = "₱ 0"
-            Else
-                Dim val As Long = 0
-                If Long.TryParse(cleanInput, val) Then
-                    lblInstallationFee.Text = $"₱ {val:N0}"
-
-                    Dim caretIndex = tb.CaretIndex
-                    Dim oldLength = tb.Text.Length
-
-                    tb.Text = val.ToString("N0")
-
-                    tb.CaretIndex = Math.Max(0, caretIndex + (tb.Text.Length - oldLength))
-                End If
-            End If
-
-            AddHandler tb.TextChanged, AddressOf txtInstallationFee_TextChanged
+        Private Sub txtInstallationFee_TextChanged(sender As Object, e As TextChangedEventArgs) Handles txtInstallationFee.TextChanged
             UpdateGrandTotal()
         End Sub
 
@@ -1611,6 +1644,7 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             End If
 
             ' Clear the shared list of items
+
             If BLItemsCache IsNot Nothing Then
                 BLItemsCache.Clear()
             End If
