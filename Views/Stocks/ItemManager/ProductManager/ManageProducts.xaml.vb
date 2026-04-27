@@ -31,6 +31,7 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
         Private _pageSize As Integer = 10
         Private _totalRows As Integer = 0
 
+
         Public Sub New()
             InitializeComponent()
 
@@ -100,7 +101,7 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
             If selectedItem IsNot Nothing Then
                 _pageSize = Integer.Parse(selectedItem.Content.ToString())
                 _currentPage = 1
-                LoadData()
+                LoadData() ' Initiates the data refresh
             End If
         End Sub
 
@@ -483,5 +484,6 @@ LIMIT @pageSize OFFSET @offset;
                 colSellingPrice.Visibility = Visibility.Visible
             End If
         End Sub
+
     End Class
 End Namespace

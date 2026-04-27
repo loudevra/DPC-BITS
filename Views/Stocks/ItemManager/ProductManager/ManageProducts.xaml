@@ -395,14 +395,15 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <Button Width="32" Height="32" Background="Transparent" Margin="4,0" ToolTip="Edit" Click="OpenEditProduct" Cursor="Hand"
-                                                BorderThickness="0">
-                                            <materialDesign:PackIcon Kind="CircleEditOutline" Width="18" Height="18" Foreground="#52C69D"/>
+
+                                        <Button Width="32" Height="32" Background="Transparent" Margin="4,0" ToolTip="Edit" Click="OpenEditProduct" Cursor="Hand" BorderThickness="0">
+                                            <materialDesign:PackIcon Kind="SquareEditOutline" Width="22" Height="22" Foreground="#52C69D"/>
                                         </Button>
-                                        <Button Width="32" Height="32" Background="Transparent" Margin="4,0" ToolTip="Delete" Cursor="Hand" Click="DeleteProduct"
-                                                BorderThickness="0">
-                                            <materialDesign:PackIcon Kind="DeleteOutline" Width="18" Height="18" Foreground="#E65E5E"/>
+
+                                        <Button Width="32" Height="32" Background="Transparent" Margin="4,0" ToolTip="Delete" Cursor="Hand" Click="DeleteProduct" BorderThickness="0">
+                                            <materialDesign:PackIcon Kind="TrashCanOutline" Width="22" Height="22" Foreground="#E65E5E"/>
                                         </Button>
+
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
