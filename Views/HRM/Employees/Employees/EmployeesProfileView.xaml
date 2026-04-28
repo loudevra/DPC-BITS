@@ -2,11 +2,9 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Background="#F5F5F5"
-        >
+        Background="#F5F5F5">
 
     <UserControl.Resources>
-
 
         <Style x:Key="AddNewButtonStyle" TargetType="Button">
             <Setter Property="Width" Value="120"/>
@@ -25,12 +23,10 @@
             </Setter>
         </Style>
 
-        <!-- Border Style -->
         <Style x:Key="RoundedBorderStyle" TargetType="Border">
             <Setter Property="CornerRadius" Value="15"/>
         </Style>
 
-        <!-- Button Style -->
         <Style x:Key="RoundedButtonStyle" TargetType="Button">
             <Setter Property="Template">
                 <Setter.Value>
@@ -51,36 +47,31 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ComboBox">
-                        <Border Style="{StaticResource RoundedBorderStyle}" 
-                    Background="{TemplateBinding Background}" 
-                    BorderBrush="{TemplateBinding BorderBrush}" 
-                    BorderThickness="1">
+                        <Border Style="{StaticResource RoundedBorderStyle}"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1">
                             <Grid>
-                                <!-- Define two columns, Content on left, Arrow on right -->
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="35" />
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="35"/>
                                 </Grid.ColumnDefinitions>
-
-                                <!-- Selected Item Content -->
                                 <ContentPresenter Name="ContentSite"
-                                      IsHitTestVisible="False"
-                                      Content="{TemplateBinding SelectionBoxItem}"
-                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                      VerticalAlignment="Center"
-                                      Margin="10,0,5,0"/>
-
-                                <!-- Arrow Button (Right) -->
-                                <ToggleButton Name="ToggleButton" 
-                                  Grid.Column="1"
-                                  Focusable="False"
-                                  IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
-                                  Background="Transparent"
-                                  BorderBrush="Transparent"
-                                  BorderThickness="0"
-                                  HorizontalAlignment="Right"
-                                  VerticalAlignment="Center"
-                                  Margin="0,0,5,0">
+                                                  IsHitTestVisible="False"
+                                                  Content="{TemplateBinding SelectionBoxItem}"
+                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                  VerticalAlignment="Center"
+                                                  Margin="10,0,5,0"/>
+                                <ToggleButton Name="ToggleButton"
+                                              Grid.Column="1"
+                                              Focusable="False"
+                                              IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                              Background="Transparent"
+                                              BorderBrush="Transparent"
+                                              BorderThickness="0"
+                                              HorizontalAlignment="Right"
+                                              VerticalAlignment="Center"
+                                              Margin="0,0,5,0">
                                     <ToggleButton.Style>
                                         <Style TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
                                             <Setter Property="Background" Value="Transparent"/>
@@ -99,20 +90,16 @@
                                         </Style>
                                     </ToggleButton.Style>
                                 </ToggleButton>
-
-                                <!-- Dropdown Items -->
                                 <Popup Name="Popup"
-                           Placement="Bottom"
-                           IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
-                           AllowsTransparency="True"
-                           Focusable="False"
-                           MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-                                    <!-- MATCH WIDTH -->
-                                    <Border Style="{StaticResource RoundedBorderStyle}" 
-                                Background="White" 
-                                BorderBrush="Black"
-                                Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
-                                        <!-- MATCH WIDTH -->
+                                       Placement="Bottom"
+                                       IsOpen="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                       AllowsTransparency="True"
+                                       Focusable="False"
+                                       MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
+                                    <Border Style="{StaticResource RoundedBorderStyle}"
+                                            Background="White"
+                                            BorderBrush="Black"
+                                            Width="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}">
                                         <ScrollViewer>
                                             <StackPanel>
                                                 <ItemsPresenter/>
@@ -135,7 +122,6 @@
             <Setter Property="Padding" Value="5"/>
         </Style>
 
-        <!-- Add the RoundedTextboxStyle that was missing in the original code -->
         <Style x:Key="RoundedTextboxStyle" TargetType="TextBox">
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Background" Value="Transparent"/>
@@ -146,9 +132,7 @@
     </UserControl.Resources>
 
     <Grid>
-        <!-- Main Content Area -->
         <Grid>
-            <!-- Main Content (ScrollViewer) -->
             <ScrollViewer VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Disabled" Margin="0,1,0,-1">
                 <Grid Margin="20">
@@ -157,105 +141,224 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <!-- Main Content -->
+
+                    <!-- Header -->
                     <StackPanel Grid.Row="0" Margin="20">
-                        <!-- Header Section -->
                         <DockPanel LastChildFill="False" VerticalAlignment="Center" Margin="0,0,0,10">
                             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left">
-                                <materialDesign:PackIcon Margin="0,0 10, 0"  VerticalAlignment="Center" Height="25" Width="25" Kind="CartOutline"/>
-                                <materialDesign:PackIcon Margin="0,0 10, 0"  VerticalAlignment="Center" Height="25" Width="25" Kind="MapMarkerOutline"/>
+                                <materialDesign:PackIcon Margin="0,0,10,0" VerticalAlignment="Center" Height="25" Width="25" Kind="CartOutline"/>
+                                <materialDesign:PackIcon Margin="0,0,10,0" VerticalAlignment="Center" Height="25" Width="25" Kind="MapMarkerOutline"/>
                             </StackPanel>
-
                             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-
-                                <Border Margin="0,0 10, 0" Style="{StaticResource RoundedBorderStyle}" Width="370" Background="#FDFDFD">
-                                    <Grid >
-                                        <TextBox Style="{StaticResource RoundedTextboxStyle}"  ></TextBox>
+                                <Border Margin="0,0,10,0" Style="{StaticResource RoundedBorderStyle}" Width="370" Background="#FDFDFD">
+                                    <Grid>
+                                        <TextBox Style="{StaticResource RoundedTextboxStyle}"/>
                                         <materialDesign:PackIcon Kind="Magnify" Margin="340,0,0,0" Foreground="#D9D9D9" Height="20" Width="20" VerticalAlignment="Center"/>
                                     </Grid>
                                 </Border>
-                                <materialDesign:PackIcon Margin="0,0 10, 0"  VerticalAlignment="Center" Height="25" Width="25" Kind="BellOutline"/>
-                                <materialDesign:PackIcon Margin="0,0 10, 0"  VerticalAlignment="Center" Height="25" Width="25" Kind="EmailOutline"/>
-                                <materialDesign:PackIcon Margin="0,0 10, 0"  VerticalAlignment="Center" Height="25" Width="25" Kind="ClockTimeFourOutline"/>
+                                <materialDesign:PackIcon Margin="0,0,10,0" VerticalAlignment="Center" Height="25" Width="25" Kind="BellOutline"/>
+                                <materialDesign:PackIcon Margin="0,0,10,0" VerticalAlignment="Center" Height="25" Width="25" Kind="EmailOutline"/>
+                                <materialDesign:PackIcon Margin="0,0,10,0" VerticalAlignment="Center" Height="25" Width="25" Kind="ClockTimeFourOutline"/>
                             </StackPanel>
-
                         </DockPanel>
                     </StackPanel>
 
+                    <!-- Title -->
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
                         <TextBlock FontWeight="Bold" Foreground="#474747" FontSize="24" FontFamily="{StaticResource Lexend}">Employee's Profile</TextBlock>
                     </StackPanel>
 
-                    <Grid Grid.Row="2" >
-
+                    <!-- Two Column Layout -->
+                    <Grid Grid.Row="2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Border Grid.Column="0" Padding="15, 25" Style="{StaticResource RoundedBorderStyle}" Background="#FDFDFD">
+                        <!-- LEFT PANEL -->
+                        <Border Grid.Column="0" Padding="15,25" Style="{StaticResource RoundedBorderStyle}" Background="#FDFDFD">
                             <StackPanel>
+
+                                <!-- Avatar + Status -->
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="250"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <Border Grid.Column="0" Height="102" HorizontalAlignment="Left" Width="102" Background="Black" CornerRadius="2000">
-
-                                    </Border>
-                                    <Border CornerRadius="12" Padding="8, 4" Grid.Column="1" VerticalAlignment="Top" Style="{StaticResource RoundedBorderStyle}" Background="#A7E183">
+                                    <Border Grid.Column="0" Height="102" HorizontalAlignment="Left" Width="102" Background="Black" CornerRadius="2000"/>
+                                    <Border x:Name="StatusBadge"
+                                            CornerRadius="12" Padding="8,4"
+                                            Grid.Column="1" VerticalAlignment="Top"
+                                            Style="{StaticResource RoundedBorderStyle}"
+                                            Background="#A7E183">
                                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                            <materialDesign:PackIcon Kind="CircleMedium" Foreground="#456B2E"/>
-                                            <TextBlock VerticalAlignment="Center" Foreground="#456B2E" FontFamily="{StaticResource Lexend}" FontSize="10" FontWeight="DemiBold" >ACTIVE</TextBlock>
+                                            <materialDesign:PackIcon x:Name="StatusDot" Kind="CircleMedium" Foreground="#456B2E"/>
+                                            <TextBlock x:Name="StatusLabel"
+                                                       VerticalAlignment="Center"
+                                                       Foreground="#456B2E"
+                                                       FontFamily="{StaticResource Lexend}"
+                                                       FontSize="10"
+                                                       FontWeight="DemiBold">ACTIVE</TextBlock>
                                         </StackPanel>
                                     </Border>
                                 </Grid>
-                                <StackPanel Margin="5,10, 5, 15">
-                                    <TextBlock FontFamily="{StaticResource Lexend}"  FontSize="20" FontWeight="Bold" Foreground="#474747">Employee Name</TextBlock>
-                                    <TextBlock Margin="0, 5, 0,0" FontFamily="{StaticResource Lexend}"  FontSize="14" FontWeight="SemiBold" Foreground="#AEAEAE">Position</TextBlock>
-                                    <TextBlock FontFamily="{StaticResource Lexend}"  FontSize="14" FontWeight="SemiBold" Foreground="#AEAEAE">Department</TextBlock>
-                                </StackPanel>
-                                <Rectangle Fill="#D9D9D9" Height="1"></Rectangle>
 
-                                <StackPanel Margin="0, 20">
+                                <!-- Name / Position / Department -->
+                                <StackPanel Margin="5,10,5,15">
+                                    <TextBlock x:Name="txtEmployeeName"
+                                               FontFamily="{StaticResource Lexend}"
+                                               FontSize="20" FontWeight="Bold"
+                                               Foreground="#474747">—</TextBlock>
+                                    <TextBlock x:Name="txtPosition"
+                                               Margin="0,5,0,0"
+                                               FontFamily="{StaticResource Lexend}"
+                                               FontSize="14" FontWeight="SemiBold"
+                                               Foreground="#AEAEAE">—</TextBlock>
+                                    <TextBlock x:Name="txtDepartment"
+                                               FontFamily="{StaticResource Lexend}"
+                                               FontSize="14" FontWeight="SemiBold"
+                                               Foreground="#AEAEAE">—</TextBlock>
+                                </StackPanel>
+
+                                <Rectangle Fill="#D9D9D9" Height="1"/>
+
+                                <!-- Nav Section 1 -->
+                                <StackPanel Margin="0,20">
                                     <StackPanel.Resources>
                                         <Style TargetType="TextBlock">
-                                            <Setter Property="Margin" Value="0, 10"/>
+                                            <Setter Property="Margin" Value="0,10"/>
                                             <Setter Property="FontWeight" Value="SemiBold"/>
                                             <Setter Property="Padding" Value="15,0"/>
                                         </Style>
                                     </StackPanel.Resources>
-
-                                    <TextBlock FontFamily="{StaticResource Lexend}"  FontSize="12"  Foreground="#AEAEAE">Personal Information</TextBlock>
-                                    <TextBlock FontFamily="{StaticResource Lexend}"  FontSize="12"  Foreground="#AEAEAE">Salary</TextBlock>
-                                    <TextBlock FontFamily="{StaticResource Lexend}"  FontSize="12"  Foreground="#AEAEAE">Sales &amp; Income</TextBlock>
-                                    <TextBlock FontFamily="{StaticResource Lexend}"  FontSize="12"  Foreground="#AEAEAE">Documents</TextBlock>
-                                    <TextBlock FontFamily="{StaticResource Lexend}"  FontSize="12"  Foreground="#AEAEAE">Projects</TextBlock>
+                                    <TextBlock FontFamily="{StaticResource Lexend}" FontSize="12" Foreground="#AEAEAE">Personal Information</TextBlock>
+                                    <TextBlock FontFamily="{StaticResource Lexend}" FontSize="12" Foreground="#AEAEAE">Salary</TextBlock>
+                                    <TextBlock FontFamily="{StaticResource Lexend}" FontSize="12" Foreground="#AEAEAE">Sales &amp; Income</TextBlock>
+                                    <TextBlock FontFamily="{StaticResource Lexend}" FontSize="12" Foreground="#AEAEAE">Documents</TextBlock>
+                                    <TextBlock FontFamily="{StaticResource Lexend}" FontSize="12" Foreground="#AEAEAE">Projects</TextBlock>
                                 </StackPanel>
 
-                                <Rectangle Fill="#D9D9D9" Height="1"></Rectangle>
-                                <StackPanel Margin="0, 20">
+                                <Rectangle Fill="#D9D9D9" Height="1"/>
+
+                                <!-- Nav Section 2 -->
+                                <StackPanel Margin="0,20">
                                     <StackPanel.Resources>
                                         <Style TargetType="TextBlock">
-                                            <Setter Property="Margin" Value="0, 10"/>
+                                            <Setter Property="Margin" Value="0,10"/>
                                             <Setter Property="FontWeight" Value="SemiBold"/>
                                             <Setter Property="Padding" Value="15,0"/>
                                         </Style>
                                     </StackPanel.Resources>
-
-                                    <TextBlock FontFamily="{StaticResource Lexend}"  FontSize="12"  Foreground="#AEAEAE">Invoices</TextBlock>
-                                    <TextBlock FontFamily="{StaticResource Lexend}"  FontSize="12"  Foreground="#AEAEAE">Quotes</TextBlock>
-                                    <TextBlock FontFamily="{StaticResource Lexend}"  FontSize="12"  Foreground="#AEAEAE">Transactions</TextBlock>
+                                    <TextBlock FontFamily="{StaticResource Lexend}" FontSize="12" Foreground="#AEAEAE">Invoices</TextBlock>
+                                    <TextBlock FontFamily="{StaticResource Lexend}" FontSize="12" Foreground="#AEAEAE">Quotes</TextBlock>
+                                    <TextBlock FontFamily="{StaticResource Lexend}" FontSize="12" Foreground="#AEAEAE">Transactions</TextBlock>
                                 </StackPanel>
+
                             </StackPanel>
                         </Border>
 
-                        <Border Margin="10,0,0,0" Padding="30, 25" Grid.Column="1" Width="600" Style="{StaticResource RoundedBorderStyle}" Background="#FDFDFD">
-                            <ContentControl x:Name="ProfileTab"/>
+                        <!-- RIGHT PANEL -->
+                        <Border Margin="10,0,0,0" Padding="30,25"
+                                Grid.Column="1"
+                                Style="{StaticResource RoundedBorderStyle}"
+                                Background="#FDFDFD">
+                            <StackPanel>
+
+                                <TextBlock Text="Personal Information"
+                                           FontFamily="{StaticResource Lexend}"
+                                           FontSize="16" FontWeight="Bold"
+                                           Foreground="#474747" Margin="0,0,0,20"/>
+
+                                <!-- Username + Email -->
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="20"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="Username" FontFamily="{StaticResource Lexend}" FontSize="11" Foreground="#AEAEAE" FontWeight="SemiBold" Margin="0,0,0,3"/>
+                                        <TextBlock x:Name="txtProfileUsername" FontFamily="{StaticResource Lexend}" FontSize="13" FontWeight="SemiBold" Foreground="#474747" Margin="0,0,0,12">—</TextBlock>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="Email" FontFamily="{StaticResource Lexend}" FontSize="11" Foreground="#AEAEAE" FontWeight="SemiBold" Margin="0,0,0,3"/>
+                                        <TextBlock x:Name="txtProfileEmail" FontFamily="{StaticResource Lexend}" FontSize="13" FontWeight="SemiBold" Foreground="#474747" Margin="0,0,0,12" TextWrapping="Wrap">—</TextBlock>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Phone + Location -->
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="20"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="Phone Number" FontFamily="{StaticResource Lexend}" FontSize="11" Foreground="#AEAEAE" FontWeight="SemiBold" Margin="0,0,0,3"/>
+                                        <TextBlock x:Name="txtProfilePhone" FontFamily="{StaticResource Lexend}" FontSize="13" FontWeight="SemiBold" Foreground="#474747" Margin="0,0,0,12">—</TextBlock>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="Business Location" FontFamily="{StaticResource Lexend}" FontSize="11" Foreground="#AEAEAE" FontWeight="SemiBold" Margin="0,0,0,3"/>
+                                        <TextBlock x:Name="txtProfileLocation" FontFamily="{StaticResource Lexend}" FontSize="13" FontWeight="SemiBold" Foreground="#474747" Margin="0,0,0,12">—</TextBlock>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Address -->
+                                <TextBlock Text="Address" FontFamily="{StaticResource Lexend}" FontSize="11" Foreground="#AEAEAE" FontWeight="SemiBold" Margin="0,0,0,3"/>
+                                <TextBlock x:Name="txtProfileAddress" FontFamily="{StaticResource Lexend}" FontSize="13" FontWeight="SemiBold" Foreground="#474747" Margin="0,0,0,12" TextWrapping="Wrap">—</TextBlock>
+
+                                <Rectangle Fill="#D9D9D9" Height="1" Margin="0,5,0,20"/>
+
+                                <!-- Compensation -->
+                                <TextBlock Text="Compensation"
+                                           FontFamily="{StaticResource Lexend}"
+                                           FontSize="16" FontWeight="Bold"
+                                           Foreground="#474747" Margin="0,0,0,15"/>
+
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="20"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="Salary" FontFamily="{StaticResource Lexend}" FontSize="11" Foreground="#AEAEAE" FontWeight="SemiBold" Margin="0,0,0,3"/>
+                                        <TextBlock x:Name="txtProfileSalary" FontFamily="{StaticResource Lexend}" FontSize="13" FontWeight="SemiBold" Foreground="#474747" Margin="0,0,0,12">—</TextBlock>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="Sales Commission" FontFamily="{StaticResource Lexend}" FontSize="11" Foreground="#AEAEAE" FontWeight="SemiBold" Margin="0,0,0,3"/>
+                                        <TextBlock x:Name="txtProfileCommission" FontFamily="{StaticResource Lexend}" FontSize="13" FontWeight="SemiBold" Foreground="#474747" Margin="0,0,0,12">—</TextBlock>
+                                    </StackPanel>
+                                </Grid>
+
+                                <Rectangle Fill="#D9D9D9" Height="1" Margin="0,5,0,20"/>
+
+                                <!-- Record Info -->
+                                <TextBlock Text="Record Information"
+                                           FontFamily="{StaticResource Lexend}"
+                                           FontSize="16" FontWeight="Bold"
+                                           Foreground="#474747" Margin="0,0,0,15"/>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="20"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0">
+                                        <TextBlock Text="Created At" FontFamily="{StaticResource Lexend}" FontSize="11" Foreground="#AEAEAE" FontWeight="SemiBold" Margin="0,0,0,3"/>
+                                        <TextBlock x:Name="txtProfileCreatedAt" FontFamily="{StaticResource Lexend}" FontSize="13" FontWeight="SemiBold" Foreground="#474747">—</TextBlock>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="Last Updated" FontFamily="{StaticResource Lexend}" FontSize="11" Foreground="#AEAEAE" FontWeight="SemiBold" Margin="0,0,0,3"/>
+                                        <TextBlock x:Name="txtProfileUpdatedAt" FontFamily="{StaticResource Lexend}" FontSize="13" FontWeight="SemiBold" Foreground="#474747">—</TextBlock>
+                                    </StackPanel>
+                                </Grid>
+
+                            </StackPanel>
                         </Border>
+
                     </Grid>
-
-
                 </Grid>
             </ScrollViewer>
         </Grid>

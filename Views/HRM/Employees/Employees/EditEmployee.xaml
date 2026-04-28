@@ -151,7 +151,7 @@
                 <StackPanel Margin="20,20,20,20">
                     <Button x:Name="btnEditEmployee" Background="Transparent" HorizontalAlignment="Right" BorderThickness="0" VerticalAlignment="Center" Click="btnEditEmployee_Click">
                         <Border Style="{StaticResource RoundedBorderStyle}" Padding="1" Background="#1D5642" BorderThickness="0" Width="300" Height="40" >
-                            <TextBlock Text="Add Employee" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14"  FontWeight="SemiBold" FontFamily="Lexend" />
+                            <TextBlock Text="Update Employee" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14"  FontWeight="SemiBold" FontFamily="Lexend" />
                         </Border>
                     </Button>
                 </StackPanel>

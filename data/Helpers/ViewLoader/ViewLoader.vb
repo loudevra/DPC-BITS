@@ -70,6 +70,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New PromoCodes.ManagePromoCodes()
                     Case "addpromocode"
                         Return New PromoCodes.AddPromoCode()
+                    Case "employeesprofileview"
+                        Return New DPC.Views.HRM.Employees.Employees.EmployeesProfileView()
 
                     ' Purchase Order / Delivery / Walk-in
                     Case "newwalkinclient"
@@ -82,6 +84,7 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New Stocks.PurchaseOrder.Delivery.PreviewEditableDeliveryReceipt()
                     Case "previewprintdeliveryreceipt"
                         Return New Stocks.PurchaseOrder.Delivery.PreviewPrintDeliveryReceipt()
+
 
                     ' CRM Navigation
                     Case "clientgroups"
@@ -294,6 +297,8 @@ Namespace DPC.Data.Helpers.ViewLoader
                         Return New calendarview()
                     Case "addevent"
                         Return New DPC.Views.Misc.Calendar.Addevent()
+                    Case "employeesprofileview"
+                        Return New DPC.Views.HRM.Employees.Employees.EmployeesProfileView()
 
 
                     Case Else
