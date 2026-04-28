@@ -31,21 +31,14 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
             InitializeMarkupUI()
             base64Image = cacheProductImage
             DisplaySelectedProductImage()
-
             InitializeSelectedProduct()
-
-            ' This calls the method below
             ApplyRolePermissions()
+            UpdateSerialCheckboxAvailability()
         End Sub
 
-        ' --- PASTE THIS ENTIRE BLOCK RIGHT HERE ---
         Private isSalesUser As Boolean = False
 
-
-
-        ' --- SECURITY TOOLKIT: LOCK SENSITIVE INPUTS ---
         Private Sub ApplyRolePermissions()
-            ' Fetch role based on the logged-in user's cached email
             Dim query As String = "SELECT ur.RoleName FROM employee e JOIN userroles ur ON e.UserRoleID = ur.RoleID WHERE e.Email = @email"
 
             Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
@@ -54,8 +47,6 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
                     Using cmd As New MySqlCommand(query, conn)
                         cmd.Parameters.AddWithValue("@email", CacheOnLoggedInEmail)
                         Dim roleName As Object = cmd.ExecuteScalar()
-
-                        ' Check if the role contains "Sales"
                         If roleName IsNot Nothing AndAlso roleName.ToString().ToLower().Contains("sales") Then
                             isSalesUser = True
                         End If
@@ -65,44 +56,36 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
                 End Try
             End Using
 
-            ' If Sales, hide ONLY the Retail Price input and inject Admin message
             If isSalesUser Then
                 Dim LockTextBox = Sub(txt As TextBox)
                                       If txt Is Nothing Then Return
-
-                                      ' Hide the textbox (your CalculateSellingPrice will still update it invisibly!)
                                       txt.Visibility = Visibility.Collapsed
                                       txt.Text = "0"
-
-                                      ' Inject the Admin Message into the same container
                                       Dim parentGrid As Grid = TryCast(txt.Parent, Grid)
                                       If parentGrid IsNot Nothing Then
                                           Dim adminMsg As New TextBlock With {
-                            .Text = "🔒 Admin Access Only",
-                            .Foreground = New SolidColorBrush(Color.FromRgb(210, 54, 54)),
-                            .FontWeight = FontWeights.SemiBold,
-                            .VerticalAlignment = VerticalAlignment.Center,
-                            .Margin = New Thickness(10, 0, 0, 0),
-                            .FontFamily = New FontFamily("Lexend")
-                        }
+                                              .Text = "🔒 Admin Access Only",
+                                              .Foreground = New SolidColorBrush(Color.FromRgb(210, 54, 54)),
+                                              .FontWeight = FontWeights.SemiBold,
+                                              .VerticalAlignment = VerticalAlignment.Center,
+                                              .Margin = New Thickness(10, 0, 0, 0),
+                                              .FontFamily = New FontFamily("Lexend")
+                                          }
                                           Grid.SetColumn(adminMsg, Grid.GetColumn(txt))
                                           parentGrid.Children.Add(adminMsg)
                                       End If
                                   End Sub
-
-                ' ONLY lock the Product Selling Price
                 LockTextBox(TxtRetailPrice)
             End If
         End Sub
-        ' --- END OF BLOCK ---
 
         Private Sub EditProduct_Unloaded(sender As Object, e As RoutedEventArgs) Handles Me.Unloaded
             ClearAllCacheValues(cacheProductUpdateCompletion)
 
             ProductController.EditProductClearInputFields(TxtProductName, TxtProductCode, TxtRetailPrice, TxtPurchaseOrder,
-            TxtDefaultTax, TxtDiscountRate, TxtStockUnits, TxtAlertQuantity, TxtDescription,
-            ComboBoxCategory, ComboBoxSubCategory, ComboBoxWarehouse, ComboBoxMeasurementUnit,
-            ComboBoxBrand, ComboBoxSupplier, MainContainer)
+                TxtDefaultTax, TxtDiscountRate, TxtStockUnits, TxtAlertQuantity, TxtDescription,
+                ComboBoxCategory, ComboBoxSubCategory, ComboBoxWarehouse, ComboBoxMeasurementUnit,
+                ComboBoxBrand, ComboBoxSupplier, MainContainer)
 
             ProductController.SerialNumbers.Clear()
             TxtProductVariation.Text = Nothing
@@ -145,57 +128,42 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
             AddHandler uploadTimer.Tick, AddressOf UploadTimer_Tick
         End Sub
 
-        Private Sub OpenProductVariationDetails()
-            ' Create and show the ProductvariationDetails UserControl
-            Dim productVariationDetails = New ProductVariationDetails()
-        End Sub
-
         Private Sub InitializeUIElements()
-            'Initialize UI state
             If cacheProductVariation = Nothing Or cacheProductVariation = False Then
                 Toggle.IsChecked = False
                 ProductController.VariationChecker(Toggle, StackPanelVariation, StackPanelWarehouse,
-                StackPanelRetailPrice, StackPanelOrderPrice, StackPanelTaxRate,
-                StackPanelDiscountRate, StackPanelMarkup, BorderStocks, StackPanelAlertQuantity,
-                StackPanelStockUnits, OuterStackPanel)
-
+                    StackPanelRetailPrice, StackPanelOrderPrice, StackPanelTaxRate,
+                    StackPanelDiscountRate, StackPanelMarkup, BorderStocks, StackPanelAlertQuantity,
+                    StackPanelStockUnits, OuterStackPanel)
             ElseIf cacheProductVariation = True Then
                 Toggle.IsChecked = True
                 ProductController.VariationChecker(Toggle, StackPanelVariation, StackPanelWarehouse,
-                StackPanelRetailPrice, StackPanelOrderPrice, StackPanelTaxRate,
-                StackPanelDiscountRate, StackPanelMarkup, BorderStocks, StackPanelAlertQuantity,
-                StackPanelStockUnits, OuterStackPanel)
+                    StackPanelRetailPrice, StackPanelOrderPrice, StackPanelTaxRate,
+                    StackPanelDiscountRate, StackPanelMarkup, BorderStocks, StackPanelAlertQuantity,
+                    StackPanelStockUnits, OuterStackPanel)
             End If
 
             If cacheSerialNumbers.Count > 0 Then
                 CheckBoxSerialNumber.IsChecked = True
                 ProductController.SerialNumberChecker(CheckBoxSerialNumber, StackPanelSerialRow,
-                TxtStockUnits, BorderStockUnits)
+                    TxtStockUnits, BorderStockUnits)
             Else
                 CheckBoxSerialNumber.IsChecked = False
                 ProductController.SerialNumberChecker(CheckBoxSerialNumber, StackPanelSerialRow,
-                TxtStockUnits, BorderStockUnits)
+                    TxtStockUnits, BorderStockUnits)
             End If
 
-            ' Set default values
             TxtDefaultTax.Text = "12"
             TxtDiscountRate.Text = "0"
-            ' Move this AFTER the controls are initialized
-            ' Initialize markup UI - But ONLY after the form has loaded
-            ' We'll handle this in the Loaded event instead
-            ' InitializeMarkupUI()
         End Sub
 
         Public Shared Sub EditProductProcessStockUnitsEntry(txtStockUnits As TextBox, mainContainer As Panel)
             Dim stockUnits As Integer
 
-            ' Validate if input is a valid number and greater than zero
             If Integer.TryParse(txtStockUnits.Text, stockUnits) Then
                 If stockUnits > 0 Then
-                    ' Clear previous rows
                     mainContainer.Children.Clear()
 
-                    ' Call BtnAddRow_Click the specified number of times
                     If cacheSerialNumbers.Count > 0 Then
                         If stockUnits > 1 AndAlso cacheSerialNumbers.Count = 1 Then
                             MessageBox.Show("Your Stocks: " & stockUnits & vbCrLf & "Your Serial Numbers: " & String.Join(Environment.NewLine, cacheSerialNumbers))
@@ -206,7 +174,6 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
                         End If
                     End If
 
-                    ' Ensure the textbox retains the correct value
                     txtStockUnits.Text = stockUnits.ToString()
                 Else
                     MessageBox.Show("Please enter a number greater than zero.", "Invalid Input", MessageBoxButton.OK, MessageBoxImage.Warning)
@@ -216,37 +183,106 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
             End If
         End Sub
 
-
         Private Sub SetupControllerReferences()
-            ' Set controller references
             ProductController.MainContainer = MainContainer
             ProductController.TxtStockUnits = TxtStockUnits
         End Sub
 
         Private Sub LoadInitialData()
-            ' Load dropdown data
             ProductController.GetBrandsWithSupplier(ComboBoxBrand)
             ProductController.GetProductCategory(ComboBoxCategory)
             ProductController.GetWarehouse(ComboBoxWarehouse)
 
-            ' Load variations if any
             Dim existingVariations As List(Of ProductVariation) = ProductController.GetProductVariations()
             If existingVariations IsNot Nothing Then
                 ProductController.UpdateProductVariationText(existingVariations, TxtProductVariation)
             End If
         End Sub
+
+#End Region
+
+#Region "Serial Number Gate"
+
+        Private Sub TxtStockUnits_TextChanged(sender As Object, e As TextChangedEventArgs)
+            UpdateSerialCheckboxAvailability()
+        End Sub
+
+        Private Sub UpdateSerialCheckboxAvailability()
+            Dim qty As Integer = 0
+            Dim isValid As Boolean = Integer.TryParse(TxtStockUnits.Text.Trim(), qty) AndAlso qty > 0
+
+            CheckBoxSerialNumber.IsEnabled = isValid
+
+            If TxtSerialHint IsNot Nothing Then
+                TxtSerialHint.Visibility = If(isValid, Visibility.Collapsed, Visibility.Visible)
+            End If
+
+            If Not isValid Then
+                CheckBoxSerialNumber.IsChecked = False
+                StackPanelSerialRow.Visibility = Visibility.Collapsed
+            End If
+        End Sub
+
+#End Region
+
+#Region "Duplicate Serial Number Check"
+
+        ''' <summary>
+        ''' Collects all serial number values from MainContainer rows and checks for duplicates.
+        ''' Returns True if duplicates are found (and shows a warning), False if all are unique.
+        ''' </summary>
+        Private Function HasDuplicateSerialNumbers() As Boolean
+            Dim collected As New List(Of String)
+
+            For Each row As StackPanel In MainContainer.Children.OfType(Of StackPanel)()
+                Dim grid As Grid = row.Children.OfType(Of Grid)().FirstOrDefault()
+                If grid Is Nothing Then Continue For
+
+                Dim border As Border = grid.Children.OfType(Of Border)().FirstOrDefault()
+                If border Is Nothing Then Continue For
+
+                Dim textBox As TextBox = TryCast(border.Child, TextBox)
+                If textBox Is Nothing OrElse String.IsNullOrWhiteSpace(textBox.Text) Then Continue For
+
+                Dim value As String = textBox.Text.Trim()
+
+                ' Check against already-collected values
+                Dim duplicate As String = collected.FirstOrDefault(
+                    Function(s) String.Equals(s, value, StringComparison.OrdinalIgnoreCase))
+
+                If duplicate IsNot Nothing Then
+                    MessageBox.Show(
+                        $"Duplicate serial number detected: ""{value}""" & vbCrLf &
+                        "Each serial number must be unique. Please correct it before saving.",
+                        "Duplicate Serial Number",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning)
+
+                    ' Highlight the duplicate TextBox so user can find it easily
+                    textBox.Focus()
+                    textBox.SelectAll()
+                    textBox.BorderBrush = New SolidColorBrush(Color.FromRgb(210, 54, 54))  ' red border
+                    textBox.Background = New SolidColorBrush(Color.FromRgb(255, 235, 235)) ' light red bg
+
+                    Return True
+                End If
+
+                collected.Add(value)
+            Next
+
+            Return False
+        End Function
+
 #End Region
 
 #Region "Selected Product Details"
 
-        'Computation to find the percentage when getting the product
         Public Function FindPercentage(buyingPrice As Double, sellingPrice As Double)
             Dim percentage As Double = 0
             percentage = ((sellingPrice - buyingPrice) / buyingPrice) * 100
             Return percentage
         End Function
 
-        'Selects brand on the combobox based on the product's brandID
         Public Sub SetSelectedBrand(comboBox As ComboBox, brandID As Int64)
             For Each item As ComboBoxItem In comboBox.Items
                 If item.Tag IsNot Nothing AndAlso Convert.ToInt32(item.Tag) = cacheBrandID Then
@@ -256,7 +292,6 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
             Next
         End Sub
 
-        'Selects Category on the combobox based on the product's CategoryID
         Public Sub SetSelectedCategory(comboBox As ComboBox, categoryID As Int64)
             For Each item As ComboBoxItem In comboBox.Items
                 If item.Tag IsNot Nothing AndAlso Convert.ToInt32(item.Tag) = cacheCategoryID Then
@@ -266,7 +301,6 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
             Next
         End Sub
 
-        'Selects SubCategory on the combobox (if available) based on the product's SubCategoryID
         Public Sub SetSelectedMeasureUnit(comboBox As ComboBox, MeasureUnit As String)
             For Each item As ComboBoxItem In comboBox.Items
                 If item.Content IsNot Nothing AndAlso item.Content.ToString().Equals(MeasureUnit, StringComparison.OrdinalIgnoreCase) Then
@@ -276,7 +310,6 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
             Next
         End Sub
 
-        'Selects Warehouse on the combobox based on the product's WarehouseID
         Public Sub SetSelectedWarehouse(comboBox As ComboBox, WarehouseID As String)
             For Each item As ComboBoxItem In comboBox.Items
                 If item.Content IsNot Nothing AndAlso item.Content.ToString().Equals(WarehouseID, StringComparison.OrdinalIgnoreCase) Then
@@ -285,20 +318,20 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
                 End If
             Next
         End Sub
+
 #End Region
 
 #Region "Event Handlers"
+
         Public Sub IntegerOnlyTextInputHandler(sender As Object, e As TextCompositionEventArgs)
             ProductController.IntegerOnlyTextInputHandler(sender, e)
         End Sub
         Public Sub IntegerOnlyPasteHandler(sender As Object, e As DataObjectPastingEventArgs)
             ProductController.IntegerOnlyPasteHandler(sender, e)
         End Sub
-
         Public Sub DecimalOnlyTextInputHandler(sender As Object, e As TextCompositionEventArgs)
             ProductController.DecimalOnlyTextInputHandler(sender, e)
         End Sub
-
         Public Sub DecimalOnlyPasteHandler(sender As Object, e As DataObjectPastingEventArgs)
             ProductController.DecimalOnlyPasteHandler(sender, e)
         End Sub
@@ -311,15 +344,42 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
         End Sub
 
         Private Sub IncludeSerial_Click(sender As Object, e As RoutedEventArgs)
+            Dim qty As Integer = 0
+            If Not Integer.TryParse(TxtStockUnits.Text.Trim(), qty) OrElse qty <= 0 Then
+                CheckBoxSerialNumber.IsChecked = False
+                MessageBox.Show("Please enter a valid stock unit quantity before adding serial numbers.",
+                                "Stock Units Required", MessageBoxButton.OK, MessageBoxImage.Information)
+                Return
+            End If
+
             ProductController.ProcessStockUnitsEntry(TxtStockUnits, MainContainer)
             ProductController.SerialNumberChecker(CheckBoxSerialNumber, StackPanelSerialRow,
-            TxtStockUnits, BorderStockUnits)
+                TxtStockUnits, BorderStockUnits)
+        End Sub
+
+        Private Sub BtnExit_Click(sender As Object, e As RoutedEventArgs)
+            ClearAllCacheValues(False)
+
+            ProductController.EditProductClearInputFields(TxtProductName, TxtProductCode, TxtRetailPrice, TxtPurchaseOrder,
+                TxtDefaultTax, TxtDiscountRate, TxtStockUnits, TxtAlertQuantity, TxtDescription,
+                ComboBoxCategory, ComboBoxSubCategory, ComboBoxWarehouse, ComboBoxMeasurementUnit,
+                ComboBoxBrand, ComboBoxSupplier, MainContainer)
+
+            ProductController.SerialNumbers.Clear()
+            TxtProductVariation.Text = Nothing
+            DPC.Components.Forms.AddVariation._savedVariations.Clear()
+            DPC.Data.Controllers.ProductController.variationManager.GetAllVariationData().Clear()
+
+            If Not String.IsNullOrWhiteSpace(base64Image) Then
+                ResetImageComponents()
+            End If
+
+            ViewLoader.DynamicView.NavigateToView("manageproducts", Me)
         End Sub
 
         Private Sub BtnEditProduct_Click(sender As Object, e As RoutedEventArgs)
 
 #Region "FOR NO VARIATION PRODUCTS"
-            'Assign new values on caches
             cacheProductName = TxtProductName.Text
             cacheProductCode = TxtProductCode.Text
             cacheCategoryID = If(ComboBoxCategory.SelectedItem IsNot Nothing, Convert.ToInt64(CType(ComboBoxCategory.SelectedItem, ComboBoxItem).Tag), 0)
@@ -332,25 +392,27 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
             cacheProductVariation = Toggle.IsChecked
             cacheProductDescription = TxtDescription.Text
 
-            'Filters empty inputs
             Dim retailPrice As Decimal
             If Not Decimal.TryParse(TxtRetailPrice.Text, retailPrice) Then
                 MessageBox.Show("Please enter a valid retail price.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Return
             End If
             cacheSellingPrice = retailPrice
+
             Dim purchaseOrder As Decimal
             If Not Decimal.TryParse(TxtPurchaseOrder.Text, purchaseOrder) Then
                 MessageBox.Show("Please enter a valid purchase order price.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Return
             End If
             cacheBuyingPrice = purchaseOrder
+
             Dim stockUnits As Integer
             If Not Integer.TryParse(TxtStockUnits.Text, stockUnits) OrElse stockUnits < 0 Then
                 MessageBox.Show("Please enter a valid stock units.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Return
             End If
             cacheStockUnit = stockUnits
+
             Dim alertQuantity As Integer
             If Not Integer.TryParse(TxtAlertQuantity.Text, alertQuantity) OrElse alertQuantity < 0 Then
                 MessageBox.Show("Please enter a valid alert quantity.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning)
@@ -358,9 +420,12 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
             End If
             cacheAlertQuantity = alertQuantity
 
-
             If CheckBoxSerialNumber.IsChecked Then
-                'clears cache for serial number then assign the new serial numbers on the textboxes
+
+                ' ── DUPLICATE CHECK — block save if any serial number appears more than once ──
+                If HasDuplicateSerialNumbers() Then Return
+
+                ' Collect serial numbers into cache
                 cacheSerialNumbers.Clear()
                 For Each row As StackPanel In MainContainer.Children.OfType(Of StackPanel)()
                     Dim grid As Grid = row.Children.OfType(Of Grid)().FirstOrDefault()
@@ -369,7 +434,6 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
                         If border IsNot Nothing Then
                             Dim textBox As TextBox = TryCast(border.Child, TextBox)
                             If textBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(textBox.Text) Then
-                                ' Update the cache with the current product details
                                 cacheSerialNumbers.Add(textBox.Text)
                             End If
                         End If
@@ -384,8 +448,6 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
 
 #End Region
 
-
-            ' Call the controller to update the product
             ProductController.UpdateSelectedProduct(Toggle, CheckBoxSerialNumber,
                 cacheProductName, cacheProductCode, cacheCategoryID, cacheSubCategoryID,
                 cacheWarehouseID, cacheBrandID, cacheSupplierID, TxtRetailPrice,
@@ -393,15 +455,14 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
                 cacheAlertQuantity, cacheMeasurementUnit, cacheProductDescription,
                 cacheSerialNumbers, cacheProductImage)
 
-
             If cacheProductUpdateCompletion Then
                 ClearAllCacheValues(cacheProductUpdateCompletion)
                 ViewLoader.DynamicView.NavigateToView("manageproducts", Me)
 
                 ProductController.EditProductClearInputFields(TxtProductName, TxtProductCode, TxtRetailPrice, TxtPurchaseOrder,
-                TxtDefaultTax, TxtDiscountRate, TxtStockUnits, TxtAlertQuantity, TxtDescription,
-                ComboBoxCategory, ComboBoxSubCategory, ComboBoxWarehouse, ComboBoxMeasurementUnit,
-                ComboBoxBrand, ComboBoxSupplier, MainContainer)
+                    TxtDefaultTax, TxtDiscountRate, TxtStockUnits, TxtAlertQuantity, TxtDescription,
+                    ComboBoxCategory, ComboBoxSubCategory, ComboBoxWarehouse, ComboBoxMeasurementUnit,
+                    ComboBoxBrand, ComboBoxSupplier, MainContainer)
 
                 ProductController.SerialNumbers.Clear()
                 TxtProductVariation.Text = Nothing
@@ -447,7 +508,6 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
 
         Private Sub ComboBoxBrand_SelectionChanged(sender As Object, e As SelectionChangedEventArgs) Handles ComboBoxBrand.SelectionChanged
             Dim selectedBrandItem As ComboBoxItem = TryCast(ComboBoxBrand.SelectedItem, ComboBoxItem)
-
             If selectedBrandItem IsNot Nothing AndAlso selectedBrandItem.Tag IsNot Nothing Then
                 Dim brandID As Integer = Convert.ToInt32(selectedBrandItem.Tag)
                 ProductController.GetSuppliersByBrand(brandID, ComboBoxSupplier)
@@ -464,36 +524,20 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
             ProductController.BtnRemoveRow_Click(Nothing, Nothing)
         End Sub
 
-        'Private Sub TxtStockUnits_KeyDown(sender As Object, e As KeyEventArgs)
-        '    ' Check if Enter key is pressed
-        '    If e.Key = Key.Enter Then
-        '        ProductController.ProcessStockUnitsEntry(TxtStockUnits, MainContainer)
-        '        ' Prevent further propagation of the event
-        '        e.Handled = True
-        '    End If
-        'End Sub
-
         Private Sub OpenAddVariation(sender As Object, e As RoutedEventArgs)
-            ' Create an instance of the AddCategory form
             Dim openAddVariation As New DPC.Components.Forms.AddVariation()
-
-            ' Subscribe to the ClosePopup method directly
             AddHandler openAddVariation.close, AddressOf AddVariation_Closed
-
-            ' Get the parent Window of this UserControl
             Dim parentWindow As Window = Window.GetWindow(Me)
-
-            ' Open the popup with the parent window instead of 'Me'
             PopupHelper.OpenPopupWithControl(sender, openAddVariation, "windowcenter", -100, 0, False, parentWindow)
         End Sub
 
         Private Sub AddVariation_Closed(sender As Object, e As RoutedEventArgs)
-            ' Reload variations after the popup is closed
             Dim variations As List(Of ProductVariation) = ProductController.GetProductVariations()
             If variations IsNot Nothing Then
                 ProductController.UpdateProductVariationText(variations, TxtProductVariation)
             End If
         End Sub
+
 #End Region
 
 #Region "Image Handling"
@@ -501,18 +545,14 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
         Private Sub DisplaySelectedProductImage()
             Try
                 Dim tempImagePath As String = Path.Combine(Path.GetTempPath(), "decoded_image.png")
-
-                ' Clean up previous image file
                 If File.Exists(tempImagePath) Then
                     GC.Collect()
                     GC.WaitForPendingFinalizers()
                     File.Delete(tempImagePath)
                 End If
 
-                ' Decode and save new image
                 Base64Utility.DecodeBase64ToFile(base64Image, tempImagePath)
 
-                ' Load image safely
                 Dim imageSource As New BitmapImage()
                 Using stream As New FileStream(tempImagePath, FileMode.Open, FileAccess.Read, FileShare.Read)
                     imageSource.BeginInit()
@@ -520,35 +560,26 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
                     imageSource.StreamSource = stream
                     imageSource.EndInit()
                 End Using
-                imageSource.Freeze() ' Allow image to be accessed in different threads
+                imageSource.Freeze()
 
-                ' Hide Image Info Panel and Show Image Display Panel
                 ImageInfoPanel.Visibility = Visibility.Collapsed
                 ImageDisplayPanel.Visibility = Visibility.Visible
-
-                ' Set the image source
                 UploadedImage.Source = imageSource
-
-                ' Make the Remove Image button visible
                 BtnRemoveImage.Visibility = Visibility.Visible
-
-                ' Disable browse button and drag-drop functionality
                 BtnBrowse.IsEnabled = False
                 DropBorder.AllowDrop = False
                 isUploadLocked = True
-
             Catch ex As Exception
                 MessageBox.Show("Error decoding image: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Sub
+
         Private Sub BtnBrowse_Click(sender As Object, e As RoutedEventArgs)
             If isUploadLocked Then Return
-
             Dim openFileDialog As New OpenFileDialog With {
                 .Filter = "Image Files|*.jpg;*.jpeg;*.png",
                 .Title = "Select an Image"
             }
-
             If openFileDialog.ShowDialog() = True Then
                 Dim filePath As String = openFileDialog.FileName
                 If ProductController.ValidateImageFile(filePath) Then
@@ -558,7 +589,6 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
         End Sub
 
         Private Sub Border_DragEnter(sender As Object, e As DragEventArgs)
-            ' Check if the dragged data is a file
             If e.Data.GetDataPresent(DataFormats.FileDrop) Then
                 e.Effects = DragDropEffects.Copy
             End If
@@ -566,7 +596,6 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
 
         Private Sub Border_Drop(sender As Object, e As DragEventArgs)
             If isUploadLocked Then Return
-
             If e.Data.GetDataPresent(DataFormats.FileDrop) Then
                 Dim files() As String = CType(e.Data.GetData(DataFormats.FileDrop), String())
                 Dim filePath As String = files(0)
@@ -577,58 +606,38 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
         End Sub
 
         Private Sub StartFileUpload(filePath As String)
-            ' Reset upload progress
             UploadProgressBar.Value = 0
             UploadStatus.Text = "Uploading..."
-
-            ' Update file info
             Dim fileInfo As New FileInfo(filePath)
-            Dim fileSizeText As String = Base64Utility.GetReadableFileSize(fileInfo.Length)
-
             ImgName.Text = Path.GetFileName(filePath)
-            ImgSize.Text = fileSizeText
-
-            ' Convert image to Base64 using Base64Utility
+            ImgSize.Text = Base64Utility.GetReadableFileSize(fileInfo.Length)
             Try
                 base64Image = Base64Utility.EncodeFileToBase64(filePath)
             Catch ex As Exception
                 MessageBox.Show("Error encoding image: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 Exit Sub
             End Try
-
-            ' Show the panel with image info
             ImageInfoPanel.Visibility = Visibility.Visible
-
-            ' Disable browse button and drag-drop functionality
             BtnBrowse.IsEnabled = False
             DropBorder.AllowDrop = False
             isUploadLocked = True
-
-            ' Configure and start the timer
             ConfigureUploadTimer()
         End Sub
 
         Private Sub ConfigureUploadTimer()
-            If uploadTimer.IsEnabled Then
-                uploadTimer.Stop()
-            End If
+            If uploadTimer.IsEnabled Then uploadTimer.Stop()
             uploadTimer.Start()
         End Sub
 
         Private Sub UploadTimer_Tick(sender As Object, e As EventArgs)
             If UploadProgressBar.Value < 100 Then
-                UploadProgressBar.Value += 2 ' Increase by 2% every tick
+                UploadProgressBar.Value += 2
             Else
                 uploadTimer.Stop()
                 UploadStatus.Text = "Upload Complete"
-
-                ' Hide Image Info Panel and Show Image Display Panel
                 ImageInfoPanel.Visibility = Visibility.Collapsed
                 ImageDisplayPanel.Visibility = Visibility.Visible
-
                 DisplayUploadedImage()
-
-                ' Make the Remove Image button visible
                 BtnRemoveImage.Visibility = Visibility.Visible
             End If
         End Sub
@@ -636,18 +645,12 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
         Private Sub DisplayUploadedImage()
             Try
                 Dim tempImagePath As String = Path.Combine(Path.GetTempPath(), "decoded_image.png")
-
-                ' Clean up previous image file
                 If File.Exists(tempImagePath) Then
                     GC.Collect()
                     GC.WaitForPendingFinalizers()
                     File.Delete(tempImagePath)
                 End If
-
-                ' Decode and save new image
                 Base64Utility.DecodeBase64ToFile(base64Image, tempImagePath)
-
-                ' Load image safely
                 Dim imageSource As New BitmapImage()
                 Using stream As New FileStream(tempImagePath, FileMode.Open, FileAccess.Read, FileShare.Read)
                     imageSource.BeginInit()
@@ -655,9 +658,7 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
                     imageSource.StreamSource = stream
                     imageSource.EndInit()
                 End Using
-                imageSource.Freeze() ' Allow image to be accessed in different threads
-
-                ' Set the image source
+                imageSource.Freeze()
                 UploadedImage.Source = imageSource
             Catch ex As Exception
                 MessageBox.Show("Error decoding image: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
@@ -670,31 +671,18 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
         End Sub
 
         Private Sub ResetImageComponents()
-            ' Reset UI elements
             UploadProgressBar.Value = 0
             UploadStatus.Text = ""
             ImgName.Text = ""
             ImgSize.Text = ""
-
-            ' Hide image panels
             ImageInfoPanel.Visibility = Visibility.Collapsed
             ImageDisplayPanel.Visibility = Visibility.Collapsed
-
-            ' Re-enable browse button and drag-drop functionality
             BtnBrowse.IsEnabled = True
             DropBorder.AllowDrop = True
             isUploadLocked = False
-
-            ' Hide the Remove Image button
             BtnRemoveImage.Visibility = Visibility.Collapsed
-
-            ' Reset uploaded image source
             UploadedImage.Source = Nothing
-
-            ' Reset Base64 string
             base64Image = String.Empty
-
-            ' Clean up temp file
             Dim tempImagePath As String = Path.Combine(Path.GetTempPath(), "decoded_image.png")
             If File.Exists(tempImagePath) Then
                 Try
@@ -702,10 +690,10 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
                     GC.WaitForPendingFinalizers()
                     File.Delete(tempImagePath)
                 Catch ex As Exception
-                    ' Ignore deletion errors
                 End Try
             End If
         End Sub
+
 #End Region
 
         Public Sub LoadProductVariations()
@@ -713,151 +701,103 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
             ProductController.UpdateProductVariationText(variations, TxtProductVariation)
         End Sub
 
-        ' Remove image button handler
         Private Sub BtnRemoveImage_Click(sender As Object, e As RoutedEventArgs)
-            ' Clear the image from the ViewModel
             ProductViewModel.Instance.ProductImage = Nothing
             ProductViewModel.Instance.ImagePath = Nothing
         End Sub
 
-        ' Common method to load image from file
         Private Sub LoadImageFromFile(filePath As String)
             Try
-                ' Check file size (2MB limit)
                 Dim fileInfo As New FileInfo(filePath)
                 Dim sizeInMB As Double = fileInfo.Length / (1024 * 1024)
-
                 If sizeInMB > 2 Then
                     MessageBox.Show("Image size exceeds 2MB limit. Please select a smaller image.", "File Too Large", MessageBoxButton.OK, MessageBoxImage.Warning)
                     Return
                 End If
-
-                ' Create BitmapImage
                 Dim bitmap As New BitmapImage()
                 bitmap.BeginInit()
-                bitmap.CacheOption = BitmapCacheOption.OnLoad ' Load the image in memory
+                bitmap.CacheOption = BitmapCacheOption.OnLoad
                 bitmap.UriSource = New Uri(filePath)
                 bitmap.EndInit()
-                bitmap.Freeze() ' Make it thread safe
-
-                ' Store in ViewModel
+                bitmap.Freeze()
                 ProductViewModel.Instance.ProductImage = bitmap
                 ProductViewModel.Instance.ImagePath = filePath
-
             Catch ex As Exception
                 MessageBox.Show("Error loading image: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Sub
 
 #Region "Markup and Price Calculation"
+
         Private Sub CalculateSellingPrice()
             Try
-                ' Check if controls exist
-                If TxtPurchaseOrder Is Nothing OrElse TxtMarkup Is Nothing OrElse TxtRetailPrice Is Nothing OrElse
-               RadBtnPercentage Is Nothing Then
-                    Return
-                End If
+                If TxtPurchaseOrder Is Nothing OrElse TxtMarkup Is Nothing OrElse
+                   TxtRetailPrice Is Nothing OrElse RadBtnPercentage Is Nothing Then Return
 
-                ' Get the buying price
                 Dim buyingPrice As Decimal
                 If String.IsNullOrWhiteSpace(TxtPurchaseOrder.Text) OrElse
-               Not Decimal.TryParse(TxtPurchaseOrder.Text, buyingPrice) OrElse
-               buyingPrice <= 0 Then
-                    ' Invalid or zero/negative buying price
+                   Not Decimal.TryParse(TxtPurchaseOrder.Text, buyingPrice) OrElse buyingPrice <= 0 Then
                     TxtRetailPrice.Text = "0.00"
                     Return
                 End If
 
-                ' Get the markup value
                 Dim markupValue As Decimal
                 If String.IsNullOrWhiteSpace(TxtMarkup.Text) OrElse
-               Not Decimal.TryParse(TxtMarkup.Text, markupValue) OrElse
-               markupValue < 0 Then
-                    ' Invalid markup value, just set selling price equal to buying price
+                   Not Decimal.TryParse(TxtMarkup.Text, markupValue) OrElse markupValue < 0 Then
                     TxtRetailPrice.Text = buyingPrice.ToString("N2")
                     Return
                 End If
 
-                ' Calculate selling price based on markup type
                 Dim sellingPrice As Decimal
-
                 If RadBtnPercentage.IsChecked = True Then
-                    ' Percentage markup
                     sellingPrice = buyingPrice + (buyingPrice * markupValue / 100)
                 Else
-                    ' Flat markup
                     sellingPrice = buyingPrice + markupValue
                 End If
 
-                ' Update the retail price text box
                 TxtRetailPrice.Text = sellingPrice.ToString("N2")
             Catch ex As Exception
                 MessageBox.Show("Error calculating selling price: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Sub
-        ' Event handler for the markup text box
+
         Private Sub TxtMarkup_TextChanged(sender As Object, e As TextChangedEventArgs) Handles TxtMarkup.TextChanged
             CalculateSellingPrice()
         End Sub
 
-        ' Event handler for the buying price text box
         Private Sub TxtPurchaseOrder_TextChanged(sender As Object, e As TextChangedEventArgs) Handles TxtPurchaseOrder.TextChanged
             CalculateSellingPrice()
         End Sub
 
-        ' Event handler for the radio buttons
         Private Sub RadioButton_Checked(sender As Object, e As RoutedEventArgs) Handles RadBtnPercentage.Checked, RadBtnFlat.Checked
             UpdateMarkupLabelsIfReady()
             CalculateSellingPrice()
         End Sub
 
-        ' Update the markup label and symbol based on selected markup type
-        Private Sub UpdateMarkupLabels()
-            UpdateMarkupLabelsIfReady()
-        End Sub
-
         Private Sub UpdateMarkupLabelsIfReady()
-            ' Check if all required elements are available before proceeding
-            If TxtMarkupLabel Is Nothing OrElse RadBtnPercentage Is Nothing OrElse
-           MarkupPrefix Is Nothing Then
-                ' Exit if any required element is not yet available
-                Return
-            End If
-
+            If TxtMarkupLabel Is Nothing OrElse RadBtnPercentage Is Nothing OrElse MarkupPrefix Is Nothing Then Return
             If RadBtnPercentage.IsChecked = True Then
                 TxtMarkupLabel.Text = "Enter Percentage:"
                 MarkupPrefix.Kind = PackIconKind.PercentOutline
-            Else ' Flat markup
+            Else
                 TxtMarkupLabel.Text = "Enter Amount:"
                 MarkupPrefix.Kind = PackIconKind.CurrencyPhp
             End If
         End Sub
 
-
-
-        ' Initialize markup UI when the form loads
         Private Sub InitializeMarkupUI()
-            ' Make sure the controls exist before trying to access them
-            If TxtMarkupLabel Is Nothing OrElse RadBtnPercentage Is Nothing OrElse
-           MarkupPrefix Is Nothing Then
-                ' Log this or handle it accordingly - controls not ready yet
-                Return
-            End If
-
-            ' Set default to percentage
+            If TxtMarkupLabel Is Nothing OrElse RadBtnPercentage Is Nothing OrElse MarkupPrefix Is Nothing Then Return
             RadBtnPercentage.IsChecked = True
-            ' Update the labels safely
             UpdateMarkupLabelsIfReady()
-
-            ' Ensure initial calculation is performed if values exist
             If Not String.IsNullOrWhiteSpace(TxtPurchaseOrder?.Text) Then
                 CalculateSellingPrice()
             End If
         End Sub
+
 #End Region
+
     End Class
 
-    ' You'll need to add this converter class to your project
     Public Class InverseBooleanToVisibilityConverter
         Implements IValueConverter
 
@@ -870,8 +810,6 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
             Dim visibility As Visibility = DirectCast(value, Visibility)
             Return visibility <> Visibility.Visible
         End Function
-
-
     End Class
 
 End Namespace
