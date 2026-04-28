@@ -1,7 +1,7 @@
 ﻿Imports MySql.Data.MySqlClient
 Imports System.Collections.ObjectModel
 Imports System.Data
-Imports DPC.Data.Helpers
+Imports DPC
 
 Public Class SOAController
 
@@ -9,7 +9,7 @@ Public Class SOAController
     ' GENERATE SOA NUMBER via stored procedure
     ' -------------------------------------------------------------------------
     Public Shared Function GenerateSOANumber() As String
-        Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+        Using conn As MySqlConnection = DPC.SplashScreen.GetDatabaseConnection()
             conn.Open()
             Using cmd As New MySqlCommand("CALL sp_generate_soa_no(@out)", conn)
                 cmd.Parameters.Add("@out", MySqlDbType.VarChar, 50).Direction = ParameterDirection.Output
@@ -24,18 +24,15 @@ Public Class SOAController
     ' -------------------------------------------------------------------------
     Public Shared Function LoadAll() As ObservableCollection(Of StatementModel)
         Dim result As New ObservableCollection(Of StatementModel)
-        Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+        Using conn As MySqlConnection = DPC.SplashScreen.GetDatabaseConnection()
             conn.Open()
-            Dim sql = "
-                SELECT soa_id, soa_no, client_id, client_name,
-                       project_title, statement_date, po_no, si_no, dr_no, bs_no,
-                       po_date, delivery_period_days, required_delivery_date,
-                       actual_completion_date, contract_amount, ld_rate_pct_per_day,
-                       days_delayed, subtotal_vat_inclusive, payments_total,
-                       outstanding_balance, liquidated_damages, grand_total, computed_ld
-                FROM v_soa_summary
-                ORDER BY statement_date DESC"
-
+            Dim sql = "SELECT soa_id, soa_no, client_id, client_name,
+                   project_title, statement_date, po_no, si_no, dr_no, bs_no,
+                   po_date, delivery_period_days, required_delivery_date,
+                   actual_completion_date, contract_amount, ld_rate_pct_per_day,
+                   days_delayed, subtotal_vat_inclusive, payments_total,
+                   outstanding_balance, liquidated_damages, grand_total, computed_ld
+                   FROM v_soa_summary ORDER BY statement_date DESC"
             Using cmd As New MySqlCommand(sql, conn)
                 Using reader = cmd.ExecuteReader()
                     While reader.Read()
@@ -52,40 +49,23 @@ Public Class SOAController
     ' -------------------------------------------------------------------------
     Public Shared Function LoadFull(soaId As Integer) As StatementModel
         Dim model As StatementModel = Nothing
-
-        Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+        Using conn As MySqlConnection = DPC.SplashScreen.GetDatabaseConnection()
             conn.Open()
-
-            ' 1. Load header from view
-            Dim headerSql = "
-                SELECT soa_id, soa_no, client_id, client_name,
-                       project_title, statement_date, po_no, si_no, dr_no, bs_no,
-                       po_date, delivery_period_days, required_delivery_date,
-                       actual_completion_date, contract_amount, ld_rate_pct_per_day,
-                       days_delayed, subtotal_vat_inclusive, payments_total,
-                       outstanding_balance, liquidated_damages, grand_total, computed_ld
-                FROM v_soa_summary
-                WHERE soa_id = @id"
-
+            Dim headerSql = "SELECT soa_id, soa_no, client_id, client_name,
+                         project_title, statement_date, po_no, si_no, dr_no, bs_no,
+                         po_date, delivery_period_days, required_delivery_date,
+                         actual_completion_date, contract_amount, ld_rate_pct_per_day,
+                         days_delayed, subtotal_vat_inclusive, payments_total,
+                         outstanding_balance, liquidated_damages, grand_total, computed_ld
+                         FROM v_soa_summary WHERE soa_id = @id"
             Using cmd As New MySqlCommand(headerSql, conn)
                 cmd.Parameters.AddWithValue("@id", soaId)
                 Using reader = cmd.ExecuteReader()
-                    If reader.Read() Then
-                        model = MapHeader(reader)
-                    End If
+                    If reader.Read() Then model = MapHeader(reader)
                 End Using
             End Using
-
             If model Is Nothing Then Return Nothing
-
-            ' 2. Load line items
-            Dim linesSql = "
-                SELECT item_date, description, qty, amount, payment, balance
-                FROM soa_line_items
-                WHERE soa_id = @id
-                ORDER BY sort_order"
-
-            Using cmd As New MySqlCommand(linesSql, conn)
+            Using cmd As New MySqlCommand("SELECT item_date, description, qty, amount, payment, balance FROM soa_line_items WHERE soa_id = @id ORDER BY sort_order", conn)
                 cmd.Parameters.AddWithValue("@id", soaId)
                 Using reader = cmd.ExecuteReader()
                     While reader.Read()
@@ -100,15 +80,7 @@ Public Class SOAController
                     End While
                 End Using
             End Using
-
-            ' 3. Load payment details
-            Dim paysSql = "
-                SELECT payment_date, reference, amount_paid
-                FROM soa_payment_details
-                WHERE soa_id = @id
-                ORDER BY sort_order"
-
-            Using cmd As New MySqlCommand(paysSql, conn)
+            Using cmd As New MySqlCommand("SELECT payment_date, reference, amount_paid FROM soa_payment_details WHERE soa_id = @id ORDER BY sort_order", conn)
                 cmd.Parameters.AddWithValue("@id", soaId)
                 Using reader = cmd.ExecuteReader()
                     While reader.Read()
@@ -121,7 +93,6 @@ Public Class SOAController
                 End Using
             End Using
         End Using
-
         Return model
     End Function
 
@@ -129,7 +100,7 @@ Public Class SOAController
     ' INSERT (returns new soa_id)
     ' -------------------------------------------------------------------------
     Public Shared Function InsertSOA(m As StatementModel) As Integer
-        Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+        Using conn As MySqlConnection = DPC.SplashScreen.GetDatabaseConnection()
             conn.Open()
             Using tx = conn.BeginTransaction()
                 Try
@@ -150,27 +121,21 @@ Public Class SOAController
     ' UPDATE (replaces children on every save)
     ' -------------------------------------------------------------------------
     Public Shared Function UpdateSOA(m As StatementModel) As Boolean
-        Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+        Using conn As MySqlConnection = DPC.SplashScreen.GetDatabaseConnection()
             conn.Open()
             Using tx = conn.BeginTransaction()
                 Try
                     UpdateHeader(conn, tx, m)
-
-                    Using cmd As New MySqlCommand(
-                    "DELETE FROM soa_line_items WHERE soa_id=@id", conn, tx)
+                    Using cmd As New MySqlCommand("DELETE FROM soa_line_items WHERE soa_id=@id", conn, tx)
                         cmd.Parameters.AddWithValue("@id", m.SoaId)
                         cmd.ExecuteNonQuery()
                     End Using
-
-                    Using cmd As New MySqlCommand(
-                    "DELETE FROM soa_payment_details WHERE soa_id=@id", conn, tx)
+                    Using cmd As New MySqlCommand("DELETE FROM soa_payment_details WHERE soa_id=@id", conn, tx)
                         cmd.Parameters.AddWithValue("@id", m.SoaId)
                         cmd.ExecuteNonQuery()
                     End Using
-
                     InsertLineItems(conn, tx, m.SoaId, m.LineItems)
                     InsertPayments(conn, tx, m.SoaId, m.PaymentItems)
-
                     tx.Commit()
                     Return True
                 Catch
@@ -185,11 +150,9 @@ Public Class SOAController
     ' DELETE
     ' -------------------------------------------------------------------------
     Public Shared Function DeleteSOA(soaId As Integer) As Boolean
-        Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+        Using conn As MySqlConnection = DPC.SplashScreen.GetDatabaseConnection()
             conn.Open()
-            ' Children cascade-delete via FK, so only need to delete the header
-            Using cmd As New MySqlCommand(
-            "DELETE FROM statements_of_account WHERE soa_id=@id", conn)
+            Using cmd As New MySqlCommand("DELETE FROM statements_of_account WHERE soa_id=@id", conn)
                 cmd.Parameters.AddWithValue("@id", soaId)
                 cmd.ExecuteNonQuery()
                 Return True

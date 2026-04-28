@@ -474,6 +474,7 @@ Public Class StatementOfAccountForm
         Next
 
         ' ── Save to DB ───────────────────────────────────────────────────────
+        MessageBox.Show("ClientId being saved: [" & newStatement.ClientId & "]")
         Try
             If _isEditMode Then
                 newStatement.SoaId = _editingRecord.SoaId
