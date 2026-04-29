@@ -765,6 +765,7 @@
     <Compile Include="Data\Controllers\PurchaseOrder\PurchaseOrderController.vb" />
     <Compile Include="Data\Controllers\Quotes\QuotesController.vb" />
     <Compile Include="Data\Controllers\ResetPassController.vb" />
+    <Compile Include="Data\Controllers\Sales\SOAController.vb" />
     <Compile Include="Data\Controllers\SessionManager.vb" />
     <Compile Include="Data\Controllers\StocksStatsController.vb" />
     <Compile Include="Data\Controllers\StocksTransferController.vb" />
@@ -831,6 +832,7 @@
     <Compile Include="Data\Models\QuotesModel.vb" />
     <Compile Include="Data\Models\ResidentialClientDetails.vb" />
     <Compile Include="Data\Models\SoftwareUpdate\GithubRelease.vb" />
+    <Compile Include="Data\Models\StatementModel.vb" />
     <Compile Include="Data\Models\Supplier.vb" />
     <Compile Include="Data\Models\UniversalTransactionModel.vb" />
     <Compile Include="Data\Models\UpdatedClient.vb" />
