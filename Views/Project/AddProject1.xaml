@@ -450,6 +450,11 @@
                         <ComboBoxItem Content="JOANNA"/>
                     </ComboBox>
                 </Border>
+                <TextBlock Text="Project Awarded Status:" Margin="0,20,0,10" FontWeight="SemiBold" Foreground="#474747"/>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                    <RadioButton x:Name="radAwardedYes" Content="Yes (Awarded)" Margin="0,0,30,0" VerticalAlignment="Center" Foreground="#474747" FontSize="14"/>
+                    <RadioButton x:Name="radAwardedNo" Content="No (Not Awarded)" VerticalAlignment="Center" Foreground="#474747" FontSize="14"/>
+                </StackPanel>
 
                 <!-- ══════════════════════════════════════
                      SECTION 6 — Note (Rich Text Editor)

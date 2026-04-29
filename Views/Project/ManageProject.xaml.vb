@@ -21,6 +21,10 @@ Namespace DPC.Views.Project
         Public Sub New()
             InitializeComponent()
             AddHandler txtSearch.TextChanged, AddressOf TxtSearch_TextChanged
+
+        End Sub
+
+        Private Sub UserControl_Loaded(sender As Object, e As RoutedEventArgs)
             LoadData()
         End Sub
 
@@ -31,6 +35,7 @@ Namespace DPC.Views.Project
             Try
                 _allProjects = DPC.Data.Controllers.ProjectController.GetProjects()
                 If _allProjects Is Nothing Then
+                    MessageBox.Show("GetProjects returned Nothing!")
                     _allProjects = New List(Of DPC.Data.Model.Project)()
                 End If
                 _filteredProjects = _allProjects
@@ -39,7 +44,7 @@ Namespace DPC.Views.Project
                 UpdateStatusCounts()
             Catch ex As Exception
                 MessageBox.Show("Error retrieving project data: " & ex.Message,
-                                "Data Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                        "Data Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Sub
 
@@ -70,18 +75,23 @@ Namespace DPC.Views.Project
         ' PAGE SIZE DROP-DOWN
         ' =========================================================
         Private Sub CmbPageSize_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
-            If _allProjects Is Nothing Then Return
-
             Dim combo = TryCast(sender, ComboBox)
             If combo IsNot Nothing AndAlso combo.SelectedItem IsNot Nothing Then
                 Dim selectedItem = TryCast(combo.SelectedItem, ComboBoxItem)
                 If selectedItem IsNot Nothing Then
-                    Dim newSize As Integer
-                    If Integer.TryParse(selectedItem.Content.ToString(), newSize) Then
-                        _pageSize = newSize
-                        _currentPage = 1
-                        ApplyPagination()
-                    End If
+                    Dim viewName = selectedItem.Content.ToString()
+
+                    Select Case viewName
+                        Case "DPC GOV SALES"
+                            ' Load DPC GOV SALES table/view
+                            LoadDPCGovSalesData()
+                        Case "AWARDED PROJECTS"
+                            ' Load AWARDED PROJECTS table/view
+                            LoadAwardedProjectsData()
+                        Case "COLLECTION"
+                            ' Load COLLECTION table/view
+                            LoadCollectionData()
+                    End Select
                 End If
             End If
         End Sub
@@ -97,6 +107,13 @@ Namespace DPC.Views.Project
             If _currentPage < 1 Then _currentPage = 1
 
             Dim paged = _filteredProjects.Skip((_currentPage - 1) * _pageSize).Take(_pageSize).ToList()
+
+            ' ADD THIS CHECK
+            If ProjectDataGrid Is Nothing Then
+                MessageBox.Show("ProjectDataGrid not found!")
+                Return
+            End If
+
             ProjectDataGrid.ItemsSource = New ObservableCollection(Of DPC.Data.Model.Project)(paged)
 
             UpdatePageButtons(totalPages)
@@ -162,6 +179,52 @@ Namespace DPC.Views.Project
                 ApplyPagination()
             End If
         End Sub
+
+        Private Sub LoadDPCGovSalesData()
+            Try
+                ' Your logic to fetch DPC GOV SALES data
+                _filteredProjects = DPC.Data.Controllers.ProjectController.GetDPCGovSalesProjects()
+                If _filteredProjects Is Nothing Then
+                    _filteredProjects = New List(Of DPC.Data.Model.Project)()
+                End If
+                _currentPage = 1
+                ApplyPagination()
+                UpdateStatusCounts()
+            Catch ex As Exception
+                MessageBox.Show("Error loading DPC GOV SALES: " & ex.Message)
+            End Try
+        End Sub
+
+        Private Sub LoadAwardedProjectsData()
+            Try
+                ' Your logic to fetch AWARDED PROJECTS data
+                _filteredProjects = DPC.Data.Controllers.ProjectController.GetAwardedProjects()
+                If _filteredProjects Is Nothing Then
+                    _filteredProjects = New List(Of DPC.Data.Model.Project)()
+                End If
+                _currentPage = 1
+                ApplyPagination()
+                UpdateStatusCounts()
+            Catch ex As Exception
+                MessageBox.Show("Error loading AWARDED PROJECTS: " & ex.Message)
+            End Try
+        End Sub
+
+        Private Sub LoadCollectionData()
+            Try
+                ' Your logic to fetch COLLECTION data
+                _filteredProjects = DPC.Data.Controllers.ProjectController.GetCollectionData()
+                If _filteredProjects Is Nothing Then
+                    _filteredProjects = New List(Of DPC.Data.Model.Project)()
+                End If
+                _currentPage = 1
+                ApplyPagination()
+                UpdateStatusCounts()
+            Catch ex As Exception
+                MessageBox.Show("Error loading COLLECTION: " & ex.Message)
+            End Try
+        End Sub
+
 
         ' =========================================================
         ' SEARCH
