@@ -31,6 +31,7 @@
         Public Property Status As String
         Public Property Remarks As String
         Public Property AssignSales As String
+        Public Property IsAwarded As Boolean
 
         ' ── Note ─────────────────────────────────────────────────
         Public Property Note As String

@@ -202,5 +202,19 @@ Namespace DPC.Data.Controllers
             End Using
         End Function
 
+        Public Shared Function GetDPCGovSalesProjects() As List(Of DPC.Data.Model.Project)
+            ' Your database query logic for DPC GOV SALES
+        End Function
+
+        Public Shared Function GetAwardedProjects() As List(Of DPC.Data.Model.Project)
+            ' Your database query logic for AWARDED PROJECTS
+        End Function
+
+        Public Shared Function GetCollectionData() As List(Of DPC.Data.Model.Project)
+            ' Your database query logic for COLLECTION
+        End Function
+
+
+
     End Class
 End Namespace

@@ -42,6 +42,7 @@ Namespace DPC.Views.Project
         Private Shared _savedAssignSalesIndex As Integer = -1
         Private Shared _savedBidDocsLink As String = ""
         Private Shared _savedNote As String = ""
+        Private Shared _savedAwardedStatus As String = ""
 
         Public Sub New()
             InitializeComponent()
@@ -108,6 +109,12 @@ Namespace DPC.Views.Project
                 EditorBox.Document.Blocks.Clear()
                 EditorBox.Document.Blocks.Add(New Paragraph(New Run(_savedNote)))
             End If
+
+            If _savedAwardedStatus = "Yes" Then
+                radAwardedYes.IsChecked = True
+            ElseIf _savedAwardedStatus = "No" Then
+                radAwardedNo.IsChecked = True
+            End If
         End Sub
 
         ' =========================================================
@@ -133,6 +140,8 @@ Namespace DPC.Views.Project
             AddHandler cmbRemarks.SelectionChanged, AddressOf SaveComboToMemory
             AddHandler cmbAssignSales.SelectionChanged, AddressOf SaveComboToMemory
             AddHandler EditorBox.TextChanged, AddressOf SaveEditorToMemory
+            AddHandler radAwardedYes.Checked, AddressOf SaveRadioToMemory
+            AddHandler radAwardedNo.Checked, AddressOf SaveRadioToMemory
         End Sub
 
         ' =========================================================
@@ -156,6 +165,14 @@ Namespace DPC.Views.Project
             _savedStatusIndex = cmbStatus.SelectedIndex
             _savedRemarksIndex = cmbRemarks.SelectedIndex
             _savedAssignSalesIndex = cmbAssignSales.SelectedIndex
+        End Sub
+
+        Private Sub SaveRadioToMemory(sender As Object, e As RoutedEventArgs)
+            If radAwardedYes.IsChecked Then
+                _savedAwardedStatus = "Yes"
+            ElseIf radAwardedNo.IsChecked Then
+                _savedAwardedStatus = "No"
+            End If
         End Sub
 
         Private Sub SaveDateToMemory(sender As Object, e As SelectionChangedEventArgs)
@@ -329,7 +346,8 @@ Namespace DPC.Views.Project
                 .Status = selectedStatus,
                 .Remarks = selectedRemarks,
                 .AssignSales = selectedAssignSales,
-                .Note = noteText
+                .Note = noteText,
+                .IsAwarded = radAwardedYes.IsChecked.GetValueOrDefault(False)
             }
 
             Dim success As Boolean = DPC.Data.Controllers.ProjectController.CreateProject(proj)
@@ -403,6 +421,10 @@ Namespace DPC.Views.Project
             _savedNote = ""
 
             txtProjectTitle.Focus()
+
+            radAwardedYes.IsChecked = False
+            radAwardedNo.IsChecked = False
+            _savedAwardedStatus = ""
         End Sub
 
         ' =========================================================
