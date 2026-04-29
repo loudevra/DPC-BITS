@@ -2,10 +2,13 @@
 Imports System.Collections.ObjectModel
 Imports System.Data
 Imports System.Windows.Controls.Primitives
+Imports DPC.Components.ConfirmationModals
+Imports DPC.DPC.Components.ConfirmationModals
 Imports DPC.DPC.Data.Controllers
 Imports DPC.DPC.Data.Helpers
 Imports DPC.DPC.Data.Model
 Imports DPC.DPC.Data.Models
+Imports DPC.DPC.DPC.Data.Helpers
 Imports MySql.Data.MySqlClient
 
 Namespace DPC.Views.HRM.Employees.Employees
@@ -135,14 +138,24 @@ Namespace DPC.Views.HRM.Employees.Employees
         End Sub
 
         Private Sub ViewEmployee(sender As Object, e As RoutedEventArgs)
-            Dim selectedEmployee As Employee = CType(EmployeesDataGrid.SelectedItem, Employee)
-            If selectedEmployee IsNot Nothing Then
-                MessageBox.Show($"Employee: {selectedEmployee.Name}" & vbCrLf &
-                                $"Role: {selectedEmployee.RoleName}" & vbCrLf &
-                                $"Location: {selectedEmployee.LocationName}", "Employee Info", MessageBoxButton.OK, MessageBoxImage.Information)
-            End If
-        End Sub
+            Dim btn = TryCast(sender, Button)
+            Dim selectedEmployee As Employee = TryCast(btn?.DataContext, Employee)
 
+            If selectedEmployee Is Nothing Then
+                selectedEmployee = TryCast(EmployeesDataGrid.SelectedItem, Employee)
+            End If
+
+            If selectedEmployee Is Nothing Then
+                MessageBox.Show("Please select an employee first.", "No Selection",
+                        MessageBoxButton.OK, MessageBoxImage.Information)
+                Return
+            End If
+
+            EmployeeProfileService.SelectedEmployee =
+        EmployeeController.GetEmployeeInfo(selectedEmployee.EmployeeID)
+
+            ViewLoader.DynamicView.NavigateToView("employeesprofileview", Me)
+        End Sub
         Private Sub UpdatePagination()
             ' Safety check for UI elements
             If TxtPageNumber IsNot Nothing Then
@@ -258,7 +271,7 @@ Namespace DPC.Views.HRM.Employees.Employees
             End If
 
             ' Create the modal
-            Dim deleteModal As New DPC.Components.ConfirmationModals.HRMDeleteEmployee(selectedEmployee)
+            Dim deleteModal As New HRMDeleteEmployee(selectedEmployee)
 
             ' Handle refresh on success
             AddHandler deleteModal.DeletedEmployee, AddressOf LoadEmployees

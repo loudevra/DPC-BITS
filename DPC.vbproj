@@ -1066,6 +1066,7 @@
     <Compile Include="Views\HRM\Employees\Employees\EditEmployee.xaml.vb">
       <DependentUpon>EditEmployee.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\HRM\Employees\Employees\EmployeesProfileControls\EmployeeProfileService.vb" />
     <Compile Include="Views\HRM\Employees\Employees\EmployeesProfileControls\Invoices.xaml.vb">
       <DependentUpon>Invoices.xaml</DependentUpon>
     </Compile>

@@ -242,10 +242,22 @@
                                         <DataGridTemplateColumn Header="Actions" Width="150">
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <Button Content="👁" Click="ViewEmployee" Margin="2"/>
-                                                        <Button Content="🖋" Click="EditEmployee_Click" Margin="2"/>
-                                                        <Button Content="🗑" Click="DeleteEmployee_Click" Margin="2"/>
+                                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                        <Button Click="ViewEmployee" Margin="3,0" Background="Transparent" BorderThickness="0" Cursor="Hand">
+                                                            <Border Background="#EBF5FB" CornerRadius="6" Padding="6">
+                                                                <materialDesign:PackIcon Kind="Eye" Width="16" Height="16" Foreground="#2196F3"/>
+                                                            </Border>
+                                                        </Button>
+                                                        <Button Click="EditEmployee_Click" Margin="3,0" Background="Transparent" BorderThickness="0" Cursor="Hand">
+                                                            <Border Background="#EAFAF1" CornerRadius="6" Padding="6">
+                                                                <materialDesign:PackIcon Kind="PencilOutline" Width="16" Height="16" Foreground="#4CAF50"/>
+                                                            </Border>
+                                                        </Button>
+                                                        <Button Click="DeleteEmployee_Click" Margin="3,0" Background="Transparent" BorderThickness="0" Cursor="Hand">
+                                                            <Border Background="#FDEDEC" CornerRadius="6" Padding="6">
+                                                                <materialDesign:PackIcon Kind="TrashCanOutline" Width="16" Height="16" Foreground="#F44336"/>
+                                                            </Border>
+                                                        </Button>
                                                     </StackPanel>
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>
