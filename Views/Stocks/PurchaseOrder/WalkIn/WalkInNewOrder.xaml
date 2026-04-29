@@ -375,6 +375,37 @@
                                     <TextBlock Text="GRAND TOTAL" FontSize="18" FontWeight="Bold" Foreground="#1D3242"/>
                                     <TextBlock x:Name="txtGrandTotal" Text="₱ 0.00" FontSize="24" HorizontalAlignment="Right" FontWeight="Bold" Foreground="#1D5642"/>
                                 </Grid>
+                                <StackPanel Orientation="Vertical" Margin="0,15,0,0" VerticalAlignment="Top">
+                                    <TextBlock Text="Apply Tax:" FontWeight="SemiBold" Margin="0,0,0,8" Foreground="#474747"/>
+                                    <Border Width="56" Height="32" Background="#E0E0E0" CornerRadius="16" BorderBrush="#AEAEAE" BorderThickness="1" HorizontalAlignment="Left">
+                                        <Grid>
+                                            <Button x:Name="ApplyTaxToggle" 
+                    Click="ApplyTaxToggle_Click"
+                    Width="28" Height="28" 
+                    Background="#AEAEAE" 
+                    BorderThickness="0"
+                    HorizontalAlignment="Left"
+                    Margin="2,2,0,0"
+                    Foreground="White">
+                                                <Button.Style>
+                                                    <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Grid>
+                                                                        <Ellipse x:Name="CircleBackground" Fill="{TemplateBinding Background}" Width="28" Height="28"/>
+                                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    </Grid>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </Button.Style>
+                                                <materialDesign:PackIcon Kind="Close" Width="16" Height="16"/>
+                                            </Button>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
                             </StackPanel>
                         </Border>
 
