@@ -1006,8 +1006,8 @@ Namespace DPC.Views.Sales.Quotes
             Dim box = CreateInputBox("", 90, False, $"txtRate_{rowIndex}", HorizontalAlignment.Center)
             Dim txt = TryCast(box.Child, TextBox)
             If txt IsNot Nothing Then
-                AddHandler txt.TextChanged, AddressOf Quantity_TextChanged
-                AddHandler txt.PreviewTextInput, AddressOf Quantity_PreviewTextInput
+                AddHandler txt.TextChanged, AddressOf Rate_TextChanged
+                AddHandler txt.PreviewTextInput, AddressOf Rate_PreviewTextInput
             End If
             Return box
         End Function
@@ -1341,6 +1341,36 @@ Namespace DPC.Views.Sales.Quotes
                         icon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Close
                     End If
                 End If
+            End If
+        End Sub
+
+        Private Sub Rate_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim textBox = TryCast(sender, TextBox)
+            If textBox Is Nothing Then Exit Sub
+
+            textBox.Dispatcher.BeginInvoke(Sub()
+                                               Dim parts = textBox.Name.Split("_"c)
+                                               If parts.Length < 2 Then Exit Sub
+
+                                               Dim rowIndex As Integer
+                                               If Not Integer.TryParse(parts(1), rowIndex) Then Exit Sub
+
+                                               CalculateAmount(rowIndex)
+                                           End Sub, DispatcherPriority.Background)
+        End Sub
+
+        Private Sub Rate_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
+            Dim tb = DirectCast(sender, TextBox)
+
+            ' Allow digits and one decimal point only
+            If Not Char.IsDigit(e.Text, 0) AndAlso e.Text <> "." Then
+                e.Handled = True
+                Return
+            End If
+
+            ' Block a second decimal point
+            If e.Text = "." AndAlso tb.Text.Contains(".") Then
+                e.Handled = True
             End If
         End Sub
 
