@@ -107,42 +107,13 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
 
         ' Event handler for search text changed
         Private Sub TxtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
-            ApplyFilter()
+            _currentPage = 1  ' Reset to first page on new search
+            LoadData()
         End Sub
 
-        ' Apply the filter to the DataTable view
+        ' Remove or empty out ApplyFilter — it's no longer needed
         Private Sub ApplyFilter()
-            If _dataTable Is Nothing Then Return
-
-            Dim searchText As String = txtSearch.Text.Trim().ToLower()
-
-            If String.IsNullOrWhiteSpace(searchText) Then
-                ' If search is empty, clear filter
-                _dataTable.DefaultView.RowFilter = ""
-            Else
-                ' Build filter string for each searchable column
-                Dim filterExpressions As New List(Of String)
-
-                ' Loop through columns and add filter for string columns
-                For Each column As DataColumn In _dataTable.Columns
-                    ' Skip image/binary columns
-                    If column.DataType Is GetType(Byte()) OrElse
-                       column.ColumnName = "ImageSource" OrElse
-                       column.ColumnName = "ProductImage" Then
-                        Continue For
-                    End If
-
-                    ' Add filter expression for this column
-                    filterExpressions.Add(String.Format("CONVERT({0}, 'System.String') LIKE '%{1}%'",
-                                                       column.ColumnName,
-                                                       searchText.Replace("'", "''")))
-                Next
-
-                ' Combine all expressions with OR
-                If filterExpressions.Count > 0 Then
-                    _dataTable.DefaultView.RowFilter = String.Join(" OR ", filterExpressions)
-                End If
-            End If
+            ' No-op: search is now handled server-side in LoadData()
         End Sub
 
 
@@ -160,125 +131,147 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
                 Dim dataTable As DataTable = Nothing
                 Dim inStockProducts As Integer = 0
                 Dim stockOutProducts As Integer = 0
+                Dim searchText As String = ""
 
-                ' Run the heavy database + image processing work on a background thread
+                ' Capture search text on UI thread before going async
+                searchText = txtSearch.Text.Trim()
+
                 Await Task.Run(
-                    Sub()
-                        Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                            ' Query WITHOUT the heavy productImage column
-                            Dim query As String = "
-                    SELECT  
-    p.productID AS ID,  
-    p.productName AS Name,  
-    c.categoryName AS Category,  
-    sc.subcategoryName AS SubCategory,  
-    b.brandName AS Brand,  
-    s.supplierName AS Supplier,  
-    GROUP_CONCAT(DISTINCT WarehouseFiltered.warehouseName SEPARATOR ', ') AS Warehouse,  
-    SUM(COALESCE(pnv.stockUnit, 0) + COALESCE(pvs.stockUnit, 0)) AS StockQuantity,  
-    MAX(COALESCE(pnv.alertQuantity, pvs.alertQuantity, 0)) AS AlertQuantity,  
-    MAX(COALESCE(pnv.buyingPrice, pvs.buyingPrice, 0)) AS BuyingPrice,
-    MAX(COALESCE(pnv.sellingPrice, pvs.sellingPrice, 0)) AS SellingPrice,
-    p.productImage AS ProductImage,  
-    p.productVariation AS HasVariations  
+            Sub()
+                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
 
-FROM product p  
+                    ' Build optional HAVING clause
+                    Dim whereClause As String = ""
+                    If Not String.IsNullOrWhiteSpace(searchText) Then
+                        whereClause = "
+                            HAVING 
+                                p.productName LIKE @search OR
+                                c.categoryName LIKE @search OR
+                                sc.subcategoryName LIKE @search OR
+                                b.brandName LIKE @search OR
+                                s.supplierName LIKE @search OR
+                                p.productID LIKE @search
+                        "
+                    End If
 
-LEFT JOIN category c ON p.categoryID = c.categoryID  
-LEFT JOIN subcategory sc ON p.subcategoryID = sc.subcategoryID  
-LEFT JOIN brand b ON p.brandID = b.brandID  
-LEFT JOIN supplier s ON p.supplierID = s.supplierID  
+                    Dim query As String = $"
+                        SELECT  
+                            p.productID AS ID,  
+                            p.productName AS Name,  
+                            c.categoryName AS Category,  
+                            sc.subcategoryName AS SubCategory,  
+                            b.brandName AS Brand,  
+                            s.supplierName AS Supplier,  
+                            GROUP_CONCAT(DISTINCT WarehouseFiltered.warehouseName SEPARATOR ', ') AS Warehouse,  
+                            SUM(COALESCE(pnv.stockUnit, 0) + COALESCE(pvs.stockUnit, 0)) AS StockQuantity,  
+                            MAX(COALESCE(pnv.alertQuantity, pvs.alertQuantity, 0)) AS AlertQuantity,  
+                            MAX(COALESCE(pnv.buyingPrice, pvs.buyingPrice, 0)) AS BuyingPrice,
+                            MAX(COALESCE(pnv.sellingPrice, pvs.sellingPrice, 0)) AS SellingPrice,
+                            p.productImage AS ProductImage,  
+                            p.productVariation AS HasVariations  
+                        FROM product p  
+                        LEFT JOIN category c ON p.categoryID = c.categoryID  
+                        LEFT JOIN subcategory sc ON p.subcategoryID = sc.subcategoryID  
+                        LEFT JOIN brand b ON p.brandID = b.brandID  
+                        LEFT JOIN supplier s ON p.supplierID = s.supplierID  
+                        LEFT JOIN productnovariation pnv ON p.productID = pnv.productID AND p.productVariation = 0  
+                        LEFT JOIN warehouse w ON pnv.warehouseID = w.warehouseID AND pnv.stockUnit > 0  
+                        LEFT JOIN productvariationstock pvs ON p.productID = pvs.productID AND p.productVariation = 1  
+                        LEFT JOIN warehouse wv ON pvs.warehouseID = wv.warehouseID AND pvs.stockUnit > 0  
+                        LEFT JOIN (
+                            SELECT warehouseID, warehouseName FROM warehouse
+                        ) AS WarehouseFiltered ON 
+                            (p.productVariation = 0 AND w.warehouseID = WarehouseFiltered.warehouseID) OR
+                            (p.productVariation = 1 AND wv.warehouseID = WarehouseFiltered.warehouseID)  
+                        GROUP BY  
+                            p.productID, p.productName, c.categoryName, sc.subcategoryName,  
+                            b.brandName, s.supplierName, p.productImage, p.productVariation
+                        {whereClause}
+                        ORDER BY p.productName
+                        LIMIT @pageSize OFFSET @offset;
+                    "
 
--- Products without variations  
-LEFT JOIN productnovariation pnv ON p.productID = pnv.productID AND p.productVariation = 0  
-LEFT JOIN warehouse w ON pnv.warehouseID = w.warehouseID AND pnv.stockUnit > 0  
+                    conn.Open()
+                    Dim adapter As New MySqlDataAdapter(query, conn)
+                    adapter.SelectCommand.Parameters.AddWithValue("@pageSize", _pageSize)
+                    adapter.SelectCommand.Parameters.AddWithValue("@offset", (_currentPage - 1) * _pageSize)
+                    If Not String.IsNullOrWhiteSpace(searchText) Then
+                        adapter.SelectCommand.Parameters.AddWithValue("@search", $"%{searchText}%")
+                    End If
 
--- Products with variations  
-LEFT JOIN productvariationstock pvs ON p.productID = pvs.productID AND p.productVariation = 1  
-LEFT JOIN warehouse wv ON pvs.warehouseID = wv.warehouseID AND pvs.stockUnit > 0  
+                    dataTable = New DataTable()
+                    adapter.Fill(dataTable)
 
--- Unified warehouse list filtered by stock  
-LEFT JOIN (
-    SELECT warehouseID, warehouseName FROM warehouse
-) AS WarehouseFiltered ON 
-    (p.productVariation = 0 AND w.warehouseID = WarehouseFiltered.warehouseID) OR
-    (p.productVariation = 1 AND wv.warehouseID = WarehouseFiltered.warehouseID)  
+                    ' Count query with the same search filter
+                    Dim countQuery As String = $"
+                        SELECT 
+                            COUNT(*) AS Total,
+                            SUM(TotalStock) AS InStock,
+                            SUM(CASE WHEN TotalStock = 0 THEN 1 ELSE 0 END) AS StockOut
+                        FROM (
+                            SELECT p.productID,
+                                SUM(COALESCE(pnv.stockUnit, 0) + COALESCE(pvs.stockUnit, 0)) AS TotalStock,
+                                p.productName, c.categoryName, sc.subcategoryName, b.brandName, s.supplierName
+                            FROM product p
+                            LEFT JOIN category c ON p.categoryID = c.categoryID
+                            LEFT JOIN subcategory sc ON p.subcategoryID = sc.subcategoryID
+                            LEFT JOIN brand b ON p.brandID = b.brandID
+                            LEFT JOIN supplier s ON p.supplierID = s.supplierID
+                            LEFT JOIN productnovariation pnv ON p.productID = pnv.productID AND p.productVariation = 0
+                            LEFT JOIN productvariationstock pvs ON p.productID = pvs.productID AND p.productVariation = 1
+                            GROUP BY p.productID, p.productName, c.categoryName, sc.subcategoryName, b.brandName, s.supplierName
+                            {whereClause}
+                        ) AS StockSummary"
 
-GROUP BY  
-    p.productID, p.productName, c.categoryName, sc.subcategoryName,  
-    b.brandName, s.supplierName, p.productImage, p.productVariation
-
-ORDER BY p.productName
-LIMIT @pageSize OFFSET @offset;
-            "
-                            conn.Open()
-                            Dim adapter As New MySqlDataAdapter(query, conn)
-                            adapter.SelectCommand.Parameters.AddWithValue("@pageSize", _pageSize)
-                            adapter.SelectCommand.Parameters.AddWithValue("@offset", (_currentPage - 1) * _pageSize)
-                            dataTable = New DataTable()
-                            adapter.Fill(dataTable)
-
-                            ' Get total count for stats (lightweight query)
-                            Dim countQuery As String = "
-                      SELECT 
-                      COUNT(*) AS Total,
-                      SUM(TotalStock) AS InStock, -- Changed from CASE WHEN TotalStock > 0...
-                      SUM(CASE WHEN TotalStock = 0 THEN 1 ELSE 0 END) AS StockOut
-                      FROM (
-                      SELECT p.productID,
-                      SUM(COALESCE(pnv.stockUnit, 0) + COALESCE(pvs.stockUnit, 0)) AS TotalStock
-                      FROM product p
-                      LEFT JOIN productnovariation pnv ON p.productID = pnv.productID AND p.productVariation = 0
-                      LEFT JOIN productvariationstock pvs ON p.productID = pvs.productID AND p.productVariation = 1
-                      GROUP BY p.productID
-                      ) AS StockSummary"
-
-                            Using countCmd As New MySqlCommand(countQuery, conn)
-                                Using reader = countCmd.ExecuteReader()
-                                    If reader.Read() Then
-                                        inStockProducts = Convert.ToInt32(reader("InStock"))
-                                        stockOutProducts = Convert.ToInt32(reader("StockOut"))
-                                        _totalRows = Convert.ToInt32(reader("Total"))
-                                    End If
-                                End Using
-                            End Using
-
-                            ' Add column for Image display
-                            If Not dataTable.Columns.Contains("ImageSource") Then
-                                dataTable.Columns.Add("ImageSource", GetType(BitmapImage))
+                    Using countCmd As New MySqlCommand(countQuery, conn)
+                        If Not String.IsNullOrWhiteSpace(searchText) Then
+                            countCmd.Parameters.AddWithValue("@search", $"%{searchText}%")
+                        End If
+                        Using reader = countCmd.ExecuteReader()
+                            If reader.Read() Then
+                                inStockProducts = Convert.ToInt32(reader("InStock"))
+                                stockOutProducts = Convert.ToInt32(reader("StockOut"))
+                                _totalRows = Convert.ToInt32(reader("Total"))
                             End If
-
-                            ' Process images on background thread with downscaled decode
-                            For Each row As DataRow In dataTable.Rows
-                                If row("ProductImage") IsNot DBNull.Value Then
-                                    Dim base64String As String = row("ProductImage").ToString()
-                                    Try
-                                        Dim imageBytes As Byte() = Convert.FromBase64String(base64String)
-                                        Dim imageSource As New BitmapImage()
-                                        Using stream As New MemoryStream(imageBytes)
-                                            imageSource.BeginInit()
-                                            imageSource.StreamSource = stream
-                                            imageSource.CacheOption = BitmapCacheOption.OnLoad
-                                            ' Decode at display size to save memory
-                                            imageSource.DecodePixelWidth = 100
-                                            imageSource.DecodePixelHeight = 100
-                                            imageSource.EndInit()
-                                            imageSource.Freeze() ' Required for cross-thread usage
-                                        End Using
-                                        row("ImageSource") = imageSource
-                                    Catch ex As Exception
-                                        Console.WriteLine($"Error processing image: {ex.Message}")
-                                    End Try
-                                End If
-
-                                ' For products with no stock, clear warehouse
-                                Dim stockQuantity As Integer = Convert.ToInt32(row("StockQuantity"))
-                                If stockQuantity = 0 Then
-                                    row("Warehouse") = DBNull.Value
-                                End If
-                            Next
                         End Using
-                    End Sub)
+                    End Using
+
+                    ' Add ImageSource column if not present
+                    If Not dataTable.Columns.Contains("ImageSource") Then
+                        dataTable.Columns.Add("ImageSource", GetType(BitmapImage))
+                    End If
+
+                    ' Process images on background thread
+                    For Each row As DataRow In dataTable.Rows
+                        If row("ProductImage") IsNot DBNull.Value Then
+                            Dim base64String As String = row("ProductImage").ToString()
+                            Try
+                                Dim imageBytes As Byte() = Convert.FromBase64String(base64String)
+                                Dim imageSource As New BitmapImage()
+                                Using stream As New MemoryStream(imageBytes)
+                                    imageSource.BeginInit()
+                                    imageSource.StreamSource = stream
+                                    imageSource.CacheOption = BitmapCacheOption.OnLoad
+                                    imageSource.DecodePixelWidth = 100
+                                    imageSource.DecodePixelHeight = 100
+                                    imageSource.EndInit()
+                                    imageSource.Freeze()
+                                End Using
+                                row("ImageSource") = imageSource
+                            Catch ex As Exception
+                                Console.WriteLine($"Error processing image: {ex.Message}")
+                            End Try
+                        End If
+
+                        ' Clear warehouse for out-of-stock products
+                        Dim stockQuantity As Integer = Convert.ToInt32(row("StockQuantity"))
+                        If stockQuantity = 0 Then
+                            row("Warehouse") = DBNull.Value
+                        End If
+                    Next
+
+                End Using  ' <-- closes Using conn
+            End Sub)
 
                 ' Update UI on the dispatcher thread
                 _dataTable = dataTable
