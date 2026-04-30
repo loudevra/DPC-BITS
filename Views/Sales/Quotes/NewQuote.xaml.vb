@@ -1378,28 +1378,35 @@ Namespace DPC.Views.Sales.Quotes
             If Not _isInitialized Then Return
             Dim tb = DirectCast(sender, TextBox)
 
+            RemoveHandler tb.TextChanged, AddressOf txtDeliveryFee_TextChange
+
             Dim rawInput As String = tb.Text.Replace(",", "").Trim()
-            ' Allow numbers and one decimal point
             Dim cleanInput As String = Regex.Replace(rawInput, "[^0-9.]", "")
 
             ' Prevent multiple decimal points
-            Dim decimalCount = cleanInput.Count(Function(c) c = "."c)
-            If decimalCount > 1 Then
-                cleanInput = cleanInput.Substring(0, cleanInput.LastIndexOf("."))
+            Dim parts = cleanInput.Split("."c)
+            If parts.Length > 2 Then
+                cleanInput = parts(0) & "." & parts(1)
             End If
-
-            RemoveHandler tb.TextChanged, AddressOf txtDeliveryFee_TextChange
 
             If String.IsNullOrEmpty(cleanInput) Then
                 tb.Text = ""
                 lblFee.Text = "₱ 0"
             Else
-                Dim val As Decimal = 0
-                If Decimal.TryParse(cleanInput, val) Then
-                    ' Display exactly what user typed
-                    lblFee.Text = $"₱ {cleanInput}"
-                    tb.Text = cleanInput
-                End If
+                ' Format the integer part with commas, keep decimal part as-is
+                Dim intPart As String = cleanInput.Split("."c)(0)
+                Dim decPart As String = If(cleanInput.Contains("."), "." & cleanInput.Split("."c)(1), "")
+
+                Dim intVal As Long = 0
+                Long.TryParse(intPart, intVal)
+                Dim formatted = intVal.ToString("N0") & decPart
+
+                Dim caretPos = tb.CaretIndex
+                Dim oldLen = tb.Text.Length
+                tb.Text = formatted
+                tb.CaretIndex = Math.Max(0, Math.Min(formatted.Length, caretPos + (formatted.Length - oldLen)))
+
+                lblFee.Text = "₱ " & formatted
             End If
 
             AddHandler tb.TextChanged, AddressOf txtDeliveryFee_TextChange
@@ -1410,28 +1417,34 @@ Namespace DPC.Views.Sales.Quotes
             If Not _isInitialized Then Return
             Dim tb = DirectCast(sender, TextBox)
 
+            RemoveHandler tb.TextChanged, AddressOf txtInstallationFee_TextChanged
+
             Dim rawInput As String = tb.Text.Replace(",", "").Trim()
-            ' Allow numbers and one decimal point
             Dim cleanInput As String = Regex.Replace(rawInput, "[^0-9.]", "")
 
             ' Prevent multiple decimal points
-            Dim decimalCount = cleanInput.Count(Function(c) c = "."c)
-            If decimalCount > 1 Then
-                cleanInput = cleanInput.Substring(0, cleanInput.LastIndexOf("."))
+            Dim parts = cleanInput.Split("."c)
+            If parts.Length > 2 Then
+                cleanInput = parts(0) & "." & parts(1)
             End If
-
-            RemoveHandler tb.TextChanged, AddressOf txtInstallationFee_TextChanged
 
             If String.IsNullOrEmpty(cleanInput) Then
                 tb.Text = ""
                 lblInstallationFee.Text = "₱ 0"
             Else
-                Dim val As Decimal = 0
-                If Decimal.TryParse(cleanInput, val) Then
-                    ' Display exactly what user typed
-                    lblInstallationFee.Text = $"₱ {cleanInput}"
-                    tb.Text = cleanInput
-                End If
+                Dim intPart As String = cleanInput.Split("."c)(0)
+                Dim decPart As String = If(cleanInput.Contains("."), "." & cleanInput.Split("."c)(1), "")
+
+                Dim intVal As Long = 0
+                Long.TryParse(intPart, intVal)
+                Dim formatted = intVal.ToString("N0") & decPart
+
+                Dim caretPos = tb.CaretIndex
+                Dim oldLen = tb.Text.Length
+                tb.Text = formatted
+                tb.CaretIndex = Math.Max(0, Math.Min(formatted.Length, caretPos + (formatted.Length - oldLen)))
+
+                lblInstallationFee.Text = "₱ " & formatted
             End If
 
             AddHandler tb.TextChanged, AddressOf txtInstallationFee_TextChanged
