@@ -246,8 +246,8 @@
                     </Button>
 
                     <ComboBox x:Name="cmbPageSize" SelectionChanged="CmbPageSize_SelectionChanged"
-                              Width="75" Style="{StaticResource RoundedComboBoxStyle}"
-                              Height="28" Foreground="#AEAEAE" Margin="0,0,10,0">
+                              Width="150" Style="{StaticResource RoundedComboBoxStyle}"
+                              Height="28" Foreground="#000000" BorderBrush="#AEAEAE" Margin="0,0,10,0">
                         <ComboBoxItem Content="DPC GOV SALES" IsSelected="True"/>
                         <ComboBoxItem Content="AWARDED PROJECTS"/>
                         <ComboBoxItem Content="COLLECTION"/>
