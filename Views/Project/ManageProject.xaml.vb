@@ -75,6 +75,9 @@ Namespace DPC.Views.Project
         ' PAGE SIZE DROP-DOWN
         ' =========================================================
         Private Sub CmbPageSize_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+            ' Guard: don't run if data isn't loaded yet
+            If _allProjects Is Nothing Then Return
+
             Dim combo = TryCast(sender, ComboBox)
             If combo IsNot Nothing AndAlso combo.SelectedItem IsNot Nothing Then
                 Dim selectedItem = TryCast(combo.SelectedItem, ComboBoxItem)
@@ -83,13 +86,10 @@ Namespace DPC.Views.Project
 
                     Select Case viewName
                         Case "DPC GOV SALES"
-                            ' Load DPC GOV SALES table/view
                             LoadDPCGovSalesData()
                         Case "AWARDED PROJECTS"
-                            ' Load AWARDED PROJECTS table/view
                             LoadAwardedProjectsData()
                         Case "COLLECTION"
-                            ' Load COLLECTION table/view
                             LoadCollectionData()
                     End Select
                 End If
@@ -110,7 +110,6 @@ Namespace DPC.Views.Project
 
             ' ADD THIS CHECK
             If ProjectDataGrid Is Nothing Then
-                MessageBox.Show("ProjectDataGrid not found!")
                 Return
             End If
 
@@ -181,18 +180,11 @@ Namespace DPC.Views.Project
         End Sub
 
         Private Sub LoadDPCGovSalesData()
-            Try
-                ' Your logic to fetch DPC GOV SALES data
-                _filteredProjects = DPC.Data.Controllers.ProjectController.GetDPCGovSalesProjects()
-                If _filteredProjects Is Nothing Then
-                    _filteredProjects = New List(Of DPC.Data.Model.Project)()
-                End If
-                _currentPage = 1
-                ApplyPagination()
-                UpdateStatusCounts()
-            Catch ex As Exception
-                MessageBox.Show("Error loading DPC GOV SALES: " & ex.Message)
-            End Try
+            _filteredProjects = _allProjects
+            _currentPage = 1
+            txtSearch.Text = ""
+            ApplyPagination()
+            UpdateStatusCounts()
         End Sub
 
         Private Sub LoadAwardedProjectsData()
