@@ -1034,8 +1034,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             Dim box = CreateInputBox("", 90, False, $"txtRate_{rowIndex}", HorizontalAlignment.Center)
             Dim txt = TryCast(box.Child, TextBox)
             If txt IsNot Nothing Then
-                AddHandler txt.TextChanged, AddressOf Quantity_TextChanged
-                AddHandler txt.PreviewTextInput, AddressOf Quantity_PreviewTextInput
+                AddHandler txt.TextChanged, AddressOf Rate_TextChanged
+                AddHandler txt.PreviewTextInput, AddressOf Rate_PreviewTextInput
             End If
             Return box
         End Function
@@ -1509,6 +1509,38 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
             ' Block if input is not a digit or if new text would be longer than 3 chars
             If Not Char.IsDigit(e.Text, 0) OrElse tb.Text.Length >= 3 Then
+                e.Handled = True
+            End If
+        End Sub
+
+        Private Sub Rate_TextChanged(sender As Object, e As TextChangedEventArgs)
+            Dim textBox = TryCast(sender, TextBox)
+            If textBox Is Nothing Then Exit Sub
+
+            textBox.Dispatcher.BeginInvoke(Sub()
+                                               ' Extract row index
+                                               Dim parts = textBox.Name.Split("_"c)
+                                               If parts.Length < 2 Then Exit Sub
+
+                                               Dim rowIndex As Integer
+                                               If Not Integer.TryParse(parts(1), rowIndex) Then Exit Sub
+
+                                               ' Just trigger calculation without reformatting
+                                               CalculateAmount(rowIndex)
+                                           End Sub, DispatcherPriority.Background)
+        End Sub
+
+        Private Sub Rate_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
+            Dim tb = DirectCast(sender, TextBox)
+
+            ' Allow digits and one decimal point
+            If Not Char.IsDigit(e.Text, 0) AndAlso e.Text <> "." Then
+                e.Handled = True
+                Exit Sub
+            End If
+
+            ' Prevent multiple decimal points
+            If e.Text = "." AndAlso tb.Text.Contains(".") Then
                 e.Handled = True
             End If
         End Sub
