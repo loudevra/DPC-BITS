@@ -150,7 +150,7 @@ Namespace DPC.Data.Helpers.ViewLoader
                     Case "edittask"
                         Return New EditTask()
                     Case "editproject"
-                        Return New EditProject()
+                        Return New DPC.Views.Project.EditProject()
 
                     ' Sales Module
                     Case "salesnewinvoice"
