@@ -1283,22 +1283,35 @@ Namespace DPC.Views.Sales.Quotes
         ' This function is for updating the value of tax whenever there is changes
         Public Sub UpdateTotalTax()
             Dim totalTax As Decimal = 0
+            Dim subtotalAmount As Decimal = 0
+            Dim deliveryFee As Decimal = 0
+            Dim installationFee As Decimal = 0
 
-            ' Loop through all textboxes with names starting with txtTaxValue_
+            ' Get subtotal from all product amounts
             For Each name As String In LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
-        SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
-        Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtTaxValue_")).
-        Select(Function(txt) txt.Name).Distinct()
+            SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
+            Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtAmount_")).
+            Select(Function(txt) txt.Name).Distinct()
 
                 Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
                 If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
-                    Dim rawText = txtBox.Text.Replace("₱", "").Trim()
-                    Dim tax As Decimal
-                    If Decimal.TryParse(rawText, tax) Then
-                        totalTax += tax
+                    Dim rawText = txtBox.Text.Replace("₱", "").Replace(",", "").Trim()
+                    Dim amount As Decimal
+                    If Decimal.TryParse(rawText, amount) Then
+                        subtotalAmount += amount
                     End If
                 End If
             Next
+
+            ' Get delivery fee
+            Decimal.TryParse(txtDeliveryFee.Text.Replace("₱", "").Replace(",", "").Trim(), deliveryFee)
+
+            ' Get installation fee
+            Decimal.TryParse(txtInstallationFee.Text.Replace("₱", "").Replace(",", "").Trim(), installationFee)
+
+            ' Calculate total tax based on (subtotal + delivery + installation) * 0.12
+            Dim baseForTaxCalculation As Decimal = subtotalAmount + deliveryFee + installationFee
+            totalTax = baseForTaxCalculation * 0.12D
 
             CostEstimateDetails.CETotalTaxValueCache = "₱ " & totalTax.ToString("N2")
             txtTotalTax.Text = "₱" & totalTax.ToString("N2")
@@ -1411,6 +1424,7 @@ Namespace DPC.Views.Sales.Quotes
 
             AddHandler tb.TextChanged, AddressOf txtDeliveryFee_TextChange
             UpdateGrandTotal()
+            UpdateTotalTax()
         End Sub
 
         Public Sub txtInstallationFee_TextChanged(sender As Object, e As TextChangedEventArgs)
@@ -1449,6 +1463,7 @@ Namespace DPC.Views.Sales.Quotes
 
             AddHandler tb.TextChanged, AddressOf txtInstallationFee_TextChanged
             UpdateGrandTotal()
+            UpdateTotalTax()
         End Sub
 
         Private Sub cmbFeeType_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
@@ -1623,10 +1638,6 @@ Namespace DPC.Views.Sales.Quotes
 
         Private Sub UpdateGrandTotalDisplay()
             ' Get the base amount (subtotal + delivery + installation)
-            Dim baseAmountText = txtGrandTotal.Text.Replace("₱", "").Replace(",", "").Trim()
-            Dim baseAmount As Decimal = 0
-
-            ' Calculate base: subtotal + delivery + installation
             Dim subtotal As Decimal = 0
             Dim delivery As Decimal = 0
             Dim installation As Decimal = 0
@@ -1641,18 +1652,17 @@ Namespace DPC.Views.Sales.Quotes
             ' Get installation fee
             Decimal.TryParse(txtInstallationFee.Text.Replace("₱", "").Replace(",", "").Trim(), installation)
 
-            baseAmount = subtotal + delivery + installation
+            Dim baseAmount = subtotal + delivery + installation
+            Dim calculatedTax As Decimal = baseAmount * 0.12D
 
             Dim toggleButton = TryCast(ApplyTaxToggle, Button)
 
             If _isTaxApplied Then
-                ' Switch ON - Calculate tax from (subtotal + delivery + installation) * 0.12
-                Dim recalculatedTax As Decimal = baseAmount * 0.12D
-                Dim grandTotalWithTax As Decimal = baseAmount + recalculatedTax
+                ' Switch ON - Add tax to grand total
+                Dim grandTotalWithTax As Decimal = baseAmount + calculatedTax
 
-                ' Update BOTH the grand total AND the tax display
                 txtGrandTotal.Text = "₱" & grandTotalWithTax.ToString("N2")
-                txtTotalTax.Text = "₱" & recalculatedTax.ToString("N2")
+                txtTotalTax.Text = "₱" & calculatedTax.ToString("N2")
 
                 If toggleButton IsNot Nothing Then
                     toggleButton.Background = CType(New BrushConverter().ConvertFrom("#1D5642"), Brush) ' Green
@@ -1664,12 +1674,9 @@ Namespace DPC.Views.Sales.Quotes
                     End If
                 End If
             Else
-                ' Switch OFF - Tax comes from subtotal only * 0.12
-                Dim subtotalOnlyTax As Decimal = subtotal * 0.12D
-
-                ' Update BOTH the grand total AND the tax display
+                ' Switch OFF - Don't add tax to grand total, but keep tax display
                 txtGrandTotal.Text = "₱" & baseAmount.ToString("N2")
-                txtTotalTax.Text = "₱" & subtotalOnlyTax.ToString("N2")
+                txtTotalTax.Text = "₱" & calculatedTax.ToString("N2")
 
                 If toggleButton IsNot Nothing Then
                     toggleButton.Background = CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush) ' Gray
