@@ -247,7 +247,7 @@
 
                     <ComboBox x:Name="cmbPageSize" SelectionChanged="CmbPageSize_SelectionChanged"
           Width="150" Style="{StaticResource RoundedComboBoxStyle}"
-          Height="28" Foreground="#000000" BorderBrush="#AEAEAE" Margin="0,0,10,0">
+          Height="28" Foreground="#000000" BorderBrush="#000000" Margin="0,0,10,0">
 
                         <!-- Shorter implementation of the blue hover effect -->
                         <ComboBox.ItemContainerStyle>
@@ -277,7 +277,7 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Width="250" Height="36">
+                    <Border Style="{StaticResource RoundedGridStyle}" MinWidth="200" Width="250" Height="36" BorderBrush="#000000">
                         <Grid>
                             <TextBox x:Name="txtSearch"
                                      BorderThickness="0"
@@ -307,7 +307,7 @@
                                 </TextBlock.Style>
                             </TextBlock>
                             <materialDesign:PackIcon Kind="Magnify" Width="25" Height="26"
-                                                     Foreground="#AEAEAE"
+                                                     Foreground="#000000"
                                                      HorizontalAlignment="Right" VerticalAlignment="Center"
                                                      Margin="0,0,5,0" IsHitTestVisible="False"/>
                         </Grid>
