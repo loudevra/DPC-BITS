@@ -246,8 +246,30 @@
                     </Button>
 
                     <ComboBox x:Name="cmbPageSize" SelectionChanged="CmbPageSize_SelectionChanged"
-                              Width="150" Style="{StaticResource RoundedComboBoxStyle}"
-                              Height="28" Foreground="#000000" BorderBrush="#AEAEAE" Margin="0,0,10,0">
+          Width="150" Style="{StaticResource RoundedComboBoxStyle}"
+          Height="28" Foreground="#000000" BorderBrush="#AEAEAE" Margin="0,0,10,0">
+
+                        <!-- Shorter implementation of the blue hover effect -->
+                        <ComboBox.ItemContainerStyle>
+                            <Style TargetType="ComboBoxItem">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ComboBoxItem">
+                                            <Border x:Name="Bd" Background="Transparent" BorderThickness="1" BorderBrush="Transparent" Padding="5,2">
+                                                <ContentPresenter />
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Bd" Property="Background" Value="#E5F3FF" />
+                                                    <Setter TargetName="Bd" Property="BorderBrush" Value="#70C0FF" />
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ComboBox.ItemContainerStyle>
+
                         <ComboBoxItem Content="DPC GOV SALES" IsSelected="True"/>
                         <ComboBoxItem Content="AWARDED PROJECTS"/>
                         <ComboBoxItem Content="COLLECTION"/>
