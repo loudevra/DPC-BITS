@@ -52,22 +52,16 @@ Namespace DPC.Views.Project
         ' STATUS SUMMARY CARDS
         ' =========================================================
         Private Sub UpdateStatusCounts()
-            If _filteredProjects Is Nothing Then
-                tbAwarded.Text = "0"
-                tbOnGoing.Text = "0"
-                tbCompleted.Text = "0"
-                tbCancelled.Text = "0"
-                Return
-            End If
+            Dim source = If(_allProjects, New List(Of DPC.Data.Model.Project)())
 
-            Dim awarded = _filteredProjects.Where(Function(p) String.Equals(p.Status, "AWARDED", StringComparison.OrdinalIgnoreCase)).Count()
-            Dim ongoing = _filteredProjects.Where(Function(p) String.Equals(p.Status, "ON-GOING", StringComparison.OrdinalIgnoreCase)).Count()
-            Dim completed = _filteredProjects.Where(Function(p) String.Equals(p.Status, "COMPLETED", StringComparison.OrdinalIgnoreCase)).Count()
-            Dim cancelled = _filteredProjects.Where(Function(p) String.Equals(p.Status, "CANCELLED", StringComparison.OrdinalIgnoreCase)).Count()
+            Dim awarded = source.Where(Function(p) String.Equals(p.Status, "AWARDED", StringComparison.OrdinalIgnoreCase)).Count()
+            Dim ongoing = source.Where(Function(p) String.Equals(p.Status, "ON-GOING", StringComparison.OrdinalIgnoreCase)).Count()
+            Dim done = source.Where(Function(p) String.Equals(p.Status, "DONE", StringComparison.OrdinalIgnoreCase)).Count()  ' ← was "COMPLETED"
+            Dim cancelled = source.Where(Function(p) String.Equals(p.Status, "CANCELLED", StringComparison.OrdinalIgnoreCase)).Count()
 
             tbAwarded.Text = awarded.ToString()
             tbOnGoing.Text = ongoing.ToString()
-            tbCompleted.Text = completed.ToString()
+            tbCompleted.Text = done.ToString()
             tbCancelled.Text = cancelled.ToString()
         End Sub
 

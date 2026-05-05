@@ -419,7 +419,7 @@
                                                     <DataTrigger Binding="{Binding Status}" Value="AWARDED">
                                                         <Setter Property="Fill" Value="#89AC74"/>
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Status}" Value="COMPLETED">
+                                                    <DataTrigger Binding="{Binding Status}" Value="DONE">
                                                         <Setter Property="Fill" Value="#E5D18E"/>
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding Status}" Value="CANCELLED">
