@@ -198,7 +198,7 @@
                     <Grid>
                         <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left">
                             <TextBlock x:Name="tbCompleted" Text="0" FontSize="32" FontWeight="Bold" Foreground="#E5D18E"/>
-                            <TextBlock Text="Completed" FontSize="14" FontWeight="SemiBold" Foreground="#E5D18E"/>
+                            <TextBlock Text="Done" FontSize="14" FontWeight="SemiBold" Foreground="#E5D18E"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
                             <Ellipse Width="55" Height="55" Fill="#FFF6D8" VerticalAlignment="Center"/>
