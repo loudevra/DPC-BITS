@@ -83,10 +83,10 @@ Namespace DPC.Components.Forms
             DocumentNumber.Text = data.DocumentNumber
             DocumentDate.Text = data.DocumentDate
             DocumentValidityDate.Text = data.DocumentValidity
-            Subtotal.Text = data.Subtotal
-            lblVatValue.Text = data.VatValue
+            Subtotal.Text = FormatMoneyForDisplay(data.Subtotal)
+            lblVatValue.Text = FormatMoneyForDisplay(data.VatValue)
             lblVat.Text = data.VatLabel
-            TotalCost.Text = data.TotalCost
+            TotalCost.Text = FormatMoneyForDisplay(data.TotalCost)
 
 
             noteBox.Text = data.Notes
@@ -97,8 +97,8 @@ Namespace DPC.Components.Forms
             lblTermsDisplay.Text = data.PaymentTerms
             lblSubtotal.Text = data.SubtotalLabel
             lblFeeType.Text = data.DeliveryMobilizationLabel
-            Delivery.Text = data.FeeValue
-            Installation.Text = data.InstallationFee
+            Delivery.Text = FormatMoneyForDisplay(data.FeeValue)
+            Installation.Text = FormatMoneyForDisplay(data.InstallationFee)
 
             If data.DocumentTitle.StartsWith("BILLING") Then
                 CNIdentifier.Text = "BS No: "
@@ -583,6 +583,19 @@ Namespace DPC.Components.Forms
         '    data.PaymentTerms = cmbTerms.Text
         'End Sub
 #End Region
+
+        Private Function FormatMoneyForDisplay(value As String) As String
+            If String.IsNullOrWhiteSpace(value) Then Return "₱ 0.00"
+
+            Dim clean = value.Replace("₱", "").Replace(",", "").Trim()
+            Dim dec As Decimal
+
+            If Decimal.TryParse(clean, NumberStyles.Any, CultureInfo.InvariantCulture, dec) Then
+                Return "₱ " & dec.ToString("N2")  ' N2 adds commas
+            End If
+
+            Return value
+        End Function
 
     End Class
 End Namespace
