@@ -407,7 +407,7 @@
                                   Background="Transparent"
                                   BorderThickness="0">
                             <ComboBoxItem Content="AWARDED"/>
-                            <ComboBoxItem Content="COMPLETED"/>
+                            <ComboBoxItem Content="DONE"/>
                             <ComboBoxItem Content="CANCELLED"/>
                             <ComboBoxItem Content="ON-GOING"/>
                             <ComboBoxItem Content="FOR FOLLOW-UP"/>
