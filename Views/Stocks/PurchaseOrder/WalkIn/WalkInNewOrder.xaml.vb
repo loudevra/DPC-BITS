@@ -123,6 +123,11 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
             _typingTimer.Start()
         End Sub
 
+        Private Function CleanMoneyText(value As String) As String
+            If String.IsNullOrWhiteSpace(value) Then Return "0.00"
+            Return value.Replace("₱", "").Replace(",", "").Trim()
+        End Function
+
         Private Sub txtQuoteNumber_TextChanged(sender As Object, e As TextChangedEventArgs)
             If Not _isInitialized Then Return
 
@@ -483,8 +488,8 @@ Namespace DPC.Views.Stocks.PurchaseOrder.WalkIn
 
             _isInitialized = True
 
-            txtDeliveryFee_TextChange(txtDeliveryFee, Nothing)
-            txtInstallationFee_TextChanged(txtInstallationFee, Nothing)
+            txtDeliveryFee.Text = CleanMoneyText(model.FeeValue)
+            txtInstallationFee.Text = CleanMoneyText(model.InstallationFee)
 
             UpdateGrandTotal()
         End Sub
@@ -1835,7 +1840,7 @@ Select(Function(txt) txt.Name).Distinct()
                     data.SubtotalLabel = "SUBTOTAL VAT EX."
                 Else
                     data.VatLabel = "VAT 12%"
-                    data.SubtotalLabel = "SUBTOTAL VAT IN."
+                    data.SubtotalLabel = "SUBTOTAL VAT INC."
                 End If
 
                 data.VatType = selectedTaxType
