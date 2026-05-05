@@ -24,13 +24,14 @@
         </Border>
 
         <ScrollViewer Grid.Row="1"
-                      VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Auto"
-                      PanningMode="Both">
+              VerticalScrollBarVisibility="Auto"
+              HorizontalScrollBarVisibility="Disabled"
+              PanningMode="VerticalFirst">
 
-            <StackPanel Width="800" Margin="40" HorizontalAlignment="Center">
+            <StackPanel MaxWidth="900" Margin="30,20" HorizontalAlignment="Stretch">
 
-                <!-- ══════════════════════════════════════
+
+                    <!-- ══════════════════════════════════════
                      SECTION 1 — Basic Info
                 ══════════════════════════════════════ -->
 
