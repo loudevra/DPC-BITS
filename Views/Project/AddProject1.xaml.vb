@@ -302,6 +302,21 @@ Namespace DPC.Views.Project
         End Sub
 
         ' =========================================================
+        ' PROJECT LIST HELPER
+        ' Reads the radListAwarded / radListCollection / default
+        ' radio buttons and returns the matching DB list key.
+        ' =========================================================
+        Private Function GetSelectedProjectList() As String
+            If radListAwarded.IsChecked = True Then
+                Return "AWARDED_PROJECTS"
+            ElseIf radListCollection.IsChecked = True Then
+                Return "COLLECTION"
+            Else
+                Return "DPC_GOV_SALES"   ' default when neither is checked
+            End If
+        End Function
+
+        ' =========================================================
         ' SAVE / SUBMIT
         ' =========================================================
         Private Sub Button_Click_1(sender As Object, e As RoutedEventArgs)
@@ -318,6 +333,9 @@ Namespace DPC.Views.Project
             Dim selectedStatus As String = GetComboText(cmbStatus)
             Dim selectedRemarks As String = GetComboText(cmbRemarks)
             Dim selectedAssignSales As String = GetComboText(cmbAssignSales)
+
+            ' ── NEW: resolve which project list was selected ──
+            Dim projectList As String = GetSelectedProjectList()
 
             Dim noteText As String = New TextRange(EditorBox.Document.ContentStart, EditorBox.Document.ContentEnd).Text.Trim()
 
@@ -346,6 +364,7 @@ Namespace DPC.Views.Project
                 .Status = selectedStatus,
                 .Remarks = selectedRemarks,
                 .AssignSales = selectedAssignSales,
+                .ProjectList = projectList,           ' ── NEW ──
                 .Note = noteText,
                 .IsAwarded = radAwardedYes.IsChecked.GetValueOrDefault(False)
             }
@@ -391,6 +410,10 @@ Namespace DPC.Views.Project
             cmbRemarks.SelectedIndex = -1
             cmbAssignSales.SelectedIndex = -1
             EditorBox.Document.Blocks.Clear()
+
+            ' Reset project list radio buttons
+            radListAwarded.IsChecked = False
+            radListCollection.IsChecked = False
 
             ' ViewModels
             dateViewModel.SelectedDate = Nothing

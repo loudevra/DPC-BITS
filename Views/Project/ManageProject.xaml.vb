@@ -174,12 +174,21 @@ Namespace DPC.Views.Project
         End Sub
 
         Private Sub LoadDPCGovSalesData()
-            _filteredProjects = _allProjects
-            _currentPage = 1
-            txtSearch.Text = ""
-            ApplyPagination()
-            UpdateStatusCounts()
+            Try
+                _allProjects = DPC.Data.Controllers.ProjectController.GetProjects()
+                If _allProjects Is Nothing Then
+                    _allProjects = New List(Of DPC.Data.Model.Project)()
+                End If
+                _filteredProjects = _allProjects
+                _currentPage = 1
+                txtSearch.Text = ""
+                ApplyPagination()
+                UpdateStatusCounts()
+            Catch ex As Exception
+                MessageBox.Show("Error loading DPC GOV SALES: " & ex.Message)
+            End Try
         End Sub
+
 
         Private Sub LoadAwardedProjectsData()
             Try
