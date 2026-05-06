@@ -407,7 +407,7 @@ Namespace DPC.Views.Project
                     img.Stretch = Stretch.Uniform
                     Dim container As New InlineUIContainer(img, EditorBox.CaretPosition)
                 Catch ex As Exception
-                    MessageBox.Show("Unable to insert this image.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    MessageBox.Show("Unable to    insert this image.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 End Try
             End If
         End Sub

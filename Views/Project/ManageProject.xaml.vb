@@ -14,6 +14,7 @@ Namespace DPC.Views.Project
 
         Private _projectID As String
         Private _allProjects As List(Of DPC.Data.Model.Project)
+        Private _allProjectsTotal As List(Of DPC.Data.Model.Project)
         Private _filteredProjects As List(Of DPC.Data.Model.Project)
         Private _currentPage As Integer = 1
         Private _pageSize As Integer = 10
@@ -21,7 +22,6 @@ Namespace DPC.Views.Project
         Public Sub New()
             InitializeComponent()
             AddHandler txtSearch.TextChanged, AddressOf TxtSearch_TextChanged
-
         End Sub
 
         Private Sub UserControl_Loaded(sender As Object, e As RoutedEventArgs)
@@ -33,11 +33,13 @@ Namespace DPC.Views.Project
         ' =========================================================
         Public Sub LoadData()
             Try
+                ' Active grid list (DPC GOV SALES is the default view)
                 _allProjects = DPC.Data.Controllers.ProjectController.GetProjects()
-                If _allProjects Is Nothing Then
-                    MessageBox.Show("GetProjects returned Nothing!")
-                    _allProjects = New List(Of DPC.Data.Model.Project)()
-                End If
+                If _allProjects Is Nothing Then _allProjects = New List(Of DPC.Data.Model.Project)()
+
+                ' Combined total for the status cards — always all three lists
+                RefreshTotalForCards()
+
                 _filteredProjects = _allProjects
                 _currentPage = 1
                 ApplyPagination()
@@ -48,37 +50,46 @@ Namespace DPC.Views.Project
             End Try
         End Sub
 
-        ' =========================================================
-        ' STATUS SUMMARY CARDS
-        ' =========================================================
-        Private Sub UpdateStatusCounts()
-            Dim source = If(_allProjects, New List(Of DPC.Data.Model.Project)())
+        ' Rebuilds _allProjectsTotal from all three lists so the cards are always global
+        Private Sub RefreshTotalForCards()
+            Dim govSales = DPC.Data.Controllers.ProjectController.GetProjects()
+            Dim awarded = DPC.Data.Controllers.ProjectController.GetAwardedProjects()
+            Dim collection = DPC.Data.Controllers.ProjectController.GetCollectionData()
 
-            Dim awarded = source.Where(Function(p) String.Equals(p.Status, "AWARDED", StringComparison.OrdinalIgnoreCase)).Count()
-            Dim ongoing = source.Where(Function(p) String.Equals(p.Status, "ON-GOING", StringComparison.OrdinalIgnoreCase)).Count()
-            Dim done = source.Where(Function(p) String.Equals(p.Status, "DONE", StringComparison.OrdinalIgnoreCase)).Count()  ' ← was "COMPLETED"
-            Dim cancelled = source.Where(Function(p) String.Equals(p.Status, "CANCELLED", StringComparison.OrdinalIgnoreCase)).Count()
-
-            tbAwarded.Text = awarded.ToString()
-            tbOnGoing.Text = ongoing.ToString()
-            tbCompleted.Text = done.ToString()
-            tbCancelled.Text = cancelled.ToString()
+            _allProjectsTotal = New List(Of DPC.Data.Model.Project)()
+            If govSales IsNot Nothing Then _allProjectsTotal.AddRange(govSales)
+            If awarded IsNot Nothing Then _allProjectsTotal.AddRange(awarded)
+            If collection IsNot Nothing Then _allProjectsTotal.AddRange(collection)
         End Sub
 
         ' =========================================================
-        ' PAGE SIZE DROP-DOWN
+        ' STATUS SUMMARY CARDS  (uses _allProjectsTotal — always global)
+        ' =========================================================
+        Private Sub UpdateStatusCounts()
+            Dim source = If(_allProjectsTotal, New List(Of DPC.Data.Model.Project)())
+
+            Dim awardedCount = source.Where(Function(p) String.Equals(p.Status, "AWARDED", StringComparison.OrdinalIgnoreCase)).Count()
+            Dim ongoingCount = source.Where(Function(p) String.Equals(p.Status, "ON-GOING", StringComparison.OrdinalIgnoreCase)).Count()
+            Dim doneCount = source.Where(Function(p) String.Equals(p.Status, "DONE", StringComparison.OrdinalIgnoreCase)).Count()
+            Dim cancelledCount = source.Where(Function(p) String.Equals(p.Status, "CANCELLED", StringComparison.OrdinalIgnoreCase)).Count()
+
+            tbAwarded.Text = awardedCount.ToString()
+            tbOnGoing.Text = ongoingCount.ToString()
+            tbCompleted.Text = doneCount.ToString()
+            tbCancelled.Text = cancelledCount.ToString()
+        End Sub
+
+        ' =========================================================
+        ' PAGE SIZE DROP-DOWN  (list switcher)
         ' =========================================================
         Private Sub CmbPageSize_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
-            ' Guard: don't run if data isn't loaded yet
             If _allProjects Is Nothing Then Return
 
             Dim combo = TryCast(sender, ComboBox)
             If combo IsNot Nothing AndAlso combo.SelectedItem IsNot Nothing Then
                 Dim selectedItem = TryCast(combo.SelectedItem, ComboBoxItem)
                 If selectedItem IsNot Nothing Then
-                    Dim viewName = selectedItem.Content.ToString()
-
-                    Select Case viewName
+                    Select Case selectedItem.Content.ToString()
                         Case "DPC GOV SALES"
                             LoadDPCGovSalesData()
                         Case "AWARDED PROJECTS"
@@ -102,10 +113,7 @@ Namespace DPC.Views.Project
 
             Dim paged = _filteredProjects.Skip((_currentPage - 1) * _pageSize).Take(_pageSize).ToList()
 
-            ' ADD THIS CHECK
-            If ProjectDataGrid Is Nothing Then
-                Return
-            End If
+            If ProjectDataGrid Is Nothing Then Return
 
             ProjectDataGrid.ItemsSource = New ObservableCollection(Of DPC.Data.Model.Project)(paged)
 
@@ -173,33 +181,32 @@ Namespace DPC.Views.Project
             End If
         End Sub
 
+        ' =========================================================
+        ' LIST LOADERS
+        ' Note: RefreshTotalForCards() is NOT called here so the
+        ' card totals stay global even as the grid view changes.
+        ' =========================================================
         Private Sub LoadDPCGovSalesData()
             Try
                 _allProjects = DPC.Data.Controllers.ProjectController.GetProjects()
-                If _allProjects Is Nothing Then
-                    _allProjects = New List(Of DPC.Data.Model.Project)()
-                End If
+                If _allProjects Is Nothing Then _allProjects = New List(Of DPC.Data.Model.Project)()
                 _filteredProjects = _allProjects
                 _currentPage = 1
                 txtSearch.Text = ""
                 ApplyPagination()
-                UpdateStatusCounts()
             Catch ex As Exception
                 MessageBox.Show("Error loading DPC GOV SALES: " & ex.Message)
             End Try
         End Sub
 
-
         Private Sub LoadAwardedProjectsData()
             Try
-                ' Your logic to fetch AWARDED PROJECTS data
-                _filteredProjects = DPC.Data.Controllers.ProjectController.GetAwardedProjects()
-                If _filteredProjects Is Nothing Then
-                    _filteredProjects = New List(Of DPC.Data.Model.Project)()
-                End If
+                _allProjects = DPC.Data.Controllers.ProjectController.GetAwardedProjects()
+                If _allProjects Is Nothing Then _allProjects = New List(Of DPC.Data.Model.Project)()
+                _filteredProjects = _allProjects
                 _currentPage = 1
+                txtSearch.Text = ""
                 ApplyPagination()
-                UpdateStatusCounts()
             Catch ex As Exception
                 MessageBox.Show("Error loading AWARDED PROJECTS: " & ex.Message)
             End Try
@@ -207,22 +214,19 @@ Namespace DPC.Views.Project
 
         Private Sub LoadCollectionData()
             Try
-                ' Your logic to fetch COLLECTION data
-                _filteredProjects = DPC.Data.Controllers.ProjectController.GetCollectionData()
-                If _filteredProjects Is Nothing Then
-                    _filteredProjects = New List(Of DPC.Data.Model.Project)()
-                End If
+                _allProjects = DPC.Data.Controllers.ProjectController.GetCollectionData()
+                If _allProjects Is Nothing Then _allProjects = New List(Of DPC.Data.Model.Project)()
+                _filteredProjects = _allProjects
                 _currentPage = 1
+                txtSearch.Text = ""
                 ApplyPagination()
-                UpdateStatusCounts()
             Catch ex As Exception
                 MessageBox.Show("Error loading COLLECTION: " & ex.Message)
             End Try
         End Sub
 
-
         ' =========================================================
-        ' SEARCH
+        ' SEARCH  (searches within the active list only)
         ' =========================================================
         Private Sub TxtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
             If _allProjects Is Nothing Then Return
@@ -246,7 +250,6 @@ Namespace DPC.Views.Project
 
             _currentPage = 1
             ApplyPagination()
-            UpdateStatusCounts()
         End Sub
 
         ' =========================================================
@@ -291,6 +294,8 @@ Namespace DPC.Views.Project
                     End Using
                 End Using
                 ProjectDataGrid.ItemsSource = Nothing
+
+                ' Reload everything so cards stay accurate after a delete
                 LoadData()
             Catch ex As Exception
                 MessageBox.Show("Error deleting project: " & ex.Message)
