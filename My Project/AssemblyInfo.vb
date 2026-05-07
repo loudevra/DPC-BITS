@@ -52,5 +52,5 @@ Imports System.Windows
 '      Revision
 '
 
-<Assembly: AssemblyVersion("2.1.0.39")>
-<Assembly: AssemblyFileVersion("1.0.8.0")>
+<Assembly: AssemblyVersion("2.1.0.40")>
+<Assembly: AssemblyFileVersion("1.0.9.0")>
