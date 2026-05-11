@@ -383,7 +383,7 @@
                         <DataGridTextColumn Header="Warehouse" Binding="{Binding Warehouse}" Width="*" MinWidth="100" FontFamily="Lexend" Foreground="#555555"
                                             CellStyle="{StaticResource CenteredCellStyle}"/>
                         <DataGridTextColumn x:Name="colSellingPrice" Header="Selling Price" Binding="{Binding SellingPrice}" Width="0.9*" MinWidth="100" FontFamily="Lexend" Foreground="#555555" CellStyle="{StaticResource CenteredCellStyle}"/>
-                        <DataGridTextColumn Header="Buying Price" Binding="{Binding BuyingPrice}" Width="0.9*" MinWidth="100" FontFamily="Lexend" Foreground="#555555"
+                        <DataGridTextColumn x:Name="colBuyingPrice" Header="Buying Price" Binding="{Binding BuyingPrice}" Width="0.9*" MinWidth="100" FontFamily="Lexend" Foreground="#555555"
                                             CellStyle="{StaticResource CenteredCellStyle}"/>
                         <DataGridTextColumn Header="Stock Qty" Binding="{Binding StockQuantity}" Width="0.7*" MinWidth="85" FontFamily="Lexend" Foreground="Red"
                                             CellStyle="{StaticResource CenteredCellStyle}"/>
