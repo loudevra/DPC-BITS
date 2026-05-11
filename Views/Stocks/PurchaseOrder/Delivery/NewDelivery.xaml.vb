@@ -192,33 +192,55 @@ Namespace DPC.Views.Stocks.PurchaseOrder.Delivery
 
             For Each item In model.OrderItems
                 Dim displayItem As New Dictionary(Of String, String) From {
-                    {"ProductName", If(item.ProductName, "Unknown Item")},
-                    {"Quantity", If(item.Quantity, "0")},
-                    {"SerialNumber", If(item.SerialNumber, "")},
-                    {"IsHeaderRow", item.IsHeaderRow.ToString().ToLower()},
-                    {"MaxAllowed", If(Not String.IsNullOrEmpty(item.MaxAllowed), item.MaxAllowed, item.Quantity)}
-                }
+            {"ProductName", If(item.ProductName, "Unknown Item")},
+            {"Quantity", If(item.Quantity, "0")},
+            {"SerialNumber", If(item.SerialNumber, "")},
+            {"IsHeaderRow", item.IsHeaderRow.ToString().ToLower()},
+            {"MaxAllowed", If(Not String.IsNullOrEmpty(item.MaxAllowed), item.MaxAllowed, item.Quantity)},
+            {"ProductID", If(Not String.IsNullOrEmpty(item.ProductID), item.ProductID, "")}  ' *** NEW: carry ProductID ***
+        }
 
                 If displayItem("IsHeaderRow").ToLower() = "true" Then
                     itemDataSource.Add(displayItem)
-
                     Dim catName = If(Not String.IsNullOrEmpty(item.ProductName), item.ProductName, "New Category")
                     AddNewCategoryWithSpecificName(catName)
                     currentTargetPanel = GetLatestItemsPanel()
-
                     masterIdx += 1
                     Continue For
                 End If
 
-                ' B. Ensure a panel exists for products
                 If currentTargetPanel Is Nothing Then
                     AddNewCategoryWithSpecificName("General Items")
                     currentTargetPanel = GetLatestItemsPanel()
                 End If
 
-                ' C. Add Product to Data Source & UI
+                ' *** NEW: Auto-fetch serials from DB if SerialNumber is empty ***
+                If String.IsNullOrEmpty(displayItem("SerialNumber")) Then
+                    Dim fetchedSerials As List(Of String)
+
+                    If Not String.IsNullOrEmpty(displayItem("ProductID")) Then
+                        ' Preferred path: use ProductID
+                        fetchedSerials = DeliveryReceiptController.GetAvailableSerialsForProduct(displayItem("ProductID"))
+                    Else
+                        ' Fallback path: match by ProductName
+                        fetchedSerials = DeliveryReceiptController.GetAvailableSerialsForProductByName(displayItem("ProductName"))
+                    End If
+
+                    ' Only take as many serials as the delivery quantity allows
+                    Dim deliveryQty As Integer = 0
+                    Integer.TryParse(displayItem("Quantity"), deliveryQty)
+
+                    If fetchedSerials IsNot Nothing AndAlso fetchedSerials.Count > 0 Then
+                        ' Cap to delivery quantity (partial delivery may be less than total available)
+                        Dim capped = fetchedSerials.Take(deliveryQty).ToList()
+                        displayItem("SerialNumber") = DeliveryReceiptController.FormatSerialsForDisplay(capped)
+                    End If
+                End If
+                ' *** END NEW ***
+
                 itemDataSource.Add(displayItem)
 
+                ' Recalculate serial counter from whatever is now in SerialNumber
                 Dim currentSerials = displayItem("SerialNumber")
                 Dim serialCount As Integer = 0
                 If Not String.IsNullOrEmpty(currentSerials) Then

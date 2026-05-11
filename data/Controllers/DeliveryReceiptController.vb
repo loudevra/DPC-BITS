@@ -132,6 +132,82 @@ Namespace DPC.Data.Controllers
         End Function
 
         ''' <summary>
+        ''' Fetches all Available serial numbers for a given ProductID.
+        ''' Returns them formatted as "(1) SN001  (2) SN002  ..." matching the delivery form's expected format.
+        ''' </summary>
+        Public Shared Function GetAvailableSerialsForProduct(productID As String) As List(Of String)
+            Dim serials As New List(Of String)
+
+            Dim query As String = "SELECT SerialNumber FROM serialnumberproduct 
+                           WHERE ProductID = @productID AND Status = 'Available' 
+                           ORDER BY serialID"
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@productID", productID)
+                        Using reader = cmd.ExecuteReader()
+                            Dim counter As Integer = 1
+                            While reader.Read()
+                                serials.Add(reader.GetString("SerialNumber"))
+                                counter += 1
+                            End While
+                        End Using
+                    End Using
+                Catch ex As Exception
+                    Debug.WriteLine("GetAvailableSerialsForProduct Error: " & ex.Message)
+                End Try
+            End Using
+
+            Return serials
+        End Function
+
+        ''' <summary>
+        ''' Fallback: fetch by ProductName if ProductID is not in the order items JSON.
+        ''' </summary>
+        Public Shared Function GetAvailableSerialsForProductByName(productName As String) As List(Of String)
+            Dim serials As New List(Of String)
+
+            Dim query As String = "SELECT s.SerialNumber FROM serialnumberproduct s
+                           INNER JOIN product p ON s.ProductID = p.productID
+                           WHERE p.productName = @productName AND s.Status = 'Available'
+                           ORDER BY s.serialID"
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                Try
+                    conn.Open()
+                    Using cmd As New MySqlCommand(query, conn)
+                        cmd.Parameters.AddWithValue("@productName", productName)
+                        Using reader = cmd.ExecuteReader()
+                            While reader.Read()
+                                serials.Add(reader.GetString("SerialNumber"))
+                            End While
+                        End Using
+                    End Using
+                Catch ex As Exception
+                    Debug.WriteLine("GetAvailableSerialsForProductByName Error: " & ex.Message)
+                End Try
+            End Using
+
+            Return serials
+        End Function
+
+        ''' <summary>
+        ''' Formats a raw list of serial strings into the delivery form's display format:
+        ''' "(1) SN001  (2) SN002  (3) SN003"
+        ''' </summary>
+        Public Shared Function FormatSerialsForDisplay(serials As List(Of String)) As String
+            If serials Is Nothing OrElse serials.Count = 0 Then Return ""
+
+            Dim parts As New List(Of String)
+            For i As Integer = 0 To serials.Count - 1
+                parts.Add($"({i + 1}) {serials(i)}")
+            Next
+            Return String.Join("  ", parts)  ' Double-space separator matches your existing Split logic
+        End Function
+
+        ''' <summary>
         ''' Search delivery receipts with user-based filtering
         ''' </summary>
         Public Shared Function SearchDeliveryReceipts(searchTerm As String, limit As Integer, currentUserID As String, isAdmin As Boolean) As ObservableCollection(Of UniversalTransactionModel)

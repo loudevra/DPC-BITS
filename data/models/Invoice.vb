@@ -14,6 +14,7 @@
         ' --- Product Information ---
         Public Property CategoryName As String = ""
         Public Property ProductName As String = ""
+        Public Property ProductID As String = ""
         Public Property Description As String = ""
         Public Property ProductDescription As String = ""
         Public Property ProductDescriptionVisibility As Visibility = Visibility.Collapsed
