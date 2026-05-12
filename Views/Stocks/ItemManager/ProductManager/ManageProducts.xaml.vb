@@ -470,11 +470,13 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
                 End Try
             End Using
 
-            ' Hide or show the Selling Price column
+            ' Sales account: show Selling Price only, hide Buying Price
             If isSales Then
-                colSellingPrice.Visibility = Visibility.Collapsed
+                colSellingPrice.Visibility = Visibility.Visible
+                colBuyingPrice.Visibility = Visibility.Collapsed
             Else
                 colSellingPrice.Visibility = Visibility.Visible
+                colBuyingPrice.Visibility = Visibility.Visible
             End If
         End Sub
 

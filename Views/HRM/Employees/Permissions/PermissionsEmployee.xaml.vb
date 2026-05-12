@@ -11,10 +11,7 @@ Namespace DPC.Views.HRM.Employees.Permissions
     Public Class PermissionsEmployee
         Inherits UserControl
 
-        ' FIXED: Was Shared (class-level), which caused duplicates on re-open.
-        ' Now it's Private (instance-level) so it resets every time the view loads.
-        Private moduleData As New List(Of Object)
-
+        Private moduleData As New List(Of PermissionModule)
         Private _permissionItems As ObservableCollection(Of PermissionItem)
         Private _hasUnsavedChanges As Boolean = False
 
@@ -33,7 +30,6 @@ Namespace DPC.Views.HRM.Employees.Permissions
                 dataGrid.ItemsSource = _permissionItems
             End If
 
-            ' Reset handlers safely
             RemoveHandler _permissionItems.CollectionChanged, AddressOf OnPermissionItemsChanged
             AddHandler _permissionItems.CollectionChanged, AddressOf OnPermissionItemsChanged
 
@@ -45,27 +41,30 @@ Namespace DPC.Views.HRM.Employees.Permissions
 
         Private Sub LoadPermissionsFromDatabase()
             _permissionItems.Clear()
-            moduleData.Clear() ' Clear instance list before repopulating
+            moduleData.Clear()
 
-            ' Define the known modules and their display order
-            moduleData.Add(New With {.Id = 1, .Name = "Dashboard"})
-            moduleData.Add(New With {.Id = 2, .Name = "Sales"})
-            moduleData.Add(New With {.Id = 3, .Name = "Stocks"})
-            moduleData.Add(New With {.Id = 4, .Name = "CRM"})
-            moduleData.Add(New With {.Id = 5, .Name = "Project"})
-            moduleData.Add(New With {.Id = 6, .Name = "Data & Reports"})
-            moduleData.Add(New With {.Id = 7, .Name = "Miscellaneous"})
-            moduleData.Add(New With {.Id = 8, .Name = "HRM"})
-            moduleData.Add(New With {.Id = 9, .Name = "Software Updates"})
+            ' Match these exactly to the actual columns in your permissions table
+            moduleData.Add(New PermissionModule With {.Id = 1, .DisplayName = "Sales", .ColumnName = "Sales"})
+            moduleData.Add(New PermissionModule With {.Id = 2, .DisplayName = "Stock", .ColumnName = "Stock"})
+            moduleData.Add(New PermissionModule With {.Id = 3, .DisplayName = "CRM", .ColumnName = "Crm"})
+            moduleData.Add(New PermissionModule With {.Id = 4, .DisplayName = "Project", .ColumnName = "Project"})
+            moduleData.Add(New PermissionModule With {.Id = 5, .DisplayName = "Accounts", .ColumnName = "Accounts"})
+            moduleData.Add(New PermissionModule With {.Id = 6, .DisplayName = "Miscellaneous", .ColumnName = "Miscellaneous"})
+            moduleData.Add(New PermissionModule With {.Id = 7, .DisplayName = "Assign Project", .ColumnName = "Assign Project"})
+            moduleData.Add(New PermissionModule With {.Id = 8, .DisplayName = "Customer Profile", .ColumnName = "Customer Profile"})
+            moduleData.Add(New PermissionModule With {.Id = 9, .DisplayName = "Employees", .ColumnName = "Employees"})
+            moduleData.Add(New PermissionModule With {.Id = 10, .DisplayName = "Reports", .ColumnName = "Reports"})
+            moduleData.Add(New PermissionModule With {.Id = 11, .DisplayName = "Delete", .ColumnName = "Delete"})
+            moduleData.Add(New PermissionModule With {.Id = 12, .DisplayName = "POS", .ColumnName = "POS"})
+            moduleData.Add(New PermissionModule With {.Id = 13, .DisplayName = "Sales Edit", .ColumnName = "Sales Edit"})
+            moduleData.Add(New PermissionModule With {.Id = 14, .DisplayName = "Stock Edit", .ColumnName = "Stock Edit"})
 
-            ' Build one PermissionItem per module, fill role columns from DB
             Dim moduleDict As New Dictionary(Of String, PermissionItem)()
 
-            ' Pre-create a PermissionItem for each known module
             For Each m In moduleData
-                moduleDict(m.Name) = New PermissionItem() With {
+                moduleDict(m.DisplayName) = New PermissionItem() With {
                     .Id = m.Id,
-                    .Name = m.Name
+                    .Name = m.DisplayName
                 }
             Next
 
@@ -77,22 +76,18 @@ Namespace DPC.Views.HRM.Employees.Permissions
                     While reader.Read()
                         Dim role As String = reader("Role").ToString()
 
-                        ' For each module column in the DB row,
-                        ' assign the boolean to the correct role property
                         For Each m In moduleData
-                            Dim colName As String = m.Name
+                            Dim colName As String = m.ColumnName
                             Dim hasAccess As Boolean = False
 
                             Try
                                 Dim colVal = reader(colName)
-                                hasAccess = (colVal IsNot DBNull.Value AndAlso
-                                             Convert.ToInt32(colVal) = 1)
-                            Catch
-                                ' Column might not exist for this module name — skip
+                                hasAccess = (colVal IsNot DBNull.Value AndAlso Convert.ToInt32(colVal) = 1)
+                            Catch ex As Exception
                                 Continue For
                             End Try
 
-                            With moduleDict(colName)
+                            With moduleDict(m.DisplayName)
                                 Select Case role
                                     Case "Inventory Manager" : .HasInventoryManager = hasAccess
                                     Case "Sales Person" : .HasSalesPerson = hasAccess
@@ -110,15 +105,12 @@ Namespace DPC.Views.HRM.Employees.Permissions
                 End Using
             End Using
 
-            ' Add to observable collection in module order
             For Each m In moduleData
-                If moduleDict.ContainsKey(m.Name) Then
-                    _permissionItems.Add(moduleDict(m.Name))
+                If moduleDict.ContainsKey(m.DisplayName) Then
+                    _permissionItems.Add(moduleDict(m.DisplayName))
                 End If
             Next
         End Sub
-
-        ' ---- Change Tracking ----
 
         Private Sub OnPermissionItemsChanged(sender As Object,
             e As System.Collections.Specialized.NotifyCollectionChangedEventArgs)
@@ -142,17 +134,15 @@ Namespace DPC.Views.HRM.Employees.Permissions
             End If
         End Sub
 
-        ' ---- Save ----
-
         Private Sub BtnSave_Click(sender As Object, e As RoutedEventArgs) Handles btnSave.Click
-            e.Handled = True   ' ✅ THIS STOPS DUPLICATION
+            e.Handled = True
 
             Try
                 Dim result As MessageBoxResult = MessageBox.Show(
-            "Are you sure you want to update permissions for all modules?",
-            "Confirm Update",
-            MessageBoxButton.YesNo,
-            MessageBoxImage.Question)
+                    "Are you sure you want to update permissions for all modules?",
+                    "Confirm Update",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question)
 
                 If result = MessageBoxResult.Yes Then
                     SaveAllPermissions()
@@ -170,7 +160,6 @@ Namespace DPC.Views.HRM.Employees.Permissions
                     SavePermissionToDatabase(item)
                 Next
 
-                ' ADD THIS — refreshes cache immediately after save
                 PermissionCache.LoadForRole(PermissionCache.CurrentRole)
 
                 _hasUnsavedChanges = False
@@ -187,7 +176,6 @@ Namespace DPC.Views.HRM.Employees.Permissions
         End Sub
 
         Private Sub SavePermissionToDatabase(item As PermissionItem)
-            ' Maps role display name -> which property on PermissionItem holds its value
             Dim roleMap As New Dictionary(Of String, Boolean) From {
                 {"Inventory Manager", item.HasInventoryManager},
                 {"Sales Person", item.HasSalesPerson},
@@ -200,30 +188,68 @@ Namespace DPC.Views.HRM.Employees.Permissions
                 {"Tech", item.HasTech}
             }
 
-            For Each kvp In roleMap
-                Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
-                    conn.Open()
-                    ' FIXED: Using parameters (@val, @role) instead of string 
-                    ' concatenation — prevents SQL injection.
-                    ' Backticks around column name handle spaces (e.g. "Sales Edit")
-                    Dim sql = $"UPDATE permissions SET `{item.Name}` = @val WHERE Role = @role"
-                    Dim cmd As New MySqlCommand(sql, conn)
-                    cmd.Parameters.AddWithValue("@val", If(kvp.Value, 1, 0))
-                    cmd.Parameters.AddWithValue("@role", kvp.Key)
-                    cmd.ExecuteNonQuery()
-                End Using
-            Next
+            Dim dbColumnName As String = GetDatabaseColumnName(item.Name)
+
+            If String.IsNullOrWhiteSpace(dbColumnName) Then
+                Throw New Exception($"No database column mapping found for module '{item.Name}'.")
+            End If
+
+            Using conn As MySqlConnection = SplashScreen.GetDatabaseConnection()
+                conn.Open()
+
+                For Each kvp In roleMap
+                    Dim sql = $"UPDATE permissions SET `{dbColumnName}` = @val WHERE Role = @role"
+                    Using cmd As New MySqlCommand(sql, conn)
+                        cmd.Parameters.AddWithValue("@val", If(kvp.Value, 1, 0))
+                        cmd.Parameters.AddWithValue("@role", kvp.Key)
+                        cmd.ExecuteNonQuery()
+                    End Using
+                Next
+            End Using
         End Sub
 
-        ' ---- Navigation ----
+        Private Function GetDatabaseColumnName(moduleName As String) As String
+            Select Case moduleName
+                Case "Sales"
+                    Return "Sales"
+                Case "Stock"
+                    Return "Stock"
+                Case "CRM"
+                    Return "Crm"
+                Case "Project"
+                    Return "Project"
+                Case "Accounts"
+                    Return "Accounts"
+                Case "Miscellaneous"
+                    Return "Miscellaneous"
+                Case "Assign Project"
+                    Return "Assign Project"
+                Case "Customer Profile"
+                    Return "Customer Profile"
+                Case "Employees"
+                    Return "Employees"
+                Case "Reports"
+                    Return "Reports"
+                Case "Delete"
+                    Return "Delete"
+                Case "POS"
+                    Return "POS"
+                Case "Sales Edit"
+                    Return "Sales Edit"
+                Case "Stock Edit"
+                    Return "Stock Edit"
+                Case Else
+                    Return Nothing
+            End Select
+        End Function
 
         Private Sub BtnAddNew_Click(sender As Object, e As RoutedEventArgs) Handles btnAddNew.Click
             If _hasUnsavedChanges Then
                 Dim result = MessageBox.Show(
-            "You have unsaved changes. Save before continuing?",
-            "Unsaved Changes",
-            MessageBoxButton.YesNoCancel,
-            MessageBoxImage.Question)
+                    "You have unsaved changes. Save before continuing?",
+                    "Unsaved Changes",
+                    MessageBoxButton.YesNoCancel,
+                    MessageBoxImage.Question)
 
                 Select Case result
                     Case MessageBoxResult.Yes
@@ -239,23 +265,30 @@ Namespace DPC.Views.HRM.Employees.Permissions
             End If
         End Sub
 
-        ' ---- Helpers ----
-
         Private Function FindVisualChild(Of T As DependencyObject)(
             parent As DependencyObject) As T
 
             If parent Is Nothing Then Return Nothing
+
             For i As Integer = 0 To VisualTreeHelper.GetChildrenCount(parent) - 1
                 Dim child As DependencyObject = VisualTreeHelper.GetChild(parent, i)
+
                 If child IsNot Nothing AndAlso TypeOf child Is T Then
                     Return DirectCast(child, T)
                 End If
+
                 Dim found As T = FindVisualChild(Of T)(child)
                 If found IsNot Nothing Then Return found
             Next
+
             Return Nothing
         End Function
 
     End Class
-End Namespace
 
+    Public Class PermissionModule
+        Public Property Id As Integer
+        Public Property DisplayName As String
+        Public Property ColumnName As String
+    End Class
+End Namespace

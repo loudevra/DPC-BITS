@@ -6,25 +6,18 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="namespace:DPC.Views.HRM.Employees.Permissions"
              Height="600" Width="800"
-             Background="#F5F5F5"
-             
-             >
+             Background="#F5F5F5">
 
     <Grid x:Name="mainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Header Section -->
             <RowDefinition Height="Auto"/>
-            <!-- Options Bar -->
             <RowDefinition Height="*"/>
-            <!-- DataGrid Section -->
             <RowDefinition Height="Auto"/>
-            <!-- Pagination Section -->
             <RowDefinition Height="Auto"/>
-            <!-- Bottom Button Section -->
         </Grid.RowDefinitions>
 
-        <!-- Title and Add Button - Static at top -->
+        <!-- Title and Add Button -->
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20,20,20,10">
             <TextBlock Text="Permissions"
                        FontWeight="SemiBold"
@@ -32,39 +25,65 @@
                        FontSize="25"
                        Foreground="#474747"
                        VerticalAlignment="Center"/>
-            <Button x:Name="btnAddNew" Style="{StaticResource RoundedButtonStyle}" Margin="20,0,0,0" Background="Transparent" Height="38" Width="136" Click="BtnAddNew_Click">
+
+            <Button x:Name="btnAddNew"
+                    Style="{StaticResource RoundedButtonStyle}"
+                    Margin="20,0,0,0"
+                    Background="Transparent"
+                    Height="38"
+                    Width="136"
+                    Click="BtnAddNew_Click">
                 <Grid Margin="15,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <materialDesign:PackIcon Kind="AccountPlus" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
-                    <TextBlock Text="Employee" FontSize="14" FontWeight="SemiBold" Foreground="#474747" Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                    <materialDesign:PackIcon Kind="AccountPlus"
+                                             Width="20"
+                                             Height="20"
+                                             VerticalAlignment="Center"
+                                             HorizontalAlignment="Center"/>
+
+                    <TextBlock Text="Employee"
+                               FontSize="14"
+                               FontWeight="SemiBold"
+                               Foreground="#474747"
+                               Grid.Column="1"
+                               Margin="10,0,0,0"
+                               VerticalAlignment="Center"/>
                 </Grid>
             </Button>
         </StackPanel>
 
+        <!-- DataGrid Section -->
+        <Border Grid.Row="2"
+                Margin="20,0,20,0"
+                BorderBrush="#E0E0E0"
+                BorderThickness="1"
+                Background="White">
 
-
-        <!-- DataGrid Section - Scrollable Content -->
-        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" Margin="20,0">
             <DataGrid Name="dataGrid"
-              AutoGenerateColumns="False"
-              CanUserAddRows="False"
-              HeadersVisibility="Column"
-              GridLinesVisibility="All"
-              RowBackground="White"
-              AlternatingRowBackground="WhiteSmoke"
-              BorderThickness="1"
-              BorderBrush="#E0E0E0"
-              FontFamily="Lexend"
-              VerticalGridLinesBrush="#E0E0E0"
-              HorizontalGridLinesBrush="#E0E0E0"
-              HorizontalScrollBarVisibility="Disabled"
-              ScrollViewer.CanContentScroll="True">
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      HeadersVisibility="Column"
+                      GridLinesVisibility="All"
+                      RowBackground="White"
+                      AlternatingRowBackground="WhiteSmoke"
+                      BorderThickness="0"
+                      BorderBrush="#E0E0E0"
+                      FontFamily="Lexend"
+                      VerticalGridLinesBrush="#E0E0E0"
+                      HorizontalGridLinesBrush="#E0E0E0"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      ScrollViewer.CanContentScroll="True"
+                      RowHeaderWidth="0"
+                      FrozenColumnCount="2"
+                      SelectionUnit="FullRow"
+                      SelectionMode="Single">
 
-                <!-- DataGrid styles remain the same -->
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow">
                         <Setter Property="Margin" Value="0"/>
@@ -97,11 +116,12 @@
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="DataGridCell">
-                                    <Border Padding="{TemplateBinding Padding}" 
-                                    BorderBrush="{TemplateBinding BorderBrush}" 
-                                    BorderThickness="{TemplateBinding BorderThickness}" 
-                                    Background="{TemplateBinding Background}">
-                                        <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <Border Padding="{TemplateBinding Padding}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            Background="{TemplateBinding Background}">
+                                        <ContentPresenter VerticalAlignment="Center"
+                                                          HorizontalAlignment="Center"/>
                                     </Border>
                                 </ControlTemplate>
                             </Setter.Value>
@@ -111,9 +131,14 @@
                     </Style>
                 </DataGrid.CellStyle>
 
-                <!-- Columns remain the same -->
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="#" Binding="{Binding Id}" Width="30" FontFamily="Lexend" FontWeight="Bold" >
+                    <!-- Number -->
+                    <DataGridTextColumn Header="#"
+                                        Binding="{Binding Id}"
+                                        Width="40"
+                                        FontFamily="Lexend"
+                                        FontWeight="Bold"
+                                        IsReadOnly="True">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -122,7 +147,11 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="100">
+                    <!-- Module Name -->
+                    <DataGridTextColumn Header="Name"
+                                        Binding="{Binding Name}"
+                                        Width="160"
+                                        IsReadOnly="True">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="TextWrapping" Value="NoWrap"/>
@@ -134,23 +163,23 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <!-- Checkbox columns - aligned center -->
-                    <DataGridTemplateColumn Header="Inventory Manager" Width="125" >
+                    <!-- Role columns -->
+                    <DataGridTemplateColumn Header="Inventory Manager" Width="125">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding HasInventoryManager, UpdateSourceTrigger=PropertyChanged}"
-                                  HorizontalAlignment="Center" 
-                                  VerticalAlignment="Center"/>
+                                <CheckBox IsChecked="{Binding HasInventoryManager, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="Sales Person" Width="100"  >
+                    <DataGridTemplateColumn Header="Sales Person" Width="100">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding HasSalesPerson, UpdateSourceTrigger=PropertyChanged}"
-                                  HorizontalAlignment="Center" 
-                                  VerticalAlignment="Center"/>
+                                <CheckBox IsChecked="{Binding HasSalesPerson, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -158,9 +187,9 @@
                     <DataGridTemplateColumn Header="Sales Manager" Width="110">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding HasSalesManager, UpdateSourceTrigger=PropertyChanged}"
-                                  HorizontalAlignment="Center" 
-                                  VerticalAlignment="Center"/>
+                                <CheckBox IsChecked="{Binding HasSalesManager, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -168,9 +197,9 @@
                     <DataGridTemplateColumn Header="Business Manager" Width="130">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding HasBusinessManager, UpdateSourceTrigger=PropertyChanged}"
-                                  HorizontalAlignment="Center" 
-                                  VerticalAlignment="Center"/>
+                                <CheckBox IsChecked="{Binding HasBusinessManager, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -178,9 +207,9 @@
                     <DataGridTemplateColumn Header="Business Owner" Width="120">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding HasBusinessOwner, UpdateSourceTrigger=PropertyChanged}"
-                                  HorizontalAlignment="Center" 
-                                  VerticalAlignment="Center"/>
+                                <CheckBox IsChecked="{Binding HasBusinessOwner, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -188,9 +217,9 @@
                     <DataGridTemplateColumn Header="Project Manager" Width="120">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding HasProjectManager, UpdateSourceTrigger=PropertyChanged}"
-                                  HorizontalAlignment="Center" 
-                                  VerticalAlignment="Center"/>
+                                <CheckBox IsChecked="{Binding HasProjectManager, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -198,9 +227,9 @@
                     <DataGridTemplateColumn Header="Administrator" Width="120">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding HasAdministrator, UpdateSourceTrigger=PropertyChanged}"
-                      HorizontalAlignment="Center" 
-                      VerticalAlignment="Center"/>
+                                <CheckBox IsChecked="{Binding HasAdministrator, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -208,9 +237,9 @@
                     <DataGridTemplateColumn Header="IT" Width="80">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding HasIT, UpdateSourceTrigger=PropertyChanged}"
-                      HorizontalAlignment="Center" 
-                      VerticalAlignment="Center"/>
+                                <CheckBox IsChecked="{Binding HasIT, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -218,39 +247,39 @@
                     <DataGridTemplateColumn Header="Tech" Width="80">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding HasTech, UpdateSourceTrigger=PropertyChanged}"
-                      HorizontalAlignment="Center" 
-                      VerticalAlignment="Center"/>
+                                <CheckBox IsChecked="{Binding HasTech, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
-        </ScrollViewer>
-
-
+        </Border>
 
         <!-- Bottom Button Section -->
-        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,20,30">
-            <Button x:Name="btnSave" 
-            Style="{StaticResource RoundedButtonStyle}" 
-            Background="#52C69D" 
-            Height="40" 
-            FontFamily="Lexend"
-            Width="189"
-            BorderBrush="#52C69D"
-            Click="BtnSave_Click">
+        <StackPanel Grid.Row="4"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,10,20,30">
+            <Button x:Name="btnSave"
+                    Style="{StaticResource RoundedButtonStyle}"
+                    Background="#52C69D"
+                    Height="40"
+                    FontFamily="Lexend"
+                    Width="189"
+                    BorderBrush="#52C69D"
+                    Click="BtnSave_Click">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Update" 
-                       FontSize="14"                      
-                       FontWeight="SemiBold" 
-                       Margin="70,0,0,0"
-                       Foreground="White" 
-                       VerticalAlignment="Center" 
-                       HorizontalAlignment="Center"/>
+                    <TextBlock Text="Update"
+                               FontSize="14"
+                               FontWeight="SemiBold"
+                               Margin="70,0,0,0"
+                               Foreground="White"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
         </StackPanel>
     </Grid>
 </UserControl>
-
