@@ -40,5 +40,8 @@
         Public Property CreatedAt As DateTime?
         Public Property UpdatedAt As DateTime?
 
+        ' ── ETC ───────────────────────────────────────────
+        Public Property ProjectList As String = "DPC_GOV_SALES"
+
     End Class
 End Namespace

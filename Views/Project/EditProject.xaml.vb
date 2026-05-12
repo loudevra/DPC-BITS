@@ -61,6 +61,17 @@ Namespace DPC.Views.Project
                 SelectComboByContent(cmbRemarks, p.Remarks)
                 SelectComboByContent(cmbAssignSales, p.AssignSales)
 
+                ' ── Restore ProjectList radio button ──
+                Select Case p.ProjectList
+                    Case "AWARDED_PROJECTS"
+                        radListAwarded.IsChecked = True
+                    Case "COLLECTION"
+                        radListCollection.IsChecked = True
+                    Case Else
+                        ' DPC_GOV_SALES is the default — leave both unchecked
+                        ' (or add a radListDPCGov radio and check it here)
+                End Select
+
                 If p.IsAwarded Then
                     radAwardedYes.IsChecked = True
                 Else
@@ -87,6 +98,24 @@ Namespace DPC.Views.Project
             Next
         End Sub
 
+        ' =========================================================
+        ' PROJECT LIST HELPER
+        ' Reads the radListAwarded / radListCollection / default
+        ' radio buttons and returns the matching DB list key.
+        ' =========================================================
+        Private Function GetSelectedProjectList() As String
+            If radListAwarded.IsChecked = True Then
+                Return "AWARDED_PROJECTS"
+            ElseIf radListCollection.IsChecked = True Then
+                Return "COLLECTION"
+            Else
+                Return "DPC_GOV_SALES"   ' default when neither is checked
+            End If
+        End Function
+
+        ' =========================================================
+        ' TO-UPPER HANDLER
+        ' =========================================================
         Private Sub TxtToUpper_TextChanged(sender As Object, e As TextChangedEventArgs)
             Dim tb = TryCast(sender, TextBox)
             If tb Is Nothing Then Return
@@ -100,12 +129,18 @@ Namespace DPC.Views.Project
             End If
         End Sub
 
+        ' =========================================================
+        ' NUMBER ONLY
+        ' =========================================================
         Private Sub txtZipCode_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
             If Not Char.IsDigit(e.Text, e.Text.Length - 1) Then
                 e.Handled = True
             End If
         End Sub
 
+        ' =========================================================
+        ' BUDGET / NUMERIC FORMATTER
+        ' =========================================================
         Private Sub txtBudget_TextChanged(sender As Object, e As TextChangedEventArgs)
             Dim tb = TryCast(sender, TextBox)
             If tb Is Nothing Then Return
@@ -128,6 +163,9 @@ Namespace DPC.Views.Project
             AddHandler tb.TextChanged, AddressOf txtBudget_TextChanged
         End Sub
 
+        ' =========================================================
+        ' DATE PICKER CLICK HANDLERS
+        ' =========================================================
         Private Sub DateButton_Click(sender As Object, e As RoutedEventArgs)
             DatePicker.DisplayDateStart = DateTime.Today
             DatePicker.IsDropDownOpen = True
@@ -148,6 +186,9 @@ Namespace DPC.Views.Project
             ReceiveDatePicker.IsDropDownOpen = True
         End Sub
 
+        ' =========================================================
+        ' DATE PICKER SELECTION CHANGED HANDLERS
+        ' =========================================================
         Private Sub DatePicker_SelectedDateChanged(sender As Object, e As SelectionChangedEventArgs)
             SyncDateViewModel(sender, dateViewModel, DateButton)
         End Sub
@@ -172,6 +213,9 @@ Namespace DPC.Views.Project
             If be IsNot Nothing Then be.UpdateTarget()
         End Sub
 
+        ' =========================================================
+        ' SAVE / UPDATE
+        ' =========================================================
         Private Sub Button_Click_1(sender As Object, e As RoutedEventArgs)
             If String.IsNullOrWhiteSpace(txtProjectTitle.Text) Then
                 MessageBox.Show("Project Title is required.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning)
@@ -189,6 +233,10 @@ Namespace DPC.Views.Project
                     Dim selectedMode As String = GetComboText(cmbModeOfSubmission)
                     Dim selectedRemarks As String = GetComboText(cmbRemarks)
                     Dim selectedAssignSales As String = GetComboText(cmbAssignSales)
+
+                    ' ── NEW: resolve which project list was selected ──
+                    Dim projectList As String = GetSelectedProjectList()
+
                     Dim noteText As String = New TextRange(EditorBox.Document.ContentStart, EditorBox.Document.ContentEnd).Text.Trim()
                     Dim rawABC As Long
                     Long.TryParse(txtABC.Text.Replace(",", ""), rawABC)
@@ -201,6 +249,7 @@ Namespace DPC.Views.Project
                         "EmailAddress=@email, AreaOfDelivery=@area, PreBidDate=@prebid, " &
                         "ClosingDate=@closing, ABC=@abc, BidRFQOffer=@bid, ReceiveDate=@receive, " &
                         "ModeOfSubmission=@mode, Remarks=@remarks, AssignSales=@sales, " &
+                        "ProjectList=@projectList, " &
                         "Note=@note, ProjectDate=@projdate, " &
                         "ReferenceNumber=@refnum WHERE projectID=@id"
 
@@ -221,6 +270,7 @@ Namespace DPC.Views.Project
                         cmd.Parameters.AddWithValue("@mode", If(selectedMode, ""))
                         cmd.Parameters.AddWithValue("@remarks", If(selectedRemarks, ""))
                         cmd.Parameters.AddWithValue("@sales", If(selectedAssignSales, ""))
+                        cmd.Parameters.AddWithValue("@projectList", projectList)   ' ── NEW ──
                         cmd.Parameters.AddWithValue("@note", noteText)
                         cmd.Parameters.AddWithValue("@projdate", If(DatePicker.SelectedDate, DBNull.Value))
                         cmd.Parameters.AddWithValue("@refnum", txtReferenceNumber.Text)
@@ -244,7 +294,9 @@ Namespace DPC.Views.Project
             Return cmb.SelectedItem.ToString()
         End Function
 
-        ' ── Rich Text Editor ──
+        ' =========================================================
+        ' RICH TEXT EDITOR FORMATTING
+        ' =========================================================
         Private Sub Format_Bold_Click(sender As Object, e As RoutedEventArgs)
             EditingCommands.ToggleBold.Execute(Nothing, EditorBox)
         End Sub
@@ -355,7 +407,7 @@ Namespace DPC.Views.Project
                     img.Stretch = Stretch.Uniform
                     Dim container As New InlineUIContainer(img, EditorBox.CaretPosition)
                 Catch ex As Exception
-                    MessageBox.Show("Unable to insert this image.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
+                    MessageBox.Show("Unable to    insert this image.", "Error", MessageBoxButton.OK, MessageBoxImage.Error)
                 End Try
             End If
         End Sub
