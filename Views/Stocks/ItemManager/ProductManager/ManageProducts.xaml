@@ -284,12 +284,10 @@
 
                         <TextBlock Text="Show" FontSize="14" Margin="10,0,5,0" Height="18" FontWeight="Regular" FontFamily="Lexend" Foreground="#474747" VerticalAlignment="Center" />
                         <ComboBox x:Name="cmbPageSize" Width="75" Style="{StaticResource RoundedComboBoxStyle}" Height="28">
-                            <ComboBoxItem Content="10" IsSelected="True"/>
-                            <ComboBoxItem Content="25"/>
-                            <ComboBoxItem Content="50"/>
-                            <ComboBoxItem Content="100"/>
+                            <ComboBoxItem Content="100" IsSelected="True"/>
                             <ComboBoxItem Content="500"/>
                             <ComboBoxItem Content="1000"/>
+                           
                         </ComboBox>
                     </StackPanel>
 
