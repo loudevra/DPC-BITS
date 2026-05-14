@@ -28,12 +28,62 @@ Namespace DPC.Views.HRM.Departments
             LoadDepartmentData()
         End Sub
 
+        ' Add this field at the top of the class
+        Private _fullDataView As DataView = Nothing
+
         Private Sub LoadDepartmentData()
             If HRMController.LoadDepartment(dataGrid) Then
-                HRMController.LoadDepartment(dataGrid)
+                ' Capture the loaded DataView for filtering/paging
+                _fullDataView = TryCast(dataGrid.ItemsSource, DataView)
+                ApplyFilter()
             Else
-                MessageBox.Show("Failed to loaded department. Seek for IT Help")
+                MessageBox.Show("Failed to load department. Seek for IT Help")
             End If
+        End Sub
+
+        Private Sub ApplyFilter()
+            If _fullDataView Is Nothing Then Exit Sub
+
+            Dim searchText As String = If(txtSearch IsNot Nothing, txtSearch.Text.ToLower(), "")
+            Dim pageSize As Integer = GetSelectedPageSize()
+
+            ' Apply search filter on the full DataView
+            Dim filterExpr As String = ""
+            If searchText.Length > 0 Then
+                filterExpr = $"DepartmentName LIKE '%{searchText}%' OR Convert(DepartmentID, 'System.String') LIKE '%{searchText}%'"
+            End If
+            _fullDataView.RowFilter = filterExpr
+
+            ' Apply page size limit by taking only the first N rows
+            Dim dt As DataTable = _fullDataView.Table.Clone()
+            Dim count As Integer = 0
+            For Each row As DataRowView In _fullDataView
+                If count >= pageSize Then Exit For
+                dt.ImportRow(row.Row)
+                count += 1
+            Next
+
+            dataGrid.ItemsSource = dt.DefaultView
+        End Sub
+
+        Private Function GetSelectedPageSize() As Integer
+            If cmbPageSize Is Nothing OrElse cmbPageSize.SelectedItem Is Nothing Then Return 10
+            Dim selected As ComboBoxItem = TryCast(cmbPageSize.SelectedItem, ComboBoxItem)
+            Dim size As Integer = 10
+            Integer.TryParse(selected?.Content?.ToString(), size)
+            Return size
+        End Function
+
+        Private Sub cmbPageSize_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
+            ApplyFilter()
+        End Sub
+
+        Private Sub txtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
+            ' Reset to full DataView before filtering so search always works on all data
+            If _fullDataView Is Nothing Then
+                _fullDataView = TryCast(dataGrid.ItemsSource, DataView)
+            End If
+            ApplyFilter()
         End Sub
 
         Private Sub OnDepartmentSaved(sender As Object, e As EventArgs)
@@ -142,28 +192,6 @@ Namespace DPC.Views.HRM.Departments
                 MessageBox.Show("Excel Export Failed: " & ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error)
             End Try
         End Sub
-        Private Sub txtSearch_TextChanged(sender As Object, e As TextChangedEventArgs)
-
-            Try
-                Dim searchText As String = txtSearch.Text.ToLower()
-
-                Dim dt As DataTable = TryCast(dataGrid.ItemsSource, DataView)?.Table
-
-                If dt Is Nothing Then Exit Sub
-
-                Dim dv As New DataView(dt)
-
-                ' Filter by DepartmentName
-                dv.RowFilter = $"DepartmentName LIKE '%{searchText}%' 
-                        OR Convert(DepartmentID, 'System.String') LIKE '%{searchText}%'"
-
-                dataGrid.ItemsSource = dv
-
-            Catch ex As Exception
-                MessageBox.Show(ex.Message)
-            End Try
-        End Sub
-
 
     End Class
 End Namespace
