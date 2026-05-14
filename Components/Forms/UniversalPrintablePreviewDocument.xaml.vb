@@ -607,26 +607,26 @@ Namespace DPC.Components.Forms
             If docNum.StartsWith("BL-") OrElse docNum.StartsWith("GB-") Then
                 ' --- BILLING STATEMENT BRANCH ---
                 Dim bm As New BillingModel With {
-                    .BillingNumber = docNum,
-                    .DRNo = "",
-                    .BillingDate = mysqlDocDate,
-                    .ClientID = data.ClientId.ToString(),
-                    .ClientName = data.ClientName,
-                    .OrderItems = json,
-                    .WarehouseID = data.WarehouseID.ToString(),
-                    .WarehouseName = data.WarehouseName,
-                    .TaxProperty = data.VatType,
-                    .DiscountProperty = data.DiscountSelection,
-                    .DeliveryFee = data.FeeValue,
-                    .InstallationFee = data.InstallationFee,
-                    .TotalTax = data.VatValue,
-                    .TotalDiscount = data.DiscountValue,
-                    .TotalAmount = data.TotalCost,
-                    .PreparedBy = data.PreparedBy,
-                    .ApprovedBy = data.ApprovedBy,
-                    .BillingNote = data.Notes,
-                    .PaymentTerms = data.PaymentTerms
-                }
+            .BillingNumber = docNum,
+            .DRNo = "",
+            .BillingDate = mysqlDocDate,
+            .ClientID = data.ClientId.ToString(),
+            .ClientName = data.ClientName,
+            .OrderItems = json,
+            .WarehouseID = data.WarehouseID.ToString(),
+            .WarehouseName = data.WarehouseName,
+            .TaxProperty = data.VatType,
+            .DiscountProperty = data.DiscountSelection,
+            .DeliveryFee = data.FeeValue,
+            .InstallationFee = data.InstallationFee,
+            .TotalTax = data.VatValue,
+            .TotalDiscount = data.DiscountValue,
+            .TotalAmount = data.TotalCost,
+            .PreparedBy = data.PreparedBy,
+            .ApprovedBy = data.ApprovedBy,
+            .BillingNote = data.Notes,
+            .PaymentTerms = data.PaymentTerms
+        }
 
                 If BillingController.BillingNumberExists(docNum) Then
                     success = BillingController.UpdateBillingStatement(bm)
@@ -634,21 +634,17 @@ Namespace DPC.Components.Forms
                     success = BillingController.InsertBillingStatement(bm)
                 End If
 
-                Debug.WriteLine("=== SaveToDb() called ===")
-                Debug.WriteLine("success value: " & success)
-                Debug.WriteLine("data.OrderItems count: " & data.OrderItems.Count)
-
-
                 If success Then
+                    ' ONLY BILLING SHOULD DEDUCT STOCK
                     DeductProductStockFromJson(json)
 
                     Dim _showDelivery As Boolean = False
 
-                    Dim result As MessageBoxResult = MessageBox.Show("Walk-in billing submitted successfully! Do you want to create a Delivery Receipt for this billing?",
-                                                     "Submission Successful",
-                                                     MessageBoxButton.YesNo,
-                                                     MessageBoxImage.Question)
-
+                    Dim result As MessageBoxResult = MessageBox.Show(
+                "Walk-in billing submitted successfully! Do you want to create a Delivery Receipt for this billing?",
+                "Submission Successful",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question)
 
                     If result = MessageBoxResult.Yes Then
                         _showDelivery = True
@@ -659,36 +655,36 @@ Namespace DPC.Components.Forms
                     MessageBox.Show("Failed to submit walk-in billing.")
                 End If
             Else
+                ' --- COST ESTIMATE / QUOTE BRANCH ---
                 Dim validityStr As String = validityDate.ToString("yyyy-MM-dd")
 
                 If QuotesController.QuoteNumberExists(docNum) Then
                     success = QuotesController.UpdateQuote(
-                    docNum, "", mysqlDocDate, mysqlDocDate,
-                    data.VatType, data.DiscountSelection,
-                    data.ClientId.ToString(), data.ClientName,
-                    data.WarehouseID.ToString(), data.WarehouseName,
-                    json, data.Notes, data.FeeValue, data.InstallationFee, data.VatValue, data.DiscountValue,
-                    data.TotalCost, data.PreparedBy, data.ApprovedBy, data.PaymentTerms)
+                docNum, "", mysqlDocDate, mysqlDocDate,
+                data.VatType, data.DiscountSelection,
+                data.ClientId.ToString(), data.ClientName,
+                data.WarehouseID.ToString(), data.WarehouseName,
+                json, data.Notes, data.FeeValue, data.InstallationFee, data.VatValue, data.DiscountValue,
+                data.TotalCost, data.PreparedBy, data.ApprovedBy, data.PaymentTerms)
                 Else
                     success = QuotesController.InsertQuote(
-                    docNum, "", mysqlDocDate, mysqlDocDate,
-                    data.VatType, data.DiscountSelection,
-                    data.ClientId.ToString(), data.ClientName,
-                    data.WarehouseID.ToString(), data.WarehouseName,
-                    json, data.Notes, data.FeeValue, data.InstallationFee, data.VatValue, data.DiscountValue,
-                    data.TotalCost, data.PreparedBy, data.ApprovedBy, data.PaymentTerms)
+                docNum, "", mysqlDocDate, mysqlDocDate,
+                data.VatType, data.DiscountSelection,
+                data.ClientId.ToString(), data.ClientName,
+                data.WarehouseID.ToString(), data.WarehouseName,
+                json, data.Notes, data.FeeValue, data.InstallationFee, data.VatValue, data.DiscountValue,
+                data.TotalCost, data.PreparedBy, data.ApprovedBy, data.PaymentTerms)
                 End If
 
                 If success Then
-                    DeductProductStockFromJson(json)
-
+                    ' DO NOT DEDUCT STOCK FOR COST ESTIMATE / QUOTE
                     Dim _showDelivery As Boolean = False
 
-                    Dim result As MessageBoxResult = MessageBox.Show("Quote submitted successfully! Do you want to create a Billing Statement for this Quote?",
-                                                     "Submission Successful",
-                                                     MessageBoxButton.YesNo,
-                                                     MessageBoxImage.Question)
-
+                    Dim result As MessageBoxResult = MessageBox.Show(
+                "Quote submitted successfully! Do you want to create a Billing Statement for this Quote?",
+                "Submission Successful",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question)
 
                     If result = MessageBoxResult.Yes Then
                         _showDelivery = True
