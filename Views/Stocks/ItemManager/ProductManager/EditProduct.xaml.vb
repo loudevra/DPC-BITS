@@ -117,7 +117,17 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
             TxtPurchaseOrder.Text = cacheBuyingPrice
             TxtMarkup.Text = FindPercentage(cacheBuyingPrice, cacheSellingPrice)
             SetSelectedMeasureUnit(ComboBoxMeasurementUnit, cacheProductDescription)
-            TxtStockUnits.Text = Convert.ToInt16(cacheStockUnit)
+
+            Dim displayStock As Integer = Math.Max(0, Convert.ToInt32(cacheStockUnit))
+
+            If displayStock = 0 Then
+                cacheSerialNumbers.Clear()
+                CheckBoxSerialNumber.IsChecked = False
+            End If
+
+            TxtStockUnits.Text = displayStock.ToString()
+            TxtStockUnits.IsEnabled = True  ' explicitly ensure it's editable after clamping
+
             EditProductProcessStockUnitsEntry(TxtStockUnits, MainContainer)
             SetSelectedWarehouse(ComboBoxWarehouse, cacheWarehouseID)
             TxtAlertQuantity.Text = cacheAlertQuantity
@@ -161,7 +171,7 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
             Dim stockUnits As Integer
 
             If Integer.TryParse(txtStockUnits.Text, stockUnits) Then
-                If stockUnits > 0 Then
+                If stockUnits >= 0 Then
                     mainContainer.Children.Clear()
 
                     If cacheSerialNumbers.Count > 0 Then
@@ -204,22 +214,21 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
 #Region "Serial Number Gate"
 
         Private Sub TxtStockUnits_TextChanged(sender As Object, e As TextChangedEventArgs)
-            UpdateSerialCheckboxAvailability()
-        End Sub
-
-        Private Sub UpdateSerialCheckboxAvailability()
+            ' Only collapse serial panel if unchecked and stock is 0
             Dim qty As Integer = 0
             Dim isValid As Boolean = Integer.TryParse(TxtStockUnits.Text.Trim(), qty) AndAlso qty > 0
 
-            CheckBoxSerialNumber.IsEnabled = isValid
+            If Not isValid AndAlso CheckBoxSerialNumber.IsChecked = False Then
+                StackPanelSerialRow.Visibility = Visibility.Collapsed
+            End If
+        End Sub
+
+        Private Sub UpdateSerialCheckboxAvailability()
+            ' Always allow the checkbox to be enabled
+            CheckBoxSerialNumber.IsEnabled = True
 
             If TxtSerialHint IsNot Nothing Then
-                TxtSerialHint.Visibility = If(isValid, Visibility.Collapsed, Visibility.Visible)
-            End If
-
-            If Not isValid Then
-                CheckBoxSerialNumber.IsChecked = False
-                StackPanelSerialRow.Visibility = Visibility.Collapsed
+                TxtSerialHint.Visibility = Visibility.Collapsed
             End If
         End Sub
 
@@ -344,17 +353,17 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
         End Sub
 
         Private Sub IncludeSerial_Click(sender As Object, e As RoutedEventArgs)
-            Dim qty As Integer = 0
-            If Not Integer.TryParse(TxtStockUnits.Text.Trim(), qty) OrElse qty <= 0 Then
-                CheckBoxSerialNumber.IsChecked = False
-                MessageBox.Show("Please enter a valid stock unit quantity before adding serial numbers.",
-                                "Stock Units Required", MessageBoxButton.OK, MessageBoxImage.Information)
-                Return
+            If CheckBoxSerialNumber.IsChecked Then
+                ' Auto-increment stock units to 1 if it's 0 or empty
+                Dim qty As Integer = 0
+                If Not Integer.TryParse(TxtStockUnits.Text.Trim(), qty) OrElse qty <= 0 Then
+                    TxtStockUnits.Text = "1"
+                End If
             End If
 
             ProductController.ProcessStockUnitsEntry(TxtStockUnits, MainContainer)
             ProductController.SerialNumberChecker(CheckBoxSerialNumber, StackPanelSerialRow,
-                TxtStockUnits, BorderStockUnits)
+        TxtStockUnits, BorderStockUnits)
         End Sub
 
         Private Sub BtnExit_Click(sender As Object, e As RoutedEventArgs)
@@ -813,3 +822,4 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
     End Class
 
 End Namespace
+
