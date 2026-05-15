@@ -419,12 +419,18 @@ Namespace DPC.Components.Forms
                             End Using
 
                             ' Calculate new stock
-                            Dim newStock As Integer = currentStock - quantitySold
+                            Dim deductedStock As Integer = currentStock - quantitySold
+                            Dim newStock As Integer = Math.Max(deductedStock, 0)
+
+                            If quantitySold > currentStock Then
+                                Debug.WriteLine("WARNING: Quantity to deduct is greater than current stock for product " & productID &
+                    ". Current stock: " & currentStock & ", requested deduction: " & quantitySold &
+                    ". Stock will be set to 0.")
+                            End If
+
                             Debug.WriteLine("New stock will be: " & newStock)
 
-                            ' Update stock
                             Dim updateStockQuery As String = "UPDATE " & tableToUpdate & " SET stockUnit = @newStock, dateModified = NOW() WHERE productID = @productID"
-
                             Using cmd As New MySqlCommand(updateStockQuery, conn)
                                 cmd.Parameters.AddWithValue("@newStock", newStock)
                                 cmd.Parameters.AddWithValue("@productID", productID)

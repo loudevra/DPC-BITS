@@ -163,7 +163,7 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
                             b.brandName AS Brand,  
                             s.supplierName AS Supplier,  
                             GROUP_CONCAT(DISTINCT WarehouseFiltered.warehouseName SEPARATOR ', ') AS Warehouse,  
-                            SUM(COALESCE(pnv.stockUnit, 0) + COALESCE(pvs.stockUnit, 0)) AS StockQuantity,  
+                            GREATEST(SUM(COALESCE(pnv.stockUnit, 0) + COALESCE(pvs.stockUnit, 0)), 0) AS StockQuantity,  
                             MAX(COALESCE(pnv.alertQuantity, pvs.alertQuantity, 0)) AS AlertQuantity,  
                             MAX(COALESCE(pnv.buyingPrice, pvs.buyingPrice, 0)) AS BuyingPrice,
                             MAX(COALESCE(pnv.sellingPrice, pvs.sellingPrice, 0)) AS SellingPrice,
@@ -265,7 +265,16 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
 
                         ' Clear warehouse for out-of-stock products
                         Dim stockQuantity As Integer = Convert.ToInt32(row("StockQuantity"))
-                        If stockQuantity = 0 Then
+
+                        If stockQuantity < 0 Then
+                            stockQuantity = 0
+                            row("StockQuantity") = 0
+                        End If
+
+                        If stockQuantity > 0 Then
+                            inStockProducts += 1
+                        Else
+                            stockOutProducts += 1
                             row("Warehouse") = DBNull.Value
                         End If
                     Next
