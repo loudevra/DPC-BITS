@@ -245,7 +245,7 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="30,15">
                             <TextBlock x:Name="txtStockOut" Text="0" FontSize="32" FontWeight="Bold" Foreground="#C64141" FontFamily="Lexend" />
-                            <TextBlock Text="Stock Out" FontSize="12" Foreground="Gray" FontFamily="Lexend" />
+                            <TextBlock Text="Out of Stock" FontSize="12" Foreground="Gray" FontFamily="Lexend" />
                         </StackPanel>
                         <materialDesign:PackIcon Grid.Column="1" Kind="PackageVariantRemove" Width="70" Height="60" Foreground="#C64141" VerticalAlignment="Center" Margin="20" HorizontalAlignment="Right"/>
                     </Grid>
