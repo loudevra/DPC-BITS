@@ -5221,11 +5221,6 @@
             "AssemblyAsmDisplayName" = "8:MongoDB.Bson, Version=3.4.0.0, Culture=neutral, PublicKeyToken=94992a530f44e321, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_29A9A7253B4A4850818E945FE5AB0A15"
-                    {
-                    "Name" = "8:MongoDB.Bson.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:MongoDB.Bson.dll"
             "TargetName" = "8:"
@@ -6326,11 +6321,6 @@
             "AssemblyAsmDisplayName" = "8:MongoDB.Driver, Version=3.4.0.0, Culture=neutral, PublicKeyToken=94992a530f44e321, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_5961B5CC9B30FE8CFE572E51B0CB5790"
-                    {
-                    "Name" = "8:MongoDB.Driver.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:MongoDB.Driver.dll"
             "TargetName" = "8:"
@@ -10817,15 +10807,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:DPC-Wizard-Setup"
-        "ProductCode" = "8:{1C13D3AE-68C2-4452-9D96-E1B05EE7F9FB}"
-        "PackageCode" = "8:{49085E64-5B84-43C9-AAE8-40F7C5518841}"
+        "ProductCode" = "8:{2C94BAC5-E0DD-4F45-974F-EECD39A46A0C}"
+        "PackageCode" = "8:{A54A8281-6FFE-4666-B775-7D244A10C632}"
         "UpgradeCode" = "8:{4E689C60-316B-4336-A1B4-57E99051A6C0}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.9"
+        "ProductVersion" = "8:1.0.10"
         "Manufacturer" = "8:DPCBITS"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
