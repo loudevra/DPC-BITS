@@ -203,25 +203,25 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
                     adapter.Fill(dataTable)
 
                     ' Count query with the same search filter
-                    Dim countQuery As String = $"
-                        SELECT 
-                            COUNT(*) AS Total,
-                            SUM(TotalStock) AS InStock,
-                            SUM(CASE WHEN TotalStock = 0 THEN 1 ELSE 0 END) AS StockOut
-                        FROM (
-                            SELECT p.productID,
-                                SUM(COALESCE(pnv.stockUnit, 0) + COALESCE(pvs.stockUnit, 0)) AS TotalStock,
-                                p.productName, c.categoryName, sc.subcategoryName, b.brandName, s.supplierName
-                            FROM product p
-                            LEFT JOIN category c ON p.categoryID = c.categoryID
-                            LEFT JOIN subcategory sc ON p.subcategoryID = sc.subcategoryID
-                            LEFT JOIN brand b ON p.brandID = b.brandID
-                            LEFT JOIN supplier s ON p.supplierID = s.supplierID
-                            LEFT JOIN productnovariation pnv ON p.productID = pnv.productID AND p.productVariation = 0
-                            LEFT JOIN productvariationstock pvs ON p.productID = pvs.productID AND p.productVariation = 1
-                            GROUP BY p.productID, p.productName, c.categoryName, sc.subcategoryName, b.brandName, s.supplierName
-                            {whereClause}
-                        ) AS StockSummary"
+                    Dim countQuery As String = $"   
+    SELECT 
+        COUNT(*) AS Total,
+        SUM(CASE WHEN TotalStock > 0 THEN 1 ELSE 0 END) AS InStock,
+        SUM(CASE WHEN TotalStock <= 0 THEN 1 ELSE 0 END) AS StockOut
+    FROM (
+        SELECT p.productID,
+            SUM(COALESCE(pnv.stockUnit, 0) + COALESCE(pvs.stockUnit, 0)) AS TotalStock,
+            p.productName, c.categoryName, sc.subcategoryName, b.brandName, s.supplierName
+        FROM product p
+        LEFT JOIN category c ON p.categoryID = c.categoryID
+        LEFT JOIN subcategory sc ON p.subcategoryID = sc.subcategoryID
+        LEFT JOIN brand b ON p.brandID = b.brandID
+        LEFT JOIN supplier s ON p.supplierID = s.supplierID
+        LEFT JOIN productnovariation pnv ON p.productID = pnv.productID AND p.productVariation = 0
+        LEFT JOIN productvariationstock pvs ON p.productID = pvs.productID AND p.productVariation = 1
+        GROUP BY p.productID, p.productName, c.categoryName, sc.subcategoryName, b.brandName, s.supplierName
+        {whereClause}
+    ) AS StockSummary"
 
                     Using countCmd As New MySqlCommand(countQuery, conn)
                         If Not String.IsNullOrWhiteSpace(searchText) Then
