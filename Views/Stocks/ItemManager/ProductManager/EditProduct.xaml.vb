@@ -26,6 +26,8 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
         Private uploadTimer As New DispatcherTimer()
         Private base64Image As String
         Private isUploadLocked As Boolean = False
+        Private isDirectPriceMode As Boolean = False
+        Private _isFormatting As Boolean = False
 
         Private Sub EditProduct_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
             InitializeMarkupUI()
@@ -114,8 +116,32 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
             SetSelectedBrand(ComboBoxBrand, cacheBrandID)
             SetSelectedCategory(ComboBoxCategory, cacheCategoryID)
             TxtDescription.Text = cacheMeasurementUnit
-            TxtPurchaseOrder.Text = cacheBuyingPrice
-            TxtMarkup.Text = FindPercentage(cacheBuyingPrice, cacheSellingPrice)
+            Dim loadedBuying As Decimal
+            If Decimal.TryParse(cacheBuyingPrice.ToString(), loadedBuying) Then
+                TxtPurchaseOrder.Text = loadedBuying.ToString("#,##0.##")
+            Else
+                TxtPurchaseOrder.Text = cacheBuyingPrice
+            End If
+
+            Dim buyingPriceVal As Decimal
+            If Not Decimal.TryParse(cacheBuyingPrice.ToString(), buyingPriceVal) OrElse buyingPriceVal <= 0 Then
+                ' Product was saved with no buying price — switch to direct mode automatically
+                isDirectPriceMode = True
+                ToggleDirectPrice.IsChecked = True
+                TxtRetailPrice.IsReadOnly = False
+                Dim loadedSelling As Decimal
+                If Decimal.TryParse(cacheSellingPrice.ToString(), loadedSelling) Then
+                    TxtRetailPrice.Text = loadedSelling.ToString("#,##0.##")
+                Else
+                    TxtRetailPrice.Text = cacheSellingPrice.ToString()
+                End If
+                GridMarkupButtons.Opacity = 0.4
+                GridMarkupButtons.IsEnabled = False
+                TxtMarkup.IsEnabled = False
+                TxtMarkup.Opacity = 0.4
+            Else
+                TxtMarkup.Text = FindPercentage(cacheBuyingPrice, cacheSellingPrice)
+            End If
             SetSelectedMeasureUnit(ComboBoxMeasurementUnit, cacheProductDescription)
 
             Dim displayStock As Integer = Math.Max(0, Convert.ToInt32(cacheStockUnit))
@@ -352,6 +378,64 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
                 StackPanelStockUnits, OuterStackPanel)
         End Sub
 
+        Private Sub PriceTextInputHandler(sender As Object, e As TextCompositionEventArgs)
+            Dim tb = TryCast(sender, TextBox)
+            If tb Is Nothing Then Return
+            Dim input As String = e.Text
+
+            If Not Char.IsDigit(input(0)) AndAlso input <> "." Then
+                e.Handled = True
+                Return
+            End If
+
+            If input = "." AndAlso tb.Text.Replace(",", "").Contains(".") Then
+                e.Handled = True
+            End If
+        End Sub
+
+        Private Sub PriceOnlyPasteHandler(sender As Object, e As DataObjectPastingEventArgs)
+            If e.DataObject.GetDataPresent(GetType(String)) Then
+                Dim text As String = CStr(e.DataObject.GetData(GetType(String)))
+                Dim stripped As String = text.Replace(",", "")
+                Dim result As Decimal
+                If Not Decimal.TryParse(stripped, result) Then
+                    e.CancelCommand()
+                End If
+            Else
+                e.CancelCommand()
+            End If
+        End Sub
+
+        Private Sub TxtRetailPrice_TextChanged(sender As Object, e As TextChangedEventArgs)
+            If Not isDirectPriceMode Then Return
+            Dim tb = TryCast(sender, TextBox)
+            If tb Is Nothing Then Return
+            FormatNumberWithCommas(tb)
+        End Sub
+
+        Private Sub ToggleDirectPrice_Click(sender As Object, e As RoutedEventArgs)
+            isDirectPriceMode = ToggleDirectPrice.IsChecked = True
+
+            If isDirectPriceMode Then
+                TxtRetailPrice.IsReadOnly = False
+                TxtRetailPrice.Foreground = New SolidColorBrush(Color.FromRgb(71, 71, 71))
+                TxtRetailPrice.Text = ""
+                TxtRetailPrice.Focus()
+
+                GridMarkupButtons.Opacity = 0.4
+                GridMarkupButtons.IsEnabled = False
+                TxtMarkup.IsEnabled = False
+                TxtMarkup.Opacity = 0.4
+            Else
+                TxtRetailPrice.IsReadOnly = True
+                GridMarkupButtons.Opacity = 1
+                GridMarkupButtons.IsEnabled = True
+                TxtMarkup.IsEnabled = True
+                TxtMarkup.Opacity = 1
+                CalculateSellingPrice()
+            End If
+        End Sub
+
         Private Sub IncludeSerial_Click(sender As Object, e As RoutedEventArgs)
             If CheckBoxSerialNumber.IsChecked Then
                 ' Auto-increment stock units to 1 if it's 0 or empty
@@ -402,14 +486,14 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
             cacheProductDescription = TxtDescription.Text
 
             Dim retailPrice As Decimal
-            If Not Decimal.TryParse(TxtRetailPrice.Text, retailPrice) Then
+            If Not Decimal.TryParse(TxtRetailPrice.Text.Replace(",", ""), retailPrice) Then
                 MessageBox.Show("Please enter a valid retail price.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Return
             End If
             cacheSellingPrice = retailPrice
 
             Dim purchaseOrder As Decimal
-            If Not Decimal.TryParse(TxtPurchaseOrder.Text, purchaseOrder) Then
+            If Not Decimal.TryParse(TxtPurchaseOrder.Text.Replace(",", ""), purchaseOrder) Then
                 MessageBox.Show("Please enter a valid purchase order price.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Return
             End If
@@ -740,12 +824,14 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
 
         Private Sub CalculateSellingPrice()
             Try
+                If isDirectPriceMode Then Return
+
                 If TxtPurchaseOrder Is Nothing OrElse TxtMarkup Is Nothing OrElse
-                   TxtRetailPrice Is Nothing OrElse RadBtnPercentage Is Nothing Then Return
+                    TxtRetailPrice Is Nothing OrElse RadBtnPercentage Is Nothing Then Return
 
                 Dim buyingPrice As Decimal
                 If String.IsNullOrWhiteSpace(TxtPurchaseOrder.Text) OrElse
-                   Not Decimal.TryParse(TxtPurchaseOrder.Text, buyingPrice) OrElse buyingPrice <= 0 Then
+                     Not Decimal.TryParse(TxtPurchaseOrder.Text.Replace(",", ""), buyingPrice) OrElse buyingPrice <= 0 Then
                     TxtRetailPrice.Text = "0.00"
                     Return
                 End If
@@ -775,12 +861,52 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
         End Sub
 
         Private Sub TxtPurchaseOrder_TextChanged(sender As Object, e As TextChangedEventArgs) Handles TxtPurchaseOrder.TextChanged
+            FormatNumberWithCommas(TryCast(sender, TextBox))
             CalculateSellingPrice()
         End Sub
 
         Private Sub RadioButton_Checked(sender As Object, e As RoutedEventArgs) Handles RadBtnPercentage.Checked, RadBtnFlat.Checked
             UpdateMarkupLabelsIfReady()
             CalculateSellingPrice()
+        End Sub
+
+        Private Sub FormatNumberWithCommas(tb As TextBox)
+            If _isFormatting OrElse tb Is Nothing Then Return
+
+            Dim currentText As String = tb.Text
+            If String.IsNullOrWhiteSpace(currentText) Then Return
+
+            Dim caretPos As Integer = Math.Min(tb.SelectionStart, currentText.Length)
+            Dim rawCaretPos As Integer = currentText.Substring(0, caretPos).Replace(",", "").Length
+
+            Dim raw As String = currentText.Replace(",", "")
+            Dim dotIndex As Integer = raw.IndexOf("."c)
+            Dim intPart As String = If(dotIndex >= 0, raw.Substring(0, dotIndex), raw)
+            Dim decPart As String = If(dotIndex >= 0, raw.Substring(dotIndex), "")
+
+            If intPart = "" Then Return
+
+            Dim parsedLong As Long
+            If Not Long.TryParse(intPart, parsedLong) Then Return
+
+            Dim formatted As String = parsedLong.ToString("#,##0") & decPart
+            If formatted = currentText Then Return
+
+            _isFormatting = True
+            tb.Text = formatted
+
+            Dim newCaret As Integer = formatted.Length
+            Dim rawCount As Integer = 0
+            For i As Integer = 0 To formatted.Length - 1
+                If rawCount = rawCaretPos Then
+                    newCaret = i
+                    Exit For
+                End If
+                If formatted(i) <> ","c Then rawCount += 1
+            Next
+
+            tb.SelectionStart = Math.Min(newCaret, formatted.Length)
+            _isFormatting = False
         End Sub
 
         Private Sub UpdateMarkupLabelsIfReady()
