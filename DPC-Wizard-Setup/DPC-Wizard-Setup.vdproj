@@ -10817,15 +10817,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:DPC-Wizard-Setup"
-        "ProductCode" = "8:{4620CCD2-2BA4-4E98-BC5F-96105CC827FA}"
-        "PackageCode" = "8:{238BBF0E-02E6-4CB5-B08B-0111A0859F7B}"
+        "ProductCode" = "8:{6DFCBAA7-CC81-45BF-8CCB-C9C5F78A7A61}"
+        "PackageCode" = "8:{C2984053-AF92-432F-BEFC-506F3DF1F88C}"
         "UpgradeCode" = "8:{4E689C60-316B-4336-A1B4-57E99051A6C0}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.11"
+        "ProductVersion" = "8:1.0.12"
         "Manufacturer" = "8:DPCBITS"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -11367,7 +11367,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_2EBEA11B60C640E2ACF178E81DC375BB"
             {
-            "SourcePath" = "8:"
+            "SourcePath" = "8:..\\obj\\Release\\DPC.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_59E067813A6A4AE2A001C3CA51367135"
