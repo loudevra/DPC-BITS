@@ -486,6 +486,9 @@ Namespace DPC.Views.Stocks.ItemManager.ProductManager
             cacheProductDescription = TxtDescription.Text
 
             Dim retailPrice As Decimal
+            If isDirectPriceMode Then
+                TxtPurchaseOrder.Text = "0"
+            End If
             If Not Decimal.TryParse(TxtRetailPrice.Text.Replace(",", ""), retailPrice) Then
                 MessageBox.Show("Please enter a valid retail price.", "Input Error", MessageBoxButton.OK, MessageBoxImage.Warning)
                 Return

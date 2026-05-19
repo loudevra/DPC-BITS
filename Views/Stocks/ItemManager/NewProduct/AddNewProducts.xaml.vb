@@ -492,23 +492,28 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
         End Sub
 
         Private Sub BtnAddProduct_Click(sender As Object, e As RoutedEventArgs)
+            If isDirectPriceMode Then
+                TxtPurchaseOrder.Text = "0"
+            End If
+            TxtPurchaseOrder.Text = TxtPurchaseOrder.Text.Replace(",", "")
+            TxtRetailPrice.Text = TxtRetailPrice.Text.Replace(",", "")
+
             Dim isSuccessAddProduct As Boolean = ProductController.InsertNewProduct(Toggle, CheckBoxSerialNumber,
-            TxtProductName, TxtProductCode, ComboBoxCategory, ComboBoxSubCategory,
-            ComboBoxWarehouse, ComboBoxBrand, ComboBoxSupplier, TxtRetailPrice,
-            TxtPurchaseOrder, TxtDefaultTax, TxtDiscountRate, TxtStockUnits,
-            TxtAlertQuantity, ComboBoxMeasurementUnit, TxtDescription,
-            SingleDatePicker, ProductController.SerialNumbers, base64Image)
+    TxtProductName, TxtProductCode, ComboBoxCategory, ComboBoxSubCategory,
+    ComboBoxWarehouse, ComboBoxBrand, ComboBoxSupplier, TxtRetailPrice,
+    TxtPurchaseOrder, TxtDefaultTax, TxtDiscountRate, TxtStockUnits,
+    TxtAlertQuantity, ComboBoxMeasurementUnit, TxtDescription,
+    SingleDatePicker, ProductController.SerialNumbers, base64Image)
             If isSuccessAddProduct Then
                 ProductController.ClearInputFields(TxtProductName, TxtProductCode, TxtRetailPrice, TxtPurchaseOrder,
-                TxtDefaultTax, TxtDiscountRate, TxtStockUnits, TxtAlertQuantity, TxtDescription,
-                ComboBoxCategory, ComboBoxSubCategory, ComboBoxWarehouse, ComboBoxMeasurementUnit,
-                ComboBoxBrand, ComboBoxSupplier, SingleDatePicker, MainContainer)
+        TxtDefaultTax, TxtDiscountRate, TxtStockUnits, TxtAlertQuantity, TxtDescription,
+        ComboBoxCategory, ComboBoxSubCategory, ComboBoxWarehouse, ComboBoxMeasurementUnit,
+        ComboBoxBrand, ComboBoxSupplier, SingleDatePicker, MainContainer)
                 ProductController.SerialNumbers.Clear()
                 TxtProductVariation.Text = Nothing
                 DPC.Components.Forms.AddVariation._savedVariations.Clear()
                 DPC.Data.Controllers.ProductController.variationManager.GetAllVariationData().Clear()
                 DPC.Data.Controllers.ProductController.variationManager.CurrentCombination = Nothing
-
                 ' Also clear saved combo state on successful submit
                 _savedBrandTag = Nothing
                 _savedSupplierTag = Nothing
@@ -516,7 +521,6 @@ Namespace DPC.Views.Stocks.ItemManager.NewProduct
                 _savedSubCategoryContent = Nothing
                 _savedWarehouseTag = Nothing
                 _savedMeasurementUnitIndex = 0
-
                 If Not String.IsNullOrWhiteSpace(base64Image) Then
                     ResetImageComponents()
                 End If
