@@ -10817,8 +10817,8 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:DPC-Wizard-Setup"
-        "ProductCode" = "8:{2A838E09-6528-4B6C-B75B-F6EB865146B0}"
-        "PackageCode" = "8:{08DFC48E-8B74-42BB-8CCF-9B41EBFCBAD2}"
+        "ProductCode" = "8:{4620CCD2-2BA4-4E98-BC5F-96105CC827FA}"
+        "PackageCode" = "8:{238BBF0E-02E6-4CB5-B08B-0111A0859F7B}"
         "UpgradeCode" = "8:{4E689C60-316B-4336-A1B4-57E99051A6C0}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
@@ -11367,7 +11367,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_2EBEA11B60C640E2ACF178E81DC375BB"
             {
-            "SourcePath" = "8:..\\obj\\Debug\\DPC.exe"
+            "SourcePath" = "8:"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_59E067813A6A4AE2A001C3CA51367135"
