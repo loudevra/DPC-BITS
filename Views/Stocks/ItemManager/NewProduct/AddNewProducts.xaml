@@ -420,29 +420,47 @@
                                     </Grid.ColumnDefinitions>
                                     <materialDesign:PackIcon Kind="CurrencyPhp" Width="25" Height="20" Margin="10,0,0,0" VerticalAlignment="Center" Grid.Column="0"/>
                                     <TextBox x:Name="TxtPurchaseOrder" Style="{StaticResource RoundedTextboxStyle}" Margin="0,0,25,0" Grid.Column="1"
-         PreviewTextInput="DecimalOnlyTextInputHandler"
-         DataObject.Pasting="DecimalOnlyPasteHandler" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"/>
+                                         PreviewTextInput="PriceTextInputHandler"
+                                         DataObject.Pasting="PriceOnlyPasteHandler"
+                                         TextChanged="TxtPurchaseOrder_TextChanged"
+                                         FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"/>
                                 </Grid>
                             </Border>
                         </StackPanel>
 
                         <StackPanel Margin="0,10" x:Name="StackPanelMarkup">
                             <StackPanel Margin="0,0,0,8">
-                                <TextBlock Text="Markup Price:" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,5"/>
-                                <Grid>
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Markup Price:" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                    <!-- NEW: Direct Price Mode Toggle -->
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock x:Name="TxtDirectModeLabel" Text="Direct Price Input" 
+                       FontSize="12" FontFamily="Lexend" Foreground="#474747" 
+                       VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                        <ToggleButton x:Name="ToggleDirectPrice" 
+                          Style="{StaticResource ToggleSwitchStyle}" 
+                          Click="ToggleDirectPrice_Click"
+                          ToolTip="ON = type selling price directly | OFF = auto-calculate from buying price + markup" Width="103"/>
+                                    </StackPanel>
+                                </Grid>
+                                <Grid x:Name="GridMarkupButtons">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <Button Style="{StaticResource RoundedButtonStyle}" Grid.Column="0" Margin="0,0,10,0">
                                         <RadioButton x:Name="RadBtnPercentage" Margin="10" BorderBrush="#474747" BorderThickness="1.5" 
-                                                     GroupName="CalculationMode" IsChecked="True" Checked="RadioButton_Checked">
+                         GroupName="CalculationMode" IsChecked="True" Checked="RadioButton_Checked">
                                             <TextBlock Text="Percentage" FontSize="14" FontWeight="SemiBold" FontFamily="{StaticResource Lexend}" Foreground="#474747"/>
                                         </RadioButton>
                                     </Button>
                                     <Button Style="{StaticResource RoundedButtonStyle}" Grid.Column="1" Margin="10,0,0,0">
                                         <RadioButton x:Name="RadBtnFlat" Margin="10" BorderBrush="#474747" BorderThickness="1.5"
-                                                     GroupName="CalculationMode" Checked="RadioButton_Checked">
+                         GroupName="CalculationMode" Checked="RadioButton_Checked">
                                             <TextBlock Text="Flat" FontSize="14" FontWeight="SemiBold" FontFamily="{StaticResource Lexend}" Foreground="#474747"/>
                                         </RadioButton>
                                     </Button>
@@ -482,9 +500,10 @@
                                     </Grid.ColumnDefinitions>
                                     <materialDesign:PackIcon Kind="CurrencyPhp" Width="25" Height="20" Margin="10,0,0,0" VerticalAlignment="Center" Grid.Column="0"/>
                                     <TextBox x:Name="TxtRetailPrice" Style="{StaticResource RoundedTextboxStyle}" Margin="0,0,25,0" Grid.Column="1" 
-                                             PreviewTextInput="DecimalOnlyTextInputHandler"
-                                             DataObject.Pasting="DecimalOnlyPasteHandler"
-                                             IsReadOnly="True" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"/>
+                                         PreviewTextInput="PriceTextInputHandler"
+                                         DataObject.Pasting="PriceOnlyPasteHandler"
+                                         IsReadOnly="True" FontFamily="Lexend" Foreground="#474747" FontWeight="SemiBold"
+                                         TextChanged="TxtRetailPrice_TextChanged"/>
                                 </Grid>
                             </Border>
                         </StackPanel>
