@@ -323,10 +323,10 @@
                             </Border>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <TextBlock Text="Tax Mode:" Width="120" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                            <TextBlock Text="Vat Type:" Width="120" VerticalAlignment="Center" FontWeight="SemiBold"/>
                             <ComboBox x:Name="txtTaxSelection" SelectionChanged="txtTaxSelection_SelectionChanged" Width="180" Style="{StaticResource RoundedComboBoxStyle}">
                                 <ComboBoxItem Content="Inclusive" IsSelected="True"/>
-                                <ComboBoxItem Content="Exclusive"/>
+                                <ComboBoxItem Content="Excluded"/>
                             </ComboBox>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
