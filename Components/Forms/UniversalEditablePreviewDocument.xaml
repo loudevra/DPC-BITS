@@ -692,8 +692,8 @@
                                             <Border Grid.Row="6" BorderBrush="#090909" BorderThickness="1" Margin="5,0,5,0" Padding="0">
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width=".65*" />
+                                                        <ColumnDefinition Width=".60*" />
                                                         <ColumnDefinition Width="*" />
                                                     </Grid.ColumnDefinitions>
 
