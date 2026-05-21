@@ -82,7 +82,7 @@ Namespace DPC.Views.Sales.Quotes
 
             ' Set the ComboBox selection to match _TaxSelection
             If _TaxSelection Then
-                txtTaxSelection.SelectedItem = txtTaxSelection.Items.Cast(Of ComboBoxItem)().FirstOrDefault(Function(i) i.Content.ToString() = "Exclusive")
+                txtTaxSelection.SelectedItem = txtTaxSelection.Items.Cast(Of ComboBoxItem)().FirstOrDefault(Function(i) i.Content.ToString() = "Excluded")
             Else
                 txtTaxSelection.SelectedItem = txtTaxSelection.Items.Cast(Of ComboBoxItem)().FirstOrDefault(Function(i) i.Content.ToString() = "Inclusive")
             End If
@@ -317,7 +317,7 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Sub txtTaxSelection_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
-            _TaxSelection = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString() = "Exclusive"
+            _TaxSelection = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString() = "Excluded"
             Debug.WriteLine($"Tax Selection - {_TaxSelection}")
 
             For Each kvp In _productTextBoxes
@@ -1169,63 +1169,25 @@ Namespace DPC.Views.Sales.Quotes
             End If
         End Function
 
-        Public Sub UpdateGrandTotal()
-            Dim subtotalAmount As Decimal = 0
-            Dim totalTaxAmount As Decimal = 0
-            Dim deliveryFee As Decimal = 0
-            Dim installationFee As Decimal = 0
+        Public Sub UpdateTotalDiscount()
+            Dim totalDiscount As Decimal = 0
 
-            Dim amountTextBoxNames = LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
-                SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
-                Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtAmount_")).
-                Select(Function(txt) txt.Name).Distinct()
+            For Each name As String In LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
+        SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
+        Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtDiscount_")).
+        Select(Function(txt) txt.Name).Distinct()
 
-            For Each name As String In amountTextBoxNames
                 Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
                 If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
-                    Dim rawText = txtBox.Text.Replace("₱", "").Replace(",", "").Trim()
-                    Dim amount As Decimal
-                    If Decimal.TryParse(rawText, amount) Then
-                        subtotalAmount += amount
+                    Dim rawText = txtBox.Text.Replace("₱", "").Trim()
+                    Dim discount As Decimal
+                    If Decimal.TryParse(rawText, discount) Then
+                        totalDiscount += discount
                     End If
                 End If
             Next
 
-            Decimal.TryParse(txtDeliveryFee.Text.Replace("₱", "").Replace(",", "").Trim(), deliveryFee)
-            Decimal.TryParse(txtInstallationFee.Text.Replace("₱", "").Replace(",", "").Trim(), installationFee)
-
-            Dim rawTax = txtTotalTax.Text.Replace("₱", "").Replace(",", "").Trim()
-            Decimal.TryParse(rawTax, totalTaxAmount)
-
-            Dim finalGrandTotal As Decimal = 0
-            Dim baseForTaxCalculation As Decimal = subtotalAmount + deliveryFee + installationFee
-
-            If _TaxSelection Then
-                Dim calculatedTaxAmount As Decimal = baseForTaxCalculation * 0.12D
-                finalGrandTotal = baseForTaxCalculation + calculatedTaxAmount
-                CostEstimateDetails.CETotalAmountCache = "₱ " & finalGrandTotal.ToString("N2")
-            Else
-                Dim calculatedTaxAmount As Decimal = subtotalAmount * 0.12D
-                finalGrandTotal = baseForTaxCalculation
-                txtTotalTax.Text = "₱" & calculatedTaxAmount.ToString("N2")
-                CostEstimateDetails.CETotalAmountCache = "₱ " & finalGrandTotal.ToString("N2")
-            End If
-
-            _originalGrandTotal = finalGrandTotal
-
-            If _isTaxApplied Then
-                Dim grandTotalWithTax As Decimal = _originalGrandTotal + totalTaxAmount
-                txtGrandTotal.Text = "₱" & grandTotalWithTax.ToString("N2")
-            Else
-                txtGrandTotal.Text = "₱" & finalGrandTotal.ToString("N2")
-            End If
-
-            CostEstimateDetails.CETotalBaseAmount = "₱" & subtotalAmount.ToString("N2")
-
-            If _isTaxApplied Then
-                _isTaxApplied = False
-                UpdateGrandTotalDisplay()
-            End If
+            txtTotalDiscount.Text = "₱" & totalDiscount.ToString("N2")
         End Sub
 
         Public Sub UpdateTotalTax()
@@ -1235,9 +1197,9 @@ Namespace DPC.Views.Sales.Quotes
             Dim installationFee As Decimal = 0
 
             For Each name As String In LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
-                SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
-                Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtAmount_")).
-                Select(Function(txt) txt.Name).Distinct()
+        SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
+        Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtAmount_")).
+        Select(Function(txt) txt.Name).Distinct()
 
                 Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
                 If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
@@ -1257,41 +1219,11 @@ Namespace DPC.Views.Sales.Quotes
 
             CostEstimateDetails.CETotalTaxValueCache = "₱ " & totalTax.ToString("N2")
             txtTotalTax.Text = "₱" & totalTax.ToString("N2")
-        End Sub
 
-        Public Sub UpdateTotalDiscount()
-            Dim totalDiscount As Decimal = 0
-
-            For Each name As String In LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
-                SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
-                Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtDiscount_")).
-                Select(Function(txt) txt.Name).Distinct()
-
-                Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
-                If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
-                    Dim rawText = txtBox.Text.Replace("₱", "").Trim()
-                    Dim discount As Decimal
-                    If Decimal.TryParse(rawText, discount) Then
-                        totalDiscount += discount
-                    End If
-                End If
-            Next
-
-            txtTotalDiscount.Text = "₱" & totalDiscount.ToString("N2")
-
-            If _isTaxApplied Then
-                _isTaxApplied = False
-
-                Dim toggleButton = TryCast(ApplyTaxToggle, Button)
-                If toggleButton IsNot Nothing Then
-                    toggleButton.Background = CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush)
-                    toggleButton.Margin = New Thickness(2, 2, 0, 0)
-
-                    Dim icon = TryCast(toggleButton.Content, MaterialDesignThemes.Wpf.PackIcon)
-                    If icon IsNot Nothing Then
-                        icon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Close
-                    End If
-                End If
+            ' *** Keep visibility in sync with toggle state ***
+            Dim taxGrid = TryCast(txtTotalTax.Parent, Grid)
+            If taxGrid IsNot Nothing Then
+                taxGrid.Visibility = If(_isTaxApplied, Visibility.Visible, Visibility.Collapsed)
             End If
         End Sub
 
@@ -1370,6 +1302,8 @@ Namespace DPC.Views.Sales.Quotes
             AddHandler tb.TextChanged, AddressOf txtDeliveryFee_TextChange
             UpdateGrandTotal()
             UpdateTotalTax()
+            UpdateTotalDiscount()
+
         End Sub
 
         Public Sub txtInstallationFee_TextChanged(sender As Object, e As TextChangedEventArgs)
@@ -1408,6 +1342,55 @@ Namespace DPC.Views.Sales.Quotes
             AddHandler tb.TextChanged, AddressOf txtInstallationFee_TextChanged
             UpdateGrandTotal()
             UpdateTotalTax()
+        End Sub
+
+        Public Sub UpdateGrandTotal()
+            Dim subtotalAmount As Decimal = 0
+            Dim deliveryFee As Decimal = 0
+            Dim installationFee As Decimal = 0
+
+            Dim amountTextBoxNames = LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
+        SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
+        Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtAmount_")).
+        Select(Function(txt) txt.Name).Distinct()
+
+            For Each name As String In amountTextBoxNames
+                Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
+                If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
+                    Dim rawText = txtBox.Text.Replace("₱", "").Replace(",", "").Trim()
+                    Dim amount As Decimal
+                    If Decimal.TryParse(rawText, amount) Then
+                        subtotalAmount += amount
+                    End If
+                End If
+            Next
+
+            Decimal.TryParse(txtDeliveryFee.Text.Replace("₱", "").Replace(",", "").Trim(), deliveryFee)
+            Decimal.TryParse(txtInstallationFee.Text.Replace("₱", "").Replace(",", "").Trim(), installationFee)
+
+            Dim baseAmount As Decimal = subtotalAmount + deliveryFee + installationFee
+            Dim calculatedTax As Decimal = baseAmount * 0.12D
+
+            CostEstimateDetails.CETotalBaseAmount = "₱" & subtotalAmount.ToString("N2")
+            CostEstimateDetails.CETotalTaxValueCache = "₱ " & calculatedTax.ToString("N2")
+            txtTotalTax.Text = "₱" & calculatedTax.ToString("N2")
+
+            If Not _TaxSelection Then
+                ' VAT INCLUSIVE — grand total always includes tax
+                _originalGrandTotal = baseAmount + calculatedTax
+            Else
+                ' VAT EXCLUSIVE — grand total is ALWAYS just base, tax NEVER added
+                _originalGrandTotal = baseAmount
+            End If
+
+            CostEstimateDetails.CETotalAmountCache = "₱ " & _originalGrandTotal.ToString("N2")
+            txtGrandTotal.Text = "₱" & _originalGrandTotal.ToString("N2")
+
+            ' Toggle only controls visibility, never the amount
+            Dim taxGrid = TryCast(txtTotalTax.Parent, Grid)
+            If taxGrid IsNot Nothing Then
+                taxGrid.Visibility = If(_isTaxApplied, Visibility.Visible, Visibility.Collapsed)
+            End If
         End Sub
 
         Private Sub cmbFeeType_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
@@ -1569,49 +1552,31 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Sub UpdateGrandTotalDisplay()
-            Dim subtotal As Decimal = 0
-            Dim delivery As Decimal = 0
-            Dim installation As Decimal = 0
-
-            Dim subtotalText = CostEstimateDetails.CETotalBaseAmount.Replace("₱", "").Trim()
-            Decimal.TryParse(subtotalText, subtotal)
-
-            Decimal.TryParse(txtDeliveryFee.Text.Replace("₱", "").Replace(",", "").Trim(), delivery)
-            Decimal.TryParse(txtInstallationFee.Text.Replace("₱", "").Replace(",", "").Trim(), installation)
-
-            Dim baseAmount = subtotal + delivery + installation
-            Dim calculatedTax As Decimal = baseAmount * 0.12D
-
+            Dim taxGrid = TryCast(txtTotalTax.Parent, Grid)
             Dim toggleButton = TryCast(ApplyTaxToggle, Button)
 
             If _isTaxApplied Then
-                Dim grandTotalWithTax As Decimal = baseAmount + calculatedTax
-                txtGrandTotal.Text = "₱" & grandTotalWithTax.ToString("N2")
-                txtTotalTax.Text = "₱" & calculatedTax.ToString("N2")
+                If taxGrid IsNot Nothing Then taxGrid.Visibility = Visibility.Visible
 
                 If toggleButton IsNot Nothing Then
                     toggleButton.Background = CType(New BrushConverter().ConvertFrom("#1D5642"), Brush)
                     toggleButton.Margin = New Thickness(24, 2, 0, 0)
-
                     Dim icon = TryCast(toggleButton.Content, MaterialDesignThemes.Wpf.PackIcon)
-                    If icon IsNot Nothing Then
-                        icon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Check
-                    End If
+                    If icon IsNot Nothing Then icon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Check
                 End If
             Else
-                txtGrandTotal.Text = "₱" & baseAmount.ToString("N2")
-                txtTotalTax.Text = "₱" & calculatedTax.ToString("N2")
+                If taxGrid IsNot Nothing Then taxGrid.Visibility = Visibility.Collapsed
 
                 If toggleButton IsNot Nothing Then
                     toggleButton.Background = CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush)
                     toggleButton.Margin = New Thickness(2, 2, 0, 0)
-
                     Dim icon = TryCast(toggleButton.Content, MaterialDesignThemes.Wpf.PackIcon)
-                    If icon IsNot Nothing Then
-                        icon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Close
-                    End If
+                    If icon IsNot Nothing Then icon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Close
                 End If
             End If
+
+            ' Never recalculate — just show the already-computed grand total
+            txtGrandTotal.Text = "₱" & _originalGrandTotal.ToString("N2")
         End Sub
 #End Region
 
