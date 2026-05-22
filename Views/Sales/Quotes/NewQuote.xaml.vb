@@ -1359,7 +1359,7 @@ Namespace DPC.Views.Sales.Quotes
 
             If String.IsNullOrEmpty(cleanInput) Then
                 tb.Text = ""
-                lblFee.Text = "₱ 0"
+                lblFee.Text = "0"
             Else
                 Dim intPart As String = cleanInput.Split("."c)(0)
                 Dim decPart As String = If(cleanInput.Contains("."), "." & cleanInput.Split("."c)(1), "")
@@ -1399,7 +1399,7 @@ Namespace DPC.Views.Sales.Quotes
 
             If String.IsNullOrEmpty(cleanInput) Then
                 tb.Text = ""
-                lblInstallationFee.Text = "₱ 0"
+                lblInstallationFee.Text = "0"
             Else
                 Dim intPart As String = cleanInput.Split("."c)(0)
                 Dim decPart As String = If(cleanInput.Contains("."), "." & cleanInput.Split("."c)(1), "")
@@ -1467,6 +1467,18 @@ Namespace DPC.Views.Sales.Quotes
             Dim taxGrid = TryCast(txtTotalTax.Parent, Grid)
             If taxGrid IsNot Nothing Then
                 taxGrid.Visibility = If(_isTaxApplied, Visibility.Visible, Visibility.Collapsed)
+            End If
+        End Sub
+
+        Private Sub txtInstallationFee_LostFocus(sender As Object, e As RoutedEventArgs)
+            Dim tb = TryCast(sender, TextBox)
+            If tb Is Nothing Then Exit Sub
+            Dim value As Decimal
+            If Decimal.TryParse(tb.Text.Replace(",", "").Trim(), value) Then
+                tb.Text = value.ToString("N2")
+                lblInstallationFee.Text = value.ToString("N2")   ' no ₱ prefix
+            Else
+                lblInstallationFee.Text = "0"
             End If
         End Sub
 
