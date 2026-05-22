@@ -648,9 +648,9 @@
                                             <Border Grid.Row="6" BorderBrush="#090909" BorderThickness="1" Margin="5,0,5,0" Padding="0">
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="*" />
-                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width=".40*" />
+                                                        <ColumnDefinition Width=".40*" />
+                                                        <ColumnDefinition Width=".90*" />
                                                     </Grid.ColumnDefinitions>
 
                                                     <!--Signature-->
@@ -690,10 +690,10 @@
                                                                     <TextBlock x:Name="lblSubtotal" Text="SUBTOTAL" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
                                                                 </Border>
                                                                 <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
-                                                                    <TextBlock x:Name="lblDeliveryMobilization"  FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                                    <TextBlock x:Name="lblDeliveryMobilization" Text="DELIVERY / MOBILIZATION" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
                                                                 </Border>
                                                                 <Border BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
-                                                                    <TextBlock Text="INSTALLATION FEE" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
+                                                                    <TextBlock Text="INSTALLATION / CONFIGURATION" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
                                                                 </Border>
                                                                 <Border x:Name="VatText" BorderBrush="#090909" BorderThickness="0,0,1,1" Padding="1">
                                                                     <TextBlock x:Name="lblVat" Text="VAT 12%" FontWeight="SemiBold" FontFamily="Lexend" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0"/>
@@ -703,20 +703,55 @@
                                                                 </Border>
                                                             </StackPanel>
                                                             <StackPanel Grid.Column="1">
-                                                                <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                    <TextBlock x:Name="Subtotal" Text="₱ 0.00" FontWeight="SemiBold" FontSize="11" Foreground="#090909" HorizontalAlignment="Left" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
-                                                                </Border>
-                                                                <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                    <TextBox  x:Name="Delivery" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
-                                                                </Border>
-                                                                <Border BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                    <TextBox  x:Name="Installation" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
-                                                                </Border>
-                                                                <Border x:Name="VatValue" BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
-                                                                    <TextBox  x:Name="lblVatValue" Text="₱ 0.00" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
+                                                                <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
+                                                                    <Grid>
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="14"/>
+                                                                            <ColumnDefinition Width="*"/>
+                                                                        </Grid.ColumnDefinitions>
+                                                                        <TextBlock Grid.Column="0" Text="₱" FontWeight="SemiBold" FontSize="11" Foreground="#090909" Margin="5,0,0,0" FontFamily="{StaticResource Lexend}"/>
+                                                                        <TextBlock x:Name="Subtotal" Grid.Column="1" Text="0.00" FontWeight="SemiBold" FontSize="11" Foreground="#090909" FontFamily="{StaticResource Lexend}"/>
+                                                                    </Grid>
                                                                 </Border>
                                                                 <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
-                                                                    <TextBlock x:Name="TotalCost" Text="₱ 0.00" FontWeight="SemiBold" FontSize="11" Foreground="Red" HorizontalAlignment="Left" Margin="5,0,5,0" FontFamily="{StaticResource Lexend}"/>
+                                                                    <Grid>
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="14"/>
+                                                                            <ColumnDefinition Width="*"/>
+                                                                        </Grid.ColumnDefinitions>
+                                                                        <TextBlock Grid.Column="0" Text="₱" FontWeight="SemiBold" FontSize="11" Foreground="#090909" Margin="5,0,0,0" FontFamily="{StaticResource Lexend}"/>
+                                                                        <TextBox x:Name="Delivery" Grid.Column="1" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" FontFamily="{StaticResource Lexend}"/>
+                                                                    </Grid>
+                                                                </Border>
+                                                                <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
+                                                                    <Grid>
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="14"/>
+                                                                            <ColumnDefinition Width="*"/>
+                                                                        </Grid.ColumnDefinitions>
+                                                                        <TextBlock Grid.Column="0" Text="₱" FontWeight="SemiBold" FontSize="11" Foreground="#090909" Margin="5,0,0,0" FontFamily="{StaticResource Lexend}"/>
+                                                                        <TextBox x:Name="Installation" Grid.Column="1" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" FontFamily="{StaticResource Lexend}"/>
+                                                                    </Grid>
+                                                                </Border>
+                                                                <Border x:Name="VatValue" BorderBrush="#090909" BorderThickness="0,0,0,1" Padding="1">
+                                                                    <Grid>
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="14"/>
+                                                                            <ColumnDefinition Width="*"/>
+                                                                        </Grid.ColumnDefinitions>
+                                                                        <TextBlock Grid.Column="0" Text="₱" FontWeight="SemiBold" FontSize="11" Foreground="#090909" Margin="5,0,0,0" FontFamily="{StaticResource Lexend}"/>
+                                                                        <TextBox x:Name="lblVatValue" Grid.Column="1" Text="0.00" FontWeight="SemiBold" BorderThickness="0" FontSize="11" Foreground="#090909" HorizontalAlignment="Stretch" FontFamily="{StaticResource Lexend}"/>
+                                                                    </Grid>
+                                                                </Border>
+                                                                <Border BorderBrush="#090909" BorderThickness="0,0,0,0" Padding="1">
+                                                                    <Grid>
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="14"/>
+                                                                            <ColumnDefinition Width="*"/>
+                                                                        </Grid.ColumnDefinitions>
+                                                                        <TextBlock Grid.Column="0" Text="₱" FontWeight="SemiBold" FontSize="11" Foreground="Red" Margin="5,0,0,0" FontFamily="{StaticResource Lexend}"/>
+                                                                        <TextBlock x:Name="TotalCost" Grid.Column="1" Text="0.00" FontWeight="SemiBold" FontSize="11" Foreground="Red" FontFamily="{StaticResource Lexend}"/>
+                                                                    </Grid>
                                                                 </Border>
                                                             </StackPanel>
                                                         </Grid>

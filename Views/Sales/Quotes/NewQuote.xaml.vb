@@ -1167,7 +1167,7 @@ Namespace DPC.Views.Sales.Quotes
 
             If taxValueBox IsNot Nothing Then taxValueBox.Text = taxValue.ToString("N2")
             If discountBox IsNot Nothing Then discountBox.Text = discountValue.ToString("N2")
-            amountBox.Text = "₱" & finalAmount.ToString("N2")
+            amountBox.Text = finalAmount.ToString("N2")
 
             Debug.WriteLine($"[Row {rowIndex}] Base: {baseAmount}, Tax: {taxValue}, Discount: {discountValue}, Total: {finalAmount}")
 
@@ -1209,7 +1209,7 @@ Namespace DPC.Views.Sales.Quotes
                 End If
             Next
 
-            txtTotalDiscount.Text = "₱" & totalDiscount.ToString("N2")
+            txtTotalDiscount.Text = totalDiscount.ToString("N2")
         End Sub
 
         Public Sub UpdateTotalTax()
@@ -1239,8 +1239,8 @@ Namespace DPC.Views.Sales.Quotes
             Dim baseForTaxCalculation As Decimal = subtotalAmount + deliveryFee + installationFee
             totalTax = baseForTaxCalculation * 0.12D
 
-            CostEstimateDetails.CETotalTaxValueCache = "₱ " & totalTax.ToString("N2")
-            txtTotalTax.Text = "₱" & totalTax.ToString("N2")
+            CostEstimateDetails.CETotalTaxValueCache = totalTax.ToString("N2")
+            txtTotalTax.Text = totalTax.ToString("N2")
 
             ' *** Keep visibility in sync with toggle state ***
             Dim taxGrid = TryCast(txtTotalTax.Parent, Grid)
@@ -1373,7 +1373,7 @@ Namespace DPC.Views.Sales.Quotes
                 tb.Text = formatted
                 tb.CaretIndex = Math.Max(0, Math.Min(formatted.Length, caretPos + (formatted.Length - oldLen)))
 
-                lblFee.Text = "₱ " & formatted
+                lblFee.Text = formatted
             End If
 
             AddHandler tb.TextChanged, AddressOf txtDeliveryFee_TextChange
@@ -1413,7 +1413,7 @@ Namespace DPC.Views.Sales.Quotes
                 tb.Text = formatted
                 tb.CaretIndex = Math.Max(0, Math.Min(formatted.Length, caretPos + (formatted.Length - oldLen)))
 
-                lblInstallationFee.Text = "₱ " & formatted
+                lblInstallationFee.Text = formatted
             End If
 
             AddHandler tb.TextChanged, AddressOf txtInstallationFee_TextChanged
@@ -1448,9 +1448,9 @@ Namespace DPC.Views.Sales.Quotes
             Dim baseAmount As Decimal = subtotalAmount + deliveryFee + installationFee
             Dim calculatedTax As Decimal = baseAmount * 0.12D
 
-            CostEstimateDetails.CETotalBaseAmount = "₱" & subtotalAmount.ToString("N2")
+            CostEstimateDetails.CETotalBaseAmount = subtotalAmount.ToString("N2")
             CostEstimateDetails.CETotalTaxValueCache = "₱ " & calculatedTax.ToString("N2")
-            txtTotalTax.Text = "₱" & calculatedTax.ToString("N2")
+            txtTotalTax.Text = calculatedTax.ToString("N2")
 
             If Not _TaxSelection Then
                 ' VAT INCLUSIVE — grand total always includes tax
@@ -1460,25 +1460,14 @@ Namespace DPC.Views.Sales.Quotes
                 _originalGrandTotal = baseAmount
             End If
 
-            CostEstimateDetails.CETotalAmountCache = "₱ " & _originalGrandTotal.ToString("N2")
-            txtGrandTotal.Text = "₱" & _originalGrandTotal.ToString("N2")
+            CostEstimateDetails.CETotalAmountCache = _originalGrandTotal.ToString("N2")
+            txtGrandTotal.Text = _originalGrandTotal.ToString("N2")
 
             ' Toggle only controls visibility, never the amount
             Dim taxGrid = TryCast(txtTotalTax.Parent, Grid)
             If taxGrid IsNot Nothing Then
                 taxGrid.Visibility = If(_isTaxApplied, Visibility.Visible, Visibility.Collapsed)
             End If
-        End Sub
-
-        Private Sub cmbFeeType_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
-            If lblFeeType Is Nothing OrElse cmbFeeType.SelectedIndex = -1 Then Return
-
-            Select Case cmbFeeType.SelectedIndex
-                Case 0
-                    lblFeeType.Text = "Delivery Fee"
-                Case 1
-                    lblFeeType.Text = "Mobilization Fee"
-            End Select
         End Sub
 
         Private Sub Quantity_TextChanged(sender As Object, e As TextChangedEventArgs)
@@ -1763,8 +1752,8 @@ Namespace DPC.Views.Sales.Quotes
             txtQuoteNote.Text = "None"
             txtTaxSelection.SelectedIndex = 0
             txtDiscountSelection.SelectedIndex = 0
-            txtTotalTax.Text = "₱0.00"
-            txtTotalDiscount.Text = "₱0.00"
+            txtTotalTax.Text = "0.00"
+            txtTotalDiscount.Text = "0.00"
             txtGrandTotal.Text = ""
             TxtClientDetails.Clear()
             ClearAllRows()
