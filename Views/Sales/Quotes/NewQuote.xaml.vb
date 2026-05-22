@@ -1642,7 +1642,7 @@ Namespace DPC.Views.Sales.Quotes
             End If
 
             ' Never recalculate — just show the already-computed grand total
-            txtGrandTotal.Text = "₱" & _originalGrandTotal.ToString("N2")
+            txtGrandTotal.Text = _originalGrandTotal.ToString("N2")
         End Sub
 #End Region
 
