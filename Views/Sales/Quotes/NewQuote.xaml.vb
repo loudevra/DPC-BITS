@@ -82,7 +82,7 @@ Namespace DPC.Views.Sales.Quotes
 
             ' Set the ComboBox selection to match _TaxSelection
             If _TaxSelection Then
-                txtTaxSelection.SelectedItem = txtTaxSelection.Items.Cast(Of ComboBoxItem)().FirstOrDefault(Function(i) i.Content.ToString() = "Exclusive")
+                txtTaxSelection.SelectedItem = txtTaxSelection.Items.Cast(Of ComboBoxItem)().FirstOrDefault(Function(i) i.Content.ToString() = "Excluded")
             Else
                 txtTaxSelection.SelectedItem = txtTaxSelection.Items.Cast(Of ComboBoxItem)().FirstOrDefault(Function(i) i.Content.ToString() = "Inclusive")
             End If
@@ -317,7 +317,7 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Sub txtTaxSelection_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
-            _TaxSelection = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString() = "Exclusive"
+            _TaxSelection = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString() = "Excluded"
             Debug.WriteLine($"Tax Selection - {_TaxSelection}")
 
             For Each kvp In _productTextBoxes
@@ -637,77 +637,130 @@ Namespace DPC.Views.Sales.Quotes
 
         Private Sub AddProductInputUI(targetPanel)
             If targetPanel Is Nothing Then Exit Sub
+
             Dim rowIndex As Integer = rowCount
+
             Dim mainBorder As New Border With {
-                .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
-                .BorderThickness = New Thickness(2),
-                .Background = CType(New BrushConverter().ConvertFrom("#FDFDFD"), Brush),
-                .CornerRadius = New CornerRadius(15),
-                .Padding = New Thickness(0),
-                .Margin = New Thickness(0, 5, 0, 5),
-                .HorizontalAlignment = HorizontalAlignment.Stretch,
-                .MinWidth = 300
-            }
+        .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
+        .BorderThickness = New Thickness(2),
+        .Background = CType(New BrushConverter().ConvertFrom("#FDFDFD"), Brush),
+        .CornerRadius = New CornerRadius(15),
+        .Padding = New Thickness(0),
+        .Margin = New Thickness(0, 5, 0, 5),
+        .HorizontalAlignment = HorizontalAlignment.Stretch,
+        .MinWidth = 300
+    }
 
             Dim mainStack As New StackPanel With {
-                .Orientation = Orientation.Vertical,
-                .Width = Double.NaN
-            }
+        .Orientation = Orientation.Vertical,
+        .Width = Double.NaN
+    }
 
-            Dim productPanel As New StackPanel With {
-                .Orientation = Orientation.Horizontal,
-                .Margin = New Thickness(10),
-                .HorizontalAlignment = HorizontalAlignment.Left,
-                .VerticalAlignment = VerticalAlignment.Top
-            }
+            Dim productPanel As New Grid With {
+        .Margin = New Thickness(10, 12, 10, 8),
+        .HorizontalAlignment = HorizontalAlignment.Stretch,
+        .VerticalAlignment = VerticalAlignment.Center
+    }
 
-            productPanel.Children.Add(CreateProductSearchBox(125, rowIndex))
-            productPanel.Children.Add(CreateQuantityBox(rowIndex))
-            productPanel.Children.Add(CreateRateBox(rowIndex))
-            productPanel.Children.Add(CreateTaxPercentBox(rowIndex))
-            productPanel.Children.Add(CreateTaxValueBox(rowIndex))
-            productPanel.Children.Add(CreateDiscountPercentBox(rowIndex))
-            productPanel.Children.Add(CreateDiscountBox(rowIndex))
-            productPanel.Children.Add(CreateAmountBox("₱ 0.00", rowIndex))
-            productPanel.Children.Add(CreateDeleteButton(mainBorder, targetPanel))
+            productPanel.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(135)}) ' Item Description
+            productPanel.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(55)})  ' Qty
+            productPanel.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(105)}) ' Unit Price
+            productPanel.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(70)})  ' Tax %
+            productPanel.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(95)}) ' Tax Value
+            productPanel.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(70)})  ' Disc %
+            productPanel.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(95)}) ' Discount
+            productPanel.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(115)}) ' Total
+            productPanel.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(45)})      ' Delete
+
+            Dim productSearch = CreateProductSearchBox(125, rowIndex)
+            Dim qtyBox = CreateQuantityBox(rowIndex)
+            Dim rateBox = CreateRateBox(rowIndex)
+            Dim taxPercentBox = CreateTaxPercentBox(rowIndex)
+            Dim taxValueBox = CreateTaxValueBox(rowIndex)
+            Dim discountPercentBox = CreateDiscountPercentBox(rowIndex)
+            Dim discountBox = CreateDiscountBox(rowIndex)
+            Dim amountBox = CreateAmountBox("₱ 0.00", rowIndex)
+            Dim deleteBtn = CreateDeleteButton(mainBorder, targetPanel)
+
+            productSearch.VerticalAlignment = VerticalAlignment.Center
+            qtyBox.VerticalAlignment = VerticalAlignment.Center
+            rateBox.VerticalAlignment = VerticalAlignment.Center
+            taxPercentBox.VerticalAlignment = VerticalAlignment.Center
+            taxValueBox.VerticalAlignment = VerticalAlignment.Center
+            discountPercentBox.VerticalAlignment = VerticalAlignment.Center
+            discountBox.VerticalAlignment = VerticalAlignment.Center
+            amountBox.VerticalAlignment = VerticalAlignment.Center
+            deleteBtn.VerticalAlignment = VerticalAlignment.Center
+
+            productSearch.Margin = New Thickness(0, 0, 8, 0)
+            qtyBox.Margin = New Thickness(0, 0, 8, 0)
+            rateBox.Margin = New Thickness(0, 0, 8, 0)
+            taxPercentBox.Margin = New Thickness(0, 0, 8, 0)
+            taxValueBox.Margin = New Thickness(0, 0, 8, 0)
+            discountPercentBox.Margin = New Thickness(0, 0, 8, 0)
+            discountBox.Margin = New Thickness(0, 0, 8, 0)
+            amountBox.Margin = New Thickness(0, 0, 8, 0)
+
+            Grid.SetColumn(productSearch, 0)
+            Grid.SetColumn(qtyBox, 1)
+            Grid.SetColumn(rateBox, 2)
+            Grid.SetColumn(taxPercentBox, 3)
+            Grid.SetColumn(taxValueBox, 4)
+            Grid.SetColumn(discountPercentBox, 5)
+            Grid.SetColumn(discountBox, 6)
+            Grid.SetColumn(amountBox, 7)
+            Grid.SetColumn(deleteBtn, 8)
+
+            productPanel.Children.Add(productSearch)
+            productPanel.Children.Add(qtyBox)
+            productPanel.Children.Add(rateBox)
+            productPanel.Children.Add(taxPercentBox)
+            productPanel.Children.Add(taxValueBox)
+            productPanel.Children.Add(discountPercentBox)
+            productPanel.Children.Add(discountBox)
+            productPanel.Children.Add(amountBox)
+            productPanel.Children.Add(deleteBtn)
 
             mainStack.Children.Add(productPanel)
 
             Dim descriptionTextBox As New TextBox With {
-                .Text = "Enter product description (Optional)",
-                .BorderThickness = New Thickness(0),
-                .Background = Brushes.Transparent,
-                .FontFamily = New FontFamily("Lexend"),
-                .FontSize = 12,
-                .Foreground = Brushes.Black,
-                .FontWeight = FontWeights.SemiBold,
-                .Height = Double.NaN,
-                .VerticalAlignment = VerticalAlignment.Top,
-                .HorizontalAlignment = HorizontalAlignment.Left,
-                .Width = Double.NaN,
-                .TextWrapping = TextWrapping.Wrap
-            }
+        .Text = "Enter product description (Optional)",
+        .BorderThickness = New Thickness(0),
+        .Background = Brushes.Transparent,
+        .FontFamily = New FontFamily("Lexend"),
+        .FontSize = 12,
+        .Foreground = Brushes.Black,
+        .FontWeight = FontWeights.SemiBold,
+        .Height = Double.NaN,
+        .VerticalAlignment = VerticalAlignment.Top,
+        .HorizontalAlignment = HorizontalAlignment.Stretch,
+        .Width = Double.NaN,
+        .TextWrapping = TextWrapping.Wrap,
+        .AcceptsReturn = True,
+        .VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+    }
 
             Dim descriptionBorder As New Border With {
-                .Margin = New Thickness(10),
-                .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
-                .BorderThickness = New Thickness(2),
-                .CornerRadius = New CornerRadius(5),
-                .Padding = New Thickness(10),
-                .Width = Double.NaN,
-                .Height = 120,
-                .Background = Brushes.Transparent,
-                .Child = descriptionTextBox
-            }
+        .Margin = New Thickness(10, 0, 10, 10),
+        .BorderBrush = CType(New BrushConverter().ConvertFrom("#1D3242"), Brush),
+        .BorderThickness = New Thickness(2),
+        .CornerRadius = New CornerRadius(5),
+        .Padding = New Thickness(10),
+        .Width = Double.NaN,
+        .Height = 120,
+        .Background = Brushes.Transparent,
+        .Child = descriptionTextBox
+    }
 
             Dim descriptionStack As New StackPanel With {
-                .Width = Double.NaN
-            }
+        .Width = Double.NaN
+    }
             descriptionStack.Children.Add(descriptionBorder)
 
             mainStack.Children.Add(descriptionStack)
             mainBorder.Child = mainStack
             targetPanel.Children.Add(mainBorder)
+
             UpdateGrandTotal()
         End Sub
 
@@ -723,17 +776,17 @@ Namespace DPC.Views.Sales.Quotes
                 .FontSize = 12,
                 .Foreground = Brushes.Black,
                 .FontWeight = FontWeights.SemiBold,
-                .TextWrapping = TextWrapping.Wrap,
+                .TextWrapping = TextWrapping.NoWrap,
                 .Padding = New Thickness(5),
                 .BorderThickness = New Thickness(0),
                 .MinWidth = width,
                 .MaxWidth = width,
-                .Width = Double.NaN,
-                .Height = Double.NaN,
-                .MinHeight = 30,
-                .MaxHeight = 150,
-                .AcceptsReturn = True,
-                .VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                .Width = width,
+                .Height = 34,
+                .MinHeight = 34,
+                .MaxHeight = 34,
+                .AcceptsReturn = False,
+                .VerticalScrollBarVisibility = ScrollBarVisibility.Disabled,
                 .HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
                 .MaxLength = 1000,
                 .VerticalAlignment = VerticalAlignment.Top
@@ -851,7 +904,7 @@ Namespace DPC.Views.Sales.Quotes
                 .Background = CType(New BrushConverter().ConvertFrom("#FDFDFD"), Brush),
                 .CornerRadius = New CornerRadius(15),
                 .Padding = New Thickness(5),
-                .Margin = New Thickness(0, 0, 5, 0)
+                .Margin = New Thickness(0)
             }
 
             Return border
@@ -859,18 +912,37 @@ Namespace DPC.Views.Sales.Quotes
 
         Public Function CreateInputBox(text As String, width As Double, Optional isReadOnly As Boolean = False, Optional name As String = "", Optional alignment As HorizontalAlignment = HorizontalAlignment.Left) As Border
             Dim txt As New TextBox With {
-                .Text = text,
-                .FontFamily = New FontFamily("Lexend"),
-                .FontSize = 12,
-                .Foreground = Brushes.Black,
-                .FontWeight = FontWeights.SemiBold,
-                .TextWrapping = TextWrapping.Wrap,
-                .Padding = New Thickness(5),
-                .BorderThickness = New Thickness(0),
-                .IsReadOnly = isReadOnly,
-                .Width = width,
-                .HorizontalContentAlignment = alignment
-            }
+        .Text = text,
+        .FontFamily = New FontFamily("Lexend"),
+        .FontSize = 12,
+        .Foreground = Brushes.Black,
+        .FontWeight = FontWeights.SemiBold,
+        .TextWrapping = TextWrapping.NoWrap,
+        .TextAlignment = TextAlignment.Center,
+        .Padding = New Thickness(5),
+        .BorderThickness = New Thickness(0),
+        .IsReadOnly = isReadOnly,
+        .Width = width,
+        .MinWidth = width,
+        .HorizontalContentAlignment = HorizontalAlignment.Center,
+        .VerticalContentAlignment = VerticalAlignment.Center,
+        .Height = 34,
+        .MaxLines = 1,
+        .AcceptsReturn = False,
+        .VerticalScrollBarVisibility = ScrollBarVisibility.Disabled,
+        .HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden
+    }
+
+            If alignment = HorizontalAlignment.Right Then
+                txt.TextAlignment = TextAlignment.Right
+                txt.HorizontalContentAlignment = HorizontalAlignment.Right
+            ElseIf alignment = HorizontalAlignment.Center Then
+                txt.TextAlignment = TextAlignment.Center
+                txt.HorizontalContentAlignment = HorizontalAlignment.Center
+            Else
+                txt.TextAlignment = TextAlignment.Left
+                txt.HorizontalContentAlignment = HorizontalAlignment.Left
+            End If
 
             If Not String.IsNullOrWhiteSpace(name) Then
                 txt.Name = name
@@ -894,14 +966,14 @@ Namespace DPC.Views.Sales.Quotes
             End If
 
             Dim border As New Border With {
-                .BorderBrush = If(isReadOnly, Brushes.Transparent, CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush)),
-                .BorderThickness = If(isReadOnly, New Thickness(0), New Thickness(1)),
-                .Background = CType(New BrushConverter().ConvertFrom("#FDFDFD"), Brush),
-                .CornerRadius = New CornerRadius(5),
-                .Padding = New Thickness(2),
-                .Margin = New Thickness(2, 0, 2, 0),
-                .Child = txt
-            }
+        .BorderBrush = If(isReadOnly, Brushes.Transparent, CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush)),
+        .BorderThickness = If(isReadOnly, New Thickness(0), New Thickness(1)),
+        .Background = CType(New BrushConverter().ConvertFrom("#FDFDFD"), Brush),
+        .CornerRadius = New CornerRadius(5),
+        .Padding = New Thickness(2),
+        .Margin = New Thickness(0),
+        .Child = txt
+    }
 
             Return border
         End Function
@@ -911,18 +983,19 @@ Namespace DPC.Views.Sales.Quotes
         End Function
 
         Private Function CreateRateBox(rowIndex As Integer) As Border
-            Dim box = CreateInputBox("", 90, False, $"txtRate_{rowIndex}", HorizontalAlignment.Center)
+            Dim box = CreateInputBox("", 95, False, $"txtRate_{rowIndex}", HorizontalAlignment.Right)
             Dim txt = TryCast(box.Child, TextBox)
             If txt IsNot Nothing Then
                 AddHandler txt.TextChanged, AddressOf Rate_TextChanged
                 AddHandler txt.PreviewTextInput, AddressOf Rate_PreviewTextInput
+                DataObject.AddPastingHandler(txt, New DataObjectPastingEventHandler(AddressOf Rate_Pasting))
             End If
             Return box
         End Function
 
         Private Function CreateTaxPercentBox(rowIndex As Integer) As Border
             Dim defaultTaxPercent As String = If(Not CEtaxSelection, "", "0")
-            Dim box = CreateInputBox(defaultTaxPercent, 60, Not _TaxSelection, $"txtTaxPercent_{rowIndex}", HorizontalAlignment.Center)
+            Dim box = CreateInputBox(defaultTaxPercent, 70, Not _TaxSelection, $"txtTaxPercent_{rowIndex}", HorizontalAlignment.Center)
             Dim txt = TryCast(box.Child, TextBox)
             If txt IsNot Nothing Then
                 AddHandler txt.TextChanged, AddressOf TaxPercent_TextChanged
@@ -932,11 +1005,11 @@ Namespace DPC.Views.Sales.Quotes
         End Function
 
         Private Function CreateTaxValueBox(rowIndex As Integer) As Border
-            Return CreateInputBox("0.00", 70, True, $"txtTaxValue_{rowIndex}", HorizontalAlignment.Center)
+            Return CreateInputBox("0.00", 90, True, $"txtTaxValue_{rowIndex}", HorizontalAlignment.Right)
         End Function
 
         Private Function CreateDiscountPercentBox(rowIndex As Integer) As Border
-            Dim box = CreateInputBox("", 75, False, $"txtDiscountPercent_{rowIndex}", HorizontalAlignment.Center)
+            Dim box = CreateInputBox("", 70, False, $"txtDiscountPercent_{rowIndex}", HorizontalAlignment.Center)
             Dim txt = TryCast(box.Child, TextBox)
             If txt IsNot Nothing Then
                 AddHandler txt.TextChanged, AddressOf DiscountPercent_TextChanged
@@ -946,32 +1019,34 @@ Namespace DPC.Views.Sales.Quotes
         End Function
 
         Private Function CreateDiscountBox(rowIndex As Integer) As Border
-            Return CreateInputBox("0.00", 75, True, $"txtDiscount_{rowIndex}", HorizontalAlignment.Center)
+            Return CreateInputBox("0.00", 90, True, $"txtDiscount_{rowIndex}", HorizontalAlignment.Right)
         End Function
 
         Private Function CreateAmountBox(text As String, rowIndex As Integer) As Border
-            Return CreateInputBox(text, 90, True, $"txtAmount_{rowIndex}", HorizontalAlignment.Center)
+            Return CreateInputBox(text, 110, True, $"txtAmount_{rowIndex}", HorizontalAlignment.Right)
         End Function
 
         Private Function CreateDeleteButton(containerToRemoveFrom As UIElement, targetPanel As StackPanel) As Button
             Dim deleteButton As New Button With {
-                .Background = Brushes.Transparent,
-                .BorderBrush = Brushes.Transparent,
-                .Padding = New Thickness(0),
-                .Width = 50,
-                .Height = 40,
-                .Cursor = Cursors.Hand,
-                .VerticalAlignment = VerticalAlignment.Center
-            }
+        .Background = Brushes.Transparent,
+        .BorderBrush = Brushes.Transparent,
+        .Padding = New Thickness(0),
+        .Width = 40,
+        .Height = 40,
+        .MinWidth = 40,
+        .HorizontalAlignment = HorizontalAlignment.Center,
+        .VerticalAlignment = VerticalAlignment.Center,
+        .Cursor = Cursors.Hand
+    }
 
             Dim icon As New MaterialDesignThemes.Wpf.PackIcon With {
-                .Kind = MaterialDesignThemes.Wpf.PackIconKind.PlaylistRemove,
-                .Foreground = CType(New BrushConverter().ConvertFrom("#D23636"), Brush),
-                .Width = 35,
-                .Height = 35,
-                .HorizontalAlignment = HorizontalAlignment.Center,
-                .VerticalAlignment = VerticalAlignment.Center
-            }
+        .Kind = MaterialDesignThemes.Wpf.PackIconKind.PlaylistRemove,
+        .Foreground = CType(New BrushConverter().ConvertFrom("#D23636"), Brush),
+        .Width = 28,
+        .Height = 28,
+        .HorizontalAlignment = HorizontalAlignment.Center,
+        .VerticalAlignment = VerticalAlignment.Center
+    }
 
             deleteButton.Content = icon
 
@@ -983,7 +1058,6 @@ Namespace DPC.Views.Sales.Quotes
                                                    If Not String.IsNullOrEmpty(txt.Name) Then
                                                        If Me.FindName(txt.Name) IsNot Nothing Then Me.UnregisterName(txt.Name)
                                                        _productTextBoxes.Remove(txt.Name)
-                                                       ' *** NEW: Clean up ProductID cache for deleted rows ***
                                                        If _selectedProductIDs.ContainsKey(txt.Name) Then
                                                            _selectedProductIDs.Remove(txt.Name)
                                                        End If
@@ -992,6 +1066,7 @@ Namespace DPC.Views.Sales.Quotes
 
                                                UpdateGrandTotal()
                                            End Sub
+
             Return deleteButton
         End Function
 #End Region
@@ -1094,63 +1169,25 @@ Namespace DPC.Views.Sales.Quotes
             End If
         End Function
 
-        Public Sub UpdateGrandTotal()
-            Dim subtotalAmount As Decimal = 0
-            Dim totalTaxAmount As Decimal = 0
-            Dim deliveryFee As Decimal = 0
-            Dim installationFee As Decimal = 0
+        Public Sub UpdateTotalDiscount()
+            Dim totalDiscount As Decimal = 0
 
-            Dim amountTextBoxNames = LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
-                SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
-                Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtAmount_")).
-                Select(Function(txt) txt.Name).Distinct()
+            For Each name As String In LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
+        SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
+        Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtDiscount_")).
+        Select(Function(txt) txt.Name).Distinct()
 
-            For Each name As String In amountTextBoxNames
                 Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
                 If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
-                    Dim rawText = txtBox.Text.Replace("₱", "").Replace(",", "").Trim()
-                    Dim amount As Decimal
-                    If Decimal.TryParse(rawText, amount) Then
-                        subtotalAmount += amount
+                    Dim rawText = txtBox.Text.Replace("₱", "").Trim()
+                    Dim discount As Decimal
+                    If Decimal.TryParse(rawText, discount) Then
+                        totalDiscount += discount
                     End If
                 End If
             Next
 
-            Decimal.TryParse(txtDeliveryFee.Text.Replace("₱", "").Replace(",", "").Trim(), deliveryFee)
-            Decimal.TryParse(txtInstallationFee.Text.Replace("₱", "").Replace(",", "").Trim(), installationFee)
-
-            Dim rawTax = txtTotalTax.Text.Replace("₱", "").Replace(",", "").Trim()
-            Decimal.TryParse(rawTax, totalTaxAmount)
-
-            Dim finalGrandTotal As Decimal = 0
-            Dim baseForTaxCalculation As Decimal = subtotalAmount + deliveryFee + installationFee
-
-            If _TaxSelection Then
-                Dim calculatedTaxAmount As Decimal = baseForTaxCalculation * 0.12D
-                finalGrandTotal = baseForTaxCalculation + calculatedTaxAmount
-                CostEstimateDetails.CETotalAmountCache = "₱ " & finalGrandTotal.ToString("N2")
-            Else
-                Dim calculatedTaxAmount As Decimal = subtotalAmount * 0.12D
-                finalGrandTotal = baseForTaxCalculation
-                txtTotalTax.Text = "₱" & calculatedTaxAmount.ToString("N2")
-                CostEstimateDetails.CETotalAmountCache = "₱ " & finalGrandTotal.ToString("N2")
-            End If
-
-            _originalGrandTotal = finalGrandTotal
-
-            If _isTaxApplied Then
-                Dim grandTotalWithTax As Decimal = _originalGrandTotal + totalTaxAmount
-                txtGrandTotal.Text = "₱" & grandTotalWithTax.ToString("N2")
-            Else
-                txtGrandTotal.Text = "₱" & finalGrandTotal.ToString("N2")
-            End If
-
-            CostEstimateDetails.CETotalBaseAmount = "₱" & subtotalAmount.ToString("N2")
-
-            If _isTaxApplied Then
-                _isTaxApplied = False
-                UpdateGrandTotalDisplay()
-            End If
+            txtTotalDiscount.Text = "₱" & totalDiscount.ToString("N2")
         End Sub
 
         Public Sub UpdateTotalTax()
@@ -1160,9 +1197,9 @@ Namespace DPC.Views.Sales.Quotes
             Dim installationFee As Decimal = 0
 
             For Each name As String In LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
-                SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
-                Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtAmount_")).
-                Select(Function(txt) txt.Name).Distinct()
+        SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
+        Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtAmount_")).
+        Select(Function(txt) txt.Name).Distinct()
 
                 Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
                 If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
@@ -1182,41 +1219,11 @@ Namespace DPC.Views.Sales.Quotes
 
             CostEstimateDetails.CETotalTaxValueCache = "₱ " & totalTax.ToString("N2")
             txtTotalTax.Text = "₱" & totalTax.ToString("N2")
-        End Sub
 
-        Public Sub UpdateTotalDiscount()
-            Dim totalDiscount As Decimal = 0
-
-            For Each name As String In LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
-                SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
-                Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtDiscount_")).
-                Select(Function(txt) txt.Name).Distinct()
-
-                Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
-                If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
-                    Dim rawText = txtBox.Text.Replace("₱", "").Trim()
-                    Dim discount As Decimal
-                    If Decimal.TryParse(rawText, discount) Then
-                        totalDiscount += discount
-                    End If
-                End If
-            Next
-
-            txtTotalDiscount.Text = "₱" & totalDiscount.ToString("N2")
-
-            If _isTaxApplied Then
-                _isTaxApplied = False
-
-                Dim toggleButton = TryCast(ApplyTaxToggle, Button)
-                If toggleButton IsNot Nothing Then
-                    toggleButton.Background = CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush)
-                    toggleButton.Margin = New Thickness(2, 2, 0, 0)
-
-                    Dim icon = TryCast(toggleButton.Content, MaterialDesignThemes.Wpf.PackIcon)
-                    If icon IsNot Nothing Then
-                        icon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Close
-                    End If
-                End If
+            ' *** Keep visibility in sync with toggle state ***
+            Dim taxGrid = TryCast(txtTotalTax.Parent, Grid)
+            If taxGrid IsNot Nothing Then
+                taxGrid.Visibility = If(_isTaxApplied, Visibility.Visible, Visibility.Collapsed)
             End If
         End Sub
 
@@ -1238,13 +1245,24 @@ Namespace DPC.Views.Sales.Quotes
         Private Sub Rate_PreviewTextInput(sender As Object, e As TextCompositionEventArgs)
             Dim tb = DirectCast(sender, TextBox)
 
-            If Not Char.IsDigit(e.Text, 0) AndAlso e.Text <> "." Then
-                e.Handled = True
-                Return
-            End If
+            Dim proposedText As String = tb.Text.Remove(tb.SelectionStart, tb.SelectionLength).
+        Insert(tb.SelectionStart, e.Text)
 
-            If e.Text = "." AndAlso tb.Text.Contains(".") Then
-                e.Handled = True
+            Dim regex As New Regex("^\d*\.?\d{0,2}$")
+
+            e.Handled = Not regex.IsMatch(proposedText)
+        End Sub
+
+        Private Sub Rate_Pasting(sender As Object, e As DataObjectPastingEventArgs)
+            If e.DataObject.GetDataPresent(GetType(String)) Then
+                Dim pastedText As String = CType(e.DataObject.GetData(GetType(String)), String)
+                Dim regex As New Regex("^\d*\.?\d{0,2}$")
+
+                If Not regex.IsMatch(pastedText.Trim()) Then
+                    e.CancelCommand()
+                End If
+            Else
+                e.CancelCommand()
             End If
         End Sub
 
@@ -1284,6 +1302,8 @@ Namespace DPC.Views.Sales.Quotes
             AddHandler tb.TextChanged, AddressOf txtDeliveryFee_TextChange
             UpdateGrandTotal()
             UpdateTotalTax()
+            UpdateTotalDiscount()
+
         End Sub
 
         Public Sub txtInstallationFee_TextChanged(sender As Object, e As TextChangedEventArgs)
@@ -1322,6 +1342,55 @@ Namespace DPC.Views.Sales.Quotes
             AddHandler tb.TextChanged, AddressOf txtInstallationFee_TextChanged
             UpdateGrandTotal()
             UpdateTotalTax()
+        End Sub
+
+        Public Sub UpdateGrandTotal()
+            Dim subtotalAmount As Decimal = 0
+            Dim deliveryFee As Decimal = 0
+            Dim installationFee As Decimal = 0
+
+            Dim amountTextBoxNames = LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
+        SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
+        Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtAmount_")).
+        Select(Function(txt) txt.Name).Distinct()
+
+            For Each name As String In amountTextBoxNames
+                Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
+                If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
+                    Dim rawText = txtBox.Text.Replace("₱", "").Replace(",", "").Trim()
+                    Dim amount As Decimal
+                    If Decimal.TryParse(rawText, amount) Then
+                        subtotalAmount += amount
+                    End If
+                End If
+            Next
+
+            Decimal.TryParse(txtDeliveryFee.Text.Replace("₱", "").Replace(",", "").Trim(), deliveryFee)
+            Decimal.TryParse(txtInstallationFee.Text.Replace("₱", "").Replace(",", "").Trim(), installationFee)
+
+            Dim baseAmount As Decimal = subtotalAmount + deliveryFee + installationFee
+            Dim calculatedTax As Decimal = baseAmount * 0.12D
+
+            CostEstimateDetails.CETotalBaseAmount = "₱" & subtotalAmount.ToString("N2")
+            CostEstimateDetails.CETotalTaxValueCache = "₱ " & calculatedTax.ToString("N2")
+            txtTotalTax.Text = "₱" & calculatedTax.ToString("N2")
+
+            If Not _TaxSelection Then
+                ' VAT INCLUSIVE — grand total always includes tax
+                _originalGrandTotal = baseAmount + calculatedTax
+            Else
+                ' VAT EXCLUSIVE — grand total is ALWAYS just base, tax NEVER added
+                _originalGrandTotal = baseAmount
+            End If
+
+            CostEstimateDetails.CETotalAmountCache = "₱ " & _originalGrandTotal.ToString("N2")
+            txtGrandTotal.Text = "₱" & _originalGrandTotal.ToString("N2")
+
+            ' Toggle only controls visibility, never the amount
+            Dim taxGrid = TryCast(txtTotalTax.Parent, Grid)
+            If taxGrid IsNot Nothing Then
+                taxGrid.Visibility = If(_isTaxApplied, Visibility.Visible, Visibility.Collapsed)
+            End If
         End Sub
 
         Private Sub cmbFeeType_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
@@ -1483,49 +1552,31 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Sub UpdateGrandTotalDisplay()
-            Dim subtotal As Decimal = 0
-            Dim delivery As Decimal = 0
-            Dim installation As Decimal = 0
-
-            Dim subtotalText = CostEstimateDetails.CETotalBaseAmount.Replace("₱", "").Trim()
-            Decimal.TryParse(subtotalText, subtotal)
-
-            Decimal.TryParse(txtDeliveryFee.Text.Replace("₱", "").Replace(",", "").Trim(), delivery)
-            Decimal.TryParse(txtInstallationFee.Text.Replace("₱", "").Replace(",", "").Trim(), installation)
-
-            Dim baseAmount = subtotal + delivery + installation
-            Dim calculatedTax As Decimal = baseAmount * 0.12D
-
+            Dim taxGrid = TryCast(txtTotalTax.Parent, Grid)
             Dim toggleButton = TryCast(ApplyTaxToggle, Button)
 
             If _isTaxApplied Then
-                Dim grandTotalWithTax As Decimal = baseAmount + calculatedTax
-                txtGrandTotal.Text = "₱" & grandTotalWithTax.ToString("N2")
-                txtTotalTax.Text = "₱" & calculatedTax.ToString("N2")
+                If taxGrid IsNot Nothing Then taxGrid.Visibility = Visibility.Visible
 
                 If toggleButton IsNot Nothing Then
                     toggleButton.Background = CType(New BrushConverter().ConvertFrom("#1D5642"), Brush)
                     toggleButton.Margin = New Thickness(24, 2, 0, 0)
-
                     Dim icon = TryCast(toggleButton.Content, MaterialDesignThemes.Wpf.PackIcon)
-                    If icon IsNot Nothing Then
-                        icon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Check
-                    End If
+                    If icon IsNot Nothing Then icon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Check
                 End If
             Else
-                txtGrandTotal.Text = "₱" & baseAmount.ToString("N2")
-                txtTotalTax.Text = "₱" & calculatedTax.ToString("N2")
+                If taxGrid IsNot Nothing Then taxGrid.Visibility = Visibility.Collapsed
 
                 If toggleButton IsNot Nothing Then
                     toggleButton.Background = CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush)
                     toggleButton.Margin = New Thickness(2, 2, 0, 0)
-
                     Dim icon = TryCast(toggleButton.Content, MaterialDesignThemes.Wpf.PackIcon)
-                    If icon IsNot Nothing Then
-                        icon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Close
-                    End If
+                    If icon IsNot Nothing Then icon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Close
                 End If
             End If
+
+            ' Never recalculate — just show the already-computed grand total
+            txtGrandTotal.Text = "₱" & _originalGrandTotal.ToString("N2")
         End Sub
 #End Region
 
