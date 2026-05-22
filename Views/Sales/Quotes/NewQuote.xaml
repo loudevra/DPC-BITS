@@ -264,38 +264,39 @@
                                     <TextBlock x:Name="lblFeeType" Text="Delivery / Mobilization" Foreground="#555555"/>
                                     <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                                         <TextBlock Text="₱" FontWeight="Bold" Foreground="#D23636" Margin="0,0,2,0"/>
-                                        <TextBlock x:Name="lblFee" Text="0.00" FontWeight="Bold" Foreground="#D23636" TextAlignment="Right"/>
+                                        <TextBlock x:Name="lblFee" Text="0.00" FontWeight="Bold" Foreground="#D23636" TextAlignment="Right" TextTrimming="CharacterEllipsis" MaxWidth="200"/>
                                     </StackPanel>
                                 </Grid>
                                 <Grid Margin="0,0,0,8">
                                     <TextBlock Text="Installation / Configuration" Foreground="#555555"/>
                                     <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                                         <TextBlock Text="₱" FontWeight="Bold" Foreground="#D23636" Margin="0,0,2,0"/>
-                                        <TextBlock x:Name="lblInstallationFee" Text="0.00" FontWeight="Bold" Foreground="#D23636" TextAlignment="Right"/>
+                                        <TextBlock x:Name="lblInstallationFee" Text="0.00" FontWeight="Bold" Foreground="#D23636" TextAlignment="Right" TextTrimming="CharacterEllipsis" MaxWidth="200"/>
                                     </StackPanel>
                                 </Grid>
-                                <Grid Margin="0,0,0,8">
+                                <Grid x:Name="TotalTaxGrid" Margin="0,0,0,8" Visibility="Collapsed">
                                     <TextBlock Text="Total Tax" Foreground="#555555"/>
                                     <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                                         <TextBlock Text="₱" FontWeight="Bold" Margin="0,0,2,0"/>
-                                        <TextBlock x:Name="txtTotalTax" Text="0.00" FontWeight="Bold" TextAlignment="Right"/>
+                                        <TextBlock x:Name="txtTotalTax" Text="0.00" FontWeight="Bold" TextAlignment="Right" TextTrimming="CharacterEllipsis" MaxWidth="200"/>
                                     </StackPanel>
                                 </Grid>
                                 <Grid Margin="0,0,0,8">
                                     <TextBlock Text="Total Discount" Foreground="#555555"/>
                                     <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                                         <TextBlock Text="₱" FontWeight="Bold" Foreground="#D23636" Margin="0,0,2,0"/>
-                                        <TextBlock x:Name="txtTotalDiscount" Text="0.00" FontWeight="Bold" Foreground="#D23636" TextAlignment="Right"/>
+                                        <TextBlock x:Name="txtTotalDiscount" Text="0.00" FontWeight="Bold" Foreground="#D23636" TextAlignment="Right" TextTrimming="CharacterEllipsis" MaxWidth="200"/>
                                     </StackPanel>
                                 </Grid>
                                 <Separator Margin="0,10" Background="#AEAEAE"/>
-                                <Grid>
-                                    <TextBlock Text="GRAND TOTAL" FontSize="18" FontWeight="Bold" Foreground="#1D3242"/>
-                                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                <StackPanel>
+                                    <TextBlock Text="GRAND TOTAL" FontSize="18" FontWeight="Bold" Foreground="#1D3242" Margin="0,0,0,4"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                         <TextBlock Text="₱" FontSize="24" FontWeight="Bold" Foreground="#1D5642" Margin="0,0,2,0"/>
-                                        <TextBlock x:Name="txtGrandTotal" Text="0.00" FontSize="24" FontWeight="Bold" Foreground="#1D5642" TextAlignment="Right"/>
+                                        <TextBlock x:Name="txtGrandTotal" Text="0.00" FontSize="24" FontWeight="Bold" Foreground="#1D5642" 
+                   TextAlignment="Right" TextWrapping="Wrap" MaxWidth="300"/>
                                     </StackPanel>
-                                </Grid>
+                                </StackPanel>
                                 <TextBlock Text="Apply Tax:" FontWeight="SemiBold" Margin="0,0,60,0" Foreground="#474747" Height="24"/>
                                 <Border Width="56" Height="32" Background="#E0E0E0" CornerRadius="16" BorderBrush="#AEAEAE" BorderThickness="1" HorizontalAlignment="Left">
                                     <Grid>
