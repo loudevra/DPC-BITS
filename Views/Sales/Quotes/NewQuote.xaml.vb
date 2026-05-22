@@ -1667,7 +1667,7 @@ Namespace DPC.Views.Sales.Quotes
                     Dim outerStack = TryCast(productBorder.Child, StackPanel)
                     If outerStack Is Nothing Then Continue For
 
-                    Dim productRow = TryCast(outerStack.Children(0), StackPanel)
+                    Dim productRow = TryCast(outerStack.Children(0), Grid)
                     If productRow Is Nothing OrElse productRow.Children.Count < 8 Then Continue For
 
                     ' *** NEW: Increment local row counter for each product row ***
@@ -1927,7 +1927,7 @@ Namespace DPC.Views.Sales.Quotes
             End If
         End Sub
 
-        Private Function GetInputVal(parent As StackPanel, index As Integer) As String
+        Private Function GetInputVal(parent As Grid, index As Integer) As String
             Dim borderInput = TryCast(parent.Children(index), Border)
             If borderInput Is Nothing Then Return ""
 
