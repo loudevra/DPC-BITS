@@ -677,7 +677,7 @@ Namespace DPC.Views.Sales.Quotes
         .VerticalAlignment = VerticalAlignment.Center
     }
 
-            productPanel.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(135)}) ' Item Description
+            productPanel.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)}) ' Item Description
             productPanel.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(55)})  ' Qty
             productPanel.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(105)}) ' Unit Price
             productPanel.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(70)})  ' Tax %
@@ -795,8 +795,7 @@ Namespace DPC.Views.Sales.Quotes
                 .Padding = New Thickness(5),
                 .BorderThickness = New Thickness(0),
                 .MinWidth = width,
-                .MaxWidth = width,
-                .Width = width,
+                .Width = Double.NaN,
                 .Height = 34,
                 .MinHeight = 34,
                 .MaxHeight = 34,

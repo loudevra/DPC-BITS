@@ -181,7 +181,7 @@
                               CanUserAddRows="False" IsReadOnly="True" HeadersVisibility="Column" GridLinesVisibility="None"
                               ColumnHeaderStyle="{StaticResource ModernDataGridHeaderStyle}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="ITEM DESCRIPTION" Width="160"/>
+                            <DataGridTextColumn Header="ITEM DESCRIPTION" Width="*"/>
                             <DataGridTextColumn Header="QTY" Width="60"/>
                             <DataGridTextColumn Header="UNIT PRICE" Width="95"/>
                             <DataGridTextColumn x:Name="TaxHeader" Header="TAX (%)" Width="75"/>
