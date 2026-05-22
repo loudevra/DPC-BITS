@@ -317,8 +317,27 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Sub txtTaxSelection_SelectionChanged(sender As Object, e As SelectionChangedEventArgs)
-            _TaxSelection = CType(txtTaxSelection.SelectedItem, ComboBoxItem).Content.ToString() = "Excluded"
-            Debug.WriteLine($"Tax Selection - {_TaxSelection}")
+            Dim selectedItem = TryCast(txtTaxSelection.SelectedItem, ComboBoxItem)
+            If selectedItem Is Nothing Then Exit Sub
+
+            Dim selectedValue As String = selectedItem.Content.ToString()
+
+            Select Case selectedValue
+                Case "Excluded", "Exclusive"
+                    _TaxSelection = True
+                    TaxHeader.Header = "TAX(%)"
+                    CEtaxSelection = True
+
+                Case "Inclusive"
+                    _TaxSelection = False
+                    TaxHeader.Header = "TAX(12%)"
+                    CEtaxSelection = False
+                'New ComboBoxItem for VAT Type
+                Case "Total Cost Inclusive of VAT"
+                    _TaxSelection = False
+                    TaxHeader.Header = "TAX(12%)"
+                    CEtaxSelection = False
+            End Select
 
             For Each kvp In _productTextBoxes
                 If kvp.Key.StartsWith("txtTaxPercent_") Then
@@ -328,8 +347,6 @@ Namespace DPC.Views.Sales.Quotes
                     If _TaxSelection Then
                         kvp.Value.Text = "0"
                         kvp.Value.IsReadOnly = False
-                        CEtaxSelection = True
-                        TaxHeader.Header = "TAX(%)"
                         If border IsNot Nothing Then
                             border.BorderThickness = New Thickness(1)
                             border.BorderBrush = CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush)
@@ -337,8 +354,6 @@ Namespace DPC.Views.Sales.Quotes
                     Else
                         kvp.Value.Text = ""
                         kvp.Value.IsReadOnly = True
-                        CEtaxSelection = False
-                        TaxHeader.Header = "TAX(12%)"
                         CEisVatExInclude = False
                         If border IsNot Nothing Then
                             border.BorderThickness = New Thickness(0)
@@ -1125,10 +1140,17 @@ Namespace DPC.Views.Sales.Quotes
             End If
 
             Dim quantity As Decimal = 0, rate As Decimal = 0, taxPercent As Decimal = 0, discountPercent As Decimal = 0
-            Decimal.TryParse(quantityBox.Text, quantity)
-            Decimal.TryParse(rateBox.Text, rate)
-            If taxPercentBox IsNot Nothing Then Decimal.TryParse(taxPercentBox.Text, taxPercent)
-            If discountPercentBox IsNot Nothing Then Decimal.TryParse(discountPercentBox.Text, discountPercent)
+
+            Decimal.TryParse(quantityBox.Text.Replace(",", "").Trim(), quantity)
+            Decimal.TryParse(rateBox.Text.Replace(",", "").Trim(), rate)
+
+            If taxPercentBox IsNot Nothing Then
+                Decimal.TryParse(taxPercentBox.Text.Replace(",", "").Trim(), taxPercent)
+            End If
+
+            If discountPercentBox IsNot Nothing Then
+                Decimal.TryParse(discountPercentBox.Text.Replace(",", "").Trim(), discountPercent)
+            End If
 
             Dim baseAmount = quantity * rate
             Dim taxValue As Decimal = 0
@@ -1231,13 +1253,57 @@ Namespace DPC.Views.Sales.Quotes
             Dim textBox = TryCast(sender, TextBox)
             If textBox Is Nothing Then Exit Sub
 
+            RemoveHandler textBox.TextChanged, AddressOf Rate_TextChanged
+
+            Dim rawText As String = textBox.Text.Replace(",", "").Trim()
+
+            If String.IsNullOrWhiteSpace(rawText) Then
+                AddHandler textBox.TextChanged, AddressOf Rate_TextChanged
+                CalculateAmountFromRateTextBox(textBox)
+                Exit Sub
+            End If
+
+            Dim hasTrailingDot As Boolean = rawText.EndsWith(".")
+            Dim parts = rawText.Split("."c)
+
+            Dim integerPart As String = parts(0)
+            Dim decimalPart As String = ""
+
+            If parts.Length > 1 Then
+                decimalPart = parts(1)
+            End If
+
+            If parts.Length > 2 Then
+                decimalPart = parts(1)
+            End If
+
+            Dim parsedInteger As Decimal
+            If Decimal.TryParse(integerPart, parsedInteger) Then
+                Dim formattedInteger As String = parsedInteger.ToString("N0")
+                Dim formattedText As String = formattedInteger
+
+                If hasTrailingDot Then
+                    formattedText &= "."
+                ElseIf rawText.Contains(".") Then
+                    formattedText &= "." & decimalPart
+                End If
+
+                textBox.Text = formattedText
+                textBox.CaretIndex = textBox.Text.Length
+            End If
+
+            AddHandler textBox.TextChanged, AddressOf Rate_TextChanged
+            CalculateAmountFromRateTextBox(textBox)
+        End Sub
+
+        Private Sub CalculateAmountFromRateTextBox(textBox As TextBox)
+            Dim parts = textBox.Name.Split("_"c)
+            If parts.Length < 2 Then Exit Sub
+
+            Dim rowIndex As Integer
+            If Not Integer.TryParse(parts(1), rowIndex) Then Exit Sub
+
             textBox.Dispatcher.BeginInvoke(Sub()
-                                               Dim parts = textBox.Name.Split("_"c)
-                                               If parts.Length < 2 Then Exit Sub
-
-                                               Dim rowIndex As Integer
-                                               If Not Integer.TryParse(parts(1), rowIndex) Then Exit Sub
-
                                                CalculateAmount(rowIndex)
                                            End Sub, DispatcherPriority.Background)
         End Sub
@@ -1248,8 +1314,9 @@ Namespace DPC.Views.Sales.Quotes
             Dim proposedText As String = tb.Text.Remove(tb.SelectionStart, tb.SelectionLength).
         Insert(tb.SelectionStart, e.Text)
 
-            Dim regex As New Regex("^\d*\.?\d{0,2}$")
+            proposedText = proposedText.Replace(",", "")
 
+            Dim regex As New Regex("^\d*\.?\d{0,2}$")
             e.Handled = Not regex.IsMatch(proposedText)
         End Sub
 
@@ -1263,6 +1330,16 @@ Namespace DPC.Views.Sales.Quotes
                 End If
             Else
                 e.CancelCommand()
+            End If
+        End Sub
+
+        Private Sub Rate_LostFocus(sender As Object, e As RoutedEventArgs)
+            Dim tb = TryCast(sender, TextBox)
+            If tb Is Nothing Then Exit Sub
+
+            Dim value As Decimal
+            If Decimal.TryParse(tb.Text.Replace(",", "").Trim(), value) Then
+                tb.Text = value.ToString("N2")
             End If
         End Sub
 
@@ -1824,12 +1901,15 @@ Namespace DPC.Views.Sales.Quotes
                 data.FeeValue = lblFee.Text
                 data.DeliveryMobilizationLabel = lblFeeType.Text.ToUpper()
 
-                If selectedTaxType = "Exclusive" Then
-                    data.VatLabel = "VAT EXCLUSIVE"
-                    data.SubtotalLabel = "SUBTOTAL VAT EX."
+                If selectedTaxType = "Inclusive" Then
+                    data.VatLabel = "VAT 12%"
+                    data.SubtotalLabel = "SUBTOTAL VAT Inc."
+                ElseIf selectedTaxType = "Excluded" Then
+                    data.VatLabel = "VAT EXCLUDED"
+                    data.SubtotalLabel = "SUBTOTAL VAT Ex."
                 Else
                     data.VatLabel = "VAT 12%"
-                    data.SubtotalLabel = "SUBTOTAL VAT IN."
+                    data.SubtotalLabel = "SUBTOTAL VAT Inc."
                 End If
 
                 data.VatType = selectedTaxType

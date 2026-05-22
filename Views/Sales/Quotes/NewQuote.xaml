@@ -327,6 +327,7 @@
                             <ComboBox x:Name="txtTaxSelection" SelectionChanged="txtTaxSelection_SelectionChanged" Width="180" Style="{StaticResource RoundedComboBoxStyle}">
                                 <ComboBoxItem Content="Inclusive" IsSelected="True"/>
                                 <ComboBoxItem Content="Excluded"/>
+                                <ComboBoxItem Content="Total Cost Inclusive of VAT"/>
                             </ComboBox>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
