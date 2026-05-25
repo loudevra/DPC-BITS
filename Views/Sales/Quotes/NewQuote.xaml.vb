@@ -677,7 +677,7 @@ Namespace DPC.Views.Sales.Quotes
         .VerticalAlignment = VerticalAlignment.Center
     }
 
-            productPanel.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(135)}) ' Item Description
+            productPanel.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(1, GridUnitType.Star)}) ' Item Description
             productPanel.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(55)})  ' Qty
             productPanel.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(105)}) ' Unit Price
             productPanel.ColumnDefinitions.Add(New ColumnDefinition With {.Width = New GridLength(70)})  ' Tax %
@@ -795,8 +795,7 @@ Namespace DPC.Views.Sales.Quotes
                 .Padding = New Thickness(5),
                 .BorderThickness = New Thickness(0),
                 .MinWidth = width,
-                .MaxWidth = width,
-                .Width = width,
+                .Width = Double.NaN,
                 .Height = 34,
                 .MinHeight = 34,
                 .MaxHeight = 34,
@@ -1213,40 +1212,26 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Public Sub UpdateTotalTax()
-            Dim totalTax As Decimal = 0
             Dim subtotalAmount As Decimal = 0
             Dim deliveryFee As Decimal = 0
             Dim installationFee As Decimal = 0
 
-            For Each name As String In LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
-        SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
-        Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtAmount_")).
-        Select(Function(txt) txt.Name).Distinct()
-
-                Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
-                If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
-                    Dim rawText = txtBox.Text.Replace("₱", "").Replace(",", "").Trim()
+            For Each kvp In _productTextBoxes
+                If kvp.Key.StartsWith("txtAmount_") Then
+                    Dim rawText = kvp.Value.Text.Replace("₱", "").Replace(",", "").Trim()
                     Dim amount As Decimal
-                    If Decimal.TryParse(rawText, amount) Then
-                        subtotalAmount += amount
-                    End If
+                    If Decimal.TryParse(rawText, amount) Then subtotalAmount += amount
                 End If
             Next
 
-            Decimal.TryParse(txtDeliveryFee.Text.Replace("₱", "").Replace(",", "").Trim(), deliveryFee)
-            Decimal.TryParse(txtInstallationFee.Text.Replace("₱", "").Replace(",", "").Trim(), installationFee)
+            Decimal.TryParse(txtDeliveryFee.Text.Replace(",", "").Trim(), deliveryFee)
+            Decimal.TryParse(txtInstallationFee.Text.Replace(",", "").Trim(), installationFee)
 
-            Dim baseForTaxCalculation As Decimal = subtotalAmount + deliveryFee + installationFee
-            totalTax = baseForTaxCalculation * 0.12D
+            Dim baseForTax = subtotalAmount + deliveryFee + installationFee
+            Dim totalTax = baseForTax * 0.12D
 
             CostEstimateDetails.CETotalTaxValueCache = totalTax.ToString("N2")
             txtTotalTax.Text = totalTax.ToString("N2")
-
-            ' *** Keep visibility in sync with toggle state ***
-            Dim taxGrid = TryCast(txtTotalTax.Parent, Grid)
-            If taxGrid IsNot Nothing Then
-                taxGrid.Visibility = If(_isTaxApplied, Visibility.Visible, Visibility.Collapsed)
-            End If
         End Sub
 
         Private Sub Rate_TextChanged(sender As Object, e As TextChangedEventArgs)
@@ -1359,7 +1344,7 @@ Namespace DPC.Views.Sales.Quotes
 
             If String.IsNullOrEmpty(cleanInput) Then
                 tb.Text = ""
-                lblFee.Text = "₱ 0"
+                lblFee.Text = "0"
             Else
                 Dim intPart As String = cleanInput.Split("."c)(0)
                 Dim decPart As String = If(cleanInput.Contains("."), "." & cleanInput.Split("."c)(1), "")
@@ -1399,7 +1384,7 @@ Namespace DPC.Views.Sales.Quotes
 
             If String.IsNullOrEmpty(cleanInput) Then
                 tb.Text = ""
-                lblInstallationFee.Text = "₱ 0"
+                lblInstallationFee.Text = "0"
             Else
                 Dim intPart As String = cleanInput.Split("."c)(0)
                 Dim decPart As String = If(cleanInput.Contains("."), "." & cleanInput.Split("."c)(1), "")
@@ -1426,47 +1411,40 @@ Namespace DPC.Views.Sales.Quotes
             Dim deliveryFee As Decimal = 0
             Dim installationFee As Decimal = 0
 
-            Dim amountTextBoxNames = LogicalTreeHelper.GetChildren(MainContainer).OfType(Of UIElement)().
-        SelectMany(Function(border) FindVisualChildren(Of TextBox)(border)).
-        Where(Function(txt) txt.Name IsNot Nothing AndAlso txt.Name.StartsWith("txtAmount_")).
-        Select(Function(txt) txt.Name).Distinct()
-
-            For Each name As String In amountTextBoxNames
-                Dim txtBox As TextBox = TryCast(Me.FindName(name), TextBox)
-                If txtBox IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(txtBox.Text) Then
-                    Dim rawText = txtBox.Text.Replace("₱", "").Replace(",", "").Trim()
+            For Each kvp In _productTextBoxes
+                If kvp.Key.StartsWith("txtAmount_") Then
+                    Dim rawText = kvp.Value.Text.Replace("₱", "").Replace(",", "").Trim()
                     Dim amount As Decimal
-                    If Decimal.TryParse(rawText, amount) Then
-                        subtotalAmount += amount
-                    End If
+                    If Decimal.TryParse(rawText, amount) Then subtotalAmount += amount
                 End If
             Next
 
-            Decimal.TryParse(txtDeliveryFee.Text.Replace("₱", "").Replace(",", "").Trim(), deliveryFee)
-            Decimal.TryParse(txtInstallationFee.Text.Replace("₱", "").Replace(",", "").Trim(), installationFee)
+            Decimal.TryParse(txtDeliveryFee.Text.Replace(",", "").Trim(), deliveryFee)
+            Decimal.TryParse(txtInstallationFee.Text.Replace(",", "").Trim(), installationFee)
 
-            Dim baseAmount As Decimal = subtotalAmount + deliveryFee + installationFee
-            Dim calculatedTax As Decimal = baseAmount * 0.12D
+            Dim baseAmount = subtotalAmount + deliveryFee + installationFee
+            Dim calculatedTax = baseAmount * 0.12D
 
             CostEstimateDetails.CETotalBaseAmount = subtotalAmount.ToString("N2")
             CostEstimateDetails.CETotalTaxValueCache = "₱ " & calculatedTax.ToString("N2")
             txtTotalTax.Text = calculatedTax.ToString("N2")
 
-            If Not _TaxSelection Then
-                ' VAT INCLUSIVE — grand total always includes tax
-                _originalGrandTotal = baseAmount + calculatedTax
-            Else
-                ' VAT EXCLUSIVE — grand total is ALWAYS just base, tax NEVER added
-                _originalGrandTotal = baseAmount
-            End If
+            _originalGrandTotal = If(Not _TaxSelection, baseAmount + calculatedTax, baseAmount)
 
             CostEstimateDetails.CETotalAmountCache = _originalGrandTotal.ToString("N2")
             txtGrandTotal.Text = _originalGrandTotal.ToString("N2")
+            ' NO visibility logic here
+        End Sub
 
-            ' Toggle only controls visibility, never the amount
-            Dim taxGrid = TryCast(txtTotalTax.Parent, Grid)
-            If taxGrid IsNot Nothing Then
-                taxGrid.Visibility = If(_isTaxApplied, Visibility.Visible, Visibility.Collapsed)
+        Private Sub txtInstallationFee_LostFocus(sender As Object, e As RoutedEventArgs)
+            Dim tb = TryCast(sender, TextBox)
+            If tb Is Nothing Then Exit Sub
+            Dim value As Decimal
+            If Decimal.TryParse(tb.Text.Replace(",", "").Trim(), value) Then
+                tb.Text = value.ToString("N2")
+                lblInstallationFee.Text = value.ToString("N2")   ' no ₱ prefix
+            Else
+                lblInstallationFee.Text = "0"
             End If
         End Sub
 
@@ -1618,12 +1596,10 @@ Namespace DPC.Views.Sales.Quotes
         End Sub
 
         Private Sub UpdateGrandTotalDisplay()
-            Dim taxGrid = TryCast(txtTotalTax.Parent, Grid)
             Dim toggleButton = TryCast(ApplyTaxToggle, Button)
 
             If _isTaxApplied Then
-                If taxGrid IsNot Nothing Then taxGrid.Visibility = Visibility.Visible
-
+                TotalTaxGrid.Visibility = Visibility.Visible
                 If toggleButton IsNot Nothing Then
                     toggleButton.Background = CType(New BrushConverter().ConvertFrom("#1D5642"), Brush)
                     toggleButton.Margin = New Thickness(24, 2, 0, 0)
@@ -1631,8 +1607,7 @@ Namespace DPC.Views.Sales.Quotes
                     If icon IsNot Nothing Then icon.Kind = MaterialDesignThemes.Wpf.PackIconKind.Check
                 End If
             Else
-                If taxGrid IsNot Nothing Then taxGrid.Visibility = Visibility.Collapsed
-
+                TotalTaxGrid.Visibility = Visibility.Collapsed
                 If toggleButton IsNot Nothing Then
                     toggleButton.Background = CType(New BrushConverter().ConvertFrom("#AEAEAE"), Brush)
                     toggleButton.Margin = New Thickness(2, 2, 0, 0)
@@ -1641,7 +1616,6 @@ Namespace DPC.Views.Sales.Quotes
                 End If
             End If
 
-            ' Never recalculate — just show the already-computed grand total
             txtGrandTotal.Text = _originalGrandTotal.ToString("N2")
         End Sub
 #End Region
@@ -1692,7 +1666,7 @@ Namespace DPC.Views.Sales.Quotes
                     Dim outerStack = TryCast(productBorder.Child, StackPanel)
                     If outerStack Is Nothing Then Continue For
 
-                    Dim productRow = TryCast(outerStack.Children(0), StackPanel)
+                    Dim productRow = TryCast(outerStack.Children(0), Grid)
                     If productRow Is Nothing OrElse productRow.Children.Count < 8 Then Continue For
 
                     ' *** NEW: Increment local row counter for each product row ***
@@ -1952,7 +1926,7 @@ Namespace DPC.Views.Sales.Quotes
             End If
         End Sub
 
-        Private Function GetInputVal(parent As StackPanel, index As Integer) As String
+        Private Function GetInputVal(parent As Grid, index As Integer) As String
             Dim borderInput = TryCast(parent.Children(index), Border)
             If borderInput Is Nothing Then Return ""
 

@@ -79,8 +79,8 @@ Namespace DPC.Components.Forms
             Dim data = TransactionState.ActiveRecord
 
 
-            Installation.Text = data.InstallationFee
-            Delivery.Text = data.FeeValue
+            Installation.Text = StripCurrency(data.InstallationFee)
+            Delivery.Text = StripCurrency(data.FeeValue)
 
             ' Load Text Fields
             lblPageTitle.Text = data.DocumentTitle
@@ -88,10 +88,10 @@ Namespace DPC.Components.Forms
             DocumentNumber.Text = data.DocumentNumber
             DocumentDate.Text = data.DocumentDate
             DocumentValidityDate.Text = data.DocumentValidity
-            Subtotal.Text = data.Subtotal
-            lblVatValue.Text = data.VatValue
+            Subtotal.Text = StripCurrency(data.Subtotal)
+            lblVatValue.Text = StripCurrency(data.VatValue)
             lblVat.Text = data.VatLabel
-            TotalCost.Text = data.TotalCost
+            TotalCost.Text = StripCurrency(data.TotalCost)
 
 
             noteBox.Text = data.Notes
@@ -250,7 +250,7 @@ Namespace DPC.Components.Forms
 
             If Not isHeader Then
                 If item.ContainsKey("Rate") Then
-                    Decimal.TryParse(item("Rate").Replace("₱", "").Replace(",", "").Trim(), rate)
+                    Decimal.TryParse(item("Rate").Replace("₱","").Replace(",", "").Trim(), rate)
                 End If
 
                 If item.ContainsKey("Amount") Then
@@ -502,6 +502,16 @@ Namespace DPC.Components.Forms
                 MessageBox.Show("Save Error: " & ex.Message)
             End Try
         End Sub
+
+        Private Function StripCurrency(value As String) As String
+            If String.IsNullOrWhiteSpace(value) Then Return "0.00"
+            Dim clean = value.Replace("₱", "").Replace(",", "").Trim()
+            Dim dec As Decimal
+            If Decimal.TryParse(clean, NumberStyles.Any, CultureInfo.InvariantCulture, dec) Then
+                Return dec.ToString("N2")
+            End If
+            Return clean
+        End Function
 
         Private Function SaveAsPDF(docName As String) As String
             Dim dlg As New Microsoft.Win32.SaveFileDialog() With {.FileName = docName & ".pdf", .Filter = "PDF Files|*.pdf"}

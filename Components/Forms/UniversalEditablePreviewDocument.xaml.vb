@@ -378,15 +378,13 @@ Namespace DPC.Components.Forms
             Dim valSubTotal As Decimal = 0
             Dim valInstall As Decimal = 0
             Dim valDeliv As Decimal = 0
-            Dim valVat As Decimal = 0
 
             Decimal.TryParse(Subtotal.Text.Replace("₱", "").Replace(",", "").Trim(), valSubTotal)
             Decimal.TryParse(Installation.Text.Replace("₱", "").Replace(",", "").Trim(), valInstall)
             Decimal.TryParse(Delivery.Text.Replace("₱", "").Replace(",", "").Trim(), valDeliv)
-            Decimal.TryParse(lblVatValue.Text.Replace("₱", "").Replace(",", "").Trim(), valVat)
 
             Dim total As Decimal = valSubTotal + valInstall + valDeliv
-            TotalCost.Text = "₱ " & total.ToString("N2")
+            TotalCost.Text = total.ToString("N2")   ' no ₱ prefix
         End Sub
 
         Private Sub Delivery_TextChanged(sender As Object, e As TextChangedEventArgs)
@@ -404,12 +402,8 @@ Namespace DPC.Components.Forms
             RemoveHandler tb.TextChanged, AddressOf Delivery_TextChanged
             RemoveHandler tb.TextChanged, AddressOf Installation_TextChanged
 
-            Dim raw As String = tb.Text.Replace("₱", "").TrimStart()
-            If raw = "" Then
-                tb.Text = "₱ "
-            ElseIf Not tb.Text.StartsWith("₱ ") Then
-                tb.Text = "₱ " & raw
-            End If
+            Dim raw As String = tb.Text.Replace("₱", "").Replace(",", "").Trim()
+            tb.Text = raw
             tb.CaretIndex = tb.Text.Length
 
             ComputeCost(Nothing, Nothing)
@@ -426,9 +420,9 @@ Namespace DPC.Components.Forms
             Dim val As Decimal = 0
 
             If Decimal.TryParse(cleanText, val) Then
-                tb.Text = "₱ " & val.ToString("N2")
+                tb.Text = val.ToString("N2")   ' no ₱ prefix
             Else
-                tb.Text = "₱ 0.00"
+                tb.Text = "0.00"
             End If
         End Sub
 
@@ -585,16 +579,16 @@ Namespace DPC.Components.Forms
 #End Region
 
         Private Function FormatMoneyForDisplay(value As String) As String
-            If String.IsNullOrWhiteSpace(value) Then Return "₱ 0.00"
+            If String.IsNullOrWhiteSpace(value) Then Return "0.00"
 
             Dim clean = value.Replace("₱", "").Replace(",", "").Trim()
             Dim dec As Decimal
 
             If Decimal.TryParse(clean, NumberStyles.Any, CultureInfo.InvariantCulture, dec) Then
-                Return "₱ " & dec.ToString("N2")  ' N2 adds commas
+                Return dec.ToString("N2")
             End If
 
-            Return value
+            Return value.Replace("₱", "").Trim()
         End Function
 
     End Class
